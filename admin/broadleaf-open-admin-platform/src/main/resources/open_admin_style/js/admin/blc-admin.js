@@ -843,7 +843,7 @@ var BLCAdmin = (function($) {
             return dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)];
         }
 	};
-	
+
 })(jQuery);
 
 // Replace the default AJAX error handler with this custom admin one that relies on the exception

@@ -19,8 +19,8 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
@@ -31,6 +31,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
@@ -80,21 +81,11 @@ public interface SolrHelperService {
      * Returns the property name for the given field, field type, and prefix
      * 
      * @param field
-     * @param searchableFieldType
+     * @param fieldType
      * @param prefix
      * @return the property name for the field and fieldtype
      */
-    public String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType, String prefix);
-
-    /**
-     * Returns the property name for the given field, its configured facet field type, and the given prefix
-     * 
-     * @param field
-     * @param prefix
-     * @param facetType
-     * @return the property name for the facet type of this field
-     */
-    public String getPropertyNameForFieldFacet(Field field, String prefix, FieldType facetType);
+    public String getPropertyNameForIndexField(IndexField field, FieldType fieldType, String prefix);
 
     /**
      * Returns the property name for the given field and field type. This will apply the global prefix to the field,
@@ -102,21 +93,11 @@ public interface SolrHelperService {
      * type was set to FieldType.PRICE
      * 
      * @param field
-     * @param searchableFieldType
+     * @param fieldType
      * @return the property name for the field and fieldtype
      */
-    public String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType);
+    public String getPropertyNameForIndexField(IndexField field, FieldType fieldType);
 
-    /**
-     * Returns the property name for the given field and its configured facet field type. This will apply the global prefix 
-     * to the field, and it will also apply either the locale prefix or the pricelist prefix, depending on whether or not 
-     * the field type was set to FieldType.PRICE
-     * 
-     * @param field
-     * @return the property name for the facet type of this field
-     */
-    public String getPropertyNameForFieldFacet(Field field);
-    
     /**
      * @return the Solr id of this indexable
      */
@@ -442,16 +423,16 @@ public interface SolrHelperService {
      * @param defaultSort
      * @param fields
      */
-    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort, List<Field> fields);
+    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort, List<IndexField> fields);
 
-    /**
+    /* 
      * Builds a map of the fields with the abbreviation 
      * @param searchCriteria
      * @param fields
      * @return
      */
-    public Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria, List<Field> fields);
-    
+    public Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria, List<IndexField> fields);
+
     /**
      * Returns a map of fully qualified solr index field key to the searchFacetDTO object
      * @param facets

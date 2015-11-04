@@ -42,7 +42,7 @@ public class FieldGroup {
     protected Set<Field> fields = new HashSet<Field>();
     protected Boolean isVisible;
     protected Integer column;
-    protected Boolean isBorderless;
+    protected Boolean isUntitled;
     protected Boolean collapsed;
     protected String toolTip;
     protected Map<String, Object> groupAttributes = new HashMap<String, Object>();
@@ -89,15 +89,15 @@ public class FieldGroup {
         this.isVisible = isVisible;
     }
 
-    public Boolean getIsBorderless() {
-        if (isBorderless != null) {
-            return isBorderless;
+    public Boolean getIsUntitled() {
+        if (isUntitled != null) {
+            return isUntitled;
         }
         return false;
     }
 
-    public void setIsBorderless(Boolean isBorderless) {
-        this.isBorderless = isBorderless;
+    public void setIsUntitled(Boolean isUntitled) {
+        this.isUntitled = isUntitled;
     }
 
     public Boolean getCollapsed() {

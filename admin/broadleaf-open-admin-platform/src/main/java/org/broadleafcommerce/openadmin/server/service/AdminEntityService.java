@@ -384,6 +384,7 @@ public interface AdminEntityService {
      */
     public String getForeignEntityName(String owningClass, String id);
 
+
     /**
      * Returns all records for selected tab of the specified request and its primary key
      * 
@@ -397,4 +398,5 @@ public interface AdminEntityService {
     public Map<String, DynamicResultSet> getRecordsForSelectedTab(ClassMetadata cmd , Entity containingEntity,
             List<SectionCrumb> sectionCrumb, String currentTabName)
             throws ServiceException;
+
 }

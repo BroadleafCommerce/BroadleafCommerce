@@ -43,7 +43,6 @@ import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -60,64 +59,61 @@ import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SEARCH_FIELD_TYPES")
+@Table(name = "BLC_INDEX_FIELD_TYPE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 @AdminPresentationMergeOverrides({
-        @AdminPresentationMergeOverride(name = "searchField.field.friendlyName", mergeEntries = {
+        @AdminPresentationMergeOverride(name = "indexField.field.friendlyName", mergeEntries = {
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3),
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "SearchFieldTypeImpl_searchField")
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "IndexFieldTypeImpl_indexField")
+        }),
+        @AdminPresentationMergeOverride(name = "indexField.searchable", mergeEntries = {
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "IndexFieldTypeImpl_searchable")
         })
 })
-@AdminPresentationClass(friendlyName = "SearchFieldTypeImpl_friendly", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
-public class SearchFieldTypeImpl implements SearchFieldType, Serializable {
+@AdminPresentationClass(friendlyName = "IndexFieldTypeImpl_friendly", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "SearchFieldTypeId")
+    @GeneratedValue(generator = "IndexFieldTypeId")
     @GenericGenerator(
-            name="SearchFieldTypeId",
+            name="IndexFieldTypeId",
             strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
-                    @Parameter(name="segment_value", value="SearchFieldTypeImpl"),
-                    @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.SearchFieldTypeImpl")
+                    @Parameter(name="segment_value", value="IndexFieldTypeImpl"),
+                    @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl")
             }
     )
-    @Column(name = "SEARCH_FIELD_TYPE_ID")
-    @AdminPresentation(friendlyName = "SearchFieldTypeImpl_ID", group = "SearchFieldTypeImpl_description",
+    @Column(name = "INDEX_FIELD_TYPE_ID")
+    @AdminPresentation(friendlyName = "IndexFieldTypeImpl_ID", group = "IndexFieldTypeTypeImpl_description",
             visibility= VisibilityEnum.HIDDEN_ALL)
     protected Long id;
-
-    @ManyToOne(optional=false, targetEntity = SearchFieldImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "SEARCH_FIELD_ID")
-    @AdminPresentation(friendlyName = "SearchFieldTypeImpl_searchField", group = "SearchFieldTypeImpl_description",
-            order=3, gridOrder = 3, visibility=VisibilityEnum.FORM_HIDDEN)
-    @AdminPresentationToOneLookup(lookupDisplayProperty = "field.friendlyName")
-    protected SearchField searchField;
-
-    @Column(name = "SEARCHABLE_FIELD_TYPE")
-    @AdminPresentation(friendlyName = "SearchFieldTypeImpl_searchableFieldType", group = "SearchFieldTypeImpl_description", order = 4, prominent = true, gridOrder = 4,
+    
+    @Column(name = "FIELD_TYPE")
+    @AdminPresentation(friendlyName = "IndexFieldTypeImpl_fieldType", group = "IndexFieldTypeImpl_description", order = 4, prominent = true, gridOrder = 4,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.search.domain.solr.FieldType",
             requiredOverride = RequiredOverride.REQUIRED,
             defaultValue = "t")
-    protected String searchableFieldType;
+    protected String fieldType;
 
-    @Override
-    public FieldType getSearchableFieldType() {
-        return FieldType.getInstance(searchableFieldType);
-    }
-
-    @Override
-    public void setSearchableFieldType(FieldType searchableFieldType) {
-        this.searchableFieldType = searchableFieldType.getType();
-    }
+    @ManyToOne(optional=false, targetEntity = IndexFieldImpl.class)
+    @JoinColumn(name = "INDEX_FIELD_ID")
+    @AdminPresentation(friendlyName = "IndexFieldTypeImpl_indexField", group = "IndexFieldTypeImpl_description",
+            order=3, gridOrder = 3, visibility=VisibilityEnum.FORM_HIDDEN)
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "field.friendlyName")
+    protected IndexField indexField;
 
     @Override
     public Long getId() {
@@ -128,30 +124,40 @@ public class SearchFieldTypeImpl implements SearchFieldType, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
+    
     @Override
-    public SearchField getSearchField() {
-        return searchField;
+    public FieldType getFieldType() {
+        return FieldType.getInstance(fieldType);
     }
 
     @Override
-    public void setSearchField(SearchField searchField) {
-        this.searchField = searchField;
+    public void setFieldType(FieldType fieldType) {
+        this.fieldType = fieldType.getType();
     }
 
     @Override
-    public <G extends SearchFieldType> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public IndexField getIndexField() {
+        return indexField;
+    }
+
+    @Override
+    public void setIndexField(IndexField indexField) {
+        this.indexField = indexField;
+    }
+
+    @Override
+    public <G extends IndexFieldType> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
-        SearchFieldType searchFieldType = createResponse.getClone();
-        if (searchField != null) {
-            searchFieldType.setSearchField(searchField.createOrRetrieveCopyInstance(context).getClone());
+        IndexFieldType indexFieldType = createResponse.getClone();
+        if (indexField != null) {
+            indexFieldType.setIndexField(indexField.createOrRetrieveCopyInstance(context).getClone());
         }
 
-        if (searchableFieldType != null) {
-            searchFieldType.setSearchableFieldType(this.getSearchableFieldType());
+        if (fieldType != null) {
+            indexFieldType.setFieldType(this.getFieldType());
         }
         return createResponse;
     }

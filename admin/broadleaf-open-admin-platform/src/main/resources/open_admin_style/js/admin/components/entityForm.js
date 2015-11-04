@@ -145,16 +145,33 @@ $(document).ready(function() {
      			data: $form.serializeArray(),
      			complete: BLCAdmin.entityForm.hideActionSpinner
      		}, function(data) {
-     			$('div.' + href + 'Tab fieldset.listgrid-container div.listgrid-header-wrapper table.list-grid-table').each(function() {
+     			$('div.' + href + 'Tab .listgrid-container').find('.listgrid-header-wrapper table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
-                    var $tableWrapper = data.find('div.listgrid-header-wrapper:has(table#' + tableId + ')');
+                    var $tableWrapper = data.find('.listgrid-header-wrapper:has(table#' + tableId + ')');
      				BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
      			});
-     			$('div.' + href + 'Tab div.selectize-wrapper').each(function() {
+     			$('div.' + href + 'Tab .selectize-wrapper').each(function() {
      				var tableId = $(this).attr('id');
-                    var $selectizeWrapper = data.find('div.selectize-wrapper#' + tableId);
+                    var $selectizeWrapper = data.find('.selectize-wrapper#' + tableId);
      				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
      			});
+                $('div.' + href + 'Tab .media-container').each(function() {
+                    var tableId = $(this).attr('id');
+                    tableId = tableId.replace(".", "\\.");
+                    var $container = data.find('#' + tableId);
+                    var $assetGrid = $($container).find('.asset-grid-container');
+                    var $assetListGrid = data.find('.asset-listgrid');
+
+                    BLCAdmin.assetGrid.initialize($assetGrid);
+
+                    $(this).find('.asset-grid-container').replaceWith($assetGrid);
+                    $(this).find('.asset-listgrid').replaceWith($assetListGrid);
+
+                    $(this).find('.listgrid-container').each(function (index, container) {
+                        BLCAdmin.listGrid.initialize($(container));
+                    });
+                });
+
                 hideTabSpinner($tab, $tabBody);
      		});
 
@@ -267,7 +284,7 @@ $(document).ready(function() {
             });
         }
     }
-    
+
     function showTabSpinner($tab, $tabBody) {
         $("#headerFlashAlertBoxContainer").addClass("hidden");
         $tabBody.find('button').prop("disabled", true);
@@ -278,7 +295,7 @@ $(document).ready(function() {
         $tabBody.find('button').prop("disabled", false);
         $tab.find('i.icon-spinner').hide();
     }
-    
+
     $('body').on('submit', 'form.entity-form', function(event) {
         var submit = BLCAdmin.runSubmitHandlers($(this));
         return submit;
@@ -302,6 +319,75 @@ $(document).ready(function() {
             });
         }
         return false;
+    });
+
+    $('body').on('click', 'a.media-link', function(event) {
+        event.preventDefault();
+
+        var asset = $(this).closest('.asset-item').find('img');
+        var link = $(asset).attr('data-link');
+        //link += $(this).attr('data-urlpostfix');
+        link += $(this).attr('data-queryparams');
+
+        BLCAdmin.showLinkAsModal(link);
+    });
+
+    $('body').on('click', 'a.media-grid-remove', function() {
+        var $container = $(this).closest('.asset-listgrid-container');
+
+        var asset = $(this).parent().siblings('img');
+        var link = $(asset).attr('data-link');
+        link += $(this).attr('data-urlpostfix');
+        link += $(this).attr('data-queryparams');
+
+        var id = $(asset).data('rowid');
+        var $tr = $(this).closest('.select-group').find('.listgrid-container').find('tr[data-rowid=' + id + ']');
+        var rowFields = BLCAdmin.listGrid.getRowFields($tr);
+
+        BLC.ajax({
+            url: link,
+            data: rowFields,
+            type: "POST"
+        }, function(data) {
+            if (data.status == 'error') {
+                BLCAdmin.listGrid.showAlert($container, data.message);
+            } else {
+                var $assetGrid = $(data).find('.asset-grid-container');
+                var $assetListGrid = $(data).find('.asset-listgrid');
+
+                BLCAdmin.assetGrid.initialize($assetGrid);
+
+                $container.find('.asset-grid-container').replaceWith($assetGrid);
+                $container.find('.asset-listgrid').replaceWith($assetListGrid);
+
+                $container.find('.listgrid-container').each(function (index, container) {
+                    BLCAdmin.listGrid.initialize($(container));
+                });
+            }
+        });
+
+        return false;
+    });
+
+    $('body').on('click', '.collapser a', function(event) {
+        event.preventDefault();
+
+        var $content = $(this).closest('.fieldset-card').find('.fieldset-card-content');
+        if ($(this).hasClass('collapsed')) {
+            $(this).removeClass('collapsed').addClass('expanded');
+            $(this).find('i').removeClass('fa-angle-down').addClass('fa-angle-up');
+            $content.removeClass('content-collapsed');
+        } else {
+            $(this).removeClass('expanded').addClass('collapsed');
+            $(this).find('i').removeClass('fa-angle-up').addClass('fa-angle-down');
+            $content.addClass('content-collapsed');
+        }
+
+        var $fieldSetCard = $(this).closest('.fieldset-card.listgrid-container');
+        var $tbody = $fieldSetCard.find('.listgrid-body-wrapper tbody');
+        if ($tbody.length) {
+            BLCAdmin.listGrid.paginate.updateGridSize($tbody);
+        }
     });
 
     /**

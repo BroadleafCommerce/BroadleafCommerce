@@ -727,7 +727,7 @@ public class EntityForm {
         newGroup.setTitle(groupMetadata.getGroupName());
         newGroup.setOrder(groupMetadata.getGroupOrder());
         newGroup.setColumn(groupMetadata.getColumn());
-        newGroup.setIsBorderless(groupMetadata.getBorderless());
+        newGroup.setIsUntitled(groupMetadata.getUntitled());
         newGroup.setToolTip(groupMetadata.getTooltip());
         newGroup.setCollapsed(groupMetadata.getCollapsed());
         newGroup.setTitle(processMessageString(groupMetadata.getGroupName()));

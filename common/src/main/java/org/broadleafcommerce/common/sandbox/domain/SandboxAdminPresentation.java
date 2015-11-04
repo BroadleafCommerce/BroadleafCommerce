@@ -32,7 +32,7 @@ import org.broadleafcommerce.common.presentation.AdminTabPresentation;
             groups = {
                 @AdminGroupPresentation(name = SandboxAdminPresentation.GroupName.Description,
                     order = SandboxAdminPresentation.GroupOrder.Description,
-                    borderless = true)
+                    untitled = true)
             }
         )
     }

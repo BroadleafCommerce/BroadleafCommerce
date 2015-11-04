@@ -145,6 +145,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey, crumbs);
         listGrid.addRowAction(DefaultListGridActions.EDIT);
+        listGrid.setSelectType(ListGrid.SelectType.NONE);
         
         Field firstField = listGrid.getHeaderFields().iterator().next();
         if (requestParams.containsKey(firstField.getName())) {
@@ -1466,10 +1467,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
         
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey, persistenceResponse, sectionCrumbs);
-        model.addAttribute("listGrid", listGrid);
-
         // We return the new list grid so that it can replace the currently visible one
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey, persistenceResponse, sectionCrumbs);
+
+        model.addAttribute("listGrid", listGrid);
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
     }
@@ -1650,10 +1652,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey, persistenceResponse, sectionCrumbs);
-        model.addAttribute("listGrid", listGrid);
-
         // We return the new list grid so that it can replace the currently visible one
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey, persistenceResponse, sectionCrumbs);
+
+        model.addAttribute("listGrid", listGrid);
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
     }

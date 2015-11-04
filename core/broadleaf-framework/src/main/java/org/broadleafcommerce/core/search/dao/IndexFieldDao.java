@@ -20,14 +20,17 @@
 package org.broadleafcommerce.core.search.dao;
 
 import org.broadleafcommerce.core.search.domain.Field;
-import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
+import org.broadleafcommerce.core.search.domain.IndexField;
+
+import java.util.List;
 
 /**
  * DAO used to interact with the database search fields
  *
  * @author Nick Crum (ncrum)
  */
-public interface SearchFieldDao {
+public interface IndexFieldDao {
 
     /**
      * Returns the SearchField instance associated with the given field parameter, or null if non exists.
@@ -35,5 +38,13 @@ public interface SearchFieldDao {
      * @param field the Field we are looking for the SearchField for
      * @return a SearchField instance for the given field
      */
-    public SearchField readSearchFieldForField(Field field);
+    public IndexField readIndexFieldForField(Field field);
+    
+    /**
+     * Finds all of the {@link IndexField}s based on the entity type.
+     * @param entityType
+     * @return
+     */
+    public List<IndexField> readFieldsByEntityType(FieldEntity entityType);
+
 }

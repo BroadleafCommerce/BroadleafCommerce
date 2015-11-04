@@ -74,6 +74,15 @@
 
             BLCAdmin.listGrid.paginate.updateTableFooter($listGridContainer.find('tbody'));
 
+            var $fieldSetCard = $listGridContainer.closest('.fieldset-card.listgrid-container');
+            var totalRecords = $listGridContainer.find('.listgrid-body-wrapper table tbody').data('totalrecords');
+            if ($fieldSetCard.length && totalRecords !== 0) {
+                var $collapser = $fieldSetCard.find('.titlebar .collapser a');
+                if ($collapser.hasClass('collapsed')) {
+                    $collapser.click();
+                }
+            }
+
             $listGridContainer.trigger('blc-listgrid-replaced', $listGridContainer);
         },
 
@@ -153,7 +162,7 @@
                 fields[fieldName] = value;
             }
 
-            if ($tr.closest('.tree-listgrid-container')) {
+            if ($tr.closest('.tree-listgrid-container').length) {
                 fields['selectedRow'] = $tr;
             }
 
@@ -174,21 +183,37 @@
             return selectedRowIds;
         },
         
-        updateRowActionButtons : function($listGridContainer) {
-            var numSelected = $listGridContainer.find('tr.selected').length;
-            if (numSelected) {
-                $listGridContainer.find('button.row-action').removeAttr('disabled');
-            } else {
-                $listGridContainer.find('button.row-action').attr('disabled', 'disabled');
-            }
-            
+        updateActionButtons : function($listGridContainer) {
             if (!$listGridContainer.find('tr.list-grid-no-results').length) {
                 $listGridContainer.find('button.row-action.all-capable').removeAttr('disabled');
             }
-            
-            if (numSelected > 1) {
-                $listGridContainer.find('button.row-action.single-action-only').attr('disabled', 'disabled');
+
+            var numSelected = $listGridContainer.find('tr.selected').length;
+            updateListGridActionsForContainer($listGridContainer.find('button.row-action'), numSelected);
+
+            var $modal = $listGridContainer.closest('.modal');
+            if ($modal.length) {
+                if (typeof BLCAdmin.treeListGrid !== 'undefined') {
+                    numSelected = BLCAdmin.treeListGrid.retrieveNumRowsSelected($listGridContainer, numSelected);
+                }
+
+                var $modalActionContainer = $modal.find('.modal-footer .listgrid-modal-actions');
+                updateListGridActionsForContainer($modalActionContainer.find("button.row-action"), numSelected);
             }
+
+            function updateListGridActionsForContainer($containerActions, numSelected) {
+                if (numSelected) {
+                    $containerActions.removeAttr('disabled');
+                } else {
+                    $containerActions.attr('disabled', 'disabled');
+                }
+
+                if (numSelected > 1) {
+                    $containerActions.filter('.single-action-only').attr('disabled', 'disabled');
+                }
+            }
+
+
         },
         
         showAlert : function($container, message, options) {
@@ -239,7 +264,7 @@
         },
         
         initialize : function($container) {
-            BLCAdmin.listGrid.updateRowActionButtons($container);
+            BLCAdmin.listGrid.updateActionButtons($container);
 
             if (BLCAdmin.listGrid.paginate) {
                 BLCAdmin.listGrid.paginate.initialize($container);
@@ -382,7 +407,7 @@ $(document).ready(function() {
 
         updateMultiSelectCheckbox($tbody, $listgridHeader)
         
-        BLCAdmin.listGrid.updateRowActionButtons($listGridContainer);
+        BLCAdmin.listGrid.updateActionButtons($listGridContainer);
     }
     $('body').on('listGrid-single_select-rowSelected', function(event, $target, link, fields, currentUrl) {
         inlineRowSelected(event, $target, link, fields, currentUrl, false);
@@ -402,7 +427,7 @@ $(document).ready(function() {
      * for the field that we are performing the to-one lookup on.
      */
     $('body').on('listGrid-to_one-rowSelected', function(event, $target, link, fields, currentUrl) {
-        $('div.additional-foreign-key-container').trigger('valueSelected', [fields, link, currentUrl]);
+        $('div.additional-foreign-key-container').trigger('valueSelected', [$target, fields, link, currentUrl]);
     });
     
     /**
@@ -438,7 +463,12 @@ $(document).ready(function() {
      * submit the form directly.
      */
     $('body').on('listGrid-adorned-rowSelected', function(event, $target, link, fields, currentUrl) {
-        $(this).find('input#adornedTargetIdProperty').val(fields['id']);
+        var $adornedTargetId = $(this).find('input#adornedTargetIdProperty');
+        if ($adornedTargetId.val() == fields['id']) {
+            $adornedTargetId.val('');
+        } else {
+            $adornedTargetId.val(fields['id']);
+        }
     });
     
     /**
@@ -446,7 +476,12 @@ $(document).ready(function() {
      * show the form with the additional maintained fields.
      */
     $('body').on('listGrid-adorned_with_form-rowSelected', function(event, $target, link, fields, currentUrl) {
-        $(this).find('input#adornedTargetIdProperty').val(fields['id']);
+        var $adornedTargetId = $(this).find('input#adornedTargetIdProperty');
+        if ($adornedTargetId.val() == fields['id']) {
+            $adornedTargetId.val('');
+        } else {
+            $adornedTargetId.val(fields['id']);
+        }
     });
     
     /**
@@ -461,7 +496,7 @@ $(document).ready(function() {
     $('body').on('click', '.to-one-lookup', function(event) {
         var $container = $(this).closest('div.additional-foreign-key-container');
         
-        $container.on('valueSelected', function(event, fields, link, currentUrl) {
+        $container.on('valueSelected', function(event, $target, fields, link, currentUrl) {
             var $this = $(this);
             var displayValueProp = $this.find('input.display-value-property').val();
             
@@ -690,7 +725,8 @@ $(document).ready(function() {
     });
 
     $('body').on('click', 'button.list-grid-single-select', function() {
-        var $container = $(this).closest('.listgrid-container');
+        var $modal = $(this).closest('.modal');
+        var $container = $modal.find('.listgrid-container');
         var $table = $container.find('table');
         var $selectedRow = $table.find('tr.selected');
         var listGridType = $table.data('listgridtype');
@@ -712,6 +748,8 @@ $(document).ready(function() {
                 type: "POST",
                 data: $(this).serialize()
             }, function(data) {
+                BLCAdmin.entityForm.hideActionSpinner($form.closest('.modal').find('.entity-form-actions'));
+
                 //if there is a validation error, replace the current form that's there with this new one
                 var $newForm = $(data).find('.modal-body form');
                 if ($newForm[0]) {
@@ -750,12 +788,30 @@ $(document).ready(function() {
             	    $actions.find('button').show();
             	    $actions.find('img.ajax-loader').hide();
                 } else {
-                    BLCAdmin.listGrid.replaceRelatedCollection($(data), {
-                        message: BLCAdmin.messages.saved + '!', 
-                        alertType: 'save-alert', 
-                        autoClose: 1000 
-                    });
-                    BLCAdmin.hideCurrentModal();
+
+                    var $assetGrid = $(data).find('.asset-grid-container');
+                    if ($assetGrid.length) {
+                        var $assetListGrid = $(data).find('.asset-listgrid');
+
+                        BLCAdmin.assetGrid.initialize($assetGrid);
+
+                        $('.asset-grid-container').replaceWith($assetGrid);
+                        $('.asset-listgrid').replaceWith($assetListGrid);
+
+                        $('.listgrid-container').each(function (index, container) {
+                            BLCAdmin.listGrid.initialize($(container));
+                        });
+                        BLCAdmin.hideCurrentModal();
+
+                    } else {
+                        BLCAdmin.hideCurrentModal();
+
+                        BLCAdmin.listGrid.replaceRelatedCollection($(data), {
+                            message: BLCAdmin.messages.saved + '!',
+                            alertType: 'save-alert',
+                            autoClose: 1000
+                        });
+                    }
                 }
             });
         }
