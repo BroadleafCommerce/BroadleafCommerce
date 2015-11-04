@@ -391,12 +391,8 @@ input[type="radio"].radio+label.radio-label.clr,
     float: left;
     margin: 30px 10px;
 }
-.modal .modal-footer .entity-form-actions .button {
-<<<<<<< HEAD
-    /*float:right;*/
-=======
-    float:left;
->>>>>>> ux-refactor
+.modal .modal-footer .entity-form-actions {
+    text-align: right;
 }
 .modal .modal-footer .entity-form-actions .ajax-loader {
     float: left;
