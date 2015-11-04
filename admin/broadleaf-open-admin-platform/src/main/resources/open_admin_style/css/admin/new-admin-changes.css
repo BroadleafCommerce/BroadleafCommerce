@@ -17,6 +17,15 @@
  * limitations under the License.
  * #L%
  */
+.app-content .content {
+    min-width: 912px;
+}
+
+.row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
 .content-yield h4.empty-main-list-grid {
     text-align: center;
 }
