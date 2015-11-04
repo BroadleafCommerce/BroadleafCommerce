@@ -188,14 +188,17 @@
                 $listGridContainer.find('button.row-action.all-capable').removeAttr('disabled');
             }
 
-            var listGridId = $listGridContainer.find('.listgrid-body-wrapper table').attr('id');
             var numSelected = $listGridContainer.find('tr.selected').length;
             updateListGridActionsForContainer($listGridContainer.find('button.row-action'), numSelected);
 
             var $modal = $listGridContainer.closest('.modal');
-            if ($modal.length && typeof listGridId !== 'undefined') {
+            if ($modal.length) {
+                if (typeof BLCAdmin.treeListGrid !== 'undefined') {
+                    numSelected = BLCAdmin.treeListGrid.retrieveNumRowsSelected($listGridContainer, numSelected);
+                }
+
                 var $modalActionContainer = $modal.find('.modal-footer .listgrid-modal-actions');
-                updateListGridActionsForContainer($modalActionContainer.find("button.row-action[data-listgridid='" + listGridId + "']"), numSelected);
+                updateListGridActionsForContainer($modalActionContainer.find("button.row-action"), numSelected);
             }
 
             function updateListGridActionsForContainer($containerActions, numSelected) {
@@ -722,10 +725,9 @@ $(document).ready(function() {
     });
 
     $('body').on('click', 'button.list-grid-single-select', function() {
-        var listGridId = $(this).data('listgridid');
         var $modal = $(this).closest('.modal');
         var $container = $modal.find('.listgrid-container');
-        var $table = $container.find('table#' + listGridId);
+        var $table = $container.find('table');
         var $selectedRow = $table.find('tr.selected');
         var listGridType = $table.data('listgridtype');
 

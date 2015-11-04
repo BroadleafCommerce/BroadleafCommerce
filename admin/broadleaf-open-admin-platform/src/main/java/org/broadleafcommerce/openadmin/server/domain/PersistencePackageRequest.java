@@ -344,6 +344,15 @@ public class PersistencePackageRequest {
         return this;
     }
 
+    public PersistencePackageRequest clearFilterAndSortCriteria() {
+        Iterator<FilterAndSortCriteria> it = filterAndSortCriteria.listIterator();
+        while (it.hasNext()) {
+            it.next();
+            it.remove();
+        }
+        return this;
+    }
+
     /* ************************ */
     /* CUSTOM GETTERS / SETTERS */
     /* ************************ */

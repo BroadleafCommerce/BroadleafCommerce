@@ -176,14 +176,14 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order = 1000,
             group = GroupName.General,
-            prominent = true, gridOrder = 1, columnWidth = "300px",
+            prominent = true, gridOrder = 1000,
             translatable = true, defaultValue = "")
     protected String name;
 
     @Column(name = "URL")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order = 4000,
             group = GroupName.General,
-            columnWidth = "300px",
+            prominent = true, gridOrder = 2000,
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     @Index(name="CATEGORY_URL_INDEX", columnNames={"URL"})
     protected String url;
