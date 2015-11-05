@@ -813,9 +813,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         cloned.setStatus(getStatus());
         cloned.setTotalFulfillmentCharges(getTotalFulfillmentCharges());
         cloned.setSubTotal(getSubTotal());
-        cloned.setTaxOverride(taxOverride);
+        cloned.setTaxOverride(taxOverride == null ? null : taxOverride);
         for(OrderItem entry : orderItems){
-            OrderItem clonedEntry = ((OrderItemImpl)entry).createOrRetrieveCopyInstance(context).getClone();
+            OrderItem clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setOrder(cloned);
             cloned.getOrderItems().add(clonedEntry);
         }
@@ -840,7 +840,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
            OfferCode clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
            cloned.getAddedOfferCodes().add(clonedEntry);
        }
-       cloned.setTotal(new Money(total));
+       cloned.setTotal(total == null ? null : new Money(total));
 
         return  createResponse;
     }

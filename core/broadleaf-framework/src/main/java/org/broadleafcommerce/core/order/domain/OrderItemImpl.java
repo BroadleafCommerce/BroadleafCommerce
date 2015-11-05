@@ -897,7 +897,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         ((OrderItemImpl)cloned).salePriceOverride = salePriceOverride;
         ((OrderItemImpl)cloned).retailPriceOverride = retailPriceOverride;
         // dont clone
-        cloned.setParentOrderItem(parentOrderItem);
+        cloned.setParentOrderItem(parentOrderItem == null ? null : parentOrderItem.createOrRetrieveCopyInstance(context).getClone());
         for(OrderItem entry : childOrderItems){
             OrderItem clonedEntry = ((OrderItem)entry).createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setParentOrderItem(clonedEntry);

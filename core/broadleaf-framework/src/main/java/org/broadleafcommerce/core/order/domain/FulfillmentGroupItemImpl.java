@@ -198,7 +198,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @Override
     public void setTotalItemAmount(Money amount) {
-        totalItemAmount = amount.getAmount();
+        totalItemAmount = Money.toAmount(amount);
     }
 
     @Override
@@ -208,7 +208,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @Override
     public void setProratedOrderAdjustmentAmount(Money proratedOrderAdjustment) {
-        this.proratedOrderAdjustment = proratedOrderAdjustment.getAmount();
+        this.proratedOrderAdjustment = Money.toAmount(proratedOrderAdjustment);
     }
 
     @Override
@@ -218,7 +218,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @Override
     public void setTotalItemTaxableAmount(Money taxableAmount) {
-        totalItemTaxableAmount = taxableAmount.getAmount();
+        totalItemTaxableAmount = Money.toAmount(taxableAmount);
     }
 
 
@@ -310,12 +310,14 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         FulfillmentGroupItem cloned = createResponse.getClone();
         cloned.setFulfillmentGroup(fulfillmentGroup.createOrRetrieveCopyInstance(context).getClone());
         cloned.setOrderItem(orderItem.createOrRetrieveCopyInstance(context).getClone());
-        cloned.setProratedOrderAdjustmentAmount(new Money(proratedOrderAdjustment));
+        cloned.setProratedOrderAdjustmentAmount(proratedOrderAdjustment == null ? null : new Money(proratedOrderAdjustment));
         cloned.setQuantity(quantity);
-        cloned.setStatus(getStatus());
-        cloned.setTotalItemAmount(new Money(totalItemAmount));
-        cloned.setTotalItemTaxableAmount(new Money(totalItemTaxableAmount));
-        return  createResponse;
+        if (getStatus() != null) {
+            cloned.setStatus(getStatus());
+        }
+        cloned.setTotalItemAmount(totalItemAmount == null ? null : new Money(totalItemAmount));
+        cloned.setTotalItemTaxableAmount(totalItemTaxableAmount == null ? null : new Money(totalItemTaxableAmount));
+        return createResponse;
     }
 
     @Override

@@ -773,20 +773,25 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
         cloned.setAddress(address.createOrRetrieveCopyInstance(context).getClone());
         cloned.setDeliveryInstruction(deliveryInstruction);
         cloned.setFulfillmentOption(fulfillmentOption);
-        cloned.setFulfillmentPrice(new Money(fulfillmentPrice));
-        cloned.setIsShippingPriceTaxable(isShippingPriceTaxable);
-        cloned.setMerchandiseTotal(new Money(merchandiseTotal));
-        cloned.setRetailFulfillmentPrice(new Money(fulfillmentPrice));
-        cloned.setTotalItemTax(new Money(totalItemTax));
-        cloned.setTotalFulfillmentGroupTax(new Money(totalFulfillmentGroupTax));
-        cloned.setTotalFeeTax(new Money(totalFeeTax));
-        cloned.setTotalTax(new Money(totalTax));
-        cloned.setRetailFulfillmentPrice(new Money(retailFulfillmentPrice));
-        cloned.setSaleFulfillmentPrice(new Money(saleFulfillmentPrice));
-        cloned.setTotal(new Money(total));
+        cloned.setFulfillmentPrice(fulfillmentPrice == null ? null : new Money(fulfillmentPrice));
+        cloned.setIsShippingPriceTaxable(isShippingPriceTaxable == null ? null : isShippingPriceTaxable);
+        cloned.setMerchandiseTotal(merchandiseTotal == null ? null : new Money(merchandiseTotal));
+        cloned.setRetailFulfillmentPrice(fulfillmentPrice == null ? null : new Money(fulfillmentPrice));
+        cloned.setTotalItemTax(totalItemTax == null ? null : new Money(totalItemTax));
+        cloned.setTotalFulfillmentGroupTax(totalFulfillmentGroupTax == null ? null : new Money(totalFulfillmentGroupTax));
+        cloned.setTotalFeeTax(totalFeeTax == null ? null : new Money(totalFeeTax));
+        cloned.setTotalTax(totalTax == null ? null : new Money(totalTax));
+        cloned.setRetailFulfillmentPrice(retailFulfillmentPrice == null ? null : new Money(retailFulfillmentPrice));
+        cloned.setSaleFulfillmentPrice(saleFulfillmentPrice == null ? null : new Money(saleFulfillmentPrice));
+        cloned.setTotal(total == null ? null : new Money(total));
         cloned.setOrder(order);
         cloned.setPrimary(primary);
         cloned.setType(getType());
+        for (FulfillmentGroupItem fgi: fulfillmentGroupItems) {
+            FulfillmentGroupItem fulfillmentGroupItem = fgi.createOrRetrieveCopyInstance(context).getClone();
+            fulfillmentGroupItem.setFulfillmentGroup(cloned);
+            cloned.getFulfillmentGroupItems().add(fulfillmentGroupItem);
+        }
         return  createResponse;
     }
 

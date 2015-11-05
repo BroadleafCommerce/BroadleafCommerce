@@ -214,10 +214,10 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
         }
         BundleOrderItemFeePrice cloned = createResponse.getClone();
         cloned.setBundleOrderItem((BundleOrderItem)bundleOrderItem.createOrRetrieveCopyInstance(context).getClone());
-        cloned.setAmount(new Money(amount));
+        cloned.setAmount(amount == null ? null : new Money(amount));
         cloned.setName(name);
         cloned.setReportingCode(reportingCode);
-        cloned.setTaxable(isTaxable);
+        cloned.setTaxable(isTaxable == null ? null : isTaxable);
         return  createResponse;
     }
 

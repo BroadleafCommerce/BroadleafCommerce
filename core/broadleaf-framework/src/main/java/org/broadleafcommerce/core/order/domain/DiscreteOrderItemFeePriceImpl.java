@@ -187,7 +187,7 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
             return createResponse;
         }
         DiscreteOrderItemFeePrice cloned = createResponse.getClone();
-        cloned.setAmount(new Money(amount));
+        cloned.setAmount(amount == null ? null : new Money(amount));
         cloned.setDiscreteOrderItem((DiscreteOrderItem)discreteOrderItem.createOrRetrieveCopyInstance(context).getClone());
         cloned.setName(name);
         cloned.setReportingCode(reportingCode);
