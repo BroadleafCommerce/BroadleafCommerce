@@ -506,6 +506,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setFieldComponentRenderer(annot.fieldComponentRenderer());
             override.setColumnWidth(annot.columnWidth());
             override.setExplicitFieldType(annot.fieldType());
+            override.setDisplayType(annot.displayType());
             override.setFieldType(annot.fieldType());
             override.setGroup(annot.group());
             override.setGroupCollapsed(annot.groupCollapsed());
@@ -611,6 +612,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
 
         if (basicFieldMetadata.getFieldType() != null) {
             metadata.setFieldType(basicFieldMetadata.getFieldType());
+        }
+        if (basicFieldMetadata.getDisplayType() != null) {
+            metadata.setDisplayType(basicFieldMetadata.getDisplayType());
         }
         if (StringUtils.isEmpty(basicFieldMetadata.getFieldComponentRenderer()) && basicFieldMetadata.getFieldType() != null) {
             metadata.setFieldComponentRenderer(basicFieldMetadata.getFieldType().toString());

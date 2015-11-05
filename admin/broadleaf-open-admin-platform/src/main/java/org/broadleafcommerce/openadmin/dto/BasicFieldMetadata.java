@@ -21,6 +21,7 @@ package org.broadleafcommerce.openadmin.dto;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.LookupType;
+import org.broadleafcommerce.common.presentation.client.RuleBuilderDisplayType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
@@ -64,6 +65,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     @Deprecated
     protected Boolean groupCollapsed;
     protected SupportedFieldType explicitFieldType;
+    protected RuleBuilderDisplayType displayType;
     protected Boolean largeEntry;
     protected Boolean prominent;
     protected Integer gridOrder;
@@ -245,6 +247,14 @@ public class BasicFieldMetadata extends FieldMetadata {
 
     public void setExplicitFieldType(SupportedFieldType fieldType) {
         this.explicitFieldType = fieldType;
+    }
+
+    public RuleBuilderDisplayType getDisplayType() {
+        return displayType;
+    }
+
+    public void setDisplayType(RuleBuilderDisplayType displayType) {
+        this.displayType = displayType;
     }
 
     public String getGroup() {
@@ -592,6 +602,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.setTab(getTab());
         metadata.setTabOrder(getTabOrder());
         metadata.explicitFieldType = explicitFieldType;
+        metadata.displayType = displayType;
         metadata.largeEntry = largeEntry;
         metadata.prominent = prominent;
         metadata.gridOrder = gridOrder;        
@@ -684,6 +695,9 @@ public class BasicFieldMetadata extends FieldMetadata {
             return false;
         }
         if (explicitFieldType != metadata.explicitFieldType) {
+            return false;
+        }
+        if (displayType != metadata.displayType) {
             return false;
         }
         if (fieldType != metadata.fieldType) {
@@ -842,6 +856,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (groupOrder != null ? groupOrder.hashCode() : 0);
         result = 31 * result + (groupCollapsed != null ? groupCollapsed.hashCode() : 0);
         result = 31 * result + (explicitFieldType != null ? explicitFieldType.hashCode() : 0);
+        result = 31 * result + (displayType != null ? displayType.hashCode() : 0);
         result = 31 * result + (largeEntry != null ? largeEntry.hashCode() : 0);
         result = 31 * result + (prominent != null ? prominent.hashCode() : 0);
         result = 31 * result + (gridOrder != null ? gridOrder.hashCode() : 0);
