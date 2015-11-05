@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -126,6 +127,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "productOption")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @ClonePolicyCollectionOverride
     protected List<ProductOptionXref> products = new ArrayList<ProductOptionXref>();
     
     @Override
