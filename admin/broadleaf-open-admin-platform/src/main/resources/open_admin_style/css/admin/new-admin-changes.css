@@ -137,7 +137,7 @@ circle {
     height: 36px;
     line-height: 36px;
     outline: 0;
-    padding: 0 2rem;
+    padding: 0 16px;
     text-transform: capitalize;
     vertical-align: middle;
     -webkit-tap-highlight-color: transparent;
@@ -633,7 +633,7 @@ button:disabled {
 }
 
 .selectize-control.single:not(.selectize-adder) {
-    display: inline-block;
+    /*display: inline-block;*/
 }
 
 .select-style {
@@ -1298,20 +1298,21 @@ p.deployment-summary {
 .selectize-control.single .selectize-input {
     display: inline-block;
     background: white;
-    width: 400px;
+    /*width: 400px;*/
     height: 40px;
     vertical-align: middle;
     padding: 10px 10px 8px 10px;
+    width: 100%;
 }
 
-.fieldset-card .selectize-control.single .selectize-input {
-    display: inline-block;
-    background: white;
-    width: 300px;
-    height: 40px;
-    vertical-align: middle;
-    padding: 10px 10px 8px 10px;
-}
+/*.fieldset-card .selectize-control.single .selectize-input {*/
+    /*display: inline-block;*/
+    /*background: white;*/
+    /*!*width: 300px;*!*/
+    /*height: 40px;*/
+    /*vertical-align: middle;*/
+    /*padding: 10px 10px 8px 10px;*/
+/*}*/
 
 :not(.sandbox-selector-wrapper) > .selectize-control.single .selectize-input {
     border: 1px solid #D8D5D0;
