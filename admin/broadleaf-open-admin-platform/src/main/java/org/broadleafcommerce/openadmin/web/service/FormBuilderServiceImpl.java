@@ -741,7 +741,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         ((RuleBuilderField) f).setJsonFieldName(property.getName() + "Json");
                         ((RuleBuilderField) f).setDataWrapper(new DataWrapper());
                         ((RuleBuilderField) f).setFieldBuilder(fmd.getRuleIdentifier());
-                        
+                        ((RuleBuilderField) f).setDisplayType(fmd.getDisplayType().toString());
+
                         String blankJsonString =  "{\"data\":[]}";
                         ((RuleBuilderField) f).setJson(blankJsonString);
                         DataWrapper dw = convertJsonToDataWrapper(blankJsonString);

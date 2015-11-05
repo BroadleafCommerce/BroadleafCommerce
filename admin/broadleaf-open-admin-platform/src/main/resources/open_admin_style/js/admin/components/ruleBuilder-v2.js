@@ -334,7 +334,6 @@
             for (var i=0; i<ruleBuilder.data.length; i++) {
                 this.constructQueryBuilder(container, ruleBuilder.data[i], ruleBuilder.fields, ruleBuilder);
             }
-
         },
 
         /**
@@ -553,8 +552,8 @@
                 inputs_separator: "<span class='rule-val-sep'>,</span>",
                 filters: fields,
                 rules: ruleData.rules && ruleData.rules.length > 0 ? ruleData : null,
-                operators: window['blcOperators']
-
+                operators: window['blcOperators'],
+                select_placeholder: '~ Choose Attribute'
             };
             return config;
         },
@@ -714,7 +713,23 @@
                 ruleBuilder = BLCAdmin.ruleBuilders.addRuleBuilder(hiddenId, containerId, ruleType, fields, data, modal);
 
             //Create QueryBuilder Instances for all rule builders on the page
-            BLCAdmin.ruleBuilders.initializeRuleBuilder($this.parent(), ruleBuilder);
+            var parent = $this.parent().clone();
+            BLCAdmin.ruleBuilders.initializeRuleBuilder(parent, ruleBuilder);
+
+
+            parent.find('select').each(function(i, el) {
+                var el = $(el);
+                if (el.hasClass('form-control')) {
+                    el.removeClass('form-control').selectize();
+                }
+
+                //el.parent().parent().find('div.rule-filter-container > div > div.selectize-input').width("244px");
+                //el.parent().parent().find('div.rule-operator-container > div > div.selectize-input').width("122px");
+                //el.parent().parent().find('div.rule-value-container > div > div.selectize-input').width("245px");
+                //el.parent().parent().find('div.rule-value-container').css("display", "inline-block");
+            });
+
+            $this.parent().replaceWith(parent);
         });
 
         //Once all the query builders have been initialized - show or render the component based on its display type
@@ -775,8 +790,10 @@ $(document).ready(function() {
      * e.g. "Build a Time Rule?" (No)
      */
     $('body').on('change', 'input.clear-rules', function(){
-        var $ruleTitle = $($(this).closest('.rule-builder-checkbox').next());
-        var $container = $($ruleTitle.next());
+        var $groupContainer = $(this).closest('.field-group');
+
+        var $ruleTitle = $($groupContainer.find('.query-builder-rules-header'));
+        var $container = $($groupContainer.find('.query-builder-rules-container').parent());
         $ruleTitle.hide();
 
         //Also hide the error divs if they are shown
@@ -789,8 +806,12 @@ $(document).ready(function() {
      * Invoked from a Rule Builder with display type : "RADIO"
      */
     $('body').on('change', 'input.add-main-rule, input.add-main-item-rule', function(){
-        var $ruleTitle = $($(this).parent().parent().find('.query-builder-rules-header'));
-        var $container = $($(this).parent().parent().find('.query-builder-rules-container'));
+        var $groupContainer = $(this).closest('.field-group');
+
+        var $ruleTitle = $($groupContainer.find('.query-builder-rules-header'));
+        var $container = $($groupContainer.find('.query-builder-rules-container'));
+
+        $container.parent().show();
 
         //if we are going to attempt to re-show something, if the error fields are around then re-show those rather
         //than the rule input
@@ -841,7 +862,15 @@ $(document).ready(function() {
 
         $modalContainer.show();
         $modal.find('.modal-body').append($modalContainer);
+        $modal.find('.modal-body').css('overflow', 'visible');
         $modal.find('.modal-footer').append(BLCAdmin.ruleBuilders.getSaveModalRuleLink(hiddenId));
+
+        $modal.find('.modal-body').find('select').each(function(i, el) {
+            var el = $(el);
+            if (el.hasClass('form-control')) {
+                el.removeClass('form-control').selectize();
+            }
+        });
 
         BLCAdmin.showElementAsModal($modal, function(){
             var modalRuleBuilder = BLCAdmin.ruleBuilders.getRuleBuilder($modalContainer.attr('id'));
@@ -909,7 +938,19 @@ $(document).ready(function() {
     /**
      * As selects are created, add necessary class to convert them to our custom appearance
      */
-    $(document).on('DOMNodeInserted', '.query-builder-rules-container .rule-filter-container select, .query-builder-rules-container .rule-operator-container select', function(e) {
-        $(e.target).parent().addClass('admin-select');
+    $(document).on('DOMNodeInserted', '.query-builder-rules-container .rule-filter-container select, ' +
+        '                              .query-builder-rules-container .rule-operator-container select,' +
+        '                              .query-builder-rules-container .rule-value-container select', function(e) {
+
+        var el = $(e.target);
+        if (el.is('select')) {
+            if (el.hasClass('form-control')) {
+                el.removeClass('form-control').selectize();
+            }
+
+            //el.parent().parent().find('div.rule-filter-container > div > div.selectize-input').width("222px");
+            //el.parent().parent().find('div.rule-operator-container > div > div.selectize-input').width("100px");
+            //el.parent().parent().find('div.rule-value-container > div > div.selectize-input').width("223px");
+        }
     });
 });

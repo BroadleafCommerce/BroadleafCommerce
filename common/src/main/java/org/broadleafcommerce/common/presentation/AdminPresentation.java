@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.presentation;
 
+import org.broadleafcommerce.common.presentation.client.RuleBuilderDisplayType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 
@@ -85,18 +86,29 @@ public @interface AdminPresentation {
      * @return whether or not to hide the form field.
      */
     VisibilityEnum visibility() default VisibilityEnum.VISIBLE_ALL;
-    
+
     /**
      * Optional - only required if you want to explicitly specify the field type. This
      * value is normally inferred by the system based on the field type in the entity class.
      *
      * Explicity specify the type the GUI should consider this field
      * Specifying UNKNOWN will cause the system to make its best guess
-     * 
+     *
      * @return the field type
      */
     SupportedFieldType fieldType() default SupportedFieldType.UNKNOWN;
-    
+
+    /**
+     * Optional - only required if you want to explicitly specify the field type. This
+     * value is normally inferred by the system based on the field type in the entity class.
+     *
+     * Explicity specify the type the GUI should consider this field
+     * Specifying UNKNOWN will cause the system to make its best guess
+     *
+     * @return the field type
+     */
+    RuleBuilderDisplayType displayType() default RuleBuilderDisplayType.NORMAL;
+
     /**
      * Used to map the field to a group defined in AdminPresentationClass using AdminGroupPresentation.
      * If the group cannot be found in AdminPresentationClass, the group (and the tab, if not present) will be

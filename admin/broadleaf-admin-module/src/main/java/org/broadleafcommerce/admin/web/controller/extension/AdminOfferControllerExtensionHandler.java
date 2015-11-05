@@ -65,32 +65,32 @@ public class AdminOfferControllerExtensionHandler extends AbstractAdminAbstractC
                 // Qualifier and Target Item Builders
                 Field qualField = form.findField("qualifyingItemCriteria");
                 if (qualField != null) {
-                    qualField.withAttribute("displayType", RuleBuilderDisplayType.NORMAL.name());
+                    qualField.setDisplayType(RuleBuilderDisplayType.NORMAL.name());
                 }
                 Field fgField = form.findField("offerMatchRules---FULFILLMENT_GROUP");
                 if (fgField != null) {
-                    fgField.withAttribute("displayType", RuleBuilderDisplayType.NORMAL.name());
+                    fgField.setDisplayType(RuleBuilderDisplayType.NORMAL.name());
                 }
                 Field tarField = form.findField("targetItemCriteria");
                 if (tarField != null) {
-                    tarField.withAttribute("displayType", RuleBuilderDisplayType.NORMAL.name());
+                    tarField.setDisplayType(RuleBuilderDisplayType.NORMAL.name());
                 }
 
                 //Activity Range Builder
                 Field timeField = form.findField("offerMatchRules---TIME");
                 if (timeField != null) {
-                    timeField.withAttribute("displayType", RuleBuilderDisplayType.MODAL.name());
+                    timeField.setDisplayType(RuleBuilderDisplayType.MODAL.name());
                 }
 
                 //Usage Builders
                 Field custField = form.findField("offerMatchRules---CUSTOMER");
                 if (custField != null) {
-                    custField.withAttribute("displayType", RuleBuilderDisplayType.MODAL.name());
+                    custField.setDisplayType(RuleBuilderDisplayType.MODAL.name());
                 }
 
                 Field orderField = form.findField("offerMatchRules---ORDER");
                 if (orderField != null) {
-                    orderField.withAttribute("displayType", RuleBuilderDisplayType.MODAL.name());
+                    orderField.setDisplayType(RuleBuilderDisplayType.MODAL.name());
                 }
             }
         }

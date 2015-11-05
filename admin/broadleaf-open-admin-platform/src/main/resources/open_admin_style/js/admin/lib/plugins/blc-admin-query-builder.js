@@ -45,13 +45,36 @@ $.fn.queryBuilder.define('blc-admin-query-builder', function(options) {
     this.on('afterCreateRuleInput.filter', function(h, rule) {
         var numElements = rule.$el.find('.rule-value-container span.rule-val-sep').length + 1;
         if (numElements > 1) {
-            var dynamicWidth = 250/numElements;
+            var dynamicWidth = 205/numElements;
             rule.$el.find('.rule-value-container span.rule-val-sep').parent()
                 .find('input').each(function() {
                     var $this = $(this);
                     $this.wrap("<div style='display:inline-block;width:" + dynamicWidth + "px;'></div>");
             });
         }
+        rule.$el.append('<div style="clear: both"></div>')
+
+    });
+
+
+    this.on('afterCreateRuleFilters.filter', function(h, rule) {
+        rule.$el.append('<div style="clear: both"></div>');
+
+        styleInputs(rule);
+    });
+
+    this.on('afterCreateRuleOperators.filter', function(h, rule) {
+        rule.$el.append('<div style="clear: both"></div>');
+
+        styleInputs(rule);
+    });
+
+    this.on('afterUpdateRuleFilter.filter', function(h, rule) {
+        styleInputs(rule);
+    });
+
+    this.on('afterUpdateRuleOperator.filter', function(h, rule) {
+        styleInputs(rule);
     });
 
     /**
@@ -99,7 +122,7 @@ $.fn.queryBuilder.define('blc-admin-query-builder', function(options) {
             var itemQty = $("<input>", {"class": "rules-group-header-item-qty", "type": options.quantity ? "text" : "hidden",
                 "value": options.quantity});
             var satisfySpan = $("<span>", {"class": "rules-group-header-span", "text": "items that satisfy"});
-            var followingRulesSpan = $("<span>", {"class": "rules-group-header-span", "text": "of the following rules:"});
+            var followingRulesSpan = $("<span>", {"class": "rules-group-header-span", "text": "of the following:"});
             $h.find('.group-conditions').prepend(satisfySpan).prepend(itemQty).prepend(itemPK).prepend(matchSpan).append(followingRulesSpan);
             $h.find('.group-actions button').addClass('button');
             h.value = $h.prop('outerHTML');
@@ -120,6 +143,14 @@ $.fn.queryBuilder.define('blc-admin-query-builder', function(options) {
 
         h.value = $h.prop('outerHTML');
     });
+
+    function styleInputs(rule) {
+        var el = rule.$el;
+        //el.find('div.rule-filter-container > div > div.selectize-input').width("222px");
+        //el.find('div.rule-operator-container > div > div.selectize-input').width("100px");
+        //el.find('div.rule-value-container > div > div.selectize-input').width("223px");
+        //el.find('div.rule-value-container').css("display", "inline-block");
+    }
 
 }, {
     pk: "null",
