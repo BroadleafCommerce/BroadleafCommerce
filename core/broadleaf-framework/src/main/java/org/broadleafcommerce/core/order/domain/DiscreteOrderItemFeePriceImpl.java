@@ -182,7 +182,7 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
     
     @Override
     public CreateResponse<DiscreteOrderItemFeePrice> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<DiscreteOrderItemFeePrice> createResponse = context.createOrRetrieveCopyInstance(context);
+        CreateResponse<DiscreteOrderItemFeePrice> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }

@@ -129,7 +129,7 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     
     @Override
     public CreateResponse<OrderMultishipOption> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<OrderMultishipOption> createResponse = context.createOrRetrieveCopyInstance(context);
+        CreateResponse<OrderMultishipOption> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }

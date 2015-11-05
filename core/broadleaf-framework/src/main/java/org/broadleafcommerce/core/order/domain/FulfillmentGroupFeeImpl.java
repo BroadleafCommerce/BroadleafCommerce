@@ -201,7 +201,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     
     @Override
     public CreateResponse<FulfillmentGroupFee> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<FulfillmentGroupFee> createResponse = context.createOrRetrieveCopyInstance(context);
+        CreateResponse<FulfillmentGroupFee> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }

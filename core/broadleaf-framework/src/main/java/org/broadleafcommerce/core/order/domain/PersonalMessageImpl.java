@@ -124,7 +124,7 @@ public class PersonalMessageImpl implements PersonalMessage {
     
     @Override
     public CreateResponse<PersonalMessage> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<PersonalMessage> createResponse = context.createOrRetrieveCopyInstance(context);
+        CreateResponse<PersonalMessage> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }

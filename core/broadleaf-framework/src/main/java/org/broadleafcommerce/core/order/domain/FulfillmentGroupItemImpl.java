@@ -303,7 +303,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     
     @Override
     public CreateResponse<FulfillmentGroupItem> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<FulfillmentGroupItem> createResponse = context.createOrRetrieveCopyInstance(context);
+        CreateResponse<FulfillmentGroupItem> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }

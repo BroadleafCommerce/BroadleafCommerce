@@ -218,7 +218,7 @@ public class TaxDetailImpl implements TaxDetail {
     
     @Override
     public CreateResponse<TaxDetail> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<TaxDetail> createResponse = context.createOrRetrieveCopyInstance(context);
+        CreateResponse<TaxDetail> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }

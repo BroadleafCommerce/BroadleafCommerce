@@ -208,7 +208,7 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
     
     @Override
     public CreateResponse<BundleOrderItemFeePrice> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<BundleOrderItemFeePrice> createResponse = context.createOrRetrieveCopyInstance(context);
+        CreateResponse<BundleOrderItemFeePrice> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }

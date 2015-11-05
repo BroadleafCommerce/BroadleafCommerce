@@ -764,8 +764,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     }
     
     @Override
-    public CreateResponse<FulfillmentGroup> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<FulfillmentGroup> createResponse = context.createOrRetrieveCopyInstance(context);
+    public <G extends FulfillmentGroup> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
@@ -776,6 +776,14 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
         cloned.setFulfillmentPrice(new Money(fulfillmentPrice));
         cloned.setIsShippingPriceTaxable(isShippingPriceTaxable);
         cloned.setMerchandiseTotal(new Money(merchandiseTotal));
+        cloned.setRetailFulfillmentPrice(new Money(fulfillmentPrice));
+        cloned.setTotalItemTax(new Money(totalItemTax));
+        cloned.setTotalFulfillmentGroupTax(new Money(totalFulfillmentGroupTax));
+        cloned.setTotalFeeTax(new Money(totalFeeTax));
+        cloned.setTotalTax(new Money(totalTax));
+        cloned.setRetailFulfillmentPrice(new Money(retailFulfillmentPrice));
+        cloned.setSaleFulfillmentPrice(new Money(saleFulfillmentPrice));
+        cloned.setTotal(new Money(total));
         cloned.setOrder(order);
         cloned.setPrimary(primary);
         cloned.setType(getType());
