@@ -38,6 +38,7 @@ public class Field {
     protected String name;
     protected String friendlyName;
     protected String fieldType;
+    protected String displayType;
     protected String value;
     protected String displayValue;
     protected String fieldComponentRenderer;
@@ -85,7 +86,12 @@ public class Field {
         setFieldType(fieldType);
         return this;
     }
-    
+
+    public Field withDisplayType(String displayType) {
+        setDisplayType(displayType);
+        return this;
+    }
+
     public Field withFieldComponentRenderer(String fieldComponentRenderer) {
         setFieldComponentRenderer(fieldComponentRenderer);
         return this;
@@ -319,6 +325,14 @@ public class Field {
 
     public void setFieldType(String fieldType) {
         this.fieldType = fieldType;
+    }
+
+    public String getDisplayType() {
+        return displayType;
+    }
+
+    public void setDisplayType(String displayType) {
+        this.displayType = displayType;
     }
 
     /**

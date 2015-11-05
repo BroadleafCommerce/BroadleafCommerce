@@ -10,12 +10,38 @@
     If the "displayType" is not present, it will just render the RULE_SIMPLE or RULE_WITH_QUANTITY as "NORMAL".
     */-->
 
-    <div class="field-label inline" th:if="${field.attributes['displayType'] != null
-    AND (field.attributes['displayType'] == 'RADIO' OR field.attributes['displayType'] == 'MODAL')}">
-        <label th:text="#{${field.friendlyName + '_Question'}}"></label>
+    <div class="field-label inline" th:if="${field.displayType != null
+    AND (field.displayType == 'RADIO' OR field.displayType == 'MODAL')}">
+        <label>
+            <span th:text="#{${field.friendlyName + '_Question'}}"></span>
+        </label>
     </div>
 
-    <br th:if="${field.attributes['displayType'] != null AND field.attributes['displayType'] == 'RADIO'}" />
+    <!--/* For: "RADIO" display type */-->
+    <div class="custom-checkbox rule-builder-checkbox radio-container"
+         th:if="${field.displayType != null
+            AND field.displayType == 'RADIO'}">
+
+        <input type="radio"
+               th:name="${field.name}"
+               th:id="${field.name + '-true'}"
+               th:class="${field.ruleType == 'rule-builder-simple' ? 'radio add-main-rule' : 'radio add-main-item-rule'}"
+               th:attr="data-ruletype=${field.ruleType}"
+               th:checked="${!#arrays.isEmpty(field.dataWrapper.data) or field.dataWrapper.error != null}" />
+        <label th:for="${field.name + '-true'}" class="radio-label">
+            <span style="margin-right: 10px;" th:text="#{Yes}" />
+        </label>
+
+        <input type="radio" class="radio clear-rules"
+               th:name="${field.name}"
+               th:id="${field.name + '-false'}"
+               th:checked="${#arrays.isEmpty(field.dataWrapper.data) and field.dataWrapper.error == null }" />
+        <label th:for="${field.name + '-false'}" class="radio-label">
+            <span style="margin-right: 10px;" th:text="#{No}" />
+        </label>
+    </div>
+
+    <br th:if="${field.displayType != null AND field.displayType == 'RADIO'}" />
 
     <div th:substituteby="components/fieldTooltip" />
  
@@ -28,17 +54,17 @@
 
         <div class="rule-builder-required-field"
             th:attr="data-ruletype=${field.ruleType},
-                     data-modal=${field.attributes['displayType'] != null AND field.attributes['displayType'] == 'MODAL'}" />
+                     data-modal=${field.displayType != null AND field.displayType == 'MODAL'}" />
 
         <!--/* For: "MODAL" display type */-->
         <div th:id="${field.jsonFieldName + '-readable'}"
-             th:if="${field.attributes['displayType'] != null AND field.attributes['displayType'] == 'MODAL'}"
+             th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
              class="read-only-rule">
             <span class="readable-no-rule">No rules applied yet.</span>
         </div>
 
         <div class="launch-modal-rule-builder button"
-             th:if="${field.attributes['displayType'] != null AND field.attributes['displayType'] == 'MODAL'}"
+             th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
              th:attr="data-hiddenId=${field.jsonFieldName},
                      data-ruleType=${field.ruleType},
                      data-ruleTitleId=${field.name + '-header'}">
@@ -47,7 +73,7 @@
         </div>
 
         <div class="clear-rule-builder button"
-             th:if="${field.attributes['displayType'] != null AND field.attributes['displayType'] == 'MODAL'}"
+             th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
              th:attr="data-hiddenId=${field.jsonFieldName},
                      data-ruleType=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'},
                      data-ruleTitleId=${field.name + '-header'}">
@@ -55,39 +81,17 @@
             <span>Clear Rule</span>
         </div>
 
-        <!--/* For: "RADIO" display type */-->
-        <div class="custom-checkbox rule-builder-checkbox"
-             th:if="${field.attributes['displayType'] != null
-            AND field.attributes['displayType'] == 'RADIO'}">
 
-            <input type="radio"
-                   th:name="${field.name}"
-                   th:id="${field.name + '-true'}"
-                   th:class="${field.ruleType == 'rule-builder-simple' ? 'radio add-main-rule' : 'radio add-main-item-rule'}"
-                   th:attr="data-ruletype=${field.ruleType}"
-                   th:checked="${!#arrays.isEmpty(field.dataWrapper.data) or field.dataWrapper.error != null}" />
-            <label th:for="${field.name + '-true'}" class="radio-label">
-                <span style="margin-right: 10px;" th:text="#{Yes}" />
-            </label>
-
-            <input type="radio" class="radio clear-rules"
-                   th:name="${field.name}"
-                   th:id="${field.name + '-false'}"
-                   th:checked="${#arrays.isEmpty(field.dataWrapper.data) and field.dataWrapper.error == null }" />
-            <label th:for="${field.name + '-false'}" class="radio-label">
-                <span style="margin-right: 10px;" th:text="#{No}" />
-            </label>
-        </div>
         
         <!--/* For: All display types */-->
         <h4 th:id="${field.name + '-header'}" class="field-label" th:text="#{${field.friendlyName}}"
             th:classappend="${!field.required ? 'query-builder-rules-header' : 'required'}"
-            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.attributes['displayType'] == 'RADIO') OR field.attributes['displayType'] == 'MODAL') ? 'display: none;' : ''}" />
+            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.displayType == 'MODAL') ? 'display: none;' : ''}" />
 
         <div class="query-builder-rules-container"
             th:classappend="${(field.required ? 'required-query-builder' : '')
                               + (field.dataWrapper.error != null ? 'rule-data-error' : '')}"
-            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.attributes['displayType'] == 'RADIO') OR field.dataWrapper.error != null OR field.attributes['displayType'] == 'MODAL') ? 'display: none;' : ''}"
+            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.dataWrapper.error != null OR field.displayType == 'MODAL') ? 'display: none;' : ''}"
             th:id="${field.name}"/>
         
         <!--/* For: All display types - rule parsing errors */-->
@@ -112,7 +116,7 @@
                      data-containerid=${field.name},
                      data-fields=${fieldWrapper.serialize()},
                      data-data=${field.dataWrapper.serialize()},
-                     data-modal=${field.attributes['displayType'] != null AND field.attributes['displayType'] == 'MODAL'},
+                     data-modal=${field.displayType != null AND field.displayType == 'MODAL'},
                      data-ruletype=${field.ruleType}" />
     
     </div>
