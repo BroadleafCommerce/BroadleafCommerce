@@ -50,14 +50,6 @@
                 <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
             </button>
 
-            <span class="external-link-container" th:style="${!field.canLinkToExternalEntity or #strings.isEmpty(field.value)}? 'display: none;'">
-               <a th:href="@{${'/' + field.entityViewPath}}"
-                  th:disabled="${field.readOnly}"
-                  th:attr="data-foreign-key-link=@{${'/' + field.foreignKeyClass}}"
-                  class="modal-view">
-                    <i class="icon-external-link"></i>
-               </a>
-            </span>
         </div>
 
         <div th:remove="tag" th:if="${field.isTypeaheadEnabled}">
