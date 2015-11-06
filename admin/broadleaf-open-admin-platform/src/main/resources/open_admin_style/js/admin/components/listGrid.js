@@ -507,8 +507,9 @@ $(document).ready(function() {
                 displayValue = $.trim($displayField.text());
             }
 
-            if (typeof BLCAdmin.treeListGrid !== 'undefined') {
-                BLCAdmin.treeListGrid.buildParentPathJson($this.closest('.modal-add-entity-form'), $selectedRow);
+            if (typeof BLCAdmin.treeListGrid !== 'undefined'
+                && $this.closest('.modal-add-entity-form.enterprise-tree-add').length) {
+                BLCAdmin.treeListGrid.buildParentPathJson($this.closest('.modal-add-entity-form.enterprise-tree-add'), $selectedRow);
             }
             
             var $valueField = $this.find('input.value');
@@ -828,7 +829,7 @@ $(document).ready(function() {
         $this.prev().html($(this).prev().prev().html());
 
         if (typeof BLCAdmin.treeListGrid !== 'undefined') {
-            BLCAdmin.treeListGrid.removeParentPathJson($container.closest('.modal-add-entity-form'));
+            BLCAdmin.treeListGrid.removeParentPathJson($container.closest('.modal-add-entity-form.enterprise-tree-add'));
         }
         
         // Remove the criteria input val
