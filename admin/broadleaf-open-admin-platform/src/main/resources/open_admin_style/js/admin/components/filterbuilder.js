@@ -1005,6 +1005,7 @@ $(document).ready(function() {
 
         var $modal = BLCAdmin.getModalSkeleton();
         //$modal.addClass('sm');
+        $modal.find('.modal-header').find('h3').html('Filters Applied');
         $modal.find('.modal-body').append(hiddenInput);
         $modal.find('.modal-body').append($modalContainer);
         $modal.find('.modal-body').css('overflow', 'visible');

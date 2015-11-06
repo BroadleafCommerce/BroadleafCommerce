@@ -225,22 +225,7 @@ var BLCAdmin = (function($) {
         },
     	
     	initializeModalTabs : function($data) {
-    		var $tabs = $data.find('dl.tabs');
-    		if ($tabs.length > 0) {
-    		    $tabs.parent().remove().appendTo($data.find('.modal-header'));
-
-    		    var $lastTab = $tabs.find('dd:last');
-    		    if ($lastTab.width() + $lastTab.position().left + 15 > $tabs.width()) {
-                    $tabs.mCustomScrollbar({
-                        theme: 'dark',
-                        autoHideScrollbar: true,
-                        horizontalScroll: true
-                    });
-    		    }
-                $data.find('.modal-header').css('border-bottom', 'none');
-    		} else {
-    		    $data.find('.tabs-container').remove();
-    		}
+			$.fn.broadleafTabs();
     	},
     	
     	initializeModalButtons : function($data) {
@@ -249,9 +234,9 @@ var BLCAdmin = (function($) {
 				var $footer = $data.find('div.modal-footer');
 				if (!$footer.length) {
 					$footer = $('<div>', { 'class' : 'modal-footer' });
-					$buttonDiv.remove().appendTo($footer);
 					$data.append($footer);
 				}
+				$buttonDiv.remove().appendTo($footer);
 			}
 
 			var $buttonDiv = $data.find('div.listgrid-modal-actions');
@@ -259,9 +244,9 @@ var BLCAdmin = (function($) {
 				var $footer = $data.find('div.modal-footer');
 				if (!$footer.length) {
 					$footer = $('<div>', { 'class' : 'modal-footer' });
-					$buttonDiv.remove().appendTo($footer);
 					$data.append($footer);
 				}
+				$buttonDiv.remove().appendTo($footer);
 			}
     	},
     	
@@ -283,7 +268,11 @@ var BLCAdmin = (function($) {
 			if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
 			    BLCAdmin.hideCurrentModal();
 			}
-			
+
+			if (!$element.find('.content-yield').length) {
+				var content = $('<div>', { 'class': 'content-yield'});
+				$element.find('.modal-body').wrapInner(content);
+			}
 			$('body').append($element);
 			showModal($element, onModalHide, onModalHideArgs);
     	},
@@ -324,7 +313,11 @@ var BLCAdmin = (function($) {
         			$data = $data.children();
 
         		    BLCAdmin.currentModal().empty().append($data);
-        		    
+
+					if (!BLCAdmin.currentModal().find('.content-yield').length) {
+						var content = $('<div>', { 'class': 'content-yield'});
+						BLCAdmin.currentModal().find('.modal-body').wrapInner(content);
+					}
         			BLCAdmin.initializeModalTabs(BLCAdmin.currentModal());
         			BLCAdmin.initializeModalButtons(BLCAdmin.currentModal());
         		    BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
@@ -504,7 +497,6 @@ var BLCAdmin = (function($) {
             BLCAdmin.initializeSelectizeFields($container);
             initializeRadioFields($container);
 			initializeDateFields($container);
-			$.fn.broadleafTabs();
 
             // Mark this container as initialized
     	    $container.data('initialized', 'true');
