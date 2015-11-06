@@ -105,6 +105,53 @@
                     $modal.find('.modal-body').prepend(errorDiv);
                 }
             }
+        },
+
+        submitFormViaAjax : function ($form) {
+            var submit = BLCAdmin.runSubmitHandlers($form);
+
+            if (submit) {
+                BLC.ajax({
+                    url: $form.action,
+                    dataType: "json",
+                    type: "POST",
+                    data: $form.serializeArray(),
+                    complete: BLCAdmin.entityForm.hideActionSpinner
+                }, function (data) {
+                    $("#headerFlashAlertBoxContainer").removeClass("hidden");
+                    $(".errors, .error, .tab-error-indicator, .tabError").remove();
+                    $('.has-error').removeClass('has-error');
+
+                    if (!data.errors) {
+                        //$(".alert-box").removeClass("alert").addClass("success");
+                        //$(".alert-box-message").text("Successfully saved");
+
+                        var alert = {
+                            message: BLCAdmin.messages.saved + '!',
+                            alertType: 'save-alert',
+                            autoClose: 1000,
+                            clearOtherAlerts: true
+                        };
+
+                        var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass('save-alert');
+                        var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
+
+                        $alert.append("Successfully saved");
+                        $alert.append($closeLink);
+
+                        $(".alert-box").find('.alert-box-message').html($alert);
+
+                        setTimeout(function() {
+                            $closeLink.click();
+                        }, 1000);
+
+                    } else {
+                        BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemSaving);
+                    }
+
+                    BLCAdmin.runPostFormSubmitHandlers($form, data);
+                });
+            }
         }
     };
 })(jQuery, BLCAdmin);
@@ -226,7 +273,7 @@ $(document).ready(function() {
         BLCAdmin.entityForm.showActionSpinner($(this).closest('.content-area-title-bar.entity-form-actions'));
 
         if ($(".blc-admin-ajax-update").length && $form.parents(".modal-body").length == 0) {
-            submitFormViaAjax($form);
+            BLCAdmin.entityForm.submitFormViaAjax($form);
         } else {
             $form.submit();
         }
@@ -241,53 +288,6 @@ $(document).ready(function() {
             .end()  //again go back to selected element
             .text()
             .trim();
-    }
-
-    function submitFormViaAjax($form) {
-        var submit = BLCAdmin.runSubmitHandlers($form);
-
-        if (submit) {
-            BLC.ajax({
-                url: $form.action,
-                dataType: "json",
-                type: "POST",
-                data: $form.serializeArray(),
-                complete: BLCAdmin.entityForm.hideActionSpinner
-            }, function (data) {
-                $("#headerFlashAlertBoxContainer").removeClass("hidden");
-                $(".errors, .error, .tab-error-indicator, .tabError").remove();
-                $('.has-error').removeClass('has-error');
-
-                if (!data.errors) {
-                    //$(".alert-box").removeClass("alert").addClass("success");
-                    //$(".alert-box-message").text("Successfully saved");
-
-                    var alert = {
-                        message: BLCAdmin.messages.saved + '!',
-                        alertType: 'save-alert',
-                        autoClose: 1000,
-                        clearOtherAlerts: true
-                    };
-
-                    var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass('save-alert');
-                    var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
-
-                    $alert.append("Successfully saved");
-                    $alert.append($closeLink);
-
-                    $(".alert-box").find('.alert-box-message').html($alert);
-
-                    setTimeout(function() {
-                        $closeLink.click();
-                    }, 1000);
-
-                } else {
-                    BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemSaving);
-                }
-                
-                BLCAdmin.runPostFormSubmitHandlers($form, data);
-            });
-        }
     }
 
     function showTabSpinner($tab, $tabBody) {
