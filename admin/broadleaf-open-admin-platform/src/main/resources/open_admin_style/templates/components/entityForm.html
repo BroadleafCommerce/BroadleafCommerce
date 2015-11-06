@@ -11,6 +11,20 @@
 <div th:object="${entityForm}" th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
 
     <div class="section-tabs" th:if="${renderTabs}">
+
+        <div class="errors" blc_admin:errors="*{*}" >
+            <div th:if="${tabErrors}" th:remove="tag">
+                <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
+                    <span th:if="${#lists.size(field.value) &gt; 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">
+                        <span th:remove="tag" th:utext="#{${field.key}}"></span>: <span th:each="message : ${field.value}">[[#{__${message}__}]]</span>
+                    </span>
+                    <span th:if="${#lists.size(field.value) == 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">
+                        <span th:remove="tag" th:utext="#{${field.key}}"></span>: <span th:remove="tag" th:utext="#{${field.value.get(0)}}"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
         <ul class="nav nav-tabs">
             <li th:each="tab : ${entityForm.tabs}"
                 th:class="${#ef.isTabActive(entityForm, tab)}? 'active'"
@@ -96,23 +110,6 @@
                         </div>
                     </div>
                 </div>
-
-
-                <!--<div th:unless="${hideTopLevelErrors}" class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">-->
-                <!--<div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">-->
-                <!--<b>[[${tab.key}]]</b>-->
-                <!--<span th:if="${#lists.size(field.value) &gt; 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">-->
-                <!--<span th:remove="tag" th:text="#{${field.key}}"></span>: <span th:each="message : ${field.value}">[[#{__${message}__}]]</span>-->
-                <!--</span>-->
-                <!--<span th:if="${#lists.size(field.value) == 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">-->
-                <!--<span th:remove="tag" th:text="#{${field.key}}"></span>: <span th:remove="tag" th:text="#{${field.value.get(0)}}"></span>-->
-                <!--</span>-->
-                <!--<br />-->
-                <!--</div>-->
-                <!--</div>-->
-
-
-
 
                 <div class="entity-form-actions">
                     <button th:each="action : ${entityForm.actions}"

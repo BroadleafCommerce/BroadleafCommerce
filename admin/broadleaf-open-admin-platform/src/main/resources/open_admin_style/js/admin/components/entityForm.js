@@ -41,21 +41,26 @@
                 if (error.errorType == "field") {
                     var fieldGroup = $("#field-" + error.field);
 
-                    // Add an error indicator to the fields tab
-                    // this can happen more than once because the indicator is absolute positioning
-                    var tabId = '#' + fieldGroup.parents('.entityFormTab').attr("class").substring(0,4);
-                    var tab = $('a[href=' + tabId + ']');
-                    tab.prepend('<span class="tab-error-indicator danger"></span>');
+                    if (fieldGroup.length) {
+                        // Add an error indicator to the fields tab
+                        // this can happen more than once because the indicator is absolute positioning
+                        var tabId = '#' + fieldGroup.parents('.entityFormTab').attr("class").substring(0, 4);
+                        var tab = $('a[href=' + tabId + ']');
+                        tab.prepend('<span class="tab-error-indicator danger"></span>');
 
-                    // Mark the field as an error
-                    var fieldError = "<div class='error'";
-                    if (fieldGroup.find(".field-help").length !== 0) {
-                        fieldError += " style='margin-top:-5px;'";
+                        // Mark the field as an error
+                        var fieldError = "<div class='error'";
+                        if (fieldGroup.find(".field-help").length !== 0) {
+                            fieldError += " style='margin-top:-5px;'";
+                        }
+                        fieldError += ">" + error.message + "</div>";
+
+                        $(fieldGroup).append(fieldError);
+                        $(fieldGroup).addClass("has-error");
+                    } else {
+                        var error = "<div class='tabError'><span class='error'>" + error.message + "</span></div>";
+                        $(".entity-errors").append(error);
                     }
-                    fieldError += ">" + error.message + "</div>";
-
-                    $(fieldGroup).append(fieldError);
-                    $(fieldGroup).addClass("has-error");
                 } else if (error.errorType == 'global'){
                     var globalError = "<div class='tabError'><b>" + BLCAdmin.messages.globalErrors + "</b><span class='error'>"
                         + error.message + "</span></div>";
@@ -218,7 +223,7 @@ $(document).ready(function() {
         $('body').click(); // Defocus any current elements in case they need to act prior to form submission
         var $form = BLCAdmin.getForm($(this));
 
-        BLCAdmin.entityForm.showActionSpinner($(this).closest('.entity-form-actions'));
+        BLCAdmin.entityForm.showActionSpinner($(this).closest('.content-area-title-bar.entity-form-actions'));
 
         if ($(".blc-admin-ajax-update").length && $form.parents(".modal-body").length == 0) {
             submitFormViaAjax($form);

@@ -34,6 +34,10 @@
     margin-left: -15px;
 }
 
+.app-content .content .section-content .main-content .content-yield {
+    padding: 10px 40px;
+}
+
 .content-yield h4.empty-main-list-grid {
     text-align: center;
 }
@@ -893,9 +897,11 @@ fieldset legend i.help-tip {
 
 .has-error input{border-color:#D20A33;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);box-shadow:inset 0 1px 1px rgba(0,0,0,0.075)}
 .has-error input:focus{border-color:#D20A33;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 6px #D20A33;box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 6px #D20A33}
+.has-error span.display-value{border: 1px solid #D20A33;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);box-shadow:inset 0 1px 1px rgba(0,0,0,0.075)}
 .has-error .error {
     color: #D20A33;
     font-size: 12px;
+    display: block;
 }
 
 #headerFlashAlertBoxContainer {
@@ -950,7 +956,7 @@ fieldset legend i.help-tip {
     display: none;
 }
 
-.fieldset-card:first-child {
+.fieldset-card:not(.dynamic-form):first-child {
     margin-top: 22px;
 }
 
@@ -965,10 +971,6 @@ fieldset legend i.help-tip {
 
 .tabError span {
     display: block;
-}
-
-.entity-errors {
-    margin-top: -35px;
 }
 
 .modal .entity-errors {
