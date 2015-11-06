@@ -21,6 +21,7 @@
 package org.broadleafcommerce.common.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.hibernate.FlushMode;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +48,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 
@@ -224,5 +228,30 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
     @Override
     public EntityManager getEntityManager() {
         return em;
+    }
+
+    @Override
+    public List<Long> readOtherEntitiesWithPropertyValue(Serializable instance, String propertyName, String value) {
+        Class clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(instance.getClass());
+
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root root = criteria.from(clazz);
+        Path idField = root.get(getIdField(clazz).getName());
+        criteria.select(idField.as(Long.class));
+
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(builder.equal(root.get(propertyName), value));
+        restrictions.add(builder.notEqual(idField, getIdentifier(instance)));
+
+        if (instance instanceof Status) {
+            restrictions.add(builder.or(
+                    builder.isNull(root.get("archiveStatus").get("archived")),
+                    builder.equal(root.get("archiveStatus").get("archived"), 'N')));
+        }
+
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        return em.createQuery(criteria).getResultList();
     }
 }
