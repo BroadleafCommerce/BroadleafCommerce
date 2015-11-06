@@ -367,7 +367,7 @@ public class EntityForm {
         groupName = processMessageString(groupName);
         tabName = processMessageString(tabName);
 
-        FieldGroup fieldGroup = findGroup(groupName);
+        FieldGroup fieldGroup = findGroupInTab(groupName, tabName);
         if (fieldGroup == null) {
             Tab tab = findTab(tabName);
             if (tab == null) {
@@ -388,15 +388,19 @@ public class EntityForm {
         fieldGroup.addField(field);
     }
 
-    public FieldGroup findGroup(String groupName) {
-        FieldGroup fieldGroup = null;
+    public FieldGroup findGroupInTab(String groupName, String tabName) {
+        if (groupName == null || tabName == null) {
+            return null;
+        }
         for (Tab tab : tabs) {
-            fieldGroup = tab.findGroup(groupName);
-            if (fieldGroup != null) {
-                break;
+            if (tabName.equals(tab.getTitle())) {
+                FieldGroup fieldGroup = tab.findGroup(groupName);
+                if (fieldGroup != null) {
+                    return fieldGroup;
+                }
             }
         }
-        return fieldGroup;
+        return null;
     }
 
     public void addListGrid(ClassMetadata cmd, ListGrid listGrid, String tabName, Integer tabOrder, String groupName, boolean isTabPresent) {
@@ -428,7 +432,7 @@ public class EntityForm {
         tabName = processMessageString(tabName);
         groupName = processMessageString(groupName);
 
-        FieldGroup fieldGroup = findGroup(groupName);
+        FieldGroup fieldGroup = findGroupInTab(groupName, tabName);
         Tab tab = findTab(tabName);
         if (fieldGroup != null) {
             fieldGroup.getListGrids().add(listGrid);
@@ -740,5 +744,4 @@ public class EntityForm {
 
         tab.getFieldGroups().add(newGroup);
     }
-
 }
