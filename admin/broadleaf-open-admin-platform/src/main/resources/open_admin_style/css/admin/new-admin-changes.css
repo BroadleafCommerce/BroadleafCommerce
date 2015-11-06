@@ -1666,3 +1666,11 @@ div.uploadMessage {
     float: right;
     margin-top: 3px;
 }
+
+.dynamic-form-wrapper {
+    min-height: 10px;
+}
+
+.dynamic-form-wrapper img {
+    margin: auto;
+}
