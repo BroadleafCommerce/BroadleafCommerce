@@ -557,10 +557,20 @@ button:disabled {
 .table thead > tr > th {
     padding-right: 0;
     border-bottom: none;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.listgrid-title {
+    padding: 0;
+    overflow: hidden;
+    max-width: 100%;
 }
 
 .listgrid-filter-sort-container {
+    position: absolute;
+    right: 0;
     display: inline-block;
+    background: #E1E0DD;
     padding: 0 5px;
     float: right;
 }
