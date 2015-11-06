@@ -129,8 +129,8 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
             }).hide();
 
             //TODO i18n the text
-            var followingRulesSpan = $("<span>", {"class": "rules-group-header-span", "text": "Filters Applied"});
-            $h.find('.group-conditions').append(followingRulesSpan);
+            //var followingRulesSpan = $("<span>", {"class": "rules-group-header-span", "text": "Filters Applied"});
+            //$h.find('.group-conditions').append(followingRulesSpan);
             $h.find('.group-actions button').addClass('button primary').text('Add New Filter');
 
             $h.find('.rules-group-header').append($("<hr />"));
@@ -155,6 +155,8 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
 
     function styleInputs(rule) {
         var el = rule.$el;
+        rule.$el.append('<div style="clear: both"></div>');
+
         el.find('div.rule-filter-container > div > div.selectize-input').width("222px");
         el.find('div.rule-operator-container > div > div.selectize-input').width("100px");
         el.find('div.rule-value-container > div > div.selectize-input').width("223px");

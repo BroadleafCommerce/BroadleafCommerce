@@ -49,6 +49,7 @@
 }
 .query-builder .rules-group-container .rules-group-header {
     margin-bottom: -10px;
+    padding-bottom: 10px;
 }
 
 .query-builder .rules-group-container .rules-list {
@@ -173,12 +174,12 @@
 }
 
 .query-builder-rules .rules-group-header-span {
-    margin: 5px;
+    margin-left: 3px;
 }
 
 .query-builder-rules .rules-group-header-item-qty {
     width: 40px;
-    margin: 5px 0;
+    margin: 5px 0 5px 3px;
     text-align:right;
 }
 
@@ -289,7 +290,7 @@
     border: none;
     padding: 0;
     line-height: 40px;
-    background-color: white;
+    background-color: transparent;
 }
 
 .query-builder-filters-container .rule-container {
@@ -334,7 +335,7 @@
 .query-builder-filters-container .query-builder .rules-group-container .rules-list,
 .query-builder-rules-container .query-builder .rules-group-container .rules-list{
     list-style: none;
-    padding: 15px 15px 0;
+    padding: 0 15px 15px;
     margin: 0;
 }
 .query-builder-filters-container .read-only {
@@ -407,11 +408,10 @@
 }
 .query-builder-rules-container {
     padding: 5px 10px 20px;
-    background-color: #fdfdfd;
 }
 
 .query-builder-rules-container .rules-group-container {
-    background-color: #fdfdfd;
+    background-color: transparent;
 }
 
 .rule-builder-with-quantity, .rule-builder-simple {

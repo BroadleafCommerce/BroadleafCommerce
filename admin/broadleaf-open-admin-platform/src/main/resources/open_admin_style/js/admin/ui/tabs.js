@@ -34,14 +34,15 @@
             });
         };
 
-        $(document).on('click', '.nav-tabs>li>a', function(e) {
+        $(document).on('click', '.nav-tabs li a', function(e) {
             e.preventDefault();
 
             // Remove 'selected' outline from tab
             $(this).blur();
 
+            var tabs = $(this).closest('.nav-tabs');
             // Remove 'active' class from all tabs
-            $.each($('.nav-tabs>li'), function (key, value) {
+            $.each(tabs.find('li'), function (key, value) {
                 $(value).removeClass('active');
             });
 
@@ -49,7 +50,8 @@
             $(this).parent().addClass('active');
 
             // Remove 'active' class from all tab content
-            $.each($('.entityFormTab'), function (key, value) {
+            var entityForms = tabs.parent().parent().find('.entityFormTab');
+            $.each(entityForms, function (key, value) {
                 $(value).removeClass('active');
             });
 
@@ -59,14 +61,13 @@
             $(tab).addClass('active');
 
             // Show or hide tab content based on 'active' class
-            $.each($('.entityFormTab'), function(key, value) {
+            $.each(entityForms, function(key, value) {
                 if ($(value).hasClass('active')) {
                     $(value).show();
                 } else {
                     $(value).hide();
                 }
             });
-
             BLCAdmin.initializeFields(BLCAdmin.getActiveTab());
             BLCAdmin.updateFields(BLCAdmin.getActiveTab());
         });
