@@ -177,6 +177,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
         }
 
+        model.addAttribute("isFilter", (requestParams.size() > 0));
         model.addAttribute("currentUri", requestUri);
         model.addAttribute("entityTypes", entityTypes);
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
