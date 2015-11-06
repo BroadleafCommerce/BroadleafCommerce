@@ -56,9 +56,8 @@ public class AdminOfferControllerExtensionHandler extends AbstractAdminAbstractC
 
             if (form != null) {
                 //UX Meta-Data to display the Rule Builders on the Offer Screen
-                FieldGroup ruleConfigGroup = form.findGroupInTab(
-                        form.processMessageString(OfferAdminPresentation.GroupName.RuleConfiguration),
-                        form.processMessageString(OfferAdminPresentation.TabName.General));
+                FieldGroup ruleConfigGroup = form.findGroup(form.
+                        processMessageString(OfferAdminPresentation.GroupName.RuleConfiguration));
                 if (ruleConfigGroup != null) {
                     ruleConfigGroup.getGroupAttributes().put("additionalGroupClasses", "card");
                 }

@@ -174,79 +174,80 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Column(name = "NAME", nullable=false)
     @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Name",
-            tab = TabName.General, group = GroupName.General, order = 1000,
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order = 1000,
+            group = GroupName.General,
             prominent = true, gridOrder = 1000,
             translatable = true, defaultValue = "")
     protected String name;
 
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url",
-            tab = TabName.General, group = GroupName.General, order = 4000,
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order = 4000,
+            group = GroupName.General,
             prominent = true, gridOrder = 2000,
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     @Index(name="CATEGORY_URL_INDEX", columnNames={"URL"})
     protected String url;
 
     @Column(name = "OVERRIDE_GENERATED_URL")
-    @AdminPresentation(friendlyName = "CategoryImpl_Override_Generated_Url",
-            tab = TabName.General, group = GroupName.General, order = 2010)
+    @AdminPresentation(friendlyName = "CategoryImpl_Override_Generated_Url", group = GroupName.General,
+            order = 2010)
     protected Boolean overrideGeneratedUrl = false;
 
     @Column(name = "EXTERNAL_ID")
     @Index(name="CATEGORY_E_ID_INDEX", columnNames={"EXTERNAL_ID"})
     @AdminPresentation(friendlyName = "CategoryImpl_Category_ExternalID",
-            tab = TabName.General, group = GroupName.Miscellaneous, order = 2000,
+            group = GroupName.Miscellaneous, order = 2000,
             tooltip = "CategoryImpl_Category_ExternalID_Tooltip")
     protected String externalId;
 
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key",
-            tab = TabName.Products, group = GroupName.ProductDefaults, excluded = true)
+            group = GroupName.ProductDefaults, excluded = true)
     protected String urlKey;
 
     @Column(name = "DESCRIPTION")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Description",
-            tab = TabName.General, group = GroupName.General, excluded = true,
+            group = GroupName.General,
             largeEntry = true,
+            excluded = true,
             translatable = true)
     protected String description;
 
     @Column(name = "TAX_CODE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_TaxCode",
-            tab = TabName.Products, group = GroupName.ProductDefaults, order = 4000)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_TaxCode", order = 4000,
+            group = GroupName.ProductDefaults)
     @AdminPresentationDataDrivenEnumeration(optionCanEditValues = true, optionFilterParams = { @OptionFilterParam(
             param = "type.key", value = "TAX_CODE", paramType = OptionFilterParamType.STRING) })
     protected String taxCode;
 
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date",
-            tab = TabName.General, group = GroupName.ActiveDateRange, order = 1000,
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order = 1000,
+            group = GroupName.ActiveDateRange,
             defaultValue = "today")
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date",
-            tab = TabName.General, group = GroupName.ActiveDateRange, order = 2000,
-            validationConfigurations = {
-                @ValidationConfiguration(validationImplementation = "blAfterStartDateValidator",
-                    configurationItems = {
-                        @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
-                })
-            })
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order = 2000,
+        group = GroupName.ActiveDateRange,
+        validationConfigurations = { 
+            @ValidationConfiguration(validationImplementation = "blAfterStartDateValidator",
+                configurationItems = { 
+                    @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
+            }) 
+        })
     protected Date activeEndDate;
 
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template",
-            tab = TabName.Products, group = GroupName.ProductDefaults, order = 1000)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template", order = 1000,
+            group = GroupName.ProductDefaults)
     protected String displayTemplate;
 
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description",
-            tab = TabName.General, group = GroupName.General, order = 2000,
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order = 2000,
+            group = GroupName.General,
             largeEntry = true,
             fieldType = SupportedFieldType.HTML_BASIC,
             translatable = true)
@@ -255,8 +256,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "CategoryImpl_defaultParentCategory",
-            tab = TabName.General, group = GroupName.General, order = 3000)
+    @AdminPresentation(friendlyName = "CategoryImpl_defaultParentCategory", order = 3000,
+            group = GroupName.General)
     @AdminPresentationToOneLookup()
     @Deprecated
     protected Category defaultParentCategory;
@@ -361,8 +362,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @OrderBy(value="sequence")
     @BatchSize(size = 50)
-    @AdminPresentationAdornedTargetCollection(friendlyName = "featuredProductsTitle",
-            tab = TabName.Marketing, order = 1000,
+    @AdminPresentationAdornedTargetCollection(friendlyName = "featuredProductsTitle", order = 1000,
+            tab = TabName.Marketing,
             targetObjectProperty = "product",
             sortProperty = "sequence",
             maintainedAdornedTargetFields = { "promotionMessage" },
@@ -373,8 +374,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @OrderBy(value="sequence")
-    @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle",
-            tab = TabName.Marketing, order = 2000,
+    @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle", order = 2000,
+            tab = TabName.Marketing,
             targetObjectProperty = "relatedSaleProduct",
             sortProperty = "sequence",
             maintainedAdornedTargetFields = { "promotionMessage" },
@@ -385,8 +386,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @OrderBy(value="sequence")
-    @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle",
-            tab = TabName.Marketing, order = 3000,
+    @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle", order = 3000,
+            tab = TabName.Marketing,
             targetObjectProperty = "relatedSaleProduct",
             sortProperty = "sequence",
             maintainedAdornedTargetFields = { "promotionMessage" },
@@ -396,8 +397,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @OneToMany(mappedBy = "category", targetEntity = CategorySearchFacetImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @OrderBy(value="sequence")
-    @AdminPresentationAdornedTargetCollection(friendlyName = "categoryFacetsTitle",
-            tab = TabName.SearchFacets, order = 1000,
+    @AdminPresentationAdornedTargetCollection(friendlyName = "categoryFacetsTitle", order = 1000,
+            tab = TabName.SearchFacets,
             targetObjectProperty = "searchFacet",
             sortProperty = "sequence",
             gridVisibleFields = { "name", "label", "fieldType.indexField.field.friendlyName" })
@@ -408,8 +409,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @OneToMany(mappedBy = "category", targetEntity = CategoryExcludedSearchFacetImpl.class, cascade = { CascadeType.ALL })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
     @OrderBy(value = "sequence")
-    @AdminPresentationAdornedTargetCollection(friendlyName = "excludedFacetsTitle",
-            tab = TabName.SearchFacets, order = 2000,
+    @AdminPresentationAdornedTargetCollection(friendlyName = "excludedFacetsTitle", order = 2000,
+            tab = TabName.SearchFacets,
             targetObjectProperty = "searchFacet",
             sortProperty = "sequence",
             gridVisibleFields = { "name", "label", "fieldType.indexField.field.friendlyName" })
@@ -429,16 +430,16 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     protected Map<String, CategoryAttribute> categoryAttributes = new HashMap<String, CategoryAttribute>();
 
     @Column(name = "INVENTORY_TYPE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType",
-            tab = TabName.Products, group = GroupName.ProductDefaults, order = 2000,
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", order = 2000,
             helpText = "categoryInventoryTypeHelpText",
+            group = GroupName.ProductDefaults,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")
     protected String inventoryType;
 
     @Column(name = "FULFILLMENT_TYPE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_FulfillmentType",
-            tab = TabName.Products, group = GroupName.ProductDefaults, order = 3000,
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_FulfillmentType", order = 3000,
+            group = GroupName.ProductDefaults,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
