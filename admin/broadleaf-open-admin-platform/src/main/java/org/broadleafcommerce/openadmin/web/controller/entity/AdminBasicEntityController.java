@@ -439,14 +439,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         setModelAttributes(model, sectionKey);
 
-        if (sandBoxHelper.isSandBoxable(entityForm.getEntityType())) {
-            Tab auditTab = new Tab();
-            auditTab.setTitle("Audit");
-            auditTab.setOrder(Integer.MAX_VALUE);
-            auditTab.setTabClass("audit-tab");
-            entityForm.getTabs().add(auditTab);
-        }
-        
+        // todo: Determine if this is still necessary
+//        if (sandBoxHelper.isSandBoxable(entityForm.getEntityType())) {
+//            Tab auditTab = new Tab();
+//            auditTab.setTitle("Audit");
+//            auditTab.setOrder(Integer.MAX_VALUE);
+//            auditTab.setTabClass("audit-tab");
+//            entityForm.getTabs().add(auditTab);
+//        }
+
         model.addAttribute("useAjaxUpdate", true);
         model.addAttribute("viewType", "entityEdit");
         return "modules/defaultContainer";
