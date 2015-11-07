@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.payment.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
@@ -367,6 +369,29 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             .append(type)
             .append(archiveStatus)
             .build();
+    }
+
+    @Override
+    public <G extends OrderPayment> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        OrderPayment cloned = createResponse.getClone();
+        cloned.setBillingAddress(billingAddress.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setReferenceNumber(referenceNumber);
+        cloned.setAmount(amount == null ? null : new Money(amount));
+        cloned.setOrder(order);
+        cloned.setPaymentGatewayType(PaymentGatewayType.getInstance(gatewayType));
+        cloned.setType(PaymentType.getInstance(type));
+        cloned.setArchived(getArchived());
+        for (PaymentTransaction transaction : transactions) {
+            PaymentTransaction cpt = transaction.createOrRetrieveCopyInstance(context).getClone();
+            cpt.setOrderPayment(cloned);
+            cloned.getTransactions().add(cpt);
+        }
+
+        return createResponse;
     }
 
     public static class Presentation {

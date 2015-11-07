@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
@@ -56,7 +57,7 @@ import org.broadleafcommerce.profile.core.domain.Customer;
  * or {@link PaymentTransactionType#AUTHORIZE_AND_CAPTURE}.</p> * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-public interface PaymentTransaction extends Serializable, Status, AdditionalFields {
+public interface PaymentTransaction extends Serializable, Status, AdditionalFields, MultiTenantCloneable<PaymentTransaction> {
 
     public Long getId();
 
