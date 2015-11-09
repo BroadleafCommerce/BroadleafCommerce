@@ -221,6 +221,7 @@ circle {
 
 .app-content .content .section-content .main-content .content-area-title-bar>.button-group .button {
     margin-top: 0;
+    margin-left: -3px;
 }
 
 .app-content .content .section-content .main-content .content-area-title-bar>.button {
