@@ -32,7 +32,8 @@ import java.util.TreeSet;
 
 public class Tab {
 
-    protected String title;
+    protected String processedTitle;
+    protected String unprocessedTitle;
     protected Integer order;
     protected String tabClass;
     protected Boolean isMultiColumn;
@@ -43,7 +44,7 @@ public class Tab {
         public int compare(FieldGroup o1, FieldGroup o2) {
             return new CompareToBuilder()
                     .append(o1.getOrder(), o2.getOrder())
-                    .append(o1.getTitle(), o2.getTitle())
+                    .append(o1.getProcessedTitle(), o2.getProcessedTitle())
                     .toComparison();
         }
     });
@@ -58,8 +59,13 @@ public class Tab {
         }
     });
 
-    public Tab withTitle(String title) {
-        setTitle(title);
+    public Tab withProcessedTitle(String processedTitle) {
+        setProcessedTitle(processedTitle);
+        return this;
+    }
+
+    public Tab withUnprocessedTitle(String unprocessedTitle) {
+        setUnprocessedTitle(unprocessedTitle);
         return this;
     }
 
@@ -92,9 +98,18 @@ public class Tab {
         return false;
     }
 
-    public FieldGroup findGroup(String groupTitle) {
+    public FieldGroup findGroupByUnprocessedTitle(String unprocessedTitle) {
         for (FieldGroup fg : fieldGroups) {
-            if (fg.getTitle() != null && fg.getTitle().equals(groupTitle)) {
+            if (fg.getUnprocessedTitle() != null && fg.getUnprocessedTitle().equals(unprocessedTitle)) {
+                return fg;
+            }
+        }
+        return null;
+    }
+
+    public FieldGroup findGroupByProcessedTitle(String processedTitle) {
+        for (FieldGroup fg : fieldGroups) {
+            if (fg.getProcessedTitle() != null && fg.getProcessedTitle().equals(processedTitle)) {
                 return fg;
             }
         }
@@ -108,6 +123,10 @@ public class Tab {
         }
         return fields;
     }
+
+    public void removeFieldGroup(FieldGroup fieldGroup) {
+        fieldGroups.remove(fieldGroup);
+    }
     
     public void removeListGrid(ListGrid listGrid) {
         listGrids.remove(listGrid);
@@ -117,12 +136,20 @@ public class Tab {
         return StringUtils.isBlank(tabClass) ? "" : " " + tabClass;
     }
 
-    public String getTitle() {
-        return title;
+    public String getProcessedTitle() {
+        return processedTitle;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setProcessedTitle(String processedTitle) {
+        this.processedTitle = processedTitle;
+    }
+
+    public String getUnprocessedTitle() {
+        return unprocessedTitle;
+    }
+
+    public void setUnprocessedTitle(String unprocessedTitle) {
+        this.unprocessedTitle = unprocessedTitle;
     }
 
     public Integer getOrder() {

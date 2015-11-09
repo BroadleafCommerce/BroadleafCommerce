@@ -36,7 +36,8 @@ import java.util.TreeSet;
 
 public class FieldGroup {
 
-    protected String title;
+    protected String processedTitle;
+    protected String unprocessedTitle;
     protected Integer order;
     protected Set<Field> alternateOrderedFields = new HashSet<Field>();
     protected Set<Field> fields = new HashSet<Field>();
@@ -111,12 +112,20 @@ public class FieldGroup {
         this.collapsed = collapsed;
     }
 
-    public String getTitle() {
-        return title;
+    public String getUnprocessedTitle() {
+        return unprocessedTitle;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setUnprocessedTitle(String unprocessedTitle) {
+        this.unprocessedTitle = unprocessedTitle;
+    }
+
+    public String getProcessedTitle() {
+        return processedTitle;
+    }
+
+    public void setProcessedTitle(String processedTitle) {
+        this.processedTitle = processedTitle;
     }
 
     public Integer getOrder() {
@@ -152,8 +161,13 @@ public class FieldGroup {
     }
 
 
-    public FieldGroup withTitle(String title) {
-        setTitle(title);
+    public FieldGroup withUnprocessedTitle(String unprocessedTitle) {
+        setUnprocessedTitle(unprocessedTitle);
+        return this;
+    }
+
+    public FieldGroup withProcessedTitle(String processedTitle) {
+        setProcessedTitle(processedTitle);
         return this;
     }
     
@@ -241,7 +255,8 @@ public class FieldGroup {
     }
 
     public boolean isMasterFieldGroup() {
-        if (getTitle() != null && getTitle().toLowerCase().contains("master")) {
+        if ((getUnprocessedTitle() != null && getUnprocessedTitle().toLowerCase().contains("master"))
+                || (getProcessedTitle() != null && getProcessedTitle().toLowerCase().contains("master")) ) {
             return true;
         }
         return false;

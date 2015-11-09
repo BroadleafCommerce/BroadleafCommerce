@@ -94,7 +94,7 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
                     String tabName = EntityForm.DEFAULT_TAB_NAME;
                     Tab tab = form.findTabForField(err.getField());
                     if (tab != null) {
-                        tabName = tab.getTitle();
+                        tabName = tab.getProcessedTitle();
                     }
 
                     Map<String, List<String>> tabErrors = result.get(tabName);

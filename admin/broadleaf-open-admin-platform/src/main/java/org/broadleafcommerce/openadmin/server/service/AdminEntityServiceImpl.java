@@ -29,10 +29,10 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -230,7 +230,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         if (StringUtils.isEmpty(entityType)) {
             entityType = entityForm.getCeilingEntityClassname();
         }
-        entity.setType(new String[] { entityType });
+        entity.setType(new String[]{entityType});
 
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withEntity(entity)
@@ -393,7 +393,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 updateTabInfo(collectionMetadata, cmd, tabName, tabOrder);
 
                 if (collectionMetadata.getLazyFetch() != null && collectionMetadata.getLazyFetch()
-                        && getTabNameDisplayValue(tabName).toUpperCase().startsWith(currentTabName.toUpperCase())) {
+                        && BLCMessageUtils.getMessage(tabName).toUpperCase().startsWith(currentTabName.toUpperCase())) {
                     PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
                     map.put(p.getName(), response2.getDynamicResultSet());
                 } else if (collectionMetadata.getLazyFetch() != null && !collectionMetadata.getLazyFetch()) {
@@ -403,9 +403,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     DynamicResultSet drs = new DynamicResultSet();
                     Map<String, Tab> tabMap = new HashMap<String, Tab>();
                     Tab tab = new Tab();
-                    tab.setTitle(tabName);
+                    tab.setUnprocessedTitle(tabName);
+                    tab.setProcessedTitle(BLCMessageUtils.getMessage(tabName));
                     tab.setOrder(tabOrder);
-                    tabMap.put(tab.getTitle(), tab);
+                    tabMap.put(tab.getProcessedTitle(), tab);
                     drs.setUnselectedTabMetadata(tabMap);
                     drs.setTotalRecords(1);
                     drs.setStartIndex(0);
@@ -442,14 +443,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 tabOrder = tabMetadataMap.get(tabKey).getTabOrder();
             }
         }
-    }
-
-    protected String getTabNameDisplayValue(String tabName) {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getMessageSource() != null) {
-            tabName = context.getMessageSource().getMessage(tabName, null, tabName, context.getJavaLocale());
-        }
-        return tabName;
     }
     
     @Override

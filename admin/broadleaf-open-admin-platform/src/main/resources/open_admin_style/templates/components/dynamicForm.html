@@ -11,7 +11,7 @@
         <div th:each="group : ${df.tabs[0].fieldGroups}"
             th:classappend="${!group.isVisible}? 'hidden'" class="fieldset-card field-group dynamic-form">
             <div class="titlebar">
-                <span th:utext="#{${group.title}}"></span>
+                <span th:utext="#{${group.processedTitle}}"></span>
                 <i class="fa fa-question-circle help-tip" th:unless="${#strings.isEmpty(group.toolTip)}" th:attr="data-tip=#{${group.toolTip}}"></i>
 
                 <div class="collapser">
@@ -36,7 +36,7 @@
                     <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
                 </div>
 
-                <div th:unless="${#strings.containsIgnoreCase(group.title, 'master')}" th:remove="tag">
+                <div th:unless="${#strings.containsIgnoreCase(group.processedTitle, 'master')}" th:remove="tag">
                     <div th:if="${dynamicFormActionsTemplate}" th:remove="tag">
                         <div th:substituteby="${dynamicFormActionsTemplate}" />
                     </div>
