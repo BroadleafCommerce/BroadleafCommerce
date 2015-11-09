@@ -317,6 +317,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         }
         cloned.setTotalItemAmount(totalItemAmount == null ? null : new Money(totalItemAmount));
         cloned.setTotalItemTaxableAmount(totalItemTaxableAmount == null ? null : new Money(totalItemTaxableAmount));
+        cloned.setTotalTax(totalTax == null ? null : new Money(totalTax));
         return createResponse;
     }
 
