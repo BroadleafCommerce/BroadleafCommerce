@@ -1361,12 +1361,17 @@ p.deployment-summary {
 
 .form-control {
     /*border-radius: 5px;*/
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    color: initial;
 }
 
 .foreign-key-value-container .display-value.read-only {
     margin-right:15px;
-    padding: 6px;
-    min-width: 200px;
+    text-overflow: ellipsis;
+    padding: 10px 15px;
+    cursor: auto;
 }
 
 /*.thumbnail {*/
@@ -1675,4 +1680,20 @@ div.uploadMessage {
 
 .dynamic-form-wrapper img {
     margin: auto;
+}
+
+.input-group-btn button.to-one-lookup.secondary.button {
+    height: 34px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    line-height: 34px;
+}
+
+.input-group-btn {
+    display: table-cell;
+    width: 1%;
+}
+
+.input-group {
+    width: 100%;
 }

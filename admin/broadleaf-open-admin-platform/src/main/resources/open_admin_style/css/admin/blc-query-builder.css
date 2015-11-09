@@ -368,7 +368,7 @@
 
 .query-builder-filters-container .selectize-input, .query-builder-filters-container .selectize-control.multi .selectize-input.has-items,
 .query-builder-rules-container .selectize-input, .query-builder-rules-container .selectize-control.multi .selectize-input.has-items {
-    padding: 5px;
+    padding: 3px;
 }
 
 .query-builder-filters-container .selectize-dropdown-content,
