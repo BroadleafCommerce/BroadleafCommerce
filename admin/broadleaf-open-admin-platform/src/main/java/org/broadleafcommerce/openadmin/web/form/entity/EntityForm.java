@@ -86,7 +86,7 @@ public class EntityForm {
         public int compare(Tab o1, Tab o2) {
             return new CompareToBuilder()
                     .append(o1.getOrder(), o2.getOrder())
-                    .append(o1.getProcessedTitle(), o2.getProcessedTitle())
+                    .append(o1.getTitle(), o2.getTitle())
                     .toComparison();
         }
     });
@@ -189,7 +189,7 @@ public class EntityForm {
 
     public Tab findTab(String tabTitle) {
         for (Tab tab : tabs) {
-            if (tab.getUnprocessedTitle() != null && tab.getUnprocessedTitle().equals(tabTitle)) {
+            if (tab.getKey() != null && tab.getKey().equals(tabTitle)) {
                 return tab;
             }
         }
@@ -281,8 +281,8 @@ public class EntityForm {
             Iterator<Tab> tabIterator = tabs.iterator();
             while (tabIterator.hasNext()) {
                 Tab currentTab = tabIterator.next();
-                if (tabName.equals(currentTab.getUnprocessedTitle())
-                        || tabName.equals(currentTab.getProcessedTitle())) {
+                if (tabName.equals(currentTab.getKey())
+                        || tabName.equals(currentTab.getTitle())) {
                     tabIterator.remove();
                 }
             }
@@ -380,8 +380,8 @@ public class EntityForm {
             Tab tab = findTab(tabName);
             if (tab == null) {
                 tab = new Tab();
-                tab.setUnprocessedTitle(tabName);
-                tab.setProcessedTitle(BLCMessageUtils.getMessage(tabName));
+                tab.setKey(tabName);
+                tab.setTitle(BLCMessageUtils.getMessage(tabName));
                 tab.setOrder(tabOrder);
                 tabs.add(tab);
             }
@@ -389,8 +389,8 @@ public class EntityForm {
             // Add new group for the field to be placed into
             // If group exists, this code will not run
             fieldGroup = new FieldGroup();
-            fieldGroup.setUnprocessedTitle(groupName);
-            fieldGroup.setProcessedTitle(BLCMessageUtils.getMessage(groupName));
+            fieldGroup.setKey(groupName);
+            fieldGroup.setTitle(BLCMessageUtils.getMessage(groupName));
             fieldGroup.setOrder(groupOrder);
             tab.getFieldGroups().add(fieldGroup);
         }
@@ -400,7 +400,7 @@ public class EntityForm {
 
     public FieldGroup findGroup(String groupName) {
         for (Tab tab : tabs) {
-            FieldGroup fieldGroup = tab.findGroupByUnprocessedTitle(groupName);
+            FieldGroup fieldGroup = tab.findGroupByKey(groupName);
             if (fieldGroup != null) {
                 return fieldGroup;
             }
@@ -441,8 +441,8 @@ public class EntityForm {
             tab.getListGrids().add(listGrid);
         } else {
             tab = new Tab();
-            tab.setUnprocessedTitle(tabName);
-            tab.setProcessedTitle(BLCMessageUtils.getMessage(tabName));
+            tab.setKey(tabName);
+            tab.setTitle(BLCMessageUtils.getMessage(tabName));
             tab.setOrder(tabOrder);
             tab.setTabsPresent(isTabPresent);
             tabs.add(tab);
@@ -721,17 +721,17 @@ public class EntityForm {
 
     public String addTabFromTabMetadata(TabMetadata tabMetadata) {
         Tab newTab = new Tab();
-        newTab.setUnprocessedTitle(tabMetadata.getTabName());
-        newTab.setProcessedTitle(BLCMessageUtils.getMessage(tabMetadata.getTabName()));
+        newTab.setKey(tabMetadata.getTabName());
+        newTab.setTitle(BLCMessageUtils.getMessage(tabMetadata.getTabName()));
         newTab.setOrder(tabMetadata.getTabOrder());
         tabs.add(newTab);
-        return newTab.getUnprocessedTitle();
+        return newTab.getKey();
     }
 
     public void addGroupFromGroupMetadata(GroupMetadata groupMetadata, String unprocessedTabName) {
         FieldGroup newGroup = new FieldGroup();
-        newGroup.setUnprocessedTitle(groupMetadata.getGroupName());
-        newGroup.setProcessedTitle(BLCMessageUtils.getMessage(groupMetadata.getGroupName()));
+        newGroup.setKey(groupMetadata.getGroupName());
+        newGroup.setTitle(BLCMessageUtils.getMessage(groupMetadata.getGroupName()));
         newGroup.setOrder(groupMetadata.getGroupOrder());
         newGroup.setColumn(groupMetadata.getColumn());
         newGroup.setIsUntitled(groupMetadata.getUntitled());

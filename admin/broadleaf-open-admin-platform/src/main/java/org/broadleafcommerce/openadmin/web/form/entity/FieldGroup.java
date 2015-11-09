@@ -36,8 +36,8 @@ import java.util.TreeSet;
 
 public class FieldGroup {
 
-    protected String processedTitle;
-    protected String unprocessedTitle;
+    protected String title;
+    protected String key;
     protected Integer order;
     protected Set<Field> alternateOrderedFields = new HashSet<Field>();
     protected Set<Field> fields = new HashSet<Field>();
@@ -112,20 +112,20 @@ public class FieldGroup {
         this.collapsed = collapsed;
     }
 
-    public String getUnprocessedTitle() {
-        return unprocessedTitle;
+    public String getKey() {
+        return key;
     }
 
-    public void setUnprocessedTitle(String unprocessedTitle) {
-        this.unprocessedTitle = unprocessedTitle;
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    public String getProcessedTitle() {
-        return processedTitle;
+    public String getTitle() {
+        return title;
     }
 
-    public void setProcessedTitle(String processedTitle) {
-        this.processedTitle = processedTitle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Integer getOrder() {
@@ -161,13 +161,13 @@ public class FieldGroup {
     }
 
 
-    public FieldGroup withUnprocessedTitle(String unprocessedTitle) {
-        setUnprocessedTitle(unprocessedTitle);
+    public FieldGroup withKey(String key) {
+        setKey(key);
         return this;
     }
 
-    public FieldGroup withProcessedTitle(String processedTitle) {
-        setProcessedTitle(processedTitle);
+    public FieldGroup withTitle(String title) {
+        setTitle(title);
         return this;
     }
     
@@ -255,8 +255,8 @@ public class FieldGroup {
     }
 
     public boolean isMasterFieldGroup() {
-        if ((getUnprocessedTitle() != null && getUnprocessedTitle().toLowerCase().contains("master"))
-                || (getProcessedTitle() != null && getProcessedTitle().toLowerCase().contains("master")) ) {
+        if ((getKey() != null && getKey().toLowerCase().contains("master"))
+                || (getTitle() != null && getTitle().toLowerCase().contains("master")) ) {
             return true;
         }
         return false;

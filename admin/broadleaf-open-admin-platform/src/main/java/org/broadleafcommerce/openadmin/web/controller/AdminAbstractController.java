@@ -808,7 +808,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             String tabFieldName = fieldName.replaceAll("-+", ".");
             Tab errorTab = form.findTabForField(tabFieldName);
             if (errorTab != null) {
-                errorMap.put("tab", errorTab.getProcessedTitle());
+                errorMap.put("tab", errorTab.getTitle());
             }
             errors.add(errorMap);
         }

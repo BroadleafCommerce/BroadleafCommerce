@@ -403,10 +403,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     DynamicResultSet drs = new DynamicResultSet();
                     Map<String, Tab> tabMap = new HashMap<String, Tab>();
                     Tab tab = new Tab();
-                    tab.setUnprocessedTitle(tabName);
-                    tab.setProcessedTitle(BLCMessageUtils.getMessage(tabName));
+                    tab.setKey(tabName);
+                    tab.setTitle(BLCMessageUtils.getMessage(tabName));
                     tab.setOrder(tabOrder);
-                    tabMap.put(tab.getProcessedTitle(), tab);
+                    tabMap.put(tab.getTitle(), tab);
                     drs.setUnselectedTabMetadata(tabMap);
                     drs.setTotalRecords(1);
                     drs.setStartIndex(0);

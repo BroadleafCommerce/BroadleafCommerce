@@ -32,8 +32,8 @@ import java.util.TreeSet;
 
 public class Tab {
 
-    protected String processedTitle;
-    protected String unprocessedTitle;
+    protected String title;
+    protected String key;
     protected Integer order;
     protected String tabClass;
     protected Boolean isMultiColumn;
@@ -44,7 +44,7 @@ public class Tab {
         public int compare(FieldGroup o1, FieldGroup o2) {
             return new CompareToBuilder()
                     .append(o1.getOrder(), o2.getOrder())
-                    .append(o1.getProcessedTitle(), o2.getProcessedTitle())
+                    .append(o1.getTitle(), o2.getTitle())
                     .toComparison();
         }
     });
@@ -59,13 +59,13 @@ public class Tab {
         }
     });
 
-    public Tab withProcessedTitle(String processedTitle) {
-        setProcessedTitle(processedTitle);
+    public Tab withTitle(String title) {
+        setTitle(title);
         return this;
     }
 
-    public Tab withUnprocessedTitle(String unprocessedTitle) {
-        setUnprocessedTitle(unprocessedTitle);
+    public Tab withKey(String key) {
+        setKey(key);
         return this;
     }
 
@@ -98,18 +98,18 @@ public class Tab {
         return false;
     }
 
-    public FieldGroup findGroupByUnprocessedTitle(String unprocessedTitle) {
+    public FieldGroup findGroupByKey(String key) {
         for (FieldGroup fg : fieldGroups) {
-            if (fg.getUnprocessedTitle() != null && fg.getUnprocessedTitle().equals(unprocessedTitle)) {
+            if (fg.getKey() != null && fg.getKey().equals(key)) {
                 return fg;
             }
         }
         return null;
     }
 
-    public FieldGroup findGroupByProcessedTitle(String processedTitle) {
+    public FieldGroup findGroupByTitle(String title) {
         for (FieldGroup fg : fieldGroups) {
-            if (fg.getProcessedTitle() != null && fg.getProcessedTitle().equals(processedTitle)) {
+            if (fg.getTitle() != null && fg.getTitle().equals(title)) {
                 return fg;
             }
         }
@@ -136,20 +136,20 @@ public class Tab {
         return StringUtils.isBlank(tabClass) ? "" : " " + tabClass;
     }
 
-    public String getProcessedTitle() {
-        return processedTitle;
+    public String getTitle() {
+        return title;
     }
 
-    public void setProcessedTitle(String processedTitle) {
-        this.processedTitle = processedTitle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getUnprocessedTitle() {
-        return unprocessedTitle;
+    public String getKey() {
+        return key;
     }
 
-    public void setUnprocessedTitle(String unprocessedTitle) {
-        this.unprocessedTitle = unprocessedTitle;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public Integer getOrder() {
