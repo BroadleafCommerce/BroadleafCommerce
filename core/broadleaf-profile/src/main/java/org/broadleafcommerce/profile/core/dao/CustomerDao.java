@@ -26,6 +26,14 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 public interface CustomerDao {
 
     public Customer readCustomerById(Long id);
+    
+    /**
+     * Reads a batch list of customers from the DB.
+     * @param start
+     * @param pageSize
+     * @return
+     */
+    List<Customer> readBatchCustomers(int start, int pageSize);
 
     /**
      * Returns the first customer that match the passed in username, with caching defaulted.

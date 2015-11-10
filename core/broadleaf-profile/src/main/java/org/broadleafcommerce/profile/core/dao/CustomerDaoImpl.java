@@ -19,19 +19,22 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerDao")
 public class CustomerDaoImpl implements CustomerDao {
@@ -104,5 +107,21 @@ public class CustomerDaoImpl implements CustomerDao {
             customer = readCustomerById(customer.getId());
         }
         em.remove(customer);
+    }
+
+    @Override
+    public List<Customer> readBatchCustomers(int start, int pageSize) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Customer> criteria = builder.createQuery(Customer.class);
+        Root<CustomerImpl> customer = criteria.from(CustomerImpl.class);
+        criteria.select(customer);
+
+        TypedQuery<Customer> query = em.createQuery(criteria);
+        query.setFirstResult(start);
+        query.setMaxResults(pageSize);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Customer");
+
+        return query.getResultList();
     }
 }
