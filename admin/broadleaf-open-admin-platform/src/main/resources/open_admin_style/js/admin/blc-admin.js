@@ -83,7 +83,7 @@ var BLCAdmin = (function($) {
 				BLCAdmin.currentModal().find('img.ajax-loader').hide();
 			}
 		});
-		
+
 		BLCAdmin.initializeModalTabs($data);
         BLCAdmin.initializeModalButtons($data);
 		BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
@@ -497,7 +497,7 @@ var BLCAdmin = (function($) {
                     $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
                 }
             }
-            
+
             // Run any additionally configured initialization handlers
             for (var i = 0; i < initializationHandlers.length; i++) {
                 initializationHandlers[i]($container);
@@ -758,8 +758,8 @@ var BLCAdmin = (function($) {
         addDependentFieldHandler : function addDependentFieldHandler(className, parentFieldSelector, childFieldSelector, 
                 showIfValue, options) {
             BLCAdmin.addInitializationHandler(function($container) {
-                var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
-                if (thisClass != null && thisClass.indexOf(className) >= 0) {
+                var thisClass = $container.find('form').find('input[name="ceilingEntityClassname"]').val();
+				if (thisClass != null && thisClass.indexOf(className) >= 0) {
                     var toggleFunction = function(event) {
                         // Extract the parent and child field DOM elements from the data
                         var $parentField = event.data.$parentField;
