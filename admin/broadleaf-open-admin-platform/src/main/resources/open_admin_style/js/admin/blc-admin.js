@@ -758,7 +758,8 @@ var BLCAdmin = (function($) {
         addDependentFieldHandler : function addDependentFieldHandler(className, parentFieldSelector, childFieldSelector, 
                 showIfValue, options) {
             BLCAdmin.addInitializationHandler(function($container) {
-                var thisClass = $container.find('form').find('input[name="ceilingEntityClassname"]').val();
+                var $form = $container.find('form').length ? $container.find('form') : $container.closest('form');
+                var thisClass = $form.find('input[name="ceilingEntityClassname"]').val();
 				if (thisClass != null && thisClass.indexOf(className) >= 0) {
                     var toggleFunction = function(event) {
                         // Extract the parent and child field DOM elements from the data
