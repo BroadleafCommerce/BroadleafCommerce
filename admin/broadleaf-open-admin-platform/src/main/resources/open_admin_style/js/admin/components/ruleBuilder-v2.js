@@ -753,11 +753,13 @@
      * NOTE: this will only collect non-modal rule builders since modals are responsible for setting their own
      * data and have already set it appropriately.
      */
-    BLCAdmin.addPostValidationSubmitHandler(function() {
-        for (var i = 0; i < BLCAdmin.ruleBuilders.ruleBuilderCount(); i++) {
-            var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByIndex(i);
-            if (!ruleBuilder.modal) {
-                BLCAdmin.ruleBuilders.setJSONValueOnField(ruleBuilder);
+    BLCAdmin.addPostValidationSubmitHandler(function($form) {
+        if ($form.find('.query-builder-rules-container').length) {
+            for (var i = 0; i < BLCAdmin.ruleBuilders.ruleBuilderCount(); i++) {
+                var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByIndex(i);
+                if (!ruleBuilder.modal) {
+                    BLCAdmin.ruleBuilders.setJSONValueOnField(ruleBuilder);
+                }
             }
         }
     });

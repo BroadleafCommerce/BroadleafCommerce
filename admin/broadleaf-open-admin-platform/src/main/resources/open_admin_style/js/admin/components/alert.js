@@ -39,7 +39,7 @@
             
             if (options.autoClose) {
                 setTimeout(function() {
-                    $closeLink.click();
+                    $closeLink.closest(".alert-box").remove();
                 }, options.autoClose);
             }
         }

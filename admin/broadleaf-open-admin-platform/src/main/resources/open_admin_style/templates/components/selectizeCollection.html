@@ -5,27 +5,6 @@
 
 <div class="selectize-wrapper" blc_admin:component_id="${listGrid}">
     <select th:id="'selectize-' + ${listGrid.friendlyName}"
-            class="selectize-collection"
-            multiple="multiple"
-            th:name="${listGrid.friendlyName} + '[]'"
-            tabindex="-1">
-        <div th:each="record : ${listGrid.records}"
-            th:unless="${#lists.isEmpty(listGrid.records)}"
-            th:remove="tag">
-
-            <div th:each="headerField : ${record.listGrid.headerFields}"
-                th:if="${headerField.isVisible}"
-                th:with="field=${record.getField(headerField.name)}"
-                th:remove="tag">
-
-                <option th:if="${record.altId}" th:value="${record.id}" th:attr="data-alternate_id=${record.altId}" selected="selected" th:text="${field.displayValue}"/>
-                <option th:unless="${record.altId}" th:value="${record.id}" selected="selected" th:text="${field.displayValue}"/>
-
-            </div>
-        </div>
-    </select>
-
-    <select th:id="'selectize-' + ${listGrid.friendlyName}"
             class="selectize-adder"
             multiple="multiple"
             th:name="${listGrid.friendlyName} + '[]'"
@@ -42,6 +21,27 @@
                  th:if="${headerField.isVisible}"
                  th:with="field=${record.getField(headerField.name)}"
                  th:remove="tag">
+
+                <option th:if="${record.altId}" th:value="${record.id}" th:attr="data-alternate_id=${record.altId}" selected="selected" th:text="${field.displayValue}"/>
+                <option th:unless="${record.altId}" th:value="${record.id}" selected="selected" th:text="${field.displayValue}"/>
+
+            </div>
+        </div>
+    </select>
+
+    <select th:id="'selectize-' + ${listGrid.friendlyName}"
+            class="selectize-collection read-only"
+            multiple="multiple"
+            th:name="${listGrid.friendlyName} + '[]'"
+            tabindex="-1" readonly="readonly">
+        <div th:each="record : ${listGrid.records}"
+            th:unless="${#lists.isEmpty(listGrid.records)}"
+            th:remove="tag">
+
+            <div th:each="headerField : ${record.listGrid.headerFields}"
+                th:if="${headerField.isVisible}"
+                th:with="field=${record.getField(headerField.name)}"
+                th:remove="tag">
 
                 <option th:if="${record.altId}" th:value="${record.id}" th:attr="data-alternate_id=${record.altId}" selected="selected" th:text="${field.displayValue}"/>
                 <option th:unless="${record.altId}" th:value="${record.id}" selected="selected" th:text="${field.displayValue}"/>
