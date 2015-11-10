@@ -36,6 +36,7 @@
 
 .app-content .content .section-content .main-content .content-yield {
     padding: 10px 40px;
+    max-width: 2000px;
 }
 
 .content-yield h4.empty-main-list-grid {
