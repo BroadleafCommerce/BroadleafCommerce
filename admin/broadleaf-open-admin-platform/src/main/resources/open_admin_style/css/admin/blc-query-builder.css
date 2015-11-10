@@ -439,6 +439,15 @@
     clear: both;
 }
 
+
+.query-builder-filters-container .query-builder-rules .group-actions {
+    margin-right: 15px;
+}
+
+.query-builder-filters-container {
+    margin-top: -11px;
+}
+
 /*.selectize-input.items.not-full.has-options {*/
     /*min-height: 40px;*/
 /*}*/
