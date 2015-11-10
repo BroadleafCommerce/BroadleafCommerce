@@ -26,17 +26,25 @@ import org.broadleafcommerce.common.cache.PersistentRetrieval;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.config.domain.SystemPropertyImpl;
 import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  * This DAO enables access to manage system properties that can be stored in the database.
@@ -54,6 +62,9 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements S
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    @Resource(name = "blSystemPropertyDaoQueryExtensionManager")
+    protected SystemPropertyDaoQueryExtensionManager queryExtensionManager;
     
     @Override
     public SystemProperty readById(Long id) {
@@ -72,9 +83,28 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements S
 
     @Override
     public List<SystemProperty> readAllSystemProperties() {
-        TypedQuery<SystemProperty> query = em.createNamedQuery("BC_READ_ALL_SYSTEM_PROPERTIES", SystemProperty.class);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        return query.getResultList();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<SystemProperty> criteria = builder.createQuery(SystemProperty.class);
+        Root<SystemPropertyImpl> handler = criteria.from(SystemPropertyImpl.class);
+        criteria.select(handler);
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Order> sorts = new ArrayList<Order>();
+        try {
+            if (queryExtensionManager != null) {
+                queryExtensionManager.getProxy().setup(SystemPropertyImpl.class, null);
+                queryExtensionManager.getProxy().refineRetrieve(SystemPropertyImpl.class, null, builder, criteria, handler, restrictions);
+                queryExtensionManager.getProxy().refineOrder(SystemPropertyImpl.class, null, builder, criteria, handler, sorts);
+            }
+            criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+            return em.createQuery(criteria).getResultList();
+        } catch (NoResultException e) {
+            LOG.error(e);
+            return new ArrayList<SystemProperty>();
+        } finally {
+            if (queryExtensionManager != null) {
+                queryExtensionManager.getProxy().breakdown(SystemPropertyImpl.class, null);
+            }
+        }
     }
 
     @Override
@@ -82,14 +112,38 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements S
         return getCachedObject(SystemProperty.class, "blSystemPropertyNullCheckCache", "SYSTEM_PROPERTY_MISSING_CACHE_HIT_RATE", new PersistentRetrieval<SystemProperty>() {
             @Override
             public SystemProperty retrievePersistentObject() {
-                TypedQuery<SystemProperty> query = em.createNamedQuery("BC_READ_SYSTEM_PROPERTIES_BY_NAME", SystemProperty.class);
-                query.setParameter("propertyName", name);
-                query.setHint(QueryHints.HINT_CACHEABLE, true);
-                List<SystemProperty> props = query.getResultList();
-                if (props != null && ! props.isEmpty()) {
-                    return props.get(0);
+                CriteriaBuilder builder = em.getCriteriaBuilder();
+                CriteriaQuery<SystemProperty> criteria = builder.createQuery(SystemProperty.class);
+                Root<SystemPropertyImpl> handler = criteria.from(SystemPropertyImpl.class);
+                criteria.select(handler);
+
+                List<Predicate> restrictions = new ArrayList<Predicate>();
+                restrictions.add(builder.equal(handler.get("name"), name));
+
+                try {
+                    if (queryExtensionManager != null) {
+                        queryExtensionManager.getProxy().setup(SystemPropertyImpl.class, null);
+                        queryExtensionManager.getProxy().refineRetrieve(SystemPropertyImpl.class, null, builder, criteria, handler, restrictions);
+                    }
+                    criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+                    TypedQuery<SystemProperty> query = em.createQuery(criteria);
+                    query.setHint(QueryHints.HINT_CACHEABLE, true);
+                    List<SystemProperty> response = query.getResultList();
+                    if (response.size() > 0) {
+                        ExtensionResultHolder<List> resultHolder = new ExtensionResultHolder<>();
+                        if (queryExtensionManager != null) {
+                            queryExtensionManager.getProxy().refineResults(SystemPropertyImpl.class, null, response, resultHolder);
+                            return (SystemProperty) resultHolder.getResult().get(0);
+                        }
+                        return response.get(0);
+                    }
+                    return null;
+                } finally {
+                    if (queryExtensionManager != null) {
+                        queryExtensionManager.getProxy().breakdown(SystemPropertyImpl.class, null);
+                    }
                 }
-                return null;
             }
         }, name, getSite());
     }
