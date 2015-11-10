@@ -41,21 +41,26 @@
                 if (error.errorType == "field") {
                     var fieldGroup = $("#field-" + error.field);
 
-                    // Add an error indicator to the fields tab
-                    // this can happen more than once because the indicator is absolute positioning
-                    var tabId = '#' + fieldGroup.parents('.entityFormTab').attr("class").substring(0,4);
-                    var tab = $('a[href=' + tabId + ']');
-                    tab.prepend('<span class="tab-error-indicator danger"></span>');
+                    if (fieldGroup.length) {
+                        // Add an error indicator to the fields tab
+                        // this can happen more than once because the indicator is absolute positioning
+                        var tabId = '#' + fieldGroup.parents('.entityFormTab').attr("class").substring(0, 4);
+                        var tab = $('a[href=' + tabId + ']');
+                        tab.prepend('<span class="tab-error-indicator danger"></span>');
 
-                    // Mark the field as an error
-                    var fieldError = "<div class='error'";
-                    if (fieldGroup.find(".field-help").length !== 0) {
-                        fieldError += " style='margin-top:-5px;'";
+                        // Mark the field as an error
+                        var fieldError = "<div class='error'";
+                        if (fieldGroup.find(".field-help").length !== 0) {
+                            fieldError += " style='margin-top:-5px;'";
+                        }
+                        fieldError += ">" + error.message + "</div>";
+
+                        $(fieldGroup).append(fieldError);
+                        $(fieldGroup).addClass("has-error");
+                    } else {
+                        var error = "<div class='tabError'><span class='error'>" + error.message + "</span></div>";
+                        $(".entity-errors").append(error);
                     }
-                    fieldError += ">" + error.message + "</div>";
-
-                    $(fieldGroup).append(fieldError);
-                    $(fieldGroup).addClass("has-error");
                 } else if (error.errorType == 'global'){
                     var globalError = "<div class='tabError'><b>" + BLCAdmin.messages.globalErrors + "</b><span class='error'>"
                         + error.message + "</span></div>";
@@ -99,6 +104,53 @@
                 } else {
                     $modal.find('.modal-body').prepend(errorDiv);
                 }
+            }
+        },
+
+        submitFormViaAjax : function ($form) {
+            var submit = BLCAdmin.runSubmitHandlers($form);
+
+            if (submit) {
+                BLC.ajax({
+                    url: $form.action,
+                    dataType: "json",
+                    type: "POST",
+                    data: $form.serializeArray(),
+                    complete: BLCAdmin.entityForm.hideActionSpinner
+                }, function (data) {
+                    $("#headerFlashAlertBoxContainer").removeClass("hidden");
+                    $(".errors, .error, .tab-error-indicator, .tabError").remove();
+                    $('.has-error').removeClass('has-error');
+
+                    if (!data.errors) {
+                        //$(".alert-box").removeClass("alert").addClass("success");
+                        //$(".alert-box-message").text("Successfully saved");
+
+                        var alert = {
+                            message: BLCAdmin.messages.saved + '!',
+                            alertType: 'save-alert',
+                            autoClose: 1000,
+                            clearOtherAlerts: true
+                        };
+
+                        var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass('save-alert');
+                        var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
+
+                        $alert.append("Successfully saved");
+                        $alert.append($closeLink);
+
+                        $(".alert-box").find('.alert-box-message').html($alert);
+
+                        setTimeout(function() {
+                            $closeLink.click();
+                        }, 1000);
+
+                    } else {
+                        BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemSaving);
+                    }
+
+                    BLCAdmin.runPostFormSubmitHandlers($form, data);
+                });
             }
         }
     };
@@ -218,10 +270,10 @@ $(document).ready(function() {
         $('body').click(); // Defocus any current elements in case they need to act prior to form submission
         var $form = BLCAdmin.getForm($(this));
 
-        BLCAdmin.entityForm.showActionSpinner($(this).closest('.entity-form-actions'));
+        BLCAdmin.entityForm.showActionSpinner($(this).closest('.content-area-title-bar.entity-form-actions'));
 
         if ($(".blc-admin-ajax-update").length && $form.parents(".modal-body").length == 0) {
-            submitFormViaAjax($form);
+            BLCAdmin.entityForm.submitFormViaAjax($form);
         } else {
             $form.submit();
         }
@@ -236,53 +288,6 @@ $(document).ready(function() {
             .end()  //again go back to selected element
             .text()
             .trim();
-    }
-
-    function submitFormViaAjax($form) {
-        var submit = BLCAdmin.runSubmitHandlers($form);
-
-        if (submit) {
-            BLC.ajax({
-                url: $form.action,
-                dataType: "json",
-                type: "POST",
-                data: $form.serializeArray(),
-                complete: BLCAdmin.entityForm.hideActionSpinner
-            }, function (data) {
-                $("#headerFlashAlertBoxContainer").removeClass("hidden");
-                $(".errors, .error, .tab-error-indicator, .tabError").remove();
-                $('.has-error').removeClass('has-error');
-
-                if (!data.errors) {
-                    //$(".alert-box").removeClass("alert").addClass("success");
-                    //$(".alert-box-message").text("Successfully saved");
-
-                    var alert = {
-                        message: BLCAdmin.messages.saved + '!',
-                        alertType: 'save-alert',
-                        autoClose: 1000,
-                        clearOtherAlerts: true
-                    };
-
-                    var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass('save-alert');
-                    var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
-
-                    $alert.append("Successfully saved");
-                    $alert.append($closeLink);
-
-                    $(".alert-box").find('.alert-box-message').html($alert);
-
-                    setTimeout(function() {
-                        $closeLink.click();
-                    }, 1000);
-
-                } else {
-                    BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemSaving);
-                }
-                
-                BLCAdmin.runPostFormSubmitHandlers($form, data);
-            });
-        }
     }
 
     function showTabSpinner($tab, $tabBody) {

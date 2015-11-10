@@ -812,10 +812,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             Set<String> tabMetadataKeySet = tabMetadataMap.keySet();
             for (String tabKey : tabMetadataKeySet) {
                 TabMetadata tabMetadata = tabMetadataMap.get(tabKey);
-                String processedTabName = ef.addTabFromTabMetadata(tabMetadata);
+                String unprocessedTabName = ef.addTabFromTabMetadata(tabMetadata);
                 Set<String> groupMetadataKeySet = tabMetadata.getGroupMetadata().keySet();
                 for (String groupKey : groupMetadataKeySet) {
-                    ef.addGroupFromGroupMetadata(tabMetadata.getGroupMetadata().get(groupKey), processedTabName);
+                    ef.addGroupFromGroupMetadata(tabMetadata.getGroupMetadata().get(groupKey), unprocessedTabName);
                 }
             }
         }

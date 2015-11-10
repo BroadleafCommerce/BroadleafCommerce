@@ -95,7 +95,7 @@ public class AdminProductController extends AdminBasicEntityController {
     protected void modifyEntityForm(EntityForm ef, Map<String, String> pathVars) {
         String defaultCategoryUrlPrefix = null;
         Field defaultCategory = ef.findField("defaultCategory");
-        if (StringUtils.isNotBlank(defaultCategory.getValue())) {
+        if (defaultCategory != null && StringUtils.isNotBlank(defaultCategory.getValue())) {
             Category cat = catalogService.findCategoryById(Long.parseLong(defaultCategory.getValue()));
             defaultCategoryUrlPrefix = cat.getUrl();
         }
@@ -118,7 +118,7 @@ public class AdminProductController extends AdminBasicEntityController {
     protected void modifyAddEntityForm(EntityForm ef, Map<String, String> pathVars) {
         String defaultCategoryUrlPrefix = null;
         Field defaultCategory = ef.findField("defaultCategory");
-        if (StringUtils.isNotBlank(defaultCategory.getValue())) {
+        if (defaultCategory != null && StringUtils.isNotBlank(defaultCategory.getValue())) {
             Category cat = catalogService.findCategoryById(Long.parseLong(defaultCategory.getValue()));
             defaultCategoryUrlPrefix = cat.getUrl();
         }

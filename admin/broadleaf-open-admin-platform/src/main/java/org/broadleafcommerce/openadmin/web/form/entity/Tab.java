@@ -33,6 +33,7 @@ import java.util.TreeSet;
 public class Tab {
 
     protected String title;
+    protected String key;
     protected Integer order;
     protected String tabClass;
     protected Boolean isMultiColumn;
@@ -60,6 +61,11 @@ public class Tab {
 
     public Tab withTitle(String title) {
         setTitle(title);
+        return this;
+    }
+
+    public Tab withKey(String key) {
+        setKey(key);
         return this;
     }
 
@@ -92,9 +98,18 @@ public class Tab {
         return false;
     }
 
-    public FieldGroup findGroup(String groupTitle) {
+    public FieldGroup findGroupByKey(String key) {
         for (FieldGroup fg : fieldGroups) {
-            if (fg.getTitle() != null && fg.getTitle().equals(groupTitle)) {
+            if (fg.getKey() != null && fg.getKey().equals(key)) {
+                return fg;
+            }
+        }
+        return null;
+    }
+
+    public FieldGroup findGroupByTitle(String title) {
+        for (FieldGroup fg : fieldGroups) {
+            if (fg.getTitle() != null && fg.getTitle().equals(title)) {
                 return fg;
             }
         }
@@ -107,6 +122,10 @@ public class Tab {
             fields.addAll(fg.getFields());
         }
         return fields;
+    }
+
+    public void removeFieldGroup(FieldGroup fieldGroup) {
+        fieldGroups.remove(fieldGroup);
     }
     
     public void removeListGrid(ListGrid listGrid) {
@@ -123,6 +142,14 @@ public class Tab {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public Integer getOrder() {

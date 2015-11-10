@@ -31,33 +31,32 @@
     <div class="foreign-key-value-container">
         
         <div th:remove="tag" th:unless="${field.isTypeaheadEnabled}">
-            <span class="display-value-none-selected" style="display: none;" th:inline="text">&lt;[[#{No_Value_Selected}]]&gt;</span>
-            <span class="display-value read-only" th:text="*{fields['__${field.name}__'].displayValue}" />
-                
-            <button class="clear-foreign-key tiny radius secondary button hover-cursor"
-                th:disabled="${field.readOnly}"
-                type="button" th:inline="text"
-                th:unless="${field.required}"
-                th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
-                <i class="blc-icon-delete"></i>&nbsp;[[#{Clear}]]
-            </button>
-            
-            <button class="to-one-lookup tiny radius secondary button hover-cursor"
-                th:disabled="${field.readOnly}"
-                type="button" th:inline="text"
-                th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})},
-                         data-dynamic-field=${field.attributes['dynamicField']}">
-                <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
-            </button>
 
-            <span class="external-link-container" th:style="${!field.canLinkToExternalEntity or #strings.isEmpty(field.value)}? 'display: none;'">
-               <a th:href="@{${'/' + field.entityViewPath}}"
-                  th:disabled="${field.readOnly}"
-                  th:attr="data-foreign-key-link=@{${'/' + field.foreignKeyClass}}"
-                  class="modal-view">
-                    <i class="icon-external-link"></i>
-               </a>
-            </span>
+
+            <div class="input-group">
+                <input class="display-value-none-selected form-control" type="text" style="display: none;" readonly="readonly" value="&lt;[[#{No_Value_Selected}]]&gt;" />
+                <input class="display-value read-only form-control" type="text" th:value="*{fields['__${field.name}__'].displayValue}" readonly="readonly"/>
+                <span class="input-group-btn">
+                    <button class="clear-foreign-key secondary button"
+                            th:disabled="${field.readOnly}"
+                            type="button" th:inline="text"
+                            th:unless="${field.required}"
+                            th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
+                        <i class="blc-icon-delete"></i>&nbsp;[[#{Clear}]]
+                    </button>
+
+                    <button class="to-one-lookup secondary button"
+                            th:disabled="${field.readOnly}"
+                            type="button" th:inline="text"
+                            th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})},
+                                 data-dynamic-field=${field.attributes['dynamicField']}">
+                        <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
+                    </button>
+                </span>
+            </div>
+
+
+
         </div>
 
         <div th:remove="tag" th:if="${field.isTypeaheadEnabled}">

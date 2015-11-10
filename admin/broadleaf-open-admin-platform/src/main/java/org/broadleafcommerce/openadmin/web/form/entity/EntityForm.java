@@ -25,7 +25,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
@@ -189,7 +189,7 @@ public class EntityForm {
 
     public Tab findTab(String tabTitle) {
         for (Tab tab : tabs) {
-            if (tab.getTitle() != null && tab.getTitle().equals(tabTitle)) {
+            if (tab.getKey() != null && tab.getKey().equals(tabTitle)) {
                 return tab;
             }
         }
@@ -266,6 +266,12 @@ public class EntityForm {
         return fieldToRemove;
     }
 
+    public void removeGroup(FieldGroup group) {
+        for (Tab tab : getTabs()) {
+            tab.removeFieldGroup(group);
+        }
+    }
+
     public void removeTab(Tab tab) {
         tabs.remove(tab);
     }
@@ -275,7 +281,8 @@ public class EntityForm {
             Iterator<Tab> tabIterator = tabs.iterator();
             while (tabIterator.hasNext()) {
                 Tab currentTab = tabIterator.next();
-                if (tabName.equals(currentTab.getTitle())) {
+                if (tabName.equals(currentTab.getKey())
+                        || tabName.equals(currentTab.getTitle())) {
                     tabIterator.remove();
                 }
             }
@@ -285,8 +292,10 @@ public class EntityForm {
     public ListGrid removeListGrid(String subCollectionFieldName) {
         ListGrid lgToRemove = null;
         Tab containingTab = null;
+        FieldGroup containingGroup = null;
 
-        findLg: {
+        findLg:
+        {
             for (Tab tab : tabs) {
                 for (ListGrid lg : tab.getListGrids()) {
                     if (subCollectionFieldName.equals(lg.getSubCollectionFieldName())) {
@@ -295,14 +304,28 @@ public class EntityForm {
                         break findLg;
                     }
                 }
+                for (FieldGroup group : tab.getFieldGroups()) {
+                    for (ListGrid lg : group.getListGrids()) {
+                        if (subCollectionFieldName.equals(lg.getSubCollectionFieldName())) {
+                            lgToRemove = lg;
+                            containingTab = tab;
+                            containingGroup = group;
+                            break findLg;
+                        }
+                    }
+                }
             }
         }
 
-        if (lgToRemove != null) {
+        if (lgToRemove != null && containingGroup != null) {
+            containingGroup.removeListGrid(lgToRemove);
+        } else if (lgToRemove != null && containingGroup == null) {
             containingTab.removeListGrid(lgToRemove);
         }
 
-        if (containingTab != null && containingTab.getListGrids().size() == 0 && containingTab.getFields().size() == 0) {
+        if (containingGroup != null && containingGroup.getListGrids().size() == 0 && containingGroup.getFields().size() == 0) {
+            removeGroup(containingGroup);
+        } else if (containingTab != null && containingTab.getListGrids().size() == 0 && containingTab.getFields().size() == 0) {
             removeTab(containingTab);
         }
 
@@ -322,15 +345,6 @@ public class EntityForm {
 
     public void addMapKeyField(ClassMetadata cmd, Field field) {
         addField(cmd, field, MAP_KEY_GROUP, 0, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
-    }
-
-    public String processMessageString(String message) {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getMessageSource() != null) {
-            return context.getMessageSource().getMessage(message, null, message, context.getJavaLocale());
-        }
-
-        return message;
     }
 
     public void addField(ClassMetadata cmd, Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
@@ -361,18 +375,13 @@ public class EntityForm {
             }
         }
 
-        // Tabs and groups should be looked up by their display, translated name since 2 unique strings can display the same
-        // thing when they are looked up in message bundles after display
-        // When displayed on the form the duplicate groups and tabs look funny
-        groupName = processMessageString(groupName);
-        tabName = processMessageString(tabName);
-
         FieldGroup fieldGroup = findGroup(groupName);
         if (fieldGroup == null) {
             Tab tab = findTab(tabName);
             if (tab == null) {
                 tab = new Tab();
-                tab.setTitle(tabName);
+                tab.setKey(tabName);
+                tab.setTitle(BLCMessageUtils.getMessage(tabName));
                 tab.setOrder(tabOrder);
                 tabs.add(tab);
             }
@@ -380,7 +389,8 @@ public class EntityForm {
             // Add new group for the field to be placed into
             // If group exists, this code will not run
             fieldGroup = new FieldGroup();
-            fieldGroup.setTitle(groupName);
+            fieldGroup.setKey(groupName);
+            fieldGroup.setTitle(BLCMessageUtils.getMessage(groupName));
             fieldGroup.setOrder(groupOrder);
             tab.getFieldGroups().add(fieldGroup);
         }
@@ -389,14 +399,13 @@ public class EntityForm {
     }
 
     public FieldGroup findGroup(String groupName) {
-        FieldGroup fieldGroup = null;
         for (Tab tab : tabs) {
-            fieldGroup = tab.findGroup(groupName);
+            FieldGroup fieldGroup = tab.findGroupByKey(groupName);
             if (fieldGroup != null) {
-                break;
+                return fieldGroup;
             }
         }
-        return fieldGroup;
+        return null;
     }
 
     public void addListGrid(ClassMetadata cmd, ListGrid listGrid, String tabName, Integer tabOrder, String groupName, boolean isTabPresent) {
@@ -424,10 +433,6 @@ public class EntityForm {
             }
         }
 
-        // Tabs/Groups should be looked up and referenced by their display name
-        tabName = processMessageString(tabName);
-        groupName = processMessageString(groupName);
-
         FieldGroup fieldGroup = findGroup(groupName);
         Tab tab = findTab(tabName);
         if (fieldGroup != null) {
@@ -436,7 +441,8 @@ public class EntityForm {
             tab.getListGrids().add(listGrid);
         } else {
             tab = new Tab();
-            tab.setTitle(tabName);
+            tab.setKey(tabName);
+            tab.setTitle(BLCMessageUtils.getMessage(tabName));
             tab.setOrder(tabOrder);
             tab.setTabsPresent(isTabPresent);
             tabs.add(tab);
@@ -715,25 +721,25 @@ public class EntityForm {
 
     public String addTabFromTabMetadata(TabMetadata tabMetadata) {
         Tab newTab = new Tab();
-        newTab.setTitle(tabMetadata.getTabName());
+        newTab.setKey(tabMetadata.getTabName());
+        newTab.setTitle(BLCMessageUtils.getMessage(tabMetadata.getTabName()));
         newTab.setOrder(tabMetadata.getTabOrder());
-        newTab.setTitle(processMessageString(tabMetadata.getTabName()));
         tabs.add(newTab);
-        return newTab.getTitle();
+        return newTab.getKey();
     }
 
-    public void addGroupFromGroupMetadata(GroupMetadata groupMetadata, String processedTabName) {
+    public void addGroupFromGroupMetadata(GroupMetadata groupMetadata, String unprocessedTabName) {
         FieldGroup newGroup = new FieldGroup();
-        newGroup.setTitle(groupMetadata.getGroupName());
+        newGroup.setKey(groupMetadata.getGroupName());
+        newGroup.setTitle(BLCMessageUtils.getMessage(groupMetadata.getGroupName()));
         newGroup.setOrder(groupMetadata.getGroupOrder());
         newGroup.setColumn(groupMetadata.getColumn());
         newGroup.setIsUntitled(groupMetadata.getUntitled());
         newGroup.setToolTip(groupMetadata.getTooltip());
         newGroup.setCollapsed(groupMetadata.getCollapsed());
-        newGroup.setTitle(processMessageString(groupMetadata.getGroupName()));
-        newGroup.setToolTip(processMessageString(groupMetadata.getTooltip()));
+        newGroup.setToolTip(groupMetadata.getTooltip());
 
-        Tab tab = findTab(processedTabName);
+        Tab tab = findTab(unprocessedTabName);
         if (groupMetadata.getColumn() != DEFAULT_COLUMN) {
             tab.setIsMultiColumn(true);
         }

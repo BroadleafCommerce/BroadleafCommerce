@@ -37,6 +37,7 @@ import java.util.TreeSet;
 public class FieldGroup {
 
     protected String title;
+    protected String key;
     protected Integer order;
     protected Set<Field> alternateOrderedFields = new HashSet<Field>();
     protected Set<Field> fields = new HashSet<Field>();
@@ -111,6 +112,14 @@ public class FieldGroup {
         this.collapsed = collapsed;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -151,6 +160,11 @@ public class FieldGroup {
         this.groupAttributes = groupAttributes;
     }
 
+
+    public FieldGroup withKey(String key) {
+        setKey(key);
+        return this;
+    }
 
     public FieldGroup withTitle(String title) {
         setTitle(title);
@@ -241,7 +255,8 @@ public class FieldGroup {
     }
 
     public boolean isMasterFieldGroup() {
-        if (getTitle() != null && getTitle().toLowerCase().contains("master")) {
+        if ((getKey() != null && getKey().toLowerCase().contains("master"))
+                || (getTitle() != null && getTitle().toLowerCase().contains("master")) ) {
             return true;
         }
         return false;
