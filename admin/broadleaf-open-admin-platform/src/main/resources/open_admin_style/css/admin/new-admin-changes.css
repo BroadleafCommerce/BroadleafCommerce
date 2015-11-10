@@ -48,6 +48,13 @@
     padding: 15px 20px;
 }
 
+.entityFormTab {
+    display:none;
+}
+.entityFormTab.active {
+    display:block;
+}
+
 .listgrid-body-wrapper tbody tr td:first-child a:not(.workflow-icon),  tbody tr td:first-child a:not(.workflow-icon) {
     color: #809831;
     text-decoration: underline;
