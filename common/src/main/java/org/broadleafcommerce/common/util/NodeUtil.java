@@ -38,6 +38,12 @@ public class NodeUtil {
 
     static Logger LOG = Logger.getLogger(NodeUtil.class.getName());
 
+    private static final String TEXT_ELEMENT_NAME = "#text";
+    private static final String MO_GROUP = "mo:group";
+    private static final String GROUP_NAME = "groupName";
+    private static final String MO_TAB = "mo:tab";
+    private static final String TAB_NAME = "tabName";
+
     /**
      * a simple implementation of the Comparator interface, (applied to the Node class) that uses the value of a given 
      * node attribute as comparison criterion. 
@@ -63,12 +69,32 @@ public class NodeUtil {
         public int compare(Node o1, Node o2) {
             NamedNodeMap attributes1 = o1.getAttributes();
             NamedNodeMap attributes2 = o2.getAttributes();
-            if (attributes1 == null || attributes2 == null) {
+            if (attributes1 == null) {
+                return 1;
+            } else if (attributes2 == null) {
                 return -1;
+            } else if (MO_TAB.equals(o1.getNodeName()) && !MO_TAB.equals(o2.getNodeName())) {
+                return -1;
+            } else if (!MO_TAB.equals(o1.getNodeName()) && MO_TAB.equals(o2.getNodeName())) {
+                return 1;
+            } else if (MO_GROUP.equals(o1.getNodeName()) && !MO_GROUP.equals(o2.getNodeName())) {
+                return -1;
+            } else if (!MO_GROUP.equals(o1.getNodeName()) && MO_GROUP.equals(o2.getNodeName())) {
+                return 1;
             }
 
-            Node id1 = attributes1.getNamedItem(attributeName);
-            Node id2 = attributes2.getNamedItem(attributeName);
+            Node id1, id2;
+            if (MO_TAB.equals(o1.getNodeName()) && MO_TAB.equals(o2.getNodeName())) {
+                id1 = attributes1.getNamedItem(TAB_NAME);
+                id2 = attributes2.getNamedItem(TAB_NAME);
+            } else if (MO_GROUP.equals(o1.getNodeName()) && MO_GROUP.equals(o2.getNodeName())) {
+                id1 = attributes1.getNamedItem(GROUP_NAME);
+                id2 = attributes2.getNamedItem(GROUP_NAME);
+            } else {
+                id1 = attributes1.getNamedItem(attributeName);
+                id2 = attributes2.getNamedItem(attributeName);
+            }
+
             if (id1 == null || id2 == null) {
                 return -1;
             }
@@ -129,12 +155,16 @@ public class NodeUtil {
         TreeSet<Node> resultSet = new TreeSet<Node>(comparator);
         if (list1 != null) {
             for (int i = 0; i < list1.getLength(); i++) {
-                resultSet.add(list1.item(i));
+                if (!TEXT_ELEMENT_NAME.equals(list1.item(i).getNodeName())) {
+                    resultSet.add(list1.item(i));
+                }
             }
         }
         if (list2 != null) {
             for (int i = 0; i < list2.getLength(); i++) {
-                resultSet.add(list2.item(i));
+                if (!TEXT_ELEMENT_NAME.equals(list2.item(i).getNodeName())) {
+                    resultSet.add(list2.item(i));
+                }
             }
         }
         for (Node node : resultSet) {
