@@ -19,6 +19,7 @@
  */
 .app-content .content {
     min-width: 912px;
+    margin-left: 50px;
 }
 
 .col8 {
@@ -59,6 +60,7 @@
 
 .app-content .side-nav {
     z-index: 300;
+    width: 50px;
 }
 
 .app-content .side-nav ul li {
@@ -80,22 +82,28 @@
 
 .app-content .side-nav ul li a {
     background-image: none;
+    width: 50px;
+    height: 50px;
 }
 
 .app-content .side-nav ul li a.blc-icon-blc-leaf:before {
-    font-size: 4em;
+    font-size: 3.2em;
     color: #809831;
-    top: 12px;
-    left: 12px;
+    top: 3px;
+    left: 3px;
 }
 
 .app-content .side-nav ul li a:before {
-    font-size: 2em;
+    font-size: 1.75em;
     color: #A4A4A4;
     text-shadow: none;
     position: absolute;
-    top: 26px;
-    left: 23px;
+    top: 14px;
+    left: 11px;
+}
+
+.content .section-content #secondary-nav .secondary-nav .nav-links li a {
+    padding: 10px 30px !important;
 }
 
 /*.app-content .content .section-content .main-content .listgrid-container {*/
@@ -231,7 +239,6 @@ circle {
 
 .app-content .content .site-bar .button {
     line-height: inherit;
-    margin: 7px 0 7px 12px;
 }
 
 tr {
