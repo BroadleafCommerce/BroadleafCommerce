@@ -19,6 +19,7 @@
  */
 .app-content .content {
     min-width: 912px;
+    margin-left: 50px;
 }
 
 .col8 {
@@ -36,6 +37,7 @@
 
 .app-content .content .section-content .main-content .content-yield {
     padding: 10px 40px;
+    max-width: 2000px;
 }
 
 .content-yield h4.empty-main-list-grid {
@@ -44,6 +46,13 @@
 
 .app-content .fieldset-card .fieldset-card-content {
     padding: 15px 20px;
+}
+
+.entityFormTab {
+    display:none;
+}
+.entityFormTab.active {
+    display:block;
 }
 
 .listgrid-body-wrapper tbody tr td:first-child a:not(.workflow-icon),  tbody tr td:first-child a:not(.workflow-icon) {
@@ -58,6 +67,7 @@
 
 .app-content .side-nav {
     z-index: 300;
+    width: 50px;
 }
 
 .app-content .side-nav ul li {
@@ -79,22 +89,28 @@
 
 .app-content .side-nav ul li a {
     background-image: none;
+    width: 50px;
+    height: 50px;
 }
 
 .app-content .side-nav ul li a.blc-icon-blc-leaf:before {
-    font-size: 4em;
+    font-size: 3.2em;
     color: #809831;
-    top: 12px;
-    left: 12px;
+    top: 3px;
+    left: 3px;
 }
 
 .app-content .side-nav ul li a:before {
-    font-size: 2em;
+    font-size: 1.75em;
     color: #A4A4A4;
     text-shadow: none;
     position: absolute;
-    top: 26px;
-    left: 23px;
+    top: 14px;
+    left: 11px;
+}
+
+.content .section-content #secondary-nav .secondary-nav .nav-links li a {
+    padding: 10px 30px !important;
 }
 
 /*.app-content .content .section-content .main-content .listgrid-container {*/
@@ -230,7 +246,6 @@ circle {
 
 .app-content .content .site-bar .button {
     line-height: inherit;
-    margin: 7px 0 7px 12px;
 }
 
 tr {
@@ -1684,16 +1699,41 @@ div.uploadMessage {
     margin: auto;
 }
 
-.input-group-btn button.to-one-lookup.secondary.button {
+.input-group-btn button.button {
     height: 34px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     line-height: 34px;
+    width: 40px;
+}
+
+.input-group-btn button.button:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.input-group-btn button.button:first-child:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .input-group-btn {
     display: table-cell;
     width: 1%;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.input-group-btn>.button, .input-group-btn>.btn-group {
+    margin-right: -2px;
+}
+
+.input-group-btn>.button, .input-group-btn>.btn-group {
+    margin-right: -1px;
+}
+
+.input-group-btn>.button+.button {
+    margin-left: -2px;
 }
 
 .input-group {

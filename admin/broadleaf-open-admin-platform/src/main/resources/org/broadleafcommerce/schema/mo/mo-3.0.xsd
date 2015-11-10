@@ -22,8 +22,8 @@
     <xsd:element name="group">
         <xsd:complexType>
             <xsd:group ref="groupPropertyGroup"/>
-            <xsd:attribute name="tabName" use="required"/>
             <xsd:attribute name="groupName" use="required"/>
+            <xsd:attribute name="tabName"/>
         </xsd:complexType>
     </xsd:element>
 

@@ -21,19 +21,6 @@
     'use strict';
 
     $.fn.broadleafTabs = function(options) {
-
-        var initTabs = function() {
-
-            // Only show the 'active' tab
-            $.each($('.entityFormTab'), function(key, value) {
-                if ($(value).hasClass('active')) {
-                    $(value).show();
-                } else {
-                    $(value).hide();
-                }
-            });
-        };
-
         $(document).on('click', '.nav-tabs li a', function(e) {
             e.preventDefault();
 
@@ -74,8 +61,6 @@
                 BLCAdmin.updateFields(BLCAdmin.getActiveTab());
             }
         });
-
-        initTabs();
     };
 
 })(jQuery, this);

@@ -61,7 +61,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
         }
 
         for (AdminTabPresentation tabPresentation : annot.tabs()) {
-            metadata.put(tabPresentation.name(), addTabMetadata(tabPresentation, addMetadataRequest.getTargetClass(), metadata));
+            metadata.put(tabPresentation.name(), buildTabMetadata(tabPresentation, addMetadataRequest.getTargetClass(), metadata));
         }
 
         return MetadataProviderResponse.HANDLED;
@@ -82,7 +82,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
             }
         }
         for (AdminGroupPresentationOverride groupOverride : annot.groupOverrides()) {
-            GroupMetadata group = getGroupFromMetadata(groupOverride.tabName(), groupOverride.groupName(), metadata);
+            GroupMetadata group = getGroupFromMetadata(groupOverride.groupName(), metadata);
             if (group != null) {
                 applyGroupMetadataOverrideViaAnnotation(group, groupOverride);
             }
@@ -140,7 +140,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
         String tabName = keySplit[0];
         String groupName = keySplit[1];
 
-        GroupMetadata group = getGroupFromMetadata(tabName, groupName, metadata);
+        GroupMetadata group = getGroupFromMetadata(groupName, metadata);
         if (group != null) {
             if (override.getName() != null) {
                 group.setGroupName(override.getName());
@@ -160,11 +160,28 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
             if (override.getTooltip() != null) {
                 group.setTooltip(override.getTooltip());
             }
+        } else {
+            buildGroupFromMetadataOverride(groupName, tabName, override, metadata);
         }
     }
 
-    private void applyTabMetadataOverrideViaXml(String overrideKey, MetadataOverride override, Map<String, TabMetadata> metadata) {
-        TabMetadata tab = getTabFromMetadata(overrideKey, metadata);
+    private void buildGroupFromMetadataOverride(String groupName, String tabName, GroupMetadataOverride override, Map<String, TabMetadata> metadata) {
+        TabMetadata constructedTab = getTabFromMetadata(tabName, metadata);
+        groupName = override.getName() == null || override.getName().isEmpty() ? groupName : override.getName();
+
+        GroupMetadata group = new GroupMetadata();
+        group.setGroupName(groupName);
+        group.setGroupOrder(override.getOrder());
+        group.setColumn(override.getColumn());
+        group.setUntitled(override.getUntitled());
+        group.setTooltip(override.getTooltip());
+        group.setCollapsed(override.getCollapsed());
+
+        constructedTab.getGroupMetadata().put(groupName, group);
+    }
+
+    private void applyTabMetadataOverrideViaXml(String tabName, MetadataOverride override, Map<String, TabMetadata> metadata) {
+        TabMetadata tab = getTabFromMetadata(tabName, metadata);
         if (tab != null) {
             if (override.getName() != null) {
                 tab.setTabName(override.getName());
@@ -172,10 +189,22 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
             if (override.getOrder() != null) {
                 tab.setTabOrder(override.getOrder());
             }
+        } else {
+            buildTabFromMetadataOverride(tabName, override, metadata);
         }
     }
 
-    protected TabMetadata addTabMetadata(AdminTabPresentation tabPresentation, Class<?> owningClass, Map<String, TabMetadata> metadata) {
+    private void buildTabFromMetadataOverride(String tabName, MetadataOverride override, Map<String, TabMetadata> metadata) {
+        tabName = override.getName() == null || override.getName().isEmpty() ? tabName : override.getName();
+
+        TabMetadata tab = new TabMetadata();
+        tab.setTabName(tabName);
+        tab.setTabOrder(override.getOrder());
+        tab.setGroupMetadata(new HashMap<String, GroupMetadata>());
+        metadata.put(tabName, tab);
+    }
+
+    protected TabMetadata buildTabMetadata(AdminTabPresentation tabPresentation, Class<?> owningClass, Map<String, TabMetadata> metadata) {
         TabMetadata constructedTab = getTabFromMetadata(tabPresentation.name(), metadata);
 
         TabMetadata tab;
@@ -192,8 +221,8 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
         }
 
         for (AdminGroupPresentation groupPresentation : tabPresentation.groups()) {
-            if (getGroupFromMetadata(tabPresentation.name(), groupPresentation.name(), metadata) == null) {
-                groupMetadataMap.put(groupPresentation.name(), addGroupMetadata(groupPresentation, owningClass, metadata));
+            if (getGroupFromMetadata(groupPresentation.name(), metadata) == null) {
+                groupMetadataMap.put(groupPresentation.name(), buildGroupMetadata(groupPresentation, owningClass, metadata));
             }
         }
         tab.setGroupMetadata(groupMetadataMap);
@@ -201,7 +230,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
         return tab;
     }
 
-    protected GroupMetadata addGroupMetadata(AdminGroupPresentation groupPresentation, Class<?> owningClass, Map<String, TabMetadata> metadata) {
+    protected GroupMetadata buildGroupMetadata(AdminGroupPresentation groupPresentation, Class<?> owningClass, Map<String, TabMetadata> metadata) {
         GroupMetadata group = new GroupMetadata();
 
         group.setOwningClass(owningClass.getCanonicalName());
@@ -219,14 +248,14 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
         return metadata.get(tabName);
     }
 
-    private GroupMetadata getGroupFromMetadata(String tabName, String groupName, Map<String, TabMetadata> metadata) {
-        TabMetadata tab = metadata.get(tabName);
-
-        if (tab == null || tab.getGroupMetadata() == null) {
-            return null;
+    private GroupMetadata getGroupFromMetadata(String groupName, Map<String, TabMetadata> metadata) {
+        for (TabMetadata tabMetadata : metadata.values()) {
+            Map<String, GroupMetadata> groupMetadata = tabMetadata.getGroupMetadata();
+            if (groupMetadata != null && groupMetadata.get(groupName) != null) {
+                return groupMetadata.get(groupName);
+            }
         }
-
-        return tab.getGroupMetadata().get(groupName);
+        return null;
     }
 
     @Override
