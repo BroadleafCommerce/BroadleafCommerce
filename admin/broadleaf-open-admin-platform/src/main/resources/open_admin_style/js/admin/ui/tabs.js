@@ -68,8 +68,11 @@
                     $(value).hide();
                 }
             });
-            BLCAdmin.initializeFields(BLCAdmin.getActiveTab());
-            BLCAdmin.updateFields(BLCAdmin.getActiveTab());
+
+            if($(this).closest('.oms') === 0) {
+                BLCAdmin.initializeFields(BLCAdmin.getActiveTab());
+                BLCAdmin.updateFields(BLCAdmin.getActiveTab());
+            }
         });
 
         initTabs();
