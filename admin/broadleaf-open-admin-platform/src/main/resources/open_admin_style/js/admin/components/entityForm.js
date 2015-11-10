@@ -218,10 +218,6 @@ $(document).ready(function() {
 
                     $(this).find('.asset-grid-container').replaceWith($assetGrid);
                     $(this).find('.asset-listgrid').replaceWith($assetListGrid);
-
-                    $(this).find('.listgrid-container').each(function (index, container) {
-                        BLCAdmin.listGrid.initialize($(container));
-                    });
                 });
 
                 hideTabSpinner($tab, $tabBody);
