@@ -34,7 +34,7 @@
 
 
             <div class="input-group">
-                <input class="display-value-none-selected form-control" type="text" style="display: none;" readonly="readonly" value="&lt;[[#{No_Value_Selected}]]&gt;" />
+                <input class="display-value-none-selected form-control" type="text" style="display: none;" readonly="readonly" th:value="#{No_Value_Selected}" />
                 <input class="display-value read-only form-control" type="text" th:value="*{fields['__${field.name}__'].displayValue}" readonly="readonly"/>
                 <span class="input-group-btn">
                     <button class="clear-foreign-key secondary button"
@@ -42,7 +42,7 @@
                             type="button" th:inline="text"
                             th:unless="${field.required}"
                             th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
-                        <i class="blc-icon-delete"></i>&nbsp;[[#{Clear}]]
+                        <i class="fa fa-times"></i>
                     </button>
 
                     <button class="to-one-lookup secondary button"
@@ -50,7 +50,7 @@
                             type="button" th:inline="text"
                             th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})},
                                  data-dynamic-field=${field.attributes['dynamicField']}">
-                        <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
+                        <i class="icon-search"></i>
                     </button>
                 </span>
             </div>

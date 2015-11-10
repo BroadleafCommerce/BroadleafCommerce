@@ -1684,16 +1684,41 @@ div.uploadMessage {
     margin: auto;
 }
 
-.input-group-btn button.to-one-lookup.secondary.button {
+.input-group-btn button.button {
     height: 34px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     line-height: 34px;
+    width: 40px;
+}
+
+.input-group-btn button.button:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.input-group-btn button.button:first-child:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .input-group-btn {
     display: table-cell;
     width: 1%;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.input-group-btn>.button, .input-group-btn>.btn-group {
+    margin-right: -2px;
+}
+
+.input-group-btn>.button, .input-group-btn>.btn-group {
+    margin-right: -1px;
+}
+
+.input-group-btn>.button+.button {
+    margin-left: -2px;
 }
 
 .input-group {

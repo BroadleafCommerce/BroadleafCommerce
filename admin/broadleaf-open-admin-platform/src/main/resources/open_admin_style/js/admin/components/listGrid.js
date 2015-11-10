@@ -826,8 +826,10 @@ $(document).ready(function() {
     $('body').on('click', 'button.clear-foreign-key', function(event) {        
         var $container = $(this).closest('div.additional-foreign-key-container');
         var $this = $(this);
+
         // Remove the current display value
-        $this.prev().html($(this).prev().prev().html());
+        var emptyInput = $this.closest('.input-group').find('input:not(:visible)');
+        $this.closest('.input-group').find('input:visible').val(emptyInput.val());
 
         if (typeof BLCAdmin.treeListGrid !== 'undefined') {
             BLCAdmin.treeListGrid.removeParentPathJson($container.closest('.modal-add-entity-form.enterprise-tree-add'));

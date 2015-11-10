@@ -483,9 +483,9 @@ var BLCAdmin = (function($) {
             
             // Set the blank value for foreign key lookups
             $container.find('.foreign-key-value-container').each(function(index, element) {
-                var $displayValue = $(this).find('span.display-value');
-                if ($displayValue.text() == '') {
-                    $displayValue.text($(this).find('span.display-value-none-selected').text());
+                var $displayValue = $(this).find('input.display-value');
+                if ($displayValue.val() == '') {
+                    $displayValue.val($(this).find('input.display-value-none-selected').val());
                 }
             });
 
