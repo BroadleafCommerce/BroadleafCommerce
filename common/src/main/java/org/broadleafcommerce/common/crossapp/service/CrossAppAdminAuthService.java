@@ -33,6 +33,9 @@ import java.util.List;
  */
 public interface CrossAppAdminAuthService {
 
+
+    public String getUrlForSiteAuth(String forwardUrl, List<String> rolesToContrib);
+
     /**
      * Composes a full URL that can be returned from a controller to redirect the user to the cross app authentication
      * controller endpoint on the site application.
