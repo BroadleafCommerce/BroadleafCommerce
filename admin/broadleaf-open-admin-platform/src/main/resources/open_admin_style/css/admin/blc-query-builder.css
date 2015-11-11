@@ -433,6 +433,15 @@
     width: 40%;
 }
 
+.query-builder-filters-container .rule-filter-container {
+    width: 30%;
+}
+.query-builder-filters-container .rule-operator-container {
+    width: 24%;
+}
+.query-builder-filters-container .rule-value-container {
+    width: 35%;
+}
 .rule-container:after {
     content: "";
     display: table;
@@ -451,4 +460,16 @@
 .query-builder-filters-container .rules-group-body .rule-filter-container .filter-text {
     display: inline-block;
     margin-top: 2px;
+}
+
+.read-only:before {
+    content: '\2022';
+    font-size: 24px;
+    padding: 4px;
+    vertical-align: bottom;
+}
+
+.filter-group-header-label {
+    margin: 15px !important;
+    color: #2c2c2c;
 }
