@@ -47,19 +47,8 @@
             tab = '.' + tab + 'Tab';
             $(tab).addClass('active');
 
-            // Show or hide tab content based on 'active' class
-            $.each(entityForms, function(key, value) {
-                if ($(value).hasClass('active')) {
-                    $(value).show();
-                } else {
-                    $(value).hide();
-                }
-            });
-
-            if($(this).closest('.oms') === 0) {
-                BLCAdmin.initializeFields(BLCAdmin.getActiveTab());
-                BLCAdmin.updateFields(BLCAdmin.getActiveTab());
-            }
+            BLCAdmin.initializeFields(BLCAdmin.getActiveTab());
+            BLCAdmin.updateFields(BLCAdmin.getActiveTab());
         });
     };
 
