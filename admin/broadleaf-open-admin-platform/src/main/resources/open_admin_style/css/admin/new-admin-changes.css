@@ -18,8 +18,7 @@
  * #L%
  */
 .app-content .side-nav {
-    height: auto;
-    min-height: auto;
+    min-height: inherit;
 }
 
 .app-content .content {
