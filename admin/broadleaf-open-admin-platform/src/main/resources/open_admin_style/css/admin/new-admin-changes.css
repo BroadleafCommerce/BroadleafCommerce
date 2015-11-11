@@ -615,6 +615,10 @@ button:disabled {
     padding: 0px 10px;
 }
 
+.selectize-control.query-builder-selectize-input .selectize-input input[type="text"] {
+    height: 32px;
+}
+
 .selectize-control.multi .selectize-input [data-value] {
     background-color: #8EAA2B;
     border:none;
@@ -782,7 +786,7 @@ button:disabled {
 }
 
 input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"] {
-    height: 32px;
+    height: 34px;
 }
 
 input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"], input[type="datetime"], input[type="date"], input[type="month"], input[type="week"], input[type="time"], input[type="datetime-local"], textarea {
