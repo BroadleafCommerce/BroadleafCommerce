@@ -462,14 +462,14 @@
     margin-top: 2px;
 }
 
-.read-only:before {
+.query-builder-filters-container .read-only:before {
     content: '\2022';
     font-size: 24px;
     padding: 4px;
     vertical-align: bottom;
 }
 
-.filter-group-header-label {
+.query-builder-filters-container .filter-group-header-label {
     margin: 15px !important;
     color: #2c2c2c;
 }
