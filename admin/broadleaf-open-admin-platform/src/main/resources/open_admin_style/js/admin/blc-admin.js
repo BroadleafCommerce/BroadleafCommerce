@@ -786,7 +786,11 @@ var BLCAdmin = (function($) {
                         }
                         
                         // Toggle the visiblity of the child field appropriately
-                        $childField.toggle(shouldShow);
+                        if ($childField.siblings('.field-group').length) {
+                            $childField.toggle(shouldShow);
+                        } else {
+                            $childField.closest('.fieldset-card').toggle(shouldShow);
+                        }
                         
                         if (options != null 
                                 && options['additionalChangeAction'] 
