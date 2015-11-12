@@ -579,9 +579,11 @@
                 });
             }
 
-            var $tbody = $('body').find('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
+            var $filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
+            var $tbody = $filterButton.closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
+            var $filterFields = $filterButton.closest('.listgrid-container').find('.filter-fields');
             BLC.ajax({
-                url: $($('.filter-fields')[0]).data('action'),
+                url: $($filterFields[0]).data('action'),
                 type: "GET",
                 data: $.param(inputs)
             }, function(data) {
@@ -744,9 +746,9 @@
             $('#' + hiddenId).val(jsonVal);
 
             // if there are active filters, change the filter button to "Edit"
+            var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
             if (filterData.rules.length > 0) {
-                if (!$('.clear-filters').length) {
-                    var filterButton = $('.filter-button');
+                if (!filterButton.closest('.button-group').length) {
 
                     filterButton.text("Edit Filter");
 
@@ -759,21 +761,21 @@
                         'class': 'button-group'
                     });
 
-                    buttonGroup.append(filterButton);
+                    buttonGroup.append(filterButton.clone());
                     buttonGroup.append(clearButton);
+                    $(buttonGroup).insertBefore(filterButton.closest('.filter-info:visible').find('.filter-builder-data'));
 
-                    $(buttonGroup).insertBefore($('.filter-info:visible .filter-builder-data'));
-                    //$('.filter-info:visible').append(buttonGroup);
+                    filterButton.remove();
                 }
-                $('.filter-text').show();
+
+                filterButton.closest('.sticky-container').find('.filter-text').show();
             } else {
-                if ($('.filter-button').text() != 'Filter') {
+                if ($(filterButton).text() != 'Filter') {
                     // change "edit filter" button back to "filter"
-                    var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
                     filterButton.text("Filter");
                     filterButton.insertBefore(filterButton.parent());
                     filterButton.siblings('.button-group:visible').remove();
-                    $('.filter-text').hide();
+                    filterButton.closest('.sticky-container').find('.filter-text').hide();
                 }
             }
         }
@@ -852,7 +854,7 @@ $(document).ready(function() {
         el.find('.read-only').remove();
         el.find('.filter-text').remove();
         var readonlySpan = $("<span>", {
-            html: "Filter where <strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
+            html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
             class: "read-only"
         });
         el.append($(readonlySpan));
@@ -895,7 +897,7 @@ $(document).ready(function() {
         // make rule filter field readonly
         var filterText = el.find('div.rule-filter-container > div > div.selectize-input .item').text();
         var readonlyFilter = $("<span>", {
-            html: "Filter where <strong>" + filterText + "</strong>",
+            html: "<strong>" + filterText + "</strong>",
             class: "filter-text"
         });
         el.find('div.rule-filter-container').append($(readonlyFilter));
@@ -907,7 +909,7 @@ $(document).ready(function() {
         if (!hasSelectize.length) {
             el.find('.rule-value-container input').show();
         } else {
-            el.find('.rule-value-container .selectize-input').css('width','233px');
+            //el.find('.rule-value-container .selectize-input').css('width','233px');
         }
         el.find('.rule-value-container').show();
 
@@ -941,23 +943,25 @@ $(document).ready(function() {
         var jsonVal = JSON.stringify({ 'data' : [] });
         $('#' + hiddenId).val(jsonVal);
 
-        // remove query string from URL
-        $(BLCAdmin.history.getUrlParameters()).each(function(index, input) {
-            for (var key in input) {
-                BLCAdmin.history.replaceUrlParameter(key, null);
-            }
-        });
+        var $tbody = $filterButton.closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
+        if ($tbody.data('listgridtype') == 'main') {        // remove query string from URL
+            $(BLCAdmin.history.getUrlParameters()).each(function (index, input) {
+                for (var key in input) {
+                    BLCAdmin.history.replaceUrlParameter(key, null);
+                }
+            });
+        }
 
         // click the search button to reload the list grid
-        $('.custom-entity-search input#listgrid-search').val('');
-        $('.custom-entity-search button.search-button').click();
+        $filterButton.closest('.listgrid-search').find('.custom-entity-search input#listgrid-search').val('');
+        $filterButton.closest('.listgrid-search').find('.custom-entity-search button.search-button').click();
 
         // change "edit filter" button back to "filter"
         $filterButton.text("Filter");
         $filterButton.insertBefore($filterButton.parent());
         $filterButton.siblings('.button-group').remove();
 
-        $('.filter-text').hide();
+        $filterButton.closest('.sticky-container').find('.filter-text').hide();
     });
 
     /**
@@ -1021,9 +1025,9 @@ $(document).ready(function() {
             }
 
             el.parent().parent().find('div.rule-filter-container > div > div.selectize-input').width("244px");
-            el.parent().parent().find('div.rule-operator-container > div > div.selectize-input').width("122px");
-            el.parent().parent().find('div.rule-value-container > div > div.selectize-input').width("245px");
-            el.parent().parent().find('div.rule-value-container').css("display", "inline-block");
+            //el.parent().parent().find('div.rule-operator-container > div > div.selectize-input').width("122px");
+            //el.parent().parent().find('div.rule-value-container > div > div.selectize-input').width("245px");
+            //el.parent().parent().find('div.rule-value-container').css("display", "inline-block");
         });
 
         $modal.find('.rule-container').each(function(i, el) {
@@ -1055,7 +1059,7 @@ $(document).ready(function() {
 
             el.find('.read-only').remove();
             var readonlySpan = $("<span>", {
-                html: "Filter where <strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
+                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
                 class: "read-only"
             });
             el.append($(readonlySpan));
@@ -1082,15 +1086,18 @@ $(document).ready(function() {
 
             // if we don't have the clear filters button, add it
             var filterData = $.parseJSON($('#' + hiddenId).val());
+
             // if there are active filters, change the filter button to "Edit"
+            var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
             if (filterData.data.length == 1) {
                 if (filterData.data[0].rules.length > 0) {
-                    if (!$('.clear-filters').length) {
-                        var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
+
+                    if (!filterButton.closest('.button-group').length) {
+
                         filterButton.text("Edit Filter");
 
                         var clearButton = $('<button>', {
-                            'html' : '<i class="fa fa-times" />',
+                            'html': '<i class="fa fa-times" />',
                             'class': 'button dropdown-toggle clear-filters'
                         });
 
@@ -1098,21 +1105,22 @@ $(document).ready(function() {
                             'class': 'button-group'
                         });
 
-                        buttonGroup.append(filterButton);
+                        buttonGroup.append(filterButton.clone());
                         buttonGroup.append(clearButton);
+                        $(buttonGroup).insertBefore(filterButton.closest('.filter-info:visible').find('.filter-builder-data'));
 
-                        $(buttonGroup).insertBefore($('.filter-info:visible .filter-builder-data'));
-                        //$('.filter-info:visible').append(buttonGroup);
-                        $('.filter-text').show();
+                        filterButton.remove();
+                        filterButton.closest('.sticky-container').find('.filter-text').show();
                     }
                 }
             } else {
-                // change "edit filter" button back to "filter"
-                var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
-                filterButton.text("Filter");
-                filterButton.insertBefore(filterButton.parent());
-                filterButton.siblings('.button-group:visible').remove();
-                $('.filter-text').hide();
+                if ($(filterButton).text() != 'Filter') {
+                    // change "edit filter" button back to "filter"
+                    filterButton.text("Filter");
+                    filterButton.insertBefore(filterButton.parent());
+                    filterButton.siblings('.button-group:visible').remove();
+                    filterButton.closest('.sticky-container').find('.filter-text').hide();
+                }
             }
         });
     });
@@ -1134,8 +1142,8 @@ $(document).ready(function() {
             }
 
             el.parent().parent().find('div.rule-filter-container > div > div.selectize-input').width("222px");
-            el.parent().parent().find('div.rule-operator-container > div > div.selectize-input').width("100px");
-            el.parent().parent().find('div.rule-value-container > div > div.selectize-input').width("223px");
+            //el.parent().parent().find('div.rule-operator-container > div > div.selectize-input').width("100px");
+            //el.parent().parent().find('div.rule-value-container > div > div.selectize-input').width("223px");
         }
     });
 

@@ -5,10 +5,10 @@
         <!--<h2 th:id="logo">Demo Site</h2>-->
     <!--</div>-->
 
-    <div class="secondary-nav" th:id="${module.icon}" th:each="module : ${adminMenu.adminModules}" th:inline="text"
+    <div class="secondary-nav" th:id="${module.moduleKey}" th:each="module : ${adminMenu.adminModules}" th:inline="text"
         th:classappend="${currentAdminModule != null and currentAdminModule.id == module.id}? 'active'">
 
-        <h2 th:id="${module.moduleKey}" th:text="#{__${module.moduleKey}__}"></h2>
+        <h2 th:text="#{__${module.moduleKey}__}"></h2>
 
         <ul class="nav-links">
             <li th:each="section : ${module.sections}"

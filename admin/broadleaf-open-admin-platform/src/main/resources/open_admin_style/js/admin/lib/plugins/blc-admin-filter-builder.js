@@ -32,7 +32,7 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
      * (e.g. Order Item - Quantity in between [text] , [text])
      */
     this.on('afterCreateRuleInput.filter', function(h, rule) {
-        rule.$el.find('.rule-operator-container > div > div.selectize-input').width('100px');
+        //rule.$el.find('.rule-operator-container > div > div.selectize-input').width('100px');
 
         var numElements = rule.$el.find('.rule-value-container span.rule-val-sep').length + 1;
         if (numElements > 1) {
@@ -72,7 +72,7 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
         // make rule filter field readonly
         var filterText = el.find('div.rule-filter-container > div > div.selectize-input .item').text();
         var readonlyFilter = $("<span>", {
-            html: "Filter where <strong>" + filterText + "</strong>",
+            html: "<strong>" + filterText + "</strong>",
             class: "filter-text"
         });
         el.find('div.rule-filter-container').append($(readonlyFilter));
@@ -129,11 +129,12 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
             }).hide();
 
             //TODO i18n the text
-            //var followingRulesSpan = $("<span>", {"class": "rules-group-header-span", "text": "Filters Applied"});
-            //$h.find('.group-conditions').append(followingRulesSpan);
+            var filterWhereLabel = $("<label>", {"class": "filter-group-header-label", "text": "Filter where:"});
+            $h.find('.group-conditions').append(filterWhereLabel);
+
             $h.find('.group-actions button').addClass('button primary').text('Add New Filter');
 
-            $h.find('.rules-group-header').append($("<hr />"));
+            //$h.find('.rules-group-header').append($("<hr />"));
             h.value = $h.prop('outerHTML');
         }
     });
@@ -157,10 +158,10 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
         var el = rule.$el;
         rule.$el.append('<div style="clear: both"></div>');
 
-        el.find('div.rule-filter-container > div > div.selectize-input').width("222px");
-        el.find('div.rule-operator-container > div > div.selectize-input').width("100px");
-        el.find('div.rule-value-container > div > div.selectize-input').width("223px");
-        el.find('div.rule-value-container').css("display", "inline-block");
+        //el.find('div.rule-filter-container > div > div.selectize-input').width("222px");
+        //el.find('div.rule-operator-container > div > div.selectize-input').width("100px");
+        //el.find('div.rule-value-container > div > div.selectize-input').width("223px");
+        //el.find('div.rule-value-container').css("display", "inline-block");
     }
 
 }, {
