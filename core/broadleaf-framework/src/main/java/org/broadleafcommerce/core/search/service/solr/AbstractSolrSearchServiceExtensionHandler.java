@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -29,12 +30,13 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.util.List;
-
+import java.util.Map;
 
 /**
  * Implementors of the SolrSearchServiceExtensionHandler interface should extend this class so that if 
@@ -67,6 +69,18 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
     }
 
     @Override public ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<Product> products) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override public ExtensionResultStatusType getSearchFacets(List<SearchFacet> searchFacets) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override public ExtensionResultStatusType attachFacet(SolrQuery query, String indexField, SearchFacetDTO dto) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override public ExtensionResultStatusType setFacetResults(Map<String, SearchFacetDTO> namedFacetMap, QueryResponse response) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

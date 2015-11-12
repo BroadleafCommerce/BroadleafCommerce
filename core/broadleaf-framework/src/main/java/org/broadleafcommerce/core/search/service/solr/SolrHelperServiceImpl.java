@@ -44,6 +44,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
+import org.apache.solr.common.util.NamedList;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -69,7 +70,6 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -83,7 +83,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-
 import javax.annotation.Resource;
 import javax.jms.IllegalStateException;
 
@@ -563,6 +562,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 facetDTO.getFacetValues().add(resultDTO);
             }
         }
+
+        searchExtensionManager.getProxy().setFacetResults(namedFacetMap, response);
     }
 
     @Override
@@ -589,19 +590,23 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
             SearchFacetDTO dto = entry.getValue();
 
-            // Clone the list - we don't want to remove these facets from the DB
-            List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
+            ExtensionResultStatusType status = searchExtensionManager.getProxy().attachFacet(query, entry.getKey(), dto);
 
-            if (searchExtensionManager != null) {
-                searchExtensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
-            }
+            if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+                // Clone the list - we don't want to remove these facets from the DB
+                List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
 
-            if (facetRanges != null && facetRanges.size() > 0) {
-                for (SearchFacetRange range : facetRanges) {
-                    query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
+                if (searchExtensionManager != null) {
+                    searchExtensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
                 }
-            } else {
-                query.addFacetField(getSolrTaggedFieldString(entry.getKey(), "ex", null));
+
+                if (facetRanges != null && facetRanges.size() > 0) {
+                    for (SearchFacetRange range : facetRanges) {
+                        query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
+                    }
+                } else {
+                    query.addFacetField(getSolrTaggedFieldString(entry.getKey(), "ex", null));
+                }
             }
         }
     }
@@ -683,7 +688,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             @Override
             public String getKey(SearchFacetDTO facet) {
                 return getPropertyNameForIndexField(facet.getFacet().getFieldType().getIndexField(),
-                    FieldType.getInstance(facet.getFacet().getFacetFieldType()));
+                        FieldType.getInstance(facet.getFacet().getFacetFieldType()));
             }
         });
     }
