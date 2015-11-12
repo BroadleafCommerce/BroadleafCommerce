@@ -30,6 +30,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
@@ -39,6 +41,8 @@ import org.springframework.stereotype.Repository;
 @Repository("blCustomerDao")
 public class CustomerDaoImpl implements CustomerDao {
 
+    private static final Log LOG = LogFactory.getLog(CustomerDaoImpl.class);
+    
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
@@ -48,6 +52,31 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public Customer readCustomerById(Long id) {
         return em.find(CustomerImpl.class, id);
+    }
+    
+    @Override
+    public List<Customer> readCustomersByIds(List<Long> ids){
+        if (ids == null || ids.size() == 0) {
+            return null;
+        }
+        if (ids.size() > 100) {
+            LOG.warn("Not recommended to use the readCustomersByIds method for long lists of customerIds, since " +
+                    "Hibernate is required to transform the distinct results. The list of requested" +
+                    "customer ids was (" + ids.size() + ") in length.");
+        }
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Customer> criteria = builder.createQuery(Customer.class);
+        Root<CustomerImpl> customer = criteria.from(CustomerImpl.class);
+        criteria.select(customer);
+
+        // We only want results that match the customer IDs
+        criteria.where(customer.get("id").as(Long.class).in(ids));
+
+        TypedQuery<Customer> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
+
+        return query.getResultList();
     }
 
     @Override

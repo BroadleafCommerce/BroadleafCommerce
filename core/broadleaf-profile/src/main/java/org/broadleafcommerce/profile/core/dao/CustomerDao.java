@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -27,13 +28,15 @@ public interface CustomerDao {
 
     public Customer readCustomerById(Long id);
     
+    public List<Customer> readCustomersByIds(List<Long> ids);
+    
     /**
      * Reads a batch list of customers from the DB.
      * @param start
      * @param pageSize
      * @return
      */
-    List<Customer> readBatchCustomers(int start, int pageSize);
+    public List<Customer> readBatchCustomers(int start, int pageSize);
 
     /**
      * Returns the first customer that match the passed in username, with caching defaulted.
