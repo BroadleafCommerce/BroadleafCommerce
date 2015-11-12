@@ -69,6 +69,10 @@
     text-decoration: underline;
 }
 
+.nav-tabs {
+    white-space: nowrap;
+}
+
 .app-content .side-nav {
     z-index: 300;
     width: 50px;
@@ -757,7 +761,7 @@ button:disabled {
 }
 
 .modal-body .fieldset-card{background-color:white;border:1px solid #e0e0e0;-moz-box-shadow:rgba(0,0,0,0.1) 0px 2px 5px;-webkit-box-shadow:rgba(0,0,0,0.1) 0px 2px 5px;box-shadow:rgba(0,0,0,0.1) 0px 2px 5px;margin-bottom:30px}
-.modal-body .fieldset-card .titlebar{background-color:#FCFBF9;border-bottom:1px solid #e0e0e0;padding: 10px 20px;width:100%;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:#B3B3B3}
+.modal-body .fieldset-card .titlebar{background-color:#FCFBF9;border-bottom:1px solid #e0e0e0;padding: 10px 20px;width:100%;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:#2c2c2c}
 .modal-body .fieldset-card .titlebar .fa{float:right;font-size:16px}
 .modal-body .fieldset-card .fieldset-card-content{padding:20px}
 .modal-body .fieldset-card .fieldset-card-content label{color:#2c2c2c;font-size:13px;font-weight:600;letter-spacing:normal;text-transform:none}
@@ -768,7 +772,7 @@ button:disabled {
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: .05em;
-    color: #B3B3B3;
+    /*color: #B3B3B3;*/
 }
 
 .modal-header h3 {
@@ -888,7 +892,7 @@ input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
     font-size:12px;
     text-transform:uppercase;
     letter-spacing:.05em;
-    color:#B3B3B3;
+    /*color:#B3B3B3;*/
 }
 
 .app-content .field-group label span.alert-wrapper {
