@@ -44,7 +44,6 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
-import org.apache.solr.common.util.NamedList;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -58,6 +57,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.RequiredFacet;
@@ -725,19 +725,28 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                             selectedValues[i] = "\"" + scrubFacetValue(selectedValues[i]) + "\"";
                         }
                     }
-                    StringBuilder valueString = new StringBuilder();
-                    if (rangeQuery) {
-                        valueString.append(solrKey).append(":(");
-                        valueString.append(StringUtils.join(selectedValues, " OR "));
-                        valueString.append(")");
-                    } else {
-                        valueString.append("{!tag=").append(solrKey).append("}");
-                        valueString.append(solrKey).append(":(");
-                        valueString.append(StringUtils.join(selectedValues, " OR "));
-                        valueString.append(")");
+
+                    FieldEntity entityType = namedFacetMap.get(solrKey).getFacet().getFieldType().getIndexField().getField().getEntityType();
+                    List<String> valueStrings = new ArrayList<>();
+                    ExtensionResultStatusType status = searchExtensionManager.getProxy().buildActiveFacetFilter(entityType, solrKey, selectedValues, valueStrings);
+
+                    if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+                        StringBuilder valueString = new StringBuilder();
+
+                        if (rangeQuery) {
+                            valueString.append(solrKey).append(":(");
+                            valueString.append(StringUtils.join(selectedValues, " OR "));
+                            valueString.append(")");
+                        } else {
+                            valueString.append("{!tag=").append(solrKey).append("}");
+                            valueString.append(solrKey).append(":(");
+                            valueString.append(StringUtils.join(selectedValues, " OR "));
+                            valueString.append(")");
+                        }
+                        valueStrings.add(valueString.toString());
                     }
 
-                    query.addFilterQuery(valueString.toString());
+                    query.addFilterQuery(valueStrings.toArray(new String[valueStrings.size()]));
                 }
             }
         }

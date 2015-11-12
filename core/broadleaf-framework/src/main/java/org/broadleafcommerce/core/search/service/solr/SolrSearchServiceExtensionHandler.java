@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
@@ -139,4 +140,16 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @return the result of the handler
      */
     public ExtensionResultStatusType setFacetResults(Map<String, SearchFacetDTO> namedFacetMap, QueryResponse response);
+
+    /**
+     * Builds the active facet filter query string for the given entity type and values. Typically this is only used when you
+     * are doing faceting on nested child documents.
+     *
+     * @param entityType
+     * @param solrKey
+     * @param selectedValues
+     * @param valueStrings
+     * @return
+     */
+    public ExtensionResultStatusType buildActiveFacetFilter(FieldEntity entityType, String solrKey, String[] selectedValues, List<String> valueStrings);
 }
