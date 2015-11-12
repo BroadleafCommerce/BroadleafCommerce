@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -29,12 +30,13 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.util.List;
-
+import java.util.Map;
 
 /**
  * @author Andre Azzolini (apazzolini), bpolster
@@ -109,4 +111,32 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @return the result of the handler, if NOT_HANDLED, then no changes where made
      */
     public ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<Product> products);
+
+    /**
+     * Populates the List of SearchFacet's, or else returns NOT_HANDLED
+     *
+     * @param searchFacets the List to populate
+     * @return the result of the handler
+     */
+    public ExtensionResultStatusType getSearchFacets(List<SearchFacet> searchFacets);
+
+    /**
+     * Attaches the given dto to the given query, if possible
+     *
+     * @param query the SolrQuery to attach the facet to
+     * @param key the key
+     * @param dto
+     * @return the result of the handler
+     */
+    public ExtensionResultStatusType attachFacet(SolrQuery query, String indexField, SearchFacetDTO dto);
+
+    /**
+     * Attaches any additional facet results to the namedFacetMap if they exist. This should only attach facets if they do
+     * not already have result DTOs
+     *
+     * @param namedFacetMap
+     * @param response
+     * @return the result of the handler
+     */
+    public ExtensionResultStatusType setFacetResults(Map<String, SearchFacetDTO> namedFacetMap, QueryResponse response);
 }

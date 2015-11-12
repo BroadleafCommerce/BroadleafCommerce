@@ -706,10 +706,17 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     @Override
     public List<SearchFacetDTO> getSearchFacets() {
-        if (useSku) {
-            return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.SKU));
+        List<SearchFacet> searchFacets = new ArrayList<>();
+        ExtensionResultStatusType status = extensionManager.getProxy().getSearchFacets(searchFacets);
+
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+            if (useSku) {
+                return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.SKU));
+            }
+            return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.PRODUCT));
         }
-        return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.PRODUCT));
+
+        return buildSearchFacetDTOs(searchFacets);
     }
 
     @Override
