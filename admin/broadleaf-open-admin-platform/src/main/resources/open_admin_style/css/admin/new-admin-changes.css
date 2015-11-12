@@ -109,8 +109,12 @@
     color: #A4A4A4;
     text-shadow: none;
     position: absolute;
-    top: 14px;
+    top: 13px;
     left: 12px;
+}
+
+.app-content .side-nav ul li a.fa-usd:before {
+    left: 17px;
 }
 
 .content .section-content #secondary-nav .secondary-nav .nav-links li a {
