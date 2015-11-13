@@ -76,6 +76,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -493,14 +494,14 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     @Override
     public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
-        String query = shs.getExplicitCategoryFieldName() + ":\"" + shs.getCategoryId(category) + "\"";
+        String query = getCategoryFilter(category);
         return findSearchResults("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
     @Override
     public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
-        String query = shs.getCategoryFieldName() + ":\"" + shs.getCategoryId(category) + "\"";
+        String query = getCategoryFilter(category);
         return findSearchResults("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
@@ -515,10 +516,24 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets();
 
-        String catFq = shs.getCategoryFieldName() + ":\"" + shs.getCategoryId(category) + "\"";
+        String catFq = getCategoryFilter(category);
         query = "(" + sanitizeQuery(query) + ")";
         
         return findSearchResults(query, facets, searchCriteria, null, catFq);
+    }
+
+    protected String getCategoryFilter(Category category) {
+        return shs.getCategoryFieldName() + ":(\"" + org.apache.commons.lang3.StringUtils.join(getCategoryIds(category), "\" \"") +  "\")";
+    }
+
+    protected List<Long> getCategoryIds(Category category) {
+        List<Long> categoryIds = new ArrayList<>();
+
+        categoryIds.add(shs.getCategoryId(category));
+
+        extensionManager.getProxy().addAdditionalCategoryIds(category, categoryIds);
+
+        return categoryIds;
     }
 
     public String getLocalePrefix() {

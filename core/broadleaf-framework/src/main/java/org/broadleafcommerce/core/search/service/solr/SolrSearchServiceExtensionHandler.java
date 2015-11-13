@@ -152,4 +152,13 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @return
      */
     public ExtensionResultStatusType buildActiveFacetFilter(FieldEntity entityType, String solrKey, String[] selectedValues, List<String> valueStrings);
+
+    /**
+     * Adds any additional category ids to filter by when category browsing or searching.
+     *
+     * @param category
+     * @param categoryIds
+     * @return
+     */
+    public ExtensionResultStatusType addAdditionalCategoryIds(Category category, List<Long> categoryIds);
 }
