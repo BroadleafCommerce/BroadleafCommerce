@@ -709,7 +709,7 @@ button:disabled {
 .modal-body {
     padding: 0;
     background-color: #F9F7F3;
-    /*overflow: visible;*/
+    overflow: visible;
 }
 
 .modal-body .content-yield {
