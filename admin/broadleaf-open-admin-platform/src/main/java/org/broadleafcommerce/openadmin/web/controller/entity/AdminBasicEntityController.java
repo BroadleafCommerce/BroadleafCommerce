@@ -137,7 +137,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey, crumbs);
-        listGrid.addRowAction(DefaultListGridActions.EDIT);
         listGrid.setSelectType(ListGrid.SelectType.NONE);
         
         Field firstField = listGrid.getHeaderFields().iterator().next();
