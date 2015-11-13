@@ -67,14 +67,14 @@ import javax.persistence.Table;
 @AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "indexField.field.friendlyName", mergeEntries = {
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false),
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3),
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "IndexFieldTypeImpl_indexField")
         }),
         @AdminPresentationMergeOverride(name = "indexField.searchable", mergeEntries = {
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false),
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3),
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "IndexFieldTypeImpl_searchable")
@@ -111,7 +111,7 @@ public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
     @ManyToOne(optional=false, targetEntity = IndexFieldImpl.class)
     @JoinColumn(name = "INDEX_FIELD_ID")
     @AdminPresentation(friendlyName = "IndexFieldTypeImpl_indexField", group = "IndexFieldTypeImpl_description",
-            order=3, gridOrder = 3, visibility=VisibilityEnum.FORM_HIDDEN)
+            order=3, gridOrder = 3, visibility=VisibilityEnum.HIDDEN_ALL)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "field.friendlyName")
     protected IndexField indexField;
 

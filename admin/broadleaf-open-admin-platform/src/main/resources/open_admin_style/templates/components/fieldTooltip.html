@@ -1,3 +1,7 @@
-<i th:if="${field.tooltip}"
-   class="fa fa-question-circle help-tip"
-   th:attr="data-tip=#{${field.tooltip}}" />
+<a href="#" class="tooltip" th:if="${field.tooltip}">
+    <i class="fa fa-question-circle"></i>
+    <span>
+        <img class="callout" th:src="@{/img/admin/tooltip-callout.gif}" />
+        <span th:utext="#{${field.tooltip}}" th:remove="tag"></span>
+    </span>
+</a>
