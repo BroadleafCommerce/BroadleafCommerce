@@ -207,7 +207,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     protected Map<String, OrderItemAttribute> orderItemAttributeMap = new HashMap<String, OrderItemAttribute>();
 
     /**
-     * @deprecated use {@link FulfillmentGroupItem#getTaxes()} ()} or {@link FulfillmentGroupItem#getTotalTax()} ()} ()} instead
+     * @deprecated use {@link FulfillmentGroupItem#getTaxes()} or {@link FulfillmentGroupItem#getTotalTax()} instead
      */
     @Column(name = "TOTAL_TAX")
     @Deprecated
