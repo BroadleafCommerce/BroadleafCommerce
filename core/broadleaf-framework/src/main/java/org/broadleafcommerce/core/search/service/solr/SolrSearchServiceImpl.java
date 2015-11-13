@@ -20,7 +20,7 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -523,7 +523,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     }
 
     protected String getCategoryFilter(Category category) {
-        return shs.getCategoryFieldName() + ":(\"" + org.apache.commons.lang3.StringUtils.join(getCategoryIds(category), "\" \"") +  "\")";
+        return shs.getCategoryFieldName() + ":(\"" + StringUtils.join(getCategoryIds(category), "\" \"") +  "\")";
     }
 
     protected List<Long> getCategoryIds(Category category) {
