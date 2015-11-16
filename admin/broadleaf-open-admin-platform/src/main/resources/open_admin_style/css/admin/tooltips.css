@@ -26,12 +26,12 @@ a.tooltip span {
     padding: 8px 10px;
     margin-top: -29px;
     margin-left: 31px;
-    width: 300px;
+    width: 500px;
     line-height: 16px;
     text-transform: none !important;
 }
 a.tooltip span.left {
-    margin-left: -310px;
+    margin-left: -510px;
 }
 a.tooltip:hover span {
     display: inline;
@@ -66,7 +66,7 @@ a.tooltip span .callout {
     left: -12px;
 }
 a.tooltip span.left .callout {
-    left: 298px;
+    left: 498px;
     -moz-transform: scaleX(-1);
     -o-transform: scaleX(-1);
     -webkit-transform: scaleX(-1);
