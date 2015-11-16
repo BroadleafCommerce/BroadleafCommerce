@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 /**
  * @author Jon Fleschler (jfleschler)
  */
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "SearchRedirectImpl_friendyName",
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
     tabs = {
         @AdminTabPresentation(name = SearchFacetAdminPresentation.TabName.General,
             order = SearchFacetAdminPresentation.TabOrder.General,
@@ -38,31 +38,42 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                                 order = SearchFacetAdminPresentation.GroupOrder.Options,
                                 column = 1)
                 }
+        ),
+            @AdminTabPresentation(name = SearchFacetAdminPresentation.TabName.Dependent,
+            order = SearchFacetAdminPresentation.TabOrder.Dependent,
+            groups = {
+                    @AdminGroupPresentation(name = SearchFacetAdminPresentation.GroupName.Dependent,
+                            order = SearchFacetAdminPresentation.GroupOrder.Dependent,
+                            untitled = true)
+            }
         )
     }
 )
 
 public interface SearchFacetAdminPresentation {
 
-
     public static class TabName {
         public static final String General = "SearchFacetImpl_General_Tab";
+        public static final String Dependent = "SearchFacetImpl_Dependent_Tab";
     }
 
     public static class TabOrder {
         public static final int General = 1000;
+        public static final int Dependent = 2000;
     }
 
     public static class GroupName {
 
         public static final String General = "SearchFacetImpl_description";
         public static final String Options = "SearchFacetImpl_options";
+        public static final String Dependent = "SearchFacetImpl_dependent";
     }
 
     public static class GroupOrder {
 
         public static final int General = 1000;
         public static final int Options = 2000;
+        public static final int Dependent = 1000;
 
     }
 }

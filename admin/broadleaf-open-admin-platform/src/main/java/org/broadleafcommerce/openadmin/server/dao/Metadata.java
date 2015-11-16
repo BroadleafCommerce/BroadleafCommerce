@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.BLCAnnotationUtils;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
@@ -116,7 +117,7 @@ public class Metadata {
         Boolean classAnnotatedPopulateManyToOneFields = null;
         //go in reverse order since I want the lowest subclass override to come last to guarantee that it takes effect
         for (int i = entities.length-1;i >= 0; i--) {
-            AdminPresentationClass adminPresentationClass = entities[i].getAnnotation(AdminPresentationClass.class);
+            AdminPresentationClass adminPresentationClass = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, entities[i]);
             if (adminPresentationClass != null && adminPresentationClass.populateToOneFields() != PopulateToOneFieldsEnum.NOT_SPECIFIED) {
                 classAnnotatedPopulateManyToOneFields = adminPresentationClass.populateToOneFields()==PopulateToOneFieldsEnum.TRUE;
                 break;
