@@ -161,4 +161,13 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @return NOT_HANDLED if no IDs were added, and HANDLED_CONTINUE if there were
      */
     public ExtensionResultStatusType addAdditionalCategoryIds(Category category, List<Long> categoryIds);
+
+    /**
+     * Populates the List of SearchFacet's for the given Category, or else returns NOT_HANDLED
+     *
+     * @param category
+     * @param searchFacets
+     * @return
+     */
+    public ExtensionResultStatusType getCategorySearchFacets(Category category, List<SearchFacet> searchFacets);
 }
