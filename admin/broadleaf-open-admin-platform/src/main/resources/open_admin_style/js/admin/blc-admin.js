@@ -521,7 +521,7 @@ var BLCAdmin = (function($) {
             }
 
             $('select:not(".selectize-collection, .selectize-adder' + excludedSelectors + '")')
-                .selectize({sortField: 'text'});
+                .selectize({sortField: 'text', dropdownParent: 'body'});
 
             $container.find('.selectize-wrapper').each(function(index, selectizeWrapper) {
                 var selectizeAdder = $(selectizeWrapper).find(".selectize-adder");
