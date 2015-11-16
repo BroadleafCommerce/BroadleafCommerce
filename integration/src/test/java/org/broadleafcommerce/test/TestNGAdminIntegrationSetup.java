@@ -28,9 +28,9 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
- * Base Integration Test Setup groovy file for Admin based integration tests. This base class has all the
+ * Base Integration Test Setup java file for Admin based integration tests. This base class has all the
  * applicationContext's shared by Integration tests for Admin based testing. Extend from this class on a
- * per project basis with another setup file that contains only an @ContextHeirarchy(@ContextConfiguration)
+ * per project basis with another setup file that contains only an @ContextHierarchy(@ContextConfiguration)
  * that references this "adminContexts" ContextConfiguration and add only the contexts, in the locations
  * parameter, that you need to run your tests at that level. Then extend off of that setup file with your
  * actual integration tests. IntegrationSetup files should not have any code in their body's.
