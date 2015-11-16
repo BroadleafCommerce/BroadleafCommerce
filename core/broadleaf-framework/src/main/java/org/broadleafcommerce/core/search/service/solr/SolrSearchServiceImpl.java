@@ -736,11 +736,14 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     @Override
     public List<SearchFacetDTO> getCategoryFacets(Category category) {
-        List<CategorySearchFacet> categorySearchFacets = category.getCumulativeSearchFacets();
-
         List<SearchFacet> searchFacets = new ArrayList<SearchFacet>();
-        for (CategorySearchFacet categorySearchFacet : categorySearchFacets) {
-            searchFacets.add(categorySearchFacet.getSearchFacet());
+        ExtensionResultStatusType status = extensionManager.getProxy().getCategorySearchFacets(category, searchFacets);
+
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+            List<CategorySearchFacet> categorySearchFacets = category.getCumulativeSearchFacets();
+            for (CategorySearchFacet categorySearchFacet : categorySearchFacets) {
+                searchFacets.add(categorySearchFacet.getSearchFacet());
+            }
         }
 
         return buildSearchFacetDTOs(searchFacets);
