@@ -548,11 +548,16 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     protected String buildQueryFieldsString(SolrQuery query) {
         StringBuilder queryBuilder = new StringBuilder();
-        List<IndexField> fields = null;
-        if (useSku) {
-            fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
-        } else {
-            fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+        List<IndexField> fields = new ArrayList<>();
+
+        ExtensionResultStatusType status = extensionManager.getProxy().getIndexFieldsForQuery(fields);
+
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+            if (useSku) {
+                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
+            } else {
+                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+            }
         }
 
         // we want to gather all the query fields into one list
@@ -736,11 +741,14 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     @Override
     public List<SearchFacetDTO> getCategoryFacets(Category category) {
-        List<CategorySearchFacet> categorySearchFacets = category.getCumulativeSearchFacets();
-
         List<SearchFacet> searchFacets = new ArrayList<SearchFacet>();
-        for (CategorySearchFacet categorySearchFacet : categorySearchFacets) {
-            searchFacets.add(categorySearchFacet.getSearchFacet());
+        ExtensionResultStatusType status = extensionManager.getProxy().getCategorySearchFacets(category, searchFacets);
+
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+            List<CategorySearchFacet> categorySearchFacets = category.getCumulativeSearchFacets();
+            for (CategorySearchFacet categorySearchFacet : categorySearchFacets) {
+                searchFacets.add(categorySearchFacet.getSearchFacet());
+            }
         }
 
         return buildSearchFacetDTOs(searchFacets);
