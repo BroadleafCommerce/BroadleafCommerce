@@ -710,7 +710,7 @@ button:disabled {
 .modal-body {
     padding: 0;
     background-color: #F9F7F3;
-    overflow: visible;
+    /*overflow: visible;*/
 }
 
 .modal-body .content-yield {
@@ -915,6 +915,10 @@ input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
     float: right;
 }
 
+.selectize-dropdown {
+    z-index: 1060;
+}
+
 fieldset legend i.help-tip {
     margin-left: 5px;
 }
@@ -1020,6 +1024,9 @@ fieldset legend i.help-tip {
     display: none;
 }
 
+.modal-body .empty-section-tabs ul {
+    display: none;
+}
 .login-box img {
     width: 140px;
 }

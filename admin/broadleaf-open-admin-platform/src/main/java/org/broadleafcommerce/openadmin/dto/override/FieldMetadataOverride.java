@@ -351,10 +351,12 @@ public class FieldMetadataOverride extends MetadataOverride {
         this.tab = tab;
     }
 
+    @Deprecated
     public Integer getTabOrder() {
         return tabOrder;
     }
 
+    @Deprecated
     public void setTabOrder(Integer tabOrder) {
         this.tabOrder = tabOrder;
     }
@@ -363,10 +365,12 @@ public class FieldMetadataOverride extends MetadataOverride {
         this.readOnly = readOnly;
     }
 
+    @Deprecated
     public Integer getGroupOrder() {
         return groupOrder;
     }
 
+    @Deprecated
     public void setGroupOrder(Integer groupOrder) {
         this.groupOrder = groupOrder;
     }
@@ -395,10 +399,12 @@ public class FieldMetadataOverride extends MetadataOverride {
         this.requiredOverride = requiredOverride;
     }
 
+    @Deprecated
     public Boolean getGroupCollapsed() {
         return groupCollapsed;
     }
 
+    @Deprecated
     public void setGroupCollapsed(Boolean groupCollapsed) {
         this.groupCollapsed = groupCollapsed;
     }

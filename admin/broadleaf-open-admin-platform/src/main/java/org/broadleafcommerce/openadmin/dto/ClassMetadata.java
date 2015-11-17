@@ -26,7 +26,9 @@ import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -52,9 +54,9 @@ public class ClassMetadata implements Serializable {
     private Property[] properties;
 
     @JsonIgnore
-    private Map<String, TabMetadata> tabAndGroupMetadata;
+    private TreeMap<String, TabMetadata> tabAndGroupMetadata;
 
-    @JsonProperty
+    @JsonProperty    
     private String currencyCode = "USD";
     
     private Map<String, Property> pMap = null;
@@ -116,7 +118,9 @@ public class ClassMetadata implements Serializable {
     }
 
     public void setTabAndGroupMetadata(Map<String, TabMetadata> tabAndGroupMetadata) {
-        this.tabAndGroupMetadata = tabAndGroupMetadata;
+        TreeMap<String, TabMetadata> orderedMap = new TreeMap<>(new TabOrderComparator(tabAndGroupMetadata));
+        orderedMap.putAll(tabAndGroupMetadata);
+        this.tabAndGroupMetadata = orderedMap;
     }
 
     public String getCurrencyCode() {
@@ -125,5 +129,45 @@ public class ClassMetadata implements Serializable {
 
     public void setCurrencyCode(String currencyCode) {
         this.currencyCode = currencyCode;
+    }
+
+    public TabMetadata getTabMetadataUsingTabKey(String tabKey) {
+        return tabAndGroupMetadata.get(tabKey);
+    }
+
+    public TabMetadata getTabMetadataUsingGroupKey(String groupKey) {
+        for (TabMetadata tab : tabAndGroupMetadata.values()) {
+            if (tab.getGroupMetadata() != null) {
+                for (GroupMetadata group : tab.getGroupMetadata().values()) {
+                    if (group.getGroupName() != null && group.getGroupName().equals(groupKey)) {
+                        return tab;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public TabMetadata getFirstTab() {
+        return tabAndGroupMetadata.firstEntry().getValue();
+    }
+
+    class TabOrderComparator implements Comparator<String> {
+        Map<String, TabMetadata> base;
+
+        public TabOrderComparator(Map<String, TabMetadata> base) {
+            this.base = base;
+        }
+
+        @Override
+        public int compare(String key1, String key2) {
+            if (base.get(key1) == null) {
+                return 1;
+            } else if (base.get(key2) == null) {
+                return -1;
+            } else {
+                return base.get(key1).getTabOrder().compareTo(base.get(key2).getTabOrder());
+            }
+        }
     }
 }

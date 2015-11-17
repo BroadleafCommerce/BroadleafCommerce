@@ -245,15 +245,20 @@
          *
          * @param $container - the ".query-builder-rules-container" in which to append the builder
          * @param typeToCreate - if there is no existing rule, the method will look for the passed in typeToCreate:
-         * - BLCAdmin.RuleTypeEnum.RULE_SIMPLE : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_WITH_QUANTITY
-         * - BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_SIMPLE
+         * - BLCAdmin.RuleTypeEnum.RULE_SIMPLE : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_SIMPLE
+         * - BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_WITH_QUANTITY
          */
         showOrCreateMainRuleBuilder : function($container, typeToCreate) {
             var containerId = $container.attr("id");
             var ruleBuilder = this.getRuleBuilder(containerId);
             if (ruleBuilder != null) {
-                if (!$container.hasClass('rule-data-error')) {
-                    $container.show();
+                var $onOffRadios = $container.closest('.field-group').find('input[type="radio"].radio');
+                var setToOff = $onOffRadios.length < 1 ? false : $onOffRadios.filter(function() {
+                    return this.id.endsWith('false');
+                }).is(':checked');
+
+                if (!$container.hasClass('rule-data-error') && !setToOff) {
+                    $container.parent().show();
                 }
 
                 //If invoked from a "RADIO" - create new query builder for the container
@@ -571,7 +576,7 @@
          */
         setJSONValueOnField : function (ruleBuilder) {
             var hiddenId = ruleBuilder.hiddenId;
-            var container = $('#'+ruleBuilder.containerId);
+            var $container = $('#'+ruleBuilder.containerId);
             var builders = ruleBuilder.builders;
 
             if (builders != null && ruleBuilder) {
@@ -581,8 +586,8 @@
                     var builder = builders[j];
                     var dataDTO = $(builder).queryBuilder('getRules');
                     if (dataDTO.rules) {
-                        dataDTO.pk = $(container).find(".rules-group-header-item-pk").val();
-                        dataDTO.quantity = $(container).find(".rules-group-header-item-qty").val();
+                        dataDTO.pk = $container.find(".rules-group-header-item-pk").val();
+                        dataDTO.quantity = $container.find(".rules-group-header-item-qty").val();
                         for (var k = 0; k < dataDTO.rules.length; k++) {
                             if (Array.isArray(dataDTO.rules[k].value)) {
                                 dataDTO.rules[k].value =  JSON.stringify(dataDTO.rules[k].value);
@@ -594,13 +599,13 @@
                 }
 
                 // There are two scenarios that we should clear out rule data:
-                //   1. The containing field-box has a hidden class, which means this field was explicitly hidden as it
+                //   1. The containing field-group has a hidden class, which means this field was explicitly hidden as it
                 //      likely depends on the value of some other field and is not currently applicable
                 //   2. This field is optional and currently set to off
 
-                var explicitlyHidden = $(container.element).closest('.field-box').hasClass('hidden');
-                var onOffRadios = $(container.element).parent().find('input[type="radio"]');
-                var setToOff = onOffRadios.length < 1 ? false : onOffRadios.filter(function() {
+                var explicitlyHidden = $container.closest('.field-group').hasClass('hidden');
+                var $onOffRadios = $container.closest('.field-group').find('input[type="radio"].radio');
+                var setToOff = $onOffRadios.length < 1 ? false : $onOffRadios.filter(function() {
                     return this.id.endsWith('false');
                 }).is(':checked');
 

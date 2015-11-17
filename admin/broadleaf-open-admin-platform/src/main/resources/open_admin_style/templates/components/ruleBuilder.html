@@ -45,7 +45,8 @@
 
     <div th:substituteby="components/fieldTooltip" />
  
-    <div th:classappend="${field.ruleType}">
+    <div th:classappend="${field.ruleType}"
+         th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.displayType == 'MODAL') ? 'display: none;' : ''}">
     
         <input type="hidden"
                th:id="${field.jsonFieldName}"
@@ -85,13 +86,11 @@
         
         <!--/* For: All display types */-->
         <h4 th:id="${field.name + '-header'}" class="field-label" th:text="#{${field.friendlyName}}"
-            th:classappend="${!field.required ? 'query-builder-rules-header' : 'required'}"
-            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.displayType == 'MODAL') ? 'display: none;' : ''}" />
+            th:classappend="${!field.required ? 'query-builder-rules-header' : 'required'}"/>
 
         <div class="query-builder-rules-container"
             th:classappend="${(field.required ? 'required-query-builder' : '')
                               + (field.dataWrapper.error != null ? 'rule-data-error' : '')}"
-            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.dataWrapper.error != null OR field.displayType == 'MODAL') ? 'display: none;' : ''}"
             th:id="${field.name}"/>
         
         <!--/* For: All display types - rule parsing errors */-->

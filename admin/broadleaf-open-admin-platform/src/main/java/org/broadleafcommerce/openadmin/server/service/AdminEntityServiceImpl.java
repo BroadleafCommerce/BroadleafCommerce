@@ -388,8 +388,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     && p.getMetadata() instanceof CollectionMetadata) {
 
                 CollectionMetadata collectionMetadata = (CollectionMetadata) p.getMetadata();
-                String tabName = collectionMetadata.getTab();
-                int tabOrder = collectionMetadata.getTabOrder();
+                TabMetadata tabMetadata = cmd.getTabMetadataUsingTabKey(collectionMetadata.getTab());
+                if (tabMetadata == null) {
+                    tabMetadata = cmd.getTabMetadataUsingGroupKey(collectionMetadata.getGroup());
+                }
+
+                String tabName = tabMetadata == null ? collectionMetadata.getTab() : tabMetadata.getTabName();
+                int tabOrder = tabMetadata == null ? collectionMetadata.getTabOrder() : tabMetadata.getTabOrder();
                 updateTabInfo(collectionMetadata, cmd, tabName, tabOrder);
 
                 if (collectionMetadata.getLazyFetch() != null && collectionMetadata.getLazyFetch()
