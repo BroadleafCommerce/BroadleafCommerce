@@ -48,7 +48,7 @@
     text-align: center;
 }
 
-.app-content .fieldset-card .fieldset-card-content {
+.fieldset-card .fieldset-card-content {
     padding: 15px 20px;
 }
 
@@ -268,10 +268,10 @@ tr {
     position: relative;
 }
 
-.app-content .content .header .button { line-height:14px; }
 .app-content .side-nav ul li a.active.logo { background-position-y: -90px }
+.content .header .button { line-height:14px; }
 
-.app-content .card {
+.card {
     background-color: white;
     border: 1px solid #e0e0e0;
     -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
@@ -386,7 +386,7 @@ input[type="radio"].radio+label.radio-label.clr,
 }
 
 /* change .site-bar to .header */
-.header{background-color:#2a2a2a;color:white;height:50px;left:0;padding:0 20px;position:absolute;top:0;width:100%;z-index:100}.app-content .content .header .button{background-color:#404040;padding:7px 15px;font-size:10px;text-transform:uppercase;color:#B3B3B3;letter-spacing:0.2em;display:inline-block;cursor:pointer;margin:10px 20px}.app-content .content .header h1{font-size:14px;font-weight:300;line-height:50px;margin:0;padding:0;display:inline-block;float:left;width:auto}.app-content .content .header .account-info{display:inline-block;float:right;font-size:14px}.app-content .content .header .account-info ul{margin:0;padding:0;list-style:none;color:white;display:inline}.app-content .content .header .account-info ul li{margin:0;height:50px;line-height:50px;display:inline-block;font-weight:300;float:left}.app-content .content .header .account-info ul li a{width:100%;height:50px;line-height:50px;color:white;font-size:1.25em;font-weight:300;padding:0 30px;float:left}.app-content .content .header .account-info ul li a:hover{background-color:#F1EFEB}.app-content .content .header .account-info .logout{float:left;display:inline-block;margin-right:0}
+.header{background-color:#2a2a2a;color:white;height:50px;left:0;padding:0 20px;position:absolute;top:0;width:100%;z-index:100}.content .header .button{background-color:#404040;padding:7px 15px;font-size:10px;text-transform:uppercase;color:#B3B3B3;letter-spacing:0.2em;display:inline-block;cursor:pointer;margin:10px 20px}.content .header h1{font-size:14px;font-weight:300;line-height:50px;margin:0;padding:0;display:inline-block;float:left;width:auto}.content .header .account-info{display:inline-block;float:right;font-size:14px}.content .header .account-info ul{margin:0;padding:0;list-style:none;color:white;display:inline}.content .header .account-info ul li{margin:0;height:50px;line-height:50px;display:inline-block;font-weight:300;float:left}.content .header .account-info ul li a{width:100%;height:50px;line-height:50px;color:white;font-size:1.25em;font-weight:300;padding:0 30px;float:left}.content .header .account-info ul li a:hover{background-color:#F1EFEB}.content .header .account-info .logout{float:left;display:inline-block;margin-right:0}
 
 .redactor-toolbar {
     z-index: 1039 !important;
@@ -881,32 +881,36 @@ input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
     margin-bottom: 0 !important;
 }
 
-.app-content .fieldset-card .fieldset-card-content label {
+.fieldset-card .fieldset-card-content label {
     font-size: 12px;
     letter-spacing: .05em;
     color: #616161;
     font-weight: normal;
 }
 
-.app-content .field-group label span {
+.field-group a.titlebar {
+    width: 100%;
+}
+
+.field-group label span {
     font-size:12px;
     text-transform:uppercase;
     letter-spacing:.05em;
     /*color:#B3B3B3;*/
 }
 
-.app-content .field-group label span.alert-wrapper {
+.field-group label span.alert-wrapper {
     font-size: 12px;
     letter-spacing: .05em;
     font-weight: normal;
     margin-left: 10px;
 }
 
-.app-content .field-group label span.alert-wrapper .alert-box {
+.field-group label span.alert-wrapper .alert-box {
     color: #8EAA2B !important;
 }
 
-.app-content .field-group label .selectize-toolbar-action {
+.field-group label .selectize-toolbar-action {
     font-size: 12px;
     letter-spacing: .05em;
     color: #B3B3B3;
@@ -987,7 +991,7 @@ fieldset legend i.help-tip {
     margin-top: 22px;
 }
 
-.app-content .fieldset-card {
+.fieldset-card {
     margin-bottom: 15px;
 }
 
