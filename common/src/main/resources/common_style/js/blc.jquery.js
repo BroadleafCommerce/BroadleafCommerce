@@ -63,6 +63,9 @@ $.fn.reloadSection = function(options) {
     }
 };
 
+// initialize ajax content
+$('.ajax-content-placeholder').each(function(){$(this).reloadSection()});
+
 $.fn.ajaxSubmit = function(options) {
     var form = $(this);
     $.ajax({
