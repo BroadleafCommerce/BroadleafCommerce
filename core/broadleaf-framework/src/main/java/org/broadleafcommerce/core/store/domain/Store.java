@@ -19,9 +19,10 @@
  */
 package org.broadleafcommerce.core.store.domain;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.profile.core.domain.Address;
+
+import java.io.Serializable;
 
 public interface Store extends Status, Serializable{
 
@@ -31,31 +32,23 @@ public interface Store extends Status, Serializable{
     public String getName();
     public void setName(String name);
 
-    public String getAddress1();
-    public void setAddress1(String address1);
+    public String getStoreNumber();
+    public void setStoreNumber(String storeNumber);
 
-    public String getAddress2();
-    public void setAddress2(String address2);
+    public Boolean getOpen();
+    public void setOpen(Boolean open);
 
-    public String getCity();
-    public void setCity(String city);
-
-    public String getZip();
-    public void setZip(String zip);
-
-    public String getCountry();
-    public void setCountry(String country);
-
-    public String getPhone();
-    public void setPhone(String phone);
-
+    public String getStoreHours();
+    public void setStoreHours(String storeHours);
+    
+    public Address getAddress();
+    public void setAddress(Address address);
+    
     public Double getLongitude();
     public void setLongitude(Double longitude);
 
     public Double getLatitude();
     public void setLatitude(Double latitude);
 
-    public void setState(String state);
-    public String getState();
 
 }

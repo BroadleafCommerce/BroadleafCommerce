@@ -23,7 +23,10 @@ import org.broadleafcommerce.common.entity.dto.EntityInformationDto;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+
+import java.util.List;
 
 /**
  * <p>
@@ -79,6 +82,15 @@ public interface EntityInformationServiceExtensionHandler extends ExtensionHandl
      * @return
      */
     ExtensionResultStatusType getOkayToUseSiteDiscriminator(Object o, ExtensionResultHolder<Boolean> erh);
+
+    /**
+     * Handler implementations will set the value of {@link ExtensionResultHolder} to a list of all catalogs,
+     * specifically when running in a Multi-Tenant Broadleaf implementation.
+     *
+     * @param erh
+     * @return
+     */
+    ExtensionResultStatusType findAllCatalogs(ExtensionResultHolder<List<Catalog>> erh);
 
     /**
      * Handler implementations will populate the {@link ExtensionResultHolder} with a valid default catalog id for the site

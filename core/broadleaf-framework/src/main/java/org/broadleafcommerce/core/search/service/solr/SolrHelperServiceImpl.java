@@ -59,6 +59,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.RequiredFacet;
@@ -71,7 +72,6 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -85,7 +85,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-
 import javax.annotation.Resource;
 import javax.jms.IllegalStateException;
 
@@ -569,6 +568,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 facetDTO.getFacetValues().add(resultDTO);
             }
         }
+
+        searchExtensionManager.getProxy().setFacetResults(namedFacetMap, response);
     }
 
     @Override
@@ -595,19 +596,23 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
             SearchFacetDTO dto = entry.getValue();
 
-            // Clone the list - we don't want to remove these facets from the DB
-            List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
+            ExtensionResultStatusType status = searchExtensionManager.getProxy().attachFacet(query, entry.getKey(), dto);
 
-            if (searchExtensionManager != null) {
-                searchExtensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
-            }
+            if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+                // Clone the list - we don't want to remove these facets from the DB
+                List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
 
-            if (facetRanges != null && facetRanges.size() > 0) {
-                for (SearchFacetRange range : facetRanges) {
-                    query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
+                if (searchExtensionManager != null) {
+                    searchExtensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
                 }
-            } else {
-                query.addFacetField(getSolrTaggedFieldString(entry.getKey(), "ex", null));
+
+                if (facetRanges != null && facetRanges.size() > 0) {
+                    for (SearchFacetRange range : facetRanges) {
+                        query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
+                    }
+                } else {
+                    query.addFacetField(getSolrTaggedFieldString(entry.getKey(), "ex", null));
+                }
             }
         }
     }
@@ -689,7 +694,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             @Override
             public String getKey(SearchFacetDTO facet) {
                 return getPropertyNameForIndexField(facet.getFacet().getFieldType().getIndexField(),
-                    FieldType.getInstance(facet.getFacet().getFacetFieldType()));
+                        FieldType.getInstance(facet.getFacet().getFacetFieldType()));
             }
         });
     }
@@ -726,19 +731,28 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                             selectedValues[i] = "\"" + scrubFacetValue(selectedValues[i]) + "\"";
                         }
                     }
-                    StringBuilder valueString = new StringBuilder();
-                    if (rangeQuery) {
-                        valueString.append(solrKey).append(":(");
-                        valueString.append(StringUtils.join(selectedValues, " OR "));
-                        valueString.append(")");
-                    } else {
-                        valueString.append("{!tag=").append(solrKey).append("}");
-                        valueString.append(solrKey).append(":(");
-                        valueString.append(StringUtils.join(selectedValues, " OR "));
-                        valueString.append(")");
+
+                    FieldEntity entityType = namedFacetMap.get(solrKey).getFacet().getFieldType().getIndexField().getField().getEntityType();
+                    List<String> valueStrings = new ArrayList<>();
+                    ExtensionResultStatusType status = searchExtensionManager.getProxy().buildActiveFacetFilter(entityType, solrKey, selectedValues, valueStrings);
+
+                    if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+                        StringBuilder valueString = new StringBuilder();
+
+                        if (rangeQuery) {
+                            valueString.append(solrKey).append(":(");
+                            valueString.append(StringUtils.join(selectedValues, " OR "));
+                            valueString.append(")");
+                        } else {
+                            valueString.append("{!tag=").append(solrKey).append("}");
+                            valueString.append(solrKey).append(":(");
+                            valueString.append(StringUtils.join(selectedValues, " OR "));
+                            valueString.append(")");
+                        }
+                        valueStrings.add(valueString.toString());
                     }
 
-                    query.addFilterQuery(valueString.toString());
+                    query.addFilterQuery(valueStrings.toArray(new String[valueStrings.size()]));
                 }
             }
         }
