@@ -793,6 +793,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     String defaultValue = fmd.getDefaultValue();
                     if (defaultValue != null) {
                         defaultValue = extractDefaultValueFromFieldData(fieldType, fmd);
+
+                        if ((defaultValue == null || defaultValue.isEmpty())
+                                && (SupportedFieldType.BROADLEAF_ENUMERATION.equals(fmd.getExplicitFieldType())
+                                && fmd.getEnumerationValues().length > 0)) {
+                            defaultValue = fmd.getEnumerationValues()[0][0];
+                        }
+
                         f.withValue(defaultValue);
                     }
 
