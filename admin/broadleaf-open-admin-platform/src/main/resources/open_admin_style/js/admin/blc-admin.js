@@ -534,7 +534,7 @@ var BLCAdmin = (function($) {
                 var select_adder, $select_adder;
                 var select_collection, $select_collection;
 
-                $select_adder = $(selectizeAdder).selectize({
+                var selectizeAdderOptions = {
                     maxItems: null,
                     persist: false,
                     loadThrottle: 100,
@@ -615,10 +615,9 @@ var BLCAdmin = (function($) {
                     onItemRemove: function () {
                         $select_adder.siblings('.selectize-control.selectize-adder').find('.selectize-input input').attr('placeholder', placeholder);
                     }
-                });
+                }
 
-                $select_collection = $(selectizeCollection).selectize({
-                    plugins: ['remove_button', 'silent_remove'],
+                var selectizeCollectionOptions = {
                     maxItems: null,
                     persist: false,
                     onInitialize: function () {
@@ -657,7 +656,14 @@ var BLCAdmin = (function($) {
                             select_adder.removeItem(value);
                         });
                     }
-                });
+                };
+
+                if (!$(selectizeCollection).hasClass('disabled')) {
+                    selectizeCollectionOptions['plugins'] = ['remove_button', 'silent_remove'];
+                }
+
+                $select_adder = $(selectizeAdder).selectize(selectizeAdderOptions);
+                $select_collection = $(selectizeCollection).selectize(selectizeCollectionOptions);
 
                 select_collection  = $select_collection[0].selectize;
                 select_adder = $select_adder[0].selectize;
