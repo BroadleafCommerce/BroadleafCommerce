@@ -370,7 +370,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Entity entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
 
         TabMetadata firstTab = cmd.getFirstTab();
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, firstTab.getTabName());
+        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, firstTab == null ? "General" : firstTab.getTabName());
      
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
         

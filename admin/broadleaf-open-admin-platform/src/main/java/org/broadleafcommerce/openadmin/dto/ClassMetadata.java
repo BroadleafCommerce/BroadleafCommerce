@@ -149,7 +149,7 @@ public class ClassMetadata implements Serializable {
     }
 
     public TabMetadata getFirstTab() {
-        return tabAndGroupMetadata.firstEntry().getValue();
+        return tabAndGroupMetadata.firstEntry() == null ? null : tabAndGroupMetadata.firstEntry().getValue();
     }
 
     class TabOrderComparator implements Comparator<String> {
