@@ -180,7 +180,7 @@ public class ListGrid {
             
             @Override
             public boolean eval(ListGridAction action) {
-                return action.getForListGridReadOnly().equals(getReadOnly());
+                return action.getForListGridReadOnly().equals(getIsReadOnly());
             }
         });
     }
@@ -195,7 +195,7 @@ public class ListGrid {
             
             @Override
             public boolean eval(ListGridAction action) {
-                return action.getForListGridReadOnly().equals(getReadOnly());
+                return action.getForListGridReadOnly().equals(getIsReadOnly());
             }
         });
     }
@@ -210,7 +210,7 @@ public class ListGrid {
 
             @Override
             public boolean eval(ListGridAction action) {
-                return action.getForListGridReadOnly().equals(getReadOnly());
+                return action.getForListGridReadOnly().equals(getIsReadOnly());
             }
         });
     }
@@ -307,7 +307,7 @@ public class ListGrid {
         return (canFilterAndSort == null ? true : canFilterAndSort);
     }
 
-    public Boolean getReadOnly() {
+    public Boolean getIsReadOnly() {
         return isReadOnly == null ? false : isReadOnly;
     }
     
@@ -495,7 +495,7 @@ public class ListGrid {
         this.pathOverride = pathOverride;
     }
     
-    public void setReadOnly(Boolean readOnly) {
+    public void setIsReadOnly(Boolean readOnly) {
         this.isReadOnly = readOnly;
     }
 

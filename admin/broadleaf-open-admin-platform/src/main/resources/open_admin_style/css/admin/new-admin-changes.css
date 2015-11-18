@@ -288,35 +288,6 @@ tr {
     color: white;
 }
 
-.sandbox-bar .selectize-control.single .selectize-input {
-    width: 260px;
-    margin: 0;
-    background-color: rgba(0,0,0,0.1);
-}
-
-.sandbox-bar .selectize-control.single .selectize-input.input-active {
-    background-color: rgba(0,0,0,0.1);
-}
-
-.dataTables_wrapper .dataTables_length {
-    margin-top: 0;
-    margin-left: 30px;
-}
-
-.dataTables_wrapper .dataTables_length .selectize-control {
-    display: inline-block;
-    background: white;
-    width: 80px;
-    height: 40px;
-    vertical-align: middle;
-    border: 1px solid #D8D5D0
-}
-
-.dataTables_wrapper .dataTables_length .selectize-control.single .selectize-input {
-    padding: 10px;
-}
-
-
 .button {
     font-size: 11px;
     /*line-height: 12px;*/
@@ -599,74 +570,6 @@ button:disabled {
     color: #2c2c2c;
 }
 
-.selectize-input, .selectize-input.focus {
-    width: 100%;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 13px;
-    border: 1px solid #D8D5D0;
-    padding: 0px 10px;
-    margin: 0;
-    border-radius: 0px;
-    box-shadow: none;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-.selectize-control.multi .selectize-input.has-items {
-    padding: 0;
-}
-
-.selectize-control.multi.selectize-adder .selectize-input,
-.selectize-control.multi.query-builder-selectize-input .selectize-input {
-    padding: 0px 10px;
-}
-
-.selectize-control.query-builder-selectize-input .selectize-input input[type="text"] {
-    height: 32px;
-}
-
-.selectize-control.multi .selectize-input [data-value] {
-    background-color: #8EAA2B;
-    border:none;
-    margin: 5px 0 5px 5px;
-}
-
-.selectize-control.plugin-remove_button [data-value] .remove {
-    border-left: 1px solid #ffffff;
-}
-
-.selectize-control.multi .selectize-input > div {
-    background: #8EAA2B;
-    color: #ffffff;
-    border: 1px solid #ffffff;
-    margin: 0;
-}
-
-.selectize-dropdown [data-selectable] {
-    padding: 5px 10px;
-}
-
-.selectize-control.multi .selectize-input [data-value].active {
-    background-color:#EB7F4C;
-}
-
-.selectize-control.multi .selectize-input > div.active {
-    background:#F2B95A;
-    color:#ffffff;
-    border:none;
-}
-
-.selectize-control.plugin-remove_button [data-value] .active {
-    border-left: 1px solid #EB7F4C;
-}
-
-.selectize-input.dropdown-active:before {
-    height: 0;
-}
-
 .select-style {
     background: #fff;
      border: none;
@@ -911,18 +814,6 @@ input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
     color: #8EAA2B !important;
 }
 
-.field-group label .selectize-toolbar-action {
-    font-size: 12px;
-    letter-spacing: .05em;
-    color: #B3B3B3;
-    font-weight: normal;
-    float: right;
-}
-
-.selectize-dropdown {
-    z-index: 1060;
-}
-
 fieldset legend i.help-tip {
     margin-left: 5px;
 }
@@ -992,7 +883,7 @@ fieldset legend i.help-tip {
     margin-top: 22px;
 }
 
-.fieldset-card {
+.app-content .fieldset-card, .modal-body .fieldset-card {
     margin-bottom: 15px;
 }
 
@@ -1063,10 +954,6 @@ input.color-picker-value {
     color: #B3B3B3;
     font-size: 12px;
     display: block;
-}
-
-.field-group {
-    margin-bottom: 10px;
 }
 
 ::-webkit-input-placeholder {
@@ -1175,30 +1062,6 @@ legend {
 .modal-body .actions {
     margin-top: 10px;
     text-align: right
-}
-
-.selectize-control.selectize-adder {
-    height: 40px !important;
-}
-
-.selectize-control.selectize-adder .item {
-    display: none;
-}
-
-.selectize-control.selectize-adder input {
-    width: 100% !important;
-}
-
-.selectize-control.selectize-collection input {
-    display: none !important;
-}
-
-.selectize-control.selectize-collection .selectize-input:not(.has-items) {
-    height: 34px;
-}
-
-.selectize-control.selectize-collection.read-only .selectize-input {
-    background-color: #eeeeee;
 }
 
 .nav>li>a .icon-spinner {
@@ -1358,25 +1221,6 @@ p.deployment-summary {
 .filter-info > .filter-button {
     margin-top: 6px;
 
-}
-
-.selectize-control.single .selectize-input {
-    display: inline-block;
-    background: white;
-    height: 34px;
-    line-height: 32px;
-    vertical-align: middle;
-    width: 100%;
-    font-size: 13px;
-    padding: 0 10px;
-}
-
-:not(.sandbox-selector-wrapper) > .selectize-control.single .selectize-input {
-    border: 1px solid #D8D5D0;
-}
-
-.selectize-control.single .selectize-input.has-items {
-    padding: 0px 10px;
 }
 
 .form-control {

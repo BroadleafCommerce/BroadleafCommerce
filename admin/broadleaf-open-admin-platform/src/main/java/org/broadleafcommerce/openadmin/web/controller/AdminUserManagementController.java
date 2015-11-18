@@ -21,6 +21,7 @@ package org.broadleafcommerce.openadmin.web.controller;
 
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -81,6 +82,19 @@ public class AdminUserManagementController extends AdminBasicEntityController {
         entityForm.removeListGrid("additionalFields");
 
         return returnPath;
+    }
+
+    @Override
+    protected void modifyEntityForm(EntityForm ef, Map<String, String> pathVars) {
+        // Remove password/confirm password field for EntityForm edit pages if it has been previously set.
+        // Password changes should be done through the "Forgot Password" flow before the user has logged in,
+        //      or "Change Password" flow after the user is logged in.
+        Field password = ef.findField("password");
+        Field passwordConfirm = ef.findField("passwordConfirm");
+        if (password != null && password.getValue() != null && !password.getValue().isEmpty()) {
+            password.setIsVisible(false);
+            passwordConfirm.setIsVisible(false);
+        }
     }
 
 }

@@ -8,6 +8,8 @@
             class="selectize-adder"
             multiple="multiple"
             th:name="${listGrid.friendlyName} + '[]'"
+            th:disabled="${listGrid.isReadOnly}"
+            th:classappend="${listGrid.isReadOnly} ? 'hidden' : ''"
             th:attr="data-selectizeurl=${listGrid.selectizeUrl},
                     data-selectizesearch=${listGrid.headerFields[0].name},
                     data-selectizeplaceholder=#{${listGrid.friendlyName}}"
@@ -33,6 +35,8 @@
             class="selectize-collection read-only"
             multiple="multiple"
             th:name="${listGrid.friendlyName} + '[]'"
+            th:disabled="${listGrid.isReadOnly}"
+            th:classappend="${listGrid.isReadOnly} ? 'disabled' : ''"
             tabindex="-1" readonly="readonly">
         <div th:each="record : ${listGrid.records}"
             th:unless="${#lists.isEmpty(listGrid.records)}"

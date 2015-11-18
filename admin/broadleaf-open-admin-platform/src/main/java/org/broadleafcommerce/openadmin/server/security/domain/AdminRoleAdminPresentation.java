@@ -27,11 +27,11 @@ import org.broadleafcommerce.common.presentation.AdminTabPresentation;
     tabs = {
         @AdminTabPresentation(
             groups = {
-                @AdminGroupPresentation(name = AdminRoleAdminPresentation.GroupName.Role,
-                    order = AdminRoleAdminPresentation.GroupOrder.Role),
+                @AdminGroupPresentation(name = AdminRoleAdminPresentation.GroupName.RoleDetails,
+                    order = AdminRoleAdminPresentation.GroupOrder.RoleDetails),
                 @AdminGroupPresentation(name = AdminRoleAdminPresentation.GroupName.Permissions,
                     order = AdminRoleAdminPresentation.GroupOrder.Permissions,
-                    column = 1, untitled = true)
+                    untitled = true)
             }
         )
     }
@@ -45,13 +45,20 @@ public interface AdminRoleAdminPresentation {
     }
 
     public static class GroupName {
-        public static final String Role = "AdminRoleImpl_Role";
+        public static final String RoleDetails = "AdminRoleImpl_RoleDetails";
         public static final String Permissions = "AdminRoleImpl_Permissions";
     }
 
     public static class GroupOrder {
-        public static final int Role = 1000;
-        public static final int Permissions = 1000;
+        public static final int RoleDetails = 1000;
+        public static final int Permissions = 2000;
+    }
+
+    public static class FieldOrder {
+        public static final int NAME = 1000;
+        public static final int DESCRIPTION = 2000;
+
+        public static final int PERMISSIONS = 1000;
     }
 
 }
