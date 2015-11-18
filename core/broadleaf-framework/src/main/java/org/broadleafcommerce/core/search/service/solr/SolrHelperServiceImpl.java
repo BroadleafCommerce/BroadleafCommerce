@@ -155,7 +155,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
                         .setAliasedCollections(reindexCollectionName).process(primary);
                 new CollectionAdminRequest.CreateAlias().setAliasName(reindex.getDefaultCollection())
-                        .setAliasedCollections(primaryCollectionName).process(primary);
+                        .setAliasedCollections(primaryCollectionName).process(reindex);
             } catch (Exception e) {
                 LOG.error("An exception occured swapping cores.", e);
                 throw new ServiceException("Unable to swap SolrCloud collections after a full reindex.", e);
