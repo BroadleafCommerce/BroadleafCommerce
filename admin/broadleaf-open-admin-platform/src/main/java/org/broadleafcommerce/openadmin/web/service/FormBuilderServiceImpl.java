@@ -502,7 +502,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             listGrid.setFriendlyName(field.getName());
         }
         listGrid.setContainingEntityId(containingEntityId);
-        listGrid.setReadOnly(readOnly);
+        listGrid.setIsReadOnly(readOnly);
         listGrid.setHideIdColumn(hideIdColumn);
         listGrid.setCanFilterAndSort(canFilterAndSort);
 

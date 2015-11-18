@@ -516,7 +516,7 @@ public class EntityForm {
 
         if (getAllListGrids() != null) {
             for (ListGrid lg : getAllListGrids()) {
-                lg.setReadOnly(readOnly);
+                lg.setIsReadOnly(readOnly);
             }
         }
 
