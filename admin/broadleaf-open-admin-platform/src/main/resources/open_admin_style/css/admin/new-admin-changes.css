@@ -991,7 +991,7 @@ fieldset legend i.help-tip {
     margin-top: 22px;
 }
 
-.fieldset-card {
+.app-content .fieldset-card, .modal-body .fieldset-card {
     margin-bottom: 15px;
 }
 
@@ -1062,10 +1062,6 @@ input.color-picker-value {
     color: #B3B3B3;
     font-size: 12px;
     display: block;
-}
-
-.field-group {
-    margin-bottom: 10px;
 }
 
 ::-webkit-input-placeholder {
