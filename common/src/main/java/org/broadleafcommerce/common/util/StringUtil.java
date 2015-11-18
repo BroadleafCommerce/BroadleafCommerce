@@ -17,18 +17,21 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.util;
 
-import org.codehaus.jettison.json.JSONObject;
+package org.broadleafcommerce.common.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
+
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
 
 public class StringUtil {
 
@@ -45,6 +48,33 @@ public class StringUtil {
         }
     }
 
+    /**
+     * Checks if a string is included in the beginning of another string, but only in dot-separated segment leaps.
+     * Examples:
+     * <ul>
+     *   <li>"sku.date" into "sku.dateExtra" should return false</li>
+     *   <li>"sku.date" into "sku.date.extra" should return true</li>
+     *   <li>"sku" into "sku" should return true</li>
+     * </ul>
+     * 
+     * This function avoids "collision" between similarly named, multi-leveled property fields.
+     * 
+     * @param bigger     the bigger (haystack) String          
+     * @param included   the string to be sought (needle)
+     * @return
+     */
+    public static boolean segmentInclusion(String bigger, String included) {
+        if (StringUtils.isEmpty(bigger) || StringUtils.isEmpty(included)) {
+            return false;
+        }
+        String[] biggerSegments = bigger.split("\\.");
+        String[] includedSetments = included.split("\\.");
+
+        String[] biggerSubset = Arrays.copyOfRange(biggerSegments, 0, includedSetments.length);
+
+        return Arrays.equals(biggerSubset, includedSetments);
+    }
+
     public static double determineSimilarity(String test1, String test2) {
         String first = new String(test1);
         first = first.replaceAll("[ \\t\\n\\r\\f\\v\\/'-]", "");
@@ -57,12 +87,12 @@ public class StringUtil {
         calc.enter(myChecksum);
         return calc.getStandardDeviation();
     }
-    
+
     /**
      * Protect against HTTP Response Splitting
      * @return
      */
-    public static String cleanseUrlString(String input){
+    public static String cleanseUrlString(String input) {
         return removeSpecialCharacters(decodeUrl(input));
     }
 
@@ -81,6 +111,16 @@ public class StringUtil {
             input = input.replaceAll("[ \\r\\n]", "");
         }
         return input;
+    }
+
+    /**
+     * given a string with the format "fields[someFieldName].value" (very common in error validation), returns
+     * only "someFieldName
+     * @param expression
+     * @return
+     */
+    public static String extractFieldNameFromExpression(String expression) {
+        return expression.substring(expression.indexOf('[') + 1, expression.lastIndexOf(']'));
     }
 
     public static String getMapAsJson(Map<String, Object> objectMap) {

@@ -9,11 +9,21 @@
     <span th:if="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
         <img class="thumbnail" th:attrappend="data-fullurl=@{*{fields['__${field.name}__'].media.url}}"
             th:src="@{*{fields['__${field.name}__'].media.url + '?largeAdminThumbnail'}}" />
+            <img class="placeholder" style="display:none" th:src="@{/img/admin/placeholder-60x60.gif}" />
     </span>
     
     <span th:unless="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
         <img class="thumbnail placeholder-image" th:src="@{/img/admin/placeholder-60x60.gif}" />
+        <img class="placeholder" style="display:none" th:src="@{/img/admin/placeholder-60x60.gif}" />
     </span>
+        
+    
+    <button class="clear-asset-selector tiny radius secondary button hover-cursor"
+        type="button" th:inline="text"
+        th:unless="${field.required}"
+        th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
+        <i class="icon-remove"></i>&nbsp;[[#{Clear}]]
+    </button>
 
     <button class="show-asset-selector tiny radius secondary button hover-cursor"
         type="button" th:inline="text"

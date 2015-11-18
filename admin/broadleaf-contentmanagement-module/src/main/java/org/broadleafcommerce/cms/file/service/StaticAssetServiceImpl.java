@@ -22,11 +22,13 @@ package org.broadleafcommerce.cms.file.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.type.StorageType;
+import org.broadleafcommerce.cms.file.StaticAssetMultiTenantExtensionManager;
 import org.broadleafcommerce.cms.file.dao.StaticAssetDao;
 import org.broadleafcommerce.cms.file.domain.ImageStaticAsset;
 import org.broadleafcommerce.cms.file.domain.ImageStaticAssetImpl;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.ImageArtifactProcessor;
@@ -75,6 +77,10 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     
     @Resource(name = "blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
+
+    @Resource(name = "blStaticAssetMultiTenantExtensionManager")
+    protected StaticAssetMultiTenantExtensionManager staticAssetExtensionManager;
+
 
     private final Random random = new Random();
     private final String FILE_NAME_CHARS = "0123456789abcdef";
@@ -161,6 +167,11 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             fileName = originalFilename;
         }
 
+        String[] splitBits = fileName.replace(".", "/").split("/");
+        String imageName = splitBits[splitBits.length - 2];
+        String imageTypeExt = splitBits[splitBits.length - 1];
+        fileName = imageName + '-' + 1 + '.' + imageTypeExt;
+
         return path.append(fileName).toString();
     }
 
@@ -182,21 +193,34 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         }
 
         String fullUrl = buildAssetURL(properties, fileName);
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append(fullUrl);
+        ExtensionResultStatusType resultStatusType = staticAssetExtensionManager.getProxy().modifyDuplicateAssetURL(urlBuilder);
+        fullUrl = urlBuilder.toString();
         StaticAsset newAsset = staticAssetDao.readStaticAssetByFullUrl(fullUrl);
-        int count = 0;
-        while (newAsset != null) {
-            count++;
-            
-            //try the new format first, then the old
-            newAsset = staticAssetDao.readStaticAssetByFullUrl(getCountUrl(fullUrl, count, false));
-            if (newAsset == null) {
-                newAsset = staticAssetDao.readStaticAssetByFullUrl(getCountUrl(fullUrl, count, true));
+        // If no ExtensionManager modified the URL to handle duplicates, then go ahead and run default
+        // logic for handling duplicate files.
+        if(resultStatusType != ExtensionResultStatusType.HANDLED){
+            int count = 0;
+            while (newAsset != null) {
+                count++;
+                //removing the default count 1, from fullUrl for count logic
+                if (fullUrl.contains("-1")) {
+                    fullUrl = fullUrl.replace("-1", "");
+                    count++;
+                }
+                //try the new format first, then the old
+                newAsset = staticAssetDao.readStaticAssetByFullUrl(getCountUrl(fullUrl, count, false));
+                if (newAsset == null) {
+                    newAsset = staticAssetDao.readStaticAssetByFullUrl(getCountUrl(fullUrl, count, true));
+                }
+            }
+
+            if (count > 0) {
+                fullUrl = getCountUrl(fullUrl, count, false);
             }
         }
 
-        if (count > 0) {
-            fullUrl = getCountUrl(fullUrl, count, false);
-        }
 
         try {
             ImageMetadata metadata = imageArtifactProcessor.getImageMetadata(inputStream);
