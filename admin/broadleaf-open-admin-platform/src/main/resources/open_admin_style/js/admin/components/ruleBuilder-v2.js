@@ -439,6 +439,7 @@
                     loadThrottle: 100,
                     preload: true,
                     hideSelected: true,
+                    closeAfterSelect: true,
                     placeholder: field.label + " +",
                     onInitialize: function () {
                         var $selectize = this;
@@ -479,6 +480,9 @@
                             });
                             callback(data);
                         });
+                    },
+                    onItemAdd: function(value, $item) {
+                        $item.closest('.selectize-input').find('input').blur();
                     }
                 };
                 field.valueSetter = function(rule, value) {

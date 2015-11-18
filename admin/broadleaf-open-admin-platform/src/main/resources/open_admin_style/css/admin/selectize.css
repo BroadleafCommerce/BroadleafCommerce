@@ -75,6 +75,10 @@
     height: 32px;
 }
 
+.selectize-control:not(.selectize-adder) .selectize-input.has-items input[type="text"] {
+    left: 4px !important;
+}
+
 .selectize-control.multi .selectize-input [data-value] {
     background-color: #8EAA2B;
     border:none;
