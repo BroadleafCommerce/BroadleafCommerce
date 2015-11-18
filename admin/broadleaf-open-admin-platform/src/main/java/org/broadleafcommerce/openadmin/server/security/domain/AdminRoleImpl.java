@@ -85,15 +85,15 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
     protected Long id;
 
     @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName = "AdminRoleImpl_Name", order = 1,
-            group = AdminRoleAdminPresentation.GroupName.Role, defaultValue = "New Admin Role")
-    protected String name = "New Admin Role";
+    @AdminPresentation(friendlyName = "AdminRoleImpl_Name",
+            group = GroupName.RoleDetails, order = FieldOrder.NAME)
+    protected String name;
 
     @Column(name = "DESCRIPTION", nullable=false)
-    @AdminPresentation(friendlyName = "AdminRoleImpl_Description", order=2,
-            group = AdminRoleAdminPresentation.GroupName.Role, defaultValue = "New Admin Role",
-            prominent=true)
-    protected String description = "New Admin Role";
+    @AdminPresentation(friendlyName = "AdminRoleImpl_Description",
+            group = GroupName.RoleDetails, order = FieldOrder.DESCRIPTION,
+            prominent = true)
+    protected String description;
 
     /** All users that have this role */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminUserImpl.class)
@@ -106,10 +106,10 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
     @JoinTable(name = "BLC_ADMIN_ROLE_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.SELECTIZE_LOOKUP,
+    @AdminPresentationCollection(friendlyName = "permissionListTitle",
+            group = GroupName.Permissions, order = FieldOrder.PERMISSIONS,
+            addType = AddMethodType.SELECTIZE_LOOKUP,
             selectizeVisibleField = "description",
-            group = AdminRoleAdminPresentation.GroupName.Permissions,
-            friendlyName = "permissionListTitle",
             manyToField = "allRoles",
             customCriteria = "includeFriendlyOnly",
             operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
