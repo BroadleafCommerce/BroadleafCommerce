@@ -145,9 +145,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
         }
 
+        model.addAttribute("viewType", "entityList");
+
         setupViewEntityListBasicModel(request, cmd, sectionKey, sectionClassName, model, requestParams);
         model.addAttribute("listGrid", listGrid);
-        model.addAttribute("viewType", "entityList");
 
         return "modules/defaultContainer";
     }
