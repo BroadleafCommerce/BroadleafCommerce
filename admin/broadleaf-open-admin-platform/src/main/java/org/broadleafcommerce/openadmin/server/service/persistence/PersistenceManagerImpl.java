@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.util.ValidationUtil;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -438,7 +439,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
         if (response.isValidationFailure()) {
             PersistenceResponse validationResponse = executeValidationProcessors(persistencePackage, new PersistenceResponse().withEntity(response));
-            throw new ValidationException(validationResponse.getEntity(), "The entity has failed validation");
+            Entity entity = validationResponse.getEntity();
+            String message = ValidationUtil.buildErrorMessage(entity.getPropertyValidationErrors(), entity.getGlobalValidationErrors());
+            throw new ValidationException(entity, message);
         }
 
         return executePostAddHandlers(persistencePackage, new PersistenceResponse().withEntity(response));
@@ -577,7 +580,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
         if (response.isValidationFailure()) {
             PersistenceResponse validationResponse = executeValidationProcessors(persistencePackage, new PersistenceResponse().withEntity(response));
-            throw new ValidationException(validationResponse.getEntity(), "The entity has failed validation");
+            Entity entity = validationResponse.getEntity();
+            String message = ValidationUtil.buildErrorMessage(entity.getPropertyValidationErrors(), entity.getGlobalValidationErrors());
+            throw new ValidationException(entity, message);
         }
 
         return executePostUpdateHandlers(persistencePackage, new PersistenceResponse().withEntity(response));

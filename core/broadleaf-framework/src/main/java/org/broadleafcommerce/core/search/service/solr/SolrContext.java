@@ -20,8 +20,9 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl;
 
 /**
  * <p>
@@ -37,22 +38,22 @@ public class SolrContext {
     public static final String PRIMARY = "primary";
     public static final String REINDEX = "reindex";
 
-    protected static SolrServer adminServer = null;
-    protected static SolrServer primaryServer = null;
-    protected static SolrServer reindexServer = null;
+    protected static SolrClient adminServer = null;
+    protected static SolrClient primaryServer = null;
+    protected static SolrClient reindexServer = null;
 
     /**
-     * Sets the primary SolrServer instance to communicate with Solr.  This is typically one of the following: 
-     * <code>org.apache.solr.client.solrj.embedded.EmbeddedSolrServer</code>, 
-     * <code>org.apache.solr.client.solrj.impl.HttpSolrServer</code>, 
-     * <code>org.apache.solr.client.solrj.impl.LBHttpSolrServer</code>, 
-     * or <code>org.apache.solr.client.solrj.impl.CloudSolrServer</code>
+     * Sets the primary SolrClient instance to communicate with Solr.  This is typically one of the following:
+     * <code>org.apache.solr.client.solrj.embedded.EmbeddedSolrClient</code>,
+     * <code>org.apache.solr.client.solrj.impl.HttpSolrClient</code>,
+     * <code>org.apache.solr.client.solrj.impl.LBHttpSolrClient</code>,
+     * or <code>org.apache.solr.client.solrj.impl.CloudSolrClient</code>
      * 
      * @param server
      */
-    public static void setPrimaryServer(SolrServer server) {
-        if (server != null && CloudSolrServer.class.isAssignableFrom(server.getClass())) {
-            CloudSolrServer cs = (CloudSolrServer) server;
+    public static void setPrimaryServer(SolrClient server) {
+        if (server != null && CloudSolrClient.class.isAssignableFrom(server.getClass())) {
+            CloudSolrClient cs = (CloudSolrClient) server;
             if (StringUtils.isBlank(cs.getDefaultCollection())) {
                 cs.setDefaultCollection(PRIMARY);
             }
@@ -65,9 +66,9 @@ public class SolrContext {
                             + "the defaultCollection must be unspecified and Broadleaf will set it.");
                 }
                 
-                if (CloudSolrServer.class.isAssignableFrom(reindexServer.getClass())) {
+                if (CloudSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
                     //Make sure that the primary and reindex servers are not using the same default collection name
-                    if (cs.getDefaultCollection().equals(((CloudSolrServer) reindexServer).getDefaultCollection())) {
+                    if (cs.getDefaultCollection().equals(((CloudSolrClient) reindexServer).getDefaultCollection())) {
                         throw new IllegalStateException("Primary and Reindex servers cannot have the same defaultCollection: "
                                 + cs.getDefaultCollection());
                     }
@@ -79,18 +80,18 @@ public class SolrContext {
     }
 
     /**
-     * Sets the SolrServer instance that points to the reindex core for the purpose of doing a full reindex, while the 
+     * Sets the SolrClient instance that points to the reindex core for the purpose of doing a full reindex, while the
      * primary core is still serving serving requests.  This is typically one of the following: 
      * <code>org.apache.solr.client.solrj.embedded.EmbeddedSolrServer</code>, 
      * <code>org.apache.solr.client.solrj.impl.HttpSolrServer</code>, 
      * <code>org.apache.solr.client.solrj.impl.LBHttpSolrServer</code>, 
-     * or <code>org.apache.solr.client.solrj.impl.CloudSolrServer</code>
+     * or <code>org.apache.solr.client.solrj.impl.CloudSolrClient</code>
      * 
      * @param server
      */
-    public static void setReindexServer(SolrServer server) {
-        if (server != null && CloudSolrServer.class.isAssignableFrom(server.getClass())) {
-            CloudSolrServer cs = (CloudSolrServer) server;
+    public static void setReindexServer(SolrClient server) {
+        if (server != null && CloudSolrClient.class.isAssignableFrom(server.getClass())) {
+            CloudSolrClient cs = (CloudSolrClient) server;
             if (StringUtils.isBlank(cs.getDefaultCollection())) {
                 cs.setDefaultCollection(REINDEX);
             }
@@ -103,9 +104,9 @@ public class SolrContext {
                             + "the defaultCollection must be unspecified and Broadleaf will set it.");
                 }
 
-                if (CloudSolrServer.class.isAssignableFrom(primaryServer.getClass())) {
+                if (CloudSolrClient.class.isAssignableFrom(primaryServer.getClass())) {
                     //Make sure that the primary and reindex servers are not using the same default collection name
-                    if (cs.getDefaultCollection().equals(((CloudSolrServer) primaryServer).getDefaultCollection())) {
+                    if (cs.getDefaultCollection().equals(((CloudSolrClient) primaryServer).getDefaultCollection())) {
                         throw new IllegalStateException("Primary and Reindex servers cannot have the same defaultCollection: "
                                 + cs.getDefaultCollection());
                     }
@@ -116,25 +117,25 @@ public class SolrContext {
     }
 
     /**
-     * Sets the admin SolrServer instance to communicate with Solr for administrative reasons, like swapping cores. 
+     * Sets the admin SolrClient instance to communicate with Solr for administrative reasons, like swapping cores.
      * This is typically one of the following: 
      * <code>org.apache.solr.client.solrj.embedded.EmbeddedSolrServer</code>, 
      * <code>org.apache.solr.client.solrj.impl.HttpSolrServer</code>, 
      * <code>org.apache.solr.client.solrj.impl.LBHttpSolrServer</code>, 
-     * or <code>org.apache.solr.client.solrj.impl.CloudSolrServer</code>
+     * or <code>org.apache.solr.client.solrj.impl.CloudSolrClient</code>
      * 
      * This should not typically need to be set unless using a stand-alone configuration, where the path to the 
      * /admin URI is different than the core URI.  This should not typically be set for EmbeddedSolrServer or 
-     * CloudSolrServer.
+     * CloudSolrClient.
      * 
      * @param server
      */
-    public static void setAdminServer(SolrServer server) {
+    public static void setAdminServer(SolrClient server) {
         adminServer = server;
     }
 
     /**
-     * The adminServer is just a reference to a SolrServer component for connecting to Solr.  In newer 
+     * The adminServer is just a reference to a SolrClient component for connecting to Solr.  In newer
      * versions of Solr, 4.4 and beyond, auto discovery of cores is  
      * provided.  When using a stand-alone server or server cluster, 
      * the admin server, for swapping cores, is a different URL. For example, 
@@ -149,7 +150,7 @@ public class SolrContext {
      * 
      * @return
      */
-    public static SolrServer getAdminServer() {
+    public static SolrClient getAdminServer() {
         if (adminServer != null) {
             return adminServer;
         }
@@ -160,14 +161,14 @@ public class SolrContext {
     /**
      * @return the primary Solr server
      */
-    public static SolrServer getServer() {
+    public static SolrClient getServer() {
         return primaryServer;
     }
 
     /**
      * @return the primary server if {@link #isSingleCoreMode()}, else the reindex server
      */
-    public static SolrServer getReindexServer() {
+    public static SolrClient getReindexServer() {
         return isSingleCoreMode() ? primaryServer : reindexServer;
     }
 
@@ -186,6 +187,6 @@ public class SolrContext {
      * @return
      */
     public static boolean isSolrCloudMode() {
-        return CloudSolrServer.class.isAssignableFrom(getServer().getClass());
+        return CloudSolrClient.class.isAssignableFrom(getServer().getClass());
     }
 }

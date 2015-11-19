@@ -49,13 +49,6 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-    <repositories>
-        <repository>
-            <id>maven central snapshots</id>
-            <name>maven central snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
     <build>
         <plugins>
             <plugin>
@@ -72,7 +65,6 @@
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <version>1.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

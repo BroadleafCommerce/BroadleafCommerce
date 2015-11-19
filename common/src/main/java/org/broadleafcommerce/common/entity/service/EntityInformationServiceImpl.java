@@ -21,8 +21,11 @@ package org.broadleafcommerce.common.entity.service;
 
 import org.broadleafcommerce.common.entity.dto.EntityInformationDto;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -58,12 +61,26 @@ public class EntityInformationServiceImpl implements EntityInformationService {
         return erh.getResult();
     }
 
+    @Override
+    public Long getDefaultCatalogIdForSite(Site site) {
+        ExtensionResultHolder<Long> erh = new ExtensionResultHolder<Long>();
+        extensionManager.getProxy().getDefaultCatalogIdForSite(site, erh);
+        return erh.getResult();
+    }
+
     /**
      * Factory method for instantiating the {@link EntityInformationDto}
      * @return
      */
     protected EntityInformationDto createEntityInformationDto(Object o) {
         return new EntityInformationDto();
+    }
+
+    @Override
+    public List<Catalog> findAllCatalogs() {
+        ExtensionResultHolder<List<Catalog>> erh = new ExtensionResultHolder<List<Catalog>>();
+        extensionManager.getProxy().findAllCatalogs(erh);
+        return erh.getResult();
     }
 
 }

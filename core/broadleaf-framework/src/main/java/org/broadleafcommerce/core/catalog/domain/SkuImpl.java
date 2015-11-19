@@ -61,6 +61,7 @@ import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -208,6 +209,12 @@ public class SkuImpl implements Sku {
         prominent = true, gridOrder = 5, 
         fieldType = SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
+
+    @Column(name = "COST", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Cost", order = 2500,
+            group = Presentation.Group.Name.Price, groupOrder = Presentation.Group.Order.Price,
+            fieldType = SupportedFieldType.MONEY)
+    protected BigDecimal cost;
 
     @Column(name = "NAME")
     @Index(name = "SKU_NAME_INDEX", columnNames = {"NAME"})
@@ -645,6 +652,47 @@ public class SkuImpl implements Sku {
     @Deprecated
     public void setListPrice(Money listPrice) {
         this.retailPrice = Money.toAmount(listPrice);
+    }
+
+    @Override
+    public Money getCost() {
+        if (cost == null && hasDefaultSku()) {
+            return lookupDefaultSku().getCost();
+        }
+
+        if (cost == null) {
+            return null;
+        }
+
+        return new Money(cost, getCurrency());
+    }
+
+    @Override
+    public void setCost(Money cost) {
+        this.cost = cost.getAmount();
+    }
+
+    @Override
+    public Money getMargin() {
+        Money margin = null;
+        Money price = getPrice();
+        Money purchaseCost = getCost();
+
+        if (price == null && hasDefaultSku()) {
+            price = lookupDefaultSku().getPrice();
+        }
+
+        if (purchaseCost == null && hasDefaultSku()) {
+            purchaseCost = lookupDefaultSku().getCost();
+        }
+
+        if (price != null) {
+            if (purchaseCost != null) {
+                margin = price.subtract(purchaseCost).divide(price.getAmount());
+            }
+        }
+
+        return margin;
     }
 
     @Override
@@ -1181,6 +1229,11 @@ public class SkuImpl implements Sku {
     @Override
     public void setUpc(String upc) {
         this.upc = upc;
+    }
+    
+    @Override
+    public FieldEntity getFieldEntityType() {
+        return FieldEntity.SKU;
     }
 
     @Override

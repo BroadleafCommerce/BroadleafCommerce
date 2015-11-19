@@ -46,9 +46,9 @@
     </developers>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>4.1.6.RELEASE</spring.version>
-        <spring.security.version>3.2.6.RELEASE</spring.security.version>
-        <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
+        <spring.version>4.1.8.RELEASE</spring.version>
+        <spring.security.version>3.2.9.RELEASE</spring.security.version>
+        <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
         <geb.version>0.10.0</geb.version>
         <spock.core.version>1.0-groovy-2.3</spock.core.version>
@@ -221,6 +221,15 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven.source.plugin.version}</version>
+                <configuration>
+                    <!-- Don't create source as a default part of the release -->
+                    <attach>false</attach>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
             <plugin>
@@ -329,11 +338,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>snapshots</id>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/snapshots</url>
+            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-snapshots</url>
         </snapshotRepository>
         <repository>
             <id>releases</id>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/releases</url>
+            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-releases</url>
         </repository>
     </distributionManagement>
     <profiles>
@@ -891,7 +900,7 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.10.3</version>
+                <version>5.3.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -906,7 +915,7 @@
             <dependency>
                 <artifactId>solr-core</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.10.3</version>
+                <version>5.3.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>

@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
@@ -79,6 +80,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
     protected static String ALL_SKUS_ATTRIBUTE_NAME = "blcAllDisplayedSkus";
 
     public String search(Model model, HttpServletRequest request, HttpServletResponse response,String query) throws ServletException, IOException, ServiceException {
+
         try {
             if (StringUtils.isNotEmpty(query)) {
                 query = StringUtils.trim(query);
@@ -150,11 +152,23 @@ public class BroadleafSearchController extends AbstractCatalogController {
             }
             
         }
+
+        updateQueryRequestAttribute(query);
+
         return getSearchView();
     }
 
     public String getSearchView() {
         return searchView;
+    }
+
+    protected void updateQueryRequestAttribute(String query) {
+        if (StringUtils.isNotEmpty(query)) {
+            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+            if (brc != null && brc.getAdditionalProperties() != null) {
+                brc.getAdditionalProperties().put("blcSearchKeyword", query);
+            }
+        }
     }
 
     protected SearchService getSearchService() {

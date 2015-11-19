@@ -23,7 +23,10 @@ import org.broadleafcommerce.common.entity.dto.EntityInformationDto;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+
+import java.util.List;
 
 public class AbstractEntityInformationServiceExtensionHandler extends AbstractExtensionHandler
         implements EntityInformationServiceExtensionHandler {
@@ -40,6 +43,15 @@ public class AbstractEntityInformationServiceExtensionHandler extends AbstractEx
 
     @Override
     public ExtensionResultStatusType getOkayToUseSiteDiscriminator(Object o, ExtensionResultHolder<Boolean> erh) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override public ExtensionResultStatusType getDefaultCatalogIdForSite(Site site, ExtensionResultHolder<Long> erh) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType findAllCatalogs(ExtensionResultHolder<List<Catalog>> erh) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 }

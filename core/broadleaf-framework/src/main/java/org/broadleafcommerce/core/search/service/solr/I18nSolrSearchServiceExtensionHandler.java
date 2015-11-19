@@ -20,23 +20,17 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -81,86 +75,10 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
     }
 
     @Override
-    public ExtensionResultStatusType buildPrefixListForSearchableFacet(Field field, List<String> prefixList) {
-        return getLocalePrefix(field, prefixList);
+    public ExtensionResultStatusType buildPrefixListForIndexField(IndexField field, FieldType fieldType, List<String> prefixList) {
+        return getLocalePrefix(field.getField(), prefixList);
     }
 
-    @Override
-    public ExtensionResultStatusType buildPrefixListForSearchableField(Field field, FieldType searchableFieldType, List<String> prefixList) {
-        return getLocalePrefix(field, prefixList);
-    }
-
-    @Override
-    public ExtensionResultStatusType addPropertyValues(Product product, Field field, FieldType fieldType,
-            Map<String, Object> values, String propertyName, List<Locale> locales)
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        
-        return addPropertyValues(product, null, false, field, fieldType, values, propertyName, locales);
-    }
-
-    @Override
-    public ExtensionResultStatusType addPropertyValues(Sku sku, Field field, FieldType fieldType,
-            Map<String, Object> values, String propertyName, List<Locale> locales)
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
-        return addPropertyValues(null, sku, true, field, fieldType, values, propertyName, locales);
-    }
-
-    protected ExtensionResultStatusType addPropertyValues(Product product, Sku sku, boolean useSku, Field field, FieldType fieldType,
-            Map<String, Object> values, String propertyName, List<Locale> locales)
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
-        Set<String> processedLocaleCodes = new HashSet<String>();
-
-        ExtensionResultStatusType result = ExtensionResultStatusType.NOT_HANDLED;
-        if (field.getTranslatable()) {
-            result = ExtensionResultStatusType.HANDLED;
-
-            TranslationConsiderationContext.setTranslationConsiderationContext(getTranslationEnabled());
-            TranslationConsiderationContext.setTranslationService(translationService);
-            BroadleafRequestContext tempContext = BroadleafRequestContext.getBroadleafRequestContext();
-            if (tempContext == null) {
-                tempContext = new BroadleafRequestContext();
-                BroadleafRequestContext.setBroadleafRequestContext(tempContext);
-            }
-
-            Locale originalLocale = tempContext.getLocale();
-
-            try {
-                for (Locale locale : locales) {
-                    String localeCode = locale.getLocaleCode();
-                    if (!Boolean.TRUE.equals(locale.getUseCountryInSearchIndex())) {
-                        int pos = localeCode.indexOf("_");
-                        if (pos > 0) {
-                            localeCode = localeCode.substring(0, pos);
-                            if (processedLocaleCodes.contains(localeCode)) {
-                                continue;
-                            } else {
-                                locale = localeService.findLocaleByCode(localeCode);
-                            }
-                        }
-                    }
-
-                    processedLocaleCodes.add(localeCode);
-                    tempContext.setLocale(locale);
-
-                    final Object propertyValue;
-                    if (useSku) {
-                        propertyValue = shs.getPropertyValue(sku, propertyName);
-                    } else {
-                        propertyValue = shs.getPropertyValue(product, propertyName);
-                    }
-
-                    values.put(localeCode, propertyValue);
-                }
-            } finally {
-                //Reset the original locale.
-                tempContext.setLocale(originalLocale);
-            }
-        }
-        return result;
-
-    }
 
     /**
      * If the field is translatable, take the current locale and add that as a prefix.

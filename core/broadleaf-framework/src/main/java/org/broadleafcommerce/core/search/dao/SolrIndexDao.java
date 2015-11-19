@@ -22,7 +22,7 @@ package org.broadleafcommerce.core.search.dao;
 import java.util.List;
 
 /**
- * Provides some specialized catalog retrieval methods for {@link org.broadleafcommerce.core.search.service.solr.SolrIndexService} for maximum
+ * Provides some specialized catalog retrieval methods for {@link org.broadleafcommerce.core.search.service.solr.index.SolrIndexService} for maximum
  * efficiency of solr document creation during indexing.
  *
  * @author Jeff Fischer
