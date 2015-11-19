@@ -63,11 +63,10 @@ import javax.persistence.Table;
 @EntityListeners(value = {AuditableListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blConfigurationModuleElements")
-@AdminPresentationClass(excludeFromPolymorphism = true, friendlyName = "AbstractModuleConfiguration")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public abstract class AbstractModuleConfiguration implements ModuleConfiguration, Status {
+public abstract class AbstractModuleConfiguration implements ModuleConfiguration, Status, AbstractModuleConfigurationAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
@@ -83,26 +82,27 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
             }
     )
     @Column(name = "MODULE_CONFIG_ID")
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "MODULE_NAME", nullable = false)
     @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Module_Name", order = 2000, gridOrder = 2,
-            prominent = true, requiredOverride = RequiredOverride.REQUIRED)
+            prominent = true, requiredOverride = RequiredOverride.REQUIRED, group = GroupName.General)
     protected String moduleName;
 
     @Column(name = "ACTIVE_START_DATE", nullable = true)
     @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Active_Start_Date", order = 3000, gridOrder = 3,
-            prominent = true, fieldType = SupportedFieldType.DATE)
+            prominent = true, fieldType = SupportedFieldType.DATE, group = GroupName.ActiveDates)
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE", nullable = true)
     @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Active_End_Date", order = 4000, gridOrder = 4,
-            prominent = true, fieldType = SupportedFieldType.DATE)
+            prominent = true, fieldType = SupportedFieldType.DATE, group = GroupName.ActiveDates)
     protected Date activeEndDate;
 
     @Column(name = "IS_DEFAULT", nullable = false)
     @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Default", order = 5000, gridOrder = 5,
-            prominent = true, requiredOverride = RequiredOverride.REQUIRED)
+            prominent = true, requiredOverride = RequiredOverride.REQUIRED, group = GroupName.Options)
     protected Boolean isDefault = false;
 
     /*
@@ -122,7 +122,7 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     @Column(name = "MODULE_PRIORITY", nullable = false)
     @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Priority",
             order = 6000, gridOrder = 6, prominent = true, requiredOverride = RequiredOverride.REQUIRED,
-            tooltip = "AbstractModuleConfiguration_Priority_Tooltip")
+            tooltip = "AbstractModuleConfiguration_Priority_Tooltip", group = GroupName.Options)
     protected Integer priority = 100;
 
     @Embedded
