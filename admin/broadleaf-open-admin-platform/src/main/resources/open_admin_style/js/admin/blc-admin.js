@@ -436,6 +436,13 @@ var BLCAdmin = (function($) {
 						$(this).find('span').addClass('left');
 					}
 				});
+
+				$container.find('.dropdown-menu-right').each(function() {
+					var windowWidth = $(window).width();
+					if ($(this).offset().left < windowWidth / 2) {
+						$(this).removeClass('dropdown-menu-right').addClass('dropdown-menu-left');
+					}
+				});
 			}
 
 			function initializeRadioFields($container) {
