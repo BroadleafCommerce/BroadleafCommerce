@@ -19,7 +19,7 @@
                 <div th:each="action,iterStat : ${listGrid.activeToolbarActions}" th:remove="tag">
                     <li>
                         <a th:classappend="${action.buttonClass}"
-                           th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                           th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation} + ${#strings.isEmpty(action.actionTargetEntity) ? '' : '&amp;entityType=' + action.actionTargetEntity}},
                              data-urlpostfix=${action.urlPostfix},
                              data-queryparams=${listGrid.sectionCrumbRepresentation},
                              disabled=${action.actionId == 'SPLIT'} ? 'disabled'">
@@ -36,7 +36,7 @@
                class="button primary"
                th:href="@{'/' + ${sectionKey + action.urlPostfix}}"
                th:classappend="${action.buttonClass}"
-               th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+               th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation} + ${#strings.isEmpty(action.actionTargetEntity) ? '' : '&amp;entityType=' + action.actionTargetEntity}},
                              data-urlpostfix=${action.urlPostfix},
                              data-queryparams=${listGrid.sectionCrumbRepresentation},
                              disabled=${action.actionId == 'SPLIT'} ? 'disabled'">
