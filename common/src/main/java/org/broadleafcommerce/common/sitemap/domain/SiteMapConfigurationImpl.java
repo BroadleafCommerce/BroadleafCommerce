@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.sitemap.domain;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
+import org.broadleafcommerce.common.config.domain.AbstractModuleConfigurationAdminPresentation;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -44,8 +45,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "BLC_SITE_MAP_CFG")
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
-@AdminPresentationClass(friendlyName = "SiteMapConfigurationImpl")
-public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implements SiteMapConfiguration {
+//@AdminPresentationClass(friendlyName = "SiteMapConfigurationImpl")
+public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implements SiteMapConfiguration, AbstractModuleConfigurationAdminPresentation {
 
     private static final long serialVersionUID = 1L;
     private static Integer DEFAULT_MAX_URL_ENTRIES = 50000;
@@ -57,7 +58,7 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
     protected Integer maximumURLEntriesPerFile;
 
     @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @AdminPresentationCollection(friendlyName = "SiteMapConfigurationImpl_Generator_Configurations")
+    @AdminPresentationCollection(friendlyName = "SiteMapConfigurationImpl_Generator_Configurations", tab = TabName.General)
     protected List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations = new ArrayList<SiteMapGeneratorConfiguration>();
 
     @Column(name = "SITE_MAP_FILE_NAME")

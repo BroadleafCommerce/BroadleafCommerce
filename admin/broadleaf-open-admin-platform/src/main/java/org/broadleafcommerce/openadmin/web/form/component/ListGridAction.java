@@ -50,6 +50,7 @@ public class ListGridAction implements Cloneable {
     protected String actionUrlOverride = null;
     protected Boolean allCapable = false;
     protected Boolean singleActionOnly = false;
+    protected String actionTargetEntity = "";
     
     public ListGridAction(String actionId) {
         this.actionId = actionId;
@@ -99,7 +100,6 @@ public class ListGridAction implements Cloneable {
         setActionUrlOverride(actionUrlOverride);
         return this;
     }
-    
 
     /**
      * @see {@link #setAllCapable(Boolean)}
@@ -114,6 +114,14 @@ public class ListGridAction implements Cloneable {
      */
     public ListGridAction withSingleActionOnly(Boolean singleActionOnly) {
         setSingleActionOnly(singleActionOnly);
+        return this;
+    }
+
+    /**
+     * @see {@link #setActionTargetEntity(String)}
+     */
+    public ListGridAction withActionTargetEntity(String actionTargetEntity) {
+        setActionTargetEntity(actionTargetEntity);
         return this;
     }
     
@@ -247,6 +255,24 @@ public class ListGridAction implements Cloneable {
      */
     public void setSingleActionOnly(Boolean singleActionOnly) {
         this.singleActionOnly = singleActionOnly;
+    }
+
+    /**
+     * Returns a fully qualified ceiling entity that this listgrid action targets
+     *
+     * @return
+     */
+    public String getActionTargetEntity() {
+        return actionTargetEntity;
+    }
+
+    /**
+     * This is used to specify a target entityType for use in listgrid actions
+     *
+     * @param actionTargetEntity
+     */
+    public void setActionTargetEntity(String actionTargetEntity) {
+        this.actionTargetEntity = actionTargetEntity;
     }
 
     @Override

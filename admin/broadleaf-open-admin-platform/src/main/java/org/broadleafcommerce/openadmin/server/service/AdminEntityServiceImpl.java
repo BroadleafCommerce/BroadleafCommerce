@@ -398,7 +398,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 updateTabInfo(collectionMetadata, cmd, tabName, tabOrder);
 
                 if (collectionMetadata.getLazyFetch() != null && collectionMetadata.getLazyFetch()
-                        && BLCMessageUtils.getMessage(tabName).toUpperCase().startsWith(currentTabName.toUpperCase())) {
+                        && tabName.toUpperCase().startsWith(currentTabName.toUpperCase())) {
                     PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
                     map.put(p.getName(), response2.getDynamicResultSet());
                 } else if (collectionMetadata.getLazyFetch() != null && !collectionMetadata.getLazyFetch()) {

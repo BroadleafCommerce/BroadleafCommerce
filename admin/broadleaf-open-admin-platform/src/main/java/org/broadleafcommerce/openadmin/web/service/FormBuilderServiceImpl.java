@@ -39,22 +39,9 @@ import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
-import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.dto.Entity;
-import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.dto.MapStructure;
-import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.dto.SectionCrumb;
-import org.broadleafcommerce.openadmin.dto.TabMetadata;
+import org.broadleafcommerce.openadmin.dto.*;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -65,11 +52,7 @@ import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
-import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
-import org.broadleafcommerce.openadmin.web.form.component.MediaField;
-import org.broadleafcommerce.openadmin.web.form.component.RuleBuilderField;
+import org.broadleafcommerce.openadmin.web.form.component.*;
 import org.broadleafcommerce.openadmin.web.form.entity.CodeField;
 import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
@@ -1136,6 +1119,23 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p, ef.getSectionKey(), sectionCrumbs);
 
                 CollectionMetadata md = ((CollectionMetadata) p.getMetadata());
+
+                PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
+                ClassMetadata collectionCmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+                if (collectionCmd.getPolymorphicEntities().getChildren().length != 0) {
+                    List<ClassTree> entityTypes = collectionCmd.getPolymorphicEntities().getCollapsedClassTrees();
+                    for (ClassTree entityType : entityTypes) {
+                        ListGridAction ADD = new ListGridAction(ListGridAction.ADD)
+                                .withButtonClass("sub-list-grid-add")
+                                .withActionTargetEntity(entityType.getFullyQualifiedClassname())
+                                .withUrlPostfix("/add")
+                                .withIconClass("blc-icon-add-category")
+                                .withDisplayText("Add " + BLCMessageUtils.getMessage(entityType.getFriendlyName()));
+                        listGrid.getToolbarActions().add(0, ADD);
+                    }
+                } else {
+                    listGrid.getToolbarActions().add(0, DefaultListGridActions.ADD);
+                }
                 if (subCollectionEntities.getUnselectedTabMetadata().get(md.getTab())!=null) {
                     ef.addListGrid(cmd, listGrid, md.getTab(), md.getTabOrder(), md.getGroup(), true);
                 } else {
@@ -1144,15 +1144,15 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
         
-        for (ListGrid lg : ef.getAllListGrids()) {
-            // We always want the add option to be the first toolbar action for consistency
-            if (lg.getToolbarActions().isEmpty()) {
-                lg.addToolbarAction(DefaultListGridActions.ADD);
-            } else {
-                lg.getToolbarActions().add(0, DefaultListGridActions.ADD);
-            }
-        }
-        
+//        for (ListGrid lg : ef.getAllListGrids()) {
+//            // We always want the add option to be the first toolbar action for consistency
+//            if (lg.getToolbarActions().isEmpty()) {
+//                lg.addToolbarAction(DefaultListGridActions.ADD);
+//            } else {
+//                lg.getToolbarActions().add(0, DefaultListGridActions.ADD);
+//            }
+//        }
+//
         if (CollectionUtils.isEmpty(ef.getActions())) {
             ef.addAction(DefaultEntityFormActions.SAVE);
         }
