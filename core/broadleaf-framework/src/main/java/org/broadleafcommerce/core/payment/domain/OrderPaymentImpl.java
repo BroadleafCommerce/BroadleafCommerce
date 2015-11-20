@@ -157,6 +157,10 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @AdminPresentationCollection(friendlyName="OrderPaymentImpl_Details",
             tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
     protected List<PaymentTransaction> transactions = new ArrayList<PaymentTransaction>();
+
+    @Column(name = "SAVE_TOKEN")
+    @AdminPresentation(friendlyName = "OrderPaymentImpl_Save_Token")
+    protected Boolean saveToken = false;
     
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -229,6 +233,16 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @Override
     public void setPaymentGatewayType(PaymentGatewayType gatewayType) {
         this.gatewayType = gatewayType == null ? null : gatewayType.getType();
+    }
+
+    @Override
+    public boolean isSaveToken() {
+        return saveToken == null ? false : saveToken;
+    }
+
+    @Override
+    public void setSaveToken(boolean saveToken) {
+        this.saveToken = saveToken;
     }
 
     @Override

@@ -67,6 +67,7 @@
         <property name="sourceList">
             <list>
                 <bean class="org.broadleafcommerce.common.extensibility.jpa.JPAPropertiesPersistenceUnitPostProcessor"/>
+                <bean class="org.broadleafcommerce.common.extensibility.jpa.ConditionalORMConfigPersistenceUnitPostProcessor"/>
             </list>
         </property>
     </bean>

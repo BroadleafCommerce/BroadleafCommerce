@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.dao.AddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.service.exception.AddressVerificationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +48,9 @@ public class AddressServiceImpl implements AddressService {
 
     @Resource(name = "blAddressVerificationProviders")
     protected List<AddressVerificationProvider> providers;
+
+    @Resource(name = "blPhoneService")
+    protected PhoneService phoneService;
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
@@ -112,6 +116,50 @@ public class AddressServiceImpl implements AddressService {
         ArrayList<Address> out = new ArrayList<Address>();
         out.add(address);
         return out;
+    }
+
+    @Override
+    public Address copyAddress(Address orig) {
+        return copyAddress(null, orig);
+    }
+
+    @Override
+    public Address copyAddress(Address dest, Address orig) {
+        if (dest == null) {
+            dest = create();
+        }
+
+        if (orig != null) {
+            dest.setFullName(orig.getFullName());
+            dest.setFirstName(orig.getFirstName());
+            dest.setLastName(orig.getLastName());
+            dest.setAddressLine1(orig.getAddressLine1());
+            dest.setAddressLine2(orig.getAddressLine2());
+            dest.setCity(orig.getCity());
+            dest.setState(orig.getState());
+            dest.setCounty(orig.getCounty());
+            dest.setIsoCountrySubdivision(orig.getIsoCountrySubdivision());
+            dest.setStateProvinceRegion(orig.getStateProvinceRegion());
+            dest.setPostalCode(orig.getPostalCode());
+            dest.setZipFour(orig.getZipFour());
+            dest.setCountry(orig.getCountry());
+            dest.setIsoCountryAlpha2(orig.getIsoCountryAlpha2());
+            dest.setCompanyName(orig.getCompanyName());
+            dest.setPrimaryPhone(orig.getPrimaryPhone());
+            dest.setSecondaryPhone(orig.getSecondaryPhone());
+            dest.setFax(orig.getFax());
+            dest.setPhonePrimary(phoneService.copyPhone(dest.getPhonePrimary(), orig.getPhonePrimary()));
+            dest.setPhoneSecondary(phoneService.copyPhone(dest.getPhoneSecondary(), orig.getPhoneSecondary()));
+            dest.setPhoneFax(phoneService.copyPhone(dest.getPhoneFax(), orig.getPhoneFax()));
+            dest.setEmailAddress(orig.getEmailAddress());
+            dest.setBusiness(orig.isBusiness());
+            dest.setMailing(orig.isMailing());
+            dest.setStreet(orig.isStreet());
+
+            return dest;
+        }
+
+        return null;
     }
 
     /**

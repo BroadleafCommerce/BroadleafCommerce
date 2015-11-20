@@ -20,7 +20,7 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,6 +76,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -493,14 +494,14 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     @Override
     public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
-        String query = shs.getExplicitCategoryFieldName() + ":\"" + shs.getCategoryId(category) + "\"";
+        String query = getCategoryFilter(category);
         return findSearchResults("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
     @Override
     public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
-        String query = shs.getCategoryFieldName() + ":\"" + shs.getCategoryId(category) + "\"";
+        String query = getCategoryFilter(category);
         return findSearchResults("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
@@ -515,10 +516,24 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets();
 
-        String catFq = shs.getCategoryFieldName() + ":\"" + shs.getCategoryId(category) + "\"";
+        String catFq = getCategoryFilter(category);
         query = "(" + sanitizeQuery(query) + ")";
         
         return findSearchResults(query, facets, searchCriteria, null, catFq);
+    }
+
+    protected String getCategoryFilter(Category category) {
+        return shs.getCategoryFieldName() + ":(\"" + StringUtils.join(getCategoryIds(category), "\" \"") +  "\")";
+    }
+
+    protected List<Long> getCategoryIds(Category category) {
+        List<Long> categoryIds = new ArrayList<>();
+
+        categoryIds.add(shs.getCategoryId(category));
+
+        extensionManager.getProxy().addAdditionalCategoryIds(category, categoryIds);
+
+        return categoryIds;
     }
 
     public String getLocalePrefix() {
@@ -533,11 +548,16 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     protected String buildQueryFieldsString(SolrQuery query) {
         StringBuilder queryBuilder = new StringBuilder();
-        List<IndexField> fields = null;
-        if (useSku) {
-            fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
-        } else {
-            fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+        List<IndexField> fields = new ArrayList<>();
+
+        ExtensionResultStatusType status = extensionManager.getProxy().getIndexFieldsForQuery(fields);
+
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+            if (useSku) {
+                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
+            } else {
+                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+            }
         }
 
         // we want to gather all the query fields into one list
@@ -706,19 +726,29 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     @Override
     public List<SearchFacetDTO> getSearchFacets() {
-        if (useSku) {
-            return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.SKU));
+        List<SearchFacet> searchFacets = new ArrayList<>();
+        ExtensionResultStatusType status = extensionManager.getProxy().getSearchFacets(searchFacets);
+
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+            if (useSku) {
+                return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.SKU));
+            }
+            return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.PRODUCT));
         }
-        return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.PRODUCT));
+
+        return buildSearchFacetDTOs(searchFacets);
     }
 
     @Override
     public List<SearchFacetDTO> getCategoryFacets(Category category) {
-        List<CategorySearchFacet> categorySearchFacets = category.getCumulativeSearchFacets();
-
         List<SearchFacet> searchFacets = new ArrayList<SearchFacet>();
-        for (CategorySearchFacet categorySearchFacet : categorySearchFacets) {
-            searchFacets.add(categorySearchFacet.getSearchFacet());
+        ExtensionResultStatusType status = extensionManager.getProxy().getCategorySearchFacets(category, searchFacets);
+
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+            List<CategorySearchFacet> categorySearchFacets = category.getCumulativeSearchFacets();
+            for (CategorySearchFacet categorySearchFacet : categorySearchFacets) {
+                searchFacets.add(categorySearchFacet.getSearchFacet());
+            }
         }
 
         return buildSearchFacetDTOs(searchFacets);

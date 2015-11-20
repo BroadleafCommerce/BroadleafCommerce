@@ -930,7 +930,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         
         return null;
     }
-
+    
     protected int getDefaultMaxResults() {
         return BLCSystemProperty.resolveIntSystemProperty("admin.default.max.results", 50);
     }

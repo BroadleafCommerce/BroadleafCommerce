@@ -127,7 +127,24 @@ public interface OrderPayment extends Serializable, Status {
      * just archiving this payment type (by deleting it) and creating a new payment for the new gateway.</p>
      */
     public void setPaymentGatewayType(PaymentGatewayType gatewayType);
-    
+
+    /**
+     * <p>
+     * Indicates whether or not a "confirmed" transaction on this Order Payment contains
+     * a payment token (i.e. {@link org.broadleafcommerce.common.payment.PaymentAdditionalFieldType#TOKEN})
+     * and should be saved as a {@link org.broadleafcommerce.profile.core.domain.CustomerPayment} on the user's profile
+     *
+     * @return - whether or not this payment is tokenized and should be saved
+     */
+    public boolean isSaveToken();
+
+    /**
+     * Mark this Order Payment as containing (or going to contain) a {@link org.broadleafcommerce.core.payment.domain.PaymentTransaction}
+     * that should be saved on the user's profile as a {@link org.broadleafcommerce.profile.core.domain.CustomerPayment}
+     * @param saveToken
+     */
+    public void setSaveToken(boolean saveToken);
+
     /**
      * <p>All of the transactions that have been applied to this particular payment. Transactions are denoted by the various
      * {@link PaymentTransactionType}s. In almost all scenarios (as in, 99.9999% of all cases) there will be a at least one

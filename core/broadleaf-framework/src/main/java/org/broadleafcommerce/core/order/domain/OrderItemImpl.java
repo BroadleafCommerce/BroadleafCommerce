@@ -206,10 +206,11 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     )
     protected Map<String, OrderItemAttribute> orderItemAttributeMap = new HashMap<String, OrderItemAttribute>();
 
+    /**
+     * @deprecated use {@link FulfillmentGroupItem#getTaxes()} or {@link FulfillmentGroupItem#getTotalTax()} instead
+     */
     @Column(name = "TOTAL_TAX")
-    @AdminPresentation(friendlyName = "OrderItemImpl_Total_Tax", order = Presentation.FieldOrder.TOTALTAX,
-                group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
-                fieldType = SupportedFieldType.MONEY)
+    @Deprecated
     protected BigDecimal totalTax;
     
     @OneToMany(mappedBy = "parentOrderItem", targetEntity = OrderItemImpl.class)
