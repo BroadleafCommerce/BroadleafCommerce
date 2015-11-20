@@ -19,12 +19,12 @@
  */
 @font-face {
 	font-family: 'broadleaf';
-	src:url('../../../fonts/broadleaf.eot?i3chse');
-	src:url('../../../fonts/broadleaf.eot?i3chse#iefix') format('embedded-opentype'),
-	url('../../../fonts/broadleaf.woff2?i3chse') format('woff2'),
-	url('../../../fonts/broadleaf.ttf?i3chse') format('truetype'),
-	url('../../../fonts/broadleaf.woff?i3chse') format('woff'),
-	url('../../../fonts/broadleaf.svg?i3chse#broadleaf') format('svg');
+	src:url('../../fonts/broadleaf.eot?i3chse');
+	src:url('../../fonts/broadleaf.eot?i3chse#iefix') format('embedded-opentype'),
+	url('../../fonts/broadleaf.woff2?i3chse') format('woff2'),
+	url('../../fonts/broadleaf.ttf?i3chse') format('truetype'),
+	url('../../fonts/broadleaf.woff?i3chse') format('woff'),
+	url('../../fonts/broadleaf.svg?i3chse#broadleaf') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
