@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.spec.checkout.service.workflow
 
+import org.broadleafcommerce.common.config.service.SystemPropertiesService
 import org.broadleafcommerce.common.money.Money
 import org.broadleafcommerce.common.payment.PaymentGatewayType
 import org.broadleafcommerce.common.payment.PaymentTransactionType
@@ -163,6 +164,9 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
                 .successful(true)
                 .paymentTransactionType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE)
 
+        SystemPropertiesService mockSPS = Mock()
+        mockSPS.resolveBooleanSystemProperty(*_) >> false
+
         PaymentGatewayTransactionConfirmationService mockConfirmationService = Mock()
         mockConfirmationService.confirmTransaction(_) >> {PaymentRequestDTO dto -> responseDTO}
 
@@ -182,6 +186,7 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
             paymentConfigurationServiceProvider = mockProvider
             orderToPaymentRequestService = mockRequestService
             orderPaymentService = mockOrderPaymentService
+            systemPropertiesService = mockSPS
             it
         }
 
@@ -269,6 +274,9 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
                 .successful(true)
                 .paymentTransactionType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE)
 
+        SystemPropertiesService mockSPS = Mock()
+        mockSPS.resolveBooleanSystemProperty(*_) >> false
+
         PaymentGatewayConfiguration mockConfiguration = Mock()
         mockConfiguration.isPerformAuthorizeAndCapture() >> true
 
@@ -292,6 +300,7 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
             paymentConfigurationServiceProvider = mockProvider
             orderToPaymentRequestService = mockRequestService
             orderPaymentService = mockOrderPaymentService
+            systemPropertiesService = mockSPS
             it
         }
 
