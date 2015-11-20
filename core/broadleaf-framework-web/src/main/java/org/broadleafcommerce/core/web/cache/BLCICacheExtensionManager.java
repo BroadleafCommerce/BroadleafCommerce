@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Profile
+ * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,20 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.profile.core.service;
+package org.broadleafcommerce.core.web.cache;
 
-import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
-public interface PhoneService {
+/**
+ * Extension manager that holds the list of {@link BLCICacheExtensionHandler}.
+ *
+ * @author Chad Harchar (charchar)
+ */
+@Service("blICacheExtensionManager")
+public class BLCICacheExtensionManager extends ExtensionManager<BLCICacheExtensionHandler> {
 
-    public Phone savePhone(Phone phone);
-
-    public Phone readPhoneById(Long phoneId);
-
-    public Phone create();
-
-    public Phone copyPhone(Phone orig);
-
-    public Phone copyPhone(Phone dest, Phone orig);
+    public BLCICacheExtensionManager() {
+        super(BLCICacheExtensionHandler.class);
+    }
 }
