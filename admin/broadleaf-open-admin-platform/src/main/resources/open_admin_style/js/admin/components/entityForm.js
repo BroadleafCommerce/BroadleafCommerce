@@ -129,7 +129,7 @@
                         var alert = {
                             message: BLCAdmin.messages.saved + '!',
                             alertType: 'save-alert',
-                            autoClose: 1000,
+                            autoClose: 3000,
                             clearOtherAlerts: true
                         };
 
@@ -174,7 +174,7 @@ $(document).ready(function() {
     $('body div.section-tabs:not(.workflow-tabs, .oms-order-tabs, .oms-customer-tabs) li').find('a').click(function(event) {
         var $tab = $(this);
         var $tabBody = $('.' + $tab.attr('href').substring(1) + 'Tab');
-        var text = getTabText($tab.find('span'));
+        var text = $tab.find('span').data('tabkey')
         var $form = BLCAdmin.getForm($tab);
         var href = $(this).attr('href').replace('#', '');
         var currentAction = $form.attr('action');
@@ -377,11 +377,13 @@ $(document).ready(function() {
         var $content = $(this).closest('.fieldset-card').find('.fieldset-card-content');
         if ($collapser.hasClass('collapsed')) {
             $collapser.removeClass('collapsed').addClass('expanded');
-            $collapser.find('i').removeClass('fa-angle-down').addClass('fa-angle-up');
+            $collapser.text("(hide)");
+            //$collapser.find('i').removeClass('fa-angle-down').addClass('fa-angle-up');
             $content.removeClass('content-collapsed');
         } else {
             $collapser.removeClass('expanded').addClass('collapsed');
-            $collapser.find('i').removeClass('fa-angle-up').addClass('fa-angle-down');
+            $collapser.text("(show)");
+            //$collapser.find('i').removeClass('fa-angle-up').addClass('fa-angle-down');
             $content.addClass('content-collapsed');
         }
 

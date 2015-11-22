@@ -77,9 +77,9 @@
             var $fieldSetCard = $listGridContainer.closest('.fieldset-card.listgrid-container');
             var totalRecords = $listGridContainer.find('.listgrid-body-wrapper table tbody').data('totalrecords');
             if ($fieldSetCard.length && totalRecords !== 0) {
-                var $collapser = $fieldSetCard.find('.titlebar .collapser a');
+                var $collapser = $fieldSetCard.find('.titlebar .collapser span');
                 if ($collapser.hasClass('collapsed')) {
-                    $collapser.click();
+                    $fieldSetCard.find('a.titlebar').click();
                 }
             }
 
@@ -220,23 +220,29 @@
             options = options || {};
     	    var alertType = options.alertType || '';
     	    
-    	    var $alert = $('<li>').addClass('alert-box list-grid-alert').addClass(alertType);
+    	    var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass(alertType);
     	    var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
     	    
-    	    $alert.append(message);
+    	    $alert.append('&nbsp;&nbsp;&nbsp;' + message);
     	    $alert.append($closeLink);
     	    
     	    if (options.clearOtherAlerts) {
     	        $container.children('.list-grid-alert').find('a.close').click();
     	    }
 
-            $container.find('.listgrid-toolbar ul').append($alert);
-    	    
-    	    if (options.autoClose) {
-    	        setTimeout(function() {
-    	            $closeLink.closest(".alert-box").remove();
-    	        }, options.autoClose);
-    	    }
+            var alertTarget = $container.find('.titlebar:first-child');
+            if (!alertTarget.length) {
+                alertTarget = $container.find('label span');
+            }
+
+            setTimeout(function() {
+                alertTarget.append($alert);
+                if (options.autoClose) {
+                    setTimeout(function() {
+                        $closeLink.closest(".alert-box").remove();
+                    }, options.autoClose);
+                }
+            }, 500);
         },
         
         fixHelper : function(e, ui) {
@@ -450,7 +456,7 @@ $(document).ready(function() {
             BLCAdmin.listGrid.replaceRelatedCollection($(data), {
                 message: BLCAdmin.messages.saved + '!', 
                 alertType: 'save-alert',
-                autoClose: 1000,
+                autoClose: 3000,
                 clearOtherAlerts: true
             });
             BLCAdmin.hideCurrentModal();
@@ -625,7 +631,7 @@ $(document).ready(function() {
                         var $container = $('div.listgrid-container#' + data.field);
                         BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', {
                             alertType: 'save-alert',
-                            autoClose: 400
+                            autoClose: 3000
                         });
 
                         $container = $this.closest('.listgrid-container');
@@ -688,7 +694,7 @@ $(document).ready(function() {
                 BLCAdmin.listGrid.replaceRelatedCollection($(data), {
                     message: BLCAdmin.messages.saved + '!', 
                     alertType: 'save-alert', 
-                    autoClose: 1000 
+                    autoClose: 3000
                 });
             }
         });
@@ -811,7 +817,7 @@ $(document).ready(function() {
                         BLCAdmin.listGrid.replaceRelatedCollection($(data), {
                             message: BLCAdmin.messages.saved + '!',
                             alertType: 'save-alert',
-                            autoClose: 1000
+                            autoClose: 3000
                         });
                     }
                 }

@@ -1532,7 +1532,8 @@ div.uploadMessage {
 .collapser {
     display: inline-block;
     float: right;
-    margin-top: 3px;
+    font-size: 8px;
+    opacity: 0.5;
 }
 
 .dynamic-form-wrapper {

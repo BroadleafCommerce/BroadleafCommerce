@@ -1119,19 +1119,22 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p, ef.getSectionKey(), sectionCrumbs);
 
                 CollectionMetadata md = ((CollectionMetadata) p.getMetadata());
-
-                PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
-                ClassMetadata collectionCmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
-                if (collectionCmd.getPolymorphicEntities().getChildren().length != 0) {
-                    List<ClassTree> entityTypes = collectionCmd.getPolymorphicEntities().getCollapsedClassTrees();
-                    for (ClassTree entityType : entityTypes) {
-                        ListGridAction ADD = new ListGridAction(ListGridAction.ADD)
-                                .withButtonClass("sub-list-grid-add")
-                                .withActionTargetEntity(entityType.getFullyQualifiedClassname())
-                                .withUrlPostfix("/add")
-                                .withIconClass("blc-icon-add-category")
-                                .withDisplayText("Add " + BLCMessageUtils.getMessage(entityType.getFriendlyName()));
-                        listGrid.getToolbarActions().add(0, ADD);
+                if (md instanceof BasicCollectionMetadata) {
+                    PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
+                    ClassMetadata collectionCmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+                    if (collectionCmd.getPolymorphicEntities().getChildren().length != 0) {
+                        List<ClassTree> entityTypes = collectionCmd.getPolymorphicEntities().getCollapsedClassTrees();
+                        for (ClassTree entityType : entityTypes) {
+                            ListGridAction ADD = new ListGridAction(ListGridAction.ADD)
+                                    .withButtonClass("sub-list-grid-add")
+                                    .withActionTargetEntity(entityType.getFullyQualifiedClassname())
+                                    .withUrlPostfix("/add")
+                                    .withIconClass("blc-icon-add-category")
+                                    .withDisplayText("Add " + BLCMessageUtils.getMessage(entityType.getFriendlyName()));
+                            listGrid.getToolbarActions().add(0, ADD);
+                        }
+                    } else {
+                        listGrid.getToolbarActions().add(0, DefaultListGridActions.ADD);
                     }
                 } else {
                     listGrid.getToolbarActions().add(0, DefaultListGridActions.ADD);
@@ -1152,7 +1155,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 //                lg.getToolbarActions().add(0, DefaultListGridActions.ADD);
 //            }
 //        }
-//
+
         if (CollectionUtils.isEmpty(ef.getActions())) {
             ef.addAction(DefaultEntityFormActions.SAVE);
         }
