@@ -400,9 +400,11 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
         cloned.setType(PaymentType.getInstance(type));
         cloned.setArchived(getArchived());
         for (PaymentTransaction transaction : transactions) {
-            PaymentTransaction cpt = transaction.createOrRetrieveCopyInstance(context).getClone();
-            cpt.setOrderPayment(cloned);
-            cloned.getTransactions().add(cpt);
+            if (transaction.isActive()) {
+                PaymentTransaction cpt = transaction.createOrRetrieveCopyInstance(context).getClone();
+                cpt.setOrderPayment(cloned);
+                cloned.getTransactions().add(cpt);
+            }
         }
 
         return createResponse;

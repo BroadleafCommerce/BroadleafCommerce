@@ -835,9 +835,11 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             cloned.getFulfillmentGroups().add(fg);
         }
         for(OrderPayment orderPayment : payments) {
-            OrderPayment payment = orderPayment.createOrRetrieveCopyInstance(context).getClone();
-            payment.setOrder(cloned);
-            cloned.getPayments().add(payment);
+            if (orderPayment.isActive()) {
+                OrderPayment payment = orderPayment.createOrRetrieveCopyInstance(context).getClone();
+                payment.setOrder(cloned);
+                cloned.getPayments().add(payment);
+            }
         }
         for(OfferCode entry : addedOfferCodes){
            OfferCode clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
