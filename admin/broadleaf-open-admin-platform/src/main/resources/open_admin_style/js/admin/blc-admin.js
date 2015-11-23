@@ -810,9 +810,12 @@ var BLCAdmin = (function($) {
                         }
                         
                         // Toggle the visiblity of the child field appropriately
-                        if ($childField.siblings('.field-group').length) {
-                            $childField.toggle(shouldShow);
-                        } else {
+                        $childField.toggle(shouldShow);
+
+                        var $cardContent = $childField.closest('.fieldset-card-content');
+                        var numTotalFields = $cardContent.find('.field-group').length;
+                        var numHiddenFields = $cardContent.find('.field-group:hidden').length;
+                        if (numTotalFields === numHiddenFields) {
                             $childField.closest('.fieldset-card').toggle(shouldShow);
                         }
                         
