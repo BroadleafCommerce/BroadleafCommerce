@@ -145,7 +145,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Index(name="OFFER_TYPE_INDEX", columnNames={"OFFER_TYPE"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order = 1000,
         group = OfferAdminPresentation.GroupName.RuleConfiguration,
-        prominent =  true, gridOrder = 3,
         fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType",
         defaultValue = "ORDER")
@@ -338,7 +337,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             @AdminPresentationMapField(
             fieldName = RuleIdentifier.TIME_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE,
-                    group = OfferAdminPresentation.GroupName.ActivityRange,
+                    group = OfferAdminPresentation.GroupName.ActivityRange, order = 4000,
                     ruleIdentifier = RuleIdentifier.TIME, friendlyName = "OfferImpl_Time_Rule")
             ),
             @AdminPresentationMapField(
@@ -365,6 +364,13 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         group = OfferAdminPresentation.GroupName.Advanced,
         visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean treatAsNewFormat = false;
+//
+//    @Transient
+//    @AdminPresentation(fieldType = SupportedFieldType.BOOLEAN_LINK,
+//            group = OfferAdminPresentation.GroupName.ActivityRange, order = 5000,
+//            friendlyName = "OfferImpl_View_Visibility_Options", defaultValue = "false",
+//            visibility = VisibilityEnum.VISIBLE_ALL)
+//    protected Boolean showAdvancedVisibilityOptions = false;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
