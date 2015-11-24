@@ -287,6 +287,11 @@
                     $(this).html(day.fromNow());
                 }
             });
+
+            $($.find("[data-fieldname$='Date']")).each(function() {
+                var d = new Date($(this).text());
+                $(this).text(d.dateFormat("l, F d, Y \@ g:ia"));
+            });
         },
         
         getListGridCount : function($container) {

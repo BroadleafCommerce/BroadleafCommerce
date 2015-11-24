@@ -810,9 +810,12 @@ var BLCAdmin = (function($) {
                         }
                         
                         // Toggle the visiblity of the child field appropriately
-                        if ($childField.siblings('.field-group').length) {
-                            $childField.toggle(shouldShow);
-                        } else {
+                        $childField.toggle(shouldShow);
+
+                        var $cardContent = $childField.closest('.fieldset-card-content');
+                        var numTotalFields = $cardContent.find('.field-group').length;
+                        var numHiddenFields = $cardContent.find('.field-group:hidden').length;
+                        if (numTotalFields === numHiddenFields) {
                             $childField.closest('.fieldset-card').toggle(shouldShow);
                         }
                         
@@ -965,6 +968,21 @@ $('body').on('click', '.disabled', function(e) {
 $('body').on('change', 'input.color-picker-value', function() {
     var $this = $(this);
     $this.closest('.field-group').find('input.color-picker').spectrum('set', $this.val());
+});
+
+
+$('.boolean-link').each(function() {
+	$(this).next().find('input:not(:checked)').click();
+});
+$('body').on('click', '.boolean-link', function(e) {
+	e.preventDefault();
+	$(this).next().find('input:not(:checked)').click();
+
+	if ($(this).hasClass('view-options')) {
+		$(this).removeClass('view-options').addClass('hide-options');
+	} else {
+		$(this).addClass('view-options').removeClass('hide-options');
+	}
 });
 
 /**

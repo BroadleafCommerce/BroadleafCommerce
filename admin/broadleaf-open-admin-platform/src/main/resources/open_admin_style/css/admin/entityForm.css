@@ -18,6 +18,24 @@
  * #L%
  */
 .required:after {
-    content: '*';
+    content: ' *';
     color: #D20A33;
+}
+
+.app-content .fieldset-card .titlebar {
+    padding: 10px 15px;
+    letter-spacing: 0.05em;
+}
+
+.boolean-link {
+    font-size: 11px;
+    color: #94AF39;
+}
+
+a.boolean-link.view-options:before {
+    content: 'View';
+}
+
+a.boolean-link.hide-options:before {
+    content: 'Hide';
 }

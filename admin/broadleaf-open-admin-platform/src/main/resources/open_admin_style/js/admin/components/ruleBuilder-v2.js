@@ -86,6 +86,22 @@
                     return null;
                 },
 
+                getFieldValueById : function(fieldId, value) {
+                    for (var i=0; i<this.fields.length; i++) {
+                        if (this.fields[i].id === fieldId) {
+                            if (this.fields[i].values) {
+                                for (var j = 0; j < this.fields[i].values.length; j++) {
+                                    var cValue = this.fields[i].values[j];
+                                    if (cValue[value] !== undefined && cValue[value].length) {
+                                        return cValue[value];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return value;
+                },
+
                 getOperatorLabelByOperatorType : function(operatorType)  {
                     return this.builders[0].queryBuilder('getOperatorLabelByType', operatorType);
                 },
@@ -643,12 +659,23 @@
             //If the element exists set the value
             if (readableElement) {
                 //clear out existing content
-                $(readableElement).empty();
+                $(readableElement).html('');
 
                 // If no data, set "No rules applied"
                 if (data == null || data.length == 0) {
-                    var noRules = $("<span>", {'class': 'readable-no-rule', 'text' : 'No rules applied yet.'});
+                    var noRules = $("<span>", {'class': 'readable-no-rule', 'html' : 'No rules applied yet,'});
+
+                    var addRules = $('<span>', {
+                        'data-hiddenId':  hiddenId,
+                        'data-ruleType': ruleBuilder.ruleType,
+                        'data-ruleTitleId': ruleBuilder.containerId + '-header',
+                        'html': '&nbsp;add some',
+                        'class': 'launch-modal-rule-builder launch-link'
+                    });
+
+                    noRules.append(addRules);
                     $(readableElement).append(noRules);
+                    $(readableElement).parent().removeClass('can-edit');
                 // else fill in data
                 } else {
 
@@ -657,15 +684,24 @@
                         var prefix = $("<span>", {
                             'class': 'readable-rule-prefix',
                             'text': dataDTO.quantity ?
-                            'Match ' + dataDTO.quantity + ' items where: ' :
-                                'Rule where: '
+                            'Match ' + dataDTO.quantity + ' items where' :
+                                'Rule where'
                         });
 
+                        var conditionText = '<strong>ANY</strong>';
+                        if (dataDTO.condition === 'AND') {
+                            conditionText = '<strong>ALL</strong>';
+                        }
+
+                        prefix.html(prefix.text() + ' ' + conditionText + ': ');
+
                         $(readableElement).append(prefix);
-                        var condition = dataDTO.condition;
+                        var listElement = $('<ul>');
+                        $(readableElement).append(listElement);
+
                         for (var k = 0; k < dataDTO.rules.length; k++) {
                             var ruleDTO = dataDTO.rules[k];
-
+                            var listItem = $('<li>');
                             var name = $("<span>", {
                                 'class': 'readable-rule-field',
                                 'text': ruleBuilder.getFieldLabelById(ruleDTO.id)
@@ -676,24 +712,28 @@
                             });
                             var value = $("<span>", {
                                 'class': 'readable-rule-value',
-                                'text': ruleDTO.value
+                                'text': ruleBuilder.getFieldValueById(ruleDTO.id, ruleDTO.value)
                             });
 
-                            $(readableElement).append(name);
-                            $(readableElement).append(operator);
-                            $(readableElement).append(value);
+                            $(listItem).append(name);
+                            $(listItem).append(operator);
+                            $(listItem).append(value);
 
-                            if (k != dataDTO.rules.length - 1) {
-                                var additional = $("<span>", {'text': condition});
-                                $(readableElement).append(additional);
-                            }
+                            //if (k != dataDTO.rules.length - 1) {
+                            //    var additional = $("<span>", {'text': condition});
+                            //    $(listItem).append(additional);
+                            //}
+
+                            $(listElement).append(listItem);
                         }
 
-                        if (i != data.length - 1) {
-                            var and = $("<span>", {'text': 'and'});
-                            $(readableElement).append(and);
-                        }
+                        //if (i != data.length - 1) {
+                        //    var and = $("<span>", {'text': 'and'});
+                        //    $(readableElement).append(and);
+                        //}
                     }
+                    $(readableElement).parent().addClass('can-edit');
+
                 }
             }
 
@@ -839,8 +879,11 @@ $(document).ready(function() {
     /**
      * Invoked from a Rule Builder with display type : "MODAL"
      */
-    $('body').on('click', 'div.launch-modal-rule-builder', function() {
+    $('body').on('click', '.launch-modal-rule-builder', function() {
         var $container = $($(this)).siblings('.query-builder-rules-container');
+        if (!$container.length) {
+            $container = $($(this).parents('.rule-modal-zone')).siblings('.query-builder-rules-container');
+        }
         var hiddenId = $($(this)).data('hiddenid');
         var ruleType = $($(this)).data('ruletype');
         var ruleTitleId = $($(this)).data('ruletitleid');

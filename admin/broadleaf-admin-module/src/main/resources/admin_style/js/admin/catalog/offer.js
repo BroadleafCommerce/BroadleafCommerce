@@ -25,7 +25,7 @@
         initValueFieldStyle : function ($form) {
             if (!$form.find("#fields\\'value\\'\\.value").parent().hasClass('input-group')) {
                 var inputGroup = $("<div>", {'class' : 'input-group'});
-                var inputGroupIcon = $("<i>", {'class' : 'blc-icon-percent'});
+                var inputGroupIcon = $("<i>", {'class' : BLCAdmin.messages.percentIconClass});
                 var inputGroupAddon = $("<span>", {'class' : 'input-group-addon'});
                 inputGroupAddon.append(inputGroupIcon);
                 $form.find("#fields\\'value\\'\\.value").wrap(inputGroup).before(inputGroupAddon);
@@ -66,7 +66,7 @@
 
             $form.find("#fields\\'value\\'\\.value").siblings().find('i').removeClass();
             if (offerDiscountType == "PERCENT_OFF") {
-                $form.find("#fields\\'value\\'\\.value").siblings().find('i').addClass("blc-icon-percent");
+                $form.find("#fields\\'value\\'\\.value").siblings().find('i').addClass(BLCAdmin.messages.percentIconClass);
             } else {
                 $form.find("#fields\\'value\\'\\.value").siblings().find('i').addClass(BLCAdmin.messages.currencyIconClass);
             }
@@ -122,5 +122,23 @@
         BLCAdmin.offer.initializeOfferFormFields($form);
         BLCAdmin.offer.initValueFieldStyle($form);
     });
-    
+
+    $.each(['org.broadleafcommerce.core.offer.domain.Offer'], function(idx, clazz) {
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-showAdvancedVisibilityOptions',
+            '#field-offerMatchRules---TIME',
+            'true'
+        );
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-showAdvancedVisibilityOptions',
+            '#field-embeddableAdvancedOffer--offerTimeZoneType',
+            'true'
+        );
+    });
+
+    // add extra padding to time zone to separate from other options
+    $('#field-embeddableAdvancedOffer--offerTimeZoneType').css('padding-top', '20px');
 })(jQuery, BLCAdmin);
