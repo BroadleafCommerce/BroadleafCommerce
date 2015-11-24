@@ -970,6 +970,21 @@ $('body').on('change', 'input.color-picker-value', function() {
     $this.closest('.field-group').find('input.color-picker').spectrum('set', $this.val());
 });
 
+
+$('.boolean-link').each(function() {
+	$(this).next().find('input:not(:checked)').click();
+});
+$('body').on('click', '.boolean-link', function(e) {
+	e.preventDefault();
+	$(this).next().find('input:not(:checked)').click();
+
+	if ($(this).hasClass('view-options')) {
+		$(this).removeClass('view-options').addClass('hide-options');
+	} else {
+		$(this).addClass('view-options').removeClass('hide-options');
+	}
+});
+
 /**
  * Make the sticky bar (breadcrumb) lock at the top of the window when it's scrolled off the page
  */

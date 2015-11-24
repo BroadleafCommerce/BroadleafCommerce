@@ -28,6 +28,7 @@ public enum SupportedFieldType {
     UNKNOWN,
     ID,
     BOOLEAN,
+    BOOLEAN_LINK,
     DATE,
     INTEGER,
     DECIMAL,
