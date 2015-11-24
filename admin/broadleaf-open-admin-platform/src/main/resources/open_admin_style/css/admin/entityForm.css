@@ -39,3 +39,21 @@ a.boolean-link.view-options:before {
 a.boolean-link.hide-options:before {
     content: 'Hide';
 }
+
+.xdsoft_current {
+    background: #94AF39 !important;
+    box-shadow: #94AF39 0 1px 3px 0 inset !important;
+}
+.xdsoft_datetimepicker .xdsoft_calendar td:hover, .xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box>div>div:hover {
+    color: #fff !important;
+    background: #F2B95A !important;
+    box-shadow: none !important;
+}
+.time-eod {
+    cursor: pointer;
+    color: #94AF39;
+    text-align: center;
+}
+.time-eod:hover {
+    color: #F2B95A;
+}
