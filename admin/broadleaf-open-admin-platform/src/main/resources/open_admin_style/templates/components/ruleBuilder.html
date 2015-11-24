@@ -57,30 +57,33 @@
                      data-modal=${field.displayType != null AND field.displayType == 'MODAL'}" />
 
         <!--/* For: "MODAL" display type */-->
+        <div class="rule-modal-zone">
         <div th:id="${field.jsonFieldName + '-readable'}"
              th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
              class="read-only-rule">
-            <span class="readable-no-rule">No rules applied yet.</span>
+            <span class="readable-no-rule">
+                No rules applied yet, add some
+            </span>
         </div>
 
-        <div class="launch-modal-rule-builder button"
+        <div class="launch-modal-rule-builder"
              th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
              th:attr="data-hiddenId=${field.jsonFieldName},
                      data-ruleType=${field.ruleType},
                      data-ruleTitleId=${field.name + '-header'}">
-            <i class="fa fa-edit fa-lg"></i>
-            <span>Edit Rule</span>
+            <i class="fa fa-pencil"></i>
+            <!--<span>Edit Rule</span>-->
         </div>
 
-        <div class="clear-rule-builder button"
+        <div class="clear-rule-builder"
              th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
              th:attr="data-hiddenId=${field.jsonFieldName},
                      data-ruleType=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'},
                      data-ruleTitleId=${field.name + '-header'}">
-            <i class="fa fa-remove fa-lg"></i>
-            <span>Clear Rule</span>
+            <i class="fa fa-times"></i>
+            <!--<span>Clear Rule</span>-->
         </div>
-
+        </div>
 
         
         <!--/* For: All display types */-->
