@@ -433,29 +433,6 @@ var BLCAdmin = (function($) {
 					}
 				});
 
-				// add 'midnight' button to datetimepickers
-				$('body').find(".xdsoft_datetimepicker").each(function() {
-					if (!$(this).hasClass('datepicker-eod')) {
-						$(this).addClass('datepicker-eod');
-
-						var button = $('<div>', {
-							'text': 'End of Day',
-							'class': 'time-eod xdsoft_time',
-							'data-hour': '23',
-							'data-minute': '59'
-						});
-						$(this).append(button);
-
-						$(button).on('click', function(e) {
-							var latestTime = $(this).siblings('.xdsoft_timepicker').find('.xdsoft_time:last');
-							var midnight = $('<div class="xdsoft_time" data-hour="23" data-minute="59" data-second="59">23:59</div>');
-							midnight.insertAfter(latestTime);
-
-							$(this).siblings('.xdsoft_timepicker').find('.xdsoft_time:last').click()
-						});
-					}
-				});
-
 				$container.find('.tooltip').each(function() {
 					var windowWidth = $(window).width();
 					if ($(this).offset().left > windowWidth / 2) {

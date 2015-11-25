@@ -308,7 +308,7 @@
                 quantity: qty,
                 condition:'AND',
                 rules: []
-            }
+            };
             return emptyData;
         },
 
@@ -377,7 +377,7 @@
 
             var builder = $("<div>", {"class": "query-builder-rules"});
             container.append(builder);
-            var addRemoveConditionsLink = ruleBuilder.builders.length >= 1;
+            var addRemoveConditionsLink = ruleBuilder.builders.length > 1;
             builder.queryBuilder(this.initializeQueryBuilderConfig(ruleData, fields, addRemoveConditionsLink));
 
             //run any post-construct handlers
@@ -900,6 +900,9 @@ $(document).ready(function() {
             var jsonVal = $.parseJSON($('#'+hiddenId).val());
             if (jsonVal.data.length > 0) {
                 for (var i=0; i<jsonVal.data.length; i++) {
+                    if (ruleType !== BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY) {
+                        jsonVal.data[i].quantity = null;
+                    }
                     BLCAdmin.ruleBuilders.constructQueryBuilder($modalContainer, jsonVal.data[i],
                         ruleBuilder.fields, ruleBuilder);
                 }
