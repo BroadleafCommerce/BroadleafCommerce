@@ -433,16 +433,17 @@
         <property name="conditionalProperty" value="enable.site.map.mt.disc"/>
     </bean>
 
-    <bean id="blOptionalIncludeAdminUserTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+    <bean id="blOptionalIncludeAdminMainEntityWeaveMap" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry key="archiveOnly" value="org.broadleafcommerce.common.weave.WeaveArchiveStatus"/>
+                <entry key="auditableOnly" value="org.broadleafcommerce.openadmin.weave.WeaveAdminAuditable"/>
             </map>
         </property>
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blOptionalIncludeAdminUserTokenMap"/>
+        <property name="collectionRef" value="blOptionalIncludeAdminMainEntityWeaveMap"/>
         <property name="targetRef" value="blDirectCopyTransformTokenMap"/>
     </bean>
 
