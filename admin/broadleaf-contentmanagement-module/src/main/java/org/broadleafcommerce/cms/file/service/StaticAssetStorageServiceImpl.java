@@ -31,6 +31,7 @@ import org.broadleafcommerce.cms.file.dao.StaticAssetStorageDao;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
 import org.broadleafcommerce.cms.file.service.operation.NamedOperationManager;
+import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
@@ -312,8 +313,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
         StringBuilder sb2 = new StringBuilder(200);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        if (staticAsset.getAuditable() != null) {
-            sb2.append(format.format(staticAsset.getAuditable().getDateUpdated() == null ? staticAsset.getAuditable().getDateCreated() : staticAsset.getAuditable().getDateUpdated()));
+        if (staticAsset instanceof Auditable) {
+            Auditable auditableStaticAsset = (Auditable) staticAsset;
+            sb2.append(format.format(auditableStaticAsset.getDateUpdated() == null ? auditableStaticAsset.getDateCreated() : auditableStaticAsset.getDateUpdated()));
         }
         
         if (parameterMap != null) {

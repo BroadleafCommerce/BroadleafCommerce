@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -102,8 +103,8 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
     }
 
     protected Date generateDate(Page page) {
-        if ((page.getAuditable() != null) && (page.getAuditable().getDateUpdated() != null)) {
-            return page.getAuditable().getDateUpdated();
+        if (page instanceof AdminAuditable) {
+            return ((AdminAuditable) page).getDateUpdated();
         } else {
             return new Date();
         }

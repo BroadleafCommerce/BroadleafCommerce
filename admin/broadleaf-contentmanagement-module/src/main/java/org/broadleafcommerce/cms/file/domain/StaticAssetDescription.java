@@ -20,7 +20,6 @@
 package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import java.io.Serializable;
 
@@ -42,8 +41,4 @@ public interface StaticAssetDescription extends Serializable, MultiTenantCloneab
     public void setLongDescription(String longDescription);
 
     public StaticAssetDescription cloneEntity();
-
-    public AdminAuditable getAuditable();
-
-    public void setAuditable(AdminAuditable auditable);
 }

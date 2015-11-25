@@ -20,7 +20,6 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import java.io.Serializable;
 
@@ -40,10 +39,6 @@ public interface PageField extends Serializable,MultiTenantCloneable<PageField> 
     public String getValue();
 
     public void setValue(String value);
-
-    public AdminAuditable getAuditable();
-
-    public void setAuditable(AdminAuditable auditable);
 
     public Page getPage();
 

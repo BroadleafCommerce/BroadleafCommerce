@@ -79,7 +79,8 @@ import javax.persistence.Transient;
 @Table(name = "BLC_ADMIN_USER")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINUSER)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINUSER),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
 public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdminPresentation {
 

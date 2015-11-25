@@ -20,6 +20,7 @@
 package org.broadleafcommerce.openadmin.audit;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
 
 import java.io.Serializable;
@@ -39,6 +40,7 @@ public class AdminAuditable implements Serializable, SandBoxNonProductionSkip, A
     @Temporal(TemporalType.TIMESTAMP)
     @AdminPresentation(friendlyName = "AdminAuditable_Date_Created", group = "AdminAuditable_Audit",
             tab="AdminAuditable_Audit", tabOrder = Integer.MAX_VALUE,
+            visibility = VisibilityEnum.HIDDEN_ALL,
             readOnly = true)
     protected Date dateCreated;
 
@@ -49,6 +51,7 @@ public class AdminAuditable implements Serializable, SandBoxNonProductionSkip, A
     @Temporal(TemporalType.TIMESTAMP)
     @AdminPresentation(friendlyName = "AdminAuditable_Date_Updated", group = "AdminAuditable_Audit",
             tab="AdminAuditable_Audit", tabOrder = Integer.MAX_VALUE,
+            visibility = VisibilityEnum.HIDDEN_ALL,
             readOnly = true)
     protected Date dateUpdated;
 
