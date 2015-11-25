@@ -57,5 +57,6 @@ public enum SupportedFieldType {
     IMAGE,
     COLOR,
     CODE,
-    GENERATED_URL
+    GENERATED_URL,
+    GENERATED_FIELD_VALUE
 }

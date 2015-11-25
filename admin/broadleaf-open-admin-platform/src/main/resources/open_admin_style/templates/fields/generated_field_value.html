@@ -1,0 +1,32 @@
+<div class="generated-fieldValue-container"
+    th:classappend="*{fields['__${field.name}__'].attributes[disabledValueGeneration] == true ? 'disabledValueGeneration' : fields['__${field.name}__'].attributes[unregisterValueGenerationOnFirstValidSave] == true ? 'unregisterValueGenerationOnFirstValidSave' : ''}"
+    th:attr="data-source-field=*{fields['__${field.name}__'].attributes[sourceField]},
+             data-toggle-field=*{fields['__${field.name}__'].attributes[toggleField]},
+             data-field-value-format-conversion-handler=*{fields['__${field.name}__'].attributes[fieldValueFormatConversionHandler]},
+             data-overridden-fieldvalue=*{fields['__${field.name}__'].attributes[overriddenFieldValue] == true}"
+    th:with="overriddenFieldValue=*{fields['__${field.name}__'].attributes[overriddenFieldValue] == true}">
+
+    <div class="override-label">
+        <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+            <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+        </label>
+
+        <a class="override-generated-fieldValue" href="#" th:text="'(' + #{Override_Generated_FieldValue-__${overriddenFieldValue ? 'enabled' : 'disabled'}__} + ')'"
+           th:disabled="${field.readOnly}"
+           th:attr="data-enabled=${overriddenFieldValue},
+                 data-enabled-text=${'(__#{Override_Generated_FieldValue-enabled}__)'},
+                 data-disabled-text=${'(__#{Override_Generated_FieldValue-disabled}__)'}" />
+    </div>
+
+    <input type="text" class="target-field"
+        th:disabled="${field.readOnly}"
+        th:required="${field.required}" 
+        th:placeholder="${field.hint}"
+        th:field="*{fields['__${field.name}__'].value}"
+        th:attr="data-prefix=*{fields['__${field.name}__'].attributes[prefix]},
+                 data-allow-slash=*{fields['__${field.name}__'].attributes[allowSlash]},
+                 data-prefix-selector=*{fields['__${field.name}__'].attributes['prefix-selector']}"
+        th:readonly="${!overriddenFieldValue}" />
+
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+</div>
