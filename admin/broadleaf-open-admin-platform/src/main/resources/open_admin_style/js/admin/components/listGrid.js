@@ -733,7 +733,7 @@ $(document).ready(function() {
             link = link.substring(0, link.lastIndexOf('/'));
         }
 
-        window.location.replace(link);
+        window.location.assign(link);
         return false;
     });
 
