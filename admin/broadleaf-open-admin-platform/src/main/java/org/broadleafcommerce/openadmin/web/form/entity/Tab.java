@@ -22,6 +22,7 @@ package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class Tab {
             return new CompareToBuilder()
                     .append(o1.getOrder(), o2.getOrder())
                     .append(o1.getTitle(), o2.getTitle())
+                    .append(o1.getKey(), o2.getKey())
                     .toComparison();
         }
     });
