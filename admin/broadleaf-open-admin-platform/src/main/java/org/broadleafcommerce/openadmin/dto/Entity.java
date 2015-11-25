@@ -253,7 +253,7 @@ public class Entity implements Serializable {
         return isPreAdd;
     }
 
-    public void setPreAdd(boolean isPreAdd) {
+    public void setIsPreAdd(boolean isPreAdd) {
         this.isPreAdd = isPreAdd;
     }
 
