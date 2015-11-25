@@ -308,7 +308,7 @@
                 quantity: qty,
                 condition:'AND',
                 rules: []
-            }
+            };
             return emptyData;
         },
 
@@ -900,6 +900,7 @@ $(document).ready(function() {
             var jsonVal = $.parseJSON($('#'+hiddenId).val());
             if (jsonVal.data.length > 0) {
                 for (var i=0; i<jsonVal.data.length; i++) {
+                    jsonVal.data[i].quantity = null;
                     BLCAdmin.ruleBuilders.constructQueryBuilder($modalContainer, jsonVal.data[i],
                         ruleBuilder.fields, ruleBuilder);
                 }
