@@ -83,6 +83,10 @@ public interface Field extends Serializable, MultiTenantCloneable<Field> {
      */
     public void setPropertyName(String propertyName);
 
+    public Boolean getOverrideGeneratedPropertyName();
+
+    public void setOverrideGeneratedPropertyName(Boolean overrideGeneratedPropertyName);
+
     /**
      * Gets the abbreviation of this Field. This will be used in URL query string parameters for sorting and
      * filtering

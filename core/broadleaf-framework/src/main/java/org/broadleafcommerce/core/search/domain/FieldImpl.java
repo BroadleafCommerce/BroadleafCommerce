@@ -101,6 +101,11 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
             requiredOverride = RequiredOverride.REQUIRED)
     protected String propertyName;
 
+    @Column(name = "OVERRIDE_GENERATED_PROPERTY_NAME")
+    @AdminPresentation(friendlyName = "FieldImpl_overrideGeneratedPropertyName",
+            group = GroupName.General, order = FieldOrder.OVERRIDE_GENERATED_PROPERTY_NAME)
+    protected Boolean overrideGeneratedPropertyName = false;
+
     @Column(name = "ABBREVIATION")
     @AdminPresentation(friendlyName = "FieldImpl_abbreviation",
             group = GroupName.General, order = FieldOrder.ABBREVIATION,
@@ -146,6 +151,16 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     @Override
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
+    }
+
+    @Override
+    public Boolean getOverrideGeneratedPropertyName() {
+        return overrideGeneratedPropertyName  == null ? false : overrideGeneratedPropertyName;
+    }
+
+    @Override
+    public void setOverrideGeneratedPropertyName(Boolean overrideGeneratedPropertyName) {
+        this.overrideGeneratedPropertyName = overrideGeneratedPropertyName == null ? false : overrideGeneratedPropertyName;
     }
 
     @Override
