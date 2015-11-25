@@ -397,6 +397,9 @@ var BLCAdmin = (function($) {
 									('0' + current_time.getHours().toString()).slice(-2) + ':' +
 									('0' + current_time.getMinutes().toString()).slice(-2) + ':00';
 
+								if (dateString.endsWith("23:59:00")) {
+									dateString = dateString.replace("23:59:00", "23:59:59");
+								}
 								// need to escape ids for entity form
 								clone.attr('value',dateString);
 							}
@@ -427,6 +430,29 @@ var BLCAdmin = (function($) {
 						var d = new Date($(this).html());
 						var timezone = d.toString().substring(d.toString().indexOf("("));
 						$(this).html(d.dateFormat("l, F d, Y \@ g:ia") + " " + timezone);
+					}
+				});
+
+				// add 'midnight' button to datetimepickers
+				$('body').find(".xdsoft_datetimepicker").each(function() {
+					if (!$(this).hasClass('datepicker-eod')) {
+						$(this).addClass('datepicker-eod');
+
+						var button = $('<div>', {
+							'text': 'End of Day',
+							'class': 'time-eod xdsoft_time',
+							'data-hour': '23',
+							'data-minute': '59'
+						});
+						$(this).append(button);
+
+						$(button).on('click', function(e) {
+							var latestTime = $(this).siblings('.xdsoft_timepicker').find('.xdsoft_time:last');
+							var midnight = $('<div class="xdsoft_time" data-hour="23" data-minute="59" data-second="59">23:59</div>');
+							midnight.insertAfter(latestTime);
+
+							$(this).siblings('.xdsoft_timepicker').find('.xdsoft_time:last').click()
+						});
 					}
 				});
 
