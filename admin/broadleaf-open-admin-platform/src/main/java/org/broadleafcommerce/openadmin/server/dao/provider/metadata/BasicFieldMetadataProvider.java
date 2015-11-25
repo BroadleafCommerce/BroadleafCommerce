@@ -402,7 +402,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.BROADLEAFENUMERATION)) {
                 fieldMetadataOverride.setBroadleafEnumeration(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.FIELDCOMPONENTRENDERER)) {
-                fieldMetadataOverride.setFieldComponentRenderer(stringValue);
+                fieldMetadataOverride.setFieldComponentRenderer(SupportedFieldType.valueOf(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.TOOLTIP)) {
                 fieldMetadataOverride.setTooltip(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.HELPTEXT)) {
@@ -616,9 +616,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (basicFieldMetadata.getDisplayType() != null) {
             metadata.setDisplayType(basicFieldMetadata.getDisplayType());
         }
-        if (StringUtils.isEmpty(basicFieldMetadata.getFieldComponentRenderer()) && basicFieldMetadata.getFieldType() != null) {
-            metadata.setFieldComponentRenderer(basicFieldMetadata.getFieldType().toString());
-        } else {
+        if (basicFieldMetadata.getFieldComponentRenderer() != null) {
             metadata.setFieldComponentRenderer(basicFieldMetadata.getFieldComponentRenderer());
         }
         if (basicFieldMetadata.getFriendlyName() != null) {

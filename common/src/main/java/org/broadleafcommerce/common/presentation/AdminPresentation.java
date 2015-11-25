@@ -222,7 +222,7 @@ public @interface AdminPresentation {
      * 
      * @return the component name responsible for rendering this field
      */
-    String fieldComponentRenderer() default "";
+    SupportedFieldType fieldComponentRenderer() default SupportedFieldType.UNKNOWN;
 
     /**
      * Optional - only required if you want to make the field immutable

@@ -41,7 +41,22 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.openadmin.dto.*;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
+import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.dto.MapStructure;
+import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -52,7 +67,12 @@ import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-import org.broadleafcommerce.openadmin.web.form.component.*;
+import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
+import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
+import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
+import org.broadleafcommerce.openadmin.web.form.component.MediaField;
+import org.broadleafcommerce.openadmin.web.form.component.RuleBuilderField;
 import org.broadleafcommerce.openadmin.web.form.entity.CodeField;
 import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
@@ -60,7 +80,10 @@ import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
-import org.broadleafcommerce.openadmin.web.rulebuilder.dto.*;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -757,7 +780,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                     f.withName(property.getName())
                          .withFieldType(fieldType)
-                         .withFieldComponentRenderer(fmd.getFieldComponentRenderer())
+                         .withFieldComponentRenderer(fmd.getFieldComponentRenderer().toString())
                          .withOrder(fmd.getOrder())
                          .withFriendlyName(fmd.getFriendlyName())
                          .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
