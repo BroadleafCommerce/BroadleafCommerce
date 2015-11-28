@@ -335,19 +335,10 @@ public class Field {
         this.displayType = displayType;
     }
 
-    /**
-     * Returns the component renderer for the field.  Defaults to the fieldType unless otherwise set.
-     * 
-     * @return String
-     */
     public String getFieldComponentRenderer() {
-        if ((StringUtils.isEmpty(fieldComponentRenderer) || fieldComponentRenderer == SupportedFieldType.UNKNOWN.toString()) && fieldType != null) {
-            return fieldType.toString();
-        }
         return fieldComponentRenderer;
     }
 
-    
     public void setFieldComponentRenderer(String fieldComponentRenderer) {
         this.fieldComponentRenderer = fieldComponentRenderer;
     }

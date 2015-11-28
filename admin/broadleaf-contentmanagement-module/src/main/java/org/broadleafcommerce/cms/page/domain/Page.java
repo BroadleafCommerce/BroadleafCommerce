@@ -20,7 +20,6 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -54,10 +53,6 @@ public interface Page extends Serializable,MultiTenantCloneable<Page> {
 
     public void setPageFields(Map<String, PageField> pageFields);
 
-    public AdminAuditable getAuditable();
-
-    public void setAuditable(AdminAuditable auditable);
-    
     /**
      * Returns the offlineFlag.   True indicates that the page should no longer appear on the site.
      * The item will still appear within the content administration program but no longer

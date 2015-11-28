@@ -321,7 +321,7 @@ var BLCAdmin = (function($) {
         			BLCAdmin.initializeModalTabs(BLCAdmin.currentModal());
         			BLCAdmin.initializeModalButtons(BLCAdmin.currentModal());
         		    BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
-        			BLCAdmin.initializeFields();
+        			BLCAdmin.initializeFields(BLCAdmin.currentModal());
         			
         			BLCAdmin.currentModal().removeClass('loading-modal');
         		});

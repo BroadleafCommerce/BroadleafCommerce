@@ -20,7 +20,6 @@
 package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.cms.field.type.StorageType;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
@@ -28,23 +27,38 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.*;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.Table;
 
 /**
  * Created by bpolster.
@@ -66,7 +80,8 @@ import java.util.Map;
         }
 )
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
 public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAssetAdminPresentation {
 
@@ -84,10 +99,6 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
     )
     @Column(name = "STATIC_ASSET_ID")
     protected Long id;
-
-    @Embedded
-    @AdminPresentation(excluded = true)
-    protected AdminAuditable auditable = new AdminAuditable();
 
     @Column(name = "NAME", nullable = false)
     @AdminPresentation(friendlyName = "StaticAssetImpl_Item_Name",
@@ -234,16 +245,6 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
     @Override
     public void setFileExtension(String fileExtension) {
         this.fileExtension = fileExtension;
-    }
-
-    @Override
-    public AdminAuditable getAuditable() {
-        return auditable;
-    }
-
-    @Override
-    public void setAuditable(AdminAuditable auditable) {
-        this.auditable = auditable;
     }
 
     @Override

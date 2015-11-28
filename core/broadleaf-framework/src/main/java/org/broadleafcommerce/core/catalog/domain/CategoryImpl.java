@@ -177,7 +177,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order = 1000,
             group = GroupName.General,
             prominent = true, gridOrder = 1000,
-            translatable = true, defaultValue = "")
+            translatable = true)
     protected String name;
 
     @Column(name = "URL")

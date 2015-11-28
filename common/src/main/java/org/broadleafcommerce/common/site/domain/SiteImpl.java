@@ -68,7 +68,8 @@ import javax.persistence.Table;
 @AdminPresentationClass(friendlyName = "baseSite")
 @SQLDelete(sql="UPDATE BLC_SITE SET ARCHIVED = 'Y' WHERE SITE_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
 public class SiteImpl implements Site, AdminMainEntity {
 

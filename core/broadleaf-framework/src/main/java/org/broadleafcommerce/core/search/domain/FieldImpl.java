@@ -51,9 +51,10 @@ import javax.persistence.Table;
 @Table(name = "BLC_FIELD")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
+    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
-public class FieldImpl implements Field, AdminMainEntity {
+public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity {
     
     /**
      * 
@@ -75,30 +76,46 @@ public class FieldImpl implements Field, AdminMainEntity {
     protected Long id;
     
     // This is a broadleaf enumeration
-    @AdminPresentation(friendlyName = "FieldImpl_EntityType", group = "FieldImpl_general", order = 1, prominent = true,
-            gridOrder = 1, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.core.search.domain.FieldEntity",
-            requiredOverride = RequiredOverride.REQUIRED)
     @Column(name = "ENTITY_TYPE", nullable = false)
     @Index(name="ENTITY_TYPE_INDEX", columnNames={"ENTITY_TYPE"})
+    @AdminPresentation(friendlyName = "FieldImpl_EntityType",
+            group = GroupName.General, order = FieldOrder.ENTITY_TYPE,
+            prominent = true, gridOrder = 1,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.search.domain.FieldEntity",
+            defaultValue = "org.broadleafcommerce.core.catalog.domain.Product",
+            requiredOverride = RequiredOverride.REQUIRED)
     protected String entityType;
     
     @Column(name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName = "FieldImpl_friendlyName", group = "FieldImpl_general", order = 2, gridOrder = 2,
-            prominent = true, translatable = true)
+    @AdminPresentation(friendlyName = "FieldImpl_friendlyName",
+            group = GroupName.General, order = FieldOrder.FRIENDLY_NAME,
+            prominent = true, gridOrder = 2, translatable = true,
+            requiredOverride = RequiredOverride.REQUIRED)
     protected String friendlyName;
 
     @Column(name = "PROPERTY_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_general", order = 3, gridOrder = 3,
-            prominent = true)
+    @AdminPresentation(friendlyName = "FieldImpl_propertyName",
+            group = GroupName.General, order = FieldOrder.PROPERTY_NAME,
+            prominent = true, gridOrder = 3,
+            requiredOverride = RequiredOverride.REQUIRED)
     protected String propertyName;
 
+    @Column(name = "OVERRIDE_GENERATED_PROPERTY_NAME")
+    @AdminPresentation(friendlyName = "FieldImpl_overrideGeneratedPropertyName",
+            group = GroupName.General, order = FieldOrder.OVERRIDE_GENERATED_PROPERTY_NAME)
+    protected Boolean overrideGeneratedPropertyName = false;
+
     @Column(name = "ABBREVIATION")
-    @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_general", order = 3, excluded = true)
+    @AdminPresentation(friendlyName = "FieldImpl_abbreviation",
+            group = GroupName.General, order = FieldOrder.ABBREVIATION,
+            excluded = true)
     protected String abbreviation;
 
     @Column(name = "TRANSLATABLE")
-    @AdminPresentation(friendlyName = "FieldImpl_translatable", group = "FieldImpl_general", excluded = true)
+    @AdminPresentation(friendlyName = "FieldImpl_translatable",
+            group = GroupName.General, order = FieldOrder.TRANSLATABLE,
+            excluded = true)
     protected Boolean translatable = false;
 
     @Override
@@ -134,6 +151,16 @@ public class FieldImpl implements Field, AdminMainEntity {
     @Override
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
+    }
+
+    @Override
+    public Boolean getOverrideGeneratedPropertyName() {
+        return overrideGeneratedPropertyName  == null ? false : overrideGeneratedPropertyName;
+    }
+
+    @Override
+    public void setOverrideGeneratedPropertyName(Boolean overrideGeneratedPropertyName) {
+        this.overrideGeneratedPropertyName = overrideGeneratedPropertyName == null ? false : overrideGeneratedPropertyName;
     }
 
     @Override

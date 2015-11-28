@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
-import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.RuleBuilderDisplayType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -71,7 +70,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected Integer gridOrder;
     protected String columnWidth;
     protected String broadleafEnumeration;
-    protected String fieldComponentRenderer;
+    protected SupportedFieldType fieldComponentRenderer;
     protected Boolean readOnly;
     protected Map<String, List<Map<String, String>>> validationConfigurations = new HashMap<String, List<Map<String, String>>>(5);
     protected Boolean requiredOverride;
@@ -297,20 +296,12 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.broadleafEnumeration = broadleafEnumeration;
     }
 
-    /**
-     * Returns the component renderer for the field.  Defaults to the fieldType unless otherwise set.
-     * 
-     * @return String
-     */
-    public String getFieldComponentRenderer() {
-        if ((StringUtils.isEmpty(fieldComponentRenderer) || fieldComponentRenderer == SupportedFieldType.UNKNOWN.toString()) && fieldType != null) {
-            return fieldType.toString();
-        }
+    public SupportedFieldType getFieldComponentRenderer() {
         return fieldComponentRenderer;
     }
 
     
-    public void setFieldComponentRenderer(String fieldComponentRenderer) {
+    public void setFieldComponentRenderer(SupportedFieldType fieldComponentRenderer) {
         this.fieldComponentRenderer = fieldComponentRenderer;
     }
 

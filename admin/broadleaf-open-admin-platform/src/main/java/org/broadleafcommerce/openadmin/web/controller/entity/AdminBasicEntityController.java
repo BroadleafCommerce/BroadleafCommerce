@@ -62,7 +62,6 @@ import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -374,8 +373,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, firstTab == null ? "General" : firstTab.getTabName());
      
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
-        
-        modifyEntityForm(entityForm, pathVars);
+
+        if (isAddRequest(entity)) {
+            modifyAddEntityForm(entityForm, pathVars);
+        } else {
+            modifyEntityForm(entityForm, pathVars);
+        }
 
         // check if the entity is dirty and find the number of changes
         int modifications = 0;
@@ -406,6 +409,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
     }
 
+    private boolean isAddRequest(Entity entity) {
+        Map<String, Property> pMap = entity.getPMap();
+        Property dateUpdated = pMap == null ? null : entity.getPMap().get("auditable.dateUpdated");
+        return dateUpdated == null || dateUpdated.getValue() == null;
+    }
+
     /**
      * Attempts to get the List Grid for the selected tab.
      * 
@@ -433,7 +442,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, tabName);
         entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
 
-        modifyEntityForm(entityForm, pathVars);
+        if (isAddRequest(entity)) {
+            modifyAddEntityForm(entityForm, pathVars);
+        } else {
+            modifyEntityForm(entityForm, pathVars);
+        }
 
         model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
@@ -552,8 +565,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
             Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, sectionCrumbs);
             entityForm.clearFieldsMap();
             formService.populateEntityForm(cmd, entity, subRecordsMap, entityForm, sectionCrumbs);
-            
-            modifyEntityForm(entityForm, pathVars);
+
+            if (isAddRequest(entity)) {
+                modifyAddEntityForm(entityForm, pathVars);
+            } else {
+                modifyEntityForm(entityForm, pathVars);
+            }
 
             model.addAttribute("entity", entity);
             model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -1001,6 +1018,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
+        model.addAttribute("actualEntityId", id);
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
     }

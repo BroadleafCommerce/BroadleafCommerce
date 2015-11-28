@@ -21,6 +21,7 @@
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
@@ -121,7 +122,7 @@ public class FieldGroup {
     }
 
     public String getTitle() {
-        return title;
+        return title != null ? title : BLCMessageUtils.getMessage(key);
     }
 
     public void setTitle(String title) {

@@ -87,6 +87,7 @@ public class EntityForm {
             return new CompareToBuilder()
                     .append(o1.getOrder(), o2.getOrder())
                     .append(o1.getTitle(), o2.getTitle())
+                    .append(o1.getKey(), o2.getKey())
                     .toComparison();
         }
     });

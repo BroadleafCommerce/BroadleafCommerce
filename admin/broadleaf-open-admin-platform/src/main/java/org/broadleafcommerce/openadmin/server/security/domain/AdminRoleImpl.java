@@ -63,7 +63,8 @@ import javax.persistence.Table;
 @Table(name = "BLC_ADMIN_ROLE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINROLE)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINROLE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
 public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, AdminMainEntity {
 
