@@ -31,6 +31,7 @@
 
     BLCAdmin.RuleTypeEnum = {
         RULE_SIMPLE : "rule-builder-simple",
+        RULE_SIMPLE_TIME : "rule-builder-simple-time",
         RULE_WITH_QUANTITY : "rule-builder-with-quantity"
     }
 
@@ -103,7 +104,12 @@
                 },
 
                 getOperatorLabelByOperatorType : function(operatorType)  {
-                    return this.builders[0].queryBuilder('getOperatorLabelByType', operatorType);
+                    var operator = this.builders[0].queryBuilder('getOperatorLabelByType', operatorType);
+                    if (operator === 'is equal to') operator = 'is';
+                    else if (operator === 'is not equal') operator = 'is not';
+                    else if (operator === 'is in') operator = 'is';
+                    else if (operator === 'is not in') operator = 'is not';
+                    return operator;
                 },
 
                 addQueryBuilder : function(builder) {
@@ -262,6 +268,7 @@
          * @param $container - the ".query-builder-rules-container" in which to append the builder
          * @param typeToCreate - if there is no existing rule, the method will look for the passed in typeToCreate:
          * - BLCAdmin.RuleTypeEnum.RULE_SIMPLE : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_SIMPLE
+         * - BLCAdmin.RuleTypeEnum.RULE_SIMPLE_TIME : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_SIMPLE_TIME
          * - BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_WITH_QUANTITY
          */
         showOrCreateMainRuleBuilder : function($container, typeToCreate) {
@@ -279,7 +286,7 @@
 
                 //If invoked from a "RADIO" - create new query builder for the container
                 if ($container.children().children().length == 0) {
-                    if (typeToCreate === BLCAdmin.RuleTypeEnum.RULE_SIMPLE) {
+                    if (typeToCreate === BLCAdmin.RuleTypeEnum.RULE_SIMPLE || typeToCreate === BLCAdmin.RuleTypeEnum.RULE_SIMPLE_TIME) {
                         this.addAdditionalQueryBuilder($container, null);
                     } else if (typeToCreate === BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY) {
                         this.addAdditionalQueryBuilder($container, 1);
@@ -316,6 +323,7 @@
          * Called in order to create a new empty Query Builder
          * Supports:
          * org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_SIMPLE
+         * org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_SIMPLE_TIME
          * org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_WITH_QUANTITY
          * @param $container
          * @param qty - if null is passed in, a simple rule builder will be created. Otherwise, an item quantity builder.
@@ -390,6 +398,15 @@
                 container.append(this.getAddAnotherConditionLink());
             }
 
+            if (ruleBuilder.ruleType === BLCAdmin.RuleTypeEnum.RULE_SIMPLE_TIME) {
+                var allCondition = $('<span>', {
+                    html: ' <strong>ALL</strong>'
+                });
+
+                allCondition.insertAfter(container.find('.query-builder-all-any-wrapper').hide());
+                container.find('.group-conditions').css('line-height', '40px');
+            }
+
             /****** For Developers: Test JSON Link *******
              var testJsonLink = $("<a>", {"href": "#", "text": "Test"});
              testJsonLink.click(function(e) {
@@ -438,14 +455,15 @@
         initSelectizePreInitFieldHandler : function(field) {
             //initialize selectize plugin
             var opRef = field.operators;
-            if (opRef && typeof opRef === 'string' && "blcOperators_Selectize" === opRef) {
+
+            if (opRef && typeof opRef === 'string' && ("blcOperators_Selectize" === opRef || "blcOperators_Selectize_Enumeration" === opRef)) {
                 var sectionKey = field.selectizeSectionKey;
 
                 field.multiple = true;
                 field.plugin = 'selectize';
                 field.input = function(rule, name){
                     return "<input type='text' class='query-builder-selectize-input' data-hydrate=''>";
-                },
+                };
                 field.plugin_config = {
                     maxItems: null,
                     persist: false,
@@ -460,6 +478,8 @@
                     onInitialize: function () {
                         var $selectize = this;
                         $selectize.sectionKey = sectionKey;
+                        $selectize.opRef = opRef;
+                        $selectize.enumValues = field.values;
                         this.revertSettings.$children.each(function () {
                             $.extend($selectize.options[this.value], $(this).data());
                         });
@@ -469,7 +489,9 @@
                         // after the options have been loaded
                         // (Values may contain multiple items and are sent back as a single String array)
                         var $selectize = this;
-                        var dataHydrate = $.parseJSON($selectize.$input.attr("data-hydrate"));
+                        var data = $selectize.$input.attr("data-hydrate");
+                        data = (data.length) ? data : "[]";
+                        var dataHydrate = $.parseJSON(data);
                         for (var k=0; k<dataHydrate.length; k++) {
                             if (!isNaN(dataHydrate[k])) {
                                 $selectize.addItem(Number(dataHydrate[k]), false);
@@ -481,21 +503,33 @@
                         var queryData = {};
                         queryData["name"] = query;
 
-                        BLC.ajax({
-                            url: BLC.servletContext + "/" + sectionKey + "/selectize",
-                            type: 'GET',
-                            data: queryData
-                        }, function(data) {
-                            $.each(data.options, function (index, value) {
-                                if ($selectize.getOption(value.id).length === 0 && $selectize.getItem(value.id).length === 0) {
-                                    $selectize.addOption({id: value.id, label: value.name});
-                                    if (typeof value.alternateId !== 'undefined') {
-                                        $selectize.options[value.name].alternate_id = data.alternateId;
-                                    }
+                        if ("blcOperators_Selectize_Enumeration" === $selectize.opRef) {
+                            var data = {options: []};
+                            $.each($selectize.enumValues, function(index, value) {
+                                var ob = Object.keys(value);
+                                if ($selectize.getOption(ob[0]).length === 0 && $selectize.getItem(ob[0]).length === 0) {
+                                    data.options.push({id: ob[0], name: value[ob[0]]});
+                                    $selectize.addOption({id: ob[0], label: value[ob[0]]});
                                 }
                             });
                             callback(data);
-                        });
+                        } else {
+                            BLC.ajax({
+                                url: BLC.servletContext + "/" + sectionKey + "/selectize",
+                                type: 'GET',
+                                data: queryData
+                            }, function (data) {
+                                $.each(data.options, function (index, value) {
+                                    if ($selectize.getOption(value.id).length === 0 && $selectize.getItem(value.id).length === 0) {
+                                        $selectize.addOption({id: value.id, label: value.name});
+                                        if (typeof value.alternateId !== 'undefined') {
+                                            $selectize.options[value.name].alternate_id = data.alternateId;
+                                        }
+                                    }
+                                });
+                                callback(data);
+                            });
+                        }
                     },
                     onItemAdd: function(value, $item) {
                         $item.closest('.selectize-input').find('input').blur();
@@ -526,7 +560,7 @@
 
         /**
          * Initializes the configuration object necessary for the jQuery Query Builder
-         * to support the BLC Admin Rule Builder use cases (both RULE_WITH_QUANTITY and RULE_SIMPLE)
+         * to support the BLC Admin Rule Builder use cases (RULE_WITH_QUANTITY, RULE_SIMPLE, and RULE_SIMPLE_TIME)
          * by passing in the fields (filters) and ruleData (rules) for the passed in rule builder
          *
          * Plugin configurations is also performed in order to support third party components
@@ -560,6 +594,14 @@
                     var valRef = fields[i].values;
                     if (valRef && typeof valRef === 'string') {
                         fields[i].values = window[valRef];
+                    }
+
+                    if (opRef && opRef.indexOf('Date') >= 0) {
+                        fields[i].type = 'date';
+                        fields[i].plugin = 'datetimepicker';
+                        fields[i].plugin_config = {
+                            format: "Y.m.d G:i:s"
+                        };
                     }
                 })();
             }
@@ -684,53 +726,72 @@
                         var prefix = $("<span>", {
                             'class': 'readable-rule-prefix',
                             'text': dataDTO.quantity ?
-                            'Match ' + dataDTO.quantity + ' items where' :
-                                'Rule where'
+                            'Match ' + dataDTO.quantity + ' items where:' :
+                                'Rule where:'
                         });
-
-                        var conditionText = '<strong>ANY</strong>';
-                        if (dataDTO.condition === 'AND') {
-                            conditionText = '<strong>ALL</strong>';
-                        }
-
-                        prefix.html(prefix.text() + ' ' + conditionText + ': ');
 
                         $(readableElement).append(prefix);
                         var listElement = $('<ul>');
                         $(readableElement).append(listElement);
 
+                        var allRules = {};
                         for (var k = 0; k < dataDTO.rules.length; k++) {
                             var ruleDTO = dataDTO.rules[k];
+                            var condition = dataDTO.condition;
+
+                            var key = ruleBuilder.getFieldLabelById(ruleDTO.id);
+
+                            var valArray;
+                            try {
+                                valArray = $.parseJSON(ruleDTO.value);
+                            } catch(err) {
+                                valArray = [ruleDTO.value];
+                            }
+
+                            var valueString = undefined;
+                            if (valArray != null) {
+                                for(var i = 0; i < valArray.length; i++){
+                                    var val = ruleBuilder.getFieldValueById(ruleDTO.id, valArray[i]);
+
+                                    if (allRules[key] === undefined) {
+                                        allRules[key] = ['<strong>' + val + '</strong>'];
+                                    } else {
+                                        allRules[key].push('<strong>' + val + '</strong>');
+                                    }
+
+                                    var values = allRules[key];
+                                    valueString = values.join(' OR ');
+                                }
+                            }
+
+                            key = '<strong>' + key + '</strong>';
+                            if (k != 0) {
+                                key = condition + ' ' + key;
+                            }
+
                             var listItem = $('<li>');
                             var name = $("<span>", {
                                 'class': 'readable-rule-field',
-                                'text': ruleBuilder.getFieldLabelById(ruleDTO.id)
+                                'html': key
                             });
                             var operator = $("<span>", {
                                 'class': 'readable-rule-operator',
                                 'text': ruleBuilder.getOperatorLabelByOperatorType(ruleDTO.operator)
                             });
-                            var value = $("<span>", {
-                                'class': 'readable-rule-value',
-                                'text': ruleBuilder.getFieldValueById(ruleDTO.id, ruleDTO.value)
-                            });
 
                             $(listItem).append(name);
                             $(listItem).append(operator);
-                            $(listItem).append(value);
 
-                            //if (k != dataDTO.rules.length - 1) {
-                            //    var additional = $("<span>", {'text': condition});
-                            //    $(listItem).append(additional);
-                            //}
+                            if (valueString !== undefined) {
+                                var value = $("<span>", {
+                                    'class': 'readable-rule-value',
+                                    'html': valueString
+                                });
+                                $(listItem).append(value);
+                            }
 
                             $(listElement).append(listItem);
                         }
-
-                        //if (i != data.length - 1) {
-                        //    var and = $("<span>", {'text': 'and'});
-                        //    $(readableElement).append(and);
-                        //}
                     }
                     $(readableElement).parent().addClass('can-edit');
 
@@ -771,11 +832,6 @@
                 if (el.hasClass('form-control')) {
                     el.removeClass('form-control').selectize();
                 }
-
-                //el.parent().parent().find('div.rule-filter-container > div > div.selectize-input').width("244px");
-                //el.parent().parent().find('div.rule-operator-container > div > div.selectize-input').width("122px");
-                //el.parent().parent().find('div.rule-value-container > div > div.selectize-input').width("245px");
-                //el.parent().parent().find('div.rule-value-container').css("display", "inline-block");
             });
 
             $this.parent().replaceWith(parent);
@@ -791,6 +847,7 @@
                 var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilder(rulesContainerID);
                 var data = ruleBuilder.data;
                 BLCAdmin.ruleBuilders.setReadableJSONValueOnField(ruleBuilder, data);
+                ruleBuilder.removeAllQueryBuilders();
             } else {
                 BLCAdmin.ruleBuilders.showOrCreateMainRuleBuilder(rulesContainer, ruleType);
             }
@@ -1004,10 +1061,6 @@ $(document).ready(function() {
             if (el.hasClass('form-control')) {
                 el.removeClass('form-control').selectize();
             }
-
-            //el.parent().parent().find('div.rule-filter-container > div > div.selectize-input').width("222px");
-            //el.parent().parent().find('div.rule-operator-container > div > div.selectize-input').width("100px");
-            //el.parent().parent().find('div.rule-value-container > div > div.selectize-input').width("223px");
         }
     });
 });
