@@ -741,6 +741,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     } else if (fieldType.equals(SupportedFieldType.CODE.toString())) {
                         f = new CodeField();
                     } else if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
+                            || fieldType.equals(SupportedFieldType.RULE_SIMPLE_TIME.toString())
                             || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
                         // We're dealing with rule builders, so we'll create those specialized fields
                         f = new RuleBuilderField();
@@ -760,6 +761,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             ((RuleBuilderField) f).setRuleType("rule-builder-simple");
                         } else if (fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
                             ((RuleBuilderField) f).setRuleType("rule-builder-with-quantity");
+                        } else if (fieldType.equals(SupportedFieldType.RULE_SIMPLE_TIME.toString())) {
+                            ((RuleBuilderField) f).setRuleType("rule-builder-simple-time");
                         }
                     } else if (LookupType.DROPDOWN.equals(fmd.getLookupType())) {
                         // We're dealing with a to-one field that wants to be rendered as a dropdown instead of in a 
@@ -831,6 +834,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     public String extractDefaultValueFromFieldData(String fieldType, BasicFieldMetadata fmd) {
         String defaultValue = fmd.getDefaultValue();
         if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
+                || fieldType.equals(SupportedFieldType.RULE_SIMPLE_TIME.toString())
                 || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
             return null;
         } else if (fieldType.equals(SupportedFieldType.INTEGER.toString())) {
@@ -998,6 +1002,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             field.setDirty(entityProp.getIsDirty());
                         }
                         if (basicFM.getFieldType()==SupportedFieldType.RULE_SIMPLE
+                                || basicFM.getFieldType()==SupportedFieldType.RULE_SIMPLE_TIME
                                 || basicFM.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY) {
                             RuleBuilderField rbf = (RuleBuilderField) field;
                             if (entity.getPMap().containsKey(rbf.getJsonFieldName())) {
