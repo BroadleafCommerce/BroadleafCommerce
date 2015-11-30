@@ -256,12 +256,19 @@
     padding-right: 4px;
 }
 
-.read-only-rule span.readable-rule-field, .read-only-rule span.readable-rule-value {
-    font-weight: bold;
+.read-only-rule span.readable-rule-field {
+    /*font-weight: bold;*/
 }
 
 .read-only-rule span.readable-no-rule {
     font-style: italic;
+}
+.read-only-rule ul {
+    list-style-type: none;
+    padding-left: 20px;
+}
+.read-only-rule ul li {
+    text-indent: -10px;
 }
 .rule-modal-zone {
     position: relative;
