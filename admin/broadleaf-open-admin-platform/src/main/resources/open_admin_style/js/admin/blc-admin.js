@@ -449,9 +449,11 @@ var BLCAdmin = (function($) {
 			}
 
 			function initializeRadioFields($container) {
-				$container.find('.radio-label:not(.disabled)').on("click", function(e) {
-					e.preventDefault();
-					$(this).prev('input').prop("checked", true).change();
+				$container.find('.radio-label').on("click", function(e) {
+                    if (!$(this).hasClass('disabled')) {
+                        e.preventDefault();
+                        $(this).prev('input').prop("checked", true).change();
+                    }
 				});
 			}
 
