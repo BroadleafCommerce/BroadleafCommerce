@@ -761,11 +761,15 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @param searchCriteria
      */
     protected void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
-        List<IndexField> fields = null;
-        if (useSku) {
-            fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
-        } else {
-            fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+        List<IndexField> fields = new ArrayList<>();
+        ExtensionResultStatusType status = extensionManager.getProxy().getIndexFieldsForQuery(fields);
+
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+            if (useSku) {
+                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
+            } else {
+                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+            }
         }
 
         shs.attachSortClause(query, searchCriteria, defaultSort, fields);
