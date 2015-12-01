@@ -268,6 +268,8 @@ public class MultiTenantCopyContext {
         validateClone(response);
         currentEquivalentMap.put(System.identityHashCode(response), instanceClass.getName() + "_" + originalId);
         currentCloneMap.put(System.identityHashCode(response), response);
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        tearDownContext(context);
         try {
             for (Field field : getAllFields(instanceClass)) {
                 field.setAccessible(true);
@@ -280,6 +282,8 @@ public class MultiTenantCopyContext {
             }
         } catch (IllegalAccessException e) {
             throw ExceptionHelper.refineException(e);
+        } finally {
+            setupContext();
         }
         return response;
     }
