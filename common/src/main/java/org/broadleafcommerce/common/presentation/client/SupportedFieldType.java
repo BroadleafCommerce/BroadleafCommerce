@@ -52,6 +52,7 @@ public enum SupportedFieldType {
     ASSET_LOOKUP,
     MEDIA,
     RULE_SIMPLE,
+    RULE_SIMPLE_TIME,
     RULE_WITH_QUANTITY,
     STRING_LIST,
     IMAGE,

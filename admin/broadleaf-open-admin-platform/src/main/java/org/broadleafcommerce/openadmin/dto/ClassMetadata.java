@@ -23,10 +23,13 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.broadleafcommerce.common.util.BLCMapUtils;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -150,6 +153,20 @@ public class ClassMetadata implements Serializable {
 
     public TabMetadata getFirstTab() {
         return tabAndGroupMetadata.firstEntry() == null ? null : tabAndGroupMetadata.firstEntry().getValue();
+    }
+
+    public String[][] getGroupOptionsFromTabAndGroupMetadata() {
+        List<String[]> result = new ArrayList<>();
+
+        for (TabMetadata tab : tabAndGroupMetadata.values()) {
+            for (GroupMetadata group : tab.getGroupMetadata().values()) {
+                String key = group.getGroupName();
+                String displayValue = BLCMessageUtils.getMessage(tab.getTabName()) + " : " + BLCMessageUtils.getMessage(group.getGroupName());
+                result.add(new String[]{key, displayValue});
+            }
+        }
+
+        return result.toArray(new String[result.size()][2]);
     }
 
     class TabOrderComparator implements Comparator<String> {

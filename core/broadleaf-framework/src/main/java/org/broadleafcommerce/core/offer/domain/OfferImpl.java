@@ -336,7 +336,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             ),
             @AdminPresentationMapField(
             fieldName = RuleIdentifier.TIME_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE,
+                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE_TIME,
                     group = OfferAdminPresentation.GroupName.ActivityRange, order = 4000,
                     ruleIdentifier = RuleIdentifier.TIME, friendlyName = "OfferImpl_Time_Rule")
             ),
@@ -364,13 +364,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         group = OfferAdminPresentation.GroupName.Advanced,
         visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean treatAsNewFormat = false;
-//
-//    @Transient
-//    @AdminPresentation(fieldType = SupportedFieldType.BOOLEAN_LINK,
-//            group = OfferAdminPresentation.GroupName.ActivityRange, order = 5000,
-//            friendlyName = "OfferImpl_View_Visibility_Options", defaultValue = "false",
-//            visibility = VisibilityEnum.VISIBLE_ALL)
-//    protected Boolean showAdvancedVisibilityOptions = false;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();

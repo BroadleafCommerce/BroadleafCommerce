@@ -96,6 +96,11 @@ var blcOperators_Enumeration = [
     "NOT_EQUAL"
 ];
 
+var blcOperators_Selectize_Enumeration = [
+    "COLLECTION_IN",
+    "COLLECTION_NOT_IN"
+];
+
 var blcOperators_Text_List = [
     "CONTAINS",
     "NOT_CONTAINS",

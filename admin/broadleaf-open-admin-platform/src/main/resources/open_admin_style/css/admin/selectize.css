@@ -118,6 +118,10 @@
     height: 0;
 }
 
+.selectize-input.disabled {
+    background-color: #eeeeee !important;
+}
+
 .field-group label .selectize-toolbar-action {
     font-size: 12px;
     letter-spacing: .05em;
