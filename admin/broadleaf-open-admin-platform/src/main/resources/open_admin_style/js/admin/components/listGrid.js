@@ -289,8 +289,11 @@
             });
 
             $($.find("[data-fieldname$='Date']")).each(function() {
-                var d = new Date($(this).text());
-                $(this).text(d.dateFormat("l, F d, Y \@ g:ia"));
+                var text = $(this).text();
+                if (text.trim() !== "") {
+                    var d = new Date(text);
+                    $(this).text(d.dateFormat("M d, Y \@ g:ia"));
+                }
             });
         },
         
@@ -316,8 +319,7 @@
             });
         });
     });
-    
-    
+
 })(jQuery, BLCAdmin);
 
 $(document).ready(function() {
