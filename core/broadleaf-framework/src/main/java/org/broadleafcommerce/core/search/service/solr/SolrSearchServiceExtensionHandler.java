@@ -179,5 +179,5 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param fields the List to be populated.
      * @return HANDLED_CONTINUE if it added field, NOT_HANDLED otherwise
      */
-    public ExtensionResultStatusType getIndexFieldsForQuery(List<IndexField> fields);
+    public ExtensionResultStatusType getIndexFields(List<IndexField> fields);
 }
