@@ -103,7 +103,8 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
 
     @Column(name = "OVERRIDE_GENERATED_PROPERTY_NAME")
     @AdminPresentation(friendlyName = "FieldImpl_overrideGeneratedPropertyName",
-            group = GroupName.General, order = FieldOrder.OVERRIDE_GENERATED_PROPERTY_NAME)
+            group = GroupName.General, order = FieldOrder.OVERRIDE_GENERATED_PROPERTY_NAME,
+            fieldType = SupportedFieldType.HIDDEN)
     protected Boolean overrideGeneratedPropertyName = false;
 
     @Column(name = "ABBREVIATION")
