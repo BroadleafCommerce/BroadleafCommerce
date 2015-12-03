@@ -399,26 +399,20 @@ $(document).ready(function() {
 
         var field = $(this).closest('.description-field');
         // show the textarea or input
-        $(field).find('textarea').show();
-        $(field).find('input').show();
-
-        // add close link to label
-        var hideLink = $('<a>', {
-            href: '',
-            html: '(hide)',
-            class: 'description-hide'
-        });
-        $(field).siblings('label').append(hideLink);
+        if ($(field).find('textarea').length) {
+            $(field).find('textarea').show().focus();
+        } else {
+            $(field).find('input').show().focus();
+        }
 
         // hide the read-only text
         $(this).parent().hide();
     });
 
-    $('body').on('click', 'a.description-hide', function(event) {
+    $('body').on('blur', '.description-field textarea, .description-field input', function(event) {
         event.preventDefault();
 
-
-        var field = $(this).parent().siblings('.description-field');
+        var field = $(this).closest('.description-field');
 
         // hide the textarea or input
         var descriptionText = $(field).find('textarea').val();
@@ -437,9 +431,6 @@ $(document).ready(function() {
         }
         $(field).find('.description-text').html(descriptionText);
         $(field).find('.description-text').show();
-
-        // remove this link
-        $(this).remove();
     });
 
     /**
