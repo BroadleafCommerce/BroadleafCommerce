@@ -388,6 +388,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         
         StopWatch s = new StopWatch();
         try {
+            sandBoxHelper.ignoreCloneCache(true);
             extensionManager.getProxy().startBatchEvent(indexables);
             Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
             List<Locale> locales = getAllLocales();
@@ -443,6 +444,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             throw e;
         } finally {
             extensionManager.getProxy().endBatchEvent(indexables);
+            sandBoxHelper.ignoreCloneCache(false);
         }
     }
 
