@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
@@ -53,12 +52,11 @@ import javax.persistence.Table;
 @Table(name="BLC_SYSTEM_PROPERTY")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "SystemPropertyImpl")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX)
 })
-public class SystemPropertyImpl implements SystemProperty, AdminMainEntity {
+public class SystemPropertyImpl implements SystemProperty, AdminMainEntity, SystemPropertyAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
@@ -76,38 +74,46 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity {
     protected Long id;
 
     @Column(name = "PROPERTY_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "SystemPropertyImpl_name", order = 1000,
-            requiredOverride = RequiredOverride.REQUIRED, defaultValue = "",
-        group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 1000)
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_name",
+            group = GroupName.General, order = FieldOrder.ATTRIBUTE_NAME,
+            prominent = true, gridOrder = 1000,
+            requiredOverride = RequiredOverride.REQUIRED)
     protected String name;
 
+    @Column(name = "OVERRIDE_GENERATED_PROPERTY_NAME")
+    @AdminPresentation(friendlyName = "FieldImpl_overrideGeneratedPropertyName",
+            group = GroupName.General)
+    protected Boolean overrideGeneratedPropertyName = false;
+
     @Column(name= "PROPERTY_VALUE")
-    @AdminPresentation(friendlyName = "SystemPropertyImpl_value", order = 3000,
-            requiredOverride = RequiredOverride.REQUIRED,
-        group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 3000)
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_value",
+        group = GroupName.General, order = FieldOrder.VALUE,
+        prominent = true, gridOrder = 3000,
+        requiredOverride = RequiredOverride.REQUIRED)
     protected String value;
 
     @Column(name = "PROPERTY_TYPE")
-    @AdminPresentation(friendlyName = "SystemPropertyImpl_propertyType", order = 2000, 
-        group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 2000,
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_propertyType",
+        group = GroupName.General, order = FieldOrder.PROPERTY_TYPE,
+        prominent = true, gridOrder = 2000,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType",
         requiredOverride = RequiredOverride.REQUIRED)
     protected String propertyType;
 
     @Column(name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName = "SystemPropertyImpl_friendlyName", order = 4000, 
-        group = "SystemPropertyImpl_general", groupOrder = 1000)
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_friendlyName",
+        group = GroupName.General, order = FieldOrder.FRIENDLY_NAME)
     protected String friendlyName;
 
     @Column(name = "FRIENDLY_GROUP")
-    @AdminPresentation(friendlyName = "SystemPropertyImpl_friendlyGroup", order = 5000, 
-        group = "SystemPropertyImpl_general", groupOrder = 1000)
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_friendlyGroup",
+        group = GroupName.Placement, order = FieldOrder.GROUP_NAME)
     protected String friendlyGroup;
 
     @Column(name = "FRIENDLY_TAB")
-    @AdminPresentation(friendlyName = "SystemPropertyImpl_friendlyTab", order = 5000, 
-        group = "SystemPropertyImpl_general", groupOrder = 1000)
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_friendlyTab",
+        group = GroupName.Placement, order = FieldOrder.TAB_NAME)
     protected String friendlyTab;
 
     @Override
@@ -128,6 +134,16 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public Boolean getOverrideGeneratedPropertyName() {
+        return overrideGeneratedPropertyName;
+    }
+
+    @Override
+    public void setOverrideGeneratedPropertyName(Boolean overrideGeneratedPropertyName) {
+        this.overrideGeneratedPropertyName = overrideGeneratedPropertyName;
     }
 
     @Override
