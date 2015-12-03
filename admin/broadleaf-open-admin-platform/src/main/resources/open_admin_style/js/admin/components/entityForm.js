@@ -171,7 +171,7 @@ $(document).ready(function() {
         }
     }
 
-    $('body div.section-tabs:not(.workflow-tabs) li').find('a').click(function(event) {
+    $('body div.section-tabs li').find('a:not(.workflow-tab, .system-property-tab)').click(function(event) {
         var $tab = $(this);
         var $tabBody = $('.' + $tab.attr('href').substring(1) + 'Tab');
         var text = $tab.find('span').data('tabkey')

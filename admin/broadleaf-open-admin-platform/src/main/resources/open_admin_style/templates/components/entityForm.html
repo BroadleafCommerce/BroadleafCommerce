@@ -31,7 +31,7 @@
                 th:if="${tab.isVisible}"
                 role="presentation">
                 <a th:href="'#tab' + ${tabStat.count}"
-                   th:classappend="${tab.tabClass}"
+                   th:class="${tab.tabClass}"
                    th:text="#{${tab.title}}" />
             </li>
         </ul>
