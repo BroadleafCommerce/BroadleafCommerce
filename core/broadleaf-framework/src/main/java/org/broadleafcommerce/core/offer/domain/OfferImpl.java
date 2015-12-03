@@ -248,13 +248,13 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "MAX_USES")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order", order = 2000,
         tooltip = "OfferImplMaxUsesPerOrder_tooltip",
-        group = OfferAdminPresentation.GroupName.Advanced)
+        group = OfferAdminPresentation.GroupName.Restrictions)
     protected Integer maxUsesPerOrder;
 
     @Column(name = "MAX_USES_PER_CUSTOMER")
     @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Per_Customer", order = 3000,
         tooltip = "OfferImplMaxUsesPerCustomer_tooltip",
-        group = OfferAdminPresentation.GroupName.Advanced)
+        group = OfferAdminPresentation.GroupName.Restrictions)
     protected Long maxUsesPerCustomer;
 
     @Column(name = "USES")
@@ -331,7 +331,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             @AdminPresentationMapField(
                 fieldName = RuleIdentifier.CUSTOMER_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE,
-                    group = OfferAdminPresentation.GroupName.Usage,
+                    group = OfferAdminPresentation.GroupName.Restrictions,
                     ruleIdentifier = RuleIdentifier.CUSTOMER, friendlyName = "OfferImpl_Customer_Rule")
             ),
             @AdminPresentationMapField(
@@ -343,7 +343,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             @AdminPresentationMapField(
                 fieldName = RuleIdentifier.ORDER_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
-                    group = OfferAdminPresentation.GroupName.Usage,
+                    group = OfferAdminPresentation.GroupName.Restrictions,
                     ruleIdentifier = RuleIdentifier.ORDER, friendlyName = "OfferImpl_Order_Rule")
             ),
             @AdminPresentationMapField(

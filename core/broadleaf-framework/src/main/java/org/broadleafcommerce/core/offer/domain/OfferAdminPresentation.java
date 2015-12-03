@@ -44,8 +44,8 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Customer,
                     order = OfferAdminPresentation.GroupOrder.Customer,
                     column = 1),
-                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Usage,
-                    order = OfferAdminPresentation.GroupOrder.Usage,
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Restrictions,
+                    order = OfferAdminPresentation.GroupOrder.Restrictions,
                     column = 1)
             }
         ),
@@ -109,7 +109,7 @@ public interface OfferAdminPresentation {
     public static class GroupName {
         public static final String Description = "OfferImpl_Description";
         public static final String ActivityRange = "OfferImpl_Activity_Range";
-        public static final String Usage = "OfferImpl_Usage";
+        public static final String Restrictions = "OfferImpl_Restrictions";
         public static final String Customer = "OfferImpl_Customer";
         public static final String RuleConfiguration = "OfferImpl_Rule_Configuration";
         public static final String Marketing = "OfferImpl_Marketing";
@@ -126,7 +126,7 @@ public interface OfferAdminPresentation {
         public static final int Description = 1000;
         public static final int ActivityRange = 2000;
         public static final int Customer = 3000;
-        public static final int Usage = 4000;
+        public static final int Restrictions = 4000;
         public static final int RuleConfiguration = 5000;
         public static final int Marketing = 1000;
         public static final int Advanced = 1000;
