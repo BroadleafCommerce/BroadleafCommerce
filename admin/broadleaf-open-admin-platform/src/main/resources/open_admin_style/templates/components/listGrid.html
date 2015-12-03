@@ -62,8 +62,8 @@
                     <!--</th:comment>-->
                 <!--</th>-->
                 <th class="listgrid-row-actions"
-                    th:if="not ${inModal}"
-                    th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (#lists.isEmpty(listGrid.activeToolbarActions))}">
+                    th:unless="${inModal}"
+                    th:if="${(not #lists.isEmpty(listGrid.activeRowActions)) or (listGrid.listGridType == 'workflow' and not #lists.isEmpty(listGrid.activeToolbarActions))}">
                     <th:comment th:remove="all">
                         This entry is acting as placeholder for Workflow Action links
                     </th:comment>
@@ -76,7 +76,7 @@
                         Id
                         </div>
                     </div>
-                    
+
                     <div class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort}">
                         <div class="listgrid-title">
                             Id
@@ -110,7 +110,9 @@
                     <td th:unless="${index.count == 1}"></td>
                 </div>
                 <td th:if="${listGrid.listGridType} == 'main'"></td>
-                <td th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (#lists.isEmpty(listGrid.activeToolbarActions))}"></td>
+                <td th:unless="${inModal}"
+                    th:if="${(not #lists.isEmpty(listGrid.activeRowActions)) or (listGrid.listGridType == 'workflow' and not #lists.isEmpty(listGrid.activeToolbarActions))}">
+                </td>
             </tr>
             
             <tr th:each="record : ${listGrid.records}"
@@ -234,7 +236,9 @@
                     <!--</span>-->
                 <!--</td>-->
 
-                <td class="listgrid-row-actions" th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (#lists.isEmpty(listGrid.activeToolbarActions))}">
+                <td class="listgrid-row-actions"
+                    th:unless="${inModal}"
+                    th:if="${(not #lists.isEmpty(listGrid.activeRowActions)) or (listGrid.listGridType == 'workflow' and not #lists.isEmpty(listGrid.activeToolbarActions))}">
                     <span class="workflow-action" th:each="action : ${listGrid.activeToolbarActions}" th:if="${listGrid.listGridType} == 'WORKFLOW' and ${action.actionId} != 'SPLIT'">
                         <a th:classappend="${action.buttonClass}"
                            href="#"
