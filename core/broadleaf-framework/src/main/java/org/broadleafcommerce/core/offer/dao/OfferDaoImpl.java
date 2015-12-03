@@ -167,8 +167,8 @@ public class OfferDaoImpl implements OfferDao {
                 Restrictions.isNull("archiveStatus.archived")));
 
         // Automatically Added or (Automatically Added is null and deliveryType is Automatic)
-        criteria.add(Restrictions.or(Restrictions.eq("automaticallyAdded", true),
-                Restrictions.and(Restrictions.isNull("automaticallyAdded"),
+        criteria.add(Restrictions.or(Restrictions.eq("requiresCode", false),
+                Restrictions.and(Restrictions.isNull("requiresCode"),
                         Restrictions.eq("deliveryType", "AUTOMATIC"))));
 
         criteria.setCacheable(true);

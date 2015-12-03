@@ -240,10 +240,10 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     protected String deliveryType;
 
     @Column(name = "AUTOMATICALLY_ADDED")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added", order = 5000,
-            group = OfferAdminPresentation.GroupName.Usage,
-            fieldType = SupportedFieldType.BOOLEAN)
-    protected Boolean automaticallyAdded = false;
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added", order = 2000,
+            group = GroupName.Customer,
+            fieldType = SupportedFieldType.BOOLEAN, defaultValue = "false")
+    protected Boolean requiresCode = false;
 
     @Column(name = "MAX_USES")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order", order = 2000,
@@ -609,21 +609,21 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     }
 
     @Override
-    public boolean isAutomaticallyAdded() {
-        if (automaticallyAdded == null) {
+    public boolean getRequiresCode() {
+        if (requiresCode == null) {
             if (deliveryType != null) {
                 OfferDeliveryType offerDeliveryType = OfferDeliveryType.getInstance(deliveryType);
                 return OfferDeliveryType.AUTOMATIC.equals(offerDeliveryType);
             }
             return false;
         }
-        return automaticallyAdded;
+        return requiresCode;
     }
 
     
     @Override
-    public void setAutomaticallyAdded(boolean automaticallyAdded) {
-        this.automaticallyAdded = automaticallyAdded;
+    public void setRequiresCode(boolean requiresCode) {
+        this.requiresCode = requiresCode;
     }
 
     @Override
@@ -631,7 +631,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @JsonIgnore
     public OfferDeliveryType getDeliveryType() {
         if (deliveryType == null) {
-            if (isAutomaticallyAdded()) {
+            if (getRequiresCode()) {
                 return OfferDeliveryType.AUTOMATIC;
             } else {
                 return OfferDeliveryType.MANUAL;
@@ -896,8 +896,8 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         }
         Offer cloned = createResponse.getClone();
         cloned.setApplyDiscountToSalePrice(applyToSalePrice);
-        if (automaticallyAdded != null) {
-            cloned.setAutomaticallyAdded(automaticallyAdded);
+        if (requiresCode != null) {
+            cloned.setRequiresCode(requiresCode);
         }
         cloned.setDescription(description);
         cloned.setDiscountType(getDiscountType());
