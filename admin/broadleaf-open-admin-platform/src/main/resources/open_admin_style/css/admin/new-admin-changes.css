@@ -49,7 +49,7 @@
 }
 
 .fieldset-card .fieldset-card-content {
-    padding: 15px;
+    padding: 15px 20px 0 !important;
 }
 
 .entityFormTab {
