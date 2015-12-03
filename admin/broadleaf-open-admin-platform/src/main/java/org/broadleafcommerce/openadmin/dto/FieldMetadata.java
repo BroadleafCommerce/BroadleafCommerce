@@ -39,6 +39,7 @@ public abstract class FieldMetadata implements Serializable {
     private String[] availableToTypes;
     private Boolean excluded;
     private String friendlyName;
+    private String addFriendlyName;
     private String securityLevel;
     private Integer order;
     private String owningClassFriendlyName;
@@ -101,6 +102,7 @@ public abstract class FieldMetadata implements Serializable {
         }
         metadata.excluded = excluded;
         metadata.friendlyName = friendlyName;
+        metadata.addFriendlyName = addFriendlyName;
         metadata.owningClassFriendlyName = owningClassFriendlyName;
         metadata.securityLevel = securityLevel;
         metadata.order = order;
@@ -140,6 +142,14 @@ public abstract class FieldMetadata implements Serializable {
 
     public void setFriendlyName(String friendlyName) {
         this.friendlyName = friendlyName;
+    }
+
+    public String getAddFriendlyName() {
+        return addFriendlyName;
+    }
+
+    public void setAddFriendlyName(String addFriendlyName) {
+        this.addFriendlyName = addFriendlyName;
     }
 
     public String getSecurityLevel() {

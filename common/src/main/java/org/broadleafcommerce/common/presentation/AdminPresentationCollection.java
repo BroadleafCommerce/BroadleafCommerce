@@ -49,6 +49,17 @@ public @interface AdminPresentationCollection {
     String friendlyName() default "";
 
     /**
+     * <p>Optional - field name will be used if not specified</p>
+     *
+     * <p>The add friendly name to present to a user for this field in the add GUI. If supporting i18N,
+     * the friendly name may be a key to retrieve a localized friendly name using
+     * the GWT support for i18N.</p>
+     *
+     * @return the add friendly name
+     */
+    String addFriendlyName() default "";
+
+    /**
      * <p>Optional - only required if you wish to apply security to this field</p>
      *
      * <p>If a security level is specified, it is registered with the SecurityManager.
