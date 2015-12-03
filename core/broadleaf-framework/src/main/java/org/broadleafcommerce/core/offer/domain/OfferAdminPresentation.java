@@ -48,12 +48,19 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                     column = 1)
             }
         ),
+        @AdminTabPresentation(name = OfferAdminPresentation.TabName.Marketing,
+                order = OfferAdminPresentation.TabOrder.Marketing,
+                groups = {
+                        @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Marketing,
+                                order = OfferAdminPresentation.GroupOrder.Marketing, untitled = true)
+                }
+        ),
         @AdminTabPresentation(name = OfferAdminPresentation.TabName.Codes,
-            order = OfferAdminPresentation.TabOrder.Codes,
-            groups = {
-                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Codes,
-                    order = OfferAdminPresentation.GroupOrder.Codes, untitled = true)
-            }
+                order = OfferAdminPresentation.TabOrder.Codes,
+                groups = {
+                        @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Codes,
+                                order = OfferAdminPresentation.GroupOrder.Codes, untitled = true)
+                }
         ),
         @AdminTabPresentation(name = OfferAdminPresentation.TabName.Advanced,
             order = OfferAdminPresentation.TabOrder.Advanced,
@@ -76,14 +83,16 @@ public interface OfferAdminPresentation {
 
     public static class TabName {
         public static final String General = "OfferImpl_General_Tab";
+        public static final String Marketing = "OfferImpl_Marketing_Tab";
         public static final String Codes = "OfferImpl_Codes_Tab";
         public static final String Advanced = "OfferImpl_Advanced_Tab";
     }
 
     public static class TabOrder {
         public static final int General = 1000;
-        public static final int Codes = 2000;
-        public static final int Advanced = 3000;
+        public static final int Marketing = 2000;
+        public static final int Codes = 3000;
+        public static final int Advanced = 4000;
     }
 
     public static class GroupName {
@@ -92,6 +101,7 @@ public interface OfferAdminPresentation {
         public static final String Usage = "OfferImpl_Usage";
         public static final String Customer = "OfferImpl_Customer";
         public static final String RuleConfiguration = "OfferImpl_Rule_Configuration";
+        public static final String Marketing = "OfferImpl_Marketing";
         public static final String Advanced = "OfferImpl_Advanced";
         public static final String CombineStack = "OfferImpl_Combine_Stack";
         public static final String QualifierRuleRestriction = "OfferImpl_Qualifier_Rule_Restriction";
@@ -105,11 +115,22 @@ public interface OfferAdminPresentation {
         public static final int Customer = 3000;
         public static final int Usage = 4000;
         public static final int RuleConfiguration = 5000;
+        public static final int Marketing = 1000;
         public static final int Advanced = 1000;
         public static final int CombineStack = 2000;
         public static final int QualifierRuleRestriction = 3000;
         public static final int TargetRuleRestriction = 4000;
         public static final int Codes = 1000;
+    }
+
+    public static class FieldOrder {
+        public static final int Name = 1000;
+        public static final int Description = 2000;
+        public static final int Message = 3000;
+        public static final int TemplateType = 4000;
+        public static final int Amount = 5000;
+        public static final int OfferType = 5000;
+        public static final int DiscountType = 5000;
     }
 
 }
