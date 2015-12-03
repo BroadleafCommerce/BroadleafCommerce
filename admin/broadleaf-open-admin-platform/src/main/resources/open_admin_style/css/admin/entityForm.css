@@ -40,6 +40,26 @@ a.boolean-link.hide-options:before {
     content: 'Hide';
 }
 
+a.description-link {
+    font-size: 11px;
+    color: #94AF39;
+}
+
+.description-text {
+    height: 34px;
+    padding: 5px 10px;
+    background-color: #eeeeee;
+    font-size: 12px;
+    font-style: italic;
+    border: 1px solid #D8D5D0;
+}
+
+.description-hide {
+    float: right;
+    font-size: 11px;
+    color: #94AF39;
+}
+
 .xdsoft_current {
     background: #94AF39 !important;
     box-shadow: #94AF39 0 1px 3px 0 inset !important;

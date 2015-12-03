@@ -394,6 +394,54 @@ $(document).ready(function() {
         }
     });
 
+    $('body').on('click', 'a.description-link', function(event) {
+        event.preventDefault();
+
+        var field = $(this).closest('.description-field');
+        // show the textarea or input
+        $(field).find('textarea').show();
+        $(field).find('input').show();
+
+        // add close link to label
+        var hideLink = $('<a>', {
+            href: '',
+            html: '(hide)',
+            class: 'description-hide'
+        });
+        $(field).siblings('label').append(hideLink);
+
+        // hide the read-only text
+        $(this).parent().hide();
+    });
+
+    $('body').on('click', 'a.description-hide', function(event) {
+        event.preventDefault();
+
+
+        var field = $(this).parent().siblings('.description-field');
+
+        // hide the textarea or input
+        var descriptionText = $(field).find('textarea').val();
+        if (descriptionText !== undefined) {
+            $(field).find('textarea').hide();
+        } else {
+            descriptionText = $(field).find('input').val();
+            $(field).find('input').hide();
+        }
+
+        // show the read-only text
+        if (descriptionText.length) {
+            descriptionText += '<a href="" class="description-link">&nbsp;&nbsp;(edit)</a>';
+        } else {
+            descriptionText = 'No description provided, <a href="" class="description-link">add one</a>';
+        }
+        $(field).find('.description-text').html(descriptionText);
+        $(field).find('.description-text').show();
+
+        // remove this link
+        $(this).remove();
+    });
+
     /**
      * Intercepts the enter keypress from the main entity name input and updates the entity title
      */
