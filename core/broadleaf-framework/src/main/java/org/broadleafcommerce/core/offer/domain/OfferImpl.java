@@ -289,7 +289,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferQualifyingCriteriaXrefImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentation(friendlyName = "OfferImpl_Qualifying_Item_Rule",
-        group = OfferAdminPresentation.GroupName.RuleConfiguration,
+        tab = TabName.Qualifiers,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY,
         ruleIdentifier = RuleIdentifier.ORDERITEM)
     protected Set<OfferQualifyingCriteriaXref> qualifyingItemCriteria = new HashSet<OfferQualifyingCriteriaXref>();
@@ -311,14 +311,14 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "TOTALITARIAN_OFFER")
     @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer",
         group = OfferAdminPresentation.GroupName.Advanced,
-        visibility = VisibilityEnum.HIDDEN_ALL)
+        visibility = VisibilityEnum.HIDDEN_ALL, defaultValue = "false")
     protected Boolean totalitarianOffer = false;
 
     @Column(name = "REQUIRES_RELATED_TAR_QUAL")
     @AdminPresentation(friendlyName = "OfferImpl_Requires_Related_Target_And_Qualifiers",
-        group = OfferAdminPresentation.GroupName.Advanced,
+        group = OfferAdminPresentation.GroupName.ShouldBeRelated,
         tooltip = "OfferImplRelatedTargetQualifier_tooltip",
-        visibility = VisibilityEnum.VISIBLE_ALL)
+        visibility = VisibilityEnum.VISIBLE_ALL, defaultValue = "false")
     protected Boolean requiresRelatedTargetAndQualifiers = false;
 
     @OneToMany(mappedBy = "offer", targetEntity = OfferOfferRuleXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)

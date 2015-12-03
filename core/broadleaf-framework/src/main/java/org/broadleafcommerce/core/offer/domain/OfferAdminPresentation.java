@@ -48,6 +48,20 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                     column = 1)
             }
         ),
+        @AdminTabPresentation(name = OfferAdminPresentation.TabName.Qualifiers,
+            order = OfferAdminPresentation.TabOrder.Qualifiers,
+            groups = {
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.ShouldBeRelated,
+                        order = OfferAdminPresentation.GroupOrder.ShouldBeRelated,
+                        column = 1, untitled = true),
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.QualifierRuleRestriction,
+                    order = OfferAdminPresentation.GroupOrder.QualifierRuleRestriction,
+                    column = 1),
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.TargetRuleRestriction,
+                    order = OfferAdminPresentation.GroupOrder.TargetRuleRestriction,
+                    column = 1)
+            }
+        ),
         @AdminTabPresentation(name = OfferAdminPresentation.TabName.Marketing,
                 order = OfferAdminPresentation.TabOrder.Marketing,
                 groups = {
@@ -68,13 +82,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Advanced,
                     order = OfferAdminPresentation.GroupOrder.Advanced),
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.CombineStack,
-                        order = OfferAdminPresentation.GroupOrder.CombineStack),
-                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.QualifierRuleRestriction,
-                    order = OfferAdminPresentation.GroupOrder.QualifierRuleRestriction,
-                    column = 1),
-                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.TargetRuleRestriction,
-                    order = OfferAdminPresentation.GroupOrder.TargetRuleRestriction,
-                    column = 1)
+                        order = OfferAdminPresentation.GroupOrder.CombineStack)
             }
         )
     }
@@ -84,15 +92,17 @@ public interface OfferAdminPresentation {
     public static class TabName {
         public static final String General = "OfferImpl_General_Tab";
         public static final String Marketing = "OfferImpl_Marketing_Tab";
+        public static final String Qualifiers = "OfferImpl_Qualifiers_Tab";
         public static final String Codes = "OfferImpl_Codes_Tab";
         public static final String Advanced = "OfferImpl_Advanced_Tab";
     }
 
     public static class TabOrder {
         public static final int General = 1000;
-        public static final int Marketing = 2000;
-        public static final int Codes = 3000;
-        public static final int Advanced = 4000;
+        public static final int Qualifiers = 2000;
+        public static final int Marketing = 3000;
+        public static final int Codes = 4000;
+        public static final int Advanced = 5000;
     }
 
     public static class GroupName {
@@ -107,6 +117,8 @@ public interface OfferAdminPresentation {
         public static final String QualifierRuleRestriction = "OfferImpl_Qualifier_Rule_Restriction";
         public static final String TargetRuleRestriction = "OfferImpl_Target_Rule_Restriction";
         public static final String Codes = "OfferImpl_Codes_Tab";
+        public static final String ShouldBeRelated = "OfferImpl_ShouldBeRelated";
+
     }
 
     public static class GroupOrder {
@@ -118,9 +130,10 @@ public interface OfferAdminPresentation {
         public static final int Marketing = 1000;
         public static final int Advanced = 1000;
         public static final int CombineStack = 2000;
-        public static final int QualifierRuleRestriction = 3000;
-        public static final int TargetRuleRestriction = 4000;
+        public static final int QualifierRuleRestriction = 2000;
+        public static final int TargetRuleRestriction = 3000;
         public static final int Codes = 1000;
+        public static final int ShouldBeRelated = 1000;
     }
 
     public static class FieldOrder {
