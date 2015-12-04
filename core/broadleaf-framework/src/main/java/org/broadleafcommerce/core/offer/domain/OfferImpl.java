@@ -434,6 +434,9 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     
     @Override
     public OfferItemRestrictionRuleType getOfferItemQualifierRuleType() {
+        // make sure our rule is up to date
+        updateOfferItemQualifierRuleType();
+
         OfferItemRestrictionRuleType returnType = OfferItemRestrictionRuleType.getInstance(offerItemQualifierRuleType);
         if (returnType == null) {
             return OfferItemRestrictionRuleType.NONE;
@@ -492,8 +495,10 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
         } else if (canBeTargets) {
             setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.TARGET);
-        } else {
+        } else if (canBeQualifiers){
             setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER);
+        } else {
+            setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.NONE);
         }
     }
 
