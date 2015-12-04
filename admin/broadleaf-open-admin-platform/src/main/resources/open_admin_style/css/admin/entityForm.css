@@ -24,7 +24,7 @@
 
 .app-content .fieldset-card .titlebar {
     padding: 10px 15px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0;
 }
 
 .boolean-link {
@@ -38,6 +38,26 @@ a.boolean-link.view-options:before {
 
 a.boolean-link.hide-options:before {
     content: 'Hide';
+}
+
+a.description-link {
+    font-size: 11px;
+    color: #94AF39;
+}
+
+.description-text {
+    height: 34px;
+    padding: 5px 10px;
+    background-color: #eeeeee;
+    font-size: 12px;
+    font-style: italic;
+    border: 1px solid #D8D5D0;
+}
+
+.description-hide {
+    float: right;
+    font-size: 11px;
+    color: #94AF39;
 }
 
 .xdsoft_current {

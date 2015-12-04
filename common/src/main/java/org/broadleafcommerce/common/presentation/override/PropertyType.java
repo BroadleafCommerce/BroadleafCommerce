@@ -41,6 +41,7 @@ public class PropertyType {
 
     public static class AdminPresentation {
         public static final String FRIENDLYNAME = "friendlyName";
+        public static final String ADDFRIENDLYNAME = "addFriendlyName";
         public static final String SECURITYLEVEL = "securityLevel";
         public static final String ORDER = "order";
         public static final String GRIDORDER = "gridOrder";
@@ -125,6 +126,7 @@ public class PropertyType {
 
     public static class AdminPresentationCollection {
         public static final String FRIENDLYNAME = "friendlyName";
+        public static final String ADDFRIENDLYNAME = "addFriendlyName";
         public static final String SECURITYLEVEL = "securityLevel";
         public static final String EXCLUDED = "excluded";
         public static final String READONLY = "readOnly";

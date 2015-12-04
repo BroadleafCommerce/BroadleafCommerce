@@ -282,6 +282,8 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                         Boolean.parseBoolean(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.FRIENDLYNAME)) {
                 fieldMetadataOverride.setFriendlyName(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.ADDFRIENDLYNAME)) {
+                fieldMetadataOverride.setAddFriendlyName(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.MANYTOFIELD)) {
                 fieldMetadataOverride.setManyToField(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.OPERATIONTYPES)) {
@@ -340,6 +342,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             override.setUseServerSideInspectionCache(annotColl.useServerSideInspectionCache());
             override.setExcluded(annotColl.excluded());
             override.setFriendlyName(annotColl.friendlyName());
+            override.setAddFriendlyName(annotColl.addFriendlyName());
             override.setReadOnly(annotColl.readOnly());
             override.setSortProperty(annotColl.sortProperty());
             override.setSortAscending(annotColl.sortAscending());
@@ -516,6 +519,10 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         if (collectionMetadata.getFriendlyName() != null) {
             metadata.setFriendlyName(collectionMetadata.getFriendlyName());
         }
+        if (collectionMetadata.getAddFriendlyName() != null) {
+            metadata.setAddFriendlyName(collectionMetadata.getAddFriendlyName());
+        }
+
         if (collectionMetadata.getSecurityLevel() != null) {
             metadata.setSecurityLevel(collectionMetadata.getSecurityLevel());
         }
