@@ -20,11 +20,25 @@
 
 (function($, BLCAdmin) {
 
+    var excludedEFSectionTabSelectors = [];
+
     BLCAdmin.entityForm = {
         showActionSpinner : function ($actions) {
             $("#headerFlashAlertBoxContainer").addClass("hidden");
             $actions.find('button').prop("disabled",true);
             $actions.find('img.ajax-loader').show();
+        },
+
+        addExcludedEFSectionTabSelector : function(selector) {
+            excludedEFSectionTabSelectors.push(selector);
+        },
+
+        getExcludedEFSectionTabSelectorString : function() {
+            var excludedSelectors = '';
+            for (var i=0;i<excludedEFSectionTabSelectors.length;i++){
+                excludedSelectors += ', ' + excludedEFSectionTabSelectors[i];
+            }
+            return excludedSelectors;
         },
 
         /**
@@ -171,7 +185,8 @@ $(document).ready(function() {
         }
     }
 
-    $('body div.section-tabs li').find('a:not(.workflow-tab, .system-property-tab)').click(function(event) {
+    $('body div.section-tabs li').find('a:not(".workflow-tab, .system-property-tab' +
+            BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + '")').click(function(event) {
         var $tab = $(this);
         var $tabBody = $('.' + $tab.attr('href').substring(1) + 'Tab');
         var text = $tab.find('span').data('tabkey')
