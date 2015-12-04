@@ -63,6 +63,17 @@
         <property name="persistenceUnitPostProcessors" ref="blPersistenceUnitPostProcessors"/>
     </bean>
 
+    <bean id="autoDDLStatusExporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
+        <property name="beans">
+            <map>
+                <entry key="bean:name=autoDDLCreateStatusTestBean" value-ref="testBean"/>
+            </map>
+        </property>
+        <property name="registrationPolicy" value="IGNORE_EXISTING"/>
+    </bean>
+
+    <bean id="testBean" class="org.broadleafcommerce.common.extensibility.jpa.AutoDDLCreateStatusTestBeanImpl"/>
+
     <bean id="blPersistenceUnitPostProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
