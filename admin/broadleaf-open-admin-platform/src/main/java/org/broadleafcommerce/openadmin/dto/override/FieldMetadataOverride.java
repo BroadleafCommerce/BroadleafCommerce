@@ -34,6 +34,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     //fields everyone depends on
     private Boolean excluded;
     private String friendlyName;
+    private String addFriendlyName;
     private String securityLevel;
     private Boolean lazyFetch;
 
@@ -51,6 +52,14 @@ public class FieldMetadataOverride extends MetadataOverride {
 
     public void setFriendlyName(String friendlyName) {
         this.friendlyName = friendlyName;
+    }
+
+    public String getAddFriendlyName() {
+        return addFriendlyName;
+    }
+
+    public void setAddFriendlyName(String addFriendlyName) {
+        this.addFriendlyName = addFriendlyName;
     }
 
     public String getSecurityLevel() {

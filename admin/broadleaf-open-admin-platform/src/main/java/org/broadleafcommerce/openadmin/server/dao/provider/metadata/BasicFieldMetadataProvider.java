@@ -391,6 +391,8 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             String stringValue = entry.getValue().overrideValue();
             if (entry.getKey().equals(PropertyType.AdminPresentation.FRIENDLYNAME)) {
                 fieldMetadataOverride.setFriendlyName(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.ADDFRIENDLYNAME)) {
+                fieldMetadataOverride.setAddFriendlyName(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.SECURITYLEVEL)) {
                 fieldMetadataOverride.setSecurityLevel(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.GROUP)) {
@@ -518,6 +520,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setHint(annot.hint());
             override.setLargeEntry(annot.largeEntry());
             override.setFriendlyName(annot.friendlyName());
+            override.setAddFriendlyName(annot.addFriendlyName());
             override.setSecurityLevel(annot.securityLevel());
             override.setOrder(annot.order());
             override.setGridOrder(annot.gridOrder());
@@ -621,6 +624,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getFriendlyName() != null) {
             metadata.setFriendlyName(basicFieldMetadata.getFriendlyName());
+        }
+        if (basicFieldMetadata.getAddFriendlyName() != null) {
+            metadata.setAddFriendlyName(basicFieldMetadata.getAddFriendlyName());
         }
         if (basicFieldMetadata.getSecurityLevel() != null) {
             metadata.setSecurityLevel(basicFieldMetadata.getSecurityLevel());

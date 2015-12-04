@@ -36,24 +36,46 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                     order = OfferAdminPresentation.GroupOrder.Description,
                     untitled = true),
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.RuleConfiguration,
-                    order = OfferAdminPresentation.GroupOrder.RuleConfiguration),
+                    order = OfferAdminPresentation.GroupOrder.RuleConfiguration,
+                    untitled = true),
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.ActivityRange,
                     order = OfferAdminPresentation.GroupOrder.ActivityRange,
                     column = 1),
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Customer,
                     order = OfferAdminPresentation.GroupOrder.Customer,
                     column = 1),
-                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Usage,
-                    order = OfferAdminPresentation.GroupOrder.Usage,
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Restrictions,
+                    order = OfferAdminPresentation.GroupOrder.Restrictions,
                     column = 1)
             }
         ),
-        @AdminTabPresentation(name = OfferAdminPresentation.TabName.Codes,
-            order = OfferAdminPresentation.TabOrder.Codes,
+        @AdminTabPresentation(name = OfferAdminPresentation.TabName.Qualifiers,
+            order = OfferAdminPresentation.TabOrder.Qualifiers,
             groups = {
-                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Codes,
-                    order = OfferAdminPresentation.GroupOrder.Codes, untitled = true)
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.ShouldBeRelated,
+                        order = OfferAdminPresentation.GroupOrder.ShouldBeRelated,
+                        column = 1, untitled = true),
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.QualifierRuleRestriction,
+                    order = OfferAdminPresentation.GroupOrder.QualifierRuleRestriction,
+                    column = 1),
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.TargetRuleRestriction,
+                    order = OfferAdminPresentation.GroupOrder.TargetRuleRestriction,
+                    column = 1)
             }
+        ),
+        @AdminTabPresentation(name = OfferAdminPresentation.TabName.Marketing,
+                order = OfferAdminPresentation.TabOrder.Marketing,
+                groups = {
+                        @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Marketing,
+                                order = OfferAdminPresentation.GroupOrder.Marketing, untitled = true)
+                }
+        ),
+        @AdminTabPresentation(name = OfferAdminPresentation.TabName.Codes,
+                order = OfferAdminPresentation.TabOrder.Codes,
+                groups = {
+                        @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Codes,
+                                order = OfferAdminPresentation.GroupOrder.Codes, untitled = true)
+                }
         ),
         @AdminTabPresentation(name = OfferAdminPresentation.TabName.Advanced,
             order = OfferAdminPresentation.TabOrder.Advanced,
@@ -61,13 +83,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Advanced,
                     order = OfferAdminPresentation.GroupOrder.Advanced),
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.CombineStack,
-                        order = OfferAdminPresentation.GroupOrder.CombineStack),
-                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.QualifierRuleRestriction,
-                    order = OfferAdminPresentation.GroupOrder.QualifierRuleRestriction,
-                    column = 1),
-                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.TargetRuleRestriction,
-                    order = OfferAdminPresentation.GroupOrder.TargetRuleRestriction,
-                    column = 1)
+                        order = OfferAdminPresentation.GroupOrder.CombineStack)
             }
         )
     }
@@ -76,40 +92,59 @@ public interface OfferAdminPresentation {
 
     public static class TabName {
         public static final String General = "OfferImpl_General_Tab";
+        public static final String Marketing = "OfferImpl_Marketing_Tab";
+        public static final String Qualifiers = "OfferImpl_Qualifiers_Tab";
         public static final String Codes = "OfferImpl_Codes_Tab";
         public static final String Advanced = "OfferImpl_Advanced_Tab";
     }
 
     public static class TabOrder {
         public static final int General = 1000;
-        public static final int Codes = 2000;
-        public static final int Advanced = 3000;
+        public static final int Qualifiers = 2000;
+        public static final int Marketing = 3000;
+        public static final int Codes = 4000;
+        public static final int Advanced = 5000;
     }
 
     public static class GroupName {
         public static final String Description = "OfferImpl_Description";
         public static final String ActivityRange = "OfferImpl_Activity_Range";
-        public static final String Usage = "OfferImpl_Usage";
+        public static final String Restrictions = "OfferImpl_Restrictions";
         public static final String Customer = "OfferImpl_Customer";
         public static final String RuleConfiguration = "OfferImpl_Rule_Configuration";
+        public static final String Marketing = "OfferImpl_Marketing";
         public static final String Advanced = "OfferImpl_Advanced";
         public static final String CombineStack = "OfferImpl_Combine_Stack";
         public static final String QualifierRuleRestriction = "OfferImpl_Qualifier_Rule_Restriction";
         public static final String TargetRuleRestriction = "OfferImpl_Target_Rule_Restriction";
         public static final String Codes = "OfferImpl_Codes_Tab";
+        public static final String ShouldBeRelated = "OfferImpl_ShouldBeRelated";
+
     }
 
     public static class GroupOrder {
         public static final int Description = 1000;
         public static final int ActivityRange = 2000;
         public static final int Customer = 3000;
-        public static final int Usage = 4000;
+        public static final int Restrictions = 4000;
         public static final int RuleConfiguration = 5000;
+        public static final int Marketing = 1000;
         public static final int Advanced = 1000;
         public static final int CombineStack = 2000;
-        public static final int QualifierRuleRestriction = 3000;
-        public static final int TargetRuleRestriction = 4000;
+        public static final int QualifierRuleRestriction = 2000;
+        public static final int TargetRuleRestriction = 3000;
         public static final int Codes = 1000;
+        public static final int ShouldBeRelated = 1000;
+    }
+
+    public static class FieldOrder {
+        public static final int Name = 1000;
+        public static final int Description = 2000;
+        public static final int Message = 3000;
+        public static final int TemplateType = 4000;
+        public static final int Amount = 5000;
+        public static final int OfferType = 5000;
+        public static final int DiscountType = 5000;
     }
 
 }

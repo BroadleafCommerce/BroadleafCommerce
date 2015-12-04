@@ -247,8 +247,8 @@
 }
 
 .read-only-rule {
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.07);
+    padding: 5px 10px;
+    background-color: #eeeeee;
 }
 
 .read-only-rule span {
@@ -448,10 +448,10 @@
 .rule-builder-with-quantity, .rule-builder-simple {
     margin-bottom: 10px;
     background-color: white;
-    border: 1px solid #e0e0e0;
-    -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
-    -webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
-    box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+    border: 1px solid #D8D5D0;
+    /*-moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;*/
+    /*-webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;*/
+    /*box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;*/
 }
 
 .query-builder-rules-container .rule-filter-container {

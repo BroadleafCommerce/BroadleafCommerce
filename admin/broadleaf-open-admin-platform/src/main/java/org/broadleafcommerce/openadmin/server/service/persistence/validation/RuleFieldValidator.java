@@ -116,7 +116,7 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                                     }
                                 }
                                 if (!foundIdToUpdate) {
-                                    return new PropertyValidationResult(false, "Tried to update QuantityBasedReule with ID " + dto.getPk() + " but that rule does not exist");
+                                    return new PropertyValidationResult(false, "Tried to update QuantityBasedRule with ID " + dto.getPk() + " but that rule does not exist");
                                 }
                             } else {
                                 // This is a new rule, just validate that it parses successfully

@@ -48,7 +48,18 @@ public @interface AdminPresentation {
      * @return the friendly name
      */
     String friendlyName() default "";
-    
+
+    /**
+     * <p>Optional - only required if you want to display a friendly name to the user</p>
+     *
+     * <p><The add friendly name to present to a user for this field in the add GUI. If supporting i18N,
+     * the friendly name may be a key to retrieve a localized friendly name using
+     * the GWT support for i18N.</p>
+     *
+     * @return the friendly name
+     */
+    String addFriendlyName() default "";
+
     /**
      * Optional - only required if you want to restrict this field
      *

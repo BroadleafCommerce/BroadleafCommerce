@@ -145,14 +145,14 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * 
      * @return
      */
-    public boolean isAutomaticallyAdded();
+    public boolean getRequiresCode();
 
     /**
      * Sets whether or not this offer should be automatically considered for consideration (versus requiring a code or 
      * other delivery mechanism).
-     * @see #isAutomaticallyAdded()
+     * @see #getRequiresCode()
      */
-    public void setAutomaticallyAdded(boolean automaticallyAdded);
+    public void setRequiresCode(boolean requiresCode);
 
     /**
      * @deprecated Replaced by isAutomaticallyApplied property.   In prior versions of Broadleaf deliveryType was used to 
@@ -337,13 +337,13 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     /**
      * Returns the offer codes that can be used to retrieve this Offer. These codes would be used in situations where
-     * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}
+     * this Offer is not automatically considered (meaning {@link Offer#getRequiresCode()} is false}
      */
     public List<OfferCode> getOfferCodes();
     
     /**
      * Sets the offer codes that can be used to retrieve this Offer. These codes would be used in situations where
-     * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}
+     * this Offer is not automatically considered (meaning {@link Offer#getRequiresCode()} is false}
      */
     public void setOfferCodes(List<OfferCode> offerCodes);
 

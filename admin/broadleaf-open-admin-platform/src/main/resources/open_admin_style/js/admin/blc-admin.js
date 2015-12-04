@@ -550,6 +550,9 @@ var BLCAdmin = (function($) {
                 var selectizeSearchField = $(selectizeAdder).data("selectizesearch");
                 var placeholder = 'Add ' + $(selectizeAdder).data("selectizeplaceholder") + ' +';
 
+				var collectionParent = window.location.pathname.split('/')[2];
+				var collectionPlaceholder = 'This ' + collectionParent + ' is not restricted to certain customers';
+
                 var select_adder, $select_adder;
                 var select_collection, $select_collection;
 
@@ -574,7 +577,7 @@ var BLCAdmin = (function($) {
                         BLC.ajax({
                             url: selectizeUrl + "/selectize",
                             type: 'GET',
-                            data: queryData,
+                            data: queryData
                         }, function(data) {
                             $.each(data.options, function (index, value) {
                                 if (select_adder.getOption(value.id).length === 0 && select_adder.getItem(value.id).length === 0) {
@@ -634,7 +637,8 @@ var BLCAdmin = (function($) {
                             $item.closest('.selectize-input').find('input').blur();
                         });
                     },
-                    onItemRemove: function () {
+                    onItemRemove: function (value, $item) {
+						select_adder.addOption({value: $item.data('value'), text: $item.html()});
                         $select_adder.siblings('.selectize-control.selectize-adder').find('.selectize-input input').attr('placeholder', placeholder);
                     }
                 }
@@ -642,6 +646,7 @@ var BLCAdmin = (function($) {
                 var selectizeCollectionOptions = {
                     maxItems: null,
                     persist: false,
+					placeholder: collectionPlaceholder,
                     onInitialize: function () {
                         var $selectize = this;
                         this.revertSettings.$children.each(function () {
@@ -691,6 +696,8 @@ var BLCAdmin = (function($) {
                 select_adder = $select_adder[0].selectize;
 
                 $select_adder.siblings('.selectize-control.selectize-adder').find('.selectize-input input').attr('placeholder', placeholder);
+
+				$('.selectize-control.selectize-collection input').attr('disabled','disabled');
             });
     	},
     	

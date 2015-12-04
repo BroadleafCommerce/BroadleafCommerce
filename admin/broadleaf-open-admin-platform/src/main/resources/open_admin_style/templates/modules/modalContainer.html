@@ -14,9 +14,12 @@
             </span>
             
             <span th:case="'addCollectionItem'" th:remove="tag">
-                [[#{modal.title.add}]] 
-                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" />
-                <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" />
+                [[#{modal.title.add}]]
+                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.addFriendlyName)}">
+                    <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" />
+                    <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" />
+                </span>
+                <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.addFriendlyName)}" th:text="#{${collectionProperty.metadata.addFriendlyName}}"></span>
             </span>
             
             <span th:case="'selectCollectionItem'" th:remove="tag">

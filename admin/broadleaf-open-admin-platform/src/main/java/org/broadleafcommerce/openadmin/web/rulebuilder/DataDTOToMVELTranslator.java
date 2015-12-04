@@ -268,11 +268,11 @@ public class DataDTOToMVELTranslator {
                 break;
             }
             case COLLECTION_IN:{
-                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, ".size()>0", false, false, false, false, true);
+                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, ".size()>0", false, false, false, false, false);
                 break;
             }
             case COLLECTION_NOT_IN:{
-                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, ".size()==0", false, false, false, false, true);
+                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, ".size()==0", false, false, false, false, false);
                 break;
             }
             case BETWEEN: {
@@ -342,17 +342,13 @@ public class DataDTOToMVELTranslator {
         sb.append("CollectionUtils.intersection(");
         sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
         sb.append(",");
-        if (value.length > 1) {
-            sb.append("[");
-            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
-                    ignoreCase, ignoreQuotes));
-            sb.append("])");
-        } else {
-            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
-                    ignoreCase, ignoreQuotes));
-            sb.append(")");
+        if (value.length == 1) {
+            value[0] = value[0].toString().replaceAll("[\\[\\]]", "");
         }
-
+        sb.append("[");
+        sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+                ignoreCase, ignoreQuotes));
+        sb.append("])");
         sb.append(operator);
     }
 
@@ -389,9 +385,7 @@ public class DataDTOToMVELTranslator {
     }
 
     protected String buildFieldName(String entityKey, String fieldName) {
-        String response = entityKey + "." + fieldName;
-        response = response.replaceAll("\\.", ".?");
-        return response;
+        return  entityKey + "." + fieldName;
     }
 
     protected String formatField(String entityKey, SupportedFieldType type, String field,

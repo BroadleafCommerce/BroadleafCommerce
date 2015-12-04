@@ -394,6 +394,45 @@ $(document).ready(function() {
         }
     });
 
+    $('body').on('click', 'a.description-link', function(event) {
+        event.preventDefault();
+
+        var field = $(this).closest('.description-field');
+        // show the textarea or input
+        if ($(field).find('textarea').length) {
+            $(field).find('textarea').show().focus();
+        } else {
+            $(field).find('input').show().focus();
+        }
+
+        // hide the read-only text
+        $(this).parent().hide();
+    });
+
+    $('body').on('blur', '.description-field textarea, .description-field input', function(event) {
+        event.preventDefault();
+
+        var field = $(this).closest('.description-field');
+
+        // hide the textarea or input
+        var descriptionText = $(field).find('textarea').val();
+        if (descriptionText !== undefined) {
+            $(field).find('textarea').hide();
+        } else {
+            descriptionText = $(field).find('input').val();
+            $(field).find('input').hide();
+        }
+
+        // show the read-only text
+        if (descriptionText.length) {
+            descriptionText += '<a href="" class="description-link">&nbsp;&nbsp;(edit)</a>';
+        } else {
+            descriptionText = 'No description provided, <a href="" class="description-link">add one</a>';
+        }
+        $(field).find('.description-text').html(descriptionText);
+        $(field).find('.description-text').show();
+    });
+
     /**
      * Intercepts the enter keypress from the main entity name input and updates the entity title
      */
