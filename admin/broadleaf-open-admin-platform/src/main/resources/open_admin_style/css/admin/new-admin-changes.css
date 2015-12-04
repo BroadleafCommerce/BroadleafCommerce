@@ -787,7 +787,6 @@ input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
 .fieldset-card .fieldset-card-content label {
     font-size: 11px !important;
     color: #616161;
-    font-weight: normal !important;
     line-height: 14px;
     text-transform: uppercase !important;
     padding-bottom: 1px;
@@ -801,6 +800,11 @@ input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
     font-size:11px;
     text-transform:uppercase;
     /*color:#B3B3B3;*/
+    font-weight: 600;
+}
+
+.radio-label span {
+    font-weight: 500 !important;
 }
 
 .field-group label span.alert-wrapper {
