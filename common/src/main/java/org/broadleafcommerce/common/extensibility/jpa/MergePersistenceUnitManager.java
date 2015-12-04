@@ -81,7 +81,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     @Resource(name="blEntityMarkerClassTransformer")
     protected EntityMarkerClassTransformer entityMarkerClassTransformer;
 
-    @Resource(name="autoDDLStatusExporter")
+    @Resource(name="blAutoDDLStatusExporter")
     protected MBeanExporter mBeanExporter;
 
     @Resource(name="blConfiguration")
@@ -399,25 +399,24 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     protected void disableSchemaCreateIfApplicable(String persistenceUnitName, MutablePersistenceUnitInfo pui) {
         String autoDDLStatus = pui.getProperties().getProperty("hibernate.hbm2ddl.auto");
         boolean isCreate = autoDDLStatus != null && (autoDDLStatus.equals("create") || autoDDLStatus.equals("create-drop"));
-        boolean detectedConfigOnly = false;
+        boolean detectedCreate = false;
         if (isCreate && configurer.determineEnvironment().equals(configurer.getDefaultEnvironment())) {
             try {
-                if (mBeanExporter.getServer().isRegistered(ObjectName.getInstance("bean:name" +
-                        "=autoDDLCreateStatusTestBean"))) {
+                if (mBeanExporter.getServer().isRegistered(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"))) {
                     Boolean response = (Boolean) mBeanExporter.getServer().invoke(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"), "getStartedWithCreate",
                             new Object[]{persistenceUnitName}, new String[]{String.class.getName()});
                     if (response == null) {
                         mBeanExporter.getServer().invoke(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"), "setStartedWithCreate",
                             new Object[]{persistenceUnitName, true}, new String[]{String.class.getName(), Boolean.class.getName()});
                     } else {
-                        detectedConfigOnly = true;
+                        detectedCreate = true;
                     }
                 }
             } catch (Exception e) {
                 LOG.warn("Unable to query the mbean server for previous auto.ddl status", e);
             }
         }
-        if (detectedConfigOnly) {
+        if (detectedCreate) {
             pui.getProperties().setProperty("hibernate.hbm2ddl.auto", "none");
         }
     }
