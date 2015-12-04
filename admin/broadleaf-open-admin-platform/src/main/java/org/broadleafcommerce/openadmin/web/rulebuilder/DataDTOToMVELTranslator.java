@@ -268,11 +268,11 @@ public class DataDTOToMVELTranslator {
                 break;
             }
             case COLLECTION_IN:{
-                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, ".size()>0", false, false, false, false, false);
+                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, ".size()>0", false, false, false, false, true);
                 break;
             }
             case COLLECTION_NOT_IN:{
-                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, ".size()==0", false, false, false, false, false);
+                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, ".size()==0", false, false, false, false, true);
                 break;
             }
             case BETWEEN: {
@@ -342,13 +342,17 @@ public class DataDTOToMVELTranslator {
         sb.append("CollectionUtils.intersection(");
         sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
         sb.append(",");
-        if (value.length == 1) {
-            value[0] = value[0].toString().replaceAll("[\\[\\]]", "");
+        if (value.length > 1) {
+            sb.append("[");
+            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+                    ignoreCase, ignoreQuotes));
+            sb.append("])");
+        } else {
+            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+                    ignoreCase, ignoreQuotes));
+            sb.append(")");
         }
-        sb.append("[");
-        sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
-                ignoreCase, ignoreQuotes));
-        sb.append("])");
+
         sb.append(operator);
     }
 

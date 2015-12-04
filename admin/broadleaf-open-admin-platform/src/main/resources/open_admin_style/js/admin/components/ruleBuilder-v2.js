@@ -540,7 +540,12 @@
                     rule.$el.find('.rule-value-container input.query-builder-selectize-input').attr('data-hydrate', value);
                 };
                 field.valueGetter = function(rule) {
-                    return "["+rule.$el.find('.rule-value-container input.query-builder-selectize-input').val()+"]";
+                    var value = rule.$el.find('.rule-value-container input.query-builder-selectize-input').val();
+                    if (value.indexOf(',') > 0) {
+                        return "["+value+"]";
+                    } else {
+                        return value;
+                    }
                 }
             }
         },
