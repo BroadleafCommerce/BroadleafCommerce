@@ -57,6 +57,18 @@ public interface SystemProperty extends Serializable, MultiTenantCloneable<Syste
     public void setName(String name);
 
     /**
+     * Declares whether or not the property name has been overridden, rather than using the default generated value.
+     * @return
+     */
+    public Boolean getOverrideGeneratedPropertyName();
+
+    /**
+     * Sets the overrideGeneratedPropertyName.
+     * @param overrideGeneratedPropertyName
+     */
+    public void setOverrideGeneratedPropertyName(Boolean overrideGeneratedPropertyName);
+
+    /**
      * Returns the property value.  
      * @param name
      */
