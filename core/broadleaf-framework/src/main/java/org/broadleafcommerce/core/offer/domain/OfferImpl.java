@@ -288,7 +288,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Qualifying_Item_Subtotal",
         group = OfferAdminPresentation.GroupName.QualifierRuleRestriction,
-        order = 2000)
+        order = 2000, defaultValue = "0")
     protected BigDecimal qualifyingItemSubTotal;
     
     @Column(name = "OFFER_ITEM_TARGET_RULE")

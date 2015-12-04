@@ -163,8 +163,19 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             return true;
         }
 
-        //TODO:  Check subtotal requirement before continuing
-           
+        for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
+            List<PromotableOrderItem> promotableItems = itemOffer.getCandidateQualifiersMap().get(itemCriteria);
+
+            Money subtotal = Money.ZERO;
+            for (PromotableOrderItem item : promotableItems) {
+                Money lineItemAmount = item.getPriceBeforeAdjustments(itemOffer.getOffer().getApplyDiscountToSalePrice()).multiply(item.getQuantity());
+                subtotal = subtotal.add(lineItemAmount);
+                if (subtotal.greaterThanOrEqual(itemOffer.getOffer().getQualifyingItemSubTotal())) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
