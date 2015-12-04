@@ -541,11 +541,8 @@
                 };
                 field.valueGetter = function(rule) {
                     var value = rule.$el.find('.rule-value-container input.query-builder-selectize-input').val();
-                    if (value.indexOf(',') > 0) {
-                        return "["+value+"]";
-                    } else {
-                        return value;
-                    }
+                    value = value.replace(',','\",\"');
+                    return "[\"" + value + "\"]";
                 }
             }
         },
