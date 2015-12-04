@@ -37,7 +37,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
@@ -268,9 +267,23 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         group = OfferAdminPresentation.GroupName.QualifierRuleRestriction,
         order = 1000,
         tooltip = "OfferItemRestrictionRuleType_tooltip",
+        visibility = VisibilityEnum.HIDDEN_ALL,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
+    @Deprecated
     protected String offerItemQualifierRuleType;
+
+    @Column(name = "QUALIFIERS_CAN_BE_TARGETS")
+    @AdminPresentation(friendlyName = "OfferImpl_Qualifiers_Can_Be_Targets",
+            group = OfferAdminPresentation.GroupName.QualifierRuleRestriction,
+            defaultValue = "false")
+    protected Boolean qualifiersCanBeTargets = false;
+
+    @Column(name = "QUALIFIERS_CAN_BE_QUALIFIERS")
+    @AdminPresentation(friendlyName = "OfferImpl_Qualifiers_Can_Be_Qualifiers",
+            group = OfferAdminPresentation.GroupName.QualifierRuleRestriction,
+            defaultValue = "false")
+    protected Boolean qualifiersCanBeQualifiers = false;
 
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Qualifying_Item_Subtotal",
@@ -283,7 +296,8 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         group = OfferAdminPresentation.GroupName.TargetRuleRestriction,
         tooltip = "OfferItemRestrictionRuleType_tooltip",
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-        broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
+        broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType",
+        defaultValue = "NONE")
     protected String offerItemTargetRuleType;
     
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferQualifyingCriteriaXrefImpl.class, cascade = CascadeType.ALL)
@@ -446,6 +460,41 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType) {
         this.offerItemTargetRuleType = restrictionRuleType.getType();
+    }
+
+    @Override
+    public Boolean getQualifiersCanBeQualifiers() {
+        return qualifiersCanBeQualifiers;
+    }
+
+    @Override
+    public void setQualifiersCanBeQualifiers(Boolean qualifiersCanBeQualifiers) {
+        this.qualifiersCanBeQualifiers = qualifiersCanBeQualifiers;
+        updateOfferItemQualifierRuleType();
+    }
+
+    @Override
+    public Boolean getQualifiersCanBeTargets() {
+        return qualifiersCanBeTargets;
+    }
+
+    @Override
+    public void setQualifiersCanBeTargets(Boolean qualifiersCanBeTargets) {
+        this.qualifiersCanBeTargets = qualifiersCanBeTargets;
+        updateOfferItemQualifierRuleType();
+    }
+
+    private void updateOfferItemQualifierRuleType() {
+        Boolean canBeTargets = getQualifiersCanBeTargets();
+        Boolean canBeQualifiers = getQualifiersCanBeQualifiers();
+
+        if (canBeTargets && canBeQualifiers) {
+            setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
+        } else if (canBeTargets) {
+            setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.TARGET);
+        } else {
+            setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER);
+        }
     }
 
     @Override
@@ -674,7 +723,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     public void setMaxUsesPerOrder(int maxUsesPerOrder) {
         this.maxUsesPerOrder = maxUsesPerOrder;
     }
-    
+
     @Override
     public boolean isUnlimitedUsePerOrder() {
         return getMaxUsesPerOrder() == 0;
@@ -909,6 +958,8 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setPriority(getPriority());
         cloned.setStackable(getStackable());
         cloned.setDeliveryType(getDeliveryType());
+        cloned.setQualifiersCanBeTargets(qualifiersCanBeTargets);
+        cloned.setQualifiersCanBeQualifiers(qualifiersCanBeQualifiers);
         cloned.setMaxUsesPerOrder(getMaxUsesPerOrder());
         cloned.setArchived(getArchived());
         cloned.setOfferItemQualifierRuleType(getOfferItemQualifierRuleType());

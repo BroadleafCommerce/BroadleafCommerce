@@ -113,14 +113,22 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     @Deprecated
     public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
-    
+
     public OfferItemRestrictionRuleType getOfferItemQualifierRuleType();
 
     public void setOfferItemQualifierRuleType(OfferItemRestrictionRuleType restrictionRuleType);
-    
+
     public OfferItemRestrictionRuleType getOfferItemTargetRuleType();
 
     public void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType);
+
+    public Boolean getQualifiersCanBeQualifiers();
+
+    public void setQualifiersCanBeQualifiers(Boolean qualifiersCanBeQualifiers);
+
+    public Boolean getQualifiersCanBeTargets();
+
+    public void setQualifiersCanBeTargets(Boolean qualifiersCanBeTargets);
 
     /**
      * Returns false if this offer is not combinable with other offers of the same type.
