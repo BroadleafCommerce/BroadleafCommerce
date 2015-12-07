@@ -132,32 +132,17 @@
                     data: $form.serializeArray(),
                     complete: BLCAdmin.entityForm.hideActionSpinner
                 }, function (data) {
-                    $("#headerFlashAlertBoxContainer").removeClass("hidden");
                     $(".errors, .error, .tab-error-indicator, .tabError").remove();
                     $('.has-error').removeClass('has-error');
 
                     if (!data.errors) {
-                        //$(".alert-box").removeClass("alert").addClass("success");
-                        //$(".alert-box-message").text("Successfully saved");
 
-                        var alert = {
-                            message: BLCAdmin.messages.saved + '!',
+                        var $titleBar = $form.closest('.main-content').find('.content-area-title-bar');
+                        BLCAdmin.alert.showAlert($titleBar, 'Successfully ' + BLCAdmin.messages.saved + '!', {
                             alertType: 'save-alert',
-                            autoClose: 3000,
+                            autoClose: 2000,
                             clearOtherAlerts: true
-                        };
-
-                        var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass('save-alert');
-                        var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
-
-                        $alert.append("Successfully saved");
-                        $alert.append($closeLink);
-
-                        $(".alert-box").find('.alert-box-message').html($alert);
-
-                        setTimeout(function() {
-                            $closeLink.click();
-                        }, 1000);
+                        });
 
                     } else {
                         BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemSaving);

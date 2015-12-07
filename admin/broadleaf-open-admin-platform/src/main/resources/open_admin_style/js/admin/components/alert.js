@@ -24,22 +24,29 @@
         showAlert : function($container, message, options) {
             options = options || {};
             var alertType = options.alertType || '';
+            var $fieldGroup = $container.closest('.field-group');
             
             var $alert = $('<span>').addClass('alert-box').addClass(alertType);
-            var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;').css("display","none");
             
             $alert.append(message);
-            $alert.append($closeLink);
             
             if (options.clearOtherAlerts) {
-                $container.closest('.field-group').find('.alert-wrapper').find('.alert-box').remove();
+                if ($fieldGroup.length) {
+                    $fieldGroup.find('.alert-wrapper').find('.alert-box').remove();
+                } else {
+                    $container.find('.alert-box').remove();
+                }
             }
 
-            $container.closest('.field-group').find('.alert-wrapper').append($alert);
+            if ($fieldGroup.length) {
+                $fieldGroup.find('.alert-wrapper').append($alert);
+            } else {
+                $container.append($alert);
+            }
             
             if (options.autoClose) {
                 setTimeout(function() {
-                    $closeLink.closest(".alert-box").remove();
+                    $alert.fadeOut();
                 }, options.autoClose);
             }
         }
