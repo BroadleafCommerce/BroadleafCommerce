@@ -44,10 +44,7 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
-import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.offer.service.type.*;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -192,7 +189,9 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "STACKABLE")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable",
             tooltip = "OfferImplStackable_tooltip",
-            group = OfferAdminPresentation.GroupName.CombineStack)
+            group = OfferAdminPresentation.GroupName.CombineStack,
+            visibility = VisibilityEnum.HIDDEN_ALL)
+    @Deprecated
     protected Boolean stackable = true;
 
     @Column(name = "TARGET_SYSTEM")
@@ -231,8 +230,43 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Combinable",
         tooltip = "OfferImplCombinableWithOtherOffers_tooltip",
-        group = OfferAdminPresentation.GroupName.CombineStack)
+        group = OfferAdminPresentation.GroupName.CombineStack,
+        visibility = VisibilityEnum.HIDDEN_ALL)
+    @Deprecated
     protected Boolean combinableWithOtherOffers = true;
+
+    @Column(name = "COMBINABLE_WITH_ORDER_OFFERS")
+    @AdminPresentation(friendlyName = "OfferImpl_Order_Offer_Combinable",
+            group = OfferAdminPresentation.GroupName.CombineStack,
+            defaultValue = "true", order = 1000)
+    protected Boolean combinableWithOrderOffers = true;
+
+    @Column(name = "COMBINABLE_WITH_ITEM_OFFERS")
+    @AdminPresentation(friendlyName = "OfferImpl_Item_Offer_Combinable",
+            group = OfferAdminPresentation.GroupName.CombineStack,
+            defaultValue = "true", order = 2000)
+    protected Boolean combinableWithItemOffers = true;
+
+    @Column(name = "COMBINABLE_WITH_ITEM_OFFERS_IMPACTING_ITEMS")
+    @AdminPresentation(friendlyName = "OfferImpl_Item_Offer_Impacting_Items_Combinable",
+            group = OfferAdminPresentation.GroupName.CombineStack,
+            defaultValue = "true", order = 3000)
+    protected Boolean combinableWithItemOffersImpactingOtherItems = true;
+
+    @Column(name = "COMBINABLE_WITH_SHIPPING_OFFERS")
+    @AdminPresentation(friendlyName = "OfferImpl_Shipping_Offer_Combinable",
+            group = OfferAdminPresentation.GroupName.CombineStack,
+            defaultValue = "true", order = 4000)
+    protected Boolean combinableWithShippingOffers = true;
+
+    @Column(name = "STACKABLE_WITH_OTHER_OFFERS")
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable",
+            tooltip = "OfferImplStackableWithOffers_tooltip",
+            group = OfferAdminPresentation.GroupName.CombineStack,
+            fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.StackabilityType",
+            defaultValue = "NO", order = 5000)
+    protected String stackableWithOtherOffers;
 
     @Column(name = "OFFER_DELIVERY_TYPE")
     @AdminPresentation(excluded = true)
@@ -562,6 +596,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
      * @return true if stackable, otherwise false
      */
     @Override
+    @Deprecated
     public boolean isStackable() {
         return stackable == null ? false : stackable;
     }
@@ -572,6 +607,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
      * @param stackable
      */
     @Override
+    @Deprecated
     public void setStackable(boolean stackable) {
         this.stackable = stackable;
     }
@@ -650,6 +686,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
      * @return true if combinableWithOtherOffers, otherwise false
      */
     @Override
+    @Deprecated
     public boolean isCombinableWithOtherOffers() {
         return combinableWithOtherOffers == null ? false : combinableWithOtherOffers;
     }
@@ -660,6 +697,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
      * @param combinableWithOtherOffers
      */
     @Override
+    @Deprecated
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers) {
         this.combinableWithOtherOffers = combinableWithOtherOffers;
     }
@@ -668,6 +706,56 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @JsonIgnore
     public boolean getCombinableWithOtherOffers() {
         return combinableWithOtherOffers;
+    }
+
+    @Override
+    public Boolean getCombinableWithOrderOffers() {
+        return combinableWithOrderOffers;
+    }
+
+    @Override
+    public void setCombinableWithOrderOffers(Boolean combinableWithOrderOffers) {
+        this.combinableWithOrderOffers = combinableWithOrderOffers;
+    }
+
+    @Override
+    public Boolean getCombinableWithItemOffers() {
+        return combinableWithItemOffers;
+    }
+
+    @Override
+    public void setCombinableWithItemOffers(Boolean combinableWithItemOffers) {
+        this.combinableWithItemOffers = combinableWithItemOffers;
+    }
+
+    @Override
+    public Boolean getCombinableWithItemOffersImpactingOtherItems() {
+        return combinableWithItemOffersImpactingOtherItems;
+    }
+
+    @Override
+    public void setCombinableWithItemOffersImpactingOtherItems(Boolean combinableWithItemOffersImpactingOtherItems) {
+        this.combinableWithItemOffersImpactingOtherItems = combinableWithItemOffersImpactingOtherItems;
+    }
+
+    @Override
+    public Boolean getCombinableWithShippingOffers() {
+        return combinableWithShippingOffers;
+    }
+
+    @Override
+    public void setCombinableWithShippingOffers(Boolean combinableWithShippingOffers) {
+        this.combinableWithShippingOffers = combinableWithShippingOffers;
+    }
+
+    @Override
+    public StackabilityType getStackableWithOtherOffers() {
+        return StackabilityType.getInstance(stackableWithOtherOffers);
+    }
+
+    @Override
+    public void setStackableWithOtherOffers(StackabilityType stackableWithOtherOffers) {
+        this.stackableWithOtherOffers = stackableWithOtherOffers.getType();
     }
 
     @Override

@@ -41,12 +41,15 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.ActivityRange,
                     order = OfferAdminPresentation.GroupOrder.ActivityRange,
                     column = 1),
-                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Customer,
-                    order = OfferAdminPresentation.GroupOrder.Customer,
-                    column = 1),
+                    @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Customer,
+                            order = OfferAdminPresentation.GroupOrder.Customer,
+                            column = 1),
+                    @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.CombineStack,
+                    order = OfferAdminPresentation.GroupOrder.CombineStack,
+                    column = 1, collapsed = true),
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Restrictions,
                     order = OfferAdminPresentation.GroupOrder.Restrictions,
-                    column = 1)
+                    column = 1, collapsed = true)
             }
         ),
         @AdminTabPresentation(name = OfferAdminPresentation.TabName.Qualifiers,
@@ -81,9 +84,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             order = OfferAdminPresentation.TabOrder.Advanced,
             groups = {
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Advanced,
-                    order = OfferAdminPresentation.GroupOrder.Advanced),
-                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.CombineStack,
-                        order = OfferAdminPresentation.GroupOrder.CombineStack)
+                    order = OfferAdminPresentation.GroupOrder.Advanced)
             }
         )
     }
@@ -111,10 +112,10 @@ public interface OfferAdminPresentation {
         public static final String ActivityRange = "OfferImpl_Activity_Range";
         public static final String Restrictions = "OfferImpl_Restrictions";
         public static final String Customer = "OfferImpl_Customer";
+        public static final String CombineStack = "OfferImpl_Combine_Stack";
         public static final String RuleConfiguration = "OfferImpl_Rule_Configuration";
         public static final String Marketing = "OfferImpl_Marketing";
         public static final String Advanced = "OfferImpl_Advanced";
-        public static final String CombineStack = "OfferImpl_Combine_Stack";
         public static final String QualifierRuleRestriction = "OfferImpl_Qualifier_Rule_Restriction";
         public static final String TargetRuleRestriction = "OfferImpl_Target_Rule_Restriction";
         public static final String Codes = "OfferImpl_Codes_Tab";
@@ -126,11 +127,11 @@ public interface OfferAdminPresentation {
         public static final int Description = 1000;
         public static final int ActivityRange = 2000;
         public static final int Customer = 3000;
-        public static final int Restrictions = 4000;
+        public static final int Restrictions = 5000;
         public static final int RuleConfiguration = 5000;
         public static final int Marketing = 1000;
         public static final int Advanced = 1000;
-        public static final int CombineStack = 2000;
+        public static final int CombineStack = 4000;
         public static final int QualifierRuleRestriction = 2000;
         public static final int TargetRuleRestriction = 3000;
         public static final int Codes = 1000;

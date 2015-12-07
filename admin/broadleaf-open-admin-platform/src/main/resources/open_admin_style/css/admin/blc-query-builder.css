@@ -445,7 +445,7 @@
     background-color: transparent;
 }
 
-.rule-builder-with-quantity, .rule-builder-simple {
+.rule-builder-with-quantity, .rule-builder-simple, .rule-builder-simple-time {
     margin-bottom: 10px;
     background-color: white;
     border: 1px solid #D8D5D0;

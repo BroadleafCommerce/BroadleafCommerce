@@ -81,7 +81,7 @@
             } else {
                 offerTypeValue = $offerType.find('input[type="radio"]:checked').val();
             }
-            
+
             var $fgCriteria = $form.find('#field-offerMatchRules---FULFILLMENT-GROUP');
             var $itemTarget = $form.find('#field-targetItemCriteria');
 
@@ -137,6 +137,30 @@
             '#field-embeddableAdvancedOffer--offerTimeZoneType',
             'true'
         );
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-type',
+            '#field-combinableWithOrderOffers',
+            hideOrderFields
+        );
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-type',
+            '#field-combinableWithItemOffers',
+            hideItemFields
+        );
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-type',
+            '#field-combinableWithItemOffersImpactingOtherItems',
+            'ORDER_ITEM'
+        );
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-type',
+            '#field-combinableWithShippingOffers',
+            hideShippingFields
+        );
 
         BLCAdmin.addDependentFieldHandler(
             clazz,
@@ -156,6 +180,18 @@
             }
         );
     });
+
+    function hideOrderFields(compareValue) {
+        return (compareValue == 'ORDER_ITEM' || compareValue == 'FULFILLMENT_GROUP');
+    }
+
+    function hideItemFields(compareValue) {
+        return (compareValue == 'ORDER' || compareValue == 'FULFILLMENT_GROUP');
+    }
+
+    function hideShippingFields(compareValue) {
+        return (compareValue == 'ORDER_ITEM' || compareValue == 'ORDER');
+    }
 
     // add extra padding to time zone to separate from other options
     $('#field-offerMatchRules---TIME').css('padding-top', '10px');
