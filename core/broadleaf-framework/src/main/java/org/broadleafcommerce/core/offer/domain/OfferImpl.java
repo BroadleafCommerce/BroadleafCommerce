@@ -201,8 +201,9 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "APPLY_TO_SALE_PRICE")
     @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price",
-            group = OfferAdminPresentation.GroupName.Advanced)
-    protected Boolean applyToSalePrice = false;
+            group = OfferAdminPresentation.GroupName.Advanced,
+            defaultValue = "true")
+    protected Boolean applyToSalePrice = true;
 
     @Column(name = "APPLIES_TO_RULES", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(excluded = true)

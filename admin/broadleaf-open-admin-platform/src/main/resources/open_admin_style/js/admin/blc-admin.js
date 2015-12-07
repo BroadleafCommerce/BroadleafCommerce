@@ -800,7 +800,7 @@ var BLCAdmin = (function($) {
                     var toggleFunction = function(event) {
                         // Extract the parent and child field DOM elements from the data
                         var $parentField = event.data.$parentField;
-                        var $childField = event.data.$container.find(event.data.childFieldSelector);
+                        var $childField = event.data.$container.parent().find(event.data.childFieldSelector);
                         var options = event.data.options;
                         var parentValue = BLCAdmin.extractFieldValue($parentField);
                         
@@ -822,8 +822,13 @@ var BLCAdmin = (function($) {
 
                         var $cardContent = $childField.closest('.fieldset-card-content');
                         var numTotalFields = $cardContent.find('.field-group').length;
-                        var numHiddenFields = $cardContent.find('.field-group:hidden').length;
-                        if (numTotalFields === numHiddenFields && !$cardContent.hasClass('content-collapsed')) {
+						var numHiddenFields = 0;
+						$cardContent.find('.field-group').each(function() {
+							if ($(this).css('display') == 'none') {
+								numHiddenFields += 1;
+							}
+						});
+						if (numTotalFields === numHiddenFields && !$cardContent.hasClass('content-collapsed')) {
                             $childField.closest('.fieldset-card').toggle(shouldShow);
                         }
                         

@@ -164,6 +164,13 @@
 
         BLCAdmin.addDependentFieldHandler(
             clazz,
+            '#field-type',
+            '#field-applyToSalePrice',
+            'ORDER_ITEM'
+        );
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
             '#field-offerMatchRules---CUSTOMER',
             '#field-maxUsesPerCustomer',
             function(value) {
