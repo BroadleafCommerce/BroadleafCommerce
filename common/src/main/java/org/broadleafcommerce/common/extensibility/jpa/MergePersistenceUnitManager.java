@@ -80,6 +80,13 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
     @Resource(name="blEntityMarkerClassTransformer")
     protected EntityMarkerClassTransformer entityMarkerClassTransformer;
+    
+    /**
+     * This should only be used in a test context to deal with the Spring ApplicationContext refreshing between different
+     * test classes but not needing to do a new transformation of classes every time. This bean will get
+     * re-initialized but all the classes have already been transformed
+     */
+    protected static boolean transformed = false;
 
     @Resource(name="blAutoDDLStatusExporter")
     protected MBeanExporter mBeanExporter;
