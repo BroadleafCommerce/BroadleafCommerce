@@ -80,7 +80,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Column(name = "BUNDLE_PRIORITY")
     @AdminPresentation(excluded = true, friendlyName = "productBundlePriority", group="productBundleGroup")
-    protected int priority=99;
+    protected Integer priority=99;
 
     @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })

@@ -23,6 +23,7 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -31,7 +32,6 @@ import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationServiceProvider;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -44,28 +44,42 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 
 
 /**
- * <p>Verifies that there is enough payment on the order via the <i>successful</i> amount on {@link PaymentTransactionType.AUTHORIZE} and
- * {@link PaymentTransactionType.AUTHORIZE_AND_CAPTURE} transactions. This will also confirm any {@link PaymentTransactionType.UNCONFIRMED} transactions
- * that exist on am {@link OrderPayment}.</p>
+ * <p>This activity is responsible for validating and processing several aspects of an order's payment so that
+ * it may successfully complete the checkout workflow. This activity will:
+ *
+ * <ul>
+ * <li>Verify that there is enough payment on the order via the <i>successful</i> amount on {@link PaymentTransactionType.AUTHORIZE} and
+ * {@link PaymentTransactionType.AUTHORIZE_AND_CAPTURE} and {@link PaymentTransactionType.PPOST_CHECKOUT_AUTH_OR_SALE} transactions.</li>
+ *
+ * <li>"Confirm" any {@link PaymentTransactionType.UNCONFIRMED} transactions that exist on an {@link OrderPayment}. This can
+ * mean different things depending on the type of Order Payment. If it is an unconfirmed {@link org.broadleafcommerce.common.payment.PaymentType#CREDIT_CARD},
+ * then it will attempt to either "Authorize" or "Authorize and Capture" it at this time. If the transaction is of any other type,
+ * it will attempt to call the implementing gateway's
+ * {@link org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionConfirmationService#confirmTransaction(org.broadleafcommerce.common.payment.dto.PaymentRequestDTO)}</li>
  * 
- * <p>If there is an exception (either in this activity or later downstream) the confirmed payments are rolled back via {@link GenericConfirmPaymentsRollbackHandler}
+ * <li>If there is an exception (either in this activity or later downstream) the confirmed payments are rolled back via
+ * {@link org.broadleafcommerce.core.checkout.service.workflow.ConfirmPaymentsRollbackHandler}. It will also by default
+ * attempt to mark the payment as "ARCHIVED" so that the user may attempt to re-enter their payment details.</li>
+ * </ul>
+ *
+ * </p>
  *
  * @author Phillip Verheyden (phillipuniverse)
+ * @author Elbert Bautista (elbertbautista)
  */
 public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
     
@@ -73,7 +87,8 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     
     /**
      * <p>
-     * Used by the {@link GenericConfirmPaymentsRollbackHandler} to roll back transactions that this activity confirms.
+     * Used by the {@link org.broadleafcommerce.core.checkout.service.workflow.ConfirmPaymentsRollbackHandler}
+     * to roll back transactions that this activity confirms.
      * 
      * <p>
      * This could also contain failed transactions that still need to be rolled back
@@ -96,6 +111,9 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     @Resource(name = "blPaymentGatewayCheckoutService")
     protected PaymentGatewayCheckoutService paymentGatewayCheckoutService;
 
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
+
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         Order order = context.getSeedData().getOrder();
@@ -113,7 +131,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         
         /**
          * This list contains the additional transactions that were created to confirm previously unconfirmed transactions
-         * which can occur if you send credit card data directly to Broadlaef and rely on this activity to confirm
+         * which can occur if you send credit card data directly to Broadleaf and rely on this activity to confirm
          * that transaction
          */
         Map<OrderPayment, PaymentTransaction> additionalTransactions = new HashMap<OrderPayment, PaymentTransaction>();
@@ -200,6 +218,8 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         additionalTransactions.put(payment, transaction);
 
                         if (responseDTO.isSuccessful()) {
+                            //if response is successful, attempt to create a customer payment token
+                            createCustomerPaymentToken(transaction);
                             additionalConfirmedTransactions.put(payment, transaction.getType());
                         } else {
                             failedTransactions.add(new ResponseTransactionPair(responseDTO, transaction.getId()));
@@ -207,6 +227,8 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
 
                     } else if (PaymentTransactionType.AUTHORIZE.equals(tx.getType()) ||
                             PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType())) {
+                        // attempt to create a customer payment token if payment is marked as tokenized
+                        createCustomerPaymentToken(tx);
                         // After each transaction is confirmed, associate the new list of confirmed transactions to the rollback state. This has the added
                         // advantage of being able to invoke the rollback handler if there is an exception thrown at some point while confirming multiple
                         // transactions. This is outside of the transaction confirmation block in order to capture transactions
@@ -257,7 +279,8 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive()) {
                 paymentSum = paymentSum.add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE))
-                               .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE));
+                               .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE))
+                               .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.POST_CHECKOUT_AUTH_OR_SALE));
             }
         }
         
@@ -284,7 +307,6 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
      * In that case, you may override this method to decipher these errors
      * and handle it appropriately based on your business requirements.
      *
-     * @param responseDTOs
      */
     protected void handleUnsuccessfulTransactions(List<ResponseTransactionPair> failedTransactions, ProcessContext<CheckoutSeed> context) throws Exception {
         //The Response DTO was not successful confirming/authorizing a transaction.
@@ -391,7 +413,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     }
 
     protected String getGatewayExpirationDateFormat(){
-        String format = BLCSystemProperty.resolveSystemProperty("gateway.config.global.expDateFormat");
+        String format = systemPropertiesService.resolveSystemProperty("gateway.config.global.expDateFormat");
         if (StringUtils.isBlank(format)) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("The System Property 'gateway.config.global.expDateFormat' is not set. " +
@@ -400,6 +422,17 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
             format = "MM/YY";
         }
         return format;
+    }
+
+    protected CustomerPayment createCustomerPaymentToken(PaymentTransaction transaction) {
+        if (transaction.getOrderPayment().isSaveToken()) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(String.format("Attempting to create a customer payment for Order Payment - (%s)", transaction.getId()));
+            }
+            return orderPaymentService.createCustomerPaymentFromPaymentTransaction(transaction);
+        }
+
+        return null;
     }
     
     protected class ResponseTransactionPair {

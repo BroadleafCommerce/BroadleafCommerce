@@ -48,4 +48,19 @@ public interface AddressService {
      */
     public List<Address> verifyAddress(Address address) throws AddressVerificationException;
 
+    /**
+     * Returns a new address instance with the given properties on the originating address
+     * minus any default or active values set
+     * @param address - the address to copy
+     * @return
+     */
+    public Address copyAddress(Address orig);
+
+    /**
+     * Copies properties from the originating address to the destination address
+     * minus any default or active values
+     * @param address - the address to copy
+     * @return
+     */
+    public Address copyAddress(Address dest, Address orig);
 }
