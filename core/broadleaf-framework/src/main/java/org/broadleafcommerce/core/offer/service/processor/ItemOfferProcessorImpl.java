@@ -151,20 +151,40 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         // The same offer may be applied to different Order Items
         
         for (PromotableCandidateItemOffer itemOffer : itemOffers) {
-            if (offerMeetsSubtotalRequirements(order, itemOffer)) {
+            if (orderMeetsQualifyingSubtotalRequirements(order, itemOffer) && orderMeetsSubtotalRequirements(order, itemOffer)) {
                 applyItemOffer(order, itemOffer);
             }
         }
     }
     
     
-    protected boolean offerMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
+    protected boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
         if (itemOffer.getOffer().getQualifyingItemSubTotal() == null || itemOffer.getOffer().getQualifyingItemSubTotal().lessThanOrEqual(Money.ZERO)) {
             return true;
         }
 
-        //TODO:  Check subtotal requirement before continuing
-           
+        for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
+            List<PromotableOrderItem> promotableItems = itemOffer.getCandidateQualifiersMap().get(itemCriteria);
+
+            Money subtotal = Money.ZERO;
+            for (PromotableOrderItem item : promotableItems) {
+                Money lineItemAmount = item.getPriceBeforeAdjustments(itemOffer.getOffer().getApplyDiscountToSalePrice()).multiply(item.getQuantity());
+                subtotal = subtotal.add(lineItemAmount);
+                if (subtotal.greaterThanOrEqual(itemOffer.getOffer().getQualifyingItemSubTotal())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected boolean orderMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
+        if (itemOffer.getOffer().getOrderMinSubTotal() == null ||
+                itemOffer.getOffer().getOrderMinSubTotal().lessThanOrEqual(Money.ZERO) ||
+                itemOffer.getOffer().getOrderMinSubTotal().lessThanOrEqual(order.getOrder().getSubTotal())) {
+            return true;
+        }
         return false;
     }
 
