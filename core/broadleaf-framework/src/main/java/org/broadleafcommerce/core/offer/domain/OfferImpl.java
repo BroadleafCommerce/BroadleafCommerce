@@ -304,6 +304,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         tooltip = "OfferItemRestrictionRuleType_tooltip",
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType",
+        visibility = VisibilityEnum.HIDDEN_ALL,
         defaultValue = "NONE")
     protected String offerItemTargetRuleType;
     
@@ -339,7 +340,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @AdminPresentation(friendlyName = "OfferImpl_Requires_Related_Target_And_Qualifiers",
         group = OfferAdminPresentation.GroupName.ShouldBeRelated,
         tooltip = "OfferImplRelatedTargetQualifier_tooltip",
-        visibility = VisibilityEnum.VISIBLE_ALL, defaultValue = "false")
+        visibility = VisibilityEnum.HIDDEN_ALL, defaultValue = "false")
     protected Boolean requiresRelatedTargetAndQualifiers = false;
 
     @OneToMany(mappedBy = "offer", targetEntity = OfferOfferRuleXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -358,7 +359,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             @AdminPresentationMapField(
             fieldName = RuleIdentifier.TIME_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE_TIME,
-                    group = OfferAdminPresentation.GroupName.ActivityRange, order = 4000,
+                    group = OfferAdminPresentation.GroupName.ActivityRange, order = 3000,
                     ruleIdentifier = RuleIdentifier.TIME, friendlyName = "OfferImpl_Time_Rule")
             ),
             @AdminPresentationMapField(

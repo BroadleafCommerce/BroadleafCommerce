@@ -158,5 +158,5 @@
     });
 
     // add extra padding to time zone to separate from other options
-    $('#field-embeddableAdvancedOffer--offerTimeZoneType').css('padding-top', '20px');
+    $('#field-offerMatchRules---TIME').css('padding-top', '10px');
 })(jQuery, BLCAdmin);
