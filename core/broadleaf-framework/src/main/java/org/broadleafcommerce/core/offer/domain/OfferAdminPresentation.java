@@ -41,23 +41,26 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.ActivityRange,
                     order = OfferAdminPresentation.GroupOrder.ActivityRange,
                     column = 1),
-                    @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Customer,
-                            order = OfferAdminPresentation.GroupOrder.Customer,
-                            column = 1),
-                    @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.CombineStack,
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Customer,
+                    order = OfferAdminPresentation.GroupOrder.Customer,
+                    column = 1),
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.CombineStack,
                     order = OfferAdminPresentation.GroupOrder.CombineStack,
-                    column = 1, collapsed = true),
+                    column = 1,
+                    collapsed = true),
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Restrictions,
                     order = OfferAdminPresentation.GroupOrder.Restrictions,
-                    column = 1, collapsed = true)
+                    column = 1,
+                    collapsed = true)
             }
         ),
         @AdminTabPresentation(name = OfferAdminPresentation.TabName.Qualifiers,
             order = OfferAdminPresentation.TabOrder.Qualifiers,
             groups = {
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.ShouldBeRelated,
-                        order = OfferAdminPresentation.GroupOrder.ShouldBeRelated,
-                        column = 1, untitled = true),
+                    order = OfferAdminPresentation.GroupOrder.ShouldBeRelated,
+                    column = 1,
+                    untitled = true),
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.QualifierRuleRestriction,
                     order = OfferAdminPresentation.GroupOrder.QualifierRuleRestriction,
                     column = 1),
@@ -67,24 +70,27 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             }
         ),
         @AdminTabPresentation(name = OfferAdminPresentation.TabName.Marketing,
-                order = OfferAdminPresentation.TabOrder.Marketing,
-                groups = {
-                        @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Marketing,
-                                order = OfferAdminPresentation.GroupOrder.Marketing, untitled = true)
-                }
+            order = OfferAdminPresentation.TabOrder.Marketing,
+            groups = {
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Marketing,
+                    order = OfferAdminPresentation.GroupOrder.Marketing,
+                    untitled = true)
+            }
         ),
         @AdminTabPresentation(name = OfferAdminPresentation.TabName.Codes,
-                order = OfferAdminPresentation.TabOrder.Codes,
-                groups = {
-                        @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Codes,
-                                order = OfferAdminPresentation.GroupOrder.Codes, untitled = true)
-                }
+            order = OfferAdminPresentation.TabOrder.Codes,
+            groups = {
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Codes,
+                    order = OfferAdminPresentation.GroupOrder.Codes,
+                    untitled = true)
+            }
         ),
         @AdminTabPresentation(name = OfferAdminPresentation.TabName.Advanced,
             order = OfferAdminPresentation.TabOrder.Advanced,
             groups = {
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Advanced,
-                    order = OfferAdminPresentation.GroupOrder.Advanced)
+                    order = OfferAdminPresentation.GroupOrder.Advanced,
+                    untitled = true)
             }
         )
     }
