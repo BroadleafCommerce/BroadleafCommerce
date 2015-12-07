@@ -151,6 +151,31 @@
                     BLCAdmin.runPostFormSubmitHandlers($form, data);
                 });
             }
+        },
+
+        makeFieldsReadOnly : function ($form) {
+            $form = typeof $form !== 'undefined' ? $form : $('body').find('.main-content .content-yield').find('form');
+
+            var $tabsContent =$form.find('.tabs-content');
+            // General input fields
+            $tabsContent.find('input').prop('disabled', true).addClass('disabled');
+
+            // Radio buttons
+            $tabsContent.find('label.radio-label').prop('disabled', true).addClass('disabled');
+
+            // ListGrid actions
+            $tabsContent.find('.listgrid-toolbar a').prop('disabled', true).addClass('disabled');
+            $tabsContent.find('.listgrid-row-actions a').prop('disabled', true).addClass('disabled');
+
+            // Selectize
+            $tabsContent.find('.selectize-control .selectize-input').addClass('disabled');
+
+            // Rule builder
+            var $ruleBuilders = $tabsContent.find('.rule-builder-simple, .rule-builder-simple-time, .rule-builder-with-quantity');
+            $ruleBuilders.find('.rules-group-header button').prop('disabled', true).addClass('disabled');
+            $ruleBuilders.find('.rules-group-body button').prop('disabled', true).addClass('disabled');
+            $ruleBuilders.find('.button.and-button').prop('disabled', true).addClass('disabled');
+            $ruleBuilders.find('.toggle-container label').addClass('disabled');
         }
     };
 })(jQuery, BLCAdmin);
@@ -263,6 +288,10 @@ $(document).ready(function() {
     });
 
     $('body').on('click', 'button.submit-button, a.submit-button', function(event) {
+        if ($(this).hasClass('disabled')) {
+            return;
+        }
+
         $('body').click(); // Defocus any current elements in case they need to act prior to form submission
         var $form = BLCAdmin.getForm($(this));
 

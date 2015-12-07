@@ -162,6 +162,10 @@
     cursor: pointer;
 }
 
+.query-builder-rules .remove-row.disabled {
+    background: none !important;
+}
+
 .query-builder-rules .group-conditions label {
     display: inline-block;
     margin: 5px;

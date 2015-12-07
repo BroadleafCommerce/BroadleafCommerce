@@ -120,6 +120,7 @@
 
 .selectize-input.disabled {
     background-color: #eeeeee !important;
+    pointer-events: none;
 }
 
 .field-group label .selectize-toolbar-action {

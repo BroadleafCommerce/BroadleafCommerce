@@ -231,9 +231,9 @@ circle {
 
 
 .button.disabled {
-    background-color: #DFDFDF !important;
+    background-color: #EEEEEE !important;
     box-shadow: none;
-    color: #9F9F9F !important;
+    color: #B3B3B3 !important;
     cursor: default;
 }
 
@@ -376,9 +376,19 @@ input[type="radio"].radio+label.radio-label.clr,
     float: left;
     margin: 30px 10px;
 }
+
+
+.content-area-title-bar .alert-box {
+    float: right;
+    padding-right: 10px;
+    font-size: 12px;
+    color: #8EAA2B !important;
+}
+
 .modal .modal-footer .entity-form-actions {
     text-align: right;
 }
+
 .modal .modal-footer .entity-form-actions .ajax-loader {
     float: left;
     margin: 10px 10px;
@@ -616,7 +626,7 @@ button:disabled {
 }
 
 .modal-body .content-yield {
-    padding: 15px 30px 0;
+    padding: 15px 30px;
     background-color: #F9F7F3;
 }
 
@@ -634,7 +644,12 @@ button:disabled {
     /*display: none;*/
 }
 
-.modal-body fieldset {
+.modal-body fieldset:first-child {
+    margin: 0;
+    padding: 10px;
+}
+
+.modal-body fieldset:not(:first-child) {
     padding: 10px;
 }
 
