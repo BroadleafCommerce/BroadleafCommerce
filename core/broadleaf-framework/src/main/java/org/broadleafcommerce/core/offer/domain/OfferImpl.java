@@ -293,8 +293,9 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "ORDER_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Order_Subtotal",
-            group = GroupName.Restrictions,
-            order = 2000, defaultValue = "0")
+        tooltip = "OfferImplMinOrderSubtotal_tooltip",
+        group = GroupName.Restrictions,
+        order = 2000, defaultValue = "0")
     protected BigDecimal orderMinSubTotal;
 
     @Column(name = "OFFER_ITEM_TARGET_RULE")
