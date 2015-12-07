@@ -339,6 +339,10 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     
     public void setQualifyingItemSubTotal(Money qualifyingItemSubtotal);
 
+    public Money getOrderMinSubTotal();
+
+    public void setOrderMinSubTotal(Money orderMinSubTotal);
+
     public void setMarketingMessage(String marketingMessage);
 
     public String getMarketingMessage();

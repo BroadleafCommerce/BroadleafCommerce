@@ -290,7 +290,13 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         group = OfferAdminPresentation.GroupName.QualifierRuleRestriction,
         order = 2000, defaultValue = "0")
     protected BigDecimal qualifyingItemSubTotal;
-    
+
+    @Column(name = "ORDER_MIN_TOTAL", precision=19, scale=5)
+    @AdminPresentation(friendlyName="OfferImpl_Order_Subtotal",
+            group = GroupName.Restrictions,
+            order = 2000, defaultValue = "0")
+    protected BigDecimal orderMinSubTotal;
+
     @Column(name = "OFFER_ITEM_TARGET_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Target_Rule",
         group = OfferAdminPresentation.GroupName.TargetRuleRestriction,
@@ -892,6 +898,16 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     }
 
     @Override
+    public Money getOrderMinSubTotal() {
+        return orderMinSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(orderMinSubTotal, null);
+    }
+
+    @Override
+    public void setOrderMinSubTotal(Money orderMinSubTotal) {
+        this.orderMinSubTotal = Money.toAmount(orderMinSubTotal);
+    }
+
+    @Override
     public List<OfferCode> getOfferCodes() {
         return offerCodes;
     }
@@ -970,6 +986,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setOfferItemQualifierRuleType(getOfferItemQualifierRuleType());
         cloned.setCombinableWithOtherOffers(isCombinableWithOtherOffers());
         cloned.setQualifyingItemSubTotal(getQualifyingItemSubTotal());
+        cloned.setOrderMinSubTotal(getOrderMinSubTotal());
         cloned.setStartDate(startDate);
         cloned.setUses(uses);
         cloned.setTargetSystem(targetSystem);

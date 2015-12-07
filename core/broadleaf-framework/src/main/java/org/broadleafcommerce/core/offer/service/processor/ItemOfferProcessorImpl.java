@@ -151,14 +151,14 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         // The same offer may be applied to different Order Items
         
         for (PromotableCandidateItemOffer itemOffer : itemOffers) {
-            if (offerMeetsSubtotalRequirements(order, itemOffer)) {
+            if (orderMeetsQualifyingSubtotalRequirements(order, itemOffer) && orderMeetsSubtotalRequirements(order, itemOffer)) {
                 applyItemOffer(order, itemOffer);
             }
         }
     }
     
     
-    protected boolean offerMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
+    protected boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
         if (itemOffer.getOffer().getQualifyingItemSubTotal() == null || itemOffer.getOffer().getQualifyingItemSubTotal().lessThanOrEqual(Money.ZERO)) {
             return true;
         }
@@ -176,6 +176,15 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             }
         }
 
+        return false;
+    }
+
+    protected boolean orderMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
+        if (itemOffer.getOffer().getOrderMinSubTotal() == null ||
+                itemOffer.getOffer().getOrderMinSubTotal().lessThanOrEqual(Money.ZERO) ||
+                itemOffer.getOffer().getOrderMinSubTotal().lessThanOrEqual(order.getOrder().getSubTotal())) {
+            return true;
+        }
         return false;
     }
 
