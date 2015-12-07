@@ -24,7 +24,7 @@ import java.sql.Types;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class ByteArrayBlobPostgreSQL82Dialect extends PostgreSQL82Dialect {
+public class BroadleafPostgreSQL82Dialect extends PostgreSQL82Dialect {
 
     @Override
     protected void registerColumnType(int code, String name) {
