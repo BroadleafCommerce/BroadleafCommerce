@@ -255,7 +255,9 @@ circle {
 .app-content .content .section-content .main-content .content-area-title-bar>.button {
     margin-top: 20px;
 }
-
+.app-content .content .section-content .main-content .content-area-title-bar>.button-group ul {
+    margin-top: -22px;
+}
 .app-content .content .site-bar .button {
     line-height: inherit;
 }
@@ -464,7 +466,7 @@ button:disabled {
 }
 
 .table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {
-    border-top: none;
+    padding: 9px 15px;
 }
 
 .table thead>tr:not(:first-child)>th, .table tbody>tr:not(:first-child)>th, .table tfoot>tr:not(:first-child)>th,
