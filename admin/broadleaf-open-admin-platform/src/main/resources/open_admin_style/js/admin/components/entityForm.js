@@ -466,6 +466,6 @@ $(document).ready(function() {
      * Intercepts the enter keypress from the main entity name input and updates the entity title
      */
     $('body').on('keyup', '.main-entity-name input', function(event) {
-        $('.mainEntityName').text($(this).val());
+        $(this).closest('.main-content').find('.mainEntityName').text($(this).val());
     });
 });
