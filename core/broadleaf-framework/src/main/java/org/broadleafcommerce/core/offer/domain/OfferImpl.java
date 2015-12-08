@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -32,57 +33,22 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
-import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.RuleIdentifier;
-import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
-import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.hibernate.annotations.BatchSize;
+import org.broadleafcommerce.core.offer.service.type.*;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -192,7 +158,9 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "STACKABLE")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable",
             tooltip = "OfferImplStackable_tooltip",
-            group = OfferAdminPresentation.GroupName.CombineStack)
+            group = OfferAdminPresentation.GroupName.CombineStack,
+            visibility = VisibilityEnum.HIDDEN_ALL)
+    @Deprecated
     protected Boolean stackable = true;
 
     @Column(name = "TARGET_SYSTEM")
@@ -202,8 +170,9 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "APPLY_TO_SALE_PRICE")
     @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price",
-            group = OfferAdminPresentation.GroupName.Advanced)
-    protected Boolean applyToSalePrice = false;
+            group = OfferAdminPresentation.GroupName.Advanced,
+            defaultValue = "true")
+    protected Boolean applyToSalePrice = true;
 
     @Column(name = "APPLIES_TO_RULES", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(excluded = true)
@@ -231,8 +200,43 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Combinable",
         tooltip = "OfferImplCombinableWithOtherOffers_tooltip",
-        group = OfferAdminPresentation.GroupName.CombineStack)
+        group = OfferAdminPresentation.GroupName.CombineStack,
+        visibility = VisibilityEnum.HIDDEN_ALL)
+    @Deprecated
     protected Boolean combinableWithOtherOffers = true;
+
+    @Column(name = "COMBINABLE_WITH_ORDER_OFFERS")
+    @AdminPresentation(friendlyName = "OfferImpl_Order_Offer_Combinable",
+            group = OfferAdminPresentation.GroupName.CombineStack,
+            defaultValue = "true", order = 1000)
+    protected Boolean combinableWithOrderOffers = true;
+
+    @Column(name = "COMBINABLE_WITH_ITEM_OFFERS")
+    @AdminPresentation(friendlyName = "OfferImpl_Item_Offer_Combinable",
+            group = OfferAdminPresentation.GroupName.CombineStack,
+            defaultValue = "true", order = 2000)
+    protected Boolean combinableWithItemOffers = true;
+
+    @Column(name = "COMBINABLE_WITH_ITEM_OFFERS_IMPACTING_ITEMS")
+    @AdminPresentation(friendlyName = "OfferImpl_Item_Offer_Impacting_Items_Combinable",
+            group = OfferAdminPresentation.GroupName.CombineStack,
+            defaultValue = "true", order = 3000)
+    protected Boolean combinableWithItemOffersImpactingOtherItems = true;
+
+    @Column(name = "COMBINABLE_WITH_SHIPPING_OFFERS")
+    @AdminPresentation(friendlyName = "OfferImpl_Shipping_Offer_Combinable",
+            group = OfferAdminPresentation.GroupName.CombineStack,
+            defaultValue = "true", order = 4000)
+    protected Boolean combinableWithShippingOffers = true;
+
+    @Column(name = "STACKABLE_WITH_OTHER_OFFERS")
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable",
+            tooltip = "OfferImplStackableWithOffers_tooltip",
+            group = OfferAdminPresentation.GroupName.CombineStack,
+            fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.StackabilityType",
+            defaultValue = "NO", order = 5000)
+    protected String stackableWithOtherOffers;
 
     @Column(name = "OFFER_DELIVERY_TYPE")
     @AdminPresentation(excluded = true)
@@ -562,6 +566,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
      * @return true if stackable, otherwise false
      */
     @Override
+    @Deprecated
     public boolean isStackable() {
         return stackable == null ? false : stackable;
     }
@@ -572,6 +577,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
      * @param stackable
      */
     @Override
+    @Deprecated
     public void setStackable(boolean stackable) {
         this.stackable = stackable;
     }
@@ -650,6 +656,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
      * @return true if combinableWithOtherOffers, otherwise false
      */
     @Override
+    @Deprecated
     public boolean isCombinableWithOtherOffers() {
         return combinableWithOtherOffers == null ? false : combinableWithOtherOffers;
     }
@@ -660,6 +667,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
      * @param combinableWithOtherOffers
      */
     @Override
+    @Deprecated
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers) {
         this.combinableWithOtherOffers = combinableWithOtherOffers;
     }
@@ -668,6 +676,56 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @JsonIgnore
     public boolean getCombinableWithOtherOffers() {
         return combinableWithOtherOffers;
+    }
+
+    @Override
+    public Boolean getCombinableWithOrderOffers() {
+        return combinableWithOrderOffers;
+    }
+
+    @Override
+    public void setCombinableWithOrderOffers(Boolean combinableWithOrderOffers) {
+        this.combinableWithOrderOffers = combinableWithOrderOffers;
+    }
+
+    @Override
+    public Boolean getCombinableWithItemOffers() {
+        return combinableWithItemOffers;
+    }
+
+    @Override
+    public void setCombinableWithItemOffers(Boolean combinableWithItemOffers) {
+        this.combinableWithItemOffers = combinableWithItemOffers;
+    }
+
+    @Override
+    public Boolean getCombinableWithItemOffersImpactingOtherItems() {
+        return combinableWithItemOffersImpactingOtherItems;
+    }
+
+    @Override
+    public void setCombinableWithItemOffersImpactingOtherItems(Boolean combinableWithItemOffersImpactingOtherItems) {
+        this.combinableWithItemOffersImpactingOtherItems = combinableWithItemOffersImpactingOtherItems;
+    }
+
+    @Override
+    public Boolean getCombinableWithShippingOffers() {
+        return combinableWithShippingOffers;
+    }
+
+    @Override
+    public void setCombinableWithShippingOffers(Boolean combinableWithShippingOffers) {
+        this.combinableWithShippingOffers = combinableWithShippingOffers;
+    }
+
+    @Override
+    public StackabilityType getStackableWithOtherOffers() {
+        return StackabilityType.getInstance(stackableWithOtherOffers);
+    }
+
+    @Override
+    public void setStackableWithOtherOffers(StackabilityType stackableWithOtherOffers) {
+        this.stackableWithOtherOffers = stackableWithOtherOffers.getType();
     }
 
     @Override
@@ -987,6 +1045,11 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setArchived(getArchived());
         cloned.setOfferItemQualifierRuleType(getOfferItemQualifierRuleType());
         cloned.setCombinableWithOtherOffers(isCombinableWithOtherOffers());
+        cloned.setCombinableWithItemOffers(getCombinableWithItemOffers());
+        cloned.setCombinableWithItemOffersImpactingOtherItems(getCombinableWithItemOffersImpactingOtherItems());
+        cloned.setCombinableWithOrderOffers(getCombinableWithOrderOffers());
+        cloned.setCombinableWithShippingOffers(getCombinableWithShippingOffers());
+        cloned.setStackableWithOtherOffers(getStackableWithOtherOffers());
         cloned.setQualifyingItemSubTotal(getQualifyingItemSubTotal());
         cloned.setOrderMinSubTotal(getOrderMinSubTotal());
         cloned.setStartDate(startDate);

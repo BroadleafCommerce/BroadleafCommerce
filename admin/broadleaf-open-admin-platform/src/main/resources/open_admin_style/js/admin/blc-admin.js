@@ -800,22 +800,18 @@ var BLCAdmin = (function($) {
                     var toggleFunction = function(event) {
                         // Extract the parent and child field DOM elements from the data
                         var $parentField = event.data.$parentField;
-                        var $childField = event.data.$container.find(event.data.childFieldSelector);
+                        var $childField = event.data.$container.parent().find(event.data.childFieldSelector);
                         var options = event.data.options;
                         var parentValue = BLCAdmin.extractFieldValue($parentField);
                         
                         // Either match the string or execute a function to figure out if the child field should be shown
-                        // Additionally, if the parent field is not visible, we'll assume that the child field shouldn't
-                        // render either.
                         var shouldShow = false;
-                        if ($parentField.is(':visible')) {
-                            if (typeof showIfValue == "function") {
-                                shouldShow = showIfValue(parentValue, event.data.$container);
-                            } else {
-                                shouldShow = (parentValue == showIfValue);
-                            }
-                        }
-                        
+						if (typeof showIfValue == "function") {
+							shouldShow = showIfValue(parentValue, event.data.$container);
+						} else {
+							shouldShow = (parentValue == showIfValue);
+						}
+
                         // Clear the data in the child field if that option was set and the parent value is null
                         if (options != null && options['clearChildData'] && !event.initialization) {
                             BLCAdmin.setFieldValue($childField, null);
@@ -826,8 +822,13 @@ var BLCAdmin = (function($) {
 
                         var $cardContent = $childField.closest('.fieldset-card-content');
                         var numTotalFields = $cardContent.find('.field-group').length;
-                        var numHiddenFields = $cardContent.find('.field-group:hidden').length;
-                        if (numTotalFields === numHiddenFields) {
+						var numHiddenFields = 0;
+						$cardContent.find('.field-group').each(function() {
+							if ($(this).css('display') == 'none') {
+								numHiddenFields += 1;
+							}
+						});
+						if (numTotalFields === numHiddenFields && !$cardContent.hasClass('content-collapsed')) {
                             $childField.closest('.fieldset-card').toggle(shouldShow);
                         }
                         
@@ -849,7 +850,7 @@ var BLCAdmin = (function($) {
                     
                     // Bind the change event for the parent field
                     $parentField.on('change', data, toggleFunction);
-    
+
                     // Run the toggleFunction immediately to set initial states appropriately
                     toggleFunction({ data : data, initialization : true });
                 }

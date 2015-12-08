@@ -22,10 +22,7 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
-import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.offer.service.type.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -137,9 +134,31 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * 
      * @return
      */
+    @Deprecated
     public boolean isCombinableWithOtherOffers();
 
+    @Deprecated
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers);
+
+    public Boolean getCombinableWithOrderOffers();
+
+    public void setCombinableWithOrderOffers(Boolean combinableWithOrderOffers);
+
+    public Boolean getCombinableWithItemOffers();
+
+    public void setCombinableWithItemOffers(Boolean combinableWithItemOffers);
+
+    public Boolean getCombinableWithItemOffersImpactingOtherItems();
+
+    public void setCombinableWithItemOffersImpactingOtherItems(Boolean combinableWithItemOffersImpactingOtherItems);
+
+    public Boolean getCombinableWithShippingOffers();
+
+    public void setCombinableWithShippingOffers(Boolean combinableWithShippingOffers);
+
+    public StackabilityType getStackableWithOtherOffers();
+
+    public void setStackableWithOtherOffers(StackabilityType stackableWithOtherOffers);
 
     /**
      * Returns true if the offer system should automatically add this offer for consideration (versus requiring a code or 

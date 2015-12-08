@@ -132,32 +132,17 @@
                     data: $form.serializeArray(),
                     complete: BLCAdmin.entityForm.hideActionSpinner
                 }, function (data) {
-                    $("#headerFlashAlertBoxContainer").removeClass("hidden");
                     $(".errors, .error, .tab-error-indicator, .tabError").remove();
                     $('.has-error').removeClass('has-error');
 
                     if (!data.errors) {
-                        //$(".alert-box").removeClass("alert").addClass("success");
-                        //$(".alert-box-message").text("Successfully saved");
 
-                        var alert = {
-                            message: BLCAdmin.messages.saved + '!',
+                        var $titleBar = $form.closest('.main-content').find('.content-area-title-bar');
+                        BLCAdmin.alert.showAlert($titleBar, 'Successfully ' + BLCAdmin.messages.saved + '!', {
                             alertType: 'save-alert',
-                            autoClose: 3000,
+                            autoClose: 2000,
                             clearOtherAlerts: true
-                        };
-
-                        var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass('save-alert');
-                        var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
-
-                        $alert.append("Successfully saved");
-                        $alert.append($closeLink);
-
-                        $(".alert-box").find('.alert-box-message').html($alert);
-
-                        setTimeout(function() {
-                            $closeLink.click();
-                        }, 1000);
+                        });
 
                     } else {
                         BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemSaving);
@@ -166,6 +151,31 @@
                     BLCAdmin.runPostFormSubmitHandlers($form, data);
                 });
             }
+        },
+
+        makeFieldsReadOnly : function ($form) {
+            $form = typeof $form !== 'undefined' ? $form : $('body').find('.main-content .content-yield').find('form');
+
+            var $tabsContent =$form.find('.tabs-content');
+            // General input fields
+            $tabsContent.find('input').prop('disabled', true).addClass('disabled');
+
+            // Radio buttons
+            $tabsContent.find('label.radio-label').prop('disabled', true).addClass('disabled');
+
+            // ListGrid actions
+            $tabsContent.find('.listgrid-toolbar a').prop('disabled', true).addClass('disabled');
+            $tabsContent.find('.listgrid-row-actions a').prop('disabled', true).addClass('disabled');
+
+            // Selectize
+            $tabsContent.find('.selectize-control .selectize-input').addClass('disabled');
+
+            // Rule builder
+            var $ruleBuilders = $tabsContent.find('.rule-builder-simple, .rule-builder-simple-time, .rule-builder-with-quantity');
+            $ruleBuilders.find('.rules-group-header button').prop('disabled', true).addClass('disabled');
+            $ruleBuilders.find('.rules-group-body button').prop('disabled', true).addClass('disabled');
+            $ruleBuilders.find('.button.and-button').prop('disabled', true).addClass('disabled');
+            $ruleBuilders.find('.toggle-container label').addClass('disabled');
         }
     };
 })(jQuery, BLCAdmin);
@@ -278,6 +288,10 @@ $(document).ready(function() {
     });
 
     $('body').on('click', 'button.submit-button, a.submit-button', function(event) {
+        if ($(this).hasClass('disabled')) {
+            return;
+        }
+
         $('body').click(); // Defocus any current elements in case they need to act prior to form submission
         var $form = BLCAdmin.getForm($(this));
 
