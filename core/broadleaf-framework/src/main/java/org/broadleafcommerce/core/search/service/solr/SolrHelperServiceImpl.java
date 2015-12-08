@@ -55,6 +55,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
@@ -116,6 +117,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Resource(name = "blSearchFacetDao")
     protected SearchFacetDao searchFacetDao;
+
+    @Resource(name = "blIndexFieldDao")
+    protected IndexFieldDao indexFieldDao;
 
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
@@ -830,5 +834,20 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         }
     }
 
+    @Override
+    public List<IndexField> getIndexFields() {
+        List<IndexField> fields = new ArrayList<>();
 
+        ExtensionResultStatusType status = searchExtensionManager.getProxy().getIndexFields(fields);
+
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+            if (useSku) {
+                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
+            } else {
+                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+            }
+        }
+
+        return fields;
+    }
 }
