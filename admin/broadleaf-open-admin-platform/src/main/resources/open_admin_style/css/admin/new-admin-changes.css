@@ -416,10 +416,19 @@ div.action-popup img.ajax-loader {
 }
 
 .listgrid-toolbar {
-    margin-bottom: 10px;
-    display: inline-block;
+    padding: 3px 0;
 }
 
+.listgrid-toolbar .button {
+    height: 30px;
+    line-height: 30px;
+}
+.listgrid-toolbar .button:not(.dropdown-toggle) {
+    min-width: 55px;
+}
+.listgrid-toolbar .button.dropdown-toggle {
+    margin-left: -3px;
+}
 
 .listgrid-toolbar li {
     float: left;
@@ -466,7 +475,7 @@ button:disabled {
 }
 
 .table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {
-    padding: 9px 15px;
+    padding: 6px 15px;
 }
 
 .table thead>tr:not(:first-child)>th, .table tbody>tr:not(:first-child)>th, .table tfoot>tr:not(:first-child)>th,
