@@ -468,4 +468,6 @@ public interface SolrHelperService {
      * @return
      */
     public String getDocumentType(Indexable indexable);
+
+    List<IndexField> getIndexFields();
 }

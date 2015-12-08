@@ -76,7 +76,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -548,17 +547,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     protected String buildQueryFieldsString(SolrQuery query) {
         StringBuilder queryBuilder = new StringBuilder();
-        List<IndexField> fields = new ArrayList<>();
-
-        ExtensionResultStatusType status = extensionManager.getProxy().getIndexFieldsForQuery(fields);
-
-        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
-            if (useSku) {
-                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
-            } else {
-                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
-            }
-        }
+        List<IndexField> fields = shs.getIndexFields();
 
         // we want to gather all the query fields into one list
         List<String> queryFields = new ArrayList<>();
@@ -761,12 +750,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @param searchCriteria
      */
     protected void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
-        List<IndexField> fields = null;
-        if (useSku) {
-            fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
-        } else {
-            fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
-        }
+        List<IndexField> fields = shs.getIndexFields();
 
         shs.attachSortClause(query, searchCriteria, defaultSort, fields);
         query.addSort("score", SolrQuery.ORDER.desc);
