@@ -21,7 +21,6 @@ package org.broadleafcommerce.common.web.payment.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.CustomerPaymentGatewayService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
@@ -56,7 +55,6 @@ public abstract class CustomerPaymentGatewayAbstractController extends Broadleaf
 
     protected static String baseRedirect = "redirect:/";
     protected static String baseErrorView = "/error";
-    protected static String baseCustomerProfileRedirect = "redirect:/account";
 
     @Resource(name = "blPaymentGatewayWebResponsePrintService")
     protected PaymentGatewayWebResponsePrintService webResponsePrintService;
@@ -64,9 +62,6 @@ public abstract class CustomerPaymentGatewayAbstractController extends Broadleaf
     @Autowired(required=false)
     @Qualifier("blCustomerPaymentGatewayService")
     protected CustomerPaymentGatewayService customerPaymentGatewayService;
-
-    @Resource(name = "blCustomerPaymentControllerExtensionManager")
-    protected CustomerPaymentControllerExtensionManager extensionManager;
 
     public Long applyCustomerTokenToProfile(PaymentResponseDTO responseDTO) throws IllegalArgumentException {
         if (LOG.isErrorEnabled()) {
@@ -134,30 +129,14 @@ public abstract class CustomerPaymentGatewayAbstractController extends Broadleaf
 
     public abstract PaymentGatewayConfiguration getConfiguration();
 
+    public abstract String getCustomerPaymentViewRedirect(String customerPaymentId);
+
     public abstract void handleProcessingException(Exception e, final RedirectAttributes redirectAttributes)
             throws PaymentException;
 
     protected String getErrorViewRedirect() {
         //delegate to the modules endpoint as there may be additional processing that is involved
         return baseRedirect + getGatewayContextKey() + baseErrorView;
-    }
-
-    public String getBaseCustomerProfileRedirect() {
-        return baseCustomerProfileRedirect;
-    }
-
-    protected String getCustomerPaymentViewRedirect(String customerPaymentId) {
-        ExtensionResultHolder erh = new ExtensionResultHolder();
-        extensionManager.getProxy().overrideCustomerPaymentViewRedirect(customerPaymentId, erh);
-        if (erh.getContextMap().containsKey(CustomerPaymentControllerExtensionHandler.OVERRIDE_CUSTOMER_PAYMENT_VIEW_REDIRECT)) {
-            return (String) erh.getContextMap().get(CustomerPaymentControllerExtensionHandler.OVERRIDE_CUSTOMER_PAYMENT_VIEW_REDIRECT);
-        }
-
-        return getDefaultCustomerPaymentRedirect(customerPaymentId);
-    }
-
-    protected String getDefaultCustomerPaymentRedirect(String customerPaymentId) {
-        return getBaseCustomerProfileRedirect() + "/payment/" + customerPaymentId;
     }
 
 }
