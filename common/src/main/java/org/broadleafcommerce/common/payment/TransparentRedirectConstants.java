@@ -17,16 +17,13 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.web.payment.controller;
+package org.broadleafcommerce.common.payment;
 
-import org.broadleafcommerce.common.extension.ExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+/**
+ * @author Elbert Bautista (elbertbautista)
+ */
+public class TransparentRedirectConstants {
 
-public interface CustomerPaymentControllerExtensionHandler extends ExtensionHandler {
-
-    public static final String OVERRIDE_CUSTOMER_PAYMENT_VIEW_REDIRECT = "overrideCustomerPaymentViewRedirect";
-
-    public ExtensionResultStatusType overrideCustomerPaymentViewRedirect(String customerPaymentId, ExtensionResultHolder resultHolder);
+    public static final String OVERRIDE_RETURN_URL = "OVERRIDE_RETURN_URL";
 
 }
