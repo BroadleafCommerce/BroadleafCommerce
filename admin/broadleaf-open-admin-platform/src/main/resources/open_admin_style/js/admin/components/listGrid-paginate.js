@@ -74,7 +74,12 @@
         },
         
         getLoadedRecordRanges : function($tbody) {
-            var rangeDescriptions = $tbody.data('recordranges').split(',');
+            var rangeDescriptions;
+            if($tbody.data('recordranges')) {
+                rangeDescriptions = $tbody.data('recordranges').split(',');
+            } else {
+                rangeDescriptions = [];
+            }
             var ranges = [];
             
             for (var i = 0; i < rangeDescriptions.length; i++) {
