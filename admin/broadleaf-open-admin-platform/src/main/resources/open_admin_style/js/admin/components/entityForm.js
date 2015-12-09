@@ -318,12 +318,12 @@ $(document).ready(function() {
     function showTabSpinner($tab, $tabBody) {
         $("#headerFlashAlertBoxContainer").addClass("hidden");
         $tabBody.find('button').prop("disabled", true);
-        $tab.find('i.icon-spinner').show();
+        $tab.find('i.fa-spinner').show();
     }
 
     function hideTabSpinner($tab, $tabBody) {
         $tabBody.find('button').prop("disabled", false);
-        $tab.find('i.icon-spinner').hide();
+        $tab.find('i.fa-spinner').hide();
     }
 
     $('body').on('submit', 'form.entity-form', function(event) {

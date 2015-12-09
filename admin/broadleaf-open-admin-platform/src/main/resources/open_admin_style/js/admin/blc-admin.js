@@ -282,7 +282,7 @@ var BLCAdmin = (function($) {
     	    var $modal = BLCAdmin.getModalSkeleton();
     	    $modal.addClass('loading-modal');
     	    $modal.find('.modal-header h3').text(BLCAdmin.messages.loading);
-    	    $modal.find('.modal-body').append($('<i>', { 'class' : 'icon-spin icon-spinner' }));
+    	    $modal.find('.modal-body').append($('<i>', { 'class' : 'fa-pulse fa fa-spinner' }));
     	    $modal.find('.modal-body').css('text-align', 'center').css('font-size', '24px').css('padding-bottom', '15px');
 
     	    BLCAdmin.showElementAsModal($modal, onModalHide, onModalHideArgs);
