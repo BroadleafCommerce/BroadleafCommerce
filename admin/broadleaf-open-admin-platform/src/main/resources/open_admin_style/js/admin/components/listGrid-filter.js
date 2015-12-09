@@ -44,8 +44,8 @@
 
         clearActiveSorts : function($context) {
             $context.closest('thead').find('i.sort-icon').removeClass('listgrid-icon-down').removeClass('listgrid-icon-up')
-                .removeClass('icon-sort-by-alphabet').removeClass('icon-sort-by-alphabet-alt')
-                .removeClass('icon-sort-by-order').removeClass('icon-sort-by-order-alt')
+                .removeClass('fa-sort-alpha-asc').removeClass('fa-sort-alpha-desc')
+                .removeClass('fa-sort-numeric-asc').removeClass('fa-sort-numeric-desc')
                 .removeClass('active');
             $context.closest('thead').find('input.sort-direction').removeClass('active').val('');
             $context.closest('thead').find('input.sort-property').removeClass('active');
@@ -92,11 +92,11 @@
 
                     var isNumeric = $closestSortHeader.find('input.is-numeric').length > 0;
                     if (isNumeric) {
-                        icon.toggleClass('icon-sort-by-order', ascending);
-                        icon.toggleClass('icon-sort-by-order-alt', !ascending);
+                        icon.toggleClass('fa-sort-numeric-asc', ascending);
+                        icon.toggleClass('fa-sort-numeric-desc', !ascending);
                     } else {
-                        icon.toggleClass('icon-sort-by-alphabet', ascending);
-                        icon.toggleClass('icon-sort-by-alphabet-alt', !ascending);
+                        icon.toggleClass('fa-sort-alpha-asc', ascending);
+                        icon.toggleClass('fa-sort-alpha-desc', !ascending);
                     }
                     
                     delete params['sortProperty'];
@@ -121,7 +121,7 @@ $(document).ready(function() {
      * Handler that fires whenever a sorting link is clicked, sort ascending or descending. This will also modify the
      * sort value input for the closet sort input for this list grid header
      */
-    $('body').on('click', '.blc-icon-select-arrows', function() {
+    $('body').on('click', '.fa-sort', function() {
         var descending = $(this).hasClass('listgrid-icon-down');
         var ascending = $(this).hasClass('listgrid-icon-up');
 
@@ -148,11 +148,11 @@ $(document).ready(function() {
             
             var isNumeric = $(this).closest('.listgrid-headerBtn').find('input.is-numeric').length > 0;
             if (isNumeric) {
-                icon.toggleClass('icon-sort-by-order', !descending);
-                icon.toggleClass('icon-sort-by-order-alt', descending);
+                icon.toggleClass('fa-sort-numeric-asc', !descending);
+                icon.toggleClass('fa-sort-numeric-desc', descending);
             } else {
-                icon.toggleClass('icon-sort-by-alphabet', !descending);
-                icon.toggleClass('icon-sort-by-alphabet-alt', descending);
+                icon.toggleClass('fa-sort-alpha-asc', !descending);
+                icon.toggleClass('fa-sort-alpha-desc', descending);
             }
             
             //also mark these particular sorts as active so they will be serialized
