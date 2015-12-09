@@ -42,6 +42,8 @@ import javax.servlet.http.HttpServletResponse;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link AdminProductController}
+ * Modified by Nathan Moore on 12/9/2015
+ * 
  */
 @Controller("blAdminCatalogActionsController")
 public class AdminCatalogActionsController extends AdminAbstractController {
@@ -63,11 +65,14 @@ public class AdminCatalogActionsController extends AdminAbstractController {
         Integer skusGenerated = adminCatalogService.generateSkusFromProduct(productId);
         
         //TODO: Externalize these messages to property files
+        //TODO: Modify the message "Failed to generate Skus...." to include which Product Option is the offender
         if (skusGenerated == 0) {
             result.put("message", "No Skus were generated. It is likely that each product option value permutation " +
             		"already has a Sku associated with it");
         } else if (skusGenerated == -1) {
             result.put("message", "This product has no Product Options configured to generate Skus from");
+        } else if (skusGenerated == -2) {
+            result.put("message", "Failed to generate skus. One of the Product Options has no Allowed Values.");
         } else {
             result.put("message", skusGenerated + " Skus have been generated from the configured product options");
         }

@@ -19,7 +19,7 @@ import java.util.Map;
  *  Created on 12/8/15
  *  
  */
-@Component("blProductOptionsCustomerPersistenceHandler")
+@Component("blProductOptionsCustomPersistenceHandler")
 public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     @Override

@@ -46,6 +46,7 @@ import javax.persistence.PersistenceContext;
 /**
  * 
  * @author Phillip Verheyden
+ * Modified by Nathan Moore on 12/9/2015
  *
  */
 @Service("blAdminCatalogService")
@@ -74,6 +75,12 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
         }
         
         List<List<ProductOptionValue>> allPermutations = generatePermutations(0, new ArrayList<ProductOptionValue>(), product.getProductOptions());
+
+        // return -2 to indicate that one of the Product Options used in Sku generation has no Allowed Values
+        if (allPermutations == null) {
+            return -2;
+        }
+
         LOG.info("Total number of permutations: " + allPermutations.size());
         LOG.info(allPermutations);
         
@@ -155,6 +162,10 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
             //end it here and return the current list of permutations.
             result.addAll(generatePermutations(currentTypeIndex + 1, currentPermutation, options));
             return result;
+        }
+        // Check to make sure there is at least 1 Allowed Value, else prevent generation
+        if (currentOption.getAllowedValues().isEmpty()) {
+            return null;
         }
         for (ProductOptionValue option : currentOption.getAllowedValues()) {
             List<ProductOptionValue> permutation = new ArrayList<ProductOptionValue>();
