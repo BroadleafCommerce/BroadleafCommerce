@@ -80,7 +80,7 @@ public class EntityForm {
     protected String translationCeilingEntity;
     protected String translationId;
 
-    protected Set<Tab> tabs = new TreeSet<Tab>(new Comparator<Tab>() {
+    protected TreeSet<Tab> tabs = new TreeSet<Tab>(new Comparator<Tab>() {
 
         @Override
         public int compare(Tab o1, Tab o2) {
@@ -183,6 +183,16 @@ public class EntityForm {
         for (ListGrid grid : getAllListGrids()) {
             if (grid.getSubCollectionFieldName().equals(collectionFieldName)) {
                 return grid;
+            }
+        }
+        return null;
+    }
+
+    public FieldGroup findGroup(String groupName) {
+        for (Tab tab : tabs) {
+            FieldGroup fieldGroup = tab.findGroupByKey(groupName);
+            if (fieldGroup != null) {
+                return fieldGroup;
             }
         }
         return null;
@@ -351,13 +361,13 @@ public class EntityForm {
     public void addField(ClassMetadata cmd, Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
         // Note: If a field creates a new tab/group (expected to be a rare occurrence), the firstTab/firstGroup may change
         //      as fields are added for a given EntityForm.
-        TabMetadata firstTab = cmd.getFirstTab();
-        GroupMetadata firstGroup = firstTab == null ? null : firstTab.getFirstGroup();
+        Tab firstTab = tabs.isEmpty() ? null : tabs.first();
+        FieldGroup firstGroup = firstTab == null || firstTab.getFieldGroups().isEmpty() ? null : ((TreeSet<FieldGroup>) firstTab.getFieldGroups()).first();
 
-        tabName = tabName == null ? (field.getIsVisible() || firstTab == null ? DEFAULT_TAB_NAME : firstTab.getTabName()) : tabName;
-        tabOrder = tabOrder == null ? (field.getIsVisible() || firstTab == null ? DEFAULT_TAB_ORDER : firstTab.getTabOrder()) : tabOrder;
-        groupName = groupName == null ? (field.getIsVisible() || firstGroup == null ? DEFAULT_GROUP_NAME : firstGroup.getGroupName()) : groupName;
-        groupOrder = groupOrder == null ? (field.getIsVisible() || firstGroup == null ? DEFAULT_GROUP_ORDER : firstGroup.getGroupOrder()) : groupOrder;
+        tabName = tabName == null ? (firstTab == null ? DEFAULT_TAB_NAME : firstTab.getKey()) : tabName;
+        tabOrder = tabOrder == null ? (firstTab == null ? DEFAULT_TAB_ORDER : firstTab.getOrder()) : tabOrder;
+        groupName = groupName == null ? (firstGroup == null ? DEFAULT_GROUP_NAME : firstGroup.getKey()) : groupName;
+        groupOrder = groupOrder == null ? (firstGroup == null ? DEFAULT_GROUP_ORDER : firstGroup.getOrder()) : groupOrder;
 
         // Check CMD for Tab/Group name overrides so that Tabs/Groups can be properly found by their display names
         boolean groupFound = false;
@@ -402,16 +412,6 @@ public class EntityForm {
         }
 
         fieldGroup.addField(field);
-    }
-
-    public FieldGroup findGroup(String groupName) {
-        for (Tab tab : tabs) {
-            FieldGroup fieldGroup = tab.findGroupByKey(groupName);
-            if (fieldGroup != null) {
-                return fieldGroup;
-            }
-        }
-        return null;
     }
 
     public void addListGrid(ClassMetadata cmd, ListGrid listGrid, String tabName, Integer tabOrder, String groupName, boolean isTabPresent) {
@@ -642,7 +642,7 @@ public class EntityForm {
     }
 
     public void setTabs(Set<Tab> tabs) {
-        this.tabs = tabs;
+        this.tabs.addAll(tabs);
     }
 
     public Map<String, EntityForm> getDynamicForms() {

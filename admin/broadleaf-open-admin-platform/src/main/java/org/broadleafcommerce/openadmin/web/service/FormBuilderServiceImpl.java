@@ -719,6 +719,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     protected void setEntityFormFields(ClassMetadata cmd, EntityForm ef, List<Property> properties) {
+        List<Field> homelessFields = new ArrayList<>();
+
         for (Property property : properties) {
             if (property.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) property.getMetadata();
@@ -810,9 +812,17 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
 
                     // Add the field to the appropriate FieldGroup
-                    ef.addField(cmd, f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
+                    if (fmd.getGroup() == null) {
+                        homelessFields.add(f);
+                    } else {
+                        ef.addField(cmd, f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
+                    }
                 }
             }
+        }
+
+        for (Field f : homelessFields) {
+            ef.addField(cmd, f, null, null, null, null);
         }
     }
 

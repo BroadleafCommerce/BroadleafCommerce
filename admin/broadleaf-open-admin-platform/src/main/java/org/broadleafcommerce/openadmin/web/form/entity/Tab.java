@@ -40,7 +40,7 @@ public class Tab {
     protected Boolean isMultiColumn;
     private boolean isTabsPresent = false;
 
-    Set<FieldGroup> fieldGroups = new TreeSet<FieldGroup>(new Comparator<FieldGroup>() {
+    TreeSet<FieldGroup> fieldGroups = new TreeSet<FieldGroup>(new Comparator<FieldGroup>() {
         @Override
         public int compare(FieldGroup o1, FieldGroup o2) {
             return new CompareToBuilder()
@@ -181,7 +181,7 @@ public class Tab {
     }
 
     public void setFieldGroups(Set<FieldGroup> fieldGroups) {
-        this.fieldGroups = fieldGroups;
+        this.fieldGroups.addAll(fieldGroups);
     }
 
     public Set<ListGrid> getListGrids() {
