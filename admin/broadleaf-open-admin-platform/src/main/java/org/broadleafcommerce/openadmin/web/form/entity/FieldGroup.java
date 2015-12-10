@@ -272,4 +272,7 @@ public class FieldGroup {
         return false;
     }
 
+    public boolean hasFieldOrListGrid() {
+        return fields.size() > 0 || listGrids.size() > 0;
+    }
 }

@@ -100,6 +100,20 @@ public class Tab {
         return false;
     }
 
+    public boolean hasFieldOrListGrid() {
+        if (listGrids.size() > 0) {
+            return true;
+        }
+
+        for (FieldGroup fg : fieldGroups) {
+            if (fg.hasFieldOrListGrid()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public FieldGroup findGroupByKey(String key) {
         for (FieldGroup fg : fieldGroups) {
             if (fg.getKey() != null && fg.getKey().equals(key)) {
