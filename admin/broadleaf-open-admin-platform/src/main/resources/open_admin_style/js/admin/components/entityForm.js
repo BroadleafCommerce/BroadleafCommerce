@@ -416,11 +416,11 @@ $(document).ready(function() {
             $content.addClass('content-collapsed');
         }
 
-        var $fieldSetCard = $(this).closest('.fieldset-card.listgrid-container');
-        var $tbody = $fieldSetCard.find('.listgrid-body-wrapper tbody');
-        if ($tbody.length) {
-            BLCAdmin.listGrid.paginate.updateGridSize($tbody);
-        }
+        var $fieldSetCard = $(this).closest('.fieldset-card');
+        var $tableBodies = $fieldSetCard.find('.listgrid-body-wrapper tbody');
+        $tableBodies.each(function( index, tbody ) {
+            BLCAdmin.listGrid.paginate.updateGridSize($(tbody));
+        });
     });
 
     $('body').on('click', 'a.description-link', function(event) {
