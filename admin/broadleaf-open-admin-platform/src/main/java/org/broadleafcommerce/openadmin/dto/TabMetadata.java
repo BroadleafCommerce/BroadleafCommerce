@@ -22,7 +22,9 @@ package org.broadleafcommerce.openadmin.dto;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Chris Kittrell
@@ -33,7 +35,7 @@ public class TabMetadata implements Serializable {
 
     protected String owningClass;
 
-    protected Map<String, GroupMetadata> groupMetadata;
+    protected TreeMap<String, GroupMetadata> groupMetadata;
     protected String tabName;
     protected Integer tabOrder;
 
@@ -66,7 +68,33 @@ public class TabMetadata implements Serializable {
     }
 
     public void setGroupMetadata(Map<String, GroupMetadata> groupMetadata) {
-        this.groupMetadata = groupMetadata;
+        TreeMap<String, GroupMetadata> orderedMap = new TreeMap<>(new GroupOrderComparator(groupMetadata));
+        orderedMap.putAll(groupMetadata);
+        this.groupMetadata = orderedMap;
+    }
+
+    public GroupMetadata getFirstGroup() {
+        return groupMetadata.firstEntry() == null ? null : groupMetadata.firstEntry().getValue();
+    }
+
+    class GroupOrderComparator implements Comparator<String> {
+        Map<String, GroupMetadata> base;
+
+        public GroupOrderComparator(Map<String, GroupMetadata> base) {
+            this.base = base;
+        }
+
+        @Override
+        public int compare(String key1, String key2) {
+            if (base.get(key1) == null) {
+                return 1;
+            } else if (base.get(key2) == null) {
+                return -1;
+            } else {
+                int comparison = base.get(key1).getGroupOrder().compareTo(base.get(key2).getGroupOrder());
+                return comparison == 0 ? key1.compareTo(key2) : comparison;
+            }
+        }
     }
 
     public TabMetadata cloneFieldMetadata() {

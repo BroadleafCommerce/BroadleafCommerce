@@ -168,7 +168,8 @@ public class ClassMetadata implements Serializable {
             } else if (base.get(key2) == null) {
                 return -1;
             } else {
-                return base.get(key1).getTabOrder().compareTo(base.get(key2).getTabOrder());
+                int comparison = base.get(key1).getTabOrder().compareTo(base.get(key2).getTabOrder());
+                return comparison == 0 ? key1.compareTo(key2) : comparison;
             }
         }
     }

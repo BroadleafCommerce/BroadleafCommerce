@@ -349,10 +349,15 @@ public class EntityForm {
     }
 
     public void addField(ClassMetadata cmd, Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
-        groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
-        groupOrder = groupOrder == null ? DEFAULT_GROUP_ORDER : groupOrder;
-        tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
-        tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
+        // Note: If a field creates a new tab/group (expected to be a rare occurrence), the firstTab/firstGroup may change
+        //      as fields are added for a given EntityForm.
+        TabMetadata firstTab = cmd.getFirstTab();
+        GroupMetadata firstGroup = firstTab == null ? null : firstTab.getFirstGroup();
+
+        tabName = tabName == null ? (field.getIsVisible() || firstTab == null ? DEFAULT_TAB_NAME : firstTab.getTabName()) : tabName;
+        tabOrder = tabOrder == null ? (field.getIsVisible() || firstTab == null ? DEFAULT_TAB_ORDER : firstTab.getTabOrder()) : tabOrder;
+        groupName = groupName == null ? (field.getIsVisible() || firstGroup == null ? DEFAULT_GROUP_NAME : firstGroup.getGroupName()) : groupName;
+        groupOrder = groupOrder == null ? (field.getIsVisible() || firstGroup == null ? DEFAULT_GROUP_ORDER : firstGroup.getGroupOrder()) : groupOrder;
 
         // Check CMD for Tab/Group name overrides so that Tabs/Groups can be properly found by their display names
         boolean groupFound = false;
