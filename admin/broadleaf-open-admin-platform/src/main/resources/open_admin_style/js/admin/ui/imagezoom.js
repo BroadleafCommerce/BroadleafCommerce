@@ -30,7 +30,7 @@
     	    });
             $container.css('left', $img.offset().left + $img.outerWidth() + 5);
             $container.css('top', $img.offset().top);
-    	    $container.append($('<i>', { 'class' : 'icon-spin icon-spinner' }));
+    	    $container.append($('<i>', { 'class' : 'fa-pulse fa fa-spinner' }));
     	    $('body').append($container);
     	    
     	    // Create the container image

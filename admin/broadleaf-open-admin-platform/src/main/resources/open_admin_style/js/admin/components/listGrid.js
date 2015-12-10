@@ -182,23 +182,20 @@
             
             return selectedRowIds;
         },
-        
+
         updateActionButtons : function($listGridContainer) {
             if (!$listGridContainer.find('tr.list-grid-no-results').length) {
                 $listGridContainer.find('button.row-action.all-capable').removeAttr('disabled');
             }
 
+            var listGridId = $listGridContainer.find('.listgrid-body-wrapper table').attr('id');
             var numSelected = $listGridContainer.find('tr.selected').length;
             updateListGridActionsForContainer($listGridContainer.find('button.row-action'), numSelected);
 
             var $modal = $listGridContainer.closest('.modal');
-            if ($modal.length) {
-                if (typeof BLCAdmin.treeListGrid !== 'undefined') {
-                    numSelected = BLCAdmin.treeListGrid.retrieveNumRowsSelected($listGridContainer, numSelected);
-                }
-
+            if ($modal.length && typeof listGridId !== 'undefined') {
                 var $modalActionContainer = $modal.find('.modal-footer .listgrid-modal-actions');
-                updateListGridActionsForContainer($modalActionContainer.find("button.row-action"), numSelected);
+                updateListGridActionsForContainer($modalActionContainer.find("button.row-action[data-listgridid='" + listGridId + "']"), numSelected);
             }
 
             function updateListGridActionsForContainer($containerActions, numSelected) {
@@ -212,8 +209,6 @@
                     $containerActions.filter('.single-action-only').attr('disabled', 'disabled');
                 }
             }
-
-
         },
         
         showAlert : function($container, message, options) {

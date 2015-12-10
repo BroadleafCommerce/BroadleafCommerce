@@ -85,10 +85,12 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
             if (useEmailForLogin) {
                 adminInstance.setUsername(adminInstance.getEmailAddress());
             }
-            
-            Entity errorEntity = validateUniqueUsername(entity, adminInstance);
-            if (errorEntity != null) {
-                return errorEntity;
+
+            if (!entity.isPreAdd()) {
+                Entity errorEntity = validateUniqueUsername(entity, adminInstance);
+                if (errorEntity != null) {
+                    return errorEntity;
+                }
             }
             
             adminInstance = dynamicEntityDao.merge(adminInstance);

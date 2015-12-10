@@ -28,92 +28,91 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
  * Created by brandon on 9/4/15.
  */
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "CustomerImpl_baseCustomer",
-        tabs = {
-                @AdminTabPresentation(name = CustomerAdminPresentation.TabName.General,
-                        order = CustomerAdminPresentation.TabOrder.General,
-                        groups = {
-                                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Customer,
-                                        order = CustomerAdminPresentation.GroupOrder.Customer),
-                                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.General,
-                                        order = CustomerAdminPresentation.GroupOrder.General,
-                                        column = 1),
-                                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.PriceLists,
-                                        order = CustomerAdminPresentation.GroupOrder.PriceLists,
-                                        column = 1)
-                        }
-                ),
-                @AdminTabPresentation(name = CustomerAdminPresentation.TabName.ContactInfo,
-                        order = CustomerAdminPresentation.TabOrder.ContactInfo,
-                        groups = {
-                                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.CustomerAddresses,
-                                        order = CustomerAdminPresentation.GroupOrder.CustomerAddresses),
-                                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.PhoneNumbers,
-                                        order = CustomerAdminPresentation.GroupOrder.PhoneNumbers),
-                                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.SavedPaymentMethods,
-                                        order = CustomerAdminPresentation.GroupOrder.SavedPaymentMethods)
-                        }
-                ),
-                @AdminTabPresentation(name = CustomerAdminPresentation.TabName.Advanced,
-                        order = CustomerAdminPresentation.TabOrder.Advanced,
-                        groups = {
-                                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Attributes,
-                                        order = CustomerAdminPresentation.GroupOrder.Attributes)
-                        }
-                ),
-                @AdminTabPresentation(name = CustomerAdminPresentation.TabName.Accounts,
-                        order = CustomerAdminPresentation.TabOrder.Accounts,
-                        groups = {
-                                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Accounts,
-                                        order = CustomerAdminPresentation.GroupOrder.Accounts)
-                        }
-                ),
-                @AdminTabPresentation(name = CustomerAdminPresentation.TabName.History,
-                        order = CustomerAdminPresentation.TabOrder.History,
-                        groups = {
-                                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Audits,
-                                        order = CustomerAdminPresentation.GroupOrder.Audits)
-                        }
-                )
-        }
+    tabs = {
+        @AdminTabPresentation(name = CustomerAdminPresentation.TabName.General,
+            order = CustomerAdminPresentation.TabOrder.General,
+            groups = {
+                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Customer,
+                    order = CustomerAdminPresentation.GroupOrder.Customer,
+                    untitled = true),
+                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.ContactInfo,
+                    order = CustomerAdminPresentation.GroupOrder.ContactInfo,
+                    collapsed = true),
+                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.QualificationOptions,
+                    order = CustomerAdminPresentation.GroupOrder.QualificationOptions,
+                    column = 1, untitled = true)
+            }
+        ),
+        @AdminTabPresentation(name = CustomerAdminPresentation.TabName.PaymentMethods,
+            order = CustomerAdminPresentation.TabOrder.PaymentMethods
+        ),
+        @AdminTabPresentation(name = CustomerAdminPresentation.TabName.Pricing,
+            order = CustomerAdminPresentation.TabOrder.Pricing,
+            groups = {
+                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Pricing,
+                    order = CustomerAdminPresentation.GroupOrder.Pricing,
+                    untitled = true)
+            }
+        ),
+        @AdminTabPresentation(name = CustomerAdminPresentation.TabName.Advanced,
+            order = CustomerAdminPresentation.TabOrder.Advanced,
+            groups = {
+                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Attributes,
+                    order = CustomerAdminPresentation.GroupOrder.Attributes),
+                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Audit,
+                    order = CustomerAdminPresentation.GroupOrder.Audit,
+                    column = 1)
+            }
+        )
+    }
 )
 public interface CustomerAdminPresentation {
     public static class TabName {
         public static final String General = "CustomerImpl_General_Tab";
-        public static final String ContactInfo = "CustomerImpl_ContactInfo_Tab";
+        public static final String PaymentMethods = "CustomerImpl_PaymentMethods_Tab";
+        public static final String Pricing = "CustomerImpl_Pricing_Tab";
         public static final String Advanced = "CustomerImpl_Advanced_Tab";
-        public static final String Accounts = "CustomerImpl_Accounts_Tab";
-        public static final String History = "CustomerImpl_History_Tab";
     }
 
     public static class TabOrder {
         public static final int General = 1000;
-        public static final int ContactInfo = 2000;
-        public static final int Advanced = 3000;
-        public static final int Accounts = 4000;
-        public static final int History = 5000;
+        public static final int PaymentMethods = 3000;
+        public static final int Pricing = 4000;
+        public static final int Advanced = 5000;
     }
 
     public static class GroupName {
         public static final String Customer = "CustomerImpl_Customer";
-        public static final String General = "CustomerImpl_General";
-        public static final String PriceLists = "CustomerImpl_PriceLists";
-        public static final String CustomerAddresses = "CustomerImpl_CustomerAddresses";
-        public static final String PhoneNumbers = "CustomerImpl_PhoneNumbers";
-        public static final String SavedPaymentMethods = "CustomerImpl_SavedPaymentMethods";
+        public static final String ContactInfo = "CustomerImpl_ContactInfo";
+        public static final String QualificationOptions = "CustomerImpl_Qualification_Options";
+        public static final String Pricing = "Pricing";
         public static final String Attributes = "CustomerImpl_Attributes";
-        public static final String Accounts = "CustomerImpl_Accounts";
-        public static final String Audits = "CustomerImpl_Audits";
+        public static final String Audit = "CustomerImpl_Audit";
     }
 
     public static class GroupOrder {
         public static final int Customer = 1000;
-        public static final int General = 2000;
-        public static final int PriceLists = 3000;
-        public static final int CustomerAddresses = 4000;
-        public static final int PhoneNumbers = 5000;
-        public static final int SavedPaymentMethods = 6000;
-        public static final int Attributes = 7000;
-        public static final int Accounts = 8000;
-        public static final int Audits = 9000;
+        public static final int ContactInfo = 2000;
+        public static final int QualificationOptions = 1000;
+        public static final int Pricing = 1000;
+        public static final int Attributes = 1000;
+        public static final int Audit = 1000;
+    }
+
+    public static class FieldOrder {
+        public static final int FIRST_NAME = 1000;
+        public static final int LAST_NAME = 2000;
+        public static final int EMAIL = 3000;
+        public static final int USERNAME = 4000;
+
+        public static final int ADDRESSES = 1000;
+        public static final int PHONES = 2000;
+
+        public static final int RECIEVE_EMAIL = 1000;
+        public static final int REGISTERED = 2000;
+        public static final int DEACTIVATED = 3000;
+
+        public static final int IS_TAX_EXEMPT = 1000;
+        public static final int TAX_EXEMPTION_CODE = 2000;
     }
 }

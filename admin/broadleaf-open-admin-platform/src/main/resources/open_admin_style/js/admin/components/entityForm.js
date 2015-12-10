@@ -318,12 +318,12 @@ $(document).ready(function() {
     function showTabSpinner($tab, $tabBody) {
         $("#headerFlashAlertBoxContainer").addClass("hidden");
         $tabBody.find('button').prop("disabled", true);
-        $tab.find('i.icon-spinner').show();
+        $tab.find('i.fa-spinner').show();
     }
 
     function hideTabSpinner($tab, $tabBody) {
         $tabBody.find('button').prop("disabled", false);
-        $tab.find('i.icon-spinner').hide();
+        $tab.find('i.fa-spinner').hide();
     }
 
     $('body').on('submit', 'form.entity-form', function(event) {
@@ -416,11 +416,11 @@ $(document).ready(function() {
             $content.addClass('content-collapsed');
         }
 
-        var $fieldSetCard = $(this).closest('.fieldset-card.listgrid-container');
-        var $tbody = $fieldSetCard.find('.listgrid-body-wrapper tbody');
-        if ($tbody.length) {
-            BLCAdmin.listGrid.paginate.updateGridSize($tbody);
-        }
+        var $fieldSetCard = $(this).closest('.fieldset-card');
+        var $tableBodies = $fieldSetCard.find('.listgrid-body-wrapper tbody');
+        $tableBodies.each(function( index, tbody ) {
+            BLCAdmin.listGrid.paginate.updateGridSize($(tbody));
+        });
     });
 
     $('body').on('click', 'a.description-link', function(event) {

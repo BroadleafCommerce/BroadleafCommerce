@@ -77,3 +77,9 @@ a.description-link {
 .time-eod:hover {
     color: #F2B95A;
 }
+
+.nav-tabs li a i {
+    position: absolute;
+    right: 12px;
+    top: 18px;
+}
