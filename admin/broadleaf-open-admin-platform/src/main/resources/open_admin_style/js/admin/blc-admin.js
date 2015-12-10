@@ -442,7 +442,8 @@ var BLCAdmin = (function($) {
 
 				$container.find('.dropdown-menu-right').each(function() {
 					var windowWidth = $(window).width();
-					if ($(this).offset().left < windowWidth / 2) {
+					if ($(this).closest('.content-area-title-bar').length === 0
+                        && $(this).offset().left < windowWidth / 2) {
 						$(this).removeClass('dropdown-menu-right').addClass('dropdown-menu-left');
 					}
 				});
