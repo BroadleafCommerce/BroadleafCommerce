@@ -34,6 +34,14 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.admin.web.controller.*"/>
     </context:component-scan>
 
+    <bean id="blFieldMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blCustomerUsernameFieldMetadataProvider"/>
+            </list>
+        </property>
+    </bean>
+
     <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
