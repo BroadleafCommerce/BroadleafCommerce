@@ -63,15 +63,13 @@ public class PropertyType {
         public static final String READONLY = "readOnly";
         public static final String VALIDATIONCONFIGURATIONS = "validationConfigurations";
         public static final String DEFAULTVALUE = "defaultValue";
-
-        @Deprecated
         public static final String GROUP = "group";
+        public static final String TAB = "tab";
+
         @Deprecated
         public static final String GROUPORDER = "groupOrder";
         @Deprecated
         public static final String GROUPCOLLAPSED = "groupCollapsed";
-        @Deprecated
-        public static final String TAB = "tab";
         @Deprecated
         public static final String TABORDER = "tabOrder";
     }
