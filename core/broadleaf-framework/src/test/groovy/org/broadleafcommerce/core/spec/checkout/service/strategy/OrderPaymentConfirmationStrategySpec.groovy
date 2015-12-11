@@ -65,6 +65,9 @@ class OrderPaymentConfirmationStrategySpec extends Specification {
 
     CreditCardPayment secureReference = new CreditCardPaymentInfoImpl()
 
+    OrderPayment unconfirmedOther = new OrderPaymentImpl()
+    PaymentTransaction unconfirmedOtherTransaction = new PaymentTransactionImpl()
+
     def setup() {
         confirmedCC.amount = new Money(10)
         confirmedCC.type = PaymentType.CREDIT_CARD
@@ -110,6 +113,15 @@ class OrderPaymentConfirmationStrategySpec extends Specification {
         secureReference.pan = "4111111111111"
         secureReference.expirationYear = 2050
         secureReference.expirationMonth = 1
+
+        unconfirmedOther.type = PaymentType.WIRE
+        unconfirmedOther.order = order
+
+        unconfirmedOtherTransaction.type = PaymentTransactionType.UNCONFIRMED
+        unconfirmedOtherTransaction.amount = new Money(22)
+        unconfirmedOtherTransaction.success = true
+        unconfirmedOtherTransaction.orderPayment = unconfirmedOther
+        unconfirmedOtherTransaction.additionalFields.put("MY_TOKEN", "12345")
 
         context = new DefaultProcessContextImpl<CheckoutSeed>().with{
             seedData = new CheckoutSeed(order, null)
@@ -179,6 +191,40 @@ class OrderPaymentConfirmationStrategySpec extends Specification {
         response.paymentType == PaymentType.CREDIT_CARD
         response.paymentTransactionType == PaymentTransactionType.AUTHORIZE_AND_CAPTURE
         response.amount == new Money(15)
+    }
+
+    def "Test confirming an UNCONFIRMED _____ with Pending Payments Enabled"() {
+        setup: "I have initialized the strategy"
+
+        SystemPropertiesService mockSPS = Mock()
+        mockSPS.resolveBooleanSystemProperty(*_) >> true
+
+        PaymentGatewayConfigurationServiceProvider mockProvider = Mock()
+        OrderToPaymentRequestDTOService mockRequestService = Mock()
+
+        PaymentRequestDTO requestDTO = new PaymentRequestDTO()
+        requestDTO.transactionTotal(unconfirmedOtherTransaction.amount.toString());
+        requestDTO.additionalField("MY_TOKEN", unconfirmedOtherTransaction.additionalFields.get("MY_TOKEN"));
+
+        mockRequestService.translatePaymentTransaction(*_) >> requestDTO
+
+        OrderPaymentConfirmationStrategy strategy = new OrderPaymentConfirmationStrategyImpl().with {
+            systemPropertiesService = mockSPS
+            orderToPaymentRequestService = mockRequestService
+            paymentConfigurationServiceProvider = mockProvider
+            it
+        }
+
+        when: "I execute the strategy with an unconfirmed credit card transaction"
+        PaymentResponseDTO response = strategy.confirmTransaction(unconfirmedOtherTransaction, context);
+
+        then: "The response should represent a PENDING transaction"
+        response.successful
+        response.paymentType == PaymentType.WIRE
+        response.paymentTransactionType == PaymentTransactionType.PENDING
+        response.amount == new Money(22)
+        response.getResponseMap().containsKey("MY_TOKEN")
+        response.getResponseMap().get("MY_TOKEN") == unconfirmedOtherTransaction.additionalFields.get("MY_TOKEN")
     }
 
     def "Test confirming an UNCONFIRMED THIRD_PARTY_ACCOUNT"() {

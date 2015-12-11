@@ -23,6 +23,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
@@ -46,6 +49,16 @@ import java.text.SimpleDateFormat;
 import javax.annotation.Resource;
 
 /**
+ * Strategy to handle confirming "UNCONFIRMED" transactions on an Order Payment during the checkout workflow.
+ *
+ * The default implementation is to (based on the passed in payment type):
+ *  - If PaymentType == CREDIT_CARD -> AUTHORIZE or AUTHORIZE_AND_CAPTURE based on configuration of the gateway
+ *  - Otherwise -> call the configured gateways {@link org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionConfirmationService}
+ *
+ * However, if PENDING payments are enabled, then this logic will be by-passed and a new transaction
+ * will be created as the payment is marked to be charged offline or asynchronously.
+ *
+ * @see {@link org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity}
  * @author Elbert Bautista (elbertbautista)
  */
 @Service("blOrderPaymentConfirmationStrategy")
@@ -85,24 +98,43 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
         populateCustomerOnRequest(confirmationRequest, payment);
         populateShippingAddressOnRequest(confirmationRequest, payment);
 
-        if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
-            // Handles the PCI-Compliant Scenario where you have an UNCONFIRMED CREDIT_CARD payment on the order.
-            // This can happen if you send the Credit Card directly to Broadleaf or you use a Digital Wallet solution like MasterPass.
-            // The Actual Credit Card PAN is stored in blSecurePU and will need to be sent to the Payment Gateway for processing.
-
-            populateCreditCardOnRequest(confirmationRequest, payment);
-
-            if (cfg.getConfiguration().isPerformAuthorizeAndCapture()) {
-                responseDTO = cfg.getTransactionService().authorizeAndCapture(confirmationRequest);
-            } else {
-                responseDTO = cfg.getTransactionService().authorize(confirmationRequest);
-            }
-
+        if (enablePendingPaymentsOnConfirmation()) {
+            responseDTO = constructPendingTransaction(payment.getType(), payment.getGatewayType(), confirmationRequest);
         } else {
-            // This handles the THIRD_PARTY_ACCOUNT scenario (like PayPal Express Checkout) where
-            // the transaction just needs to be confirmed with the Gateway
+            if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
+                // Handles the PCI-Compliant Scenario where you have an UNCONFIRMED CREDIT_CARD payment on the order.
+                // This can happen if you send the Credit Card directly to Broadleaf or you use a Digital Wallet solution like MasterPass.
+                // The Actual Credit Card PAN is stored in blSecurePU and will need to be sent to the Payment Gateway for processing.
 
-            responseDTO = cfg.getTransactionConfirmationService().confirmTransaction(confirmationRequest);
+                populateCreditCardOnRequest(confirmationRequest, payment);
+
+                if (cfg.getConfiguration().isPerformAuthorizeAndCapture()) {
+                    responseDTO = cfg.getTransactionService().authorizeAndCapture(confirmationRequest);
+                } else {
+                    responseDTO = cfg.getTransactionService().authorize(confirmationRequest);
+                }
+
+            } else {
+                // This handles the THIRD_PARTY_ACCOUNT scenario (like PayPal Express Checkout) where
+                // the transaction just needs to be confirmed with the Gateway
+
+                responseDTO = cfg.getTransactionConfirmationService().confirmTransaction(confirmationRequest);
+            }
+        }
+
+        return responseDTO;
+    }
+
+    protected PaymentResponseDTO constructPendingTransaction(PaymentType paymentType, PaymentGatewayType gatewayType,
+                                                             PaymentRequestDTO confirmationRequest) {
+        PaymentResponseDTO responseDTO = new PaymentResponseDTO(paymentType, gatewayType);
+        responseDTO.amount(new Money(confirmationRequest.getTransactionTotal()))
+                .rawResponse(this.getClass().getName() + ": converting UNCONFIRMED transaction into a PENDING payment")
+                .successful(true)
+                .paymentTransactionType(PaymentTransactionType.PENDING);
+
+        for (String key : confirmationRequest.getAdditionalFields().keySet()) {
+            responseDTO.responseMap(key, confirmationRequest.getAdditionalFields().get(key).toString());
         }
 
         return responseDTO;
@@ -172,6 +204,15 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
             format = "MM/YY";
         }
         return format;
+    }
+
+    /**
+     * Set "gateway.config.global.enablePendingPayments" property to allow
+     * confirmation of an "UNCONFIRMED" transaction into a "PENDING" state
+     * instead of confirming into an AUTHORIZE or AUTHORIZE_AND_CAPTURE status.
+     */
+    protected boolean enablePendingPaymentsOnConfirmation() {
+        return systemPropertiesService.resolveBooleanSystemProperty("gateway.config.global.enablePendingPayments");
     }
 
 }
