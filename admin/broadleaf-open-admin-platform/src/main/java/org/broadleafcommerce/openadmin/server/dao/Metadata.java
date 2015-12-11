@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.BLCAnnotationUtils;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
@@ -109,8 +110,12 @@ public class Metadata {
             basicEntityMetadataProvider.overrideMetadataViaAnnotation(new OverrideViaAnnotationRequest(entities[i], true, null, ""),
                     mergedTabAndGroupMetadata);
             basicEntityMetadataProvider.overrideMetadataViaXml(new OverrideViaXmlRequest("", entities[i].getCanonicalName(), "", true, null),
-                mergedTabAndGroupMetadata);
+                    mergedTabAndGroupMetadata);
         }
+    }
+
+    public void buildAdditionalTabAndGroupMetadataFromCmdProperties(ClassMetadata cmd, Map<String, TabMetadata> metadata) {
+        basicEntityMetadataProvider.addTabAndGroupMetadataFromCmdProperties(cmd, metadata);
     }
 
     public Map<String, FieldMetadata> overrideMetadata(Class<?>[] entities, PropertyBuilder propertyBuilder, String prefix, Boolean isParentExcluded, String ceilingEntityFullyQualifiedClassname, String configurationKey, DynamicEntityDao dynamicEntityDao) {

@@ -224,7 +224,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         cmd.setCurrencyCode(Money.defaultCurrency().getCurrencyCode());
 
         cmd.setProperties(processMergedProperties(entities, mergedProperties));
-        cmd.setTabAndGroupMetadata(dynamicEntityDao.getTabAndGroupMetadata(entities));
+        cmd.setTabAndGroupMetadata(dynamicEntityDao.getTabAndGroupMetadata(entities, cmd));
 
         return cmd;
     }

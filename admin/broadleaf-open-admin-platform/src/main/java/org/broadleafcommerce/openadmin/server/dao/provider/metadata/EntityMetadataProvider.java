@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
@@ -68,6 +69,14 @@ public interface EntityMetadataProvider extends Ordered {
      * @return whether or not this implementation adjusted metadata
      */
     MetadataProviderResponse overrideMetadataViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, TabMetadata> metadata);
+
+    /**
+     *
+     * @param cmd
+     * @param metadata
+     * @return whether or not this implementation adjusted metadata
+     */
+    MetadataProviderResponse addTabAndGroupMetadataFromCmdProperties(ClassMetadata cmd, Map<String, TabMetadata> metadata);
     
     /**
      * Contribute to metadata inspection for the {@link java.lang.reflect.Field} instance in the request. Implementations should
