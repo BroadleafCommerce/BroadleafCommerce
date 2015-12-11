@@ -232,7 +232,7 @@ public class EntityForm {
                 }
             }
         }
-        return null;
+        return fields == null ? null : fields.get(fieldName);
     }
 
     /**
