@@ -820,6 +820,9 @@ var BLCAdmin = (function($) {
 
                         // Toggle the visiblity of the child field appropriately
                         $childField.toggle(shouldShow);
+						if (shouldShow) {
+							$childField.removeClass('hidden');
+						}
 
                         var $cardContent = $childField.closest('.fieldset-card-content');
                         var $card = $cardContent.closest('.fieldset-card');

@@ -22,6 +22,7 @@
     width: 260px;
     margin: 0;
     background-color: rgba(0,0,0,0.1);
+    padding: 0 22px !important;
 }
 
 .sandbox-bar .selectize-control.single .selectize-input.input-active {

@@ -17,6 +17,40 @@
  * limitations under the License.
  * #L%
  */
+
+select:not(#sandboxes) {
+    padding: 0 10px;
+    border: 1px solid #D8D5D0;
+    display: inline-block;
+    background: white;
+    height: 34px !important;
+    line-height: 34px;
+    vertical-align: middle;
+    width: 100%;
+    font-size: 13px;
+    box-shadow: none;
+    -webkit-appearance: none;
+    font-family: 'Open Sans', sans-serif;
+    margin: 0 0 ;
+    border-radius: 0;
+    box-sizing: border-box;
+    color: #303030;
+
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+select.selectize-adder {
+    margin-bottom: 4px;
+    height: 36px !important;
+}
+
+select.selectize-collection.read-only {
+    margin-bottom: 5px;
+    background-color: #eeeeee;
+}
+
 .required:after {
     content: ' *';
     color: #D20A33;
