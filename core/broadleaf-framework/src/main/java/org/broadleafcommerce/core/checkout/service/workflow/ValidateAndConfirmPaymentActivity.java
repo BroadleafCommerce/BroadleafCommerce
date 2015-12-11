@@ -274,13 +274,15 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
             handleUnsuccessfulTransactions(failedTransactions, context);
         }
 
-        // Add authorize and authorize_and_capture; there should only be one or the other in the payment
+        // Add authorize and authorize_and_capture transactions;
+        // there should only be one or the other in the payment
+        // Also add any pending transactions (as these are marked as being AUTH or CAPTURED later)
         Money paymentSum = new Money(BigDecimal.ZERO);
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive()) {
                 paymentSum = paymentSum.add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE))
                                .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE))
-                               .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.POST_CHECKOUT_AUTH_OR_SALE));
+                               .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.PENDING));
             }
         }
         
@@ -425,7 +427,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     }
 
     protected CustomerPayment createCustomerPaymentToken(PaymentTransaction transaction) {
-        if (transaction.getOrderPayment().isSaveToken()) {
+        if (transaction.isSaveToken()) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace(String.format("Attempting to create a customer payment for Order Payment - (%s)", transaction.getId()));
             }
