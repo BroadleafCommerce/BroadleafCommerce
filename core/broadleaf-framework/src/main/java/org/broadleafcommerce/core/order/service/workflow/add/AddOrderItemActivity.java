@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.service.workflow.add;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -41,6 +43,8 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import javax.annotation.Resource;
 
 public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
+
+    private static final Log LOG = LogFactory.getLog(AddOrderItemActivity.class);
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -119,6 +123,11 @@ public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperat
         if (orderItemRequestDTO.getParentOrderItemId() != null) {
             OrderItem parent = orderItemService.readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
             item.setParentOrderItem(parent);
+        }
+
+        if (LOG.isTraceEnabled()) {
+            String itemName = item.getName() == null ? "none" : item.getName();
+            LOG.trace("Adding item quantity: order=" + order.getId() + " item=" + itemName + " quantity=" + item.getQuantity());
         }
         
         order.getOrderItems().add(item);

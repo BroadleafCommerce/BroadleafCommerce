@@ -20,6 +20,8 @@
 package org.broadleafcommerce.core.order.service.workflow.remove;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -38,6 +40,8 @@ import javax.annotation.Resource;
  * @author Andre Azzolini (apazzolini)
  */
 public class RemoveOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
+
+    private static final Log LOG = LogFactory.getLog(RemoveOrderItemActivity.class);
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -61,6 +65,8 @@ public class RemoveOrderItemActivity extends BaseActivity<ProcessContext<CartOpe
                 removeItemAndChildren(oisToDelete, childOrderItem);
             }
         }
+
+        LOG.trace("Removing item: order=" + orderItem.getOrder().getId() + " item=" + orderItem.getId() + " quantity=" + orderItem.getQuantity());
         
         oisToDelete.add(orderItem);
     }

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.service.workflow.update;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -31,7 +33,9 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import javax.annotation.Resource;
 
 public class UpdateOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
-    
+
+    private static final Log LOG = LogFactory.getLog(UpdateOrderItemActivity.class);
+
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
@@ -51,13 +55,20 @@ public class UpdateOrderItemActivity extends BaseActivity<ProcessContext<CartOpe
         if (orderItem == null || !order.getOrderItems().contains(orderItem)) {
             throw new ItemNotFoundException("Order Item (" + orderItemRequestDTO.getOrderItemId() + ") not found in Order (" + order.getId() + ")");
         }
-        
+
+        int originalQty = 0; //for Tracing purposes
+
         OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(orderItem));
         if (orderItemRequestDTO.getQuantity() >= 0) {
             request.setOrderItemQuantityDelta(orderItemRequestDTO.getQuantity() - itemFromOrder.getQuantity());
+            if (LOG.isTraceEnabled()) {
+                originalQty = itemFromOrder.getQuantity();
+            }
             itemFromOrder.setQuantity(orderItemRequestDTO.getQuantity());
             request.setOrderItem(itemFromOrder);
         }
+
+        LOG.trace("Updating item quantity: order=" + order.getId() + " item=" + itemFromOrder.getId() + " original=" + originalQty + " updated=" + itemFromOrder.getQuantity() + " delta=" + request.getOrderItemQuantityDelta());
 
         return context;
     }

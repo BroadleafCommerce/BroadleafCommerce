@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.strategy;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -34,6 +36,7 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.util.OrderUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -50,7 +53,9 @@ import javax.annotation.Resource;
  */
 @Service("blFulfillmentGroupItemStrategy")
 public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStrategy {
-    
+
+    private static final Log LOG = LogFactory.getLog(FulfillmentGroupItemStrategyImpl.class);
+
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
     
@@ -202,6 +207,9 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     }
 
     protected FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem orderItem, int quantity, FulfillmentGroup fulfillmentGroup) throws PricingException {
+
+        LOG.trace("Adding item fg quantity: order=" + order.getId() + " item=" + orderItem.getId() + " quantity=" + quantity);
+
         FulfillmentGroupItemRequest fulfillmentGroupItemRequest = new FulfillmentGroupItemRequest();
         fulfillmentGroupItemRequest.setOrder(order);
         fulfillmentGroupItemRequest.setOrderItem(orderItem);
@@ -249,6 +257,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                     if (!done && fgItem.getOrderItem().equals(orderItem)) {
                         fgItem.setQuantity(fgItem.getQuantity() + orderItemQuantityDelta);
                         done = true;
+                        LOG.trace("Update item fg quantity: order=" + order.getId() + " item=" + orderItem.getId() + " fg=" + fgItem.getId() + " delta="+ orderItemQuantityDelta);                        
                     }
                 }
             }
@@ -264,15 +273,18 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                             // Quantity matches exactly. Simply remove the item.
                             fgisToDelete.add(fgItem);
                             done = true;
+                            LOG.trace("Update item fg quantity - exact qty match removing fg: order=" + order.getId() + " item=" + orderItem.getId() + " fg=" + fgItem.getId() + " decremented="+ remainingToDecrement);                        
                         } else if (!done && fgItem.getQuantity() > remainingToDecrement) {
-                            // We have enough quantity in this fg item to facilitate the entire requsted update
+                            // We have enough quantity in this fg item to facilitate the entire requested update
                             fgItem.setQuantity(fgItem.getQuantity() - remainingToDecrement);
                             done = true;
+                            LOG.trace("Update item fg quantity: order=" + order.getId() + " item=" + orderItem.getId() + " fg=" + fgItem.getId() + " decremented="+ remainingToDecrement);                        
                         } else if (!done) {
                             // We do not have enough quantity. We'll remove this item and continue searching
                             // for the remainder.
                             remainingToDecrement = remainingToDecrement - fgItem.getQuantity();
                             fgisToDelete.add(fgItem);
+                            LOG.trace("Update item fg quantity - exceeded fg qty removing fg: order=" + order.getId() + " item=" + orderItem.getId() + " fg=" + fgItem.getId() + " decremented="+ fgItem.getQuantity());                        
                         }
                     }
                 }
@@ -294,10 +306,22 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         if (orderItem instanceof BundleOrderItem) {
             List<OrderItem> itemsToRemove = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
             for (OrderItem oi : itemsToRemove) {
-                request.getFgisToDelete().addAll(fulfillmentGroupService.getFulfillmentGroupItemsForOrderItem(order, oi));
+                List<FulfillmentGroupItem> fgItems = fulfillmentGroupService.getFulfillmentGroupItemsForOrderItem(order, oi);
+                if (LOG.isTraceEnabled()) {
+                    for(FulfillmentGroupItem aItem : fgItems) {
+                        LOG.trace("FG item removed: order=" + order.getId() + " orderItem=" + orderItem.getId() + " fg=" + aItem.getId() + " quantity="+ aItem.getQuantity());                        
+                    }
+                }
+                request.getFgisToDelete().addAll(fgItems);
             }
         } else {
-            request.getFgisToDelete().addAll(fulfillmentGroupService.getFulfillmentGroupItemsForOrderItem(order, orderItem));
+            List<FulfillmentGroupItem> fgItems = fulfillmentGroupService.getFulfillmentGroupItemsForOrderItem(order, orderItem);
+            if (LOG.isTraceEnabled()) {
+                for(FulfillmentGroupItem aItem : fgItems) {
+                    LOG.trace("FG item removed: order=" + order.getId() + " orderItem=" + orderItem.getId() + " fg=" + aItem.getId() + " quantity="+ aItem.getQuantity());                        
+                }
+            }
+            request.getFgisToDelete().addAll(fgItems);
         }
         
         return request;
@@ -347,6 +371,8 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             
             oiQuantityMap.put(oi.getId(), oiQuantity);
         }
+
+        LOG.trace("Verify item quantity - orders only: order=" + order.getId() + " itemMap=" + oiQuantityMap.toString());                        
         
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
@@ -361,16 +387,21 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                 oiQuantityMap.put(oiId, oiQuantity);
             }
         }
-        
+
+        LOG.trace("Verify item quantity - final state: order=" + order.getId() + " itemMap=" + oiQuantityMap.toString());                        
+
         for (Entry<Long, Integer> entry : oiQuantityMap.entrySet()) {
             if (!entry.getValue().equals(0)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Qty Mismatch - Order Dump\n" + OrderUtil.convertOrderToJSON(order).toString());
+                }
                 throw new IllegalStateException("Not enough fulfillment group items found for DiscreteOrderItem id: " + entry.getKey());
             }
         }
         
         return request;
     }
-
+   
     @Override
     public boolean isRemoveEmptyFulfillmentGroups() {
         return removeEmptyFulfillmentGroups;
