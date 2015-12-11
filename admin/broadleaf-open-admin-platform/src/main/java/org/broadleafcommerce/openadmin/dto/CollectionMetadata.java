@@ -30,7 +30,6 @@ public abstract class CollectionMetadata extends FieldMetadata {
     private String collectionCeilingEntity;
     private boolean mutable = true;
     private String[] customCriteria;
-    private String group;
 
     public PersistencePerspective getPersistencePerspective() {
         return persistencePerspective;
@@ -64,14 +63,6 @@ public abstract class CollectionMetadata extends FieldMetadata {
         this.customCriteria = customCriteria;
     }
 
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
     @Override
     protected FieldMetadata populate(FieldMetadata metadata) {
         super.populate(metadata);
@@ -79,9 +70,6 @@ public abstract class CollectionMetadata extends FieldMetadata {
         ((CollectionMetadata) metadata).setCollectionCeilingEntity(collectionCeilingEntity);
         ((CollectionMetadata) metadata).setMutable(mutable);
         ((CollectionMetadata) metadata).setCustomCriteria(customCriteria);
-        ((CollectionMetadata) metadata).setTab(getTab());
-        ((CollectionMetadata) metadata).setTabOrder(getTabOrder());
-        ((CollectionMetadata) metadata).setGroup(getGroup());
         return metadata;
     }
 
@@ -99,8 +87,6 @@ public abstract class CollectionMetadata extends FieldMetadata {
         if (!Arrays.equals(customCriteria, metadata.customCriteria)) return false;
         if (persistencePerspective != null ? !persistencePerspective.equals(metadata.persistencePerspective) : metadata.persistencePerspective != null)
             return false;
-        if (group != null ? !group.equals(metadata.group) : metadata.group != null)
-            return false;
 
         return true;
     }
@@ -111,7 +97,6 @@ public abstract class CollectionMetadata extends FieldMetadata {
         result = 31 * result + (collectionCeilingEntity != null ? collectionCeilingEntity.hashCode() : 0);
         result = 31 * result + (mutable ? 1 : 0);
         result = 31 * result + (customCriteria != null ? Arrays.hashCode(customCriteria) : 0);
-        result = 31 * result + (group != null ? group.hashCode() : 0);
         return result;
     }
 }
