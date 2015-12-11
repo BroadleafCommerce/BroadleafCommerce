@@ -817,11 +817,12 @@ var BLCAdmin = (function($) {
                         if (options != null && options['clearChildData'] && !event.initialization) {
                             BLCAdmin.setFieldValue($childField, null);
                         }
-                        
+
                         // Toggle the visiblity of the child field appropriately
                         $childField.toggle(shouldShow);
 
                         var $cardContent = $childField.closest('.fieldset-card-content');
+                        var $card = $cardContent.closest('.fieldset-card');
                         var numTotalFields = $cardContent.find('.field-group').length;
 						var numHiddenFields = 0;
 						$cardContent.find('.field-group').each(function() {
@@ -829,8 +830,13 @@ var BLCAdmin = (function($) {
 								numHiddenFields += 1;
 							}
 						});
-						if (numTotalFields === numHiddenFields && !$cardContent.hasClass('content-collapsed')) {
-                            $childField.closest('.fieldset-card').toggle(shouldShow);
+						if (numTotalFields === numHiddenFields) {
+                            $card.hide();
+                        } else {
+                            $card.show();
+                            if ($card.find('.titlebar .collapsed').length && !$cardContent.hasClass('content-collapsed')) {
+                                $card.find('.titlebar').click();
+                            }
                         }
                         
                         if (options != null 

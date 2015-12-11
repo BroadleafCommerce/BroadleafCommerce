@@ -22,9 +22,8 @@ package org.broadleafcommerce.openadmin.dto;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
 
 import java.io.Serializable;
-import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * @author Chris Kittrell
@@ -35,7 +34,7 @@ public class TabMetadata implements Serializable {
 
     protected String owningClass;
 
-    protected TreeMap<String, GroupMetadata> groupMetadata;
+    protected Map<String, GroupMetadata> groupMetadata;
     protected String tabName;
     protected Integer tabOrder;
 
@@ -68,33 +67,21 @@ public class TabMetadata implements Serializable {
     }
 
     public void setGroupMetadata(Map<String, GroupMetadata> groupMetadata) {
-        TreeMap<String, GroupMetadata> orderedMap = new TreeMap<>(new GroupOrderComparator(groupMetadata));
-        orderedMap.putAll(groupMetadata);
-        this.groupMetadata = orderedMap;
+        this.groupMetadata = groupMetadata;
     }
 
     public GroupMetadata getFirstGroup() {
-        return groupMetadata.firstEntry() == null ? null : groupMetadata.firstEntry().getValue();
-    }
+        Iterator<GroupMetadata> groupMetadataIterator = groupMetadata.values().iterator();
+        GroupMetadata result = groupMetadataIterator.hasNext() ? groupMetadataIterator.next() : null;
 
-    class GroupOrderComparator implements Comparator<String> {
-        Map<String, GroupMetadata> base;
-
-        public GroupOrderComparator(Map<String, GroupMetadata> base) {
-            this.base = base;
-        }
-
-        @Override
-        public int compare(String key1, String key2) {
-            if (base.get(key1) == null) {
-                return 1;
-            } else if (base.get(key2) == null) {
-                return -1;
-            } else {
-                int comparison = base.get(key1).getGroupOrder().compareTo(base.get(key2).getGroupOrder());
-                return comparison == 0 ? key1.compareTo(key2) : comparison;
+        while(groupMetadataIterator.hasNext()) {
+            GroupMetadata next = groupMetadataIterator.next();
+            if (next.getGroupOrder() < result.getGroupOrder()) {
+                result = next;
             }
         }
+
+        return result;
     }
 
     public TabMetadata cloneFieldMetadata() {
