@@ -834,7 +834,7 @@ var BLCAdmin = (function($) {
                             $card.hide();
                         } else {
                             $card.show();
-                            if ($card.find('.titlebar .collapsed').length) {
+                            if ($card.find('.titlebar .collapsed').length && !$cardContent.hasClass('content-collapsed')) {
                                 $card.find('.titlebar').click();
                             }
                         }
