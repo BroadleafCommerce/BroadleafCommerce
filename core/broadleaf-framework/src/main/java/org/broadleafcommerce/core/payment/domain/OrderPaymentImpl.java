@@ -158,10 +158,6 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
     protected List<PaymentTransaction> transactions = new ArrayList<PaymentTransaction>();
 
-    @Column(name = "SAVE_TOKEN")
-    @AdminPresentation(friendlyName = "OrderPaymentImpl_Save_Token")
-    protected Boolean saveToken = false;
-    
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
     
@@ -236,16 +232,6 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     }
 
     @Override
-    public boolean isSaveToken() {
-        return saveToken == null ? false : saveToken;
-    }
-
-    @Override
-    public void setSaveToken(boolean saveToken) {
-        this.saveToken = saveToken;
-    }
-
-    @Override
     public List<PaymentTransaction> getTransactions() {
         return transactions;
     }
@@ -301,6 +287,44 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             }
         }
         return amount;
+    }
+
+    @Override
+    public boolean isAuthorize() {
+        List<PaymentTransaction> txs = getTransactionsForType(PaymentTransactionType.AUTHORIZE);
+        for (PaymentTransaction tx : txs) {
+            if (tx.getSuccess()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isAuthorizeAndCapture() {
+        List<PaymentTransaction> txs = getTransactionsForType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE);
+        for (PaymentTransaction tx : txs) {
+            if (tx.getSuccess()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isPending() {
+        boolean containsPending = false;
+        List<PaymentTransaction> txs = getTransactionsForType(PaymentTransactionType.PENDING);
+        for (PaymentTransaction tx : txs) {
+            if (tx.getSuccess()) {
+                containsPending = true;
+                break;
+            }
+        }
+
+        return !isAuthorize() && !isAuthorizeAndCapture() && containsPending;
     }
 
     @Override
