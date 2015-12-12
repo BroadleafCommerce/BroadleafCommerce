@@ -102,6 +102,11 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
     }
 
     @Override
+    public ExtensionResultStatusType getSearchableIndexFields(List<IndexField> fields) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
     public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }

@@ -417,13 +417,12 @@ public interface SolrHelperService {
 
     /**
      * Sets up the sorting criteria. This will support sorting by multiple fields at a time
-     * 
+     *
      * @param query
      * @param searchCriteria
      * @param defaultSort
-     * @param fields
      */
-    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort, List<IndexField> fields);
+    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort);
 
     /* 
      * Builds a map of the fields with the abbreviation 
@@ -469,5 +468,14 @@ public interface SolrHelperService {
      */
     public String getDocumentType(Indexable indexable);
 
+    /**
+     *
+     * @deprecated marking this as deprecated since this is a very dangerous operation in the context of search, in real
+     * world situations you could have hundreds or thousands of index fields and it isn't efficient to query all of those
+     * into memory at once, it is better to get index fields in a more selective way as needed.
+     * @return
+     */
     List<IndexField> getIndexFields();
+
+    List<IndexField> getSearchableIndexFields();
 }
