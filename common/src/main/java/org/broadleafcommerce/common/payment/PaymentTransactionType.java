@@ -40,6 +40,45 @@ import java.util.Map;
  * @see {@link #UNCONFIRMED}
  * @see {@link #PENDING}
  *
+ *  The following is a depiction of the possible state flows for an Order Payment and the
+ *  hierarchical relationship of all its transactions:
+ *
+ * +-------------+
+ * | UNCONFIRMED |
+ * +-+-----------+
+ *   |
+ *   | +--------------------+
+ *   +-+ PENDING (Optional) |
+ *     +-+----------------+-+
+ *       |                |
+ *       | +-----------+  |                +-----------------------+
+ *       +-+ AUTHORIZE |  +----------------+ AUTHORIZE_AND_CAPTURE |
+ *         +-+---------+                   +-+---------------------+
+ *           |                             |
+ *           | +-------------------+       | +------+
+ *           +-+ REVERSE_AUTHORIZE |       +-+ VOID |
+ *           | +-------------------+       | +------+
+ *           |                             |
+ *           | +---------+                 | +--------------------+
+ *           +-+ CAPTURE |                 +-+ SETTLED (Optional) |
+ *             +-+-------+                   +-+------------------+
+ *               |                             |
+ *               | +------+                    | +--------+
+ *               +-+ VOID |                    +-+ REFUND |
+ *               | +------+                      +--------+
+ *               |
+ *               | +--------------------+
+ *               +-+ SETTLED (Optional) |
+ *                 +-+------------------+
+ *                   |
+ *                   | +--------+
+ *                   +-+ REFUND |
+ *                     +--------+
+ *
+ *  +-----------------+
+ *  | DETACHED_CREDIT |
+ *  +-----------------+
+ *
  * @author Jerry Ocanas (jocanas)
  * @author Phillip Verheyden (phillipuniverse)
  * @author Elbert Bautista (elbertbautista)
