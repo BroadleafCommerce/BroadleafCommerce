@@ -547,7 +547,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     protected String buildQueryFieldsString(SolrQuery query) {
         StringBuilder queryBuilder = new StringBuilder();
-        List<IndexField> fields = shs.getIndexFields();
+        List<IndexField> fields = shs.getSearchableIndexFields();
 
         // we want to gather all the query fields into one list
         List<String> queryFields = new ArrayList<>();
@@ -750,9 +750,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @param searchCriteria
      */
     protected void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
-        List<IndexField> fields = shs.getIndexFields();
-
-        shs.attachSortClause(query, searchCriteria, defaultSort, fields);
+        shs.attachSortClause(query, searchCriteria, defaultSort);
         query.addSort("score", SolrQuery.ORDER.desc);
     }
 
