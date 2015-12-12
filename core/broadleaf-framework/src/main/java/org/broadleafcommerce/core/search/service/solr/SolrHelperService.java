@@ -468,14 +468,5 @@ public interface SolrHelperService {
      */
     public String getDocumentType(Indexable indexable);
 
-    /**
-     *
-     * @deprecated marking this as deprecated since this is a very dangerous operation in the context of search, in real
-     * world situations you could have hundreds or thousands of index fields and it isn't efficient to query all of those
-     * into memory at once, it is better to get index fields in a more selective way as needed.
-     * @return
-     */
-    List<IndexField> getIndexFields();
-
     List<IndexField> getSearchableIndexFields();
 }

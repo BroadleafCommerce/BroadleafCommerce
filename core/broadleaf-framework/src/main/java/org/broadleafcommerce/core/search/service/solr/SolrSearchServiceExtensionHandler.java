@@ -172,16 +172,6 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
     public ExtensionResultStatusType getCategorySearchFacets(Category category, List<SearchFacet> searchFacets);
 
     /**
-     * Populated the List of IndexField's for a Solr query. It is assumed
-     * that if the result of this call is NOT_HANDLED, then SolrSearchService will follow it's default behavior for
-     * populating IndexFields.
-     *
-     * @param fields the List to be populated.
-     * @return HANDLED_CONTINUE if it added field, NOT_HANDLED otherwise
-     */
-    public ExtensionResultStatusType getIndexFields(List<IndexField> fields);
-
-    /**
      * Populated the List of searchable IndexField's that will be used in building the query fields (qf) for a Solr query.
      * It is assumed that if the result of this call is NOT_HANDLED, then SolrSearchService will follow it's default behavior
      * for populating IndexFields.

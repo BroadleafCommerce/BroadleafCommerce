@@ -71,6 +71,7 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -84,6 +85,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+
 import javax.annotation.Resource;
 import javax.jms.IllegalStateException;
 
@@ -833,24 +835,6 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         } else {
             collection.add(o);
         }
-    }
-
-    @Override
-    @Deprecated
-    public List<IndexField> getIndexFields() {
-        List<IndexField> fields = new ArrayList<>();
-
-        ExtensionResultStatusType status = searchExtensionManager.getProxy().getIndexFields(fields);
-
-        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
-            if (useSku) {
-                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
-            } else {
-                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
-            }
-        }
-
-        return fields;
     }
 
     @Override
