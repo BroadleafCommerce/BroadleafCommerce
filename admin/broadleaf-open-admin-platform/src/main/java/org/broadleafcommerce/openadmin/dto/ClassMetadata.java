@@ -156,7 +156,9 @@ public class ClassMetadata implements Serializable {
 
         while(tabMetadataIterator.hasNext()) {
             TabMetadata next = tabMetadataIterator.next();
-            if (next.getTabOrder() < result.getTabOrder()) {
+            if (result.getTabOrder() == null) {
+                result = next;
+            } else if (next.getTabOrder() != null && next.getTabOrder() < result.getTabOrder()) {
                 result = next;
             }
         }

@@ -24,11 +24,16 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminGroupPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminTabPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminGroupPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminTabPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.util.BLCAnnotationUtils;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.GroupMetadata;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.dto.override.GroupMetadataOverride;
@@ -106,6 +111,51 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
                 }
             }
         }
+        return MetadataProviderResponse.HANDLED;
+    }
+
+    @Override
+    public MetadataProviderResponse addTabAndGroupMetadataFromCmdProperties(ClassMetadata cmd, Map<String, TabMetadata> metadata) {
+        for (Property p : cmd.getProperties()) {
+            FieldMetadata fmd = p.getMetadata();
+            boolean isExcluded = fmd.getExcluded() != null && fmd.getExcluded() == true;
+            boolean isHidden = fmd instanceof BasicFieldMetadata && ((BasicFieldMetadata) fmd).getVisibility() != null
+                    && (((BasicFieldMetadata) fmd).getVisibility().equals(VisibilityEnum.HIDDEN_ALL)
+                    || ((BasicFieldMetadata) fmd).getVisibility().equals(VisibilityEnum.FORM_HIDDEN));
+            if (!(isExcluded || isHidden)) {
+                GroupMetadata groupMetadata = getGroupFromMetadata(fmd.getGroup(), metadata);
+                if (groupMetadata == null) {
+                    TabMetadata tabMetadata = getTabFromMetadata(fmd.getTab(), metadata);
+                    Map<String, GroupMetadata> groupMetadataMap = tabMetadata == null || tabMetadata.getGroupMetadata() == null ?
+                            new HashMap<String, GroupMetadata>() : tabMetadata.getGroupMetadata();
+                    if (tabMetadata == null) {
+                        tabMetadata = new TabMetadata();
+                        tabMetadata.setTabName(fmd.getTab());
+                        tabMetadata.setTabOrder(fmd.getTabOrder());
+                        tabMetadata.setOwningClass(cmd.getPolymorphicEntities().getFullyQualifiedClassname());
+                        tabMetadata.setGroupMetadata(groupMetadataMap);
+                        metadata.put(fmd.getTab(), tabMetadata);
+                    }
+
+                    // Add new group for the field to be placed into
+                    // If group exists, this code will not run
+                    //
+                    // If fmd.getGroup.isEmpty() == true, then this property ('p')
+                    // is a collection being added to only the specified tab, not a group as well.
+                    if (!(fmd.getGroup() == null || fmd.getGroup().isEmpty())) {
+                        groupMetadata = new GroupMetadata();
+                        groupMetadata.setOwningClass(cmd.getPolymorphicEntities().getFullyQualifiedClassname());
+                        groupMetadata.setGroupName(fmd.getGroup());
+                        groupMetadata.setGroupOrder(fmd.getGroupOrder());
+                        groupMetadata.setColumn(0);
+                        groupMetadata.setUntitled(false);
+                        groupMetadata.setCollapsed(false);
+                        groupMetadataMap.put(fmd.getGroup(), groupMetadata);
+                    }
+                }
+            }
+        }
+
         return MetadataProviderResponse.HANDLED;
     }
 

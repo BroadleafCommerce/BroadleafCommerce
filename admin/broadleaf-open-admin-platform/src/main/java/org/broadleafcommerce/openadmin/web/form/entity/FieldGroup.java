@@ -40,8 +40,8 @@ public class FieldGroup {
     protected String title;
     protected String key;
     protected Integer order;
-    protected Set<Field> alternateOrderedFields = new HashSet<Field>();
-    protected Set<Field> fields = new HashSet<Field>();
+    protected Set<Field> alternateOrderedFields = new HashSet<>();
+    protected Set<Field> fields = new HashSet<>();
     protected Boolean isVisible;
     protected Integer column;
     protected Boolean isUntitled;
@@ -273,6 +273,6 @@ public class FieldGroup {
     }
 
     public boolean hasFieldOrListGrid() {
-        return fields.size() > 0 || listGrids.size() > 0;
+        return fields.size() > 0 || alternateOrderedFields.size() > 0|| listGrids.size() > 0;
     }
 }

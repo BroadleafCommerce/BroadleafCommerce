@@ -29,7 +29,7 @@ $(document).ready(function(){
         $(container).each(function() {
 
             $el = $(this);
-            $($el).height('auto')
+            $($el).height('auto');
             topPostion = $el.position().top;
 
             if (currentRowStart != topPostion) {

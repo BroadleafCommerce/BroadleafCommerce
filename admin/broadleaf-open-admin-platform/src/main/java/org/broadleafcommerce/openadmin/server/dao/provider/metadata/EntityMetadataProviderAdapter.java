@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
@@ -47,6 +48,11 @@ public class EntityMetadataProviderAdapter extends AbstractEntityMetadataProvide
 
     @Override
     public MetadataProviderResponse overrideMetadataViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, TabMetadata> metadata) {
+        return MetadataProviderResponse.NOT_HANDLED;
+    }
+
+    @Override
+    public MetadataProviderResponse addTabAndGroupMetadataFromCmdProperties(ClassMetadata cmd, Map<String, TabMetadata> metadata) {
         return MetadataProviderResponse.NOT_HANDLED;
     }
 

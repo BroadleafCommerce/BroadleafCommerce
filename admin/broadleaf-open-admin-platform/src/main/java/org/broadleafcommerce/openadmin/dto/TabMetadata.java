@@ -76,7 +76,9 @@ public class TabMetadata implements Serializable {
 
         while(groupMetadataIterator.hasNext()) {
             GroupMetadata next = groupMetadataIterator.next();
-            if (next.getGroupOrder() < result.getGroupOrder()) {
+            if (result.getGroupOrder() == null) {
+                result = next;
+            } else if (next.getGroupOrder() != null && next.getGroupOrder() < result.getGroupOrder()) {
                 result = next;
             }
         }

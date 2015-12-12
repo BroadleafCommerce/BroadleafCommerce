@@ -52,6 +52,10 @@
     padding: 15px 20px 0 !important;
 }
 
+.app-content .content .sandbox-bar #sandboxes {
+    padding: 0 10px 2px;
+}
+
 .entityFormTab {
     display:none;
 }

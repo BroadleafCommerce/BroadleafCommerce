@@ -58,9 +58,6 @@ public class BasicFieldMetadata extends FieldMetadata {
     //@AdminPresentation derived fields
     protected String name;
     protected VisibilityEnum visibility;
-    protected String group;
-    @Deprecated
-    protected Integer groupOrder;
     @Deprecated
     protected Boolean groupCollapsed;
     protected SupportedFieldType explicitFieldType;
@@ -256,14 +253,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.displayType = displayType;
     }
 
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
     public Boolean isLargeEntry() {
         return largeEntry;
     }
@@ -313,16 +302,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.readOnly = readOnly;
     }
 
-    @Deprecated
-    public Integer getGroupOrder() {
-        return groupOrder;
-    }
-
-    @Deprecated
-    public void setGroupOrder(Integer groupOrder) {
-        this.groupOrder = groupOrder;
-    }
-    
     public Integer getGridOrder() {
         return gridOrder;
     }
@@ -587,11 +566,7 @@ public class BasicFieldMetadata extends FieldMetadata {
 
         metadata.name = name;
         metadata.visibility = visibility;
-        metadata.group = group;
-        metadata.groupOrder = groupOrder;
         metadata.groupCollapsed = groupCollapsed;
-        metadata.setTab(getTab());
-        metadata.setTabOrder(getTabOrder());
         metadata.explicitFieldType = explicitFieldType;
         metadata.displayType = displayType;
         metadata.largeEntry = largeEntry;
@@ -706,13 +681,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (foreignKeyProperty != null ? !foreignKeyProperty.equals(metadata.foreignKeyProperty) : metadata.foreignKeyProperty != null) {
             return false;
         }
-        if (group != null ? !group.equals(metadata.group) : metadata.group != null) {
-            return false;
-        }
         if (groupCollapsed != null ? !groupCollapsed.equals(metadata.groupCollapsed) : metadata.groupCollapsed != null) {
-            return false;
-        }
-        if (groupOrder != null ? !groupOrder.equals(metadata.groupOrder) : metadata.groupOrder != null) {
             return false;
         }
         if (helpText != null ? !helpText.equals(metadata.helpText) : metadata.helpText != null) {
@@ -843,8 +812,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (enumerationClass != null ? enumerationClass.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (visibility != null ? visibility.hashCode() : 0);
-        result = 31 * result + (group != null ? group.hashCode() : 0);
-        result = 31 * result + (groupOrder != null ? groupOrder.hashCode() : 0);
         result = 31 * result + (groupCollapsed != null ? groupCollapsed.hashCode() : 0);
         result = 31 * result + (explicitFieldType != null ? explicitFieldType.hashCode() : 0);
         result = 31 * result + (displayType != null ? displayType.hashCode() : 0);

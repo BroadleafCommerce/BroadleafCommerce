@@ -20,6 +20,7 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
@@ -125,5 +126,5 @@ public interface DynamicEntityDao {
 
     public SessionFactory getSessionFactory();
 
-    Map<String, TabMetadata> getTabAndGroupMetadata(Class<?>[] clazz);
+    Map<String, TabMetadata> getTabAndGroupMetadata(Class<?>[] clazz, ClassMetadata cmd);
 }

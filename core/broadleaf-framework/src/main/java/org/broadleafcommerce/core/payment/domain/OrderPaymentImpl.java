@@ -43,15 +43,19 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.payment.service.OrderPaymentStatusService;
+import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+import org.springframework.context.ApplicationContext;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -292,41 +296,14 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     }
 
     @Override
-    public boolean isAuthorize() {
-        List<PaymentTransaction> txs = getTransactionsForType(PaymentTransactionType.AUTHORIZE);
-        for (PaymentTransaction tx : txs) {
-            if (tx.getSuccess()) {
-                return true;
-            }
+    public OrderPaymentStatus getStatus() {
+        ApplicationContext ctx = ApplicationContextHolder.getApplicationContext();
+        if (ctx == null) {
+            return null;
         }
 
-        return false;
-    }
-
-    @Override
-    public boolean isAuthorizeAndCapture() {
-        List<PaymentTransaction> txs = getTransactionsForType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE);
-        for (PaymentTransaction tx : txs) {
-            if (tx.getSuccess()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean isPending() {
-        boolean containsPending = false;
-        List<PaymentTransaction> txs = getTransactionsForType(PaymentTransactionType.PENDING);
-        for (PaymentTransaction tx : txs) {
-            if (tx.getSuccess()) {
-                containsPending = true;
-                break;
-            }
-        }
-
-        return !isAuthorize() && !isAuthorizeAndCapture() && containsPending;
+        OrderPaymentStatusService svc = ctx.getBean("blOrderPaymentStatusService", OrderPaymentStatusService.class);
+        return svc.determineOrderPaymentStatus(this);
     }
 
     @Override

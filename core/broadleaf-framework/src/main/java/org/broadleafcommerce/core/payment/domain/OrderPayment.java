@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
+import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
 import org.broadleafcommerce.profile.core.domain.Address;
 
 import java.io.Serializable;
@@ -194,30 +195,11 @@ public interface OrderPayment extends Serializable, Status, MultiTenantCloneable
     public Money getSuccessfulTransactionAmountForType(PaymentTransactionType type);
 
     /**
-     * Convenience method to look through all the transactions for this payment
-     * and return whether or not it contains a successful transaction of type
-     * {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE}
-     * @return whether or not this payment has been authorized
+     * Convenience method to get the calculated status of this order payment based on the
+     * state of the {@link #getTransactions()}
+     * @return {@link org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus}
      */
-    public boolean isAuthorize();
-
-    /**
-     * Convenience method to look through all the transactions for this payment
-     * and return whether or not it contains a successful transaction of type
-     * {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE_AND_CAPTURE}
-     * @return whether or not this payment has been authorized and captured
-     */
-    public boolean isAuthorizeAndCapture();
-
-    /**
-     * Convenience method to look through all the transactions for this payment
-     * and return whether or not it contains a successful transaction of type
-     * {@link org.broadleafcommerce.common.payment.PaymentTransactionType#PENDING}
-     * and does NOT contain an {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE}
-     * or {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE_AND_CAPTURE} transaction
-     * @return whether or not this payment is in the pending state
-     */
-    public boolean isPending();
+    public OrderPaymentStatus getStatus();
 
     /**
      * Looks through all of the transactions for this payment and returns whether or not

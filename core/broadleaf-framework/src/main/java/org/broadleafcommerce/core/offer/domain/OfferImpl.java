@@ -96,14 +96,14 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "OFFER_DESCRIPTION")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = FieldOrder.Description,
         group = OfferAdminPresentation.GroupName.Description,
-        largeEntry = true, fieldType = SupportedFieldType.DESCRIPTION)
+        largeEntry = true, fieldType = SupportedFieldType.DESCRIPTION, defaultValue = "")
     protected String description;
 
     @Column(name = "MARKETING_MESSASGE")
     @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnNames = { "MARKETING_MESSASGE" })
     @AdminPresentation(friendlyName = "OfferImpl_marketingMessage", order = FieldOrder.Message,
         group = GroupName.Marketing,
-        translatable = true)
+        translatable = true, defaultValue = "")
     protected String marketingMessage;
 
     @Column(name = "OFFER_TYPE", nullable=false)
@@ -128,7 +128,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order = FieldOrder.Amount,
         group = OfferAdminPresentation.GroupName.Description,
         prominent = true, gridOrder = 4,
-        defaultValue = "0")
+        defaultValue = "0.00000")
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")
@@ -292,14 +292,14 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Qualifying_Item_Subtotal",
         group = OfferAdminPresentation.GroupName.QualifierRuleRestriction,
-        order = 2000, defaultValue = "0")
+        order = 2000, defaultValue = "0.00000")
     protected BigDecimal qualifyingItemSubTotal;
 
     @Column(name = "ORDER_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Order_Subtotal",
         tooltip = "OfferImplMinOrderSubtotal_tooltip",
         group = GroupName.Restrictions,
-        order = 2000, defaultValue = "0")
+        order = 2000, defaultValue = "0.00000")
     protected BigDecimal orderMinSubTotal;
 
     @Column(name = "OFFER_ITEM_TARGET_RULE")
