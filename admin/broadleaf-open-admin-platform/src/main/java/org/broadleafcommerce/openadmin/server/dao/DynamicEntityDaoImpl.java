@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
+import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -196,7 +197,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         return ejb3ConfigurationDao.getConfiguration().getClassMapping(targetClassName);
     }
 
-    protected boolean useCache() {
+    @Override
+    public boolean useCache() {
         if (cacheEntityMetaDataTtl < 0) {
             return true;
         }
@@ -220,13 +222,15 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         return getAllPolymorphicEntitiesFromCeiling(ceilingClass, true);
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao#getAllPolymorphicEntitiesFromCeiling(java.lang.Class)
-     */
     @Override
     public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, boolean includeUnqualifiedPolymorphicEntities) {
         return dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(ceilingClass, getSessionFactory(), 
                 includeUnqualifiedPolymorphicEntities, useCache());
+    }
+
+    @Override
+    public Class<?>[] getUpDownInheritance(Class<?> testClass) {
+        return dynamicDaoHelper.getUpDownInheritance(testClass, getSessionFactory(), true, useCache(), ejb3ConfigurationDao);
     }
 
     public Class<?>[] sortEntities(Class<?> ceilingClass, List<Class<?>> entities) {
@@ -1322,6 +1326,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         this.standardEntityManager = entityManager;
     }
 
+    @Override
     public EJB3ConfigurationDao getEjb3ConfigurationDao() {
         return ejb3ConfigurationDao;
     }
@@ -1376,7 +1381,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         return dynamicDaoHelper.isExcludeClassFromPolymorphism(clazz);
     }
 
-    
+    @Override
     public DynamicDaoHelper getDynamicDaoHelper() {
         return dynamicDaoHelper;
     }
