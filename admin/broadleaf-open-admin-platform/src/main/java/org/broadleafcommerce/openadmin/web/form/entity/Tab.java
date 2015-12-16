@@ -153,7 +153,13 @@ public class Tab {
     }
 
     public String getTitle() {
-        return title != null ? title : BLCMessageUtils.getMessage(key);
+        if (title != null) {
+            return title;
+        } else if (key != null) {
+            return BLCMessageUtils.getMessage(key);
+        }
+
+        return null;
     }
 
     public void setTitle(String title) {
