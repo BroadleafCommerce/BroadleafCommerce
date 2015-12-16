@@ -404,7 +404,14 @@
                 //console.log('Loading more records -- ' + url);
                 
                 BLC.ajax({ url: url, type: 'GET' }, function(data) {
-                    var $newTbody = data.find('tbody');
+                    var $newTbody;
+                    if ($tbody.closest('.tree-column-wrapper').length) {
+                        var treeColumnParentId = $tbody.closest('.select-column').data('parentid');
+                        $newTbody = $(data).find(".select-column[data-parentid='" + treeColumnParentId + "']").find('tbody');
+                    } else {
+                        var listGridId = $tbody.closest('table').attr('id');
+                        $newTbody = $(data).find('table#' + listGridId).find('tbody');
+                    }
                     BLCAdmin.listGrid.paginate.injectRecords($tbody, $newTbody);
                     BLCAdmin.listGrid.paginate.releaseLock();
                     
@@ -807,13 +814,16 @@
 $(document).ready(function() {
     
     $(window).resize(function() {
-        $.doTimeout('resizeListGrid', 150, function() {
-            $('tbody').each(function(index, element) {
+        $.doTimeout('resizeListGrid', 0, function() {
+            BLCAdmin.getActiveTab().find('tbody').each(function(index, element) {
                 if ($(element).is(':visible')) {
                     BLCAdmin.listGrid.paginate.updateGridSize($(element));
                 } else {
                     $(element).addClass('needsupdate');
                 }
+            });
+            BLCAdmin.getActiveTab().find('.fieldgroup-listgrid-wrapper-header').each(function(index, element) {
+                BLCAdmin.listGrid.updateGridTitleBarSize($(element));
             });
         });
     });

@@ -32,17 +32,11 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.web.Locatable;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 
@@ -76,15 +70,15 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     protected Long id;
 
     @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = GroupName.General, prominent = true,
-            helpText = "urlHandlerIncoming_help", defaultValue = "/incoming/url")
+            helpText = "urlHandlerIncoming_help", defaultValue = "")
     @Column(name = "INCOMING_URL", nullable = false)
     @Index(name="INCOMING_URL_INDEX", columnNames={"INCOMING_URL"})
-    protected String incomingURL = "/incoming/url";
+    protected String incomingURL;
 
     @Column(name = "NEW_URL", nullable = false)
     @AdminPresentation(friendlyName = "URLHandlerImpl_newURL", order = 1, group = GroupName.General, prominent = true,
-            helpText = "urlHandlerNew_help", defaultValue = "/new/url")
-    protected String newURL = "/new/url";
+            helpText = "urlHandlerNew_help", defaultValue = "")
+    protected String newURL;
 
     @Column(name = "URL_REDIRECT_TYPE")
     @AdminPresentation(friendlyName = "URLHandlerImpl_redirectType", order = 4, group = GroupName.Redirect,

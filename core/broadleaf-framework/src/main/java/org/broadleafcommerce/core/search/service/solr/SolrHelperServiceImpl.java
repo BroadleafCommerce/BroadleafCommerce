@@ -71,6 +71,7 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -84,6 +85,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+
 import javax.annotation.Resource;
 import javax.jms.IllegalStateException;
 
@@ -642,9 +644,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort, List<IndexField> fields) {
-        Map<String, String> solrFieldKeyMap = getSolrFieldKeyMap(searchCriteria, fields);
-
+    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
         String sortQuery = searchCriteria.getSortQuery();
         if (StringUtils.isBlank(sortQuery)) {
             sortQuery = defaultSort;
@@ -652,22 +652,25 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
         if (StringUtils.isNotBlank(sortQuery)) {
             String[] sortFields = sortQuery.split(",");
+
             for (String sortField : sortFields) {
-                String field = sortField.split(" ")[0];
-                if (solrFieldKeyMap.containsKey(field)) {
-                    field = solrFieldKeyMap.get(field);
-                }
-                ORDER order = ORDER.asc;
-                String[] sortFieldsSegments = sortField.split(" ");
-                if (sortFieldsSegments.length < 2) {
-                    StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
-                    msg.append("\nDefaulting to ASCending");
-                    LOG.warn(msg.toString());
-                } else if ("desc".equals(sortFieldsSegments[1])) {
-                    order = ORDER.desc;
-                }
-                if (field != null) {
-                    query.addSort(new SortClause(field, order));
+                List<IndexFieldType> fieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviation(sortField.split(" ")[0]);
+
+                for (IndexFieldType fieldType : fieldTypes) {
+                    String field = getPropertyNameForIndexField(fieldType.getIndexField(), fieldType.getFieldType());
+
+                    ORDER order = ORDER.asc;
+                    String[] sortFieldsSegments = sortField.split(" ");
+                    if (sortFieldsSegments.length < 2) {
+                        StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
+                        msg.append("\nDefaulting to ASCending");
+                        LOG.warn(msg.toString());
+                    } else if ("desc".equals(sortFieldsSegments[1])) {
+                        order = ORDER.desc;
+                    }
+                    if (field != null) {
+                        query.addSort(new SortClause(field, order));
+                    }
                 }
             }
         }
@@ -835,16 +838,16 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public List<IndexField> getIndexFields() {
+    public List<IndexField> getSearchableIndexFields() {
         List<IndexField> fields = new ArrayList<>();
 
-        ExtensionResultStatusType status = searchExtensionManager.getProxy().getIndexFields(fields);
+        ExtensionResultStatusType status = searchExtensionManager.getProxy().getSearchableIndexFields(fields);
 
         if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
             if (useSku) {
-                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
+                fields = indexFieldDao.readSearchableFieldsByEntityType(FieldEntity.SKU);
             } else {
-                fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+                fields = indexFieldDao.readSearchableFieldsByEntityType(FieldEntity.PRODUCT);
             }
         }
 

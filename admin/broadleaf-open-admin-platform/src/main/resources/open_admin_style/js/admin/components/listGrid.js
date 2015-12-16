@@ -74,12 +74,21 @@
 
             BLCAdmin.listGrid.paginate.updateTableFooter($listGridContainer.find('tbody'));
 
-            var $fieldSetCard = $listGridContainer.closest('.fieldset-card.listgrid-container');
+            var $fieldGroupListGridWrapperHeader = $listGridContainer.find('.fieldgroup-listgrid-wrapper-header');
+            var $tbody = $listGridContainer.find('.listgrid-body-wrapper table tbody');
             var totalRecords = $listGridContainer.find('.listgrid-body-wrapper table tbody').data('totalrecords');
-            if ($fieldSetCard.length && totalRecords !== 0) {
-                var $collapser = $fieldSetCard.find('.titlebar .collapser span');
-                if ($collapser.hasClass('collapsed')) {
-                    $fieldSetCard.find('a.titlebar').click();
+            if ($fieldGroupListGridWrapperHeader.length) {
+                var $totalRecords = $fieldGroupListGridWrapperHeader.find('.listgrid-total-records');
+                var totalRecordsText = totalRecords == 1 ? '(' + totalRecords + ' Record)' : '(' + totalRecords + ' Records)';
+                $totalRecords.html(totalRecordsText);
+
+                if (totalRecords !== 0) {
+                    $fieldGroupListGridWrapperHeader.removeClass('hidden-body');
+                    $fieldGroupListGridWrapperHeader.parent().find('.fieldgroup-listgrid-wrapper').removeClass('hidden');
+                    BLCAdmin.listGrid.paginate.updateGridSize($tbody);
+                } else {
+                    $fieldGroupListGridWrapperHeader.addClass('hidden-body');
+                    $fieldGroupListGridWrapperHeader.parent().find('.fieldgroup-listgrid-wrapper').addClass('hidden');
                 }
             }
 
@@ -200,13 +209,13 @@
 
             function updateListGridActionsForContainer($containerActions, numSelected) {
                 if (numSelected) {
-                    $containerActions.removeAttr('disabled');
+                    $containerActions.removeClass('disabled').prop('disabled', false);
                 } else {
-                    $containerActions.attr('disabled', 'disabled');
+                    $containerActions.addClass('disabled').prop('disabled', true);
                 }
 
                 if (numSelected > 1) {
-                    $containerActions.filter('.single-action-only').attr('disabled', 'disabled');
+                    $containerActions.filter('.single-action-only').prop('disabled', true);
                 }
             }
         },
@@ -222,10 +231,10 @@
     	    $alert.append($closeLink);
     	    
     	    if (options.clearOtherAlerts) {
-    	        $container.children('.list-grid-alert').find('a.close').click();
+                $container.find('.alert-box').remove();
     	    }
 
-            var alertTarget = $container.find('.titlebar:first-child');
+            var alertTarget = $container.find('.titlebar:first-child .titlebar-title');
             if (!alertTarget.length) {
                 alertTarget = $container.find('label span');
             }
@@ -237,7 +246,7 @@
                         $closeLink.closest(".alert-box").remove();
                     }, options.autoClose);
                 }
-            }, 500);
+            });
         },
         
         fixHelper : function(e, ui) {
@@ -253,7 +262,6 @@
             if (spinnerOffset) {
                 $spinner.css('position', 'absolute');
                 $spinner.css('top', spinnerOffset + 'px');
-                $spinner.css('left', $tbody.offset().left - 80 + 'px');
             }
             $spinner.css('width',$tbody.width());
             $spinner.css('display', 'block');
@@ -294,6 +302,15 @@
         
         getListGridCount : function($container) {
             return $container.find('.listgrid-container').length;
+        },
+
+        updateGridTitleBarSize : function($titlebar) {
+            var maxWidth = $titlebar.width();
+            maxWidth -= $titlebar.find('.listgrid-toolbar').outerWidth();
+            maxWidth -= $titlebar.find('.listgrid-total-records').outerWidth();
+            maxWidth -= 70;
+
+            $titlebar.find('.listgrid-friendly-name').css('max-width', maxWidth + 'px');
         }
     };
     
@@ -641,14 +658,14 @@ $(document).ready(function() {
                             var $parent = $container.prev().find('tr.selected');
                             if (!$parent.hasClass('dirty')) {
                                 $parent.addClass('dirty');
-                                var pencilIcon = '<span><a class="hover-cursor workflow-icon icon-pencil" data-width="200" ' +
-                                    'title="This record has been modified in the current sandbox"></a></span>';
+                                var changeIcon = '<a class="blc-icon-site-updates has-tip hover-cursor workflow-icon" data-width="200" ' +
+                                    'title="This record has been modified in the current sandbox"></a>';
 
-                                if ($parent.find('.sub-list-grid-reorder').length) {
-                                    $parent.find('.sub-list-grid-reorder').after(pencilIcon);
+                                if ($parent.find('.workflow-change-icon').length) {
+                                    $parent.find('.workflow-change-icon').html(changeIcon);
                                 } else {
                                     var contents = $parent.find('td:first').html();
-                                    $parent.find('td:first').html(pencilIcon + contents);
+                                    $parent.find('td:first').html(changeIcon + contents);
                                 }
                             }
                         }
@@ -696,7 +713,8 @@ $(document).ready(function() {
                 BLCAdmin.listGrid.replaceRelatedCollection($(data), {
                     message: BLCAdmin.messages.saved + '!', 
                     alertType: 'save-alert', 
-                    autoClose: 3000
+                    autoClose: 3000,
+                    clearOtherAlerts: true
                 });
             }
         });

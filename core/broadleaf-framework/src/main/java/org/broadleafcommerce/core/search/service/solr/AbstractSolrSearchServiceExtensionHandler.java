@@ -65,39 +65,48 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override public ExtensionResultStatusType getQueryField(SolrQuery query, IndexField indexField, IndexFieldType indexFieldType, ExtensionResultHolder<List<String>> queryFieldsResult) {
+    @Override
+    public ExtensionResultStatusType getQueryField(SolrQuery query, IndexField indexField, IndexFieldType indexFieldType, ExtensionResultHolder<List<String>> queryFieldsResult) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override public ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<Product> products) {
+    @Override
+    public ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<Product> products) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override public ExtensionResultStatusType getSearchFacets(List<SearchFacet> searchFacets) {
+    @Override
+    public ExtensionResultStatusType getSearchFacets(List<SearchFacet> searchFacets) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override public ExtensionResultStatusType attachFacet(SolrQuery query, String indexField, SearchFacetDTO dto) {
+    @Override
+    public ExtensionResultStatusType attachFacet(SolrQuery query, String indexField, SearchFacetDTO dto) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override public ExtensionResultStatusType setFacetResults(Map<String, SearchFacetDTO> namedFacetMap, QueryResponse response) {
+    @Override
+    public ExtensionResultStatusType setFacetResults(Map<String, SearchFacetDTO> namedFacetMap, QueryResponse response) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override public ExtensionResultStatusType buildActiveFacetFilter(FieldEntity entityType, String solrKey, String[] selectedValues, List<String> valueStrings) {
+    @Override
+    public ExtensionResultStatusType buildActiveFacetFilter(FieldEntity entityType, String solrKey, String[] selectedValues, List<String> valueStrings) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override public ExtensionResultStatusType addAdditionalCategoryIds(Category category, List<Long> categoryIds) {
+    @Override
+    public ExtensionResultStatusType addAdditionalCategoryIds(Category category, List<Long> categoryIds) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override public ExtensionResultStatusType getCategorySearchFacets(Category category, List<SearchFacet> searchFacets) {
+    @Override
+    public ExtensionResultStatusType getCategorySearchFacets(Category category, List<SearchFacet> searchFacets) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override public ExtensionResultStatusType getIndexFields(List<IndexField> fields) {
+    @Override
+    public ExtensionResultStatusType getSearchableIndexFields(List<IndexField> fields) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

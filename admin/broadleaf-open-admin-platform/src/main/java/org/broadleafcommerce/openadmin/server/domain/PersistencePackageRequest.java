@@ -303,12 +303,24 @@ public class PersistencePackageRequest {
 
     public PersistencePackageRequest addCustomCriteria(String customCriteria) {
         if (this.customCriteria == null) {
-            this.customCriteria = new ArrayList<String>();
+            this.customCriteria = new ArrayList<>();
         }
         
         if (StringUtils.isNotBlank(customCriteria)) {
             this.customCriteria.add(customCriteria);
         }
+        return this;
+    }
+
+    public PersistencePackageRequest addCustomCriteria(String[] customCriteriaList) {
+        if (customCriteriaList != null && customCriteriaList.length > 0) {
+            if (this.customCriteria == null) {
+                this.customCriteria = new ArrayList<>(Arrays.asList(customCriteriaList));
+            } else {
+                this.customCriteria.addAll(new ArrayList<>(Arrays.asList(customCriteriaList)));
+            }
+        }
+
         return this;
     }
 

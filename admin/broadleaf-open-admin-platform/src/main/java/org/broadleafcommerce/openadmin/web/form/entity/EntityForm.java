@@ -364,10 +364,10 @@ public class EntityForm {
         Tab firstTab = tabs.isEmpty() ? null : tabs.first();
         FieldGroup firstGroup = firstTab == null || firstTab.getFieldGroups().isEmpty() ? null : ((TreeSet<FieldGroup>) firstTab.getFieldGroups()).first();
 
-        tabName = tabName == null ? (firstTab == null ? DEFAULT_TAB_NAME : firstTab.getKey()) : tabName;
-        tabOrder = tabOrder == null ? (firstTab == null ? DEFAULT_TAB_ORDER : firstTab.getOrder()) : tabOrder;
-        groupName = groupName == null ? (firstGroup == null ? DEFAULT_GROUP_NAME : firstGroup.getKey()) : groupName;
-        groupOrder = groupOrder == null ? (firstGroup == null ? DEFAULT_GROUP_ORDER : firstGroup.getOrder()) : groupOrder;
+        tabName = tabName == null ? (firstTab == null || firstTab.getKey() == null ? DEFAULT_TAB_NAME : firstTab.getKey()) : tabName;
+        tabOrder = tabOrder == null ? (firstTab == null || firstTab.getOrder() == null ? DEFAULT_TAB_ORDER : firstTab.getOrder()) : tabOrder;
+        groupName = groupName == null ? (firstGroup == null || firstGroup.getKey() == null ? DEFAULT_GROUP_NAME : firstGroup.getKey()) : groupName;
+        groupOrder = groupOrder == null ? (firstGroup == null || firstGroup.getOrder() == null ? DEFAULT_GROUP_ORDER : firstGroup.getOrder()) : groupOrder;
 
         // Check CMD for Tab/Group name overrides so that Tabs/Groups can be properly found by their display names
         boolean groupFound = false;
@@ -385,7 +385,9 @@ public class EntityForm {
                 if (groupFound) {
                     break;
                 }
-                if (tabKey.equals(tabName) || tabMetadataMap.get(tabKey).getTabName().equals(tabName)) {
+                if ((tabKey.equals(tabName)) ||
+                        (tabMetadataMap.get(tabKey).getTabName() != null
+                                && tabMetadataMap.get(tabKey).getTabName().equals(tabName))) {
                     tabName = tabMetadataMap.get(tabKey).getTabName();
                 }
             }
@@ -642,6 +644,7 @@ public class EntityForm {
     }
 
     public void setTabs(Set<Tab> tabs) {
+        this.tabs.clear();
         this.tabs.addAll(tabs);
     }
 
@@ -728,7 +731,9 @@ public class EntityForm {
     public String addTabFromTabMetadata(TabMetadata tabMetadata) {
         Tab newTab = new Tab();
         newTab.setKey(tabMetadata.getTabName());
-        newTab.setTitle(BLCMessageUtils.getMessage(tabMetadata.getTabName()));
+        if (tabMetadata.getTabName() != null) {
+            newTab.setTitle(BLCMessageUtils.getMessage(tabMetadata.getTabName()));
+        }
         newTab.setOrder(tabMetadata.getTabOrder());
         tabs.add(newTab);
         return newTab.getKey();

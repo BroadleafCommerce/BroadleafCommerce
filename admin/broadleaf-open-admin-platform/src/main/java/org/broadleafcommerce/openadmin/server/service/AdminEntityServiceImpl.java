@@ -245,7 +245,16 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     public PersistenceResponse getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumbs, String alternateId)
             throws ServiceException {
+        return getAdvancedCollectionRecord(containingClassMetadata, containingEntity, collectionProperty, collectionItemId, sectionCrumbs, alternateId, null);
+    }
+
+    @Override
+    public PersistenceResponse getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
+            Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumbs, String alternateId,
+            String[] customCriteria) throws ServiceException {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata(), sectionCrumbs);
+
+        ppr.addCustomCriteria(customCriteria);
 
         FieldMetadata md = collectionProperty.getMetadata();
         String containingEntityId = getContextSpecificRelationshipId(containingClassMetadata, containingEntity,
@@ -413,7 +422,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     tab.setOrder(tabOrder);
                     tabMap.put(tab.getTitle(), tab);
                     drs.setUnselectedTabMetadata(tabMap);
-                    drs.setTotalRecords(1);
+                    drs.setTotalRecords(0);
                     drs.setStartIndex(0);
                     drs.setBatchId(1);
                     drs.setClassMetaData(null);

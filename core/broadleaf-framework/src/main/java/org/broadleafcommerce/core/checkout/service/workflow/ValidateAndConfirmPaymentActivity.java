@@ -54,14 +54,10 @@ import javax.annotation.Resource;
  *
  * <ul>
  * <li>Verify that there is enough payment on the order via the <i>successful</i> amount on {@link PaymentTransactionType.AUTHORIZE} and
- * {@link PaymentTransactionType.AUTHORIZE_AND_CAPTURE} and {@link PaymentTransactionType.PPOST_CHECKOUT_AUTH_OR_SALE} transactions.</li>
+ * {@link PaymentTransactionType.AUTHORIZE_AND_CAPTURE} and {@link PaymentTransactionType.PENDING} transactions.</li>
  *
  * <li>"Confirm" any {@link PaymentTransactionType.UNCONFIRMED} transactions that exist on an {@link OrderPayment}. This can
- * mean different things depending on the type of Order Payment. If it is an unconfirmed {@link org.broadleafcommerce.common.payment.PaymentType#CREDIT_CARD},
- * then it will attempt to either "Authorize" or "Authorize and Capture" it at this time. If the transaction is of any other type,
- * it will attempt to call the implementing gateway's
- * {@link org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionConfirmationService#confirmTransaction(org.broadleafcommerce.common.payment.dto.PaymentRequestDTO)}</li>
- * 
+ * mean different things depending on the type of Order Payment and is handled by the {@link org.broadleafcommerce.core.checkout.service.strategy.OrderPaymentConfirmationStrategy}</li>
  * <li>If there is an exception (either in this activity or later downstream) the confirmed payments are rolled back via
  * {@link org.broadleafcommerce.core.checkout.service.workflow.ConfirmPaymentsRollbackHandler}. It will also by default
  * attempt to mark the payment as "ARCHIVED" so that the user may attempt to re-enter their payment details.</li>

@@ -128,7 +128,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
                     TabMetadata tabMetadata = getTabFromMetadata(fmd.getTab(), metadata);
                     Map<String, GroupMetadata> groupMetadataMap = tabMetadata == null || tabMetadata.getGroupMetadata() == null ?
                             new HashMap<String, GroupMetadata>() : tabMetadata.getGroupMetadata();
-                    if (tabMetadata == null) {
+                    if (tabMetadata == null && !(fmd.getTab() == null || fmd.getTab().isEmpty())) {
                         tabMetadata = new TabMetadata();
                         tabMetadata.setTabName(fmd.getTab());
                         tabMetadata.setTabOrder(fmd.getTabOrder());
