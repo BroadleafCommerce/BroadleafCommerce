@@ -210,8 +210,23 @@ public interface AdminEntityService {
      * @throws ServiceException
      */
     public PersistenceResponse getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
-            Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumb, String alternateId)
+            Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumbs, String alternateId)
             throws ServiceException;
+
+    /**
+     * Gets an Entity representing a specific collection item
+     *
+     * @param containingClassMetadata
+     * @param containingEntity
+     * @param collectionProperty
+     * @param collectionItemId
+     * @param customCriteria
+     * @return the Entity
+     * @throws ServiceException
+     */
+    public PersistenceResponse getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
+            Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumbs, String alternateId,
+            String[] customCriteria) throws ServiceException;
 
     /**
      * Returns the DynamicResultSet representing the records that belong to the specified collectionProperty for the 

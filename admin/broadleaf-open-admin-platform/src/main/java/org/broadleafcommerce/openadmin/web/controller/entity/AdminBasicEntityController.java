@@ -1544,7 +1544,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             // Get an entity form for the entity
             EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false);
             Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty, 
-                    collectionItemId, sectionCrumbs, alternateId).getDynamicResultSet().getRecords()[0];
+                    collectionItemId, sectionCrumbs, alternateId, new String[]{"reorderChildEntityFetch"})
+                    .getDynamicResultSet().getRecords()[0];
             formService.populateEntityFormFields(entityForm, entity);
             formService.populateAdornedEntityFormFields(entityForm, entity, ppr.getAdornedList());
             
