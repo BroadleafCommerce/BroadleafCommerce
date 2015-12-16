@@ -81,6 +81,15 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
 
     @Override
     public PaymentResponseDTO confirmTransaction(PaymentTransaction tx, ProcessContext<CheckoutSeed> context) throws PaymentException, WorkflowException, CheckoutException {
+        return confirmTransactionInternal(tx, context, true);
+    }
+
+    @Override
+    public PaymentResponseDTO confirmPendingTransaction(PaymentTransaction tx, ProcessContext<CheckoutSeed> context) throws PaymentException, WorkflowException, CheckoutException {
+        return confirmTransactionInternal(tx, context, false);
+    }
+
+    protected PaymentResponseDTO confirmTransactionInternal(PaymentTransaction tx, ProcessContext<CheckoutSeed> context, boolean isCheckout) throws PaymentException, WorkflowException, CheckoutException {
         // Cannot confirm anything here if there is no provider
         if (paymentConfigurationServiceProvider == null) {
             String msg = "There are unconfirmed payment transactions on this payment but no payment gateway" +
@@ -98,7 +107,7 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
         populateCustomerOnRequest(confirmationRequest, payment);
         populateShippingAddressOnRequest(confirmationRequest, payment);
 
-        if (enablePendingPaymentsOnConfirmation()) {
+        if (isCheckout && enablePendingPaymentsOnCheckoutConfirmation()) {
             responseDTO = constructPendingTransaction(payment.getType(), payment.getGatewayType(), confirmationRequest);
         } else {
             if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
@@ -211,7 +220,7 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
      * confirmation of an "UNCONFIRMED" transaction into a "PENDING" state
      * instead of confirming into an AUTHORIZE or AUTHORIZE_AND_CAPTURE status.
      */
-    protected boolean enablePendingPaymentsOnConfirmation() {
+    protected boolean enablePendingPaymentsOnCheckoutConfirmation() {
         return systemPropertiesService.resolveBooleanSystemProperty("gateway.config.global.enablePendingPayments");
     }
 

@@ -42,6 +42,12 @@ import java.util.Map;
  *    {@link #DETACHED_CREDIT_REFUND} can be passed to an implementation's
  *    {@link org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService#refund(org.broadleafcommerce.common.payment.dto.PaymentRequestDTO)}
  *    method to distinguish what type of refund to construct.
+ * 3. Some gateway implementations allow you to pass a manual authorization code received from the bank.
+ *    For example, a customer service representative can take orders over the phone and call the bank directly
+ *    to get an authorization code for the customer's card. In this scenario, if your gateway supports
+ *    this, {@link #MANUAL_AUTHORIZATION} can be passed into an implementation's
+ *    {@link org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService#authorize(org.broadleafcommerce.common.payment.dto.PaymentRequestDTO)}
+ *    method to distinguish what type of authorization to construct.
  *
  * @author Elbert Bautista (elbertbautista)
  */
@@ -55,6 +61,7 @@ public class PaymentGatewayRequestType implements Serializable, BroadleafEnumera
     public static final PaymentGatewayRequestType CUSTOMER_PAYMENT_TR = new PaymentGatewayRequestType("CUSTOMER_PAYMENT_TR", "Transparent Redirect Customer Payment Tokenization Request");
     public static final PaymentGatewayRequestType DETACHED_CREDIT_REFUND = new PaymentGatewayRequestType("DETACHED_CREDIT_REFUND", "Detached Credit Refund Request");
     public static final PaymentGatewayRequestType FOLLOW_ON_REFUND = new PaymentGatewayRequestType("FOLLOW_ON_REFUND", "Follow-on Refund Request");
+    public static final PaymentGatewayRequestType MANUAL_AUTHORIZATION = new PaymentGatewayRequestType("MANUAL_AUTHORIZATION", "Manual Authorization Request");
 
     public static PaymentGatewayRequestType getInstance(final String type) {
         return TYPES.get(type);
