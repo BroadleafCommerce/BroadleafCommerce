@@ -57,8 +57,6 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
         @AdminTabPresentation(name = CustomerAdminPresentation.TabName.Advanced,
             order = CustomerAdminPresentation.TabOrder.Advanced,
             groups = {
-                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Attributes,
-                    order = CustomerAdminPresentation.GroupOrder.Attributes),
                 @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Audit,
                     order = CustomerAdminPresentation.GroupOrder.Audit,
                     column = 1)
@@ -86,7 +84,6 @@ public interface CustomerAdminPresentation {
         public static final String ContactInfo = "CustomerImpl_ContactInfo";
         public static final String QualificationOptions = "CustomerImpl_Qualification_Options";
         public static final String Pricing = "Pricing";
-        public static final String Attributes = "CustomerImpl_Attributes";
         public static final String Audit = "CustomerImpl_Audit";
     }
 
@@ -95,7 +92,6 @@ public interface CustomerAdminPresentation {
         public static final int ContactInfo = 2000;
         public static final int QualificationOptions = 1000;
         public static final int Pricing = 1000;
-        public static final int Attributes = 1000;
         public static final int Audit = 1000;
     }
 
