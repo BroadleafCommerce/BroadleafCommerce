@@ -63,7 +63,7 @@
                 <!--</th>-->
                 <th class="listgrid-row-actions"
                     th:unless="${inModal}"
-                    th:if="${(not #lists.isEmpty(listGrid.activeRowActions)) or (listGrid.listGridType == 'workflow' and not #lists.isEmpty(listGrid.activeToolbarActions))}">
+                    th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
                     <th:comment th:remove="all">
                         This entry is acting as placeholder for Workflow Action links
                     </th:comment>
@@ -111,7 +111,7 @@
                 </div>
                 <td th:if="${listGrid.listGridType} == 'main'"></td>
                 <td th:unless="${inModal}"
-                    th:if="${(not #lists.isEmpty(listGrid.activeRowActions)) or (listGrid.listGridType == 'workflow' and not #lists.isEmpty(listGrid.activeToolbarActions))}">
+                    th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
                 </td>
             </tr>
             
@@ -238,18 +238,7 @@
 
                 <td class="listgrid-row-actions"
                     th:unless="${inModal}"
-                    th:if="${(not #lists.isEmpty(listGrid.activeRowActions)) or (listGrid.listGridType == 'workflow' and not #lists.isEmpty(listGrid.activeToolbarActions))}">
-                    <span class="workflow-action" th:each="action : ${listGrid.activeToolbarActions}" th:if="${listGrid.listGridType} == 'WORKFLOW' and ${action.actionId} != 'SPLIT'">
-                        <a th:classappend="${action.buttonClass}"
-                           href="#"
-                           class="button button-action"
-                           th:attr="data-urlpostfix=${action.urlPostfix},
-                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
-                             data-queryparams=${listGrid.sectionCrumbRepresentation}"
-                           th:title="#{${action.displayText}}">
-                            <i th:class="${action.iconClass}"></i>
-                        </a>
-                    </span>
+                    th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
                     <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}">
                         <a th:classappend="${action.buttonClass}"
                            href="#"
