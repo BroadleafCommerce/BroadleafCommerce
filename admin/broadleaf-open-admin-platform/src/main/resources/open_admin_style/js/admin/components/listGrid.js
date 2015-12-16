@@ -209,13 +209,13 @@
 
             function updateListGridActionsForContainer($containerActions, numSelected) {
                 if (numSelected) {
-                    $containerActions.removeAttr('disabled');
+                    $containerActions.removeClass('disabled').prop('disabled', false);
                 } else {
-                    $containerActions.attr('disabled', 'disabled');
+                    $containerActions.addClass('disabled').prop('disabled', true);
                 }
 
                 if (numSelected > 1) {
-                    $containerActions.filter('.single-action-only').attr('disabled', 'disabled');
+                    $containerActions.filter('.single-action-only').prop('disabled', true);
                 }
             }
         },
