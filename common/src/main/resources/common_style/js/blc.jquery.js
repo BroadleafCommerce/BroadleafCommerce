@@ -8,12 +8,16 @@ $.fn.dataByPrefix = function( pr ){
 };
 
 $.fn.reloadSection = function(options) {
-    if(!$(this).hasClass('ajax-content-placeholder')) {
+    if($(this).length === 0) {
+        return false;
+    } else if(!$(this).hasClass('ajax-content-placeholder')) {
         console.error("Can't populate content. Element is not an ajax-content-placeholder:");
         console.log($(this));
+        return false;
     } else if($(this).data('url') === 'undefined') {
         console.error("Can't populate content. Element does not have a data-url attribute:");
         console.log($(this));
+        return false;
     } else {
         var placeholder = this;
         var requestUrl = $(placeholder).data('url');
@@ -46,18 +50,36 @@ $.fn.reloadSection = function(options) {
         $.ajax({
             url: $(placeholder).data('url') + paramsString,
             complete: function(response) {
-                if($(placeholder).find('.list-grid-table').length > 0) {
-                    $(placeholder).find('tbody').html($(response.responseText).find('tbody').html());
-                    $(placeholder).find('.listgrid-table-footer').html($(response.responseText).find('.listgrid-table-footer').html());
-                } else {
-                    $(placeholder).html(response.responseText);
+
+                // clone sections that shouldn't be changed and then
+                // re-apply them after reloading the main section
+                var originalStates = $(placeholder).find('.do-not-reload').clone();
+                if(originalStates.filter('[data-section-key]').length < originalStates.length) {
+                    console.error("Error: 'do-not-reload' element does not have 'data-section-key' attribute");
+                    console.log($(this));
+                    return false;
                 }
+                $(placeholder).html(response.responseText);
+                var places = $(placeholder).find('.do-not-reload');
+
+                for(var i = 0; i < originalStates.length; i++) {
+                    var originalState = $(originalStates[i]);
+                    var destination = places.filter('[data-section-key="' + originalState.data('section-key') + '"]')
+                    destination.replaceWith(originalState);
+                }
+
                 $(placeholder).addClass('populated');
+
+                if($(placeholder).find('select').length > 0) {
+                    BLCAdmin.initializeSelectizeFields($(placeholder));
+                }
 
                 // call callback if exists
                 if(typeof options !== 'undefined' && typeof options['callback'] !== 'undefined') {
                     options['callback'](placeholder);
                 }
+
+                $(placeholder).trigger('content-loaded', response);
             }
         });
     }
