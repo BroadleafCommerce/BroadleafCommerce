@@ -82,10 +82,6 @@ public class CategoryAttributeImpl implements CategoryAttribute {
     @Column(name = "VALUE")
     @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Value", order=2, group = "ProductAttributeImpl_Description", prominent=true)
     protected String value;
-
-    @Column(name = "SEARCHABLE")
-    @AdminPresentation(excluded = true)
-    protected Boolean searchable = false;
     
     @ManyToOne(targetEntity = CategoryImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
@@ -110,20 +106,6 @@ public class CategoryAttributeImpl implements CategoryAttribute {
     @Override
     public void setValue(String value) {
         this.value = value;
-    }
-
-    @Override
-    public Boolean getSearchable() {
-        if (searchable == null) {
-            return Boolean.FALSE;
-        } else {
-            return searchable;
-        }
-    }
-
-    @Override
-    public void setSearchable(Boolean searchable) {
-        this.searchable = searchable;
     }
 
     @Override
@@ -205,7 +187,6 @@ public class CategoryAttributeImpl implements CategoryAttribute {
         }
         cloned.setName(name);
         cloned.setValue(value);
-        cloned.setSearchable(searchable);
         return  createResponse;
     }
 }

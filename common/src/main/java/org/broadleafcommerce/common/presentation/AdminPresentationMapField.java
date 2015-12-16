@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.presentation;
 
-import org.broadleafcommerce.common.presentation.client.CustomFieldSearchableTypes;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -56,21 +54,11 @@ public @interface AdminPresentationMapField {
      * inferred, you can explicitly set the Map structure value type here. Map fields can only understand
      * maps whose values are basic types (String, Long, Date, etc...). Complex types require additional
      * support. Support is provided out-of-the-box for complex types <tt>ValueAssignable</tt>,
-     * <tt>Searchable</tt> and <tt>SimpleRule</tt>.</p>
+     * and <tt>SimpleRule</tt>.</p>
      *
      * @return the concrete type for the Map structure value
      */
     Class<?> targetClass() default Void.class;
-
-    /**
-     * <p>Optional - if the map field value contains searchable information and should be included in Broadleaf
-     * search engine indexing and searching. If set, the map value class must implement the <tt>Searchable</tt> interface.
-     * Note, support for indexing and searching this field must be explicitly added to the Broadleaf search service
-     * as well.</p>
-     *
-     * @return Whether or not this field is searchable with the Broadleaf search engine
-     */
-    CustomFieldSearchableTypes searchable() default CustomFieldSearchableTypes.NOT_SPECIFIED;
 
     /**
      * <p>Optional - if the value is not primitive and contains a bi-directional reference back to the entity containing
