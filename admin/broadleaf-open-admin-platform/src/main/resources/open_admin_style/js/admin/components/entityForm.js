@@ -199,11 +199,11 @@ $(document).ready(function() {
             BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + '")').click(function(event) {
         var $tab = $(this);
         var $tabBody = $('.' + $tab.attr('href').substring(1) + 'Tab');
-        var text = $tab.find('span').data('tabkey')
+        var tabKey = $tab.find('span').data('tabkey');
         var $form = BLCAdmin.getForm($tab);
         var href = $(this).attr('href').replace('#', '');
         var currentAction = $form.attr('action');
-        var tabUrl = encodeURI(currentAction + '/1/' + text);
+        var tabUrl = encodeURI(currentAction + '/1/' + tabKey);
 
      	if (tabs_action && tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf(tabUrl) >= 0) {
      		tabs_action = tabs_action.replace(tabUrl, tabUrl + '++');
@@ -213,7 +213,7 @@ $(document).ready(function() {
      		tabs_action = tabUrl;
      	}
 
-     	if (tabs_action.indexOf(tabUrl + '++') == -1 && text != 'General') {
+     	if (tabs_action.indexOf(tabUrl + '++') == -1 && !$tab.hasClass('first-tab')) {
             showTabSpinner($tab, $tabBody);
 
      		BLC.ajax({
