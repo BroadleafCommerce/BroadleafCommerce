@@ -422,7 +422,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     tab.setOrder(tabOrder);
                     tabMap.put(tab.getTitle(), tab);
                     drs.setUnselectedTabMetadata(tabMap);
-                    drs.setTotalRecords(1);
+                    drs.setTotalRecords(0);
                     drs.setStartIndex(0);
                     drs.setBatchId(1);
                     drs.setClassMetaData(null);
