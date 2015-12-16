@@ -226,6 +226,7 @@ $(document).ready(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
                     var $tableWrapper = data.find('.listgrid-header-wrapper:has(table#' + tableId + ')');
      				BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
+                    BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
      			});
      			$('div.' + href + 'Tab .selectize-wrapper').each(function() {
      				var tableId = $(this).attr('id');

@@ -303,6 +303,15 @@
         
         getListGridCount : function($container) {
             return $container.find('.listgrid-container').length;
+        },
+
+        updateGridTitleBarSize : function($titlebar) {
+            var maxWidth = $titlebar.width();
+            maxWidth -= $titlebar.find('.listgrid-toolbar').outerWidth();
+            maxWidth -= $titlebar.find('.listgrid-total-records').outerWidth();
+            maxWidth -= 70;
+
+            $titlebar.find('.listgrid-friendly-name').css('max-width', maxWidth + 'px');
         }
     };
     

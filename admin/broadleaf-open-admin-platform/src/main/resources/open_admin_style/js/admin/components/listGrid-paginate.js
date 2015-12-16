@@ -809,13 +809,16 @@
 $(document).ready(function() {
     
     $(window).resize(function() {
-        $.doTimeout('resizeListGrid', 150, function() {
-            $('tbody').each(function(index, element) {
+        $.doTimeout('resizeListGrid', 0, function() {
+            BLCAdmin.getActiveTab().find('tbody').each(function(index, element) {
                 if ($(element).is(':visible')) {
                     BLCAdmin.listGrid.paginate.updateGridSize($(element));
                 } else {
                     $(element).addClass('needsupdate');
                 }
+            });
+            BLCAdmin.getActiveTab().find('.fieldgroup-listgrid-wrapper-header').each(function(index, element) {
+                BLCAdmin.listGrid.updateGridTitleBarSize($(element));
             });
         });
     });
