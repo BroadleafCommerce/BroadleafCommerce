@@ -74,12 +74,21 @@
 
             BLCAdmin.listGrid.paginate.updateTableFooter($listGridContainer.find('tbody'));
 
-            var $fieldSetCard = $listGridContainer.closest('.fieldset-card.listgrid-container');
+            var $fieldGroupListGridWrapperHeader = $listGridContainer.find('.fieldgroup-listgrid-wrapper-header');
+            var $tbody = $listGridContainer.find('.listgrid-body-wrapper table tbody');
             var totalRecords = $listGridContainer.find('.listgrid-body-wrapper table tbody').data('totalrecords');
-            if ($fieldSetCard.length && totalRecords !== 0) {
-                var $collapser = $fieldSetCard.find('.titlebar .collapser span');
-                if ($collapser.hasClass('collapsed')) {
-                    $fieldSetCard.find('a.titlebar').click();
+            if ($fieldGroupListGridWrapperHeader.length) {
+                var $totalRecords = $fieldGroupListGridWrapperHeader.find('.listgrid-total-records');
+                var totalRecordsText = totalRecords == 1 ? '(' + totalRecords + ' Record)' : '(' + totalRecords + ' Records)';
+                $totalRecords.html(totalRecordsText);
+
+                if (totalRecords !== 0) {
+                    $fieldGroupListGridWrapperHeader.removeClass('hidden-body');
+                    $fieldGroupListGridWrapperHeader.parent().find('.fieldgroup-listgrid-wrapper').removeClass('hidden');
+                    BLCAdmin.listGrid.paginate.updateGridSize($tbody);
+                } else {
+                    $fieldGroupListGridWrapperHeader.addClass('hidden-body');
+                    $fieldGroupListGridWrapperHeader.parent().find('.fieldgroup-listgrid-wrapper').addClass('hidden');
                 }
             }
 
