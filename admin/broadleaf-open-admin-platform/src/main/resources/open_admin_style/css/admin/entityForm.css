@@ -56,9 +56,140 @@ select.selectize-collection.read-only {
     color: #D20A33;
 }
 
+fieldset {
+    margin: 10px 0 0 0;
+}
+
+fieldset:not(.untitledGroup) {
+    background-color: #FBFAF7;
+}
+
+.fieldset-card .fieldset-card-content {
+    padding: 15px 15px 0 !important;
+}
+
+.app-content .fieldset-card, .modal-body .fieldset-card {
+    margin-bottom: 15px;
+}
+
+.app-content .fieldset-card.untitledGroup .titlebar{
+    display: none;
+}
+
 .app-content .fieldset-card .titlebar {
-    padding: 10px 15px;
+    width: 100%;
+    padding: 0 15px;
     letter-spacing: 0;
+}
+
+.fieldset-card .titlebar .listgrid-toolbar {
+    display: inline-block;
+    float: right;
+    margin: 6px 0;
+}
+
+.fieldset-card .titlebar .titlebar-title, .fieldset-card .titlebar .collapser {
+    display: inline-block;
+    margin: 10px 0;
+    position: relative;
+}
+
+.fieldset-card .fieldset-card-content label {
+    font-size: 11px !important;
+    color: #616161;
+    line-height: 14px;
+    text-transform: uppercase !important;
+    padding-bottom: 1px;
+}
+
+.fieldset-card:not(.dynamic-form):not(.inModal):first-child {
+    margin-top: 22px;
+}
+
+.fieldset-card-content .fieldgroup-listgrid {
+    background-color: white;
+    border: 1px solid #D8D5D0;
+}
+
+.fieldgroup-listgrid-wrapper-header {
+    height: 43px;
+    overflow: hidden;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper-header {
+    margin: 0;
+    background-color: #FCFBF9;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0 10px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: #757575;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper-header.hidden-body {
+    border: none;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper-header span {
+    display: inline-block;
+    margin: 10px 0;
+    line-height: 20px;
+}
+
+.fieldgroup-listgrid-wrapper-header span.listgrid-friendly-name {
+    text-overflow: ellipsis;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.fieldgroup-listgrid-wrapper-header span.listgrid-total-records {
+    margin-left: 5px;
+    text-transform: none;
+    opacity: 0.5;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper-header .listgrid-toolbar {
+    display: inline-block;
+    float: right;
+    margin: 6px 0;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper {
+    padding: 10px 10px 0;
+}
+
+.fieldgroup-listgrid {
+    margin-bottom: 20px;
+}
+
+.fieldset-card .titlebar-title i.help-tip {
+    margin-left: 5px;
+}
+
+.field-group label span {
+    font-size:11px;
+    text-transform:uppercase;
+    /*color:#B3B3B3;*/
+    font-weight: 600;
+}
+
+.radio-label span {
+    font-weight: 500 !important;
+}
+
+.field-group label span.alert-wrapper {
+    font-size: 12px;
+    letter-spacing: .05em;
+    font-weight: normal;
+    margin-left: 10px;
+}
+
+.field-group label span.alert-wrapper .alert-box {
+    color: #8EAA2B !important;
 }
 
 .boolean-link {
@@ -117,3 +248,36 @@ a.description-link {
     right: 12px;
     top: 18px;
 }
+
+
+/*************************** IN MODAL (beginning of section) ***************************/
+
+.modal-body .fieldset-card{background-color:white;border:1px solid #e0e0e0;-moz-box-shadow:rgba(0,0,0,0.1) 0px 2px 5px;-webkit-box-shadow:rgba(0,0,0,0.1) 0px 2px 5px;box-shadow:rgba(0,0,0,0.1) 0px 2px 5px;margin-bottom:15px}
+.modal-body .fieldset-card .titlebar{background-color:#FCFBF9;border-bottom:1px solid #e0e0e0;padding: 0 20px;width:100%;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:#2c2c2c}
+.modal-body .fieldset-card .titlebar .fa{float:right;font-size:16px}
+.modal-body .fieldset-card .fieldset-card-content{padding:20px}
+.modal-body .fieldset-card .fieldset-card-content label{color:#2c2c2c;font-size:13px;font-weight:600;letter-spacing:normal;text-transform:none}
+.modal-body .fieldset-card .fieldset-card-content .radio-label{margin-bottom:5px;font-size:12px;font-weight:400}
+.modal-body .fieldset-card .fieldset-card-content .checkbox{padding:0}
+.modal-body .fieldset-card .fieldset-card-content .checkbox .checkbox-label{font-size:12px;margin-right:10px}
+.modal-body .field-group label span {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    /*color: #B3B3B3;*/
+}
+
+.modal-body fieldset:first-child {
+    margin: 0;
+    padding: 10px;
+}
+
+.modal-body fieldset:not(:first-child) {
+    padding: 10px;
+}
+
+.modal-body textarea {
+    height: 90px;
+}
+
+/*************************** IN MODAL (end of section) ***************************/

@@ -25,13 +25,41 @@
     min-width: 912px;
     margin-left: 50px;
 }
-
-.col8 {
-    width: 66.66666666666666%;
+.col1{
+    width:8.333333333333332%
 }
-
-.col4 {
-    width: 33.33333333333333%;
+.col2{
+    width:16.666666666666664%
+}
+.col3{
+    width:25%
+}
+.col4{
+    width:33.33333333333333%
+}
+.col5{
+    width:41.66666666666667%
+}
+.col6{
+    width:50%
+}
+.col7{
+    width:58.333333333333336%
+}
+.col8{
+    width:66.66666666666666%
+}
+.col9{
+    width:75%
+}
+.col10{
+    width:83.33333333333334%
+}
+.col11{
+    width:91.66666666666666%
+}
+.col12{
+    width:100%
 }
 
 .row {
@@ -48,10 +76,6 @@
     text-align: center;
 }
 
-.fieldset-card .fieldset-card-content {
-    padding: 15px 20px 0 !important;
-}
-
 .app-content .content .sandbox-bar #sandboxes {
     padding: 0 10px 2px;
 }
@@ -61,6 +85,10 @@
 }
 .entityFormTab.active {
     display:block;
+}
+
+.listgrid-body-wrapper .table tbody>tr:first-child>td {
+    border-top: none;
 }
 
 .listgrid-body-wrapper tbody tr td:first-child a:not(.workflow-icon),  tbody tr td:first-child a:not(.workflow-icon) {
@@ -341,6 +369,10 @@ input[type="radio"].radio+label.radio-label.clr,
     min-width: 275px;
 }
 
+.table {
+    border-collapse: separate;
+}
+
 /* add nowrap to listgrids */
 .table tbody > tr > td {
     max-width: 260px;
@@ -415,21 +447,25 @@ div.action-popup img.ajax-loader {
     display: none;
 }
 
-.fieldgroup-listgrid {
-    margin-bottom: 20px;
-}
-
-.listgrid-toolbar {
-    padding: 3px 0;
-}
-
 .listgrid-toolbar .button {
     height: 30px;
     line-height: 30px;
 }
+
+.listgrid-toolbar .listgrid-toolbar-actions, .listgrid-toolbar .listgrid-row-actions {
+    display: inline-block;
+}
+
+.listgrid-toolbar .listgrid-toolbar-actions.row-actions-present {
+    border-right:1px solid #D8D5D0;
+    margin-right:7px;
+    padding-right:10px;
+}
+
 .listgrid-toolbar .button:not(.dropdown-toggle) {
     min-width: 55px;
 }
+
 .listgrid-toolbar .button.dropdown-toggle {
     margin-left: -3px;
 }
@@ -659,19 +695,6 @@ button:disabled {
     /*display: none;*/
 }
 
-.modal-body fieldset:first-child {
-    margin: 0;
-    padding: 10px;
-}
-
-.modal-body fieldset:not(:first-child) {
-    padding: 10px;
-}
-
-.modal-body textarea {
-    height: 90px;
-}
-
 .modal-footer {
     background-color: #fff;
     border-top: 0;
@@ -691,21 +714,6 @@ button:disabled {
 .modal-header h3 {
     font-weight: 500;
     /*margin-bottom: -10px;*/
-}
-
-.modal-body .fieldset-card{background-color:white;border:1px solid #e0e0e0;-moz-box-shadow:rgba(0,0,0,0.1) 0px 2px 5px;-webkit-box-shadow:rgba(0,0,0,0.1) 0px 2px 5px;box-shadow:rgba(0,0,0,0.1) 0px 2px 5px;margin-bottom:30px}
-.modal-body .fieldset-card .titlebar{background-color:#FCFBF9;border-bottom:1px solid #e0e0e0;padding: 10px 20px;width:100%;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:#2c2c2c}
-.modal-body .fieldset-card .titlebar .fa{float:right;font-size:16px}
-.modal-body .fieldset-card .fieldset-card-content{padding:20px}
-.modal-body .fieldset-card .fieldset-card-content label{color:#2c2c2c;font-size:13px;font-weight:600;letter-spacing:normal;text-transform:none}
-.modal-body .fieldset-card .fieldset-card-content .radio-label{margin-bottom:5px;font-size:12px;font-weight:400}
-.modal-body .fieldset-card .fieldset-card-content .checkbox{padding:0}
-.modal-body .fieldset-card .fieldset-card-content .checkbox .checkbox-label{font-size:12px;margin-right:10px}
-.modal-body .field-group label span {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    /*color: #B3B3B3;*/
 }
 
 .modal-header h3 {
@@ -814,44 +822,6 @@ input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
     margin-bottom: 0 !important;
 }
 
-.fieldset-card .fieldset-card-content label {
-    font-size: 11px !important;
-    color: #616161;
-    line-height: 14px;
-    text-transform: uppercase !important;
-    padding-bottom: 1px;
-}
-
-.field-group a.titlebar {
-    width: 100%;
-}
-
-.field-group label span {
-    font-size:11px;
-    text-transform:uppercase;
-    /*color:#B3B3B3;*/
-    font-weight: 600;
-}
-
-.radio-label span {
-    font-weight: 500 !important;
-}
-
-.field-group label span.alert-wrapper {
-    font-size: 12px;
-    letter-spacing: .05em;
-    font-weight: normal;
-    margin-left: 10px;
-}
-
-.field-group label span.alert-wrapper .alert-box {
-    color: #8EAA2B !important;
-}
-
-fieldset legend i.help-tip {
-    margin-left: 5px;
-}
-
 .has-error input{border-color:#D20A33;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);box-shadow:inset 0 1px 1px rgba(0,0,0,0.075)}
 .has-error input:focus{border-color:#D20A33;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 6px #D20A33;box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 6px #D20A33}
 .has-error span.display-value{border: 1px solid #D20A33;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);box-shadow:inset 0 1px 1px rgba(0,0,0,0.075)}
@@ -907,18 +877,6 @@ fieldset legend i.help-tip {
         transform: scale(1);
         opacity: 0.7;
     }
-}
-
-.fieldset-card.untitledGroup .titlebar{
-    display: none;
-}
-
-.fieldset-card:not(.dynamic-form):first-child {
-    margin-top: 22px;
-}
-
-.app-content .fieldset-card, .modal-body .fieldset-card {
-    margin-bottom: 15px;
 }
 
 .tabError {
@@ -1078,15 +1036,6 @@ span.workflow-action a:hover {
 
 .listgrid-row-actions {
     text-align: right;
-    padding-right: 14px !important;
-}
-
-fieldset {
-    margin: 10px 0 0 0;
-}
-
-fieldset:not(.untitledGroup) {
-    background-color: #FBFAF7;
 }
 
 legend {
