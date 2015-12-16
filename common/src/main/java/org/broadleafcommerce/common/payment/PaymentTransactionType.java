@@ -75,9 +75,13 @@ import java.util.Map;
  *                   +-+ REFUND |
  *                     +--------+
  *
- *  +-----------------+
- *  | DETACHED_CREDIT |
- *  +-----------------+
+ * +-------------+
+ * | UNCONFIRMED |
+ * +-+-----------+
+ *   |
+ *   | +-----------------+
+ *   +-+ DETACHED_CREDIT |
+ *     +-+---------------+
  *
  * @author Jerry Ocanas (jocanas)
  * @author Phillip Verheyden (phillipuniverse)

@@ -28,6 +28,15 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 
 /**
+ * Implementation to "confirm" an unconfirmed transaction.
+ *
+ * Default implementation is to:
+ * - If it is an unconfirmed {@link org.broadleafcommerce.common.payment.PaymentType#CREDIT_CARD},
+ * then it will attempt to either "Authorize" or "Authorize and Capture" it at this time.
+ * - If the transaction is of any other type, it will attempt to call the implementing gateway's
+ * {@link org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionConfirmationService#confirmTransaction(org.broadleafcommerce.common.payment.dto.PaymentRequestDTO)}
+ * - If the system is configured to handle PENDING payments during a checkout, it will create that in the interim.
+ *
  * @author Elbert Bautista (elbertbautista)
  */
 public interface OrderPaymentConfirmationStrategy {
@@ -36,4 +45,9 @@ public interface OrderPaymentConfirmationStrategy {
      * Strategy to determine how to "confirm" an OrderPayment at checkout
      */
     public PaymentResponseDTO confirmTransaction(PaymentTransaction tx, ProcessContext<CheckoutSeed> context) throws PaymentException, WorkflowException, CheckoutException;
+
+    /**
+     * Strategy to determine how to "confirm" a PENDING OrderPayment post-checkout
+     */
+    public PaymentResponseDTO confirmPendingTransaction(PaymentTransaction tx, ProcessContext<CheckoutSeed> context) throws PaymentException, WorkflowException, CheckoutException;
 }
