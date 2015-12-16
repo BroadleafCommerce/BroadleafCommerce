@@ -187,6 +187,7 @@ public class Tab {
     }
 
     public void setFieldGroups(Set<FieldGroup> fieldGroups) {
+        this.fieldGroups.clear();
         this.fieldGroups.addAll(fieldGroups);
     }
 

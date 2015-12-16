@@ -644,6 +644,7 @@ public class EntityForm {
     }
 
     public void setTabs(Set<Tab> tabs) {
+        this.tabs.clear();
         this.tabs.addAll(tabs);
     }
 
