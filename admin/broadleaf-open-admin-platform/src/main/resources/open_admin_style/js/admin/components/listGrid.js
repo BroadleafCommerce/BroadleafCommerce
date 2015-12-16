@@ -231,10 +231,10 @@
     	    $alert.append($closeLink);
     	    
     	    if (options.clearOtherAlerts) {
-    	        $container.children('.list-grid-alert').find('a.close').click();
+                $container.find('.alert-box').remove();
     	    }
 
-            var alertTarget = $container.find('.titlebar:first-child');
+            var alertTarget = $container.find('.titlebar:first-child .titlebar-title');
             if (!alertTarget.length) {
                 alertTarget = $container.find('label span');
             }
@@ -246,7 +246,7 @@
                         $closeLink.closest(".alert-box").remove();
                     }, options.autoClose);
                 }
-            }, 500);
+            });
         },
         
         fixHelper : function(e, ui) {
@@ -650,14 +650,14 @@ $(document).ready(function() {
                             var $parent = $container.prev().find('tr.selected');
                             if (!$parent.hasClass('dirty')) {
                                 $parent.addClass('dirty');
-                                var pencilIcon = '<span><a class="hover-cursor workflow-icon icon-pencil" data-width="200" ' +
-                                    'title="This record has been modified in the current sandbox"></a></span>';
+                                var changeIcon = '<a class="blc-icon-site-updates has-tip hover-cursor workflow-icon" data-width="200" ' +
+                                    'title="This record has been modified in the current sandbox"></a>';
 
-                                if ($parent.find('.sub-list-grid-reorder').length) {
-                                    $parent.find('.sub-list-grid-reorder').after(pencilIcon);
+                                if ($parent.find('.workflow-change-icon').length) {
+                                    $parent.find('.workflow-change-icon').html(changeIcon);
                                 } else {
                                     var contents = $parent.find('td:first').html();
-                                    $parent.find('td:first').html(pencilIcon + contents);
+                                    $parent.find('td:first').html(changeIcon + contents);
                                 }
                             }
                         }
@@ -705,7 +705,8 @@ $(document).ready(function() {
                 BLCAdmin.listGrid.replaceRelatedCollection($(data), {
                     message: BLCAdmin.messages.saved + '!', 
                     alertType: 'save-alert', 
-                    autoClose: 3000
+                    autoClose: 3000,
+                    clearOtherAlerts: true
                 });
             }
         });
