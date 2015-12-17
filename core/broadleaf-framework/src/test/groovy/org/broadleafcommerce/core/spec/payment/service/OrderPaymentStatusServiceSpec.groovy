@@ -362,10 +362,23 @@ class OrderPaymentStatusServiceSpec extends Specification {
         status == OrderPaymentStatus.PENDING
     }
 
-    def "Test OrderPaymentStatus.UNDETERMINED on an UNCONFIRMED"() {
+    def "Test OrderPaymentStatus.UNCONFIRMED on an UNCONFIRMED"() {
         setup: "I have an Order Payment with a UNCONFIRMED transaction"
         reset()
         payment.transactions << unconfirmedTX
+
+        when: "I execute the order payment status service"
+        OrderPaymentStatus status = statusService.determineOrderPaymentStatus(payment);
+
+        then: "The OrderPaymentStatus should be UNCONFIRMED"
+        status == OrderPaymentStatus.UNCONFIRMED
+    }
+
+    def "Test OrderPaymentStatus.UNDETERMINED on an Invalid Transaction set"() {
+        setup: "I have an Order Payment with invalid transactions"
+        reset()
+        payment.transactions << unconfirmedTX
+        payment.transactions << refundCapture1TX
 
         when: "I execute the order payment status service"
         OrderPaymentStatus status = statusService.determineOrderPaymentStatus(payment);

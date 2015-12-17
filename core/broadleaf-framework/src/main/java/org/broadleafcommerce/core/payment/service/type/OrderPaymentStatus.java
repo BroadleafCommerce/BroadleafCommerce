@@ -43,6 +43,12 @@ public class OrderPaymentStatus implements Serializable, BroadleafEnumerationTyp
     public static final OrderPaymentStatus UNDETERMINED = new OrderPaymentStatus("UNDETERMINED", "Undetermined");
 
     /**
+     * This represents the state where there is only a {@link org.broadleafcommerce.common.payment.PaymentTransactionType#UNCONFIRMED}
+     * transaction on the payment.
+     */
+    public static final OrderPaymentStatus UNCONFIRMED = new OrderPaymentStatus("UNCONFIRMED", "Unconfirmed Transaction");
+
+    /**
      * This represents the state where there is a {@link org.broadleafcommerce.common.payment.PaymentTransactionType#PENDING}
      * transaction on the payment, but there is not yet a completed {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE}
      * or {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE_AND_CAPTURE} transaction.
