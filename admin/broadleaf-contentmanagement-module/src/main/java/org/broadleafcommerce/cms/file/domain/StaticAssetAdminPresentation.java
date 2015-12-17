@@ -83,8 +83,8 @@ public interface StaticAssetAdminPresentation {
         // General Fields
         public static final int NAME = 1000;
         public static final int URL = 2000;
-        public static final int TITLE = 3000;
-        public static final int ALT_TEXT = 4000;
+        public static final int TITLE = 4000;
+        public static final int ALT_TEXT = 3000;
 
         public static final int MIME_TYPE = 5000;
         public static final int FILE_EXTENSION = 6000;
