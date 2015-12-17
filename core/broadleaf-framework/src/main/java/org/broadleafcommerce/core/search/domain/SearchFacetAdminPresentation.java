@@ -33,7 +33,10 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             order = SearchFacetAdminPresentation.TabOrder.General,
                 groups = {
                         @AdminGroupPresentation(name = SearchFacetAdminPresentation.GroupName.General,
-                                order = SearchFacetAdminPresentation.GroupOrder.General),
+                                order = SearchFacetAdminPresentation.GroupOrder.General,
+                                untitled = true),
+                        @AdminGroupPresentation(name = SearchFacetAdminPresentation.GroupName.Ranges,
+                                order = SearchFacetAdminPresentation.GroupOrder.Ranges),
                         @AdminGroupPresentation(name = SearchFacetAdminPresentation.GroupName.Options,
                                 order = SearchFacetAdminPresentation.GroupOrder.Options,
                                 column = 1)
@@ -65,6 +68,7 @@ public interface SearchFacetAdminPresentation {
     public static class GroupName {
 
         public static final String General = "SearchFacetImpl_description";
+        public static final String Ranges = "SearchFacetImpl_ranges";
         public static final String Options = "SearchFacetImpl_options";
         public static final String Dependent = "SearchFacetImpl_dependent";
     }
@@ -72,7 +76,8 @@ public interface SearchFacetAdminPresentation {
     public static class GroupOrder {
 
         public static final int General = 1000;
-        public static final int Options = 2000;
+        public static final int Ranges = 2000;
+        public static final int Options = 3000;
         public static final int Dependent = 1000;
 
     }
