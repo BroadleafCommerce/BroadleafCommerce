@@ -44,6 +44,8 @@ public class OrderPaymentStatusServiceImpl implements OrderPaymentStatusService 
             return OrderPaymentStatus.AUTHORIZED;
         } else if (determinePending(orderPayment)) {
             return OrderPaymentStatus.PENDING;
+        } else if (determineUnconfirmed(orderPayment)) {
+            return OrderPaymentStatus.UNCONFIRMED;
         }
 
         return OrderPaymentStatus.UNDETERMINED;
@@ -82,13 +84,15 @@ public class OrderPaymentStatusServiceImpl implements OrderPaymentStatusService 
     protected boolean determinePartiallyComplete(OrderPayment payment) {
         Money fullAuthAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE);
         Money fullCaptureAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.CAPTURE);
+        Money totalVoidAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.VOID);
+        Money totalRefundAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.REFUND);
 
         return !determineComplete(payment) &&
-                (containsSuccessfulType(payment, PaymentTransactionType.REFUND) ||
-                 containsSuccessfulType(payment, PaymentTransactionType.VOID) ||
+                ((totalRefundAmount.greaterThan(Money.ZERO) && fullAuthAmount.greaterThan(totalRefundAmount)) ||
+                 (totalVoidAmount.greaterThan(Money.ZERO) && fullAuthAmount.greaterThan(totalVoidAmount)) ||
                         (containsSuccessfulType(payment, PaymentTransactionType.CAPTURE) &&
-                                fullAuthAmount.greaterThan(Money.ZERO) &&
-                                fullAuthAmount.greaterThan(fullCaptureAmount)));
+                         fullAuthAmount.greaterThan(Money.ZERO) &&
+                         fullAuthAmount.greaterThan(fullCaptureAmount)));
     }
 
     protected boolean determineFullyCaptured(OrderPayment payment) {
@@ -107,6 +111,12 @@ public class OrderPaymentStatusServiceImpl implements OrderPaymentStatusService 
         return !determineAuthorized(payment) &&
                 !containsSuccessfulType(payment, PaymentTransactionType.AUTHORIZE_AND_CAPTURE) &&
                 containsSuccessfulType(payment, PaymentTransactionType.PENDING);
+    }
+
+    protected boolean determineUnconfirmed(OrderPayment payment) {
+        return payment.getTransactions().size() == 1 &&
+                payment.getTransactions().get(0).getSuccess() &&
+                payment.getTransactions().get(0).getType().equals(PaymentTransactionType.UNCONFIRMED);
     }
 
 }
