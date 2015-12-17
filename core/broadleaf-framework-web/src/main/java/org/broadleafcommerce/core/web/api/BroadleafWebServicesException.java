@@ -50,6 +50,7 @@ public class BroadleafWebServicesException extends RuntimeException {
     public static final String FULFILLMENT_GROUP_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.fulfillmentGroupNotFound";
     public static final String FULFILLMENT_OPTION_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.fulfillmentOptionNotFound";
     public static final String CUSTOMER_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.customerNotFound";
+    public static final String CUSTOMER_ADDRESS_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.customerAddressNotFound";
     public static final String CHECKOUT_PROCESSING_ERROR = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.checkoutProcessingError";
     public static final String CONTENT_TYPE_NOT_SUPPORTED = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.contentTypeNotSupported";
     public static final String QUERY_PARAMETER_NOT_PRESENT = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.queryParameterNotPresent";

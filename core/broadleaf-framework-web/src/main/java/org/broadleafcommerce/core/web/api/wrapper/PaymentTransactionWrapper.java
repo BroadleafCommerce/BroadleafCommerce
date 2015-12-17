@@ -18,6 +18,14 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.money.util.CurrencyAdapter;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
+import org.broadleafcommerce.common.util.xml.BigDecimalRoundingAdapter;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
+import org.broadleafcommerce.core.payment.service.OrderPaymentService;
+import org.springframework.context.ApplicationContext;
+
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.HashMap;
@@ -31,14 +39,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.money.util.CurrencyAdapter;
-import org.broadleafcommerce.common.payment.PaymentTransactionType;
-import org.broadleafcommerce.common.util.xml.BigDecimalRoundingAdapter;
-import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
-import org.broadleafcommerce.core.payment.service.OrderPaymentService;
-import org.springframework.context.ApplicationContext;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -76,7 +76,7 @@ public class PaymentTransactionWrapper extends BaseWrapper implements APIWrapper
     @XmlJavaTypeAdapter(value = CurrencyAdapter.class)
     protected Currency currency;
 
-    @XmlElement(name = "element")
+    @XmlElement(name = "additionalField")
     @XmlElementWrapper(name = "additionalFields")
     protected List<MapElementWrapper> additionalFields;
 

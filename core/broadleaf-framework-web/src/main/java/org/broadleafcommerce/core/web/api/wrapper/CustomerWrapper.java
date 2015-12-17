@@ -88,8 +88,7 @@ public class CustomerWrapper extends BaseWrapper implements APIWrapper<Customer>
     @Override
     public Customer unwrap(HttpServletRequest request, ApplicationContext context) {
         CustomerService customerService = (CustomerService) context.getBean("blCustomerService");
-        Customer customer = customerService.readCustomerById(this.id);
-        customer.setId(this.id);
+        Customer customer = customerService.createCustomerFromId(this.id);
         customer.setFirstName(this.firstName);
         customer.setLastName(this.lastName);
         customer.setEmailAddress(this.emailAddress);
