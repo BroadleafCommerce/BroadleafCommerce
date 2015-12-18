@@ -41,15 +41,19 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.payment.service.OrderPaymentStatusService;
+import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+import org.springframework.context.ApplicationContext;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -158,10 +162,6 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
     protected List<PaymentTransaction> transactions = new ArrayList<PaymentTransaction>();
 
-    @Column(name = "SAVE_TOKEN")
-    @AdminPresentation(friendlyName = "OrderPaymentImpl_Save_Token")
-    protected Boolean saveToken = false;
-    
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
     
@@ -236,16 +236,6 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     }
 
     @Override
-    public boolean isSaveToken() {
-        return saveToken == null ? false : saveToken;
-    }
-
-    @Override
-    public void setSaveToken(boolean saveToken) {
-        this.saveToken = saveToken;
-    }
-
-    @Override
     public List<PaymentTransaction> getTransactions() {
         return transactions;
     }
@@ -301,6 +291,17 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             }
         }
         return amount;
+    }
+
+    @Override
+    public OrderPaymentStatus getStatus() {
+        ApplicationContext ctx = ApplicationContextHolder.getApplicationContext();
+        if (ctx == null) {
+            return null;
+        }
+
+        OrderPaymentStatusService svc = ctx.getBean("blOrderPaymentStatusService", OrderPaymentStatusService.class);
+        return svc.determineOrderPaymentStatus(this);
     }
 
     @Override

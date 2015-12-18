@@ -34,10 +34,54 @@ import java.util.Map;
  * @see {@link #AUTHORIZE_AND_CAPTURE}
  * @see {@link #SETTLED}
  * @see {@link #REFUND}
+ * @see {@link #DETACHED_CREDIT}
  * @see {@link #VOID}
  * @see {@link #REVERSE_AUTH}
  * @see {@link #UNCONFIRMED}
- * @see {@link #POST_CHECKOUT_AUTH_OR_SALE}
+ * @see {@link #PENDING}
+ *
+ *  The following is a depiction of the possible state flows for an Order Payment and the
+ *  hierarchical relationship of all its transactions:
+ *
+ * +-------------+
+ * | UNCONFIRMED |
+ * +-+-----------+
+ *   |
+ *   | +--------------------+
+ *   +-+ PENDING (Optional) |
+ *     +-+----------------+-+
+ *       |                |
+ *       | +-----------+  |                +-----------------------+
+ *       +-+ AUTHORIZE |  +----------------+ AUTHORIZE_AND_CAPTURE |
+ *         +-+---------+                   +-+---------------------+
+ *           |                             |
+ *           | +-------------------+       | +------+
+ *           +-+ REVERSE_AUTHORIZE |       +-+ VOID |
+ *           | +-------------------+       | +------+
+ *           |                             |
+ *           | +---------+                 | +--------------------+
+ *           +-+ CAPTURE |                 +-+ SETTLED (Optional) |
+ *             +-+-------+                   +-+------------------+
+ *               |                             |
+ *               | +------+                    | +--------+
+ *               +-+ VOID |                    +-+ REFUND |
+ *               | +------+                      +--------+
+ *               |
+ *               | +--------------------+
+ *               +-+ SETTLED (Optional) |
+ *                 +-+------------------+
+ *                   |
+ *                   | +--------+
+ *                   +-+ REFUND |
+ *                     +--------+
+ *
+ * +-------------+
+ * | UNCONFIRMED |
+ * +-+-----------+
+ *   |
+ *   | +-----------------+
+ *   +-+ DETACHED_CREDIT |
+ *     +-+---------------+
  *
  * @author Jerry Ocanas (jocanas)
  * @author Phillip Verheyden (phillipuniverse)
@@ -81,15 +125,30 @@ public class PaymentTransactionType implements Serializable, BroadleafEnumeratio
     public static final PaymentTransactionType SETTLED = new PaymentTransactionType("SETTLED", "Settled");
     
     /**
-     * Funds have been refunded/credited. This can <b>ONLY</b> occur after funds have been {@link #CAPTURE}d or
-     * {@link #SETTLED}. This should only be used when money goes back to a customer.
+     * <p>Funds have been refunded/credited. This can <b>ONLY</b> occur after funds have been {@link #CAPTURE}d or
+     * {@link #SETTLED}. This should only be used when money goes back to a customer. This assumes that
+     * there will be a parent {@link #AUTHORIZE_AND_CAPTURE}, {@link #CAPTURE}, or {@link #SETTLED} transaction
+     * that this can be tied back to.</p>
+     *
+     * <p>NOTE: This can also be referred to as a "follow-on credit"</p>
      */
     public static final PaymentTransactionType REFUND = new PaymentTransactionType("REFUND", "Refund");
+
+    /**
+     * <p>Some payment processors allow you to issue credit to a customer that is not tied
+     * to an initial {@link #AUTHORIZE} or {@link #AUTHORIZE_AND_CAPTURE} transaction.
+     * Most payment gateways disable this feature by default because it is against
+     * card association (e.g. Visa, MasterCard) rules. However, there may be legitimate instances
+     * where you had a sale transaction but are not able to issue a refund (e.g. closed account of original payment etc...)
+     * Please contact your payment gateway provider to see how to enable this feature.</p>
+     *
+     * <p>NOTE: This can also be referred to as a "blind credit" or "stand-alone credit"</p>
+     */
+    public static final PaymentTransactionType DETACHED_CREDIT = new PaymentTransactionType("DETACHED_CREDIT", "Detached Credit");
     
     /**
-     * Void can happen after a CAPTURE but before it has been SETTLED. Payment transactions are usually settled in batches
-     * at the end of the day. This basically performs the same action as a REFUND, although the transaction might not
-     * hit the customer's card.
+     * <p>Void can happen after a CAPTURE but before it has been SETTLED. Payment transactions are usually settled in batches
+     * at the end of the day.</p>
      */
     public static final PaymentTransactionType VOID = new PaymentTransactionType("VOID", "Void");
     
@@ -118,15 +177,18 @@ public class PaymentTransactionType implements Serializable, BroadleafEnumeratio
     public static final PaymentTransactionType UNCONFIRMED = new PaymentTransactionType("UNCONFIRMED", "Not Confirmed");
 
     /**
-     * Some implementations may wish to defer any Authorization or Authorize and Capture transactions outside
+     * <p>Some implementations may wish to defer any Authorization or Authorize and Capture transactions outside
      * the scope of the checkout workflow. For example, some may wish to take all orders up front (possibly
      * just doing AVS and CVV checks during checkout) and opt to process the users card offline or asynchronously
      * through some other external mechanism or process. In this scenario, you may create an Order Payment with
      * a transaction that "marks" it with the intention of being processed later. This allows the
      * {@link ValidateAndConfirmPaymentActivity} to correctly compare the equality of all the successful payments on the order
-     * against the order total.
+     * against the order total.</p>
+     *
+     * <p>NOTE: This differs from {@link #UNCONFIRMED} because at the time of checkout,
+     * the checkout workflow will try to AUTH or SALE any UNCONFIRMED transactions on all the payments.</p>
      */
-    public static final PaymentTransactionType POST_CHECKOUT_AUTH_OR_SALE = new PaymentTransactionType("POST_CHECKOUT_AUTH_OR_SALE", "Post-Checkout Authorize or Authorize and Capture ");
+    public static final PaymentTransactionType PENDING = new PaymentTransactionType("PENDING", "Pending Authorize or Authorize and Capture");
 
 
     public static PaymentTransactionType getInstance(final String type) {
