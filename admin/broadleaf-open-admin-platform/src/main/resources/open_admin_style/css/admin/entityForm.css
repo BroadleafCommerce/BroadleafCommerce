@@ -72,7 +72,7 @@ fieldset:not(.untitledGroup) {
     margin-bottom: 15px;
 }
 
-.app-content .fieldset-card.untitledGroup .titlebar{
+.app-content .fieldset-card.untitledGroup .titlebar, .modal-body .fieldset-card.untitledGroup .titlebar {
     display: none;
 }
 
