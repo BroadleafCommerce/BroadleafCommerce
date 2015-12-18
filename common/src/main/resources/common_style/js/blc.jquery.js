@@ -1,6 +1,7 @@
 /**
  * Created by brandon on 11/16/15.
  */
+/*
 $.fn.dataByPrefix = function( pr ){
     var d=this.data(), r=new RegExp("^"+pr), ob={};
     for(var k in d) if(r.test(k)) ob[k]=d[k];
@@ -70,7 +71,7 @@ $.fn.reloadSection = function(options) {
 
                 $(placeholder).addClass('populated');
 
-                if($(placeholder).find('select').length > 0) {
+                if(typeof(BLCAdmin) !== 'undefined' && $(placeholder).find('select').length > 0) {
                     BLCAdmin.initializeSelectizeFields($(placeholder));
                 }
 
@@ -96,4 +97,4 @@ $.fn.ajaxSubmit = function(options) {
         data: form.serialize(),
         complete: options.callback ? options.callback : undefined
     });
-};
+};*/
