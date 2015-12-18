@@ -303,6 +303,8 @@ public class SkuImpl implements Sku {
     @MapKey(name = "key")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
+    @ClonePolicyCollectionOverride
+    @ClonePolicyArchive
     @AdminPresentationMap(friendlyName = "SkuImpl_Sku_Media",
         tab = ProductImpl.Presentation.Tab.Name.Media, tabOrder = ProductImpl.Presentation.Tab.Order.Media,
         keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
