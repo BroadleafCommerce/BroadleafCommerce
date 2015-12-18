@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <parent>
+        <groupId>org.broadleafcommerce</groupId>
+        <artifactId>core</artifactId>
+        <version>4.0.7-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.broadleafcommerce</groupId>
+    <artifactId>broadleaf-rest-api</artifactId>
+    <version>4.0.7-SNAPSHOT</version>
+    <name>BroadleafCommerce Rest Api</name>
+    <url>http://www.broadleafcommerce.org</url>
+    <properties>
+        <project.uri>${project.baseUri}/../../</project.uri>
+    </properties>
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-framework</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce </groupId>
+            <artifactId>broadleaf-framework-web</artifactId>
+        </dependency>
+        <!-- Added for JAXRS backwards compatibility with the Broadleaf REST APIs in Broadleaf 4.0 -->
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.social</groupId>
+            <artifactId>spring-social-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-profile</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-profile-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+    </dependencies>
+</project>
