@@ -23,14 +23,16 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
-import org.broadleafcommerce.core.web.api.wrapper.CustomerAddressWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.CustomerAttributeWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.CustomerWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.broadleafcommerce.web.api.v2.wrapper.CustomerAddressWrapper;
+import org.broadleafcommerce.web.api.v2.wrapper.CustomerAttributeWrapper;
+import org.broadleafcommerce.web.api.v2.wrapper.CustomerPaymentWrapper;
+import org.broadleafcommerce.web.api.v2.wrapper.CustomerWrapper;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
@@ -272,6 +274,31 @@ public abstract class CustomerEndpoint extends BaseEndpoint {
             }
         }
         return wrappers;
+    }
+    
+    public CustomerPayment addCustomerPayment(HttpServletRequest request, Long customerId, CustomerPaymentWrapper wrapper) {
+        // TODO implement
+        return null;
+    }
+    
+    public List<CustomerPayment> removeAllCustomerPayments(HttpServletRequest request, Long customerId) {
+        // TODO implement
+        return null;
+    }
+    
+    public CustomerPayment removeCustomerPayment(HttpServletRequest request, Long customerId, Long paymentId) {
+        // TODO implement
+        return null;
+    }
+    
+    public CustomerPayment findCustomerPayment(HttpServletRequest request, Long customerId, Long paymentId) {
+        // TODO implement
+        return null;
+    }
+    
+    public List<CustomerPayment> findAllCustomerPayments(HttpServletRequest request, Long customerId) {
+        // TODO implement
+        return null;
     }
 
 
