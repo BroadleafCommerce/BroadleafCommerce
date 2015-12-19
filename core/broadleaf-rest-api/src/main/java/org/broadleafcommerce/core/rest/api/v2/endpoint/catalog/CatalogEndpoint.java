@@ -2,21 +2,23 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  * #L%
  */
 
-package org.broadleafcommerce.core.web.api.endpoint.catalog;
+package org.broadleafcommerce.core.rest.api.v2.endpoint.catalog;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -34,28 +36,31 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.InventoryService;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.CategoriesWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.CategoryAttributeWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.CategoryWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.InventoryWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.MediaWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.ProductAttributeWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.ProductWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.RelatedProductWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.SearchResultsWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.SkuAttributeWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.SkuWrapper;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
-import org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.InventoryWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.MediaWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.RelatedProductWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.SkuWrapper;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.springframework.http.HttpStatus;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -79,10 +84,8 @@ import javax.servlet.http.HttpServletRequest;
  * will override and extend the methods of this class, add new methods, and control the JAX-RS behavior 
  * using annotations according to the JAX-RS specification.
  *
- * @deprecated - use {@link org.broadleafcommerce.web.api.v2.endpoint.catalog.CatalogEndpoint}
  * User: Kelly Tisdell
  */
-@Deprecated
 public abstract class CatalogEndpoint extends BaseEndpoint {
 
     @Resource(name = "blCatalogService")
@@ -160,7 +163,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                     .addMessage(BroadleafWebServicesException.INVALID_CATEGORY_ID, categoryId);
         }
 
-        SearchCriteria searchCriteria = facetService.buildSearchCriteria(request);
+        List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
+        SearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
         searchCriteria.setPageSize(pageSize);
         searchCriteria.setPage(page);
         try {
@@ -202,7 +206,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                     .addMessage(BroadleafWebServicesException.SEARCH_QUERY_MALFORMED, q);
         }
 
-        SearchCriteria searchCriteria = facetService.buildSearchCriteria(request);
+        List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
+        SearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
         searchCriteria.setPageSize(pageSize);
         searchCriteria.setPage(page);
         try {

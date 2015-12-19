@@ -2,20 +2,22 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.api.endpoint.checkout;
+package org.broadleafcommerce.core.rest.api.v2.endpoint.checkout;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,10 +28,10 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderPaymentWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
-import org.broadleafcommerce.core.web.api.wrapper.OrderPaymentWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.springframework.http.HttpStatus;
 
@@ -45,13 +47,9 @@ import javax.servlet.http.HttpServletRequest;
  * @GET, @POST, @PUT, and @DELETE are purposely not provided here to allow implementors finer control over 
  * the details of the endpoint.
  * <p/>
- * 
- * @deprecated - use {@link org.broadleafcommerce.web.api.v2.endpoint.checkout.CheckoutEndpoint}
- * 
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@Deprecated
 public abstract class CheckoutEndpoint extends BaseEndpoint {
 
     private static final Log LOG = LogFactory.getLog(CheckoutEndpoint.class);
