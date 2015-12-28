@@ -30,7 +30,7 @@
     <div class="select-group">
         <div class="asset-grid">
             <div class="asset-grid-container">
-                <div th:each="asset : ${assetGrid.records}" class="asset-item">
+                <div th:each="asset : ${listGrid.records}" class="asset-item">
 
                     <div class="image-wrapper">
                         <img class="thumbnail"
@@ -78,7 +78,7 @@
             </div>
         </div>
         <div class="asset-listgrid-wrapper" style="display: none;">
-            <div class="asset-listgrid listgrid-container"  th:include="components/listGrid" th:with="listGrid=${assetGrid}"></div>
+            <div class="asset-listgrid listgrid-container"  th:include="components/listGrid" th:with="listGrid=${listGrid}"></div>
         </div>
     </div>
 </div>

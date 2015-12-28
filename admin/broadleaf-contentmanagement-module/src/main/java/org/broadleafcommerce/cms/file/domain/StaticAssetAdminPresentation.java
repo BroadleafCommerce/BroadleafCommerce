@@ -40,10 +40,10 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                                         column = 1),
                                 @AdminGroupPresentation(name = StaticAssetAdminPresentation.GroupName.Image,
                                         order = StaticAssetAdminPresentation.GroupOrder.Image,
-                                        column = 1, untitled = true),
+                                        untitled = true),
                                 @AdminGroupPresentation(name = StaticAssetAdminPresentation.GroupName.File_Details,
                                         order = StaticAssetAdminPresentation.GroupOrder.File_Details,
-                                        collapsed = true)
+                                        column = 1)
                         }
                 )
         }
@@ -71,9 +71,9 @@ public interface StaticAssetAdminPresentation {
     }
 
     public static class GroupOrder {
-        public static final int General = 1000;
+        public static final int General = 2000;
         public static final int Options = 6000;
-        public static final int Image = 3000;
+        public static final int Image = 1000;
         public static final int Dates = 4000;
         public static final int File_Details = 5000;
     }
@@ -81,10 +81,10 @@ public interface StaticAssetAdminPresentation {
     public static class FieldOrder {
 
         // General Fields
-        public static final int NAME = 1000;
-        public static final int URL = 2000;
-        public static final int TITLE = 4000;
-        public static final int ALT_TEXT = 3000;
+        public static final int NAME = 3000;
+        public static final int URL = 6000;
+        public static final int TITLE = 1000;
+        public static final int ALT_TEXT = 2000;
 
         public static final int MIME_TYPE = 5000;
         public static final int FILE_EXTENSION = 6000;
