@@ -109,10 +109,17 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         populateBillTo(order, requestDTO);
 
         // Only set totals and line items when in a Payment flow
-        if (PaymentTransactionType.UNCONFIRMED.equals(paymentTransaction.getType())) {
+        // (i.e. where the transaction is meant to be charged, UNCONFIRMED -> AUTHORIZE or UNCONFIRMED -> AUTHORIZE_AND_CAPTURE)
+        // AND where the order does not contain multiple final payments. (e.g. multiple credit cards)
+        // - If in a REFUND flow or paying with multiple final payments,
+        //   you cannot use the total after applied payments convenience method.
+        // - The amounts to be sent to the gateway are the amounts passed in.
+        if (PaymentTransactionType.UNCONFIRMED.equals(paymentTransaction.getType()) &&
+                !orderContainsMultipleFinalPayments(order)) {
             populateTotals(order, requestDTO);
             populateDefaultLineItemsAndSubtotal(order, requestDTO);
         }
+
         //Copy Additional Fields from PaymentTransaction into the Request DTO.
         //This will contain any gateway specific information needed to perform actions on this transaction
         Map<String, String> additionalFields = paymentTransaction.getAdditionalFields();
@@ -122,6 +129,22 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         }
 
         return requestDTO;
+    }
+
+    /**
+     * determine whether or not this order contains multiple final payments.
+     * (e.g. paying with multiple credit cards)
+     * @param order
+     * @return
+     */
+    protected boolean orderContainsMultipleFinalPayments(Order order) {
+        int finalPaymentCount = 0;
+        for (OrderPayment payment : order.getPayments()) {
+            if (payment.isActive() && payment.isFinalPayment()) {
+                finalPaymentCount++;
+            }
+        }
+        return finalPaymentCount > 1;
     }
 
     @Override

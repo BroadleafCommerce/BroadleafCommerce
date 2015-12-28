@@ -213,7 +213,7 @@ public class OfferTest extends CommonSetupBaseTest {
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyAndSaveOffersToOrder(offers, order);
 
-        assert (order.getSubTotal().equals(new Money(240D)));
+        assert (order.getSubTotal().equals(new Money(180D)));
     }
 
     @Test(groups =  {"testOfferLowerSalePriceWithNotCombinableOfferAndInformation"}, dependsOnGroups = { "testOfferLowerSalePriceWithNotCombinableOffer"})
@@ -239,7 +239,7 @@ public class OfferTest extends CommonSetupBaseTest {
         
         order = orderService.save(order, true);
 
-        assert (order.getSubTotal().equals(new Money(240D)));
+        assert (order.getSubTotal().equals(new Money(180D)));
 
         order = orderService.findOrderById(order.getId());
         assert(order.getAdditionalOfferInformation().get(offerCode1.getOffer()).equals(info1));
@@ -261,7 +261,12 @@ public class OfferTest extends CommonSetupBaseTest {
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyAndSaveOffersToOrder(offers, order);
 
-        assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(170D));
+        // The $45 offer got applied to all 4 items. The $30 order offer is also applied as an adjustment but since that would
+        // push the order into negative ($20 total - $30 == -$10) then only $20 of that is actually applied to the total.
+        // Important to note that this extra $20 order adjustment is not included in the subtotal (which is just the sum of
+        // all of the order items) but is applied in to the full Total via the TotalAcivity in the pricing workflow
+        assert order.getSubTotal().equals(new Money("20"));
+        assert order.getOrderAdjustmentsValue().equals(new Money("20"));
     }
 
     @Test(groups =  {"testOfferNotStackableOrderOffers"}, dependsOnGroups = { "testOfferLowerSalePriceWithNotCombinableOffer2"})
