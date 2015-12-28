@@ -324,6 +324,15 @@ var BLCAdmin = (function($) {
         			BLCAdmin.initializeFields(BLCAdmin.currentModal());
         			
         			BLCAdmin.currentModal().removeClass('loading-modal');
+
+					if (BLCAdmin.currentModal().hasClass('asset-selector')) {
+						var $header = BLCAdmin.currentModal().find('.modal-header');
+						var $closeBtn = $header.find('.close');
+						var $tabSection = BLCAdmin.currentModal().find('.modal-body .section-tabs');
+
+						$tabSection.append($closeBtn);
+						$header.hide();
+					}
         		});
     		} else {
     		    showLinkAsModal(link);

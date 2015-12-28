@@ -243,7 +243,6 @@ $(document).ready(function() {
                     BLCAdmin.assetGrid.initialize($assetGrid);
 
                     $(this).find('.asset-grid-container').replaceWith($assetGrid);
-                    $(this).find('.asset-listgrid').replaceWith($assetListGrid);
                 });
 
                 hideTabSpinner($tab, $tabBody);

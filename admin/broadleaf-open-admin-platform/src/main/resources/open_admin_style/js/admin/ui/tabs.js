@@ -55,8 +55,11 @@
                     $(value).hide();
                 }
             });
-            BLCAdmin.initializeFields(BLCAdmin.getActiveTab());
-            BLCAdmin.updateFields(BLCAdmin.getActiveTab());
+
+            if (!$(this).hasClass('lookup')) {
+                BLCAdmin.initializeFields(BLCAdmin.getActiveTab());
+                BLCAdmin.updateFields(BLCAdmin.getActiveTab());
+            }
         });
     };
 

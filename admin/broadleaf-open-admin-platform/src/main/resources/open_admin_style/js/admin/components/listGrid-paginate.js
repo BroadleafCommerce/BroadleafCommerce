@@ -484,8 +484,8 @@
                 $modalBody.css('overflow-y', 'hidden');
             }
 
-            if ($table.data('listgridtype') == 'asset_grid' && $('.select-column:visible').length > 0) {
-                var fullWidth = $('.select-group').width() - 320;
+            if ($table.data('listgridtype') == 'asset_grid' && $table.closest('.select-group').find('.select-column:visible').length > 0) {
+                var fullWidth = $table.closest('.select-group').width() - 320;
 
                 $headerTable.css('width', '');
                 $table.css('width', '');
@@ -579,6 +579,7 @@
 
                 $wrapper.css('height', wrapperHeight);
                 $wrapper.find('.mCustomScrollBox').css('height', wrapperHeight);
+                $modalBody.css('overflow-y', 'visible');
 
                 $wrapper.mCustomScrollbar('update');
             } else if ($modalBody.length > 0) {
@@ -606,7 +607,8 @@
                 maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, maxHeight);
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
-                $modalBody.css('overflow-y', 'auto');
+                $modalBody.css('overflow-y', 'visible');
+
             } else if ($table.data('listgridtype') === 'tree') {
                 var maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, treeListGridHeight);
                 $wrapper.css('max-height', maxHeight);
@@ -791,7 +793,7 @@
             // Render the table
             $wrapper.mCustomScrollbar('update');
             $clonedTable.find('tbody').css('visibility', 'visible');
-            $modalBody.css('overflow-y', 'auto');
+            $modalBody.css('overflow-y', 'visible');
             
             this.initializeTableResizing($table, $clonedTable);
         }
