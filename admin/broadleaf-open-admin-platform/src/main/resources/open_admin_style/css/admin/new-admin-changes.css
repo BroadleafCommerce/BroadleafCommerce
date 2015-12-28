@@ -456,10 +456,10 @@ div.action-popup img.ajax-loader {
     display: inline-block;
 }
 
-.listgrid-toolbar .listgrid-toolbar-actions.row-actions-present {
-    border-right:1px solid #D8D5D0;
-    margin-right:7px;
-    padding-right:10px;
+.listgrid-toolbar .listgrid-row-actions {
+    border-left: 1px solid #D8D5D0;
+    margin-left: 7px;
+    padding-left: 10px;
 }
 
 .listgrid-toolbar .button:not(.dropdown-toggle) {

@@ -8,8 +8,7 @@
         (hideActionButtons == null or hideActionButtons == 'false') and (listGrid.subCollectionFieldName != null)}">
 
     <div class="listgrid-toolbar-actions"
-         th:unless="${#arrays.isEmpty(listGrid.activeToolbarActions)}"
-         th:classappend="${not #arrays.isEmpty(listGrid.activeRowActions)} ? 'row-actions-present'">
+         th:unless="${#arrays.isEmpty(listGrid.activeToolbarActions)}">
         <button type="button" class="button primary toolbar-action"
                 th:classappend="${action.buttonClass}"
                 th:each="action,iterStat : ${listGrid.activeToolbarActions}"

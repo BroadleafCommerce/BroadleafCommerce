@@ -274,6 +274,7 @@
         
         initialize : function($container) {
             BLCAdmin.listGrid.updateActionButtons($container);
+            BLCAdmin.listGrid.updateGridTitleBarSize($container.find('.fieldgroup-listgrid-wrapper-header'));
 
             if (BLCAdmin.listGrid.paginate) {
                 BLCAdmin.listGrid.paginate.initialize($container);
@@ -288,14 +289,6 @@
                 var day = moment($(this).html());
                 if (day.isValid()) {
                     $(this).html(day.fromNow());
-                }
-            });
-
-            $($.find("[data-fieldname$='Date']")).each(function() {
-                var text = $(this).text();
-                if (text.trim() !== "") {
-                    var d = new Date(text);
-                    $(this).text(d.dateFormat("M d, Y \@ g:ia"));
                 }
             });
         },
@@ -327,6 +320,9 @@
                     } else {
                         $(element).addClass('needsupdate');
                     }
+                });
+                $(element).find('.fieldgroup-listgrid-wrapper-header').each(function(index, element) {
+                    BLCAdmin.listGrid.updateGridTitleBarSize($(element));
                 });
             });
         });

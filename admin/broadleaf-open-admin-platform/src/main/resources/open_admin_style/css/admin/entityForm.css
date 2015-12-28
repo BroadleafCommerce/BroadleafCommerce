@@ -94,6 +94,11 @@ fieldset:not(.untitledGroup) {
     position: relative;
 }
 
+.fieldset-card .titlebar .titlebar-title .tooltip {
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
 .fieldset-card .fieldset-card-content label {
     font-size: 11px !important;
     color: #616161;
