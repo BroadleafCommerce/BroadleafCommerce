@@ -587,6 +587,10 @@ button:disabled {
     display: inline-block;
 }
 
+.modal .listgrid-search .col6 {
+    padding: 0;
+}
+
 .listgrid-search-actions {
     padding-top: 6px;
     display: inline-block;
@@ -1307,7 +1311,7 @@ blockquote::before{
 }
 
 .fieldset-card-content .media-image-container {
-    width: 100%;
+    /*width: 100%;*/
     max-width: 350px;
 }
 
