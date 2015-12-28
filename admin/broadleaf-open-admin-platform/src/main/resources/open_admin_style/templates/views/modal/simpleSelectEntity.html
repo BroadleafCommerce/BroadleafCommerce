@@ -7,8 +7,7 @@
 </div>
 <div th:unless="${treeListGrid}" th:remove="tag">
     <div th:if="${isAssetGrid != null and isAssetGrid}" th:remove="tag">
-        <div th:include="views/fullAssetGrid" th:remove="tag"></div>
-        <div th:include="components/listGridModalActions" th:with="listGrid=${assetGrid.assetListGrid}" th:remove="tag"></div>
+        <div th:include="views/assetGridWithUploadForm" th:remove="tag"></div>
     </div>
     <div th:unless="${isAssetGrid != null and isAssetGrid}" class="listgrid-container single-listgrid">
         <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag"></div>
