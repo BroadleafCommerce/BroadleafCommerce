@@ -13,6 +13,7 @@ bl-framework-applicationContext-workflow.xml
 bl-framework-applicationContext-workflow-payment.xml
 bl-framework-web-applicationContext.xml
 bl-framework-web-applicationContext-api-wrapper.xml
+bl-framework-rest-applicationContext-api-wrapper.xml
 #The application context files below are not added by default to the BLC runtime
 #Instead, these items must be explicitly declared for import in web.xml, if desired
 bl-open-admin-contentClient-applicationContext.xml

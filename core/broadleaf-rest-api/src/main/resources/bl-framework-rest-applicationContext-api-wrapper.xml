@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Framework Web
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <!-- The following beans are for API Wrappers.  They must be prototype scoped..  Override for extensibility.  Unlike the other Broadleaf classes that are keyed by their interface name,
+               these are keyed by their base implementation name. JAXB doesn't like interfaces too much, so we use a base wrapper class that can be extended and overwritten here. -->
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.AddressWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.AddressWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CategoriesWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CategoriesWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CategoryWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CategoryWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CategoryAttributeWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CategoryAttributeWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CountryWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CountryWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerPaymentWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerPaymentWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerAttributeWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerAttributeWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.ErrorWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.ErrorWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.ErrorMessageWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.ErrorMessageWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentGroupItemWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentGroupItemWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentGroupWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentGroupWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentOptionWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentOptionWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.MapElementWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.MapElementWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.MediaWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.MediaWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderItemWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderItemWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderItemQualifierWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderItemQualifierWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderItemAttributeWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderItemAttributeWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderAttributeWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderAttributeWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderPaymentWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderPaymentWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.PaymentTransactionWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.PaymentTransactionWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.PhoneWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.PhoneWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.ProductAttributeWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.ProductAttributeWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.DimensionWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.DimensionWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.WeightWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.WeightWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.ProductWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.ProductWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.ReferencedWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.ReferencedWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.RelatedProductWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.RelatedProductWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.SkuAttributeWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.SkuAttributeWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.SkuWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.SkuWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.InventoryWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.InventoryWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.StateWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.StateWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.ProductOptionWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.ProductOptionWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.ProductOptionValueWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.ProductOptionValueWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.SkuBundleItemWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.SkuBundleItemWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.BroadleafEnumerationTypeWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.BroadleafEnumerationTypeWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.OfferWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.OfferWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.AdjustmentWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.AdjustmentWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderItemPriceDetailWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.OrderItemPriceDetailWrapper" scope="prototype"/>    
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.SearchResultsWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.SearchResultsWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.SearchFacetWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.SearchFacetWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.SearchFacetValueWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.SearchFacetValueWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.TaxDetailWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.TaxDetailWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CartMessageWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CartMessageWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.ISOCountryWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.ISOCountryWrapper" scope="prototype" />
+
+
+</beans>
