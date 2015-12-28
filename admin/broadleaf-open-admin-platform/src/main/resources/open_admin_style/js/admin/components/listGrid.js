@@ -290,14 +290,6 @@
                     $(this).html(day.fromNow());
                 }
             });
-
-            $($.find("[data-fieldname$='Date']")).each(function() {
-                var text = $(this).text();
-                if (text.trim() !== "") {
-                    var d = new Date(text);
-                    $(this).text(d.dateFormat("M d, Y \@ g:ia"));
-                }
-            });
         },
         
         getListGridCount : function($container) {
