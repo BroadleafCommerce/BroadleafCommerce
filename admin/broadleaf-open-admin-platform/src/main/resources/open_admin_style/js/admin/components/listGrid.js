@@ -274,6 +274,7 @@
         
         initialize : function($container) {
             BLCAdmin.listGrid.updateActionButtons($container);
+            BLCAdmin.listGrid.updateGridTitleBarSize($container.find('.fieldgroup-listgrid-wrapper-header'));
 
             if (BLCAdmin.listGrid.paginate) {
                 BLCAdmin.listGrid.paginate.initialize($container);
@@ -319,6 +320,9 @@
                     } else {
                         $(element).addClass('needsupdate');
                     }
+                });
+                $(element).find('.fieldgroup-listgrid-wrapper-header').each(function(index, element) {
+                    BLCAdmin.listGrid.updateGridTitleBarSize($(element));
                 });
             });
         });
