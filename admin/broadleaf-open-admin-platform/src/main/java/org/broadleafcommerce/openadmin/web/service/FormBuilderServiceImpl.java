@@ -622,11 +622,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (e.findProperty("hasError") != null) {
                 Boolean hasError = Boolean.parseBoolean(e.findProperty("hasError").getValue());
                 record.setIsError(hasError);
-                ExtensionResultStatusType messageResultStatus = listGridErrorExtensionManager
-                        .getProxy().determineErrorMessageForEntity(e, record);
-                
-                if (ExtensionResultStatusType.NOT_HANDLED.equals(messageResultStatus)) {
-                    record.setErrorKey("listgrid.record.error");
+                if (hasError) {
+                    ExtensionResultStatusType messageResultStatus = listGridErrorExtensionManager
+                            .getProxy().determineErrorMessageForEntity(e, record);
+
+                    if (ExtensionResultStatusType.NOT_HANDLED.equals(messageResultStatus)) {
+                        record.setErrorKey("listgrid.record.error");
+                    }
                 }
             }
 
