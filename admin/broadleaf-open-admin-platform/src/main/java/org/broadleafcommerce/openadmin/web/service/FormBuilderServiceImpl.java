@@ -647,7 +647,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     } else {
                         if (headerField.getFieldType().equals("DATE")) {
                             try {
-                                Date date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").parse(recordField.getValue());
+                                Date date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").parse(p.getValue());
                                 String newValue = formatter.format(date);
                                 recordField.setValue(newValue);
                             } catch (Exception ex) {
