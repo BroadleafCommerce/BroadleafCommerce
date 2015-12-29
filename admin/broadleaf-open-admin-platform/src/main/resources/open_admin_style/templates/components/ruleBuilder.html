@@ -94,8 +94,9 @@
         <div class="query-builder-rules-container"
             th:classappend="${(field.required ? 'required-query-builder' : '')
                               + (field.dataWrapper.error != null ? 'rule-data-error' : '')}"
-             th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.dataWrapper.error != null OR field.displayType == 'MODAL') ? 'display: none;' : ''}"
-            th:id="${field.name}"/>
+            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.dataWrapper.error != null OR field.displayType == 'MODAL') ? 'display: none;' : ''}"
+            th:id="${field.name}"
+            th:attr="data-itemsthatsatisfytext=${#messages.msgOrNull(field.fieldBuilder + '_ItemsThatSatisfyText')}"/>
         
         <!--/* For: All display types - rule parsing errors */-->
         <div class="field-label error"
