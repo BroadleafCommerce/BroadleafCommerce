@@ -30,6 +30,11 @@ import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderAttribute;
+import org.broadleafcommerce.core.order.domain.OrderAttributeImpl;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
+import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
@@ -42,7 +47,6 @@ import org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesExcepti
 import org.broadleafcommerce.core.rest.api.v2.endpoint.catalog.CatalogEndpoint;
 import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
-import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.beans.BeansException;
@@ -50,6 +54,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.MultiValueMap;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -76,16 +81,23 @@ public abstract class CartEndpoint extends BaseEndpoint {
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
     
+    @Resource(name="blOrderItemService")
+    protected OrderItemService orderItemService;
+    
     /**
      * Search for {@code Order} by {@code Customer}
      *
      * @return the cart for the customer
      */
     public OrderWrapper findCartForCustomer(HttpServletRequest request, Long customerId) {
+        if (customerId == null) {
+            throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value());
+        }
         Customer customer = customerService.readCustomerById(customerId);
         Order cart = null;
         if (customer == null) {
-            // TODO Do I make an anonymous cart or throw error?
+            throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
+                .addMessage(BroadleafWebServicesException.CUSTOMER_NOT_FOUND);
         } else {
             cart = orderService.findCartForCustomer(customer);
         }
@@ -106,10 +118,14 @@ public abstract class CartEndpoint extends BaseEndpoint {
      * @return the cart for the customer
      */
     public OrderWrapper createNewCartForCustomer(HttpServletRequest request, Long customerId) {
+        if (customerId == null) {
+            throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value());
+        }
         Customer customer = customerService.readCustomerById(customerId);
         Order cart = null;
         if (customer == null) {
-            // TODO Do I make an anonymous cart or throw error?
+            throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
+                .addMessage(BroadleafWebServicesException.CUSTOMER_NOT_FOUND);
         } else {
             cart = orderService.createNewCartForCustomer(customer);
         }
@@ -365,39 +381,157 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
     public OrderWrapper updateProductOptions(HttpServletRequest request,
             MultiValueMap<String, String> requestParams,
+            Long cartId,
+            Long customerId,
             Long itemId,
-            boolean priceOrder) {
+            Boolean priceOrder) {
 
-        Order cart = CartState.getCart();
-        if (cart != null) {
-            try {
-                OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+        Order cart = validateCartAndCustomer(customerId, cartId);
+        try {
+            OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
 
-                HashMap<String, String> productOptions = getOptions(requestParams);
-                orderItemRequestDTO.setOrderItemId(itemId);
-                //If we have product options set them on the DTO
-                if (productOptions.size() > 0) {
-                    orderItemRequestDTO.setItemAttributes(productOptions);
-                }
-                Order order = orderService.updateProductOptionsForItem(cart.getId(), orderItemRequestDTO, priceOrder);
+            HashMap<String, String> productOptions = getOptions(requestParams);
+            orderItemRequestDTO.setOrderItemId(itemId);
+            //If we have product options set them on the DTO
+            if (productOptions.size() > 0) {
+                orderItemRequestDTO.setItemAttributes(productOptions);
+            }
+            Order order = orderService.updateProductOptionsForItem(cart.getId(), orderItemRequestDTO, priceOrder);
 
-                order = orderService.save(order, priceOrder);
-                return wrapCart(request, cart);
-            } catch (UpdateCartException e) {
-                if (e.getCause() instanceof ItemNotFoundException) {
-                    throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value(), null, null, e.getCause())
-                    .addMessage(BroadleafWebServicesException.CART_ITEM_NOT_FOUND, itemId);
-                } else {
-                    throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, e)
-                            .addMessage(BroadleafWebServicesException.UPDATE_CART_ERROR);
-                }
-            } catch (PricingException pe) {
-                throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, pe)
-                        .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
+            order = orderService.save(order, priceOrder);
+            return wrapCart(request, cart);
+        } catch (UpdateCartException e) {
+            if (e.getCause() instanceof ItemNotFoundException) {
+                throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value(), null, null, e.getCause())
+                .addMessage(BroadleafWebServicesException.CART_ITEM_NOT_FOUND, itemId);
+            } else {
+                throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, e)
+                        .addMessage(BroadleafWebServicesException.UPDATE_CART_ERROR);
+            }
+        } catch (PricingException pe) {
+            throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, pe)
+                    .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
+        }
+
+    }
+    
+    public OrderWrapper deleteProductOptions(HttpServletRequest request,
+            MultiValueMap<String, String> requestParams,
+            Long cartId,
+            Long customerId,
+            Long itemId,
+            Boolean priceOrder) {
+        
+        Order cart = validateCartAndCustomer(customerId, cartId);
+        try {
+            OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+
+            Map<String, String> productOptions = getOptions(requestParams);
+            orderItemRequestDTO.setOrderItemId(itemId);
+            OrderItem item = orderItemService.readOrderItemById(itemId);
+            if (item == null) {
+                throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
+                    .addMessage(BroadleafWebServicesException.CART_ITEM_NOT_FOUND);
+            }
+            productOptions = getRemainingProductOptions(productOptions, item.getOrderItemAttributes());
+            //If we have product options set them on the DTO
+            if (productOptions.size() > 0) {
+                orderItemRequestDTO.setItemAttributes(productOptions);
+            }
+            
+            Order order = orderService.updateProductOptionsForItem(cart.getId(), orderItemRequestDTO, priceOrder);
+
+            order = orderService.save(order, priceOrder);
+            return wrapCart(request, cart);
+        } catch (UpdateCartException e) {
+            if (e.getCause() instanceof ItemNotFoundException) {
+                throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value(), null, null, e.getCause())
+                .addMessage(BroadleafWebServicesException.CART_ITEM_NOT_FOUND, itemId);
+            } else {
+                throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, e)
+                        .addMessage(BroadleafWebServicesException.UPDATE_CART_ERROR);
+            }
+        } catch (PricingException pe) {
+            throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, pe)
+                    .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
+        }
+        
+    }
+    
+    public OrderWrapper updateOrderAttributes(HttpServletRequest request,
+            MultiValueMap<String, String> requestParams,
+            Long cartId,
+            Long customerId,
+            Boolean priceOrder) {
+        
+        Order cart = validateCartAndCustomer(customerId, cartId);
+        try {
+            Map<String, String> options = getOptions(requestParams);
+            
+            if (options.size() > 0) {
+                cart.setOrderAttributes(getOrderAttributeMap(options, cart));
+            }
+            
+            cart = orderService.save(cart, priceOrder);
+            return wrapCart(request, cart);
+        } catch (PricingException pe) {
+            throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, pe)
+                    .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
+        }
+    }
+    
+    public OrderWrapper deleteOrderAttributes(HttpServletRequest request,
+            MultiValueMap<String, String> requestParams,
+            Long cartId,
+            Long customerId,
+            Boolean priceOrder) {
+        
+        Order cart = validateCartAndCustomer(customerId, cartId);
+        try {
+            Map<String, String> options = getOptions(requestParams);
+            
+            if (options.size() > 0) {
+                cart.setOrderAttributes(getRemainingOrderAttributes(options, cart.getOrderAttributes()));
+            }
+            
+            cart = orderService.save(cart, priceOrder);
+            return wrapCart(request, cart);
+        } catch (PricingException pe) {
+            throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, pe)
+                    .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
+        }
+    }
+    
+    protected Map<String, OrderAttribute> getOrderAttributeMap(Map<String, String> options, Order order) {
+        Map<String, OrderAttribute> attributes = new HashMap<String, OrderAttribute>();
+        for (String key : options.keySet()) {
+            OrderAttribute attribute = new OrderAttributeImpl();
+            attribute.setName(key);
+            attribute.setValue(options.get(key));
+            attribute.setOrder(order);
+            attributes.put(key, attribute);
+        }
+        return attributes;
+    }
+    
+    protected Map<String, OrderAttribute> getRemainingOrderAttributes(Map<String, String> attrsToRemove, Map<String, OrderAttribute> attrs) {
+        Map<String, OrderAttribute> resultParams = new HashMap<String, OrderAttribute>();
+        for (String key : attrs.keySet()) {
+            if (!attrsToRemove.containsKey(key)) {
+                resultParams.put(key, attrs.get(key));
             }
         }
-        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
-                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
+        return resultParams;
+    }
+    
+    protected Map<String, String> getRemainingProductOptions(Map<String, String> paramsToRemove, Map<String, OrderItemAttribute> params) {
+        Map<String, String> resultParams = new HashMap<String, String>();
+        for (String key : params.keySet()) {
+            if (!paramsToRemove.containsKey(key)) {
+                resultParams.put(key, params.get(key).getValue());
+            }
+        }
+        return resultParams;
     }
     
     protected OrderWrapper addItemToOrder(HttpServletRequest request,
