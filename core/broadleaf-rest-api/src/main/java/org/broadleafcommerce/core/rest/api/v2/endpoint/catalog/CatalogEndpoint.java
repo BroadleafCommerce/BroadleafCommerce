@@ -27,13 +27,14 @@ import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
+import org.broadleafcommerce.core.catalog.domain.CategoryMediaXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
+import org.broadleafcommerce.core.catalog.domain.SkuMediaXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.rest.api.v2.wrapper.CategoriesWrapper;
@@ -377,10 +378,10 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             ArrayList<CategoryAttributeWrapper> out = new ArrayList<CategoryAttributeWrapper>();
-            if (category.getCategoryAttributes() != null) {
-                for (CategoryAttribute attribute : category.getCategoryAttributes()) {
+            if (category.getCategoryAttributesMap() != null) {
+                for (String key : category.getCategoryAttributesMap().keySet()) {
                     CategoryAttributeWrapper wrapper = (CategoryAttributeWrapper) context.getBean(CategoryAttributeWrapper.class.getName());
-                    wrapper.wrapSummary(attribute, request);
+                    wrapper.wrapSummary(category.getCategoryAttributesMap().get(key), request);
                     out.add(wrapper);
                 }
             }
@@ -477,12 +478,12 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         Sku sku = catalogService.findSkuById(id);
         if (sku != null) {
             List<MediaWrapper> medias = new ArrayList<MediaWrapper>();
-            if (sku.getSkuMedia() != null && !sku.getSkuMedia().isEmpty()) {
-                for (Media media : sku.getSkuMedia().values()) {
+            if (sku.getSkuMediaXref() != null && !sku.getSkuMediaXref().isEmpty()) {
+                for (SkuMediaXref xref : sku.getSkuMediaXref().values()) {
                     MediaWrapper wrapper = (MediaWrapper) context.getBean(MediaWrapper.class.getName());
-                    wrapper.wrapSummary(media, request);
+                    wrapper.wrapSummary(xref.getMedia(), request);
                     if (wrapper.isAllowOverrideUrl()) {
-                        wrapper.setUrl(staticAssetPathService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
+                        wrapper.setUrl(staticAssetPathService.convertAssetPath(xref.getMedia().getUrl(), request.getContextPath(), request.isSecure()));
                     }
                     medias.add(wrapper);
                 }
@@ -548,10 +549,10 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             ArrayList<MediaWrapper> out = new ArrayList<MediaWrapper>();
-            Map<String, Media> media = category.getCategoryMedia();
-            for (Media med : media.values()) {
+            Map<String, CategoryMediaXref> media = category.getCategoryMediaXref();
+            for (CategoryMediaXref xref : media.values()) {
                 MediaWrapper wrapper = (MediaWrapper) context.getBean(MediaWrapper.class.getName());
-                wrapper.wrapSummary(med, request);
+                wrapper.wrapSummary(xref.getMedia(), request);
                 out.add(wrapper);
             }
             return out;
