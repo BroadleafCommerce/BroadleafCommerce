@@ -18,6 +18,24 @@
  * #L%
  */
 
+
+
+
+/*************************** ENTITY FORM TITLE BAR (beginning of section) ***************************/
+.app-content .content .section-content .main-content .content-area-title-bar>.button-group .button {
+    margin-top: 0;
+    margin-left: -3px;
+}
+
+.app-content .content .section-content .main-content .content-area-title-bar>.button {
+    margin-top: 20px;
+}
+
+.app-content .content .section-content .main-content .content-area-title-bar>.button-group ul {
+    margin-top: -22px;
+}
+/*************************** ENTITY FORM TITLE BAR (end of section) ***************************/
+
 select:not(#sandboxes) {
     padding: 0 10px;
     border: 1px solid #D8D5D0;
