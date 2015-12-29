@@ -22,7 +22,10 @@ package org.broadleafcommerce.core.order.fulfillment.domain;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.hibernate.annotations.Cache;
@@ -45,25 +48,27 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_OPT_BANDED_PRC")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(friendlyName = "Banded Price Fulfillment Option")
+@AdminPresentationClass(friendlyName = "Banded Price Fulfillment Option",populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl implements BandedPriceFulfillmentOption {
 
     private static final long serialVersionUID = 1L;
     
     @OneToMany(mappedBy="option", targetEntity=FulfillmentPriceBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(friendlyName = "BandedPriceFulfillmentOptionImpl_bands")
     @IgnoreEnterpriseBehavior
-    protected List<FulfillmentPriceBand> bands = new ArrayList<FulfillmentPriceBand>();
+    protected List<FulfillmentPriceBand> priceBands = new ArrayList<FulfillmentPriceBand>();
 
     @Override
-    public List<FulfillmentPriceBand> getBands() {
-        return bands;
+    public List<FulfillmentPriceBand> getPriceBands() {
+        return priceBands;
     }
 
     @Override
-    public void setBands(List<FulfillmentPriceBand> bands) {
-        this.bands = bands;
+    public void setPriceBands(List<FulfillmentPriceBand> priceBands) {
+        this.priceBands = priceBands;
     }
+
 
     @Override
     public CreateResponse<BandedPriceFulfillmentOption> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
@@ -74,8 +79,8 @@ public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl impl
         }
         BandedPriceFulfillmentOption myClone = createResponse.getClone();
 
-        for (FulfillmentPriceBand band : bands) {
-            myClone.getBands().add(band);
+        for (FulfillmentPriceBand band : priceBands) {
+            myClone.getPriceBands().add(band);
         }
 
         return createResponse;

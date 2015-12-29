@@ -54,6 +54,7 @@ public class FixedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl imple
     private static final long serialVersionUID = 1L;
 
     @Column(name = "PRICE", precision=19, scale=5, nullable=false)
+    @AdminPresentation(friendlyName = "FixedPriceFulfillmentOptionImpl_price")
     protected BigDecimal price;
     
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)

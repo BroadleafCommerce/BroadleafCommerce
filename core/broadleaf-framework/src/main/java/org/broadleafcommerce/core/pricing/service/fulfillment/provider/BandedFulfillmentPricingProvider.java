@@ -104,9 +104,9 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                 
                 List<? extends FulfillmentBand> bands = null;
                 if (option instanceof BandedPriceFulfillmentOption) {
-                    bands = ((BandedPriceFulfillmentOption) option).getBands();
+                    bands = ((BandedPriceFulfillmentOption) option).getPriceBands();
                 } else if (option instanceof BandedWeightFulfillmentOption) {
-                    bands = ((BandedWeightFulfillmentOption) option).getBands();
+                    bands = ((BandedWeightFulfillmentOption) option).getWeightBands();
                 }
                 
                 if (bands == null || bands.isEmpty()) {

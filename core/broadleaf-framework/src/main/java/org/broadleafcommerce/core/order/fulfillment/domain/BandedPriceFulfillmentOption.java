@@ -29,8 +29,8 @@ import java.util.List;
  */
 public interface BandedPriceFulfillmentOption extends FulfillmentOption {
     
-    public List<FulfillmentPriceBand> getBands();
+    public List<FulfillmentPriceBand> getPriceBands();
 
-    public void setBands(List<FulfillmentPriceBand> bands);
+    public void setPriceBands(List<FulfillmentPriceBand> bands);
 
 }
