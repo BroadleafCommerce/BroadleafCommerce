@@ -42,6 +42,7 @@ public class BroadleafWebServicesException extends RuntimeException {
     public static final String SEARCH_QUERY_MALFORMED = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.searchQueryMalformed";
     public static final String INVALID_CATEGORY_ID = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.invalidCategoryId";
     public static final String CART_NOT_FOUND = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.cartNotFound";
+    public static final String CART_CUSTOMER_MISMATCH = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.cartCustomerMismatch";
     public static final String CART_ITEM_NOT_FOUND = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.cartItemNotFound";
     public static final String CART_PRICING_ERROR = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.cartPricingError";
     public static final String UPDATE_CART_ERROR = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.updateCartError";
@@ -58,6 +59,8 @@ public class BroadleafWebServicesException extends RuntimeException {
     public static final String QUERY_PARAMETER_NOT_PRESENT = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.queryParameterNotPresent";
     public static final String CUSTOMER_PAYMENT_NOT_FOUND = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.customerPaymentNotFound";
     public static final String INVALID_CUSTOMER_FOR_PAYMENT = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.invalidCustomerForPayment";
+    public static final String INVALID_ADD_TO_CART_REQUEST = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.invalidAddToCartRequest";
+    public static final String MISSING_ITEM_NAME = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.missingItemName";
 
     protected int httpStatusCode = 500;
 
