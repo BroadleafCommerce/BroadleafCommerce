@@ -279,17 +279,6 @@ circle {
     float: none;
 }
 
-.app-content .content .section-content .main-content .content-area-title-bar>.button-group .button {
-    margin-top: 0;
-    margin-left: -3px;
-}
-
-.app-content .content .section-content .main-content .content-area-title-bar>.button {
-    margin-top: 20px;
-}
-.app-content .content .section-content .main-content .content-area-title-bar>.button-group ul {
-    margin-top: -22px;
-}
 .app-content .content .site-bar .button {
     line-height: inherit;
 }

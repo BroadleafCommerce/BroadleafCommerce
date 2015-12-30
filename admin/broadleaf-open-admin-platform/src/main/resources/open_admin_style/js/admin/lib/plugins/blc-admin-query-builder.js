@@ -121,7 +121,17 @@ $.fn.queryBuilder.define('blc-admin-query-builder', function(options) {
             var itemPK = $("<input>", {"class": "rules-group-header-item-pk", "type": "hidden", "value": options.pk});
             var itemQty = $("<input>", {"class": "rules-group-header-item-qty", "type": options.quantity ? "text" : "hidden",
                 "value": options.quantity});
-            var satisfySpan = $("<span>", {"class": "rules-group-header-span", "text": "items that satisfy"});
+
+            // To introduce additional unique "items that satisfy" text, you must create a property such that
+            // the key is in the following format "{Rule Identifier Type}_ItemsThatSatisfyText".
+            // Examples: "PRODUCT_FIELDS_ItemsThatSatisfyText" or "ORDER_ITEM_FIELDS_ItemsThatSatisfyText"
+            var satisfyText = $(this).closest('.query-builder-rules-container').data('itemsthatsatisfytext');
+            if (typeof satisfyText === 'undefined' || satisfyText === null || satisfyText.endsWith("_ItemsThatSatisfyText")) {
+                // If the property cannot be resolved, use the default text.
+                satisfyText = "items that satisfy";
+            }
+
+            var satisfySpan = $("<span>", {"class": "rules-group-header-span", "text": satisfyText});
             var followingRulesSpan = $("<span>", {"class": "rules-group-header-span", "text": "of the following:"});
             $h.find('.group-conditions').prepend(satisfySpan).prepend(itemQty).prepend(itemPK).prepend(matchSpan).append(followingRulesSpan);
             $h.find('.group-actions button').addClass('button');
