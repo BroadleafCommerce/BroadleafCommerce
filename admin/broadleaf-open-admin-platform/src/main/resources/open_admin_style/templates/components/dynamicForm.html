@@ -11,8 +11,10 @@
         <div th:each="group : ${df.tabs[0].fieldGroups}"
             th:classappend="${!group.isVisible}? 'hidden'" class="fieldset-card field-group dynamic-form">
             <a class="titlebar" href="#">
-                <span th:utext="#{${group.title}}"></span>
-                <i class="fa fa-question-circle help-tip" th:unless="${#strings.isEmpty(group.toolTip)}" th:attr="data-tip=#{${group.toolTip}}"></i>
+                <div class="titlebar-title">
+                    <span th:utext="#{${group.title}}"></span>
+                    <i class="fa fa-question-circle help-tip" th:unless="${#strings.isEmpty(group.toolTip)}" th:attr="data-tip=#{${group.toolTip}}"></i>
+                </div>
 
                 <div class="collapser">
                     <span class="collapsed" href="#" th:if="${group.collapsed}"><i class="fa fa-angle-down"></i></span>
@@ -31,7 +33,12 @@
                           th:attr="data-original-value=${field.attributes['originalValue']},
                                    data-original-overriden-value=${field.attributes['originalOverridenValue']}" />
 
-                    <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}" />
+                    <div th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
+                        <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"/>
+                    </div>
+                    <div th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
+                        <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"/>
+                    </div>
 
                     <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
                 </div>

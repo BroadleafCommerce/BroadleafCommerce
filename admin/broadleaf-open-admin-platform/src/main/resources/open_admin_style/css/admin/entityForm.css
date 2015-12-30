@@ -82,10 +82,6 @@ fieldset:not(.untitledGroup) {
     background-color: #FBFAF7;
 }
 
-.fieldset-card .fieldset-card-content {
-    padding: 15px 15px 0 !important;
-}
-
 .app-content .fieldset-card, .modal-body .fieldset-card {
     margin-bottom: 15px;
 }
@@ -117,12 +113,22 @@ fieldset:not(.untitledGroup) {
     margin-left: 5px;
 }
 
+.fieldset-card .fieldset-card-content {
+    padding: 15px 15px 0 !important;
+}
+
 .fieldset-card .fieldset-card-content label {
     font-size: 11px !important;
     color: #616161;
     line-height: 14px;
     text-transform: uppercase !important;
     padding-bottom: 1px;
+    display: inline-block;
+}
+
+.fieldset-card .fieldset-card-content .show-translations {
+    font-size: 12px;
+    margin-left: 5px;
 }
 
 .fieldset-card:not(.dynamic-form):not(.inModal):first-child {
@@ -304,3 +310,47 @@ a.description-link {
 }
 
 /*************************** IN MODAL (end of section) ***************************/
+
+
+/*************************** DYNAMIC FORM (beginning of section) ***************************/
+
+.content-item-add-button-wrapper {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.content-item-add-sc {
+    margin: 0 auto;
+}
+
+.pick-sctype-popup {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+    -webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+    box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+    padding: 10px 15px 15px;
+    margin: 10px auto;
+    text-align: left;
+    width: 550px;
+}
+
+.pick-sctype-popup .selectize-control {
+    width: 425px;
+    display: inline-block;
+}
+
+.pick-sctype-popup .actions {
+    float: right;
+    display: inline-block;
+}
+
+.pick-sctype-popup .actions .action-popup-cancel {
+    vertical-align: middle;
+}
+
+.dynamic-form-container .fieldset-card-content .content-item-action-wrapper {
+    margin-bottom: 15px;
+}
+
+/*************************** DYNAMIC FORM (end of section) ***************************/
