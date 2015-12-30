@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.rest.api.v2.endpoint.order;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -31,11 +32,12 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.AddressWrapper;
 import org.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentGroupItemWrapper;
 import org.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentGroupWrapper;
 import org.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentOptionWrapper;
 import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderWrapper;
-import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.springframework.http.HttpStatus;
@@ -132,8 +134,9 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
     public FulfillmentGroupWrapper addItemToFulfillmentGroup(HttpServletRequest request,
             Long fulfillmentGroupId,
             FulfillmentGroupItemWrapper wrapper,
-            boolean priceOrder) {
-        Order cart = CartState.getCart();
+            boolean priceOrder,
+            Long cartId) {
+        Order cart = orderService.findOrderById(cartId);
         if (cart != null) {
             FulfillmentGroupItemRequest fulfillmentGroupItemRequest = wrapper.unwrap(request, context);
             if (fulfillmentGroupItemRequest.getOrderItem() != null) {
@@ -176,7 +179,8 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
     public FulfillmentGroupWrapper addFulfillmentOptionToFulfillmentGroup(HttpServletRequest request,
             Long fulfillmentGroupId,
             Long fulfillmentOptionId,
-            boolean priceOrder) {
+            boolean priceOrder,
+            Long cartId) {
 
         FulfillmentOption option = fulfillmentOptionService.readFulfillmentOptionById(fulfillmentOptionId);
         if (option == null) {
@@ -184,7 +188,7 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
                     .addMessage(BroadleafWebServicesException.FULFILLMENT_OPTION_NOT_FOUND, fulfillmentOptionId);
         }
 
-        Order cart = CartState.getCart();
+        Order cart = orderService.findOrderById(cartId);
         if (cart != null) {
             boolean found = false;
             List<FulfillmentGroup> groups = cart.getFulfillmentGroups();
@@ -237,5 +241,37 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
         }
         
         return out;
+    }
+    
+    public FulfillmentGroupWrapper updateFulfillmentGroupAddress(HttpServletRequest request,
+                                                                 AddressWrapper address,
+                                                                 Long fulfillmentGroupId,
+                                                                 Long cartId) {
+        FulfillmentGroup group = fulfillmentGroupService.findFulfillmentGroupById(fulfillmentGroupId);
+        Order cart = orderService.findOrderById(cartId);
+        if (cart == null) {
+            throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
+        }
+        if (group == null) {
+            throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
+                .addMessage(BroadleafWebServicesException.FULFILLMENT_GROUP_NOT_FOUND);
+        }
+        if (group.getOrder() == null || ObjectUtils.notEqual(cart.getId(), group.getOrder().getId())) {
+            throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
+                .addMessage(BroadleafWebServicesException.INVALID_FULFILLMENT_GROUP_FOR_ORDER);
+        }
+        
+        group.setAddress(address.unwrap(request, context));
+        group = fulfillmentGroupService.save(group);
+        try {
+            orderService.save(cart, false);
+        } catch (PricingException pe) {
+            // Won't happen
+        }
+        FulfillmentGroupWrapper wrapper = new FulfillmentGroupWrapper();
+        wrapper.wrapDetails(group, request);
+        return wrapper;
+        
     }
 }

@@ -61,6 +61,10 @@ public class BroadleafWebServicesException extends RuntimeException {
     public static final String INVALID_CUSTOMER_FOR_PAYMENT = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.invalidCustomerForPayment";
     public static final String INVALID_ADD_TO_CART_REQUEST = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.invalidAddToCartRequest";
     public static final String MISSING_ITEM_NAME = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.missingItemName";
+    public static final String CUSTOMER_PAYMENT_ORDER_MISMATCH = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.customerPaymentOrderMismatch";
+    public static final String ORDER_PAYMENT_NOT_FOUND = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.orderPaymentNotFound";
+    public static final String INVALID_ORDER_PAYMENT_FOR_ORDER = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.invalidOrderPaymentForOrder";
+    public static final String INVALID_FULFILLMENT_GROUP_FOR_ORDER = "org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException.invalidFulfillmentGroupForOrder";
 
     protected int httpStatusCode = 500;
 

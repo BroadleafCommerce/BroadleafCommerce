@@ -650,7 +650,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
             if (customer == null) {
                 throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                     .addMessage(BroadleafWebServicesException.CUSTOMER_NOT_FOUND);
-            } else if (ObjectUtils.notEqual(customer, cart.getCustomer())) {
+            } else if (ObjectUtils.notEqual(customer.getId(), cart.getCustomer().getId())) {
                 throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
                     .addMessage(BroadleafWebServicesException.CART_CUSTOMER_MISMATCH);
             }
