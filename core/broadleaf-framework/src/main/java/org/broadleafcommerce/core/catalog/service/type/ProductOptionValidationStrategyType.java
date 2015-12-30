@@ -37,8 +37,9 @@ public class ProductOptionValidationStrategyType implements Serializable, Broadl
 
     private static final Map<String, ProductOptionValidationStrategyType> TYPES = new LinkedHashMap<String, ProductOptionValidationStrategyType>();
 
-    public static final ProductOptionValidationStrategyType ADD_ITEM = new ProductOptionValidationStrategyType("ADD_ITEM", 1000, "Validate On Add Item");
-    public static final ProductOptionValidationStrategyType SUBMIT_ORDER = new ProductOptionValidationStrategyType("SUBMIT_ORDER", 2000, "Validate On Submit");
+    public static final ProductOptionValidationStrategyType NONE = new ProductOptionValidationStrategyType("NONE", 1000, "None");
+    public static final ProductOptionValidationStrategyType ADD_ITEM = new ProductOptionValidationStrategyType("ADD_ITEM", 2000, "Validate On Add Item");
+    public static final ProductOptionValidationStrategyType SUBMIT_ORDER = new ProductOptionValidationStrategyType("SUBMIT_ORDER", 3000, "Validate On Submit");
 
     public static ProductOptionValidationStrategyType getInstance(final String type) {
         return TYPES.get(type);
