@@ -66,6 +66,18 @@ public interface ProductOption extends Serializable, MultiTenantCloneable<Produc
     public void setId(Long id);
 
     /**
+     * Returns name of the product option.
+     * @return
+     */
+    public String getName();
+
+    /**
+     * Sets the name of the product option.
+     * @param name
+     */
+    public void setName(String name);
+
+    /**
      * Returns the option type.   For example, "color", "size", etc.
      * These are used primarily to determine how the UI should prompt for and
      * validate the product option.

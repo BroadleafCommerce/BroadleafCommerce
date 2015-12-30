@@ -83,6 +83,13 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     )
     @Column(name = "PRODUCT_OPTION_ID")
     protected Long id;
+
+    @Column(name = "NAME")
+    @Index(name="PRODUCT_OPTION_NAME_INDEX", columnNames={"NAME"})
+    @AdminPresentation(friendlyName = "productOption_name",
+        group = GroupName.General, order = FieldOrder.name,
+        prominent = true, gridOrder = 1000)
+    protected String name;
     
     @Column(name = "OPTION_TYPE")
     @AdminPresentation(friendlyName = "productOption_Type",
@@ -181,6 +188,16 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String getName() {
+        return name == null || name.isEmpty() ? getLabel() : name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -339,6 +356,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
             return createResponse;
         }
         ProductOption cloned = createResponse.getClone();
+        cloned.setName(name);
         cloned.setAttributeName(attributeName);
         cloned.setDisplayOrder(displayOrder);
         cloned.setErrorMessage(errorMessage);
