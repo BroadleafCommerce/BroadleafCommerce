@@ -36,6 +36,10 @@
 }
 /*************************** ENTITY FORM TITLE BAR (end of section) ***************************/
 
+label .fa {
+    font-size: 13px;
+}
+
 select:not(#sandboxes) {
     padding: 0 10px;
     border: 1px solid #D8D5D0;

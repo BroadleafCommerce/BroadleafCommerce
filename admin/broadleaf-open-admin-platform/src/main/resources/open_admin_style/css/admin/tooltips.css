@@ -24,14 +24,14 @@ a.tooltip span {
     z-index: 10;
     display: none;
     padding: 8px 10px;
-    margin-top: -29px;
-    margin-left: 31px;
+    margin-top: -26px;
+    margin-left: 29px;
     width: 500px;
     line-height: 16px;
     text-transform: none !important;
 }
 a.tooltip span.left {
-    margin-left: -510px;
+    margin-left: -508px;
 }
 a.tooltip:hover span {
     display: inline;
