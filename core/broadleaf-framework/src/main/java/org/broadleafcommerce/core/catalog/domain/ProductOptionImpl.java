@@ -306,6 +306,10 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
 
     @Override
     public ProductOptionValidationType getProductOptionValidationType() {
+        if (productOptionValidationType == null || productOptionValidationType.isEmpty()) {
+            return ProductOptionValidationType.REGEX;
+        }
+
         return ProductOptionValidationType.getInstance(productOptionValidationType);
     }
 
