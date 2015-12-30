@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.rest.api.v2.endpoint.order;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
@@ -26,7 +27,7 @@ import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
@@ -48,10 +49,13 @@ public abstract class OrderHistoryEndpoint extends BaseEndpoint {
 
     @Resource(name="blOrderService")
     protected OrderService orderService;
+    
+    @Resource(name="blCustomerService")
+    protected CustomerService customerService;
 
     public List<OrderWrapper> findOrdersForCustomer(HttpServletRequest request,
-            String orderStatus) {
-        Customer customer = CustomerState.getCustomer(request);
+            String orderStatus, Long customerId) {
+        Customer customer = customerService.readCustomerById(customerId);
         OrderStatus status = OrderStatus.getInstance(orderStatus);
 
         if (customer != null && status != null) {
@@ -74,5 +78,40 @@ public abstract class OrderHistoryEndpoint extends BaseEndpoint {
 
         throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
                 .addMessage(BroadleafWebServicesException.CUSTOMER_NOT_FOUND);
+    }
+
+    public List<OrderWrapper> findAllOrdersForCustomer(HttpServletRequest request, Long customerId) {
+        Customer customer = customerService.readCustomerById(customerId);
+
+        if (customer != null) {
+            List<Order> orders = orderService.findOrdersForCustomer(customer);
+            if (CollectionUtils.isNotEmpty(orders)) {
+                List<OrderWrapper> wrappers = new ArrayList<OrderWrapper>();
+                for (Order order : orders) {
+                    OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                    wrapper.wrapSummary(order, request);
+                    wrappers.add(wrapper);
+                }
+
+                return wrappers;
+            }
+
+            throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
+                    .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
+        }
+
+        throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
+                .addMessage(BroadleafWebServicesException.CUSTOMER_NOT_FOUND);
+    }
+
+    public OrderWrapper findOrderById(HttpServletRequest request, Long orderId) {
+        Order order = orderService.findOrderById(orderId);
+        if (order == null) {
+            throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
+        }
+        OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+        wrapper.wrapSummary(order, request);
+        return wrapper;
     }
 }
