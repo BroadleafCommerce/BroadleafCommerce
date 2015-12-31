@@ -545,7 +545,6 @@ var BLCAdmin = (function($) {
             $('select:not(".selectize-collection, .selectize-adder' + excludedSelectors + '")')
                 .selectize({
                     sortField: 'text',
-                    dropdownParent: 'body',
                     closeAfterSelect: true,
                     onItemAdd: function(value, $item) {
                         $item.closest('.selectize-input').find('input').blur();

@@ -198,8 +198,8 @@ circle {
     border: none;
     border-radius: 2px;
     display: inline-block;
-    height: 36px;
-    line-height: 36px;
+    height: 34px;
+    line-height: 34px;
     outline: 0;
     padding: 0 16px;
     text-transform: capitalize;
@@ -209,6 +209,10 @@ circle {
 
 .button.large {
     padding: 0 2rem;
+}
+
+.button.small {
+    padding: 0px 10px;
 }
 
 .button.secondary, .button {

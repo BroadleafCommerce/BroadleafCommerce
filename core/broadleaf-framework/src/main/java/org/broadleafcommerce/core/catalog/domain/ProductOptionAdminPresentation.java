@@ -35,6 +35,9 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 @AdminGroupPresentation(name = ProductOptionAdminPresentation.GroupName.General,
                     order = ProductOptionAdminPresentation.GroupOrder.General,
                     untitled = true),
+                @AdminGroupPresentation(name = ProductOptionAdminPresentation.GroupName.Details,
+                    order = ProductOptionAdminPresentation.GroupOrder.Details,
+                    column = 1),
                 @AdminGroupPresentation(name = ProductOptionAdminPresentation.GroupName.Validation,
                     order = ProductOptionAdminPresentation.GroupOrder.Validation,
                     column = 1)
@@ -46,25 +49,39 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 public interface ProductOptionAdminPresentation {
 
     public static class TabName {
-
         public static final String General = "ProductImpl_General_Tab";
-
     }
 
     public static class TabOrder {
-
         public static final int General = 1000;
     }
 
     public static class GroupName {
-
-        public static final String General = "ProductImpl_Product_Description";
+        public static final String General = "productOption_general";
+        public static final String Details = "productOption_details";
         public static final String Validation = "productOption_validation";
     }
 
     public static class GroupOrder {
-
         public static final int General = 1000;
+        public static final int Details = 1000;
         public static final int Validation = 2000;
+    }
+
+    public static class FieldOrder {
+        public static final int name = 1000;
+        public static final int label = 2000;
+        public static final int type = 3000;
+
+        public static final int attributeName = 1000;
+        public static final int displayOrder = 2000;
+        public static final int useInSkuGeneration = 3000;
+
+        public static final int required = 1000;
+        public static final int validationStrategyType = 2000;
+        public static final int validationType = 3000;
+        public static final int validationString = 4000;
+        public static final int errorCode = 5000;
+        public static final int errorMessage = 6000;
     }
 }
