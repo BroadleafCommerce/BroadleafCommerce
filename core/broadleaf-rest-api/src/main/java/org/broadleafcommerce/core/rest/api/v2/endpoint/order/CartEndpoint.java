@@ -22,6 +22,9 @@ package org.broadleafcommerce.core.rest.api.v2.endpoint.order;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
@@ -83,6 +86,9 @@ public abstract class CartEndpoint extends BaseEndpoint {
     
     @Resource(name="blOrderItemService")
     protected OrderItemService orderItemService;
+    
+    @Resource(name="blCatalogService")
+    protected CatalogService catalogService;
     
     /**
      * Search for {@code Order} by {@code Customer}
@@ -199,11 +205,14 @@ public abstract class CartEndpoint extends BaseEndpoint {
             Boolean priceOrder,
             Long parentOrderItemId) {
         
-        if (skuId == null) {
+        Sku sku = catalogService.findSkuById(skuId);
+        if (sku == null) {
             throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND);
         }
-        return addItemToOrder(request, null, skuId, cartId, requestParams, null, customerId, itemPrice, categoryId, quantity, priceOrder, parentOrderItemId);
+        Product prod = sku.getProduct();
+        
+        return addItemToOrder(request, prod != null ? prod.getId() : null, skuId, cartId, requestParams, null, customerId, itemPrice, categoryId, quantity, priceOrder, parentOrderItemId);
     }
     
     public OrderWrapper addNonDiscreteOrderItemToOrder(HttpServletRequest request,

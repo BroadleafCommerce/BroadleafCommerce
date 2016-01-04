@@ -22,12 +22,14 @@ package org.broadleafcommerce.core.rest.api.v2.endpoint.customer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException;
 import org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerAddressWrapper;
 import org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerAttributeWrapper;
 import org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerPaymentWrapper;
 import org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerWrapper;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
+import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
@@ -39,6 +41,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -91,6 +94,12 @@ public abstract class CustomerEndpoint extends BaseEndpoint {
 
     public CustomerWrapper addCustomer(HttpServletRequest request, CustomerWrapper wrapper) {
         Customer customer = wrapper.unwrap(request, context);
+        if (StringUtils.isEmpty(customer.getUsername())) {
+            String userName = (StringUtils.isNotBlank(customer.getFirstName()) ? customer.getFirstName() : "") +
+                              (StringUtils.isNotBlank(customer.getLastName()) ? customer.getLastName() : "") +
+                              (StringUtils.isNotBlank(customer.getEmailAddress()) ? customer.getEmailAddress() : "");
+            customer.setUsername(userName);
+        }
         customer = customerService.saveCustomer(customer);
 
         CustomerWrapper response = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
@@ -143,6 +152,7 @@ public abstract class CustomerEndpoint extends BaseEndpoint {
                 .addMessage(BroadleafWebServicesException.CUSTOMER_NOT_FOUND);
         }
         CustomerAttribute attribute = wrapper.unwrap(request, context);
+        attribute.setCustomer(customer);
         customer.getCustomerAttributes().put(attribute.getName(), attribute);
         customer = customerService.saveCustomer(customer);
 
@@ -215,42 +225,44 @@ public abstract class CustomerEndpoint extends BaseEndpoint {
     }
 
     public CustomerAddressWrapper updateAddress(HttpServletRequest request, Long customerId, Long customerAddressId, CustomerAddressWrapper wrapper) {
-        CustomerAddress address = customerAddressService.readCustomerAddressById(customerAddressId);
+        CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
         Customer customer = customerService.readCustomerById(customerId);
         if (customer == null) {
             throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CUSTOMER_NOT_FOUND);
         }
-        if (address == null || !address.getCustomer().getId().equals(customerId)) {
+        if (customerAddress == null || !customerAddress.getCustomer().getId().equals(customerId)) {
             throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CUSTOMER_ADDRESS_NOT_FOUND);
         }
-        address.setAddressName(wrapper.getAddressName());
-        address.setAddress(wrapper.getAddress().unwrap(request, context));
-        address = customerAddressService.saveCustomerAddress(address);
+        customerAddress.setAddressName(wrapper.getAddressName());
+        Address newAddress = wrapper.getAddress().unwrap(request, context);
+        Address oldAddress = customerAddress.getAddress();
+        // Workaround for a hibernate issue where when replacing the country on the oldAddress with the same country causes a persisting detached entity error
+        if (Objects.equals(newAddress.getCountry(), oldAddress.getCountry())) {
+            newAddress.setCountry(oldAddress.getCountry());
+        }
+        customerAddress.setAddress(newAddress);
+        customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
         CustomerAddressWrapper response = (CustomerAddressWrapper) context.getBean(CustomerAddressWrapper.class.getName());
-        response.wrapDetails(address, request);
+        response.wrapDetails(customerAddress, request);
 
         return response;
     }
 
-    public List<CustomerAddressWrapper> removeAllAddresses(HttpServletRequest request, Long customerId) {
+    public CustomerWrapper removeAllAddresses(HttpServletRequest request, Long customerId) {
         List<CustomerAddress> addresses = customerAddressService.readActiveCustomerAddressesByCustomerId(customerId);
         if (!CollectionUtils.isEmpty(addresses)) {
             for (CustomerAddress address : addresses) {
                 customerAddressService.deleteCustomerAddressById(address.getId());
             }
         }
-        addresses = customerAddressService.readActiveCustomerAddressesByCustomerId(customerId);
-        List<CustomerAddressWrapper> wrappers = new ArrayList<CustomerAddressWrapper>();
-        if (!CollectionUtils.isEmpty(addresses)) {
-            for (CustomerAddress address : addresses) {
-                CustomerAddressWrapper wrapper = (CustomerAddressWrapper) context.getBean(CustomerAddressWrapper.class.getName());
-                wrapper.wrapDetails(address, request);
-                wrappers.add(wrapper);
-            }
+        Customer customer = customerService.readCustomerById(customerId);
+        CustomerWrapper wrapper = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
+        if (customer != null) {
+            wrapper.wrapSummary(customer, request);
         }
-        return wrappers;
+        return wrapper;
     }
 
     public List<CustomerAddressWrapper> removeAddress(HttpServletRequest request, Long customerId, String addressName) {
@@ -337,25 +349,24 @@ public abstract class CustomerEndpoint extends BaseEndpoint {
         return response;
     }
     
-    public List<CustomerPaymentWrapper> removeAllCustomerPayments(HttpServletRequest request, Long customerId) {
+    public CustomerWrapper removeAllCustomerPayments(HttpServletRequest request, Long customerId) {
         Customer customer = customerService.readCustomerById(customerId);
         if (customer == null) {
             throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CUSTOMER_NOT_FOUND);
         }
         List<CustomerPayment> payments = customerPaymentService.readCustomerPaymentsByCustomerId(customerId);
-        List<CustomerPaymentWrapper> wrappers = new ArrayList<>();
         for (CustomerPayment payment : payments) {
             customerPaymentService.deleteCustomerPaymentFromCustomer(customer, payment);
-            CustomerPaymentWrapper response = (CustomerPaymentWrapper) context.getBean(CustomerPaymentWrapper.class.getName());
-            response.wrapDetails(payment, request);
-            wrappers.add(response);
         }
-        
-        return wrappers;
+        CustomerWrapper wrapper = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
+        if (customer != null) {
+            wrapper.wrapSummary(customer, request);
+        }
+        return wrapper;
     }
     
-    public CustomerPaymentWrapper removeCustomerPayment(HttpServletRequest request, Long customerId, Long paymentId) {
+    public List<CustomerPaymentWrapper> removeCustomerPayment(HttpServletRequest request, Long customerId, Long paymentId) {
         Customer customer = customerService.readCustomerById(customerId);
         if (customer == null) {
             throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
@@ -367,9 +378,14 @@ public abstract class CustomerEndpoint extends BaseEndpoint {
                 .addMessage(BroadleafWebServicesException.CUSTOMER_PAYMENT_NOT_FOUND);
         }
         customerPaymentService.deleteCustomerPaymentFromCustomer(customer, payment);
-        CustomerPaymentWrapper response = (CustomerPaymentWrapper) context.getBean(CustomerPaymentWrapper.class.getName());
-        response.wrapDetails(payment, request);
-        return response;
+        List<CustomerPaymentWrapper> wrapper = new ArrayList<>();
+        customer = customerService.readCustomerById(customerId);
+        for (CustomerPayment cp : customer.getCustomerPayments()) {
+            CustomerPaymentWrapper response = (CustomerPaymentWrapper) context.getBean(CustomerPaymentWrapper.class.getName());
+            response.wrapDetails(cp, request);
+            wrapper.add(response);
+        }
+        return wrapper;
     }
     
 }

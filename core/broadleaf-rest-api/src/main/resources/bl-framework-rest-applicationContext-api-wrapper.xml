@@ -30,6 +30,7 @@
     <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CategoryWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CategoryWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CategoryAttributeWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CategoryAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CountryWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CountryWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerAddressWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerAddressWrapper" scope="prototype" />
     <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerPaymentWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerPaymentWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerAttributeWrapper" class="org.broadleafcommerce.core.rest.api.v2.wrapper.CustomerAttributeWrapper" scope="prototype"/>

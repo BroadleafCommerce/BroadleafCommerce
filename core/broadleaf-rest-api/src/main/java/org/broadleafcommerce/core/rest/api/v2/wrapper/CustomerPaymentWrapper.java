@@ -24,9 +24,7 @@ import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
-import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
-import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Date;
@@ -117,13 +115,15 @@ public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<Cu
         CustomerPaymentService custPayService = (CustomerPaymentService) context.getBean("blCustomerPaymentService");
         CustomerPayment custPay = custPayService.create();
 
-        AddressService addressService = (AddressService) context.getBean("blAddressService");
-        Address billingAddress = addressService.readAddressById(this.billingAddress.getId());
-        custPay.setBillingAddress(billingAddress);
-
-        CustomerService customerService = (CustomerService) context.getBean("blCustomerService");
-        Customer cust = customerService.readCustomerById(this.customer.getId());
-        custPay.setCustomer(cust);
+        if (this.billingAddress != null) {
+            Address billingAddress = this.billingAddress.unwrap(request, context);
+            custPay.setBillingAddress(billingAddress);
+        }
+        
+        if (this.customer != null) {
+            Customer cust = this.customer.unwrap(request, context);
+            custPay.setCustomer(cust);
+        }
 
         custPay.setIsDefault(this.isDefault);
         custPay.setPaymentToken(this.getPaymentToken());
