@@ -11,9 +11,16 @@
             <div type="hidden" id="treeParentPathJson" th:if="${treeParentPathJson != null}" th:attr="data-parentpathjson=${treeParentPathJson}"></div>
             <div class="asset-grid-container">
                 <div th:each="asset : ${assetGrid.records}" class="asset-item">
-                    <img class="thumbnail"
-                         th:src="@{${asset.fullUrl + '?largeAdminThumbnail'}}"
-                         th:attr="data-fullurl=@{${asset.fullUrl}}, data-rowid=${asset.id}" />
+
+                    <div class="image-wrapper">
+                        <img class="thumbnail"
+                             th:src="@{${asset.fullUrl + '?largeAdminThumbnail'}}"
+                             th:attr="data-fullurl=@{${asset.fullUrl}}, data-rowid=${asset.id}" />
+
+                        <div class="asset-actions asset-grid-lock" th:if="${asset.locked}">
+                            <i class="fa fa-lock"></i>
+                        </div>
+                    </div>
 
                     <a th:href="${'/admin/assets/' + asset.id}" th:text="${asset.name}"></a>
                 </div>

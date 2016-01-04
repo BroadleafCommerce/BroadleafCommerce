@@ -14,7 +14,7 @@
         <thead>
             <tr>
                 <th class="multiselect-checkbox explicit-size" th:if="${listGrid.selectType} == 'multi_select'" data-columnwidth="45px" style="width: 45px;">
-                    <input type="checkbox" class="multiselect-checkbox"/>
+                    <input type="checkbox" class="multiselect-checkbox" />
                 </th>
                 <th th:each="headerField : ${listGrid.headerFields}"
                     th:if="${headerField.isVisible}"
@@ -125,7 +125,8 @@
                          data-hiddenfields=${record.getHiddenFieldsJson()}">
 
                 <td class="listgrid-checkbox" th:if="${listGrid.selectType} == 'multi_select'">
-                    <input type="checkbox" class="listgrid-checkbox"/>
+                    <input type="checkbox" class="listgrid-checkbox"  th:unless="${record.locked}"/>
+                    <i class="fa fa-lock"  th:if="${record.locked}"></i>
                 </td>
                 
                 <td th:each="headerField : ${record.listGrid.headerFields}"
@@ -239,7 +240,7 @@
                 <td class="listgrid-row-actions"
                     th:unless="${inModal}"
                     th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
-                    <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}">
+                    <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}" th:unless="${record.locked}">
                         <a th:classappend="${action.buttonClass}"
                            href="#"
                            class="button button-action"
@@ -249,6 +250,9 @@
                             th:title="#{${action.displayText}}">
                             <i th:class="${action.iconClass}"></i>
                         </a>
+                    </span>
+                    <span class="workflow-action" th:if="${record.locked}">
+                        <i class="fa fa-lock"></i>
                     </span>
                 </td>
                 

@@ -366,6 +366,11 @@ $(document).ready(function() {
                 $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$tr, link, fields, currentUrl]);
             }
 
+            // If this record is locked, don't allow clicks
+            if ($tr.find('.fa-lock').length) {
+                return;
+            }
+
             // Select row based on select type
             if (listGridType !== 'tree' || !$tr.hasClass('selected')) {
                 $('body').trigger('listGrid-' + listGridSelectType + '-rowSelected', [$tr, link, fields, currentUrl]);
