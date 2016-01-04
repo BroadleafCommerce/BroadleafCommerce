@@ -42,6 +42,7 @@ public class ListGridRecord {
     protected String errorKey;
     protected String errorMessage;
     protected ListGridRecordIcon icon;
+    protected Boolean isLocked = false;
 
     /**
      * Convenience map keyed by the field name. Used to guarantee field ordering with header fields within a ListGrid
@@ -241,5 +242,12 @@ public class ListGridRecord {
     public void setAltId(String altId) {
         this.altId = altId;
     }
-    
+
+    public Boolean getLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(Boolean locked) {
+        isLocked = locked;
+    }
 }
