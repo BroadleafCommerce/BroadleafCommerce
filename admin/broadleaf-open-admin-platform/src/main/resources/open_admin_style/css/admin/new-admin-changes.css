@@ -358,7 +358,7 @@ input[type="radio"].radio+label.radio-label.clr,
 
 .radio-container {
     padding: 0 10px;
-    display: inline-block;
+    display: block;
     min-width: 275px;
 }
 
