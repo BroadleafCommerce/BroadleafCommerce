@@ -22,24 +22,24 @@
         </div>
 
         <!-- Filter button -->
-        <!--<div class="col6 filter-info" style="white-space: nowrap;">-->
-            <!--&lt;!&ndash; Filter information &ndash;&gt;-->
-            <!--<button class="button filter-button" th:inline="text" th:utext="#{Filter}" th:attr="data-hiddenid=${listGrid.jsonFieldName}"></button>-->
+        <div class="col6 filter-info" style="white-space: nowrap;">
+            <!-- Filter information -->
+            <button class="button filter-button" th:inline="text" th:utext="#{Filter}" th:attr="data-hiddenid=${assetGrid.assetListGrid.jsonFieldName}"></button>
 
-            <!--<div class="filter-builder-data" style="display: none;"-->
-                 <!--th:attr="data-hiddenid=${listGrid.jsonFieldName},-->
-                 <!--data-containerid=${listGrid.friendlyName},-->
-                 <!--data-fields=${listGrid.fieldWrapper.serialize()},-->
-                 <!--data-data=${listGrid.dataWrapper.serialize()}">-->
-            <!--</div>-->
+            <div class="filter-builder-data" style="display: none;"
+                 th:attr="data-hiddenid=${assetGrid.assetListGrid.jsonFieldName},
+                 data-containerid=${assetGrid.assetListGrid.friendlyName},
+                 data-fields=${assetGrid.assetListGrid.fieldWrapper.serialize()},
+                 data-data=${assetGrid.assetListGrid.dataWrapper.serialize()}">
+            </div>
 
-            <!--<input type="hidden"-->
-                   <!--th:id="${listGrid.jsonFieldName}"-->
-                   <!--th:name="${listGrid.friendlyName}"-->
-                   <!--value="{&quot;data&quot;:[]}"/>-->
+            <input type="hidden"
+                   th:id="${assetGrid.assetListGrid.jsonFieldName}"
+                   th:name="${assetGrid.assetListGrid.friendlyName}"
+                   value="{&quot;data&quot;:[]}"/>
 
-            <!--<div class="query-builder-filters-container" th:id="${listGrid.friendlyName}" style="display: none;"></div>-->
-        <!--</div>-->
+            <div class="query-builder-filters-container" th:id="${assetGrid.assetListGrid.friendlyName}" style="display: none;"></div>
+        </div>
     </div>
 
     <div th:include="components/assetGrid" th:object="${assetGrid}" th:remove="tag" />
