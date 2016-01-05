@@ -48,15 +48,17 @@ import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException;
 import org.broadleafcommerce.core.rest.api.v2.endpoint.catalog.CatalogEndpoint;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderAttributeWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderItemAttributeWrapper;
 import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.beans.BeansException;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.MultiValueMap;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -179,7 +181,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
     public OrderWrapper addProductToOrder(HttpServletRequest request,
             Long productId,
             Long cartId,
-            MultiValueMap<String, String> requestParams,
+            List<OrderItemAttributeWrapper> requestParams,
             Long customerId,
             Double itemPrice,
             Long categoryId,
@@ -191,13 +193,14 @@ public abstract class CartEndpoint extends BaseEndpoint {
             throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND);
         }
-        return addItemToOrder(request, productId, null, cartId, requestParams, null, customerId, itemPrice, categoryId, quantity, priceOrder, parentOrderItemId);
+        
+        return addItemToOrder(request, productId, null, cartId, transformOrderItemAttributeWrappersToMap(requestParams), null, customerId, itemPrice, categoryId, quantity, priceOrder, parentOrderItemId);
     }
     
     public OrderWrapper addSkuToOrder(HttpServletRequest request,
             Long skuId,
             Long cartId,
-            MultiValueMap<String, String> requestParams,
+            List<OrderItemAttributeWrapper> requestParams,
             Long customerId,
             Double itemPrice,
             Long categoryId,
@@ -212,13 +215,13 @@ public abstract class CartEndpoint extends BaseEndpoint {
         }
         Product prod = sku.getProduct();
         
-        return addItemToOrder(request, prod != null ? prod.getId() : null, skuId, cartId, requestParams, null, customerId, itemPrice, categoryId, quantity, priceOrder, parentOrderItemId);
+        return addItemToOrder(request, prod != null ? prod.getId() : null, skuId, cartId, transformOrderItemAttributeWrappersToMap(requestParams), null, customerId, itemPrice, categoryId, quantity, priceOrder, parentOrderItemId);
     }
     
     public OrderWrapper addNonDiscreteOrderItemToOrder(HttpServletRequest request,
             Long cartId,
             String itemName,
-            MultiValueMap<String, String> requestParams,
+            List<OrderItemAttributeWrapper> requestParams,
             Long customerId,
             Double itemPrice,
             Long categoryId,
@@ -230,7 +233,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
             throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
                 .addMessage(BroadleafWebServicesException.MISSING_ITEM_NAME);
         }
-        return addItemToOrder(request, null, null, cartId, requestParams, itemName, customerId, itemPrice, categoryId, quantity, priceOrder, parentOrderItemId);
+        return addItemToOrder(request, null, null, cartId, transformOrderItemAttributeWrappersToMap(requestParams), itemName, customerId, itemPrice, categoryId, quantity, priceOrder, parentOrderItemId);
         
     }
     
@@ -389,7 +392,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
     }
 
     public OrderWrapper updateProductOptions(HttpServletRequest request,
-            MultiValueMap<String, String> requestParams,
+            List<OrderItemAttributeWrapper> requestParams,
             Long cartId,
             Long customerId,
             Long itemId,
@@ -399,7 +402,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
         try {
             OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
 
-            HashMap<String, String> productOptions = getOptions(requestParams);
+            HashMap<String, String> productOptions = parseOptions(transformOrderItemAttributeWrappersToMap(requestParams));
             orderItemRequestDTO.setOrderItemId(itemId);
             //If we have product options set them on the DTO
             if (productOptions.size() > 0) {
@@ -425,7 +428,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
     }
     
     public OrderWrapper deleteProductOptions(HttpServletRequest request,
-            MultiValueMap<String, String> requestParams,
+            List<OrderItemAttributeWrapper> requestParams,
             Long cartId,
             Long customerId,
             Long itemId,
@@ -435,31 +438,25 @@ public abstract class CartEndpoint extends BaseEndpoint {
         try {
             OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
 
-            Map<String, String> productOptions = getOptions(requestParams);
+            Map<String, String> productOptions = parseOptions(transformOrderItemAttributeWrappersToMap(requestParams));
             orderItemRequestDTO.setOrderItemId(itemId);
             OrderItem item = orderItemService.readOrderItemById(itemId);
             if (item == null) {
                 throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                     .addMessage(BroadleafWebServicesException.CART_ITEM_NOT_FOUND);
             }
-            productOptions = getRemainingProductOptions(productOptions, item.getOrderItemAttributes());
+            
             //If we have product options set them on the DTO
             if (productOptions.size() > 0) {
-                orderItemRequestDTO.setItemAttributes(productOptions);
+                Map<String, OrderItemAttribute> attributes = item.getOrderItemAttributes();
+                for (String key : productOptions.keySet()) {
+                    attributes.remove(key);
+                }
+                orderItemService.saveOrderItem(item);
             }
             
-            Order order = orderService.updateProductOptionsForItem(cart.getId(), orderItemRequestDTO, priceOrder);
-
-            order = orderService.save(order, priceOrder);
+            cart = orderService.save(cart, priceOrder);
             return wrapCart(request, cart);
-        } catch (UpdateCartException e) {
-            if (e.getCause() instanceof ItemNotFoundException) {
-                throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value(), null, null, e.getCause())
-                .addMessage(BroadleafWebServicesException.CART_ITEM_NOT_FOUND, itemId);
-            } else {
-                throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, e)
-                        .addMessage(BroadleafWebServicesException.UPDATE_CART_ERROR);
-            }
         } catch (PricingException pe) {
             throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, pe)
                     .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
@@ -468,17 +465,21 @@ public abstract class CartEndpoint extends BaseEndpoint {
     }
     
     public OrderWrapper updateOrderAttributes(HttpServletRequest request,
-            MultiValueMap<String, String> requestParams,
+            List<OrderAttributeWrapper> requestParams,
             Long cartId,
             Long customerId,
             Boolean priceOrder) {
         
         Order cart = validateCartAndCustomer(customerId, cartId);
         try {
-            Map<String, String> options = getOptions(requestParams);
+            Map<String, String> options = parseOptions(transformOrderAttributeWrappersToMap(requestParams));
             
             if (options.size() > 0) {
-                cart.setOrderAttributes(getOrderAttributeMap(options, cart));
+                Map<String, OrderAttribute> attributes = cart.getOrderAttributes();
+                Map<String, OrderAttribute> newAttributes = getOrderAttributeMap(options, cart);
+                for(String key : newAttributes.keySet()) {
+                    attributes.put(key, newAttributes.get(key));
+                }
             }
             
             cart = orderService.save(cart, priceOrder);
@@ -490,17 +491,22 @@ public abstract class CartEndpoint extends BaseEndpoint {
     }
     
     public OrderWrapper deleteOrderAttributes(HttpServletRequest request,
-            MultiValueMap<String, String> requestParams,
+            List<OrderAttributeWrapper> requestParams,
             Long cartId,
             Long customerId,
             Boolean priceOrder) {
         
         Order cart = validateCartAndCustomer(customerId, cartId);
         try {
-            Map<String, String> options = getOptions(requestParams);
+            Map<String, String> options = parseOptions(transformOrderAttributeWrappersToMap(requestParams));
             
             if (options.size() > 0) {
-                cart.setOrderAttributes(getRemainingOrderAttributes(options, cart.getOrderAttributes()));
+                Map<String, OrderAttribute> attributes = cart.getOrderAttributes();
+                Map<String, OrderAttribute> newAttributes = getRemainingOrderAttributes(options, attributes);
+                attributes.clear();
+                for(String key : newAttributes.keySet()) {
+                    attributes.put(key, newAttributes.get(key));
+                }
             }
             
             cart = orderService.save(cart, priceOrder);
@@ -533,21 +539,11 @@ public abstract class CartEndpoint extends BaseEndpoint {
         return resultParams;
     }
     
-    protected Map<String, String> getRemainingProductOptions(Map<String, String> paramsToRemove, Map<String, OrderItemAttribute> params) {
-        Map<String, String> resultParams = new HashMap<String, String>();
-        for (String key : params.keySet()) {
-            if (!paramsToRemove.containsKey(key)) {
-                resultParams.put(key, params.get(key).getValue());
-            }
-        }
-        return resultParams;
-    }
-    
     protected OrderWrapper addItemToOrder(HttpServletRequest request,
             Long productId,
             Long skuId,
             Long cartId,
-            MultiValueMap<String, String> requestParams,
+            Map<String, String> requestParams,
             String itemName,
             Long customerId,
             Double itemPrice,
@@ -584,7 +580,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
     }
     
     protected OrderItemRequestDTO populateOrderItemRequestDTO(HttpServletRequest request,
-            MultiValueMap<String, String> requestParams,
+            Map<String, String> requestParams,
             Long productId,
             Long skuId,
             String itemName,
@@ -595,7 +591,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
         
         //We allow product options to be submitted via form post or via query params.  We need to take 
         //the product options and build a map with them...
-        HashMap<String, String> productOptions = getOptions(requestParams);
+        HashMap<String, String> productOptions = parseOptions(requestParams);
         OrderItemRequestDTO orderItemRequestDTO = null;
         if (itemName == null) {
             orderItemRequestDTO = new OrderItemRequestDTO();
@@ -623,6 +619,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
         }
         if (itemPrice != null) {
             orderItemRequestDTO.setOverrideRetailPrice(new Money(itemPrice));
+            orderItemRequestDTO.setOverrideSalePrice(orderItemRequestDTO.getOverrideRetailPrice());
         }
     
         //If we have product options set them on the DTO
@@ -633,16 +630,16 @@ public abstract class CartEndpoint extends BaseEndpoint {
         return orderItemRequestDTO;
     }
     
-    protected HashMap<String, String> getOptions(MultiValueMap<String, String> requestParams) {
+    protected HashMap<String, String> parseOptions(Map<String, String> requestParams) {
         HashMap<String, String> productOptions = new HashMap<String, String>();
     
         //Fill up a map of key values that will represent product options
         Set<String> keySet = requestParams.keySet();
         for (String key : keySet) {
-            if (requestParams.getFirst(key) != null) {
+            if (requestParams.get(key) != null) {
                 //Product options should be returned with "productOption." as a prefix. We'll look for those, and 
                 //remove the prefix.
-                productOptions.put(StringUtils.removeStart(key, "productOption."), requestParams.getFirst(key));
+                productOptions.put(StringUtils.removeStart(key, "productOption."), requestParams.get(key));
             }
         }
         return productOptions;
@@ -666,6 +663,29 @@ public abstract class CartEndpoint extends BaseEndpoint {
         }
         return cart; 
     }
+    
+    protected Map<String, String> transformOrderItemAttributeWrappersToMap(List<OrderItemAttributeWrapper> oiaws) {
+        Map<String, String> params = new HashMap<>();
+        if (oiaws == null) {
+            return params;
+        }
+        for (OrderItemAttributeWrapper oiaw : oiaws) {
+            params.put(oiaw.getName(), oiaw.getValue());
+        }
+        return params;
+    }
+    
+    protected Map<String, String> transformOrderAttributeWrappersToMap(List<OrderAttributeWrapper> oaws) {
+        Map<String, String> params = new HashMap<>();
+        if (oaws == null) {
+            return params;
+        }
+        for (OrderAttributeWrapper oaw : oaws) {
+            params.put(oaw.getName(), oaw.getValue());
+        }
+        return params;
+    }
+    
     protected OrderWrapper wrapCart(HttpServletRequest request, Order cart) {
 
         try {
