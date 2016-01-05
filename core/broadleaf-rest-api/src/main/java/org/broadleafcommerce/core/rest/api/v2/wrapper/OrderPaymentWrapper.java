@@ -80,7 +80,7 @@ public class OrderPaymentWrapper extends BaseWrapper implements APIWrapper<Order
     @XmlElement
     protected String gatewayType;
 
-    @XmlElement(name = "transaction")
+    @XmlElement(name = "transactions")
     @XmlElementWrapper(name = "transactions")
     protected List<PaymentTransactionWrapper> transactions;
 
