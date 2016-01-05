@@ -114,22 +114,20 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
         
         Order cart = orderService.findOrderById(cartId);
         if (cart != null) {
+            if (wrapper.getOrderId() == null) {
+                wrapper.setOrderId(cartId);
+            } else if (!wrapper.getOrderId().equals(cartId)) {
+                throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
+                    .addMessage(BroadleafWebServicesException.CUSTOMER_PAYMENT_ORDER_MISMATCH);
+            }
             OrderPayment orderPayment = wrapper.unwrap(request, context);
             
-            if (orderPayment.getOrder() == null) {
-                orderPayment.setOrder(cart);
-            }
+            orderPayment = orderPaymentService.save(orderPayment);
+            OrderPayment savedPayment = orderService.addPaymentToOrder(cart, orderPayment, null);
+            OrderPaymentWrapper orderPaymentWrapper = (OrderPaymentWrapper) context.getBean(OrderPaymentWrapper.class.getName());
+            orderPaymentWrapper.wrapSummary(savedPayment, request);
             
-            if (orderPayment.getOrder().getId().equals(cart.getId())) {
-                orderPayment = orderPaymentService.save(orderPayment);
-                OrderPayment savedPayment = orderService.addPaymentToOrder(cart, orderPayment, null);
-                OrderPaymentWrapper orderPaymentWrapper = (OrderPaymentWrapper) context.getBean(OrderPaymentWrapper.class.getName());
-                orderPaymentWrapper.wrapSummary(savedPayment, request);
-                return orderPaymentWrapper;
-            } 
-            
-            throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
-                .addMessage(BroadleafWebServicesException.CUSTOMER_PAYMENT_ORDER_MISMATCH);
+            return orderPaymentWrapper;
         }
 
         throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
