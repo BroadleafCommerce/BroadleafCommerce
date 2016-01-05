@@ -168,9 +168,28 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
             throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CUSTOMER_PAYMENT_NOT_FOUND);
         }
-        OrderPaymentWrapper wrapper = new OrderPaymentWrapper();
-        wrapper.wrapDetails(orderPayment, request);
-        return removePaymentFromOrder(request, wrapper, cartId);
+        
+        Order cart = orderService.findOrderById(cartId);
+        if (cart != null) {
+
+            if (orderPayment.getOrder() != null && orderPayment.getOrder().getId().equals(cart.getId())) {
+                OrderPayment paymentToRemove = null;
+                for (OrderPayment payment : cart.getPayments()) {
+                    if (payment.getId().equals(orderPayment.getId())) {
+                        paymentToRemove = payment;
+                    }
+                }
+
+                orderService.removePaymentFromOrder(cart, paymentToRemove);
+
+                OrderWrapper orderWrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                orderWrapper.wrapDetails(cart, request);
+                return orderWrapper;
+            }
+        }
+
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
         
     }
     
