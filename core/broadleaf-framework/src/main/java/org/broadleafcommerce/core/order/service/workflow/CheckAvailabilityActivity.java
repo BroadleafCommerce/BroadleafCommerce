@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
@@ -60,7 +61,7 @@ public class CheckAvailabilityActivity extends BaseActivity<ProcessContext<CartO
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
-        
+        OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         Sku sku;
         Long orderItemId = request.getItemRequest().getOrderItemId();
         if (orderItemId != null) {
@@ -74,6 +75,8 @@ public class CheckAvailabilityActivity extends BaseActivity<ProcessContext<CartO
                 LOG.warn("Could not check availability; did not recognize passed-in item " + orderItem.getClass().getName());
                 return context;
             }
+        } else if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO){
+            return context;
         } else {
             // No order item, this must be a new item add request
             Long skuId = request.getItemRequest().getSkuId();
