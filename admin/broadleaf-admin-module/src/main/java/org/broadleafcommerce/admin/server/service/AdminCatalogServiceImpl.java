@@ -45,8 +45,7 @@ import javax.persistence.PersistenceContext;
 
 /**
  * 
- * @author Phillip Verheyden
- * Modified by Nathan Moore on 12/9/2015
+ * @author Phillip Verheyden\
  *
  */
 @Service("blAdminCatalogService")

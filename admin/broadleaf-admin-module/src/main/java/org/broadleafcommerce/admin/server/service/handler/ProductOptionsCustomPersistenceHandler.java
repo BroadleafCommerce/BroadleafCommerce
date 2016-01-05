@@ -34,8 +34,10 @@ import java.util.Map;
 
 /**
  * 
+ *  This class is used to prevent updates to Product Options if "Use in Sku generation" is true but no "Allowed Values" 
+ *  have been set.
+ * 
  *  @author Nathan Moore (nathanmoore)
- *  Created on 12/8/15
  *  
  */
 @Component("blProductOptionsCustomPersistenceHandler")
@@ -79,6 +81,14 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
         }
     }
 
+    /**
+     * This function checks if a Product Option's "Use in sku generation" field is set to true 
+     * without any allowed values set. This is what we are trying to prevent from happening. 
+     * If "Use in sku generation" is true and there are no Allowed Values, the functions returns true.
+     * 
+     * @param adminInstance: The Product Option being validated
+     * @return boolean: Default is false. Returns whether the Product Option needs any Allowed Values .
+     */
     protected boolean needsAllowedValue(ProductOption adminInstance) {
         // validate "Use in Sku generation"
         // Check if "use in sku generation" is true and that there are no allowed values set

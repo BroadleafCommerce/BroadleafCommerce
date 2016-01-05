@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletResponse;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link AdminProductController}
- * Modified by Nathan Moore on 12/9/2015
  * 
  */
 @Controller("blAdminCatalogActionsController")
