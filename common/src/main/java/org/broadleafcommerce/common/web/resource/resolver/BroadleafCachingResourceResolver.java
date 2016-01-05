@@ -39,9 +39,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Wraps Spring's {@link CachingResourceResolver} but adds in support to disable with 
- * environment properties.
- * 
+ * A ResourceResolver that handles using the theme as part of the cache key and adds in
+ * support to disable with environment properties.
+ *
+ * We bypass {@link CachingResourceResolver} and instead borrow its code in order to be
+ * able to inject the theme key that is needed by BLC since Spring's class could not be
+ * leveraged otherwise.
+ *
  *  {@code }
  * 
  * @author Brian Polster
@@ -121,6 +125,13 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
         }
     }
 
+    /**
+     * Pulled from {@link CachingResourceResolver}
+     *
+     * @param request
+     * @param requestPath
+     * @return
+     */
     protected String computeKey(HttpServletRequest request, String requestPath) {
         StringBuilder key = new StringBuilder(RESOLVED_RESOURCE_CACHE_KEY_PREFIX);
         key.append(requestPath);
@@ -167,7 +178,8 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
 
                 if (response == null) {
                     if (logger.isTraceEnabled()) {
-                        logger.trace(String.format("Putting resolved null reference url path in cache for '%s'", resourceUrlPath));
+                        logger.trace(String.format("Putting resolved null reference url " +
+                                "path in cache for '%s'", resourceUrlPath));
                     }
                     getCache().put(key, NULL_REFERENCE);
                 }
@@ -178,6 +190,11 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
         }
     }
 
+    /**
+     * Gets the theme path from the {@link org.broadleafcommerce.common.web.BroadleafRequestContext}
+     *
+     * @return
+     */
     protected String getThemePathFromBRC() {
         String themePath = null;
         Theme theme = BroadleafRequestContext.getBroadleafRequestContext().getTheme();
