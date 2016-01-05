@@ -110,6 +110,15 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     @Value("${solr.cloud.defaultNumShards}")
     protected int solrCloudNumShards = 2;
 
+    @Value("${solr.index.site.collections:false}")
+    protected boolean siteCollections;
+
+    @Value("${solr.index.site.alias.name:site}")
+    protected String siteAliasBase;
+
+    @Value("${solr.index.site.collection.name:blcSite}")
+    protected String siteCollectionBase;
+
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
 
@@ -348,117 +357,126 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     @Override
     public void afterPropertiesSet() throws Exception {
         if (SolrContext.isSolrCloudMode()) {
-            //We want to use the Solr APIs to make sure the correct collections are set up.
+            if (!siteCollections) {
+                //We want to use the Solr APIs to make sure the correct collections are set up.
+                CloudSolrClient primary = (CloudSolrClient) SolrContext.getServer();
+                CloudSolrClient reindex = (CloudSolrClient) SolrContext.getReindexServer();
+                if (primary == null || reindex == null) {
+                    throw new IllegalStateException("The primary and reindex CloudSolrServers must not be null. Check "
+                            + "your configuration and ensure that you are passing a different instance for each to the "
+                            + "constructor of "
+                            + this.getClass().getName()
+                            + " and ensure that each has a null (empty)"
+                            + " defaultCollection property, or ensure that defaultCollection is unique between"
+                            + " the two instances. All other things, like Zookeeper addresses should be the same.");
+                }
 
-            CloudSolrClient primary = (CloudSolrClient) SolrContext.getServer();
-            CloudSolrClient reindex = (CloudSolrClient) SolrContext.getReindexServer();
-            if (primary == null || reindex == null) {
-                throw new IllegalStateException("The primary and reindex CloudSolrServers must not be null. Check "
-                        + "your configuration and ensure that you are passing a different instance for each to the "
-                        + "constructor of "
-                        + this.getClass().getName()
-                        + " and ensure that each has a null (empty)"
-                        + " defaultCollection property, or ensure that defaultCollection is unique between"
-                        + " the two instances. All other things, like Zookeeper addresses should be the same.");
-            }
+                if (primary == reindex) {
+                    //These are the same object instances.  They should be separate instances, with generally
+                    //the same configuration, except for the defaultCollection name.
+                    throw new IllegalStateException("The primary and reindex CloudSolrServers must be different instances "
+                            + "and their defaultCollection property must be unique or null.  All other things like the "
+                            + "Zookeeper addresses should be the same.");
+                }
 
-            if (primary == reindex) {
-                //These are the same object instances.  They should be separate instances, with generally 
-                //the same configuration, except for the defaultCollection name.
-                throw new IllegalStateException("The primary and reindex CloudSolrServers must be different instances "
-                        + "and their defaultCollection property must be unique or null.  All other things like the "
-                        + "Zookeeper addresses should be the same.");
-            }
-            
-            //Set the default collection if it's null
-            if (StringUtils.isEmpty(primary.getDefaultCollection())) {
-                primary.setDefaultCollection(SolrContext.PRIMARY);
-            }
+                //Set the default collection if it's null
+                if (StringUtils.isEmpty(primary.getDefaultCollection())) {
+                    primary.setDefaultCollection(SolrContext.PRIMARY);
+                }
 
-            //Set the default collection if it's null
-            if (StringUtils.isEmpty(reindex.getDefaultCollection())) {
-                reindex.setDefaultCollection(SolrContext.REINDEX);
-            }
+                //Set the default collection if it's null
+                if (StringUtils.isEmpty(reindex.getDefaultCollection())) {
+                    reindex.setDefaultCollection(SolrContext.REINDEX);
+                }
 
-            if (Objects.equals(primary.getDefaultCollection(), reindex.getDefaultCollection())) {
-                throw new IllegalStateException("The primary and reindex CloudSolrServers must have a null (empty) or "
-                        + "unique defaultCollection property.  All other things like the "
-                        + "Zookeeper addresses should be the same.");
-            }
+                if (Objects.equals(primary.getDefaultCollection(), reindex.getDefaultCollection())) {
+                    throw new IllegalStateException("The primary and reindex CloudSolrServers must have a null (empty) or "
+                            + "unique defaultCollection property.  All other things like the "
+                            + "Zookeeper addresses should be the same.");
+                }
+                primary.connect(); //This is required to ensure no NPE!
 
-            primary.connect(); //This is required to ensure no NPE!
+                //Get a list of existing collections so we don't overwrite one
+                Set<String> collectionNames = primary.getZkStateReader().getClusterState().getCollections();
+                if (collectionNames == null) {
+                    collectionNames = new HashSet<String>();
+                }
 
-            //Get a list of existing collections so we don't overwrite one
-            Set<String> collectionNames = primary.getZkStateReader().getClusterState().getCollections();
-            if (collectionNames == null) {
-                collectionNames = new HashSet<String>();
-            }
+                Aliases aliases = primary.getZkStateReader().getAliases();
+                Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
 
-            Aliases aliases = primary.getZkStateReader().getAliases();
-            Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
+                if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(primary.getDefaultCollection())) {
+                    //Create a completely new collection
+                    String collectionName = null;
+                    for (int i = 0; i < 1000; i++) {
+                        collectionName = "blcCollection" + i;
+                        if (collectionNames.contains(collectionName)) {
+                            collectionName = null;
+                        } else {
+                            break;
+                        }
+                    }
 
-            if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(primary.getDefaultCollection())) {
-                //Create a completely new collection
-                String collectionName = null;
-                for (int i = 0; i < 1000; i++) {
-                    collectionName = "blcCollection" + i;
-                    if (collectionNames.contains(collectionName)) {
-                        collectionName = null;
-                    } else {
-                        break;
+                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
+                            .setConfigName(solrCloudConfigName).process(primary);
+
+                    new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
+                            .setAliasedCollections(collectionName).process(primary);
+                } else {
+                    //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
+                    String collectionName = aliasCollectionMap.get(primary.getDefaultCollection());
+                    collectionName = collectionName.split(",")[0];
+                    if (!collectionNames.contains(collectionName)) {
+                        new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
+                                .setConfigName(solrCloudConfigName).process(primary);
                     }
                 }
 
-                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                        .setConfigName(solrCloudConfigName).process(primary);
+                //Reload the collection names
+                collectionNames = primary.getZkStateReader().getClusterState().getCollections();
+                if (collectionNames == null) {
+                    collectionNames = new HashSet<String>();
+                }
 
-                new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
-                        .setAliasedCollections(collectionName).process(primary);
-            } else {
-                //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
-                String collectionName = aliasCollectionMap.get(primary.getDefaultCollection());
-                collectionName = collectionName.split(",")[0];
-                if (!collectionNames.contains(collectionName)) {
+                //Reload these maps for the next collection.
+                aliases = primary.getZkStateReader().getAliases();
+                aliasCollectionMap = aliases.getCollectionAliasMap();
+
+                if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(reindex.getDefaultCollection())) {
+                    //Create a completely new collection
+                    String collectionName = null;
+                    for (int i = 0; i < 1000; i++) {
+                        collectionName = "blcCollection" + i;
+                        if (collectionNames.contains(collectionName)) {
+                            collectionName = null;
+                        } else {
+                            break;
+                        }
+                    }
+
                     new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
                             .setConfigName(solrCloudConfigName).process(primary);
-                }
-            }
 
-            //Reload the collection names
-            collectionNames = primary.getZkStateReader().getClusterState().getCollections();
-            if (collectionNames == null) {
-                collectionNames = new HashSet<String>();
-            }
-
-            //Reload these maps for the next collection.
-            aliases = primary.getZkStateReader().getAliases();
-            aliasCollectionMap = aliases.getCollectionAliasMap();
-
-            if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(reindex.getDefaultCollection())) {
-                //Create a completely new collection
-                String collectionName = null;
-                for (int i = 0; i < 1000; i++) {
-                    collectionName = "blcCollection" + i;
-                    if (collectionNames.contains(collectionName)) {
-                        collectionName = null;
-                    } else {
-                        break;
+                    new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
+                            .setAliasedCollections(collectionName).process(primary);
+                } else {
+                    //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
+                        String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
+                collectionName = collectionName.split(",")[0];
+                    if (!collectionNames.contains(collectionName)) {
+                        new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
+                                .setConfigName(solrCloudConfigName).process(primary);
                     }
                 }
-
-                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                        .setConfigName(solrCloudConfigName).process(primary);
-
-                new CollectionAdminRequest.CreateAlias().setAliasName(reindex.getDefaultCollection())
-                        .setAliasedCollections(collectionName).process(primary);
             } else {
-                //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
-                String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
-                collectionName = collectionName.split(",")[0];
-                if (!collectionNames.contains(collectionName)) {
-                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                            .setConfigName(solrCloudConfigName).process(primary);
-                }
+                SolrContext.setSiteAliasBase(siteAliasBase);
+                SolrContext.setSiteCollectionBase(siteCollectionBase);
+                SolrContext.setSiteCollections(siteCollections);
+                SolrContext.setSolrCloudNumShards(solrCloudNumShards);
+                SolrContext.setSolrCloudConfigName(solrCloudConfigName);
+
+                SolrContext.getServer();
+                SolrContext.getReindexServer();
             }
         }
     }
@@ -571,7 +589,11 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 .setStart((start) * searchCriteria.getPageSize());
 
         //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "PRIMARY"
-        solrQuery.setParam("collection", SolrContext.PRIMARY); //This should be ignored if not using SolrCloud
+        if (SolrContext.isSiteCollections()) {
+            solrQuery.setParam("collection", SolrContext.getSiteAliasName(BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite()));
+        } else {
+            solrQuery.setParam("collection", SolrContext.PRIMARY); //This should be ignored if not using SolrCloud
+        }
 
         solrQuery.setFields(shs.getIndexableIdFieldName());
         if (filterQueries != null) {
