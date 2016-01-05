@@ -21,15 +21,22 @@ package org.broadleafcommerce.core.search.redirect.dao;
 
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
+import org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl;
 import org.hibernate.ejb.QueryHints;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  * Created by ppatel.
@@ -39,6 +46,9 @@ public class SearchRedirectDaoImpl implements SearchRedirectDao {
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
+
+    @Value("${searchRedirect.is.null.activeStartDate.active:false}")
+    protected boolean isNullActiveStartDateActive;
 
     protected Long currentDateResolution = 10000L;
     protected Date cachedDate = SystemTime.asDate();
@@ -55,10 +65,7 @@ public class SearchRedirectDaoImpl implements SearchRedirectDao {
 
     @Override
     public SearchRedirect findSearchRedirectBySearchTerm(String searchTerm) {
-        Query query;
-        query = em.createNamedQuery("BC_READ_SEARCH_URL");
-        query.setParameter("searchTerm", searchTerm);
-        query.setParameter("now", getCurrentDateAfterFactoringInDateResolution());
+        Query query = em.createQuery(buildFindSearchRedirectBySearchTermCriteria(searchTerm));
         query.setMaxResults(1);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
 
@@ -68,6 +75,32 @@ public class SearchRedirectDaoImpl implements SearchRedirectDao {
         } else {
             return null;
         }
+    }
+
+    private CriteriaQuery<SearchRedirect> buildFindSearchRedirectBySearchTermCriteria(String searchTerm) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<SearchRedirect> criteria = builder.createQuery(SearchRedirect.class);
+        Root<SearchRedirectImpl> redirect = criteria.from(SearchRedirectImpl.class);
+
+        List<Predicate> restrictions = new ArrayList<>();
+        restrictions.add(builder.equal(builder.upper(redirect.<String>get("searchTerm")), searchTerm.toUpperCase()));
+
+        // Add the active start/end date restrictions
+        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
+        if (isNullActiveStartDateActive) {
+            restrictions.add(builder.or(builder.isNull(redirect.get("activeStartDate")),
+                    builder.lessThanOrEqualTo(redirect.get("activeStartDate").as(Date.class), currentDate)));
+        } else {
+            restrictions.add(builder.and(builder.isNotNull(redirect.get("activeStartDate")),
+                    builder.lessThanOrEqualTo(redirect.get("activeStartDate").as(Date.class), currentDate)));
+        }
+        restrictions.add(builder.or(builder.isNull(redirect.get("activeEndDate")),
+                builder.greaterThan(redirect.get("activeEndDate").as(Date.class), currentDate)));
+
+        // Add the restrictions to the criteria query
+        criteria.select(redirect);
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        return criteria.orderBy(builder.asc(redirect.get("searchPriority")));
     }
 
     public Long getCurrentDateResolution() {
