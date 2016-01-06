@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * This is a JAXB wrapper around Address.
  *
- *@deprecated - use {@link org.broadleafcommerce.web.api.v2.wrapper.AddressWrapper}
+ *@deprecated - use {@link com.broadleafcommerce.web.api.v2.wrapper.AddressWrapper}
  *
  * User: Elbert Bautista
  * Date: 4/10/12

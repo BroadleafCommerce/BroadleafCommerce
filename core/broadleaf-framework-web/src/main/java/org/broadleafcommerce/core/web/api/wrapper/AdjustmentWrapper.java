@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * This is a JAXB wrapper around OrderAdjustmentWrapper.
  * <p/>
- * @deprecated - use {@link org.broadleafcommerce.web.api.v2.wrapper.AdjustmentWrapper}
+ * @deprecated - use {@link com.broadleafcommerce.web.api.v2.wrapper.AdjustmentWrapper}
  * Author: ppatel, bpolster
  */
 @Deprecated

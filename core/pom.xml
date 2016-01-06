@@ -42,6 +42,5 @@
         <module>broadleaf-profile-web</module>
         <module>broadleaf-framework</module>
         <module>broadleaf-framework-web</module>
-        <module>broadleaf-rest-api</module>
   </modules>
 </project>

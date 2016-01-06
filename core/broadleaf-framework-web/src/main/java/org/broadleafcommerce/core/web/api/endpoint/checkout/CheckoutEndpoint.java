@@ -46,7 +46,7 @@ import javax.servlet.http.HttpServletRequest;
  * the details of the endpoint.
  * <p/>
  * 
- * @deprecated - use {@link org.broadleafcommerce.web.api.v2.endpoint.checkout.CheckoutEndpoint}
+ * @deprecated - use {@link com.broadleafcommerce.web.api.v2.endpoint.checkout.CheckoutEndpoint}
  * 
  * User: Kelly Tisdell
  * Date: 4/10/12

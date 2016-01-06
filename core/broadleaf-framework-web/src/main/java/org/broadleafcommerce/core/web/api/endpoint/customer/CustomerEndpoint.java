@@ -28,10 +28,10 @@ import javax.annotation.Resource;
  * @GET, @POST, @PUT, and @DELETE are purposely not provided here to allow implementors finer control over 
  * the details of the endpoint.
  * 
- * @Deprecated - use {@code org.broadleafcommerce.web.api.v2.endpoint.customer.CustomerEndpoint}
  * <p/>
  * User: Kelly Tisdell
  * Date: 4/10/12
+ * @deprecated all Broadleaf endpoints have been moved to the API module as a separate jar
  */
 @Deprecated
 public abstract class CustomerEndpoint extends BaseEndpoint {
