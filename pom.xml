@@ -108,6 +108,14 @@
                     <version>2.3.2</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                    <configuration>
+                        <deployAtEnd>true</deployAtEnd>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
                     <version>1.3</version>
@@ -226,6 +234,14 @@
                 <configuration>
                     <!-- Don't create source as a default part of the release -->
                     <attach>false</attach>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+                <configuration>
+                    <deployAtEnd>true</deployAtEnd>
                 </configuration>
             </plugin>
             <plugin>
@@ -377,7 +393,7 @@
             </build>
         </profile>
         <profile>
-            <id>aggregate-javadocs</id>
+            <id>javadocs</id>
             <activation>
                 <property>
                     <name>performRelease</name>
@@ -394,7 +410,7 @@
                             <execution>
                                 <id>attach-javadocs</id>
                                 <goals>
-                                    <goal>aggregate-jar</goal>
+                                    <goal>jar</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -427,6 +443,15 @@
                         <configuration>
                             <attach>true</attach>
                         </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                    <goal>test-jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
