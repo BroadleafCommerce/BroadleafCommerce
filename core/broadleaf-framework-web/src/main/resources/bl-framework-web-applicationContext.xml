@@ -216,6 +216,4 @@
         </property>
     </bean> 
     
-    <!-- bean overrides to account for bean names being used in the v2 api -->
-    <bean id="blWrapperOverrideTypeModifier" class="org.broadleafcommerce.core.web.api.WrapperOverrideTypeModifier" />
 </beans>
