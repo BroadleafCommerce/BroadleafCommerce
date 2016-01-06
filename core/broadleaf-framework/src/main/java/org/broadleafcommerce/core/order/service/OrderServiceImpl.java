@@ -625,19 +625,31 @@ public class OrderServiceImpl implements OrderService {
             if (oi == null) {
                 throw new WorkflowException(new ItemNotFoundException());
             }
-            if (CollectionUtils.isNotEmpty(oi.getChildOrderItems())) {
-                List<Long> childrenToRemove = new ArrayList<Long>();
-                for (OrderItem childOrderItem : oi.getChildOrderItems()) {
-                    childrenToRemove.add(childOrderItem.getId());
+            List<Long> childrenToRemove = new ArrayList<Long>();
+            if (oi instanceof BundleOrderItem) {
+                List<DiscreteOrderItem> bundledItems = ((BundleOrderItem) oi).getDiscreteOrderItems();
+                for (DiscreteOrderItem doi : bundledItems) {
+                    findAllChildrenToRemove(childrenToRemove, doi);
                 }
-                for (Long childToRemove : childrenToRemove) {
-                    removeItemInternal(orderId, childToRemove, false);
-                }
+            } else {
+                findAllChildrenToRemove(childrenToRemove, oi);
             }
+            for (Long childToRemove : childrenToRemove) {
+                removeItemInternal(orderId, childToRemove, false);
+            }                    
 
             return removeItemInternal(orderId, orderItemId, priceOrder);
         } catch (WorkflowException e) {
             throw new RemoveFromCartException("Could not remove from cart", getCartOperationExceptionRootCause(e));
+        }
+    }
+
+    protected void findAllChildrenToRemove(List<Long> childrenToRemove, OrderItem orderItem){
+        if (CollectionUtils.isNotEmpty(orderItem.getChildOrderItems())) {
+            for (OrderItem childOrderItem : orderItem.getChildOrderItems()) {
+                findAllChildrenToRemove(childrenToRemove, childOrderItem);
+                childrenToRemove.add(childOrderItem.getId());
+            }
         }
     }
     

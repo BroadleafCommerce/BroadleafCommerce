@@ -174,6 +174,12 @@
                     padRange = pr;
                 }
             });
+
+            // If there is no padding, these rows were probably already loaded.
+            if (padRange == null) {
+                return;
+            }
+
             // Create the top split (potentially nothing)
             var blankRangeAbove = {
                 lo : padRange.lo,
@@ -400,7 +406,16 @@
 
                 var url = BLCAdmin.history.getUrlWithParameter('startIndex', startIndex, null, baseUrl);
                 url = BLCAdmin.history.getUrlWithParameter('maxIndex', maxIndex, null, url);
-                
+
+                // also grab the sorts and ensure those inputs are also serialized
+                var $sorts = $tbody.closest('.listgrid-container').find('input.sort-direction.active, input.sort-property.active');
+                $sorts.each(function(index, input) {
+                    //only submit fields that have a value set and are not a sort field. Sort fields will be added separately
+                    if ($(input).val()) {
+                        url = BLCAdmin.history.getUrlWithParameter($(input).data('name'), $(input).val(), null, url);
+                    }
+                });
+
                 //console.log('Loading more records -- ' + url);
                 
                 BLC.ajax({ url: url, type: 'GET' }, function(data) {
@@ -609,7 +624,7 @@
                     maxHeight = minHeight;
                 }
                 
-                maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, maxHeight);
+                //maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, maxHeight);
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
                 $modalBody.css('overflow-y', 'visible');

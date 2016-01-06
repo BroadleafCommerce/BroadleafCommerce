@@ -558,6 +558,10 @@
             var hiddenId = $("#hidden-id").data('hiddenid');
             var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
 
+            var $filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
+            var $tbody = $filterButton.closest('.content-yield').find('.listgrid-body-wrapper .list-grid-table');
+            var $filterFields = $filterButton.closest('.content-yield').find('.filter-fields');
+
             // couldn't find filter builder so exit
             if (!filterBuilder) {
                 return;
@@ -577,11 +581,10 @@
                         inputs.push(input);
                     }
                 });
+            } else {
+                $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
             }
 
-            var $filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
-            var $tbody = $filterButton.closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
-            var $filterFields = $filterButton.closest('.listgrid-container').find('.filter-fields');
             BLC.ajax({
                 url: $($filterFields[0]).data('action'),
                 type: "GET",
@@ -601,7 +604,38 @@
                         });
                     }
                 }
-                BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, { isRefresh : false });
+
+                if ($tbody.data('listgridtype') == 'asset_grid_folder') {
+                    var $assetGrid = data.find('.asset-grid');
+                    var assetGrid = $filterButton.closest('.content-yield').find('.asset-grid').html($assetGrid.html());
+                    var $assetListGrid = data.find('.asset-listgrid');
+                    var assetListgrid = $filterButton.closest('.content-yield').find('.asset-listgrid').html($assetListGrid.html());
+
+                    var container = assetGrid.closest('.asset-listgrid-container');
+
+                    if (filters.data.length == 0) {
+                        // show all breadcrumbs
+                        container.find('.breadcrumb-wrapper').show();
+
+                        var parentId = container.find('.select-column').data('parentid');
+
+                        // reload the most recent folder
+                        BLCAdmin.assetGrid.loadFolder(parentId, container.find('.select-column'));
+                    } else {
+                        // hide the folder listgrid
+                        container.find('.select-column').hide();
+
+                        // hide all breadcrumbs
+                        container.find('.breadcrumb-wrapper').hide();
+
+                        container.find('.asset-title').html("Showing filtered results").show();
+                    }
+
+                    BLCAdmin.assetGrid.initialize($(assetGrid).find('.asset-grid-container'));
+                    BLCAdmin.listGrid.initialize($(assetListgrid));
+                } else {
+                    BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, {isRefresh: false});
+                }
             });
 
             $('.error-container').hide();
@@ -767,15 +801,14 @@
 
                     filterButton.remove();
                 }
-
-                filterButton.closest('.sticky-container').find('.filter-text').show();
+                filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
             } else {
                 if ($(filterButton).text() != 'Filter') {
                     // change "edit filter" button back to "filter"
                     filterButton.text("Filter");
                     filterButton.insertBefore(filterButton.parent());
                     filterButton.siblings('.button-group:visible').remove();
-                    filterButton.closest('.sticky-container').find('.filter-text').hide();
+                    filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
                 }
             }
         }
@@ -943,8 +976,9 @@ $(document).ready(function() {
         var jsonVal = JSON.stringify({ 'data' : [] });
         $('#' + hiddenId).val(jsonVal);
 
-        var $tbody = $filterButton.closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
-        if ($tbody.data('listgridtype') == 'main') {        // remove query string from URL
+        var $tbody = $filterButton.closest('.content-yield').find('.listgrid-body-wrapper .list-grid-table');
+        if ($tbody.data('listgridtype') == 'main') {
+            // remove query string from URL
             $(BLCAdmin.history.getUrlParameters()).each(function (index, input) {
                 for (var key in input) {
                     BLCAdmin.history.replaceUrlParameter(key, null);
@@ -953,15 +987,19 @@ $(document).ready(function() {
         }
 
         // click the search button to reload the list grid
-        $filterButton.closest('.listgrid-search').find('.custom-entity-search input#listgrid-search').val('');
+        $filterButton.closest('.listgrid-search').find('.custom-entity-search input').val('');
         $filterButton.closest('.listgrid-search').find('.custom-entity-search button.search-button').click();
+
+        // for asset grid filters
+        $filterButton.closest('.listgrid-search').find('.custom-asset-search input').val('');
+        $filterButton.closest('.listgrid-search').find('.custom-asset-search button.asset-search-button').click();
 
         // change "edit filter" button back to "filter"
         $filterButton.text("Filter");
         $filterButton.insertBefore($filterButton.parent());
         $filterButton.siblings('.button-group').remove();
 
-        $filterButton.closest('.sticky-container').find('.filter-text').hide();
+        $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
     });
 
     /**
@@ -1110,7 +1148,7 @@ $(document).ready(function() {
                         $(buttonGroup).insertBefore(filterButton.closest('.filter-info:visible').find('.filter-builder-data'));
 
                         filterButton.remove();
-                        filterButton.closest('.sticky-container').find('.filter-text').show();
+                        filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
                     }
                 }
             } else {
@@ -1119,7 +1157,7 @@ $(document).ready(function() {
                     filterButton.text("Filter");
                     filterButton.insertBefore(filterButton.parent());
                     filterButton.siblings('.button-group:visible').remove();
-                    filterButton.closest('.sticky-container').find('.filter-text').hide();
+                    filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
                 }
             }
         });

@@ -45,7 +45,7 @@ class BaseCheckoutActivitySpec extends Specification {
         order.id = 1
         order.customer = customer
         context = new DefaultProcessContextImpl<CheckoutSeed>().with{
-			seedData = new CheckoutSeed(order, null)
+			seedData = new CheckoutSeed(order, new HashMap<String, Object>())
 			it
 		} 
     }
