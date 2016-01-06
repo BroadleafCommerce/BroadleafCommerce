@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.core.offer.service.type.OfferTimeZoneType;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ import java.util.List;
  * 
  * @author Priyesh Patel
  */
-public interface AdvancedOffer {
+public interface AdvancedOffer extends Serializable {
 
     /**
      * List of Tiers an offer supports.   Implemented in external module.

@@ -80,6 +80,8 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
      */
     public static final String ROLLBACK_TRANSACTIONS = "confirmedTransactions";
     
+    public static final String FAILED_RESPONSES = "failedResponses";
+    
     @Autowired(required = false)
     @Qualifier("blPaymentGatewayConfigurationServiceProvider")
     protected PaymentGatewayConfigurationServiceProvider paymentConfigurationServiceProvider;
@@ -296,6 +298,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
          */
         List<OrderPayment> invalidatedPayments = new ArrayList<OrderPayment>();
         List<PaymentTransaction> failedTransactionsToRollBack = new ArrayList<PaymentTransaction>();
+        List<PaymentResponseDTO> failedResponses = new ArrayList<PaymentResponseDTO>();
         for (ResponseTransactionPair responseTransactionPair : failedTransactions) {
             PaymentTransaction tx = orderPaymentService.readTransactionById(responseTransactionPair.getTransactionId());
             if (shouldRollbackFailedTransaction(responseTransactionPair)) {
@@ -305,6 +308,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                 OrderPayment payment = orderPaymentService.save(tx.getOrderPayment());
                 invalidatedPayments.add(payment);
             }
+            failedResponses.add(responseTransactionPair.getResponseDTO());
         }
         
         /**
@@ -315,6 +319,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
          */
         Map<String, Object> rollbackState = new HashMap<String, Object>(); 
         rollbackState.put(ROLLBACK_TRANSACTIONS, failedTransactionsToRollBack);
+        context.getSeedData().getUserDefinedFields().put(FAILED_RESPONSES, failedResponses);
         ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), rollbackState);
         
         if (LOG.isErrorEnabled()) {
@@ -326,7 +331,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                 LOG.trace(responseTransactionPair.getResponseDTO().getRawResponse());
             }
         }
-
+        
         throw new CheckoutException(msg, context.getSeedData());
     }
     
