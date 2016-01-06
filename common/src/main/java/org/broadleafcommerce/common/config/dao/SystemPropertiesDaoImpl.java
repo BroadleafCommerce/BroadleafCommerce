@@ -135,7 +135,7 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements S
                         ExtensionResultHolder<List> resultHolder = new ExtensionResultHolder<>();
                         if (queryExtensionManager != null) {
                             ExtensionResultStatusType resultStatusType = queryExtensionManager.getProxy().refineResults(SystemPropertyImpl.class, null, response, resultHolder);
-                            if (resultStatusType.equals(ExtensionResultStatusType.HANDLED)) {
+                            if (!resultStatusType.equals(ExtensionResultStatusType.NOT_HANDLED)) {
                                 return (SystemProperty) resultHolder.getResult().get(0);
                             }
                         }
