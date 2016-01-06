@@ -29,7 +29,10 @@
 
     <div class="select-group">
         <div class="asset-grid">
-            <div class="asset-grid-container">
+            <div class="asset-grid-container"
+                 th:attr="data-recordranges=${listGrid.startIndex + '-' + (listGrid.startIndex + #lists.size(listGrid.records) - 1)},
+                        data-totalrecords=${listGrid.totalRecords},
+                        data-pagesize=${listGrid.pageSize}">
                 <div th:each="asset : ${listGrid.records}" class="asset-item">
 
                     <div class="image-wrapper">

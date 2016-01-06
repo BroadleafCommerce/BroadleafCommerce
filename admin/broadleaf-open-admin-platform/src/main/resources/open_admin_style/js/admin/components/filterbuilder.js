@@ -607,26 +607,28 @@
 
                 if ($tbody.data('listgridtype') == 'asset_grid_folder') {
                     var $assetGrid = data.find('.asset-grid');
-                    var assetGrid = $('.asset-grid').html($assetGrid.html());
+                    var assetGrid = $filterButton.closest('.content-yield').find('.asset-grid').html($assetGrid.html());
                     var $assetListGrid = data.find('.asset-listgrid');
-                    var assetListgrid = $('.asset-listgrid').html($assetListGrid.html());
+                    var assetListgrid = $filterButton.closest('.content-yield').find('.asset-listgrid').html($assetListGrid.html());
+
+                    var container = assetGrid.closest('.asset-listgrid-container');
 
                     if (filters.data.length == 0) {
                         // show all breadcrumbs
-                        $('.breadcrumb-wrapper').show();
+                        container.find('.breadcrumb-wrapper').show();
 
-                        var parentId = $('.select-column').data('parentid');
+                        var parentId = container.find('.select-column').data('parentid');
 
                         // reload the most recent folder
-                        BLCAdmin.assetGrid.loadFolder(parentId, $('.select-column'));
+                        BLCAdmin.assetGrid.loadFolder(parentId, container.find('.select-column'));
                     } else {
                         // hide the folder listgrid
-                        $('.select-column').hide();
+                        container.find('.select-column').hide();
 
                         // hide all breadcrumbs
-                        $('.breadcrumb-wrapper').hide();
+                        container.find('.breadcrumb-wrapper').hide();
 
-                        $('.asset-title').html("Showing filtered results").show();
+                        container.find('.asset-title').html("Showing filtered results").show();
                     }
 
                     BLCAdmin.assetGrid.initialize($(assetGrid).find('.asset-grid-container'));

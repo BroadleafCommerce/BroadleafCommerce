@@ -1393,6 +1393,11 @@ blockquote::before{
     border: none;
 }
 
+td .thumbnail {
+    height: 38px !important;
+    width: auto !important;
+}
+
 .placeholder-image {
     width: 100%;
     max-width: 350px;
@@ -1418,7 +1423,7 @@ td[data-fieldname="thumbnail"] {
     padding: 0 !important;
     object-fit: cover;
     width: 52px;
-    height: 52px;
+    text-align: center;
 }
 
 div.uploadMessage {

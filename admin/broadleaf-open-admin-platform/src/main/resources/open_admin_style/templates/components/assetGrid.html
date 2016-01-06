@@ -9,7 +9,10 @@
 
         <div class="asset-grid">
             <div type="hidden" id="treeParentPathJson" th:if="${treeParentPathJson != null}" th:attr="data-parentpathjson=${treeParentPathJson}"></div>
-            <div class="asset-grid-container">
+            <div class="asset-grid-container"
+                 th:attr="data-recordranges=${assetGrid.startIndex + '-' + (assetGrid.startIndex + #lists.size(assetGrid.records) - 1)},
+                        data-totalrecords=${assetGrid.totalRecords},
+                        data-pagesize=${assetGrid.pageSize}">
                 <div th:each="asset : ${assetGrid.records}" class="asset-item">
 
                     <div class="image-wrapper">
