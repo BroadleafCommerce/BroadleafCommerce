@@ -368,7 +368,7 @@
             </build>
         </profile>
         <profile>
-            <id>aggregate-javadocs</id>
+            <id>javadocs</id>
             <activation>
                 <property>
                     <name>performRelease</name>
@@ -385,7 +385,7 @@
                             <execution>
                                 <id>attach-javadocs</id>
                                 <goals>
-                                    <goal>aggregate-jar</goal>
+                                    <goal>jar</goal>
                                 </goals>
                             </execution>
                         </executions>
