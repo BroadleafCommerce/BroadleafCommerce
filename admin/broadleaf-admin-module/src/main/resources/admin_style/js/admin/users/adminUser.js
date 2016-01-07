@@ -18,7 +18,7 @@
  * #L%
  */
 (function($, BLCAdmin) {
-    if (location.pathname.match("^/admin/user-management/")) {
+    if (location.pathname.match("^" + BLC.servletContext + "/user-management/")) {
         BLCAdmin.addPostFormSubmitHandler(function($form, data) {
             var $password = $form.find('#field-password input');
             if (!data.errors && typeof $password.val() !== 'undefined') {
