@@ -126,11 +126,13 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
             if (MapUtils.isEmpty(additionalFields)) {
                 additionalFields = new HashMap<>();
             }
-            if (additionalFields.containsKey(PaymentAdditionalFieldType.PAYMENT_TYPE)) {
-                paymentType = PaymentType.getInstance(additionalFields.get(PaymentAdditionalFieldType.PAYMENT_TYPE));
+            String paymentTypeKey = PaymentAdditionalFieldType.PAYMENT_TYPE.getType();
+            if (additionalFields.containsKey(paymentTypeKey)) {
+                paymentType = PaymentType.getInstance(additionalFields.get(paymentTypeKey));
             }
-            if (additionalFields.containsKey(PaymentAdditionalFieldType.GATEWAY_TYPE)) {
-                gatewayType = PaymentGatewayType.getInstance(additionalFields.get(PaymentAdditionalFieldType.GATEWAY_TYPE));
+            String gatewayTypeKey = PaymentAdditionalFieldType.GATEWAY_TYPE.getType();
+            if (additionalFields.containsKey(gatewayTypeKey)) {
+                gatewayType = PaymentGatewayType.getInstance(additionalFields.get(gatewayTypeKey));
             }
         }
         orderPayment.setPaymentGatewayType(gatewayType);
