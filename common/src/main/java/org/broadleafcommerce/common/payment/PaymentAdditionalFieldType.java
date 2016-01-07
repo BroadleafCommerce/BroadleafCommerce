@@ -38,6 +38,7 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
 
     // Generic Fields that can be used for multiple payment types
     public static final PaymentAdditionalFieldType PAYMENT_TYPE = new PaymentAdditionalFieldType("PAYMENT_TYPE", "Type of OrderPayment");
+    public static final PaymentAdditionalFieldType GATEWAY_TYPE = new PaymentAdditionalFieldType("GATEWAY_TYPE", "Gateway Type");
     public static final PaymentAdditionalFieldType NAME_ON_ACCOUNT = new PaymentAdditionalFieldType("NAME_ON_ACCOUNT", "Name on Account");
     public static final PaymentAdditionalFieldType ACCOUNT_TYPE = new PaymentAdditionalFieldType("ACCOUNT_TYPE", "Account Type");
     public static final PaymentAdditionalFieldType LAST_FOUR = new PaymentAdditionalFieldType("LAST_FOUR", "Last Four Digits ofAccount or CC");
@@ -68,10 +69,12 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
         setType(type);
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getFriendlyType() {
         return friendlyType;
     }
@@ -93,18 +96,23 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (!getClass().isAssignableFrom(obj.getClass()))
+        }
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
+        }
         PaymentAdditionalFieldType other = (PaymentAdditionalFieldType) obj;
         if (type == null) {
-            if (other.type != null)
+            if (other.type != null) {
                 return false;
-        } else if (!type.equals(other.type))
+            }
+        } else if (!type.equals(other.type)) {
             return false;
+        }
         return true;
     }
 }
