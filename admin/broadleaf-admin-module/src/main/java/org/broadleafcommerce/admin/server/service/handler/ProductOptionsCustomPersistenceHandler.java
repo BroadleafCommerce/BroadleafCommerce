@@ -92,8 +92,9 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
     protected boolean needsAllowedValue(ProductOption adminInstance) {
         // validate "Use in Sku generation"
         // Check if "use in sku generation" is true and that there are no allowed values set
-        if (adminInstance.getUseInSkuGeneration() && adminInstance.getAllowedValues().isEmpty())
+        if (adminInstance.getUseInSkuGeneration() && adminInstance.getAllowedValues().isEmpty()) {
             return true;
+        }
         // Else either there are allowed values and/or "use in sku generation" is false
         return false;
     }
