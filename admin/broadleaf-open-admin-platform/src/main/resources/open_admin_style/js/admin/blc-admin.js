@@ -546,6 +546,7 @@ var BLCAdmin = (function($) {
                 .selectize({
                     sortField: 'text',
                     closeAfterSelect: true,
+					dropdownParent: 'body',
                     onItemAdd: function(value, $item) {
                         $item.closest('.selectize-input').find('input').blur();
                     }
@@ -573,6 +574,7 @@ var BLCAdmin = (function($) {
                     hideSelected: true,
                     closeAfterSelect: true,
                     placeholder: placeholder,
+					dropdownParent: 'body',
                     onInitialize: function () {
                         var $selectize = this;
                         this.revertSettings.$children.each(function () {
@@ -656,6 +658,7 @@ var BLCAdmin = (function($) {
                     maxItems: null,
                     persist: false,
 					placeholder: collectionPlaceholder,
+					dropdownParent: 'body',
                     onInitialize: function () {
                         var $selectize = this;
                         this.revertSettings.$children.each(function () {
