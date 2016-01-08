@@ -176,6 +176,16 @@ public class MultiTenantCopyContext {
         return allFields;
     }
 
+    public Object getPreviousClone(Class<?> instanceClass, Long originalId) {
+        Object previousClone;
+        if (currentEquivalentMap.inverse().containsKey(instanceClass.getName() + "_" + originalId)) {
+            previousClone = currentCloneMap.get(currentEquivalentMap.inverse().get(instanceClass.getName() + "_" + originalId));
+        } else {
+            previousClone = getClonedVersion(instanceClass, originalId);
+        }
+        return previousClone;
+    }
+
     protected boolean checkCloneStatus(Object instance) {
         boolean shouldClone = true;
         ExtensionResultHolder<Boolean> shouldCloneHolder = new ExtensionResultHolder<Boolean>();
@@ -187,16 +197,6 @@ public class MultiTenantCopyContext {
             }
         }
         return shouldClone;
-    }
-
-    protected Object getPreviousClone(Class<?> instanceClass, Long originalId) {
-        Object previousClone;
-        if (currentEquivalentMap.inverse().containsKey(instanceClass.getName() + "_" + originalId)) {
-            previousClone = currentCloneMap.get(currentEquivalentMap.inverse().get(instanceClass.getName() + "_" + originalId));
-        } else {
-            previousClone = getClonedVersion(instanceClass, originalId);
-        }
-        return previousClone;
     }
 
     protected void validateOriginal(Object instance) throws CloneNotSupportedException {
