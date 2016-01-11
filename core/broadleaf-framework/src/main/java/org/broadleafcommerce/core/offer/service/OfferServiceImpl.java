@@ -484,6 +484,17 @@ public class OfferServiceImpl implements OfferService {
     }
     
     @Override
+    @Transactional("blTransactionManager")
+    public Boolean deleteOfferCode(OfferCode code) {
+        if (offerCodeDao.offerCodeIsUsed(code)) {
+            return false;
+        }
+
+        offerCodeDao.delete(code);
+        return true;
+    }
+
+    @Override
     public CustomerOfferDao getCustomerOfferDao() {
         return customerOfferDao;
     }

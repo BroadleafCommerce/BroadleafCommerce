@@ -22,6 +22,8 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -29,8 +31,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 
 @Repository("blOfferCodeDao")
 public class OfferCodeDaoImpl implements OfferCodeDao {
@@ -65,6 +73,23 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
     @Override
     public OfferCode readOfferCodeById(Long offerCodeId) {
         return em.find(OfferCodeImpl.class, offerCodeId);
+    }
+
+    @Override
+    public Boolean offerCodeIsUsed(OfferCode code) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<OrderImpl> baseOrder = criteria.from(OrderImpl.class);
+        criteria.select(baseOrder);
+        Join<OrderImpl, OfferCodeImpl> join = baseOrder.join("addedOfferCodes");
+        criteria.where(builder.equal(join.get("id"), code.getId()));
+        TypedQuery<Order> query = em.createQuery(criteria);
+        try {
+            query.getSingleResult();
+        } catch (NoResultException e) {
+            return false;
+        }
+        return true;
     }
 
     @Override
