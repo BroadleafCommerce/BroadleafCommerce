@@ -20,6 +20,9 @@
 
 package org.broadleafcommerce.common.payment.dto;
 
+import org.broadleafcommerce.common.payment.PaymentGatewayRequestType;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -101,6 +104,9 @@ public class PaymentRequestDTO {
     protected String shippingTotal;
     protected String taxTotal;
     protected String transactionTotal;
+
+    protected PaymentType paymentType;
+    protected PaymentGatewayRequestType gatewayRequestType;
 
     protected boolean completeCheckoutOnCallback = true;
 
@@ -220,6 +226,16 @@ public class PaymentRequestDTO {
         return this;
     }
 
+    public PaymentRequestDTO paymentType(PaymentType paymentType) {
+        this.paymentType = paymentType;
+        return this;
+    }
+
+    public PaymentRequestDTO gatewayRequestType(PaymentGatewayRequestType gatewayRequestType) {
+        this.gatewayRequestType = gatewayRequestType;
+        return this;
+    }
+
     public PaymentRequestDTO completeCheckoutOnCallback(boolean completeCheckoutOnCallback) {
         this.completeCheckoutOnCallback = completeCheckoutOnCallback;
         return this;
@@ -287,6 +303,14 @@ public class PaymentRequestDTO {
 
     public String getTransactionTotal() {
         return transactionTotal;
+    }
+
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
+
+    public PaymentGatewayRequestType getGatewayRequestType() {
+        return gatewayRequestType;
     }
 
     public boolean isCompleteCheckoutOnCallback() {

@@ -22,7 +22,9 @@ package org.broadleafcommerce.common.web.payment.processor;
 
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.payment.PaymentGatewayRequestType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.payment.TransparentRedirectConstants;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
@@ -81,14 +83,19 @@ public abstract class AbstractTRCreditCardExtensionHandler extends AbstractExten
                 }
 
                 PaymentResponseDTO responseDTO;
-                if (getConfiguration().isPerformAuthorizeAndCapture()) {
+
+                if (PaymentGatewayRequestType.CREATE_CUSTOMER_PAYMENT_TR.equals(requestDTO.getGatewayRequestType())) {
+                    responseDTO = getTransparentRedirectService().createCustomerPaymentTokenForm(requestDTO);
+                } else if (PaymentGatewayRequestType.UPDATE_CUSTOMER_PAYMENT_TR.equals(requestDTO.getGatewayRequestType())) {
+                    responseDTO = getTransparentRedirectService().updateCustomerPaymentTokenForm(requestDTO);
+                } else if (getConfiguration().isPerformAuthorizeAndCapture()) {
                     responseDTO = getTransparentRedirectService().createAuthorizeAndCaptureForm(requestDTO);
                 } else {
                     responseDTO = getTransparentRedirectService().createAuthorizeForm(requestDTO);
                 }
 
+                overrideCustomerPaymentReturnURLs(requestDTO, responseDTO);
                 populateFormParameters(formParameters, responseDTO);
-
             }
 
             return ExtensionResultStatusType.HANDLED_CONTINUE;
@@ -111,5 +118,42 @@ public abstract class AbstractTRCreditCardExtensionHandler extends AbstractExten
 
     public abstract void populateFormParameters(Map<String, Map<String, String>> formParameters,
                                                 PaymentResponseDTO responseDTO);
+
+    /**
+     * If the request contains information about an override return URL, use the one specified on the request dto.
+     * e.g. some modules like OMS may use the transparent redirect mechanism to create payment tokens,
+     * if the request is originating from a module, then it may override the return url,
+     * else the request would be coming from a normal flow, like adding a customer payment token from a customer's profile page.
+     */
+    protected void overrideCustomerPaymentReturnURLs(PaymentRequestDTO requestDTO, PaymentResponseDTO responseDTO) {
+        if (requestDTO.getAdditionalFields().containsKey(TransparentRedirectConstants.OVERRIDE_CREATE_TOKEN_RETURN_URL)) {
+            String createReturnKey = getTransparentRedirectService().getCreateCustomerPaymentTokenReturnURLFieldKey(responseDTO);
+            String override = (String)requestDTO.getAdditionalFields().get(TransparentRedirectConstants.OVERRIDE_CREATE_TOKEN_RETURN_URL);
+            responseDTO.getResponseMap().put(createReturnKey, override);
+            responseDTO.getResponseMap().remove(TransparentRedirectConstants.OVERRIDE_CREATE_TOKEN_RETURN_URL);
+        }
+
+        if (requestDTO.getAdditionalFields().containsKey(TransparentRedirectConstants.OVERRIDE_CREATE_TOKEN_CANCEL_URL)) {
+            String createCancelKey = getTransparentRedirectService().getCreateCustomerPaymentTokenCancelURLFieldKey(responseDTO);
+            String override = (String)requestDTO.getAdditionalFields().get(TransparentRedirectConstants.OVERRIDE_CREATE_TOKEN_CANCEL_URL);
+            responseDTO.getResponseMap().put(createCancelKey, override);
+            responseDTO.getResponseMap().remove(TransparentRedirectConstants.OVERRIDE_CREATE_TOKEN_CANCEL_URL);
+        }
+
+        if (requestDTO.getAdditionalFields().containsKey(TransparentRedirectConstants.OVERRIDE_UPDATE_TOKEN_RETURN_URL)) {
+            String updateReturnKey = getTransparentRedirectService().getUpdateCustomerPaymentTokenReturnURLFieldKey(responseDTO);
+            String override = (String)requestDTO.getAdditionalFields().get(TransparentRedirectConstants.OVERRIDE_UPDATE_TOKEN_RETURN_URL);
+            responseDTO.getResponseMap().put(updateReturnKey, override);
+            responseDTO.getResponseMap().remove(TransparentRedirectConstants.OVERRIDE_UPDATE_TOKEN_RETURN_URL);
+        }
+
+        if (requestDTO.getAdditionalFields().containsKey(TransparentRedirectConstants.OVERRIDE_UPDATE_TOKEN_CANCEL_URL)) {
+            String updateCancelKey = getTransparentRedirectService().getUpdateCustomerPaymentTokenCancelURLFieldKey(responseDTO);
+            String override = (String)requestDTO.getAdditionalFields().get(TransparentRedirectConstants.OVERRIDE_UPDATE_TOKEN_CANCEL_URL);
+            responseDTO.getResponseMap().put(updateCancelKey, override);
+            responseDTO.getResponseMap().remove(TransparentRedirectConstants.OVERRIDE_UPDATE_TOKEN_CANCEL_URL);
+        }
+
+    }
 
 }

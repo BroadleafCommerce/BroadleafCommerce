@@ -40,7 +40,7 @@ import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 /**
  * @author gdiaz
  */
-public interface NullPaymentGatewayHostedConfiguration extends PaymentGatewayConfiguration {
+public interface NullIntegrationGatewayHostedConfiguration extends PaymentGatewayConfiguration {
 
     public String getHostedRedirectUrl();
 

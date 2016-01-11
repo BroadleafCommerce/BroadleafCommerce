@@ -33,7 +33,9 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
+import org.broadleafcommerce.core.payment.service.OrderPaymentStatusService;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
+import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
@@ -101,6 +103,9 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     @Resource(name = "blOrderPaymentConfirmationStrategy")
     protected OrderPaymentConfirmationStrategy orderPaymentConfirmationStrategy;
 
+    @Resource(name = "blOrderPaymentStatusService")
+    protected OrderPaymentStatusService orderPaymentStatusService;
+
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         Order order = context.getSeedData().getOrder();
@@ -134,7 +139,8 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive()) {
                 for (PaymentTransaction tx : payment.getTransactions()) {
-                    if (PaymentTransactionType.UNCONFIRMED.equals(tx.getType())) {
+                    if (OrderPaymentStatus.UNCONFIRMED.equals(orderPaymentStatusService.determineOrderPaymentStatus(payment)) &&
+                            PaymentTransactionType.UNCONFIRMED.equals(tx.getType())) {
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("Transaction " + tx.getId() + " is not confirmed. Proceeding to confirm transaction.");
                         }

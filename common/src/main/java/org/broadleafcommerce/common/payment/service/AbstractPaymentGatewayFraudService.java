@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Framework Web
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,16 @@
  * limitations under the License.
  * #L%
  */
+package org.broadleafcommerce.common.payment.service;
 
-package org.broadleafcommerce.core.payment.service;
+import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
+import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
+public class AbstractPaymentGatewayFraudService implements PaymentGatewayFraudService {
 
-/**
- * @author Elbert Bautista (elbertbautista)
- */
-public interface NullPaymentGatewayConfiguration extends PaymentGatewayConfiguration {
-
-    public String getTransparentRedirectUrl();
-
-    public String getTransparentRedirectReturnUrl();
+    @Override
+    public PaymentResponseDTO requestPayerAuthentication(PaymentRequestDTO paymentRequestDTO) {
+        throw new UnsupportedOperationException("Not Implemented");
+    }
 
 }
