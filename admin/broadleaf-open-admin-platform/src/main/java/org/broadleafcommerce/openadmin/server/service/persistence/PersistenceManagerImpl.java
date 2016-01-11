@@ -132,27 +132,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     @Override
     public Class<?>[] getUpDownInheritance(Class<?> testClass) {
-        Class<?>[] pEntities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(testClass);
-        if (ArrayUtils.isEmpty(pEntities)) {
-            return pEntities;
-        }
-        Class<?> topConcreteClass = pEntities[pEntities.length - 1];
-        List<Class<?>> temp = new ArrayList<Class<?>>(pEntities.length);
-        temp.addAll(Arrays.asList(pEntities));
-        Collections.reverse(temp);
-        boolean eof = false;
-        while (!eof) {
-            Class<?> superClass = topConcreteClass.getSuperclass();
-            PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(superClass.getName());
-            if (persistentClass == null) {
-                eof = true;
-            } else {
-                temp.add(0, superClass);
-                topConcreteClass = superClass;
-            }
-        }
-
-        return temp.toArray(new Class<?>[temp.size()]);
+        return dynamicEntityDao.getUpDownInheritance(testClass);
     }
 
     @Override
