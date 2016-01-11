@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Admin Module
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -17,14 +17,15 @@
  * limitations under the License.
  * #L%
  */
-(function($, BLCAdmin) {
-    if (location.pathname.match("^" + BLC.servletContext + "/user-management/")) {
-        BLCAdmin.addPostFormSubmitHandler(function($form, data) {
-            var $password = $form.find('#field-password input');
-            if (!data.errors && typeof $password.val() !== 'undefined') {
-                $('#field-password').hide();
-                $('#field-passwordConfirm').hide();
-            }
-        });
-    }
-})(jQuery, BLCAdmin);
+
+package org.broadleafcommerce.core.payment.service;
+
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
+
+public interface NullIntegrationGatewayConfiguration extends PaymentGatewayConfiguration {
+
+    public String getTransparentRedirectUrl();
+
+    public String getTransparentRedirectReturnUrl();
+
+}

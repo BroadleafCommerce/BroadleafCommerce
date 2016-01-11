@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -52,20 +53,12 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldS
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.OneToMany;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * Provides persistence (read/write) behavior for rule builder fields. This includes two types: Rule with quantity, and
@@ -161,7 +154,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             Property prop = itr.next();
             if (prop.getName().endsWith("Json")) {
                 for (Map.Entry<String, FieldMetadata> entry : properties.entrySet()) {
-                    if (prop.getName().startsWith(entry.getKey())) {
+                    String propName = prop.getName().substring(0, prop.getName().length()-4);
+                    if (propName.equals(entry.getKey())) {
                         BasicFieldMetadata originalFM = (BasicFieldMetadata) entry.getValue();
                         if (originalFM.getFieldType() == SupportedFieldType.RULE_SIMPLE ||
                                 originalFM.getFieldType() == SupportedFieldType.RULE_SIMPLE_TIME ||

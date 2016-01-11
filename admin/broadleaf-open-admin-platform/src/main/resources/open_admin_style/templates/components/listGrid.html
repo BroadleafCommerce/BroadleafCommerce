@@ -173,7 +173,7 @@
                         <span th:substituteby="components/partials/listGridIcon"></span>
 
                         <a th:if="${headerField.mainEntityLink}"
-                           th:href="${'/admin/assets/' + record.id}"
+                           th:href="@{${'/assets/' + record.id}}"
                            th:text="${field.displayValue}"></a>
 
                         <span th:if="${field.fieldType == 'IMAGE'}">

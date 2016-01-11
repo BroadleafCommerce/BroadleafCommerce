@@ -25,7 +25,7 @@
                         </div>
                     </div>
 
-                    <a th:href="${'/admin/assets/' + asset.id}" th:text="${asset.name}"></a>
+                    <a th:href="@{${'/assets/' + asset.id}}" th:text="${asset.name}"></a>
                 </div>
             </div>
         </div>

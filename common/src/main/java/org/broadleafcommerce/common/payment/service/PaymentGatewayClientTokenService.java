@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,20 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.payment;
+package org.broadleafcommerce.common.payment.service;
+
+import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
+import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 
 /**
+ * <p>The intention of this API is to generate the necessary parameters and fields
+ * needed by the payment gateway's JavaScript library in order to create a tokenization request.
+ * These parameters will be placed on the ResponseDTO for consumption by a client application or template.</p>
+ *
  * @author Elbert Bautista (elbertbautista)
  */
-public class TransparentRedirectConstants {
+public interface PaymentGatewayClientTokenService {
 
-    public static final String OVERRIDE_CREATE_TOKEN_RETURN_URL = "OVERRIDE_CREATE_TOKEN_RETURN_URL";
-    public static final String OVERRIDE_CREATE_TOKEN_CANCEL_URL = "OVERRIDE_CREATE_TOKEN_CANCEL_URL";
-    public static final String OVERRIDE_UPDATE_TOKEN_RETURN_URL = "OVERRIDE_UPDATE_TOKEN_RETURN_URL";
-    public static final String OVERRIDE_UPDATE_TOKEN_CANCEL_URL = "OVERRIDE_UPDATE_TOKEN_CANCEL_URL";
+    public PaymentResponseDTO generateClientToken(PaymentRequestDTO requestDTO);
 
 }

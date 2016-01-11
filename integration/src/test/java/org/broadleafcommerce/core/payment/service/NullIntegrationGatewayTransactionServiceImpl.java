@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.CreditCardDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
+import org.broadleafcommerce.common.payment.service.AbstractPaymentGatewayTransactionService;
 import org.broadleafcommerce.common.payment.service.FailureCountExposable;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
@@ -39,22 +40,8 @@ import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
-/**
- * This is an example implementation of a {@link org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService}.
- * This handles the scenario where the implementation is PCI-Compliant and
- * the server directly handles the Credit Card PAN. If so, this service should make
- * a server to server call to charge the card against the configured gateway.
- *
- * In order to use load this demo service, you will need to component scan
- * the package "com.mycompany.sample".
- *
- * This should NOT be used in production, and is meant solely for demonstration
- * purposes only.
- *
- * @author Elbert Bautista (elbertbautista)
- */
-@Service("blNullPaymentGatewayTransactionService")
-public class NullPaymentGatewayTransactionServiceImpl implements PaymentGatewayTransactionService, FailureCountExposable {
+@Service("blNullIntegrationGatewayTransactionService")
+public class NullIntegrationGatewayTransactionServiceImpl extends AbstractPaymentGatewayTransactionService implements FailureCountExposable {
 
     @Override
     public PaymentResponseDTO authorize(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
@@ -68,7 +55,7 @@ public class NullPaymentGatewayTransactionServiceImpl implements PaymentGatewayT
     @Override
     public PaymentResponseDTO capture(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
 
-        PaymentResponseDTO responseDTO = new PaymentResponseDTO(PaymentType.THIRD_PARTY_ACCOUNT, NullPaymentGatewayType.NULL_GATEWAY);
+        PaymentResponseDTO responseDTO = new PaymentResponseDTO(PaymentType.THIRD_PARTY_ACCOUNT, NullIntegrationGatewayType.NULL_INTEGRATION_GATEWAY);
 
         responseDTO.paymentTransactionType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE);
         responseDTO.amount(new Money(paymentRequestDTO.getTransactionTotal()));
@@ -109,7 +96,7 @@ public class NullPaymentGatewayTransactionServiceImpl implements PaymentGatewayT
 
     @Override
     public PaymentResponseDTO refund(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
-        PaymentResponseDTO responseDTO = new PaymentResponseDTO(PaymentType.CREDIT_CARD, NullPaymentGatewayType.NULL_GATEWAY);
+        PaymentResponseDTO responseDTO = new PaymentResponseDTO(PaymentType.CREDIT_CARD, NullIntegrationGatewayType.NULL_INTEGRATION_GATEWAY);
         responseDTO.valid(true)
                 .paymentTransactionType(PaymentTransactionType.REFUND)
                 .amount(new Money(paymentRequestDTO.getTransactionTotal()))
@@ -127,12 +114,9 @@ public class NullPaymentGatewayTransactionServiceImpl implements PaymentGatewayT
     /**
      * Does minimal Credit Card Validation (luhn check and expiration date is after today).
      * Mimics the Response of a real Payment Gateway.
-     *
-     * @param creditCardDTO
-     * @return
      */
     protected PaymentResponseDTO commonCreditCardProcessing(PaymentRequestDTO requestDTO, PaymentTransactionType paymentTransactionType) {
-        PaymentResponseDTO responseDTO = new PaymentResponseDTO(PaymentType.CREDIT_CARD, NullPaymentGatewayType.NULL_GATEWAY);
+        PaymentResponseDTO responseDTO = new PaymentResponseDTO(PaymentType.CREDIT_CARD, NullIntegrationGatewayType.NULL_INTEGRATION_GATEWAY);
         responseDTO.valid(true)
                 .paymentTransactionType(paymentTransactionType);
 
