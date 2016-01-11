@@ -51,7 +51,7 @@ import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl;
 import org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment;
-import org.broadleafcommerce.core.payment.service.NullPaymentGatewayType;
+import org.broadleafcommerce.core.payment.service.NullIntegrationGatewayType;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
@@ -126,7 +126,7 @@ public class CheckoutTest extends BaseTest {
         payment.setAmount(new Money(15D + (15D * 0.05D)));
         payment.setReferenceNumber("1234");
         payment.setType(PaymentType.CREDIT_CARD);
-        payment.setPaymentGatewayType(NullPaymentGatewayType.NULL_GATEWAY);
+        payment.setPaymentGatewayType(NullIntegrationGatewayType.NULL_INTEGRATION_GATEWAY);
         payment.setOrder(order);
         PaymentTransaction tx = new PaymentTransactionImpl();
         tx.setAmount(payment.getAmount());
