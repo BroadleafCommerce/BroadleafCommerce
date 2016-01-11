@@ -699,7 +699,7 @@ button:disabled {
     -moz-box-shadow: none;
     box-shadow: none;
     text-align: right;
-    border-top: 2px solid #E0E0E0;
+    border-top: 1px solid #E0E0E0;
 }
 
 .close {

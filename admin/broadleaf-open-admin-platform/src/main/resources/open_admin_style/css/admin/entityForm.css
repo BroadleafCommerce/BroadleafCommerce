@@ -358,3 +358,15 @@ a.description-link {
 }
 
 /*************************** DYNAMIC FORM (end of section) ***************************/
+
+/*************************** ADORNED COLLECTION MODAL (beginning of section) ***************************/
+
+.modal-body .adorned-select-wrapper .content-yield:last-of-type {
+    padding-top: 0;
+}
+
+.modal-body .adorned-select-wrapper .fieldset-card .titlebar {
+    display: none;
+}
+
+/*************************** ADORNED COLLECTION MODAL (end of section) ***************************/
