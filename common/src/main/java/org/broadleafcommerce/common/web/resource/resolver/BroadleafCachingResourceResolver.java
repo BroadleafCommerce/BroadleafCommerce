@@ -19,8 +19,8 @@
  */
 package org.broadleafcommerce.common.web.resource.resolver;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.site.domain.Theme;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +29,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.web.servlet.resource.AbstractResourceResolver;
 import org.springframework.web.servlet.resource.CachingResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
@@ -37,23 +39,30 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Wraps Spring's {@link CachingResourceResolver} but adds in support to disable with 
- * environment properties.
- * 
+ * A ResourceResolver that handles using the theme as part of the cache key and adds in
+ * support to disable with environment properties.
+ *
+ * We bypass {@link CachingResourceResolver} and instead borrow its code in order to be
+ * able to inject the theme key that is needed by BLC since Spring's class could not be
+ * leveraged otherwise.
+ *
  *  {@code }
  * 
  * @author Brian Polster
  * @since Broadleaf 4.0
  */
 @Component("blCacheResourceResolver")
-public class BroadleafCachingResourceResolver extends CachingResourceResolver implements Ordered {
+public class BroadleafCachingResourceResolver extends AbstractResourceResolver implements Ordered {
 
+    public static final String RESOLVED_RESOURCE_CACHE_KEY_PREFIX = "resolvedResource:";
+    public static final String RESOLVED_URL_PATH_CACHE_KEY_PREFIX = "resolvedUrlPath:";
     public static final String RESOLVED_RESOURCE_CACHE_KEY_PREFIX_NULL = "resolvedResourceNull:";
     public static final String RESOLVED_URL_PATH_CACHE_KEY_PREFIX_NULL = "resolvedUrlPathNull:";
     private static final Object NULL_REFERENCE = new Object();
-    protected static final Log LOG = LogFactory.getLog(BroadleafCachingResourceResolver.class);
     private int order = BroadleafResourceResolverOrder.BLC_CACHE_RESOURCE_RESOLVER;
-    
+
+    private final Cache cache;
+
     @javax.annotation.Resource(name = "blSpringCacheManager")
     private CacheManager cacheManager;
     
@@ -64,19 +73,43 @@ public class BroadleafCachingResourceResolver extends CachingResourceResolver im
 
     @Autowired
     public BroadleafCachingResourceResolver(@Qualifier("blSpringCacheManager") CacheManager cacheManager) {
-        super(cacheManager, DEFAULT_CACHE_NAME);
+        this(cacheManager.getCache(DEFAULT_CACHE_NAME));
     }
 
     // Allows for an implementor to override the default cache settings.
     public BroadleafCachingResourceResolver(Cache cache) {
-        super(cache);
+        Assert.notNull(cache, "'cache' is required");
+        this.cache = cache;
+    }
+
+    /**
+     * Return the configured {@code Cache}.
+     */
+    public Cache getCache() {
+        return this.cache;
     }
 
     @Override
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
         if (resourceCachingEnabled) {
-            Resource resource = super.resolveResourceInternal(request, requestPath, locations, chain);
+            String key = computeKey(request, requestPath) + getThemePathFromBRC();
+            Resource resource = this.cache.get(key, Resource.class);
+
+            if (resource != null) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Found match");
+                }
+                return resource;
+            }
+
+            resource = chain.resolveResource(request, requestPath, locations);
+            if (resource != null) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Putting resolved resource in cache");
+                }
+                this.cache.put(key, resource);
+            }
 
             if (logger.isDebugEnabled()) {
                 if (resource == null) {
@@ -92,22 +125,64 @@ public class BroadleafCachingResourceResolver extends CachingResourceResolver im
         }
     }
 
+    /**
+     * Pulled from {@link CachingResourceResolver}
+     *
+     * @param request
+     * @param requestPath
+     * @return
+     */
+    protected String computeKey(HttpServletRequest request, String requestPath) {
+        StringBuilder key = new StringBuilder(RESOLVED_RESOURCE_CACHE_KEY_PREFIX);
+        key.append(requestPath);
+        if (request != null) {
+            String encoding = request.getHeader("Accept-Encoding");
+            if (encoding != null && encoding.contains("gzip")) {
+                key.append("+encoding=gzip");
+            }
+        }
+        return key.toString();
+    }
+
     @Override
     protected String resolveUrlPathInternal(String resourceUrlPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
         if (resourceCachingEnabled) {
+            String response = null;
             String key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX_NULL + resourceUrlPath;
             Object nullResource = getCache().get(key, Object.class);
             if (nullResource != null) {
-                if (logger.isTraceEnabled()) {
-                    logger.trace(String.format("Found null reference url path match for '%s'", resourceUrlPath));
-                }
+                logNullReferenceUrlPatchMatch(resourceUrlPath);
                 return null;
             } else {
-                String response = super.resolveUrlPathInternal(resourceUrlPath, locations, chain);
+                key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX + resourceUrlPath + getThemePathFromBRC();
+                nullResource = getCache().get(key, Object.class);
+                if (nullResource != null) {
+                    logNullReferenceUrlPatchMatch(resourceUrlPath);
+                    return null;
+                }
+
+                String resolvedUrlPath = this.cache.get(key, String.class);
+                if (resolvedUrlPath != null) {
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("Found match");
+                    }
+                    response = resolvedUrlPath;
+                }
+
+                resolvedUrlPath = chain.resolveUrlPath(resourceUrlPath, locations);
+                if (resolvedUrlPath != null) {
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("Putting resolved resource URL path in cache");
+                    }
+                    this.cache.put(key, resolvedUrlPath);
+                    response = resolvedUrlPath;
+                }
+
                 if (response == null) {
                     if (logger.isTraceEnabled()) {
-                        logger.trace(String.format("Putting resolved null reference url path in cache for '%s'", resourceUrlPath));
+                        logger.trace(String.format("Putting resolved null reference url " +
+                                "path in cache for '%s'", resourceUrlPath));
                     }
                     getCache().put(key, NULL_REFERENCE);
                 }
@@ -116,6 +191,26 @@ public class BroadleafCachingResourceResolver extends CachingResourceResolver im
         } else {
             return chain.resolveUrlPath(resourceUrlPath, locations);
         }
+    }
+
+    private void logNullReferenceUrlPatchMatch(String resourceUrlPath) {
+        if (logger.isTraceEnabled()) {
+            logger.trace(String.format("Found null reference url path match for '%s'", resourceUrlPath));
+        }
+    }
+
+    /**
+     * Gets the theme path from the {@link org.broadleafcommerce.common.web.BroadleafRequestContext}
+     *
+     * @return
+     */
+    protected String getThemePathFromBRC() {
+        String themePath = null;
+        Theme theme = BroadleafRequestContext.getBroadleafRequestContext().getTheme();
+        if (theme != null) {
+            themePath = theme.getPath();
+        }
+        return themePath == null ? "" : "-" + themePath;
     }
 
     @Override
