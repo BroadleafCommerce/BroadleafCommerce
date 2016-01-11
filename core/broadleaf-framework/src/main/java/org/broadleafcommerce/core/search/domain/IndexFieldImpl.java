@@ -166,7 +166,7 @@ public class IndexFieldImpl implements IndexField, Serializable {
         }
         IndexField cloned = createResponse.getClone();
         cloned.setSearchable(searchable);
-        cloned.setField(field.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setField(field);
         for(IndexFieldType entry : fieldTypes){
             cloned.getFieldTypes().add(entry.createOrRetrieveCopyInstance(context).getClone());
         }
