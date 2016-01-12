@@ -152,17 +152,14 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
             String key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX_NULL + resourceUrlPath;
             Object nullResource = getCache().get(key, Object.class);
             if (nullResource != null) {
-                logNullReferenceUrlPatchMatch(resourceUrlPath);
+                if (logger.isTraceEnabled()) {
+                    logger.trace(String.format("Found null reference url path match for '%s'", resourceUrlPath));
+                }
                 return null;
             } else {
                 key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX + resourceUrlPath + getThemePathFromBRC();
-                nullResource = getCache().get(key, Object.class);
-                if (nullResource != null) {
-                    logNullReferenceUrlPatchMatch(resourceUrlPath);
-                    return null;
-                }
-
                 String resolvedUrlPath = this.cache.get(key, String.class);
+
                 if (resolvedUrlPath != null) {
                     if (logger.isTraceEnabled()) {
                         logger.trace("Found match");
@@ -190,12 +187,6 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
             }
         } else {
             return chain.resolveUrlPath(resourceUrlPath, locations);
-        }
-    }
-
-    private void logNullReferenceUrlPatchMatch(String resourceUrlPath) {
-        if (logger.isTraceEnabled()) {
-            logger.trace(String.format("Found null reference url path match for '%s'", resourceUrlPath));
         }
     }
 
