@@ -54,7 +54,7 @@
     <bean id="blTestPaymentConfigurationServices" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
-                <ref bean="blNullPaymentGatewayConfigurationService"/>
+                <ref bean="blNullIntegrationGatewayConfigurationService"/>
             </list>
         </property>
     </bean>

@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
@@ -103,7 +104,9 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     private String productOptionValidationStrategyType;
 
     @Column(name = "VALIDATION_TYPE")
-    @AdminPresentation(friendlyName = "productOption_validationType", group = "productOption_validation", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType")
+    @AdminPresentation(friendlyName = "productOption_validationType", visibility = VisibilityEnum.HIDDEN_ALL,
+            group = "productOption_validation", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType")
     private String productOptionValidationType;
 
     @Column(name = "VALIDATION_STRING")

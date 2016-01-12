@@ -39,12 +39,17 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
      */
     @Override
     public Boolean validate(ProductOption productOption, String value) {
-        if (productOption.getProductOptionValidationType() == ProductOptionValidationType.REGEX) {
-            if (!validateRegex(productOption.getValidationString(), value))
-            {
-                LOG.error(productOption.getErrorMessage() + ". Value [" + value + "] does not match regex string [" + productOption.getValidationString() + "]");
-                String exceptionMessage = productOption.getAttributeName() + " " + productOption.getErrorMessage() + ". Value [" + value + "] does not match regex string [" + productOption.getValidationString() + "]";
-                throw new ProductOptionValidationException(exceptionMessage, productOption.getErrorCode(), productOption.getAttributeName(), value, productOption.getValidationString(), productOption.getErrorMessage());
+        ProductOptionValidationType validationType = productOption.getProductOptionValidationType();
+        if (validationType == null || validationType == ProductOptionValidationType.REGEX) {
+            if (!validateRegex(productOption.getValidationString(), value)) {
+                LOG.error(productOption.getErrorMessage() + ". Value [" + value + "] does not match regex string ["
+                        + productOption.getValidationString() + "]");
+                String exceptionMessage = productOption.getAttributeName() + " " + productOption.getErrorMessage()
+                        + ". Value [" + value + "] does not match regex string ["
+                        + productOption.getValidationString() + "]";
+                throw new ProductOptionValidationException(exceptionMessage, productOption.getErrorCode(),
+                        productOption.getAttributeName(), value, productOption.getValidationString(),
+                        productOption.getErrorMessage());
             }
         }
         return true;

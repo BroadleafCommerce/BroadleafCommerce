@@ -33,7 +33,9 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
+import org.broadleafcommerce.core.payment.service.OrderPaymentStatusService;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
+import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
@@ -82,6 +84,13 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
      */
     public static final String ROLLBACK_TRANSACTIONS = "confirmedTransactions";
 
+    public static final String FAILED_RESPONSES = "failedResponses";
+    
+
+    @Autowired(required = false)
+    @Qualifier("blPaymentGatewayConfigurationServiceProvider")
+    protected PaymentGatewayConfigurationServiceProvider paymentConfigurationServiceProvider;
+    
     @Resource(name = "blOrderToPaymentRequestDTOService")
     protected OrderToPaymentRequestDTOService orderToPaymentRequestService;
 
@@ -93,6 +102,9 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
 
     @Resource(name = "blOrderPaymentConfirmationStrategy")
     protected OrderPaymentConfirmationStrategy orderPaymentConfirmationStrategy;
+
+    @Resource(name = "blOrderPaymentStatusService")
+    protected OrderPaymentStatusService orderPaymentStatusService;
 
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
@@ -127,7 +139,8 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive()) {
                 for (PaymentTransaction tx : payment.getTransactions()) {
-                    if (PaymentTransactionType.UNCONFIRMED.equals(tx.getType())) {
+                    if (OrderPaymentStatus.UNCONFIRMED.equals(orderPaymentStatusService.determineOrderPaymentStatus(payment)) &&
+                            PaymentTransactionType.UNCONFIRMED.equals(tx.getType())) {
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("Transaction " + tx.getId() + " is not confirmed. Proceeding to confirm transaction.");
                         }
@@ -267,6 +280,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
          */
         List<OrderPayment> invalidatedPayments = new ArrayList<OrderPayment>();
         List<PaymentTransaction> failedTransactionsToRollBack = new ArrayList<PaymentTransaction>();
+        List<PaymentResponseDTO> failedResponses = new ArrayList<PaymentResponseDTO>();
         for (ResponseTransactionPair responseTransactionPair : failedTransactions) {
             PaymentTransaction tx = orderPaymentService.readTransactionById(responseTransactionPair.getTransactionId());
             if (shouldRollbackFailedTransaction(responseTransactionPair)) {
@@ -276,6 +290,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                 OrderPayment payment = orderPaymentService.save(tx.getOrderPayment());
                 invalidatedPayments.add(payment);
             }
+            failedResponses.add(responseTransactionPair.getResponseDTO());
         }
         
         /**
@@ -286,6 +301,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
          */
         Map<String, Object> rollbackState = new HashMap<String, Object>(); 
         rollbackState.put(ROLLBACK_TRANSACTIONS, failedTransactionsToRollBack);
+        context.getSeedData().getUserDefinedFields().put(FAILED_RESPONSES, failedResponses);
         ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), rollbackState);
         
         if (LOG.isErrorEnabled()) {
@@ -297,7 +313,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                 LOG.trace(responseTransactionPair.getResponseDTO().getRawResponse());
             }
         }
-
+        
         throw new CheckoutException(msg, context.getSeedData());
     }
     

@@ -145,9 +145,13 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
 
     @Override
     public void populateCustomerPaymentToken(PaymentResponseDTO responseDTO, CustomerPayment customerPayment) {
-        if (responseDTO.getResponseMap().containsKey(PaymentAdditionalFieldType.TOKEN.getType())) {
+        if (responseDTO.getPaymentToken() != null) {
+            customerPayment.setPaymentToken(responseDTO.getPaymentToken());
+        } else if (responseDTO.getResponseMap().containsKey(PaymentAdditionalFieldType.TOKEN.getType())) {
+            //handle legacy additional fields map
             customerPayment.setPaymentToken(responseDTO.getResponseMap().get(PaymentAdditionalFieldType.TOKEN.getType()));
         } else if (responseDTO.getCreditCard() != null) {
+            //handle higher PCI level compliance scenarios
             customerPayment.setPaymentToken(responseDTO.getCreditCard().getCreditCardNum());
         }
     }

@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.config.domain.SystemPropertyImpl;
 import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.ejb.QueryHints;
@@ -53,19 +54,19 @@ import javax.persistence.criteria.Root;
  * Date: 6/20/12
  */
 @Repository("blSystemPropertiesDao")
-public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements SystemPropertiesDao{
+public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements SystemPropertiesDao {
 
     protected static final Log LOG = LogFactory.getLog(SystemPropertiesDaoImpl.class);
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Resource(name = "blSystemPropertyDaoQueryExtensionManager")
     protected SystemPropertyDaoQueryExtensionManager queryExtensionManager;
-    
+
     @Override
     public SystemProperty readById(Long id) {
         return em.find(SystemPropertyImpl.class, id);
@@ -133,8 +134,10 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements S
                     if (response.size() > 0) {
                         ExtensionResultHolder<List> resultHolder = new ExtensionResultHolder<>();
                         if (queryExtensionManager != null) {
-                            queryExtensionManager.getProxy().refineResults(SystemPropertyImpl.class, null, response, resultHolder);
-                            return (SystemProperty) resultHolder.getResult().get(0);
+                            ExtensionResultStatusType resultStatusType = queryExtensionManager.getProxy().refineResults(SystemPropertyImpl.class, null, response, resultHolder);
+                            if (!resultStatusType.equals(ExtensionResultStatusType.NOT_HANDLED)) {
+                                return (SystemProperty) resultHolder.getResult().get(0);
+                            }
                         }
                         return response.get(0);
                     }
@@ -159,7 +162,7 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements S
 
     @Override
     public SystemProperty createNewSystemProperty() {
-        return (SystemProperty)entityConfiguration.createEntityInstance(SystemProperty.class.getName());
+        return (SystemProperty) entityConfiguration.createEntityInstance(SystemProperty.class.getName());
     }
 
     @Override

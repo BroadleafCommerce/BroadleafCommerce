@@ -73,5 +73,5 @@ public class DefaultListGridActions {
             .withButtonClass("workflow-preview")
             .withIconClass("icon-eye-open")
             .withDisplayText("Workflow_button_preview");
-    
+
 }

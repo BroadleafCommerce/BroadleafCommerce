@@ -24,6 +24,9 @@ package org.broadleafcommerce.common.payment;
  */
 public class TransparentRedirectConstants {
 
-    public static final String OVERRIDE_RETURN_URL = "OVERRIDE_RETURN_URL";
+    public static final String OVERRIDE_CREATE_TOKEN_RETURN_URL = "OVERRIDE_CREATE_TOKEN_RETURN_URL";
+    public static final String OVERRIDE_CREATE_TOKEN_CANCEL_URL = "OVERRIDE_CREATE_TOKEN_CANCEL_URL";
+    public static final String OVERRIDE_UPDATE_TOKEN_RETURN_URL = "OVERRIDE_UPDATE_TOKEN_RETURN_URL";
+    public static final String OVERRIDE_UPDATE_TOKEN_CANCEL_URL = "OVERRIDE_UPDATE_TOKEN_CANCEL_URL";
 
 }
