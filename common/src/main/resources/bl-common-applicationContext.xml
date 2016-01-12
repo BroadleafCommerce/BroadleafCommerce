@@ -473,6 +473,16 @@
         <property name="conditionalProperty" value="enable.search.redirect.mt.disc"/>
     </bean>
 
+    <!-- This is to conditionally add workflow annotation to AdminSectionImpl -->
+    <bean id="blAdminSectionConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
+        <property name="templateTokens">
+            <array>
+                <util:constant static-field="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes.MULTITENANT_SITE"/>
+            </array>
+        </property>
+        <property name="conditionalProperty" value="enable.admin.section.mt.disc"/>
+    </bean>
+
     <bean id="blCommonConditionalDirectCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
@@ -481,6 +491,8 @@
                 <entry key="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl" value-ref="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember"/>
                 <entry key="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl" value-ref="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember"/>
                 <entry key="org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl" value-ref="blAdminUserConditionalDirectCopyTransformerMember" />
+                <entry key="org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl" value-ref="blAdminSectionConditionalDirectCopyTransformerMember" />
+
             </map>
         </property>
     </bean>

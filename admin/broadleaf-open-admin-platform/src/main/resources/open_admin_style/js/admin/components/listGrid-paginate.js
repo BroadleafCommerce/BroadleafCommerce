@@ -599,12 +599,12 @@
 
                 $wrapper.css('height', wrapperHeight);
                 $wrapper.find('.mCustomScrollBox').css('height', wrapperHeight);
-                $modalBody.css('overflow-y', 'visible');
+                $modalBody.css('overflow-y', 'auto');
 
                 $wrapper.mCustomScrollbar('update');
             } else if ($modalBody.length > 0) {
                 // If this is inside of a modal, the max height should be the size of the modal
-                var maxHeight = $modalBody.height() - $wrapper.prev().height() - $wrapper.next().height() - 30;
+                var maxHeight = $modalBody.height() - $wrapper.prev().outerHeight(true) - $wrapper.next().outerHeight(true) - 32;
 
                 $wrapper.closest('.adorned-select-wrapper').find('fieldset').each(function(index, fieldset) {
                     maxHeight -= $(fieldset).height();
@@ -627,7 +627,7 @@
                 //maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, maxHeight);
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
-                $modalBody.css('overflow-y', 'visible');
+                $modalBody.css('overflow-y', 'auto');
 
             } else if ($table.data('listgridtype') === 'tree') {
                 var maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, treeListGridHeight);
@@ -813,7 +813,7 @@
             // Render the table
             $wrapper.mCustomScrollbar('update');
             $clonedTable.find('tbody').css('visibility', 'visible');
-            $modalBody.css('overflow-y', 'visible');
+            $modalBody.css('overflow-y', 'auto');
             
             this.initializeTableResizing($table, $clonedTable);
         }
