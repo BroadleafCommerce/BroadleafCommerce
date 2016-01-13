@@ -45,7 +45,7 @@ public abstract class OptionalEnterpriseBandedWeightFulfillmentOptionTemplate {
 
     @OneToMany(mappedBy = "option", targetEntity = FulfillmentWeightBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-    @AdminPresentationCollection(friendlyName = "BandedWeightFulfillmentOptionBands")
+    @AdminPresentationCollection(friendlyName = "BandedWeightFulfillmentOptionBands", excluded = true)
     protected List<FulfillmentWeightBand> bands = new ArrayList<FulfillmentWeightBand>();
 
 }

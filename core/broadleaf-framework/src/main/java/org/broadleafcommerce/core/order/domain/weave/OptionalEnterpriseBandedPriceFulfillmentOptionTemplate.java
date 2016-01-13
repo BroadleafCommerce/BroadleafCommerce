@@ -43,7 +43,7 @@ public abstract class OptionalEnterpriseBandedPriceFulfillmentOptionTemplate {
 
     @OneToMany(mappedBy = "option", targetEntity = FulfillmentPriceBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-    @AdminPresentationCollection(friendlyName = "BandedPriceFulfillmentOptionBands")
+    @AdminPresentationCollection(friendlyName = "BandedPriceFulfillmentOptionBands", excluded = true)
     protected List<FulfillmentPriceBand> bands = new ArrayList<FulfillmentPriceBand>();
 
 }
