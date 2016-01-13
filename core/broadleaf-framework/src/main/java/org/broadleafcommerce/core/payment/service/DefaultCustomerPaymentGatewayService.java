@@ -83,8 +83,10 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
 
             Address billingAddress = addressService.create();
             AddressDTO<PaymentResponseDTO> billToDTO = responseDTO.getBillTo();
-            dtoToEntityService.populateAddressInfo(billToDTO, billingAddress);
-            customerPayment.setBillingAddress(billingAddress);
+            if (billToDTO.addressPopulated()) {
+                dtoToEntityService.populateAddressInfo(billToDTO, billingAddress);
+                customerPayment.setBillingAddress(billingAddress);
+            }
 
             if (responseDTO.getCreditCard().creditCardPopulated()) {
                 if (responseDTO.getCreditCard().getCreditCardHolderName() != null) {
