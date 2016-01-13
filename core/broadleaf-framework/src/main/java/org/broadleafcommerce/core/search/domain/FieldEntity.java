@@ -35,12 +35,12 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
 
     private static final Map<String, FieldEntity> TYPES = new LinkedHashMap<String, FieldEntity>();
 
-    public static final FieldEntity PRODUCT = new FieldEntity("org.broadleafcommerce.core.catalog.domain.Product", "Product", false);
-    public static final FieldEntity SKU = new FieldEntity("org.broadleafcommerce.core.catalog.domain.Sku", "Sku", false);
-    public static final FieldEntity CUSTOMER = new FieldEntity("org.broadleafcommerce.profile.core.domain.Customer", "Customer", false);
-    public static final FieldEntity ORDER = new FieldEntity("org.broadleafcommerce.core.order.domain.Order", "Order", false);
-    public static final FieldEntity ORDERITEM = new FieldEntity("org.broadleafcommerce.core.order.domain.OrderItem", "Order Item", false);
-    public static final FieldEntity OFFER = new FieldEntity("org.broadleafcommerce.core.offer.domain.Offer", "Offer", false);
+    public static final FieldEntity PRODUCT = new FieldEntity("PRODUCT", "Product", false);
+    public static final FieldEntity SKU = new FieldEntity("SKU", "Sku", false);
+    public static final FieldEntity CUSTOMER = new FieldEntity("CUSTOMER", "Customer", false);
+    public static final FieldEntity ORDER = new FieldEntity("ORDER", "Order", false);
+    public static final FieldEntity ORDERITEM = new FieldEntity("ORDER_ITEM", "Order Item", false);
+    public static final FieldEntity OFFER = new FieldEntity("OFFER", "Offer", false);
 
     public static FieldEntity getInstance(final String type) {
         return TYPES.get(type);
