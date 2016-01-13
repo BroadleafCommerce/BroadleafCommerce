@@ -81,14 +81,13 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
             customerPayment.setPaymentType(responseDTO.getPaymentType());
             dtoToEntityService.populateCustomerPaymentToken(responseDTO, customerPayment);
 
-            Address billingAddress = addressService.create();
-            AddressDTO<PaymentResponseDTO> billToDTO = responseDTO.getBillTo();
-            if (billToDTO.addressPopulated()) {
-                dtoToEntityService.populateAddressInfo(billToDTO, billingAddress);
+            if (responseDTO.getBillTo() != null && responseDTO.getBillTo().addressPopulated()) {
+                Address billingAddress = addressService.create();
+                dtoToEntityService.populateAddressInfo(responseDTO.getBillTo(), billingAddress);
                 customerPayment.setBillingAddress(billingAddress);
             }
 
-            if (responseDTO.getCreditCard().creditCardPopulated()) {
+            if (responseDTO.getCreditCard() !=null && responseDTO.getCreditCard().creditCardPopulated()) {
                 if (responseDTO.getCreditCard().getCreditCardHolderName() != null) {
                     customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.NAME_ON_CARD.getType(), responseDTO.getCreditCard().getCreditCardHolderName());
                 }
