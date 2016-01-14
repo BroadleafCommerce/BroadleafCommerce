@@ -73,7 +73,7 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
                 return entity;
             }
             
-            adminInstance = dynamicEntityDao.merge(adminInstance);
+            adminInstance = (ProductOption) dynamicEntityDao.merge(adminInstance);
             return helper.getRecord(adminProperties, adminInstance, null, null);
 
         } catch (Exception e) {
