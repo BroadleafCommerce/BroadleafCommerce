@@ -762,10 +762,10 @@ var BLCAdmin = (function($) {
                 value = $field.find('select').val();
             }
             if (value == null) {
-                value = $field.find('input[type="text"]').val();
+                value = $field.find('input[type="hidden"].value').val();
             }
             if (value == null) {
-                value = $field.find('input[type="hidden"].value').val();
+                value = $field.find('input[type="text"]').val();
             }
             return value;
     	},
