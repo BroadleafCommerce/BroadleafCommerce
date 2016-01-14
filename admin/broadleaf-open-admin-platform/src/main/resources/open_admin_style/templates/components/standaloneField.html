@@ -3,13 +3,18 @@
          th:class="${'field-group' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}"
          blc_admin:component_id="${field}"
          th:classappend="${!field.isVisible}? 'hidden'">
-
-        <div th:if="${field.readOnly}" th:remove="tag">
+        
+        <th:block th:if="${field.readOnly}">
             <div th:substituteby="fields/readonly" />
-        </div>
-        <div th:unless="${field.readOnly}" th:remove="tag">
-            <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}" />
-        </div>
+        </th:block>
+        <th:block th:unless="${field.readOnly}">
+            <th:block th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}">
+                <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"/>
+            </th:block>
+            <th:block th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}">
+                <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"/>
+            </th:block>
+        </th:block>
 
         <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
     </div>
