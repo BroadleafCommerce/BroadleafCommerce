@@ -812,7 +812,7 @@ var BLCAdmin = (function($) {
                     var toggleFunction = function(event) {
                         // Extract the parent and child field DOM elements from the data
                         var $parentField = event.data.$parentField;
-                        var $childField = event.data.$container.parent().find(event.data.childFieldSelector);
+                        var $childField = $container.find(event.data.childFieldSelector);
                         var options = event.data.options;
                         var parentValue = BLCAdmin.extractFieldValue($parentField);
                         
