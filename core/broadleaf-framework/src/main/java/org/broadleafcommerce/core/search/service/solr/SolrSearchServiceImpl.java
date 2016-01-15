@@ -447,7 +447,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
                         .setConfigName(solrCloudConfigName).process(primary);
 
-                new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
+                new CollectionAdminRequest.CreateAlias().setAliasName(reindex.getDefaultCollection())
                         .setAliasedCollections(collectionName).process(primary);
             } else {
                 //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
