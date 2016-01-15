@@ -105,7 +105,7 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
         Customer customer = CustomerState.getCustomer();
 
         if (customer == null) {
-            LOG.warn("No customer was found on the current request, no cart will be added to the current request. Ensure that the"
+            LOG.info("No customer was found on the current request, no cart will be added to the current request. Ensure that the"
                     + " blCustomerStateFilter occurs prior to the blCartStateFilter");
             return;
         }
