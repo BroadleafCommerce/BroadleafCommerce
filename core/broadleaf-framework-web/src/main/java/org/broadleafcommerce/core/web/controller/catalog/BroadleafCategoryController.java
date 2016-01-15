@@ -121,16 +121,17 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             
             Category category = (Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME);
             assert(category != null);
-            
-            List<SearchFacetDTO> availableFacets = getSearchService().getCategoryFacets(category);
-            SearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
-            
+
+            SearchCriteria searchCriteria = facetService.buildSearchCriteria(request);
+            searchCriteria.setCategory(category);
+
             String searchTerm = request.getParameter(SearchCriteria.QUERY_STRING);
             SearchResult result;
             if (StringUtils.isNotBlank(searchTerm)) {
-                result = getSearchService().findSearchResultsByCategoryAndQuery(category, searchTerm, searchCriteria);
+                searchCriteria.setQuery(searchTerm);
+                result = getSearchService().findSearchResults(searchCriteria);
             } else {
-                result = getSearchService().findSearchResultsByCategory(category, searchCriteria);
+                result = getSearchService().findSearchResults(searchCriteria);
             }
             
             facetService.setActiveFacetResults(result.getFacets(), request);

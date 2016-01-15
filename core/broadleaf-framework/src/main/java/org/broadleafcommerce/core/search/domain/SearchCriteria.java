@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.core.catalog.domain.Category;
 import java.util.Map;
 
 
@@ -38,6 +39,8 @@ public class SearchCriteria {
     protected Integer pageSize;
     protected String sortQuery;
     protected Map<String, String[]> filterCriteria;
+    protected Category category;
+    protected String query;
     
     public Integer getPage() {
         return page;
@@ -70,5 +73,20 @@ public class SearchCriteria {
     public void setFilterCriteria(Map<String, String[]> filterCriteria) {
         this.filterCriteria = filterCriteria;
     }
-    
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
 }

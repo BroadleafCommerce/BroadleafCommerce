@@ -58,6 +58,7 @@ public interface SearchService {
      * @return the result of the search
      * @throws ServiceException 
      */
+    @Deprecated
     public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria)
             throws ServiceException;
     
@@ -75,6 +76,7 @@ public interface SearchService {
      * @return
      * @throws ServiceException
      */
+    @Deprecated
     public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria)
             throws ServiceException;
     
@@ -87,6 +89,7 @@ public interface SearchService {
      * @return the result of the search
      * @throws ServiceException 
      */
+    @Deprecated
     public SearchResult findSearchResultsByQuery(String query, SearchCriteria searchCriteria)
             throws ServiceException;
     
@@ -99,7 +102,17 @@ public interface SearchService {
      * @param searchCriteria
      * @throws ServiceException
      */
+    @Deprecated
     public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException;
+
+    /**
+     * Performs a search for search results based on the given SearchCriteria, if SearchCriteria has a category, the category
+     * is considering for the search.
+     *
+     * @param searchCriteria contains the information about this given search
+     * @return the SearchResult
+     */
+    public SearchResult findSearchResults(SearchCriteria searchCriteria) throws ServiceException;
 
     /**
      * Gets all available facets for search results page
@@ -107,6 +120,8 @@ public interface SearchService {
      * @return the available facets
      */
     public List<SearchFacetDTO> getSearchFacets();
+
+    public List<SearchFacetDTO> getSearchFacets(Category category);
 
     /**
      * Gets all available facets for a given category

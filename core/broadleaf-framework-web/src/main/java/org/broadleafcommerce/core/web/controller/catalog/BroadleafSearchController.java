@@ -131,9 +131,8 @@ public class BroadleafSearchController extends AbstractCatalogController {
             }
 
             if (StringUtils.isNotEmpty(query)) {
-                List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
-                SearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
-                SearchResult result = getSearchService().findSearchResultsByQuery(query, searchCriteria);
+                SearchCriteria searchCriteria = facetService.buildSearchCriteria(request);
+                SearchResult result = getSearchService().findSearchResults(searchCriteria);
                 
                 facetService.setActiveFacetResults(result.getFacets(), request);
                 
