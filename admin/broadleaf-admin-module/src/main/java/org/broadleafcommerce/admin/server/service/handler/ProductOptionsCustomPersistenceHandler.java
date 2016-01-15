@@ -19,12 +19,17 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
@@ -52,6 +57,24 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
         } catch (ClassNotFoundException e) {
             return false;
         }
+    }
+
+    @Override
+    public Boolean canHandleFetch(PersistencePackage persistencePackage) {
+        return canHandleUpdate(persistencePackage);
+    }
+
+    @Override
+    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao
+            dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        DynamicResultSet response = helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+        for (Entity entity : response.getRecords()) {
+            Property prop = entity.findProperty("useInSkuGeneration");
+            if (prop != null && StringUtils.isEmpty(prop.getValue())) {
+                prop.setValue("true");
+            }
+        }
+        return response;
     }
 
     @Override
