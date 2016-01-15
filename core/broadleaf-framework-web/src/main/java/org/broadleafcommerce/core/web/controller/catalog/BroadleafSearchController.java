@@ -81,19 +81,6 @@ public class BroadleafSearchController extends AbstractCatalogController {
 
     public String search(Model model, HttpServletRequest request, HttpServletResponse response,String query) throws ServletException, IOException, ServiceException {
 
-        try {
-            if (StringUtils.isNotEmpty(query)) {
-                query = StringUtils.trim(query);
-                query = exploitProtectionService.cleanString(query);
-            }
-        } catch (ServiceException e) {
-            query = null;
-        }
-        
-        if (query == null || query.length() == 0) {
-            return "redirect:/";
-        }
-        
         if (request.getParameterMap().containsKey("facetField")) {
             // If we receive a facetField parameter, we need to convert the field to the 
             // product search criteria expected format. This is used in multi-facet selection. We 
@@ -132,7 +119,12 @@ public class BroadleafSearchController extends AbstractCatalogController {
 
             if (StringUtils.isNotEmpty(query)) {
                 SearchCriteria searchCriteria = facetService.buildSearchCriteria(request);
-                searchCriteria.setQuery(query);
+
+                if (StringUtils.isEmpty(searchCriteria.getQuery())) {
+                    // if our query is empty or null, we want to redirect.
+                    return "redirect:/";
+                }
+
                 SearchResult result = getSearchService().findSearchResults(searchCriteria);
                 
                 facetService.setActiveFacetResults(result.getFacets(), request);

@@ -112,7 +112,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
 
     @Override
     public SearchResult findSearchResults(SearchCriteria searchCriteria) throws ServiceException {
-        return findSearchResultsByQuery("*:*", searchCriteria);
+        return findSearchResultsByQuery(searchCriteria.getQuery(), searchCriteria);
     }
 
     @Override

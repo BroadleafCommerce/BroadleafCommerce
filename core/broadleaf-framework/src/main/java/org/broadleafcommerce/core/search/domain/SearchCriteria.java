@@ -41,6 +41,7 @@ public class SearchCriteria {
     protected Map<String, String[]> filterCriteria;
     protected Category category;
     protected String query;
+    protected boolean includeCategoryHierarchy = true;
     
     public Integer getPage() {
         return page;
@@ -88,5 +89,13 @@ public class SearchCriteria {
 
     public void setQuery(String query) {
         this.query = query;
+    }
+
+    public boolean getIncludeCategoryHierarchy() {
+        return includeCategoryHierarchy;
+    }
+
+    public void setIncludeCategoryHierarchy(boolean includeCategoryHierarchy) {
+        this.includeCategoryHierarchy = includeCategoryHierarchy;
     }
 }

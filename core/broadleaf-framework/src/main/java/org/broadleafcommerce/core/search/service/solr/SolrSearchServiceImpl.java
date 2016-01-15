@@ -493,43 +493,31 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     }
 
     @Override
-    @Deprecated
-    // Currently same as findSearchResultsByCategory
     public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
-        return findSearchResultsByCategory(category, searchCriteria);
+        searchCriteria.setIncludeCategoryHierarchy(false);
+        searchCriteria.setCategory(category);
+        return findSearchResults(searchCriteria);
     }
 
     @Override
     @Deprecated
     public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
-        if (searchCriteria.getCategory() == null) {
-            searchCriteria.setCategory(category);
-        }
-
+        searchCriteria.setCategory(category);
         return findSearchResults(searchCriteria);
     }
 
     @Override
     @Deprecated
     public SearchResult findSearchResultsByQuery(String query, SearchCriteria searchCriteria) throws ServiceException {
-        if (searchCriteria.getQuery() == null) {
-            searchCriteria.setQuery(query);
-        }
-
+        searchCriteria.setQuery(query);
         return findSearchResults(searchCriteria);
     }
 
     @Override
     @Deprecated
     public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException {
-        if (searchCriteria.getCategory() == null) {
-            searchCriteria.setCategory(category);
-        }
-
-        if (searchCriteria.getQuery() == null) {
-            searchCriteria.setQuery(query);
-        }
-
+        searchCriteria.setCategory(category);
+        searchCriteria.setQuery(query);
         return findSearchResults(searchCriteria);
     }
 
@@ -585,7 +573,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
         // add category filter if applicable
         if (searchCriteria.getCategory() != null) {
-            solrQuery.addFilterQuery(getCategoryFilter(searchCriteria.getCategory()));
+            solrQuery.addFilterQuery(getCategoryFilter(searchCriteria));
         }
 
         solrQuery.addFilterQuery(shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")");
@@ -659,8 +647,15 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         return null;
     }
 
-    protected String getCategoryFilter(Category category) {
-        return shs.getCategoryFieldName() + ":(\"" + StringUtils.join(shs.getCategoryHierarchy(category), "\" \"") +  "\")";
+    protected String getCategoryFilter(SearchCriteria searchCriteria) {
+        String categoryFilterIds;
+        if (searchCriteria.getIncludeCategoryHierarchy()) {
+            categoryFilterIds = StringUtils.join(shs.getCategoryHierarchy(searchCriteria.getCategory()), "\" \"");
+        } else {
+            categoryFilterIds = String.valueOf(searchCriteria.getCategory().getId());
+        }
+
+        return shs.getCategoryFieldName() + ":(\"" + categoryFilterIds +  "\")";
     }
 
     public String getLocalePrefix() {

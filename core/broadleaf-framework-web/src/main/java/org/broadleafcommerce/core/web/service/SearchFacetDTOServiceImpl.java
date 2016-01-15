@@ -20,6 +20,8 @@
 package org.broadleafcommerce.core.web.service;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
@@ -32,11 +34,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 @Service("blSearchFacetDTOService")
 public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
-    
+
+    @Resource(name = "blExploitProtectionService")
+    protected ExploitProtectionService exploitProtectionService;
+
     protected int getDefaultPageSize() {
         return BLCSystemProperty.resolveIntSystemProperty("web.defaultPageSize");
     }
@@ -65,7 +71,15 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
                 int maxPageSize = getMaxPageSize();
                 searchCriteria.setPageSize(Math.min(requestedPageSize, maxPageSize));
             } else if (Objects.equals(key, SearchCriteria.QUERY_STRING)) {
-                continue; // This is handled by the controller
+                String query = request.getParameter(SearchCriteria.QUERY_STRING);
+                try {
+                    if (StringUtils.isNotEmpty(query)) {
+                        query = exploitProtectionService.cleanString(StringUtils.trim(query));
+                    }
+                } catch (ServiceException e) {
+                    query = null;
+                }
+                searchCriteria.setQuery(query);
             } else {
                 facets.put(key, entry.getValue());
             }
