@@ -3,7 +3,7 @@
 </label>
 
 <div th:remove="tag" th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) ge #props.getAsInt('admin.enum.minCountForDropDown')}">
-    <select class="six"  th:field="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}">
+    <select class="six" th:field="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}">
         <option th:each="entry : *{fields['__${field.name}__'].options}"
                 th:value="${entry.key}"
                 th:text="#{${entry.value}}" />
@@ -12,11 +12,8 @@
 
 <div th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) lt #props.getAsInt('admin.enum.minCountForDropDown')}"
      th:each="entry : *{fields['__${field.name}__'].options}" class="radio-container">
-    <label th:inline="text" class="inline-radio-label" th:classappend="${field.readOnly}? 'disabled'">
-        <input th:field="*{fields['__${field.name}__'].value}"
-               th:disabled="${field.readOnly}"
-               type="radio"
-               th:value="${entry.key}" />
+    <input type="radio" class="radio" th:field="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}" th:value="${entry.key}"/>
+    <label th:inline="text" class="radio-label" th:classappend="${field.readOnly}? 'disabled'">
         [[${entry.value}]]
     </label>
 </div>
