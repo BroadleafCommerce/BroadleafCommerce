@@ -37,10 +37,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * This is a JAXB wrapper around FulfillmentGroupItem.
- *
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.CustomerWrapper}
+ * 
  * User: Elbert Bautista
  * Date: 4/18/12
  */
+@Deprecated
 @XmlRootElement(name = "customer")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class CustomerWrapper extends BaseWrapper implements APIWrapper<Customer>, APIUnwrapper<Customer> {

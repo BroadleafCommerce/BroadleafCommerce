@@ -30,9 +30,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * This is a JAXB wrapper around State.
  *
+ *@deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.StateWrapper}
+ *
  * User: Elbert Bautista
  * Date: 4/10/12
  */
+@Deprecated
 @XmlRootElement(name = "state")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class StateWrapper extends BaseWrapper implements APIWrapper<State>, APIUnwrapper<State> {

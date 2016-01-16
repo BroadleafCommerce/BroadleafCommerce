@@ -27,8 +27,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * This is a JAXB wrapper around HibuProduct.
-
+ *
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.BroadleafEnumerationTypeWrapper}
  */
+@Deprecated
 @XmlRootElement(name = "BroadleafEnumerationTypeWrapper")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class BroadleafEnumerationTypeWrapper extends BaseWrapper implements APIWrapper<BroadleafEnumerationType> {
@@ -42,7 +44,9 @@ public class BroadleafEnumerationTypeWrapper extends BaseWrapper implements APIW
 
     @Override
     public void wrapDetails(BroadleafEnumerationType model, HttpServletRequest request) {
-        if (model == null) return;
+        if (model == null) {
+            return;
+        }
         this.friendlyName = model.getFriendlyType();
         this.type = model.getType();
     }

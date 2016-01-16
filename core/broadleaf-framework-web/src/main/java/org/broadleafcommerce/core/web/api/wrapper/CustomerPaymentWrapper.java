@@ -40,8 +40,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * This is a JAXB wrapper to wrap CustomerPayment.
- * <p/>
+ * </p>
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.CustomerPaymentWrapper}
+ * 
  */
+@Deprecated
 @XmlRootElement(name = "customerPayment")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<CustomerPayment>, WrapperAdditionalFields, APIUnwrapper<CustomerPayment> {

@@ -41,8 +41,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.PaymentTransactionWrapper}
+ * 
  * @author Elbert Bautista (elbertbautista)
  */
+@Deprecated
 @XmlRootElement(name = "transaction")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class PaymentTransactionWrapper extends BaseWrapper implements APIWrapper<PaymentTransaction>, APIUnwrapper<PaymentTransaction> {

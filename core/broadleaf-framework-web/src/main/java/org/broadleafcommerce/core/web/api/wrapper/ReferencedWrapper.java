@@ -40,10 +40,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  *  <code>GiftCardPayment</code>
  *  <code>EmptyReferenced</code>
  *
+ *  @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.ReferencedWrapper}
+ *
  * <p/>
  * User: Elbert Bautista
  * Date: 4/26/12
  */
+@Deprecated
 @XmlRootElement(name = "referenced")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class ReferencedWrapper extends BaseWrapper implements APIWrapper<Referenced>, APIUnwrapper<Referenced>{

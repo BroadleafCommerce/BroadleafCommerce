@@ -27,6 +27,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ *
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.SearchFacetValueWrapper}
+ *
+ */
+
+@Deprecated
 @XmlRootElement(name = "searchFacetValue")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class SearchFacetValueWrapper extends BaseWrapper implements APIWrapper<SearchFacetResultDTO> {

@@ -41,7 +41,10 @@ import java.util.List;
  * servlet with {@code contextClass} {@link org.springframework.web.context.support.AnnotationConfigWebApplicationContext} in web.xml.
  *
  * @author Phillip Verheyden (phillipuniverse)
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.BroadleafRestApiMvcConfiguration}
  */
+@Deprecated
 public class BroadleafRestApiMvcConfiguration extends WebMvcConfigurerAdapter {
 
     @Override

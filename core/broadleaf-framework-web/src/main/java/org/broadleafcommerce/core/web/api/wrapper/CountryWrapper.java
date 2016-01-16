@@ -29,10 +29,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * This is a JAXB wrapper around Country.
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.CountryWrapper}
  *
  * User: Elbert Bautista
  * Date: 4/10/12
  */
+@Deprecated
 @XmlRootElement(name = "country")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class CountryWrapper extends BaseWrapper implements APIWrapper<Country>, APIUnwrapper<Country> {

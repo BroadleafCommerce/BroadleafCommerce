@@ -34,6 +34,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * <p/>
  * @deprecated - use {@link com.broadleafcommerce.web.api.v2.wrapper.AdjustmentWrapper}
  * Author: ppatel, bpolster
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.AdjustmentWrapper}
  */
 @Deprecated
 @XmlRootElement(name = "adjustment")

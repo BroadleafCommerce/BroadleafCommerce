@@ -24,7 +24,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,11 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Base class for APIWrapper implementations to inject the EntityConfiguration reference.
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.BaseWrapper}
+ * 
  */
+@Deprecated
 public abstract class BaseWrapper implements ApplicationContextAware {
 
     @XmlTransient
