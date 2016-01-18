@@ -22,6 +22,7 @@ package org.broadleafcommerce.admin.server.service.handler;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -61,7 +62,8 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
-        return canHandleUpdate(persistencePackage);
+        return canHandleUpdate(persistencePackage) &&
+                !persistencePackage.getPersistencePerspectiveItems().containsKey(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
     }
 
     @Override
