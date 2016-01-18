@@ -72,7 +72,8 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
     protected static String ACTIVE_FACETS_ATTRIBUTE_NAME = "activeFacets";  
     protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
     protected static String ALL_SKUS_ATTRIBUTE_NAME = "blcAllDisplayedSkus";
-    
+    protected static String ORIGINAL_QUERY_ATTRIBUTE_NAME = "originalQuery";
+
     @Resource(name = "blSearchService")
     protected SearchService searchService;
     
@@ -132,6 +133,9 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             model.addObject(SKUS_ATTRIBUTE_NAME, result.getSkus());
             model.addObject(FACETS_ATTRIBUTE_NAME, result.getFacets());
             model.addObject(PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME, result);
+            if (request.getParameterMap().containsKey("q")) {
+                model.addObject(ORIGINAL_QUERY_ATTRIBUTE_NAME, request.getParameter("q"));
+            }
             model.addObject("BLC_PAGE_TYPE", "category");
             if (result.getProducts() != null) {
                 model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(result.getProducts()));
