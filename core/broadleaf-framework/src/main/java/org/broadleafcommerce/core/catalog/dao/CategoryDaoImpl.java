@@ -151,6 +151,20 @@ public class CategoryDaoImpl implements CategoryDao {
         return query.getResultList();
     }
 
+    @Nonnull
+    @Override
+    public List<Category> readCategoriesByNames(List<String> names) {
+        TypedQuery<Category> query = em.createQuery(
+                "select category from org.broadleafcommerce.core.catalog.domain.Category category "
+                        + "where category.name in :names",
+                Category.class);
+        query.setParameter("names", names);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
     @Override
     public List<Category> readAllCategories() {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_CATEGORIES", Category.class);

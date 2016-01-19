@@ -83,6 +83,9 @@ public interface CategoryDao {
     @Nonnull
     public List<Category> readCategoriesByName(@Nonnull String categoryName, int limit, int offset);
 
+    @Nonnull
+    public List<Category> readCategoriesByNames(List<String> names);
+
     /**
      * Persist a {@code Category} instance to the datastore
      *
