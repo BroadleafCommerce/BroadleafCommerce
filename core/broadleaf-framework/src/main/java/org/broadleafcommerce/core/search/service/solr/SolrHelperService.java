@@ -471,4 +471,6 @@ public interface SolrHelperService {
     List<IndexField> getSearchableIndexFields();
 
     public List<Long> getCategoryHierarchy(Category category);
+
+    public String getCategoryStringFieldName();
 }

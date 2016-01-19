@@ -44,6 +44,7 @@ import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
@@ -65,7 +66,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -79,7 +79,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.annotation.Resource;
 
 
@@ -120,6 +119,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Resource(name = "blSkuDao")
     protected SkuDao skuDao;
+
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
 
     @Resource(name = "blFieldDao")
     protected FieldDao fieldDao;
@@ -612,6 +614,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         Collection<Object> existingValues = document.getFieldValues(shs.getCategoryFieldName());
         if (existingValues == null || !existingValues.contains(catIdToAdd)) {
             document.addField(shs.getCategoryFieldName(), catIdToAdd);
+            document.addField(shs.getCategoryStringFieldName(), catalogService.findCategoryById(catIdToAdd).getName());
         }
 
         Set<Long> parents = cache.getParentCategoriesByCategory().get(categoryId);
