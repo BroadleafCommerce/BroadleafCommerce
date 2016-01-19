@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl;
+import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -121,6 +122,25 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
         criteria.select(root);
         criteria.where(
                 builder.equal(root.get("indexField").get("field").get("abbreviation").as(String.class), abbreviation)
+        );
+
+        TypedQuery<IndexFieldType> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<IndexFieldType> getIndexFieldTypes(FieldType facetFieldType) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<IndexFieldType> criteria = builder.createQuery(IndexFieldType.class);
+
+        Root<IndexFieldTypeImpl> root = criteria.from(IndexFieldTypeImpl.class);
+
+        criteria.select(root);
+        criteria.where(
+                builder.equal(root.get("fieldType").as(String.class), facetFieldType.getType())
         );
 
         TypedQuery<IndexFieldType> query = em.createQuery(criteria);
