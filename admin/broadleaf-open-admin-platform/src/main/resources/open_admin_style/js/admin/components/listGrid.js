@@ -743,7 +743,8 @@ $(document).ready(function() {
         var link = BLCAdmin.listGrid.getActionLink($(this));
 
         if ($(this).closest('table').length
-            && $(this).closest('table').data('listgridtype') === 'tree') {
+            && $(this).closest('table').data('listgridtype') === 'tree'
+            && $(this).closest('.tree-column-wrapper').length) {
             // Expected uri structure: "/admin/{section}/{id}/{alternate-id}"
             // Desired uri structure: "/admin/{section}/{id}"
             link = link.substring(0, link.lastIndexOf('/'));
