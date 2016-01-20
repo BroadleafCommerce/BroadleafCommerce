@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.order.domain.weave;
 
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBand;
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl;
 import org.hibernate.annotations.Cache;
@@ -42,6 +43,7 @@ public abstract class OptionalEnterpriseBandedPriceFulfillmentOptionTemplate {
 
     @OneToMany(mappedBy = "option", targetEntity = FulfillmentPriceBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @AdminPresentationCollection(friendlyName = "BandedPriceFulfillmentOptionBands", excluded = true)
     protected List<FulfillmentPriceBand> bands = new ArrayList<FulfillmentPriceBand>();
 
 }

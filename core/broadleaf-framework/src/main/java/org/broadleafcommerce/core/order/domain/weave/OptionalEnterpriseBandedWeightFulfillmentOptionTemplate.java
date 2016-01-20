@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.order.domain.weave;
 
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBand;
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl;
 import org.hibernate.annotations.Cache;
@@ -44,6 +45,7 @@ public abstract class OptionalEnterpriseBandedWeightFulfillmentOptionTemplate {
 
     @OneToMany(mappedBy = "option", targetEntity = FulfillmentWeightBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @AdminPresentationCollection(friendlyName = "BandedWeightFulfillmentOptionBands", excluded = true)
     protected List<FulfillmentWeightBand> bands = new ArrayList<FulfillmentWeightBand>();
 
 }
