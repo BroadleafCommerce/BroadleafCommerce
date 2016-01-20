@@ -446,7 +446,8 @@
         // ************************* *
         
         getRowHeight : function($tbody) {
-            return $tbody.find('td:not(.blank-padding):first').css('height').replace('px', '');
+            // The first row will always be 1px shorter since it doesn't have a top boarder, therefore add 1 to the height.
+            return $tbody.find('td:not(.blank-padding):first').innerHeight() + 1;
         },
         
         getTopVisibleIndex : function($tbody) {
@@ -469,6 +470,10 @@
         
         scrollToIndex : function($tbody, index) {
             var offset = index * this.getRowHeight($tbody);
+            if (offset > 0) {
+                // make sure to account for the top boarder on each row other than the first
+                offset += 1;
+            }
             //console.log('scrolling to ' + offset);
             $tbody.closest('.listgrid-body-wrapper').find('.mCSB_container').css('top', '-' + offset + 'px');
         },
@@ -743,15 +748,15 @@
             $tbody = $clonedTable.find('tbody');
             $clonedTable.attr('id', $clonedTable.attr('id').replace('-header', ''));
 
-            // Get the first td's height
-            var tdHeight = $tbody.find('td:first').outerHeight();
+            // Get the first tr's height
+            var trHeight = parseInt(this.getRowHeight($tbody), 10);
 
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
                 theme: 'dark',
                 scrollEasing: "linear",
                 scrollInertia: 500,
-                mouseWheelPixels: tdHeight,
+                mouseWheelPixels: trHeight,
                 callbacks: {
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;
