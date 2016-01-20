@@ -527,8 +527,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                                 String solrPropertyName = shs.getPropertyNameForIndexField(indexField, fieldType, prefix);
                                 Object value = entry.getValue();
-
-                                document.addField(solrPropertyName, value);
+                                
+                                if (FieldType.isMultiValued(fieldType)) {
+                                    document.addField(solrPropertyName, value);
+                                } else {
+                                    document.setField(solrPropertyName, value);
+                                }
                             }
                         }
                     }

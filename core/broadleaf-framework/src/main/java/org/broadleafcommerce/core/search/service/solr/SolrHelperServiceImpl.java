@@ -859,4 +859,15 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
         return fields;
     }
+
+    @Override
+    public List<Long> getCategoryFilterIds(Category category, SearchCriteria searchCriteria) {
+        List<Long> categoryIds = new ArrayList<>();
+
+        categoryIds.add(getCategoryId(category));
+
+        searchExtensionManager.getProxy().addAdditionalCategoryIds(category, searchCriteria, categoryIds);
+
+        return categoryIds;
+    }
 }
