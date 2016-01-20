@@ -64,6 +64,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -83,6 +84,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -494,7 +496,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     @Override
     public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
-        searchCriteria.setIncludeCategoryHierarchy(false);
+        searchCriteria.setSearchExplicitCategory(true);
         searchCriteria.setCategory(category);
         return findSearchResults(searchCriteria);
     }
@@ -530,7 +532,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             searchCriteria.setQuery("*:*");
         }
 
-        return findSearchResults(searchCriteria, facets, getDefaultSort(searchCriteria));
+        return findSearchResults(searchCriteria.getQuery(), facets, searchCriteria, getDefaultSort(searchCriteria));
     }
 
     /**
@@ -539,9 +541,9 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     @Deprecated
     protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
             SearchCriteria searchCriteria, String defaultSort) throws ServiceException {
-        return findSearchResults(searchCriteria, facets, defaultSort, (String[]) null);
+        return findSearchResults(searchCriteria.getQuery(), facets, searchCriteria, defaultSort, (String[]) null);
     }
-
+    
     /**
      * Given a qualified solr query string (such as "category:2002"), actually performs a solr search. It will
      * take into considering the search criteria to build out facets / pagination / sorting.
@@ -551,10 +553,15 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @return the ProductSearchResult of the search
      * @throws ServiceException
      */
-    protected SearchResult findSearchResults(SearchCriteria searchCriteria, List<SearchFacetDTO> facets, String defaultSort, String... filterQueries)
+    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort, String... filterQueries)
             throws ServiceException  {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
+        // Left here for backwards compatibility for this method signature
+        if (searchCriteria.getQuery() == null && qualifiedSolrQuery != null) {
+            searchCriteria.setQuery(qualifiedSolrQuery);
+        }
+        
         // Build the basic query
         // Solr queries with a 'start' parameter cannot be a negative number
         int start = (searchCriteria.getPage() <= 0) ? 0 : (searchCriteria.getPage() - 1);
@@ -648,14 +655,14 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     }
 
     protected String getCategoryFilter(SearchCriteria searchCriteria) {
-        String categoryFilterIds;
-        if (searchCriteria.getIncludeCategoryHierarchy()) {
-            categoryFilterIds = StringUtils.join(shs.getCategoryHierarchy(searchCriteria.getCategory()), "\" \"");
-        } else {
-            categoryFilterIds = String.valueOf(searchCriteria.getCategory().getId());
+        String categoryFilterIds = StringUtils.join(shs.getCategoryFilterIds(searchCriteria.getCategory(), searchCriteria), "\" \"");
+        
+        String categoryFilterField = shs.getCategoryFieldName();
+        if (searchCriteria.getSearchExplicitCategory()) {
+            categoryFilterField = shs.getExplicitCategoryFieldName();
         }
 
-        return shs.getCategoryFieldName() + ":(\"" + categoryFilterIds +  "\")";
+        return categoryFilterField + ":(\"" + categoryFilterIds +  "\")";
     }
 
     public String getLocalePrefix() {
