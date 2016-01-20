@@ -4,8 +4,7 @@
 <!--    hideActionButtons - if set to true, will not render the add/update/delete buttons -->
 </comment>
 
-<div class="listgrid-toolbar" th:if="${#lists.size(listGrid.activeToolbarActions) > 0 and
-        (hideActionButtons == null or hideActionButtons == 'false') and (listGrid.subCollectionFieldName != null)}">
+<div class="listgrid-toolbar" th:if="${(hideActionButtons == null or hideActionButtons == 'false') and (listGrid.subCollectionFieldName != null)}">
 
     <div class="listgrid-toolbar-actions"
          th:unless="${#arrays.isEmpty(listGrid.activeToolbarActions)}">

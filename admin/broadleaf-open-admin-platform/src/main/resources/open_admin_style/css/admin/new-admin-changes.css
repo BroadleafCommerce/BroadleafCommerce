@@ -1179,7 +1179,7 @@ p.local-changes-made-label {
 }
 
 p.deployment-summary {
-    margin-top: -5px;
+    margin-top: 4px;
 }
 
 /*.custom-entity-search {*/

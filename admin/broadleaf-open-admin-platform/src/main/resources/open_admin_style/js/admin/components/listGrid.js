@@ -291,6 +291,12 @@
                     $(this).html(day.fromNow());
                 }
             });
+
+            // update duration fields
+            $($.find("[data-fieldname='durationLabel']")).each(function() {
+                var day = moment.duration(parseInt($(this).html())).format('h[h] m[m] s[s]');
+                $(this).html(day);
+            });
         },
         
         getListGridCount : function($container) {
