@@ -94,13 +94,12 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      *
      *
      * @param query
-     * @param indexField the search field
-     * @param indexFieldType the field type of the field
-     * @param queryFieldsResult the binding result that contains the list of query fields, only add to this
-     * @return the result of the handler, if NOT_HANDLED, then no query fields were added
+     * @param searchCriteria
+     *@param indexFieldType the field type of the field
+     * @param queryFieldsResult the binding result that contains the list of query fields, only add to this   @return the result of the handler, if NOT_HANDLED, then no query fields were added
      * @see {@link SolrHelperService#getPropertyNameForIndexField(IndexField, FieldType)}
      */
-    public ExtensionResultStatusType getQueryField(SolrQuery query, IndexField indexField, IndexFieldType indexFieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
+    public ExtensionResultStatusType getQueryField(SolrQuery query, SearchCriteria searchCriteria, IndexFieldType indexFieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
 
     /**
      * <p>Modifies the product search results from a Solr query</p>
@@ -157,10 +156,11 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * Adds any additional category ids to filter by when category browsing or searching.
      *
      * @param category the current Category we are browsing or searching on
+     * @param searchCriteria the criteria for the current query
      * @param categoryIds the category IDs we are going to filter on (this already includes the current category's ID)
      * @return NOT_HANDLED if no IDs were added, and HANDLED_CONTINUE if there were
      */
-    public ExtensionResultStatusType addAdditionalCategoryIds(Category category, List<Long> categoryIds);
+    public ExtensionResultStatusType addAdditionalCategoryIds(Category category, SearchCriteria searchCriteria, List<Long> categoryIds);
 
     /**
      * Populates the List of SearchFacet's for the given Category, or else returns NOT_HANDLED

@@ -37,7 +37,6 @@ import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
-import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
@@ -55,12 +54,10 @@ import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuWrapper;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.springframework.http.HttpStatus;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -163,8 +160,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                     .addMessage(BroadleafWebServicesException.INVALID_CATEGORY_ID, categoryId);
         }
 
-        List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
-        SearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
+        SearchCriteria searchCriteria = facetService.buildSearchCriteria(request);
         searchCriteria.setPageSize(pageSize);
         searchCriteria.setPage(page);
         try {
@@ -206,8 +202,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                     .addMessage(BroadleafWebServicesException.SEARCH_QUERY_MALFORMED, q);
         }
 
-        List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
-        SearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
+        SearchCriteria searchCriteria = facetService.buildSearchCriteria(request);
         searchCriteria.setPageSize(pageSize);
         searchCriteria.setPage(page);
         try {
