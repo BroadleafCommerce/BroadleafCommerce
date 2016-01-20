@@ -111,6 +111,13 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
     Category getParentCategory();
 
     /**
+     * Return the parent category xref of the default parent or first applicable parent
+     *
+     * @return
+     */
+    CategoryXref getParentCategoryXref();
+
+    /**
      * Set the parent category of this category
      *
      * @param category

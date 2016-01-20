@@ -613,6 +613,31 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
+    public CategoryXref getParentCategoryXref() {
+        CategoryXref response = null;
+        List<CategoryXref> xrefs = getAllParentCategoryXrefs();
+        if (!CollectionUtils.isEmpty(xrefs)) {
+            for (CategoryXref xref : xrefs) {
+                if (xref.getCategory().isActive() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                    response = xref;
+                    break;
+                }
+            }
+        }
+        if (response == null) {
+            if (!CollectionUtils.isEmpty(xrefs)) {
+                for (CategoryXref xref : xrefs) {
+                   if (xref.getCategory().isActive()) {
+                        response = xref;
+                        break;
+                    }
+                }
+            }
+        }
+        return response;
+    }
+
+    @Override
     public void setParentCategory(Category category) {
         List<CategoryXref> xrefs = getAllParentCategoryXrefs();
         boolean found = false;
