@@ -62,7 +62,6 @@
                     <!--</th:comment>-->
                 <!--</th>-->
                 <th class="listgrid-row-actions"
-                    th:unless="${inModal}"
                     th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
                     <th:comment th:remove="all">
                         This entry is acting as placeholder for Workflow Action links
@@ -110,8 +109,7 @@
                     <td th:unless="${index.count == 1}"></td>
                 </div>
                 <td th:if="${listGrid.listGridType} == 'main'"></td>
-                <td th:unless="${inModal}"
-                    th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
+                <td th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
                 </td>
             </tr>
             
@@ -238,7 +236,6 @@
                 <!--</td>-->
 
                 <td class="listgrid-row-actions"
-                    th:unless="${inModal}"
                     th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
                     <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}" th:unless="${record.locked}">
                         <a th:classappend="${action.buttonClass}"
