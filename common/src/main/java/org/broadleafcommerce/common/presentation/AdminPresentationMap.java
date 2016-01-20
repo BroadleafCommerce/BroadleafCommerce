@@ -131,7 +131,7 @@ public @interface AdminPresentationMap {
      * @return the order for this tab
      */
     @Deprecated
-    int tabOrder() default 100;
+    int tabOrder() default 99999;
 
     /**
      * <p>Optional - only required if the type for the key of this map

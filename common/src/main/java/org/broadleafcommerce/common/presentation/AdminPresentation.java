@@ -179,7 +179,7 @@ public @interface AdminPresentation {
      * @return the order for this tab
      */
     @Deprecated
-    int tabOrder() default 100;
+    int tabOrder() default 99999;
 
     /**
      * Optional - only required if you want to give the user extra room to enter a value
