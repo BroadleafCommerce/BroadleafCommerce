@@ -502,6 +502,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     }
 
     @Override
+    @Deprecated
     public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
         searchCriteria.setCategory(category);
         return findSearchResults(searchCriteria);

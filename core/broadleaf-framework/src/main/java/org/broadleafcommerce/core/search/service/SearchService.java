@@ -57,7 +57,9 @@ public interface SearchService {
      * @param searchCriteria
      * @return the result of the search
      * @throws ServiceException
+     * @deprecated use #findSearchResults(SearchCriteria)
      */
+    @Deprecated
     public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria)
             throws ServiceException;
     
