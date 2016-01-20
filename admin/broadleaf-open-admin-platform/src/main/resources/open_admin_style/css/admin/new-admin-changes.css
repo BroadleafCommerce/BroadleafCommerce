@@ -585,11 +585,11 @@ button:disabled {
 }
 
 .listgrid-search-actions {
-    padding-top: 6px;
     display: inline-block;
 }
 
 .listgrid-search-actions .button{
+    top: -1px;
     position: relative;
 }
 

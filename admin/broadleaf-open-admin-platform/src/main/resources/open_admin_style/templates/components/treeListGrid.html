@@ -1,7 +1,7 @@
 <div class="listgrid-search row">
     <div th:class="${!inModal}? 'col6' : ''">
         <!-- Search box -->
-        <form class="custom-tree-search" th:action="${currentUrl}" method="GET">
+        <form class="custom-tree-search" th:action="${sectionUrl}" method="GET">
             <input id="tree-listgrid-search" type="search" name="table-search"
                    th:each="column, iterStat : ${treeListGrid.treeListGridColumns}"
                    th:if="${iterStat.index == 0}"
