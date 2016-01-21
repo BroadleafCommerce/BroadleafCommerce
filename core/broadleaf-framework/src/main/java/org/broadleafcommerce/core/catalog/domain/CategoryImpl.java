@@ -813,7 +813,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     public List<Category> buildParentCategoryPath(List<Category> currentPath, Boolean firstParent) {
         if (currentPath == null) {
             currentPath = new ArrayList<Category>();
-            currentPath.add(this);
+            currentPath.add(0, this);
         }
         Boolean shouldAdd = true;
         List<Category> myParentCategories = new ArrayList<Category>();
@@ -835,7 +835,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
         for (Category category : myParentCategories) {
             if (!currentPath.contains(category)) {
-                currentPath.add(category);
+                currentPath.add(0, category);
                 category.buildParentCategoryPath(currentPath);
             }
         }
@@ -847,10 +847,10 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     public List<Category> buildDefaultParentCategoryPath(List<Category> currentPath) {
         if (currentPath == null) {
             currentPath = new ArrayList<Category>();
-            currentPath.add(this);
+            currentPath.add(0, this);
         }
         if (getDefaultParentCategory() != null && ! currentPath.contains(getDefaultParentCategory())) {
-            currentPath.add(getDefaultParentCategory());
+            currentPath.add(0, getDefaultParentCategory());
             getDefaultParentCategory().buildDefaultParentCategoryPath(currentPath);
         }
         return currentPath;
