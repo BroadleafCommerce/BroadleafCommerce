@@ -742,16 +742,4 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * @param externalId
      */
     public void setExternalId(String externalId);
-
-    /**
-     *
-     * @return
-     */
-    public List<Category> getParentCategoryPath();
-
-    /**
-     *
-     * @param currentHierarchy
-     */
-    public void setParentCategoryPath(List<Category> currentHierarchy);
 }

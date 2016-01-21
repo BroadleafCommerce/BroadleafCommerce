@@ -417,10 +417,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     protected List<Long> childCategoryIds;
 
     @Transient
-    @Hydrated(factoryMethod = "createParentCategoryPath")
-    protected List<Category> parentCategoryPath;
-
-    @Transient
     protected List<CategoryXref> childCategoryXrefs = new ArrayList<CategoryXref>(50);
 
     @Transient
@@ -789,21 +785,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         this.childCategoryURLMap = childCategoryURLMap;
     }
 
-    public List<Category> getParentCategoryPath() {
-        if (parentCategoryPath == null) {
-            HydratedSetup.populateFromCache(this, "parentCategoryPath");
-        }
-        return parentCategoryPath;
-    }
-
-    public void setParentCategoryPath(List<Category> currentPath) {
-        this.parentCategoryPath = currentPath;
-    }
-
-    public List<Category> createParentCategoryPath() {
-        return buildParentCategoryPath(null, true);
-    }
-
     @Override
     public List<Category> buildParentCategoryPath(List<Category> currentPath) {
         return buildParentCategoryPath(currentPath, false);
@@ -811,10 +792,17 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public List<Category> buildParentCategoryPath(List<Category> currentPath, Boolean firstParent) {
+        // If firstParent is null, default it to false
+        if (firstParent == null) {
+            firstParent = false;
+        }
+
+        // If the currentPath is null, this is the first iteration.
         if (currentPath == null) {
             currentPath = new ArrayList<Category>();
             currentPath.add(0, this);
         }
+
         Boolean shouldAdd = true;
         List<Category> myParentCategories = new ArrayList<Category>();
         if (getDefaultParentCategory() != null) {
@@ -824,6 +812,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             }
         }
 
+        // Check if there are parent categories and we still want to add them
         if (!CollectionUtils.isEmpty(getAllParentCategoryXrefs()) && shouldAdd) {
             for (CategoryXref parent : getAllParentCategoryXrefs()) {
                 myParentCategories.add(parent.getCategory());
