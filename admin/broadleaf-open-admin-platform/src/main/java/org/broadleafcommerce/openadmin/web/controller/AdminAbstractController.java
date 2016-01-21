@@ -26,8 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.util.BLCMapUtils;
-import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
@@ -39,12 +37,7 @@ import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminN
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
-import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
-import org.broadleafcommerce.openadmin.web.form.entity.Field;
-import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
-import org.broadleafcommerce.openadmin.web.form.entity.Tab;
+import org.broadleafcommerce.openadmin.web.form.entity.*;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -52,15 +45,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for the Admin
@@ -676,7 +668,22 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         List<String> maxIndex = requestParams.get(FilterAndSortCriteria.MAX_INDEX_PARAMETER);
         return CollectionUtils.isEmpty(maxIndex) ? null : Integer.parseInt(maxIndex.get(0));
     }
-    
+
+    /**
+     * Obtains the requested max index parameter
+     *
+     * @param requestParams
+     * @return
+     */
+    protected Integer getMaxResults(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> maxResults = requestParams.get(FilterAndSortCriteria.MAX_RESULTS_PARAMETER);
+        return CollectionUtils.isEmpty(maxResults) ? null : Integer.parseInt(maxResults.get(0));
+    }
+
     // ************************
     // GENERIC HELPER METHODS *
     // ************************
