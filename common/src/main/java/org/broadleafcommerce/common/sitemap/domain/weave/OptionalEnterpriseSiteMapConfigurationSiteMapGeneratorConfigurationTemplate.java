@@ -45,8 +45,7 @@ public abstract class OptionalEnterpriseSiteMapConfigurationSiteMapGeneratorConf
 
     @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @AdminPresentationCollection(friendlyName = "SiteMapConfigurationImpl_Generator_Configurations",
-            tab = AbstractModuleConfigurationAdminPresentation.TabName.General,
-            tabOrder = AbstractModuleConfigurationAdminPresentation.TabOrder.General)
+            tab = AbstractModuleConfigurationAdminPresentation.TabName.General)
     @SiteDiscriminatable(type = SiteDiscriminatableType.SITE)
     protected List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations = new ArrayList<SiteMapGeneratorConfiguration>();
 
