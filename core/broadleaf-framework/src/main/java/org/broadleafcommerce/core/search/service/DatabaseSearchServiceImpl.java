@@ -19,10 +19,6 @@
  */
 package org.broadleafcommerce.core.search.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -41,7 +37,6 @@ import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceImpl;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,8 +44,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.annotation.Resource;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * @deprecated Use {@link SolrSearchServiceImpl} 
@@ -111,7 +109,12 @@ public class DatabaseSearchServiceImpl implements SearchService {
         result.setPageSize(products.size());
         return result;
     }
-    
+
+    @Override
+    public SearchResult findSearchResults(SearchCriteria searchCriteria) throws ServiceException {
+        return findSearchResultsByQuery(searchCriteria.getQuery(), searchCriteria);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public List<SearchFacetDTO> getSearchFacets() {
@@ -130,7 +133,12 @@ public class DatabaseSearchServiceImpl implements SearchService {
         }
         return facets;
     }
-    
+
+    @Override
+    public List<SearchFacetDTO> getSearchFacets(Category category) {
+        return getSearchFacets();
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public List<SearchFacetDTO> getCategoryFacets(Category category) {
