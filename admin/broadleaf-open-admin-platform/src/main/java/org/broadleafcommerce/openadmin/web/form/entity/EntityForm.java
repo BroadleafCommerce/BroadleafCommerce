@@ -54,7 +54,7 @@ public class EntityForm {
     public static final Integer DEFAULT_GROUP_ORDER = 99999;
     public static final Integer DEFAULT_COLUMN = 0;
     public static final String DEFAULT_TAB_NAME = "General";
-    public static final Integer DEFAULT_TAB_ORDER = 100;
+    public static final Integer DEFAULT_TAB_ORDER = 99999;
 
     protected String id;
     protected String parentId;

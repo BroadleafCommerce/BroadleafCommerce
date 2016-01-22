@@ -253,7 +253,7 @@ public @interface AdminPresentationAdornedTargetCollection {
      * @return the order for this tab
      */
     @Deprecated
-    int tabOrder() default 100;
+    int tabOrder() default 99999;
 
     /**
      * <p>Optional - only required if you need to specially handle crud operations for this
