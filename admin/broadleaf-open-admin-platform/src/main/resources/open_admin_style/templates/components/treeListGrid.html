@@ -27,7 +27,7 @@
         </div>
     </div>
     <div class="select-group">
-        <div class="tree-column-wrapper" th:style="'width: ' + ${320 * #arrays.length(treeListGrid.treeListGridColumns)} + 'px; height: 400px;'">
+        <div class="tree-column-wrapper" th:style="'width: ' + ${320 * #arrays.length(treeListGrid.treeListGridColumns)} + 'px;'">
             <div type="hidden" id="treeParentPathJson" th:if="${treeParentPathJson != null}"
                  th:attr="data-parentpathjson=${treeParentPathJson}" />
             <div class="select-column listgrid-container"
