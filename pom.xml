@@ -61,6 +61,7 @@
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</connection>
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
+        <tag>HEAD</tag>
     </scm>
     <build>
         <pluginManagement>
@@ -221,11 +222,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.2.1</version>
-                <configuration>
-                    <!-- Only here for the Spock SNAPSHOT dependency since it has not been fully released -->
-                    <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
-                </configuration>
+                <version>2.5.3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

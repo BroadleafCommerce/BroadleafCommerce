@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.sitemap.domain.weave;
 
+import org.broadleafcommerce.common.config.domain.AbstractModuleConfigurationAdminPresentation;
 import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminatable;
 import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminatableType;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -43,7 +44,8 @@ import javax.persistence.OneToMany;
 public abstract class OptionalEnterpriseSiteMapConfigurationSiteMapGeneratorConfigurationTemplate {
 
     @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @AdminPresentationCollection(friendlyName = "SiteMapConfigurationImpl_Generator_Configurations")
+    @AdminPresentationCollection(friendlyName = "SiteMapConfigurationImpl_Generator_Configurations",
+            tab = AbstractModuleConfigurationAdminPresentation.TabName.General)
     @SiteDiscriminatable(type = SiteDiscriminatableType.SITE)
     protected List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations = new ArrayList<SiteMapGeneratorConfiguration>();
 
