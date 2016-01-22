@@ -766,7 +766,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             searchFacetDTOs.addAll(getCategoryFacets(category));
         }
 
-        if (globalFacetsForCategorySearch) {
+        if (globalFacetsForCategorySearch || category == null) {
             searchFacetDTOs.addAll(getSearchFacets());
         }
 
