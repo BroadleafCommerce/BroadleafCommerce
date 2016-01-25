@@ -473,7 +473,7 @@ var BLCAdmin = (function($) {
             }
 
             // If we've already initialized this container, we'll skip it.
-            if ($container.data('initialized') == 'true' || $('.oms').length > 0) {
+            if ($container.data('initialized') == 'true') {
                 return;
             }
 
