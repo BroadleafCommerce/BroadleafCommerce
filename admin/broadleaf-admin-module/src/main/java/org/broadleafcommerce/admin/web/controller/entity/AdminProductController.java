@@ -92,29 +92,6 @@ public class AdminProductController extends AdminBasicEntityController {
     }
 
     @Override
-    protected void modifyEntityForm(EntityForm ef, Map<String, String> pathVars) {
-        String defaultCategoryUrlPrefix = null;
-        Field defaultCategory = ef.findField("defaultCategory");
-        if (defaultCategory != null && StringUtils.isNotBlank(defaultCategory.getValue())) {
-            Category cat = catalogService.findCategoryById(Long.parseLong(defaultCategory.getValue()));
-            defaultCategoryUrlPrefix = cat.getUrl();
-        }
-
-        Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
-        overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
-        boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
-        Field fullUrl = ef.findField("url");
-        if (fullUrl != null) {
-            fullUrl.withAttribute("overriddenUrl", overriddenUrl)
-                    .withAttribute("sourceField", "defaultSku--name")
-                    .withAttribute("toggleField", "overrideGeneratedUrl")
-                    .withAttribute("prefix-selector", "#field-defaultCategory")
-                    .withAttribute("prefix", defaultCategoryUrlPrefix)
-                    .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
-        }
-    }
-
-    @Override
     protected void modifyAddEntityForm(EntityForm ef, Map<String, String> pathVars) {
         String defaultCategoryUrlPrefix = null;
         Field defaultCategory = ef.findField("defaultCategory");
