@@ -19,9 +19,15 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,12 +41,12 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
 
     private static final Map<String, FieldEntity> TYPES = new LinkedHashMap<String, FieldEntity>();
 
-    public static final FieldEntity PRODUCT = new FieldEntity("org.broadleafcommerce.core.catalog.domain.Product", "Product", false);
-    public static final FieldEntity SKU = new FieldEntity("org.broadleafcommerce.core.catalog.domain.Sku", "Sku", false);
-    public static final FieldEntity CUSTOMER = new FieldEntity("org.broadleafcommerce.profile.core.domain.Customer", "Customer", false);
-    public static final FieldEntity ORDER = new FieldEntity("org.broadleafcommerce.core.order.domain.Order", "Order", false);
-    public static final FieldEntity ORDERITEM = new FieldEntity("org.broadleafcommerce.core.order.domain.OrderItem", "Order Item", false);
-    public static final FieldEntity OFFER = new FieldEntity("org.broadleafcommerce.core.offer.domain.Offer", "Offer", false);
+    public static final FieldEntity PRODUCT = new FieldEntity("PRODUCT", "Product");
+    public static final FieldEntity SKU = new FieldEntity("SKU", "Sku");
+    public static final FieldEntity CUSTOMER = new FieldEntity("CUSTOMER", "Customer");
+    public static final FieldEntity ORDER = new FieldEntity("ORDER", "Order");
+    public static final FieldEntity ORDERITEM = new FieldEntity("ORDER_ITEM", "Order Item");
+    public static final FieldEntity OFFER = new FieldEntity("OFFER", "Offer");
 
     public static FieldEntity getInstance(final String type) {
         return TYPES.get(type);
@@ -48,28 +54,46 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
 
     private String type;
     private String friendlyType;
-    private Boolean isCustomFieldEntity;
+    protected List<String> additionalLookupTypes = new ArrayList<>();;
 
     public FieldEntity() {
         //do nothing
     }
 
-    public FieldEntity(final String type, final String friendlyType, final Boolean isCustomFieldEntity) {
+    public FieldEntity(final String type, final String friendlyType) {
         this.friendlyType = friendlyType;
-        this.isCustomFieldEntity = isCustomFieldEntity;
         setType(type);
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getFriendlyType() {
         return friendlyType;
     }
-
-    public Boolean getIsCustomFieldEntity() {
-        return isCustomFieldEntity;
+    
+    public void addAditionalLookupType(String additionalLookupType) {
+        if (additionalLookupTypes == null) {
+            additionalLookupTypes = new ArrayList<>();
+        }
+        additionalLookupTypes.add(additionalLookupType);
+    }
+    
+    public List<String> getAdditionalLookupTypes() {
+        return Collections.unmodifiableList(additionalLookupTypes);
+    }
+    
+    public List<String> getAllLookupTypes() {
+        if (CollectionUtils.isNotEmpty(getAdditionalLookupTypes())) {
+            List<String> result = new ArrayList<>(getAdditionalLookupTypes());
+            result.add(getType());
+            return Collections.unmodifiableList(result);
+        } else {
+            return Arrays.asList(getType());
+        }
     }
 
     private void setType(final String type) {

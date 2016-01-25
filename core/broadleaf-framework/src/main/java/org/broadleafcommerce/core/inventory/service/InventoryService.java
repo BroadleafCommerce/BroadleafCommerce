@@ -21,7 +21,9 @@
 package org.broadleafcommerce.core.inventory.service;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryActivity;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
+import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
 
 import java.util.Collection;
 import java.util.Map;
@@ -34,6 +36,10 @@ import java.util.Map;
  * <p>Skus with an InventoryType of null or 'ALWAYS_AVAILABLE' will be considered undefined from an inventory perspective, and will generally 
  * be considered available.  However, a request for available quantities of Skus with a null or 'ALWAYS_AVAILABLE' inventory type will 
  * return null (as the {@link Sku} is available but no inventory strategy is defined).</p>
+ * 
+ * <p>For most implementations outside of the very basic inventory case, you will actually want to use the {@link ContextualInventoryService}.
+ * This is the version of the service that is invoked from the checkout workflow in {@link DecrementInventoryActivity} and
+ * where the main checks for inventory are in the {@link CheckAvailabilityActivity}</p>
  * 
  * @author Kelly Tisdell
  * @author Phillip Verheyden (phillipuniverse)
@@ -53,6 +59,7 @@ public interface InventoryService {
      * @param
      * @return <b>null</b> if there is no inventory strategy defined (meaning, {@link Sku#getInventoryType()} is null or
      * {@link InventoryType#ALWAYS_AVAILABLE}). Otherwise, this returns the quantity of the {@link Sku}
+     * {@see ContextualInventoryService#retrieveQuantityAvailable(Sku, Map)}
      */
     public Integer retrieveQuantityAvailable(Sku sku);
 
@@ -68,6 +75,7 @@ public interface InventoryService {
      * @return a map of the given set of <b>skus</b> to the quantity as represented in the inventory system. The {@link Map#keySet()}
      * is the same collection of given <b>skus</b>
      * @see {@link #retrieveQuantityAvailable(Sku)}
+     * @see {@link ContextualInventoryService#retrieveQuantitiesAvailable(Collection, Map)}
      */
     public Map<Sku, Integer> retrieveQuantitiesAvailable(Collection<Sku> skus);
     
@@ -81,6 +89,7 @@ public interface InventoryService {
      * @param sku the {@link Sku} to see if enough quantity is available
      * @param quantity the quantity to check for the given <b>sku<b>
      * @return <b>true</b> if there is available quantity
+     * @see {@link ContextualInventoryService#isAvailable(Sku, int, Map)}
      */
     public boolean isAvailable(Sku sku, int quantity);
     
@@ -109,6 +118,7 @@ public interface InventoryService {
      * @param quantity the quantity to take inventory from
      * @throws InventoryUnavailableException if there is not enough of the given <b>quantity</b> for the given <b>sku</b>
      * @throws IllegalArgumentException if the given quantity is not greater than zero
+     * @see {@link ContextualInventoryService#decrementInventory(Sku, int, Map)}
      */
     public void decrementInventory(Sku sku, int quantity) throws InventoryUnavailableException;
 
@@ -124,6 +134,7 @@ public interface InventoryService {
      * @throws InventoryUnavailableException if there is not enough inventory to decrement from any of the given skus or
      * if {@link #checkBasicAvailablility(Sku)} returns false
      * @throws IllegalArgumentException if any of the quantities of the given skus are less than zero
+     * @see {@link ContextualInventoryService#decrementInventory(Map, Map)}
      */
     public void decrementInventory(Map<Sku, Integer> skuQuantities) throws InventoryUnavailableException;
 
@@ -137,6 +148,7 @@ public interface InventoryService {
      * @throws IllegalArgumentException if <b>quantity</b> is less than zero or {@link #retrieveQuantityAvailable(Sku)} for
      * the given <b>sku</b> returns <b>null</b>
      * @see {@link #incrementInventory(Map)}
+     * @see {@link ContextualInventoryService#incrementInventory(Sku, int, Map)}
      */
     public void incrementInventory(Sku sku, int quantity);
 
@@ -151,6 +163,7 @@ public interface InventoryService {
      * @param skuQuantities the map of a {@link Sku} to the quantity that should be incremented
      * @throws IllegalArgumentException if any of the quantities in the map values are null or less than zero, or if
      * {@link #retrieveQuantityAvailable(Sku)} for the {@link Sku}s in the map is <b>null</b>
+     * @see {@link ContextualInventoryService#incrementInventory(Map, Map)}
      */
     public void incrementInventory(Map<Sku, Integer> skuQuantities);
 

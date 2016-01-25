@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
@@ -77,15 +78,15 @@ public class StoreImpl implements Store {
     protected String name;
     
     @Column(name = "STORE_NUMBER")
-    @AdminPresentation(friendlyName = "AutoStoreImpl_Store_Number")
+    @AdminPresentation(friendlyName = "StoreImpl_Store_Number")
     protected String storeNumber;
 
     @Column(name = "OPEN")
-    @AdminPresentation(friendlyName = "AutoStoreImpl_Open")
+    @AdminPresentation(friendlyName = "StoreImpl_Open")
     protected Boolean open;
 
     @Column(name = "STORE_HOURS")
-    @AdminPresentation(friendlyName = "AutoStoreImpl_Store_Hours")
+    @AdminPresentation(friendlyName = "StoreImpl_Store_Hours", fieldType = SupportedFieldType.HTML)
     protected String storeHours;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class)

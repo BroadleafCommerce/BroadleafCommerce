@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Framework Web
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@
  * limitations under the License.
  * #L%
  */
-
-package org.broadleafcommerce.core.payment.service;
-
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
+package org.broadleafcommerce.common.extensibility.jpa;
 
 /**
- * @author Elbert Bautista (elbertbautista)
+ * MBean registered in JMX to keep track of which persistence units are marked with auto.ddl 'create'. The scope of this MBean
+ * covers the current JVM, which may span more than a single application in the same container.
+ *
+ * @author Jeff Fischer
  */
-public interface NullPaymentGatewayConfiguration extends PaymentGatewayConfiguration {
+public interface AutoDDLCreateStatusTestBean {
 
-    public String getTransparentRedirectUrl();
+    Boolean getStartedWithCreate(String pu);
 
-    public String getTransparentRedirectReturnUrl();
+    void setStartedWithCreate(String pu, Boolean val);
 
 }

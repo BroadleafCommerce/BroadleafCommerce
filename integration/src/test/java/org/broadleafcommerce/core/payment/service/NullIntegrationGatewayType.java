@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -17,17 +17,18 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.dao;
 
-import org.hibernate.ejb.Ejb3Configuration;
+package org.broadleafcommerce.core.payment.service;
+
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
 
 /**
- * 
- * @author jfischer
- *
+ * @author Elbert Bautista (elbertbautista)
  */
-public interface EJB3ConfigurationDao {
+public class NullIntegrationGatewayType extends PaymentGatewayType {
 
-    public abstract Ejb3Configuration getConfiguration();
+    public static final PaymentGatewayType NULL_INTEGRATION_GATEWAY  = new PaymentGatewayType("NULL_INTEGRATION_GATEWAY", "Null Payment Gateway Implementation");
+    public static final PaymentGatewayType NULL_INTEGRATION_HOSTED_GATEWAY  = new PaymentGatewayType("NULL_INTEGRATION_HOSTED_GATEWAY", "Null Hosted Payment Gateway Implementation");
+
 
 }

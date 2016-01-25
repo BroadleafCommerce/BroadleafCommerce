@@ -166,41 +166,13 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
                 if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
                     Address billing = payment.getBillingAddress();
                     if (billing != null) {
-                        Address shipping = addressService.create();
-                        shipping.setFullName(billing.getFullName());
-                        shipping.setFirstName(billing.getFirstName());
-                        shipping.setLastName(billing.getLastName());
-                        shipping.setAddressLine1(billing.getAddressLine1());
-                        shipping.setAddressLine2(billing.getAddressLine2());
-                        shipping.setCity(billing.getCity());
-                        shipping.setState(billing.getState());
-                        shipping.setIsoCountrySubdivision(billing.getIsoCountrySubdivision());
-                        shipping.setStateProvinceRegion(billing.getStateProvinceRegion());
-                        shipping.setPostalCode(billing.getPostalCode());
-                        shipping.setCountry(billing.getCountry());
-                        shipping.setIsoCountryAlpha2(billing.getIsoCountryAlpha2());
-                        shipping.setPrimaryPhone(billing.getPrimaryPhone());
-                        shipping.setSecondaryPhone(billing.getSecondaryPhone());
-                        shipping.setFax(billing.getFax());
-                        shipping.setPhonePrimary(copyPhone(billing.getPhonePrimary()));
-                        shipping.setPhoneSecondary(copyPhone(billing.getPhoneSecondary()));
-                        shipping.setPhoneFax(copyPhone(billing.getPhoneFax()));
-                        shipping.setEmailAddress(billing.getEmailAddress());
+                        Address shipping = addressService.copyAddress(billing);
                         shippingInfoForm.setAddress(shipping);
                     }
                 }
             }
 
         }
-    }
-
-    protected Phone copyPhone(Phone phoneToCopy) {
-        if (phoneToCopy != null) {
-            Phone copy = phoneService.create();
-            copy.setPhoneNumber(phoneToCopy.getPhoneNumber());
-            return copy;
-        }
-        return null;
     }
 
     /**

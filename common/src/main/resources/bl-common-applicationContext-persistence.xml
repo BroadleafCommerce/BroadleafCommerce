@@ -34,6 +34,12 @@
         <property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
         <property name="persistenceUnitName" value="blPU"/>
     </bean>
+
+    <bean id="blEJB3ConfigurationDao" class="org.broadleafcommerce.common.util.dao.EJB3ConfigurationDaoImpl">
+        <property name="persistenceUnitInfo">
+            <bean factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
+        </property>
+    </bean>
     
     <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -62,6 +68,17 @@
     <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager">
         <property name="persistenceUnitPostProcessors" ref="blPersistenceUnitPostProcessors"/>
     </bean>
+
+    <bean id="blAutoDDLStatusExporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
+        <property name="beans">
+            <map>
+                <entry key="bean:name=autoDDLCreateStatusTestBean" value-ref="blAutoDDLStatusTestBean"/>
+            </map>
+        </property>
+        <property name="registrationPolicy" value="IGNORE_EXISTING"/>
+    </bean>
+
+    <bean id="blAutoDDLStatusTestBean" class="org.broadleafcommerce.common.extensibility.jpa.AutoDDLCreateStatusTestBeanImpl"/>
 
     <bean id="blPersistenceUnitPostProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">

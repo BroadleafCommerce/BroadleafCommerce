@@ -34,6 +34,9 @@ import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
  * and your HTML should include these fields to be POSTed directly to the
  * implementing gateway for processing.</p>
  *
+ * <p>In addition, some gateways also support the creation of a payment token (i.e. a tokenized version of a
+ * Credit Card that can be used on subsequent requests) outside the scope of an authorize or sale transaction.</p>
+ *
  * @author Elbert Bautista (elbertbautista)
  */
 public interface PaymentGatewayTransparentRedirectService {
@@ -41,5 +44,33 @@ public interface PaymentGatewayTransparentRedirectService {
     public PaymentResponseDTO createAuthorizeForm(PaymentRequestDTO requestDTO) throws PaymentException;
 
     public PaymentResponseDTO createAuthorizeAndCaptureForm(PaymentRequestDTO requestDTO) throws PaymentException;
+
+    public PaymentResponseDTO createCustomerPaymentTokenForm(PaymentRequestDTO requestDTO) throws PaymentException;
+
+    public PaymentResponseDTO updateCustomerPaymentTokenForm(PaymentRequestDTO requestDTO) throws PaymentException;
+
+    /**
+     * Return the {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO#responseMap} key
+     * that corresponds to creating the customer token return url
+     */
+    public String getCreateCustomerPaymentTokenReturnURLFieldKey(PaymentResponseDTO responseDTO);
+
+    /**
+     * Return the {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO#responseMap} key
+     * that corresponds to creating the customer token cancel url
+     */
+    public String getCreateCustomerPaymentTokenCancelURLFieldKey(PaymentResponseDTO responseDTO);
+
+    /**
+     * Return the {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO#responseMap} key
+     * that corresponds to updating the customer token return url
+     */
+    public String getUpdateCustomerPaymentTokenReturnURLFieldKey(PaymentResponseDTO responseDTO);
+
+    /**
+     * Return the {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO#responseMap} key
+     * that corresponds to updating the customer token cancel url
+     */
+    public String getUpdateCustomerPaymentTokenCancelURLFieldKey(PaymentResponseDTO responseDTO);
 
 }

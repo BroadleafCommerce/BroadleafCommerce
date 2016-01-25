@@ -157,4 +157,21 @@ public interface PaymentTransaction extends Serializable, Status, AdditionalFiel
 
     public void setAdditionalFields(Map<String, String> additionalFields);
 
+    /**
+     * <p>
+     * Indicates whether or not this transaction on the Order Payment contains
+     * a payment token (i.e. {@link org.broadleafcommerce.common.payment.PaymentAdditionalFieldType#TOKEN})
+     * and should be saved as a {@link org.broadleafcommerce.profile.core.domain.CustomerPayment} on the user's profile
+     *
+     * @return - whether or not this transaction should be tokenized
+     */
+    public boolean isSaveToken();
+
+    /**
+     * Mark this transaction as containing (or going to contain) a token
+     * that should be saved on the user's profile as a {@link org.broadleafcommerce.profile.core.domain.CustomerPayment}
+     * @param saveToken
+     */
+    public void setSaveToken(boolean saveToken);
+
 }
