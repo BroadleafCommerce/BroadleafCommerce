@@ -407,6 +407,15 @@ public class EntityForm {
         }
 
         fieldGroup.addField(field);
+
+        // Make sure to add the field to the fields "cache".
+        // If getFields() was called before this field was added, the "cache" was set. Since we're
+        // adding another field here, we need to add the field to the fields "cache".
+        // If the fields map is null, then the "cache" is not set. Therefore, we should not add this field,
+        // but instead wait for getFields() to build the entire map.
+        if (fields != null) {
+            fields.put(field.getName(), field);
+        }
     }
 
     public void addListGrid(ClassMetadata cmd, ListGrid listGrid, String tabName, Integer tabOrder, String groupName, boolean isTabPresent) {
