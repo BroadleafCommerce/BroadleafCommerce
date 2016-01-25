@@ -25,25 +25,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.OptionFilterParam;
-import org.broadleafcommerce.common.presentation.OptionFilterParamType;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationDataDrivenEnumerationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationToOneLookupOverride;
-import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.broadleafcommerce.common.presentation.override.*;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -63,11 +49,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -287,6 +269,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 metadata.setFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 metadata.setExplicitFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 metadata.setOptionListEntity(annot.optionListEntity().getName());
+                metadata.setOptionHideIfEmpty(annot.optionHideIfEmpty());
                 if (metadata.getOptionListEntity().equals(DataDrivenEnumerationValueImpl.class.getName())) {
                     metadata.setOptionValueFieldName("key");
                     metadata.setOptionDisplayFieldName("display");
@@ -478,6 +461,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 fieldMetadataOverride.setOptionValueFieldName(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONDISPLAYFIELDNAME)) {
                 fieldMetadataOverride.setOptionDisplayFieldName(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONHIDEIFEMPTY)) {
+                fieldMetadataOverride.setOptionHideIfEmpty(StringUtils.isEmpty(stringValue) ? entry.getValue()
+                        .booleanOverrideValue() : Boolean.parseBoolean(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONCANEDITVALUES)) {
                 fieldMetadataOverride.setOptionCanEditValues(StringUtils.isEmpty(stringValue) ? entry.getValue()
                         .booleanOverrideValue() : Boolean.parseBoolean(stringValue));
@@ -559,6 +545,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 override.setExplicitFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 override.setFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 override.setOptionCanEditValues(dataDrivenEnumeration.optionCanEditValues());
+                override.setOptionHideIfEmpty(dataDrivenEnumeration.optionHideIfEmpty());
                 override.setOptionDisplayFieldName(dataDrivenEnumeration.optionDisplayFieldName());
                 if (!ArrayUtils.isEmpty(dataDrivenEnumeration.optionFilterParams())) {
                     Serializable[][] params = new Serializable[dataDrivenEnumeration.optionFilterParams().length][3];
@@ -746,6 +733,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             if (basicFieldMetadata.getOptionDisplayFieldName() != null) {
                 metadata.setOptionDisplayFieldName(basicFieldMetadata.getOptionDisplayFieldName());
             }
+        }
+        if (basicFieldMetadata.getOptionHideIfEmpty() != null) {
+            metadata.setOptionHideIfEmpty(basicFieldMetadata.getOptionHideIfEmpty());
         }
         if (!StringUtils.isEmpty(metadata.getOptionListEntity()) && (StringUtils.isEmpty(metadata.getOptionValueFieldName()) || StringUtils.isEmpty(metadata.getOptionDisplayFieldName()))) {
             throw new IllegalArgumentException("Problem setting up data driven enumeration for (" + field.getName() + "). The optionListEntity, optionValueFieldName and optionDisplayFieldName properties must all be included if not using DataDrivenEnumerationValueImpl as the optionListEntity.");

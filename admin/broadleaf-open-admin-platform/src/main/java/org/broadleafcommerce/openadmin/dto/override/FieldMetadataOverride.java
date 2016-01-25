@@ -116,6 +116,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private String optionValueFieldName;
     private String optionDisplayFieldName;
     private Boolean optionCanEditValues;
+    private Boolean optionHideIfEmpty;
     private Serializable[][] optionFilterValues;
     private String showIfProperty;
     private String ruleIdentifier;
@@ -511,6 +512,14 @@ public class FieldMetadataOverride extends MetadataOverride {
 
     public void setOptionFilterValues(Serializable[][] optionFilterValues) {
         this.optionFilterValues = optionFilterValues;
+    }
+
+    public Boolean getOptionHideIfEmpty() {
+        return optionHideIfEmpty;
+    }
+
+    public void setOptionHideIfEmpty(Boolean optionHideIfEmpty) {
+        this.optionHideIfEmpty = optionHideIfEmpty;
     }
 
     public String getRuleIdentifier() {

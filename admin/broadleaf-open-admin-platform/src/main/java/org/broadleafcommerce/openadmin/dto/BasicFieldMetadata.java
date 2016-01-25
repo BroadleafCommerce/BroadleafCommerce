@@ -81,6 +81,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String optionValueFieldName;
     protected String optionDisplayFieldName;
     protected Boolean optionCanEditValues;
+    protected Boolean optionHideIfEmpty;
     protected String[][] optionFilterParams;
     protected String[] customCriteria;
     protected Boolean useServerSideInspectionCache;
@@ -403,6 +404,14 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.optionCanEditValues = optionCanEditValues;
     }
 
+    public Boolean getOptionHideIfEmpty() {
+        return optionHideIfEmpty;
+    }
+
+    public void setOptionHideIfEmpty(Boolean optionHideIfEmpty) {
+        this.optionHideIfEmpty = optionHideIfEmpty;
+    }
+
     public String getOptionDisplayFieldName() {
         return optionDisplayFieldName;
     }
@@ -597,6 +606,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.enableTypeaheadLookup = enableTypeaheadLookup;
         metadata.optionListEntity = optionListEntity;
         metadata.optionCanEditValues = optionCanEditValues;
+        metadata.optionHideIfEmpty = optionHideIfEmpty;
         metadata.optionDisplayFieldName = optionDisplayFieldName;
         metadata.optionValueFieldName = optionValueFieldName;
         if (optionFilterParams != null) {
@@ -717,6 +727,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (optionCanEditValues != null ? !optionCanEditValues.equals(metadata.optionCanEditValues) : metadata.optionCanEditValues != null) {
             return false;
         }
+        if (optionHideIfEmpty != null ? !optionHideIfEmpty.equals(metadata.optionHideIfEmpty) : metadata.optionHideIfEmpty != null) {
+            return false;
+        }
         if (optionDisplayFieldName != null ? !optionDisplayFieldName.equals(metadata.optionDisplayFieldName) : metadata.optionDisplayFieldName != null) {
             return false;
         }
@@ -834,6 +847,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (optionValueFieldName != null ? optionValueFieldName.hashCode() : 0);
         result = 31 * result + (optionDisplayFieldName != null ? optionDisplayFieldName.hashCode() : 0);
         result = 31 * result + (optionCanEditValues != null ? optionCanEditValues.hashCode() : 0);
+        result = 31 * result + (optionHideIfEmpty != null ? optionHideIfEmpty.hashCode() : 0);
         result = 31 * result + (ruleIdentifier != null ? ruleIdentifier.hashCode() : 0);
         result = 31 * result + (mapFieldValueClass != null ? mapFieldValueClass.hashCode() : 0);
         result = 31 * result + (searchable != null ? searchable.hashCode() : 0);

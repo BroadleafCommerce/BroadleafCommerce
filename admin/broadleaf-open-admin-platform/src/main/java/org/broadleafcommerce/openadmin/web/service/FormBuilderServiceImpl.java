@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.openadmin.web.service;
 
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
@@ -33,30 +36,10 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.media.domain.MediaDto;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.AdornedTargetAddMethodType;
-import org.broadleafcommerce.common.presentation.client.LookupType;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.client.*;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
-import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.dto.ClassTree;
-import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.dto.Entity;
-import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.dto.MapStructure;
-import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.dto.SectionCrumb;
-import org.broadleafcommerce.openadmin.dto.TabMetadata;
+import org.broadleafcommerce.openadmin.dto.*;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -67,19 +50,8 @@ import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
-import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
-import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
-import org.broadleafcommerce.openadmin.web.form.component.MediaField;
-import org.broadleafcommerce.openadmin.web.form.component.RuleBuilderField;
-import org.broadleafcommerce.openadmin.web.form.entity.CodeField;
-import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
-import org.broadleafcommerce.openadmin.web.form.entity.DefaultAdornedEntityFormActions;
-import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
-import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
-import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.form.component.*;
+import org.broadleafcommerce.openadmin.web.form.entity.*;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
@@ -89,31 +61,18 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-
+import javax.annotation.Resource;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -762,6 +721,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         // We're dealing with fields that should render as drop-downs, so set their possible values
                         f = new ComboField();
                         ((ComboField) f).setOptions(fmd.getEnumerationValues());
+                        if (fmd.getOptionHideIfEmpty() != null && fmd.getOptionHideIfEmpty().booleanValue()
+                                && ((ComboField) f).getOptions().size() == 0) {
+                            f.setIsVisible(false);
+                        }
                     } else if (fieldType.equals(SupportedFieldType.CODE.toString())) {
                         f = new CodeField();
                     } else if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())

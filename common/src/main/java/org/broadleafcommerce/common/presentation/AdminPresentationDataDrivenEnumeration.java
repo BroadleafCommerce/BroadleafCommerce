@@ -86,4 +86,13 @@ public @interface AdminPresentationDataDrivenEnumeration {
      * @return whether or not the user can type in the data-driven field
      */
     boolean optionCanEditValues() default false;
+
+    /**
+     * <p>Optional - only required if you want to hide this field when there are no enumerations provided</p>
+     *
+     * <p>Whether or not to show the field if no Enumerations are provided.</p>
+     *
+     * @return whether or not to show the field if empty
+     */
+    boolean optionHideIfEmpty() default false;
 }
