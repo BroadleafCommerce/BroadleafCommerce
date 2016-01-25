@@ -20,23 +20,29 @@
 package org.broadleafcommerce.core.web.service;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
+import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.Objects;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 @Service("blSearchFacetDTOService")
 public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
-    
+
+    @Resource(name = "blExploitProtectionService")
+    protected ExploitProtectionService exploitProtectionService;
+
     protected int getDefaultPageSize() {
         return BLCSystemProperty.resolveIntSystemProperty("web.defaultPageSize");
     }
@@ -47,32 +53,40 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
     
     @Override
     @SuppressWarnings("unchecked")
-    public SearchCriteria buildSearchCriteria(HttpServletRequest request, List<SearchFacetDTO> availableFacets) {
+    public SearchCriteria buildSearchCriteria(HttpServletRequest request) {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setPageSize(getDefaultPageSize());
         
         Map<String, String[]> facets = new HashMap<String, String[]>();
-        
-        for (Iterator<Entry<String,String[]>> iter = request.getParameterMap().entrySet().iterator(); iter.hasNext();){
-            Map.Entry<String, String[]> entry = iter.next();
+
+        for (Entry<String, String[]> entry : (Iterable<Entry<String, String[]>>) request.getParameterMap().entrySet()) {
             String key = entry.getKey();
-            
-            if (key.equals(SearchCriteria.SORT_STRING)) {
+
+            if (Objects.equals(key, SearchCriteria.SORT_STRING)) {
                 searchCriteria.setSortQuery(StringUtils.join(entry.getValue(), ","));
-            } else if (key.equals(SearchCriteria.PAGE_NUMBER)) {
+            } else if (Objects.equals(key, SearchCriteria.PAGE_NUMBER)) {
                 searchCriteria.setPage(Integer.parseInt(entry.getValue()[0]));
-            } else if (key.equals(SearchCriteria.PAGE_SIZE_STRING)) {
+            } else if (Objects.equals(key, SearchCriteria.PAGE_SIZE_STRING)) {
                 int requestedPageSize = Integer.parseInt(entry.getValue()[0]);
                 int maxPageSize = getMaxPageSize();
                 searchCriteria.setPageSize(Math.min(requestedPageSize, maxPageSize));
-            } else if (key.equals(SearchCriteria.QUERY_STRING)) {
-                continue; // This is handled by the controller
+            } else if (Objects.equals(key, SearchCriteria.QUERY_STRING)) {
+                String query = request.getParameter(SearchCriteria.QUERY_STRING);
+                try {
+                    if (StringUtils.isNotEmpty(query)) {
+                        query = exploitProtectionService.cleanString(StringUtils.trim(query));
+                    }
+                } catch (ServiceException e) {
+                    query = null;
+                }
+                searchCriteria.setQuery(query);
             } else {
                 facets.put(key, entry.getValue());
             }
         }
         
         searchCriteria.setFilterCriteria(facets);
+        searchCriteria.setCategory((Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME));
         
         return searchCriteria;
     }

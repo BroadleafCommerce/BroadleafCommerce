@@ -248,12 +248,12 @@ public @interface AdminPresentationAdornedTargetCollection {
      * Specify an order for this tab. Tabs will be sorted int he resulting form in 
      * ascending order based on this parameter.
      * 
-     * The default tab will render with an order of 100.
+     * The default tab will render with an order of 99999.
      * 
      * @return the order for this tab
      */
     @Deprecated
-    int tabOrder() default 100;
+    int tabOrder() default 99999;
 
     /**
      * <p>Optional - only required if you need to specially handle crud operations for this

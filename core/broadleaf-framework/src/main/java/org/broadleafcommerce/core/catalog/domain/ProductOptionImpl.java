@@ -123,9 +123,9 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     @AdminPresentation(friendlyName = "productOption_UseInSKUGeneration",
         group = GroupName.Details, order = FieldOrder.useInSkuGeneration,
         tooltip = "productOption_useInSkuGenerationTip",
-        defaultValue = "false",
+        defaultValue = "true",
         validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUseInSkuGenerationValidator") })
-    private Boolean useInSkuGeneration = Boolean.FALSE;
+    private Boolean useInSkuGeneration = Boolean.TRUE;
 
     @Column(name = "DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "productOption_displayOrder",
