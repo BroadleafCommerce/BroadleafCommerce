@@ -106,7 +106,7 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
                         //at this point the field name actually occurs within some array syntax
                         String fieldName = extractFieldName(err);
                         String[] fieldInfo = fieldName.split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
-                        Field formField = form.getDynamicForm(fieldInfo[0]).getFields().get(fieldName);
+                        Field formField = form.getDynamicForm(fieldInfo[0]).findField(fieldName);
 
                         if (formField != null) {
                             addFieldError(formField.getFriendlyName(), err.getCode(), tabErrors);

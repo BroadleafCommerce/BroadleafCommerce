@@ -1370,12 +1370,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public void populateAdornedEntityFormFields(EntityForm ef, Entity entity, AdornedTargetList adornedList) {
-        Field field = ef.getFields().get(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
+        Field field = ef.findField(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
         Property entityProp = entity.findProperty(ef.getIdProperty());
         field.setValue(entityProp.getValue());
 
         if (StringUtils.isNotBlank(adornedList.getSortField())) {
-            field = ef.getFields().get(adornedList.getSortField());
+            field = ef.findField(adornedList.getSortField());
             entityProp = entity.findProperty(adornedList.getSortField());
             if (field != null && entityProp != null) {
                 field.setValue(entityProp.getValue());
@@ -1385,7 +1385,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public void populateMapEntityFormFields(EntityForm ef, Entity entity) {
-        Field field = ef.getFields().get("priorKey");
+        Field field = ef.findField("priorKey");
         Property entityProp = entity.findProperty("key");
         if (field != null && entityProp != null) {
             field.setValue(entityProp.getValue());

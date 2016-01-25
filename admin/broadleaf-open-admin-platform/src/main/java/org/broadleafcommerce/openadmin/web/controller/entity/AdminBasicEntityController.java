@@ -1373,10 +1373,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
             } else {
                 //save off the prior key before clearing out the fields map as it will not appear
                 //back on the saved entity
-                String priorKey = entityForm.getFields().get("priorKey").getValue();
+                String priorKey = entityForm.findField("priorKey").getValue();
                 entityForm.clearFieldsMap();
                 formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id, entityForm);
-                entityForm.getFields().get("priorKey").setValue(priorKey);
+                entityForm.findField("priorKey").setValue(priorKey);
                 populateTypeAndId = false;
             }
 
