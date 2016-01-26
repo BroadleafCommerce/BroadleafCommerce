@@ -78,6 +78,7 @@
                 <configuration>
                     <includes>
                         <include>**/*Spec*</include>
+                        <include>**/*Test*</include>
                     </includes>
                     <argLine>${surefire.argLine}</argLine>
                 </configuration>
