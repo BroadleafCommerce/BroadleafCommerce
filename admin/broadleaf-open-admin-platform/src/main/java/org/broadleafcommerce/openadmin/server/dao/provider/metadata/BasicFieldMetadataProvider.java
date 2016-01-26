@@ -287,6 +287,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 metadata.setFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 metadata.setExplicitFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 metadata.setOptionListEntity(annot.optionListEntity().getName());
+                metadata.setOptionHideIfEmpty(annot.optionHideIfEmpty());
                 if (metadata.getOptionListEntity().equals(DataDrivenEnumerationValueImpl.class.getName())) {
                     metadata.setOptionValueFieldName("key");
                     metadata.setOptionDisplayFieldName("display");
@@ -478,6 +479,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 fieldMetadataOverride.setOptionValueFieldName(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONDISPLAYFIELDNAME)) {
                 fieldMetadataOverride.setOptionDisplayFieldName(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONHIDEIFEMPTY)) {
+                fieldMetadataOverride.setOptionHideIfEmpty(StringUtils.isEmpty(stringValue) ? entry.getValue()
+                        .booleanOverrideValue() : Boolean.parseBoolean(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONCANEDITVALUES)) {
                 fieldMetadataOverride.setOptionCanEditValues(StringUtils.isEmpty(stringValue) ? entry.getValue()
                         .booleanOverrideValue() : Boolean.parseBoolean(stringValue));
@@ -559,6 +563,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 override.setExplicitFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 override.setFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 override.setOptionCanEditValues(dataDrivenEnumeration.optionCanEditValues());
+                override.setOptionHideIfEmpty(dataDrivenEnumeration.optionHideIfEmpty());
                 override.setOptionDisplayFieldName(dataDrivenEnumeration.optionDisplayFieldName());
                 if (!ArrayUtils.isEmpty(dataDrivenEnumeration.optionFilterParams())) {
                     Serializable[][] params = new Serializable[dataDrivenEnumeration.optionFilterParams().length][3];
@@ -746,6 +751,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             if (basicFieldMetadata.getOptionDisplayFieldName() != null) {
                 metadata.setOptionDisplayFieldName(basicFieldMetadata.getOptionDisplayFieldName());
             }
+        }
+        if (basicFieldMetadata.getOptionHideIfEmpty() != null) {
+            metadata.setOptionHideIfEmpty(basicFieldMetadata.getOptionHideIfEmpty());
         }
         if (!StringUtils.isEmpty(metadata.getOptionListEntity()) && (StringUtils.isEmpty(metadata.getOptionValueFieldName()) || StringUtils.isEmpty(metadata.getOptionDisplayFieldName()))) {
             throw new IllegalArgumentException("Problem setting up data driven enumeration for (" + field.getName() + "). The optionListEntity, optionValueFieldName and optionDisplayFieldName properties must all be included if not using DataDrivenEnumerationValueImpl as the optionListEntity.");
