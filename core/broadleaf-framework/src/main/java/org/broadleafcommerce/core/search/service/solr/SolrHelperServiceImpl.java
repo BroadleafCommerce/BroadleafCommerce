@@ -860,12 +860,12 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public List<Long> getCategoryHierarchy(Category category) {
+    public List<Long> getCategoryFilterIds(Category category, SearchCriteria searchCriteria) {
         List<Long> categoryIds = new ArrayList<>();
 
         categoryIds.add(getCategoryId(category));
 
-        searchExtensionManager.getProxy().addAdditionalCategoryIds(category, categoryIds);
+        searchExtensionManager.getProxy().addAdditionalCategoryIds(category, searchCriteria, categoryIds);
 
         return categoryIds;
     }
