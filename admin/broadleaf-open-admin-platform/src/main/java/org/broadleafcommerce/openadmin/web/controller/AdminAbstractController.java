@@ -482,7 +482,8 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         if (requestParams == null || requestParams.isEmpty()) {
             return null;
         }
-        
+        Map<String, FilterAndSortCriteria> fasMap = new HashMap<String, FilterAndSortCriteria>();
+
         List<FilterAndSortCriteria> result = new ArrayList<FilterAndSortCriteria>();
         for (Entry<String, List<String>> entry : requestParams.entrySet()) {
             if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER)
@@ -501,9 +502,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                         collapsedValues.add(value);
                     }
                 }
-                
+
                 FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), collapsedValues);
-                result.add(fasCriteria);
+                fasMap.put(entry.getKey(),fasCriteria);
             }
         }
 
@@ -511,7 +512,6 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         List<String> sortDirections = getSortDirections(requestParams);
         if (CollectionUtils.isNotEmpty(sortProperties)) {
             //set up a map to determine if there is already some criteria set for the sort property
-            Map<String, FilterAndSortCriteria> fasMap = new HashMap<String, FilterAndSortCriteria>();
             for (int i = 0; i < sortProperties.size(); i++) {
                 boolean sortAscending = SortDirection.ASCENDING.toString().equals(sortDirections.get(i));
                 FilterAndSortCriteria propertyCriteria = fasMap.get(sortProperties.get(i));
@@ -520,13 +520,14 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                 if (propertyCriteria != null) {
                     propertyCriteria.setSortAscending(sortAscending);
                 } else {
-                    FilterAndSortCriteria fasc = new FilterAndSortCriteria(sortProperties.get(i));
-                    fasc.setSortAscending(sortAscending);
-                    result.add(fasc);
+                    propertyCriteria = new FilterAndSortCriteria(sortProperties.get(i));
+                    propertyCriteria.setSortAscending(sortAscending);
+                    fasMap.put(sortProperties.get(i),propertyCriteria);
                 }
             }
         }
-        
+
+        result.addAll(fasMap.values());
         return result.toArray(new FilterAndSortCriteria[result.size()]);
     }
     
