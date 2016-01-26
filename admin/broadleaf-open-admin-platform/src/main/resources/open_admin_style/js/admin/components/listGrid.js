@@ -18,6 +18,8 @@
  * #L%
  */
 (function($, BLCAdmin) {
+
+    var initializationHandlers = [];
     
     // Add utility functions for list grids to the BLCAdmin object
     BLCAdmin.listGrid = {
@@ -165,10 +167,12 @@
 
             //add hidden fields to the array
             var hiddenFields = $tr.data('hiddenfields');
-            for (j=0;j<hiddenFields.hiddenFields.length;j++) {
-                var fieldName = hiddenFields.hiddenFields[j].name;
-                var value = hiddenFields.hiddenFields[j].val;
-                fields[fieldName] = value;
+            if (hiddenFields) {
+                for (j = 0; j < hiddenFields.hiddenFields.length; j++) {
+                    var fieldName = hiddenFields.hiddenFields[j].name;
+                    var value = hiddenFields.hiddenFields[j].val;
+                    fields[fieldName] = value;
+                }
             }
 
             if ($tr.closest('.tree-listgrid-container').length) {
@@ -291,6 +295,10 @@
                     $(this).html(day.fromNow());
                 }
             });
+            // Run any additionally configured initialization handlers
+            for (var i = 0; i < initializationHandlers.length; i++) {
+                initializationHandlers[i]($container.find('table#listGrid-main'));
+            }
         },
         
         getListGridCount : function($container) {
@@ -304,6 +312,10 @@
             maxWidth -= 70;
 
             $titlebar.find('.listgrid-friendly-name').css('max-width', maxWidth + 'px');
+        },
+
+        addInitializationHandler : function(fn) {
+            initializationHandlers.push(fn);
         }
     };
     

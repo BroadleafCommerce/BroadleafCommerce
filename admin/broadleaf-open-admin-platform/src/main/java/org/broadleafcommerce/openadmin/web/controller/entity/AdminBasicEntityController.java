@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +33,21 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.web.JsonResponse;
-import org.broadleafcommerce.openadmin.dto.*;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
+import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -45,27 +58,41 @@ import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.entity.*;
+import org.broadleafcommerce.openadmin.web.form.entity.DefaultAdornedEntityFormActions;
+import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
+import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
@@ -355,20 +382,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
             modifyEntityForm(entityForm, pathVars);
         }
 
-        // check if the entity is dirty and find the number of changes
-        int modifications = 0;
-        for (Property prop : entity.getProperties()) {
-            if (prop.getIsDirty() && !prop.getName().equals("id")) {
-                modifications++;
-            }
-        }
-
         model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-
-        // sandbox ribbon information
-        model.addAttribute("entityModifications", modifications);
 
         setModelAttributes(model, sectionKey);
 
@@ -397,7 +413,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param response
      * @param model
      * @param pathVars
-     * @param ModelAttributes
+     * @param id
+     * @param tabName
+     * @param entityForm
+     * @param entity
      * @return the return view path
      * @throws Exception
      */
@@ -1229,7 +1248,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param collectionField
      * @param collectionItemId
      * @param modalHeaderType
-     * @param ef
+     * @param entityForm
      * @param entity
      * @return
      * @throws ServiceException
