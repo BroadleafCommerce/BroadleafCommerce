@@ -89,6 +89,7 @@ public class PropertyType {
         public static final String OPTIONDISPLAYFIELDNAME = "optionDisplayFieldName";
         public static final String OPTIONCANEDITVALUES = "optionCanEditValues";
         public static final String OPTIONFILTERPARAMS = "optionFilterParams";
+        public static final String OPTIONHIDEIFEMPTY = "optionHideIfEmpty";
     }
 
     public static class AdminPresentationAdornedTargetCollection {
