@@ -46,6 +46,14 @@ public interface CategoryDao {
     public Category readCategoryById(@Nonnull Long categoryId);
 
     /**
+     * Retrieves a List of Category IDs
+     *
+     * @param categoryIds
+     * @return
+     */
+    public List<Category> readCategoriesByIds(List<Long> categoryIds);
+
+    /**
      * Retrieve a {@link Category} instance by the external id
      * @param externalId
      * @return

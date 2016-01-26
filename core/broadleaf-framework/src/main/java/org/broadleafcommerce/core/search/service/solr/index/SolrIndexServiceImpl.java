@@ -618,7 +618,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         Collection<Object> existingValues = document.getFieldValues(shs.getCategoryFieldName());
         if (existingValues == null || !existingValues.contains(catIdToAdd)) {
             document.addField(shs.getCategoryFieldName(), catIdToAdd);
-            document.addField(shs.getCategoryStringFieldName(), catalogService.findCategoryById(catIdToAdd).getName());
         }
 
         Set<Long> parents = cache.getParentCategoriesByCategory().get(categoryId);
