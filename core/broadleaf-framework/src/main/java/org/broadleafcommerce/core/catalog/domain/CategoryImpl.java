@@ -385,7 +385,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @MapKey(name="name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "categoryAttributesTitle",
-        tab = TabName.Marketing,
+        tab = TabName.General, order = FieldOrder.CustomAttributes,
         deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
     )
     protected Map<String, CategoryAttribute> categoryAttributes = new HashMap<String, CategoryAttribute>();

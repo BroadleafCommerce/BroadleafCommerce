@@ -18,7 +18,9 @@
  * #L%
  */
 (function($, BLCAdmin) {
-    
+
+    var recordLoadHandlers = [];
+
     var LISTGRID_AJAX_LOCK = 0;
     var fetchDebounce = 200;
     var updateUrlDebounce = 700;
@@ -440,6 +442,10 @@
                     } else {
                         BLCAdmin.listGrid.hideLoadingSpinner($tbody);
                     }
+                    // Run any additionally configured initialization handlers
+                    for (var i = 0; i < recordLoadHandlers.length; i++) {
+                        recordLoadHandlers[i]($tbody.closest("table"));
+                    }
                 });
             } else {
                 BLCAdmin.listGrid.paginate.releaseLock();
@@ -816,6 +822,10 @@
             $modalBody.css('overflow-y', 'auto');
             
             this.initializeTableResizing($table, $clonedTable);
+        },
+
+        addRecordLoadHandler : function(fn) {
+            recordLoadHandlers.push(fn);
         }
     };
     

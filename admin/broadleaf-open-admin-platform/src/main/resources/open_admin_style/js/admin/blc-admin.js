@@ -36,7 +36,7 @@ var BLCAdmin = (function($) {
 	};
 	var originalStickyBarOffset = $('.sticky-container').offset().top;
 	
-    var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container span.display-value, .redactor_box, ' +
+    var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container, .redactor_box, ' +
                          '.asset-selector-container img, >div>select, div.custom-checkbox, div.small-enum-container, ' +
                          'textarea, div.radio-container, div.query-builder-rules-container, >.selectize-control>.selectize-input, .redactor-box';
     

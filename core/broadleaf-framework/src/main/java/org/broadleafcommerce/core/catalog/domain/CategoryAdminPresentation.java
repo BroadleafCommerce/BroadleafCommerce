@@ -95,4 +95,8 @@ public interface CategoryAdminPresentation {
         public static final int Miscellaneous = 2000;
         public static final int ProductDefaults = 1000;
     }
+
+    public static class FieldOrder {
+        public static final int CustomAttributes = 9000;
+    }
 }
