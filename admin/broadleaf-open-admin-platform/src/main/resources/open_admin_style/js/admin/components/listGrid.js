@@ -297,7 +297,7 @@
             });
             // Run any additionally configured initialization handlers
             for (var i = 0; i < initializationHandlers.length; i++) {
-                initializationHandlers[i]($container.find('table#listGrid-main'));
+                initializationHandlers[i]($container.find('table:not([id$="-header"])'));
             }
         },
         
