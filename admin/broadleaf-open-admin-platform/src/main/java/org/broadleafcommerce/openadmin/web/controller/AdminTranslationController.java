@@ -51,14 +51,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Controller("blAdminTranslationController")
 @RequestMapping("/translation")
@@ -188,7 +187,8 @@ public class AdminTranslationController extends AdminAbstractController {
         entityForm.getFields().put("entityType", entityType);
         entityForm.getFields().put("fieldName", fieldName);
 
-        Entity entity = service.addEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(ceilingEntity, getSectionCustomCriteria());
+        Entity entity = service.addEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
 
         entityFormValidator.validate(entityForm, entity, result);
         if (result.hasErrors()) {
@@ -286,7 +286,8 @@ public class AdminTranslationController extends AdminAbstractController {
         entityForm.getFields().put("id", id);
         entityForm.setId(String.valueOf(form.getTranslationId()));
 
-        service.updateEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(Translation.class.getName(), getSectionCustomCriteria());
+        service.updateEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
         return viewTranslation(request, response, model, form, result);
     }
 
@@ -326,7 +327,8 @@ public class AdminTranslationController extends AdminAbstractController {
         entityForm.getFields().put("id", id);
         entityForm.setId(String.valueOf(form.getTranslationId()));
 
-        service.removeEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs);
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(Translation.class.getName(), getSectionCustomCriteria());
+        service.removeEntity(entityForm, sectionCriteria, sectionCrumbs);
         return viewTranslation(request, response, model, form, result);
     }
 

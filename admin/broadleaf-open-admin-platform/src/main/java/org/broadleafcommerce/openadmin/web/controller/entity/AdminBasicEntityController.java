@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -81,18 +82,15 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
@@ -326,7 +324,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
 
         extractDynamicFormFields(cmd, entityForm);
-        Entity entity = service.addEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(sectionClassName, getSectionCustomCriteria());
+        Entity entity = service.addEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
         entityFormValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
@@ -548,8 +547,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 
         extractDynamicFormFields(cmd, entityForm);
-        
-        Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
+
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(sectionClassName, getSectionCustomCriteria());
+        Entity entity = service.updateEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
 
         entityFormValidator.validate(entityForm, entity, result);
         if (result.hasErrors()) {
@@ -606,9 +606,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result,
             RedirectAttributes ra) throws Exception {
         String sectionKey = getSectionKey(pathVars);
+        String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
 
-        Entity entity = service.removeEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(sectionClassName, getSectionCustomCriteria());
+        Entity entity = service.removeEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
         // Removal does not normally return an Entity unless there is some validation error
         if (entity != null) {
             entityFormValidator.validate(entityForm, entity, result);
@@ -620,7 +622,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 request.setAttribute(DispatcherServlet.OUTPUT_FLASH_MAP_ATTRIBUTE, fm);
                 
                 // Re-look back up the entity so that we can return something populated
-                String sectionClassName = getClassNameForSection(sectionKey);
                 PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars);
                 ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
                 entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
