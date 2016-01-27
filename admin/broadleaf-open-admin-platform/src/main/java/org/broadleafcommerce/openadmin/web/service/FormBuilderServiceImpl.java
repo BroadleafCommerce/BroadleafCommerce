@@ -879,11 +879,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 LOG.warn(msg);
                 return null;
             }
-        } else if (fieldType.equals(SupportedFieldType.DECIMAL.toString())) {
+        } else if (fieldType.equals(SupportedFieldType.DECIMAL.toString())
+                || fieldType.equals(SupportedFieldType.MONEY.toString())) {
             try {
                 BigDecimal val = new BigDecimal(defaultValue);
             } catch (NumberFormatException  e) {
-                String msg = buildMsgForDefValException(SupportedFieldType.DECIMAL.toString(), fmd, defaultValue);
+                String msg = buildMsgForDefValException(fieldType.toString(), fmd, defaultValue);
                 LOG.warn(msg);
                 return null;
             }
