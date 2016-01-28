@@ -306,11 +306,6 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public String getCategoryStringFieldName() {
-        return "categoryName_ss";
-    }
-
-    @Override
     public String getExplicitCategoryFieldName() {
         return "explicitCategory";
     }
