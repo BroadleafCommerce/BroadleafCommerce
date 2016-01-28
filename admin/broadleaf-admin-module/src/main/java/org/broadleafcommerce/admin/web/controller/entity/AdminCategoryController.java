@@ -28,9 +28,8 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.Map;
-
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * Handles admin operations for the {@link Category} entity.
@@ -77,10 +76,5 @@ public class AdminCategoryController extends AdminBasicEntityController {
             .withAttribute("sourceField", "name")
             .withAttribute("toggleField", "overrideGeneratedUrl")
             .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
-    }
-
-    @Override
-    public String[] getSectionCustomCriteria() {
-        return new String[]{"categoryDirectEdit"};
     }
 }

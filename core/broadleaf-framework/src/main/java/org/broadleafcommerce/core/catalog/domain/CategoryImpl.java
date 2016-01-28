@@ -177,8 +177,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Column(name = "TAX_CODE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_TaxCode", order = 4000,
+            tooltip = "categoryTaxCodeHelpText",
             group = GroupName.ProductDefaults)
-    @AdminPresentationDataDrivenEnumeration(optionCanEditValues = true, optionFilterParams = { @OptionFilterParam(
+    @AdminPresentationDataDrivenEnumeration(optionCanEditValues = true, optionHideIfEmpty = true, optionFilterParams = { @OptionFilterParam(
             param = "type.key", value = "TAX_CODE", paramType = OptionFilterParamType.STRING) })
     protected String taxCode;
 
@@ -359,7 +360,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "categoryFacetsTitle", order = 1000,
-            tab = TabName.SearchFacets,
+            tab = TabName.Search,
             targetObjectProperty = "searchFacet",
             sortProperty = "sequence",
             gridVisibleFields = { "name", "label", "fieldType.indexField.field.friendlyName" })
@@ -371,7 +372,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
     @OrderBy(value = "sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "excludedFacetsTitle", order = 2000,
-            tab = TabName.SearchFacets,
+            tab = TabName.Search,
             targetObjectProperty = "searchFacet",
             sortProperty = "sequence",
             gridVisibleFields = { "name", "label", "fieldType.indexField.field.friendlyName" })
@@ -392,7 +393,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", order = 2000,
-            helpText = "categoryInventoryTypeHelpText",
+            tooltip = "categoryInventoryTypeHelpText",
             group = GroupName.ProductDefaults,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")
@@ -400,6 +401,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Column(name = "FULFILLMENT_TYPE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_FulfillmentType", order = 3000,
+            tooltip = "categoryFulfillmentTypeHelpText",
             group = GroupName.ProductDefaults,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")

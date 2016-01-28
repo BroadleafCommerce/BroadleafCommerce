@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.openadmin.web.service;
 
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
@@ -89,10 +92,10 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-
+import javax.annotation.Resource;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -109,11 +112,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -762,6 +760,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         // We're dealing with fields that should render as drop-downs, so set their possible values
                         f = new ComboField();
                         ((ComboField) f).setOptions(fmd.getEnumerationValues());
+                        if (fmd.getOptionHideIfEmpty() != null && fmd.getOptionHideIfEmpty().booleanValue()
+                                && ((ComboField) f).getOptions().size() == 0) {
+                            f.setIsVisible(false);
+                        }
                     } else if (fieldType.equals(SupportedFieldType.CODE.toString())) {
                         f = new CodeField();
                     } else if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
@@ -877,11 +879,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 LOG.warn(msg);
                 return null;
             }
-        } else if (fieldType.equals(SupportedFieldType.DECIMAL.toString())) {
+        } else if (fieldType.equals(SupportedFieldType.DECIMAL.toString())
+                || fieldType.equals(SupportedFieldType.MONEY.toString())) {
             try {
                 BigDecimal val = new BigDecimal(defaultValue);
             } catch (NumberFormatException  e) {
-                String msg = buildMsgForDefValException(SupportedFieldType.DECIMAL.toString(), fmd, defaultValue);
+                String msg = buildMsgForDefValException(fieldType.toString(), fmd, defaultValue);
                 LOG.warn(msg);
                 return null;
             }
@@ -1370,12 +1373,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public void populateAdornedEntityFormFields(EntityForm ef, Entity entity, AdornedTargetList adornedList) {
-        Field field = ef.getFields().get(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
+        Field field = ef.findField(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
         Property entityProp = entity.findProperty(ef.getIdProperty());
         field.setValue(entityProp.getValue());
 
         if (StringUtils.isNotBlank(adornedList.getSortField())) {
-            field = ef.getFields().get(adornedList.getSortField());
+            field = ef.findField(adornedList.getSortField());
             entityProp = entity.findProperty(adornedList.getSortField());
             if (field != null && entityProp != null) {
                 field.setValue(entityProp.getValue());
@@ -1385,7 +1388,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public void populateMapEntityFormFields(EntityForm ef, Entity entity) {
-        Field field = ef.getFields().get("priorKey");
+        Field field = ef.findField("priorKey");
         Property entityProp = entity.findProperty("key");
         if (field != null && entityProp != null) {
             field.setValue(entityProp.getValue());

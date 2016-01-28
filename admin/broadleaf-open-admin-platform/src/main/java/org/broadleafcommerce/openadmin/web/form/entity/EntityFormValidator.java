@@ -92,9 +92,9 @@ public class EntityFormValidator {
                     Field field = null;
                     if (StringUtils.contains(unserializedFieldName, DynamicEntityFormInfo.FIELD_SEPARATOR)) {
                         String[] fieldInfo = unserializedFieldName.split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
-                        field = form.getDynamicForm(fieldInfo[0]).getFields().get(fieldInfo[1]);
-                    } else if (form.getFields().get(unserializedFieldName) != null) {
-                        field = form.getFields().get(unserializedFieldName);
+                        field = form.getDynamicForm(fieldInfo[0]).findField(fieldInfo[1]);
+                    } else if (form.findField(unserializedFieldName) != null) {
+                        field = form.findField(unserializedFieldName);
                     }
                     
                     //If the submitted field was a radio button but has validation associated with it, that radio field
