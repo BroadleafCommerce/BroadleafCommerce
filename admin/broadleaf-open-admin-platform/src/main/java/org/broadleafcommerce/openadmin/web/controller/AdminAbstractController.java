@@ -331,7 +331,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             Map<String, Field> fieldOverrides = dynamicFormOverride.getFields();
             for (Entry<String, Field> override : fieldOverrides.entrySet()) {
                 if (dynamicForm.getFields().containsKey(override.getKey())) {
-                    dynamicForm.getFields().get(override.getKey()).setValue(override.getValue().getValue());
+                    dynamicForm.findField(override.getKey()).setValue(override.getValue().getValue());
                 }
             }
         }

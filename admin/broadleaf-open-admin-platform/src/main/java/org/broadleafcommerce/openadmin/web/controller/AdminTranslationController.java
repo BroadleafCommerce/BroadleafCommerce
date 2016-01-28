@@ -340,12 +340,12 @@ public class AdminTranslationController extends AdminAbstractController {
      */
     protected TranslationForm getTranslationForm(EntityForm entityForm) {
         TranslationForm form = new TranslationForm();
-        form.setCeilingEntity(entityForm.getFields().get("ceilingEntity").getValue());
-        form.setEntityId(entityForm.getFields().get("entityId").getValue());
-        form.setLocaleCode(entityForm.getFields().get("localeCode").getValue());
-        form.setPropertyName(entityForm.getFields().get("propertyName").getValue());
-        form.setTranslatedValue(entityForm.getFields().get("translatedValue").getValue());
-        form.setIsRte(Boolean.valueOf(entityForm.getFields().get("isRte").getValue()));
+        form.setCeilingEntity(entityForm.findField("ceilingEntity").getValue());
+        form.setEntityId(entityForm.findField("entityId").getValue());
+        form.setLocaleCode(entityForm.findField("localeCode").getValue());
+        form.setPropertyName(entityForm.findField("propertyName").getValue());
+        form.setTranslatedValue(entityForm.findField("translatedValue").getValue());
+        form.setIsRte(Boolean.valueOf(entityForm.findField("isRte").getValue()));
         if (StringUtils.isNotBlank(entityForm.getId())) {
             form.setTranslationId(Long.parseLong(entityForm.getId()));
         }
