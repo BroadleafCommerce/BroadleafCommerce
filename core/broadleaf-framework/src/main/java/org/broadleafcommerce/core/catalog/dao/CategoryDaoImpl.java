@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -94,7 +95,8 @@ public class CategoryDaoImpl implements CategoryDao {
                 "select category from org.broadleafcommerce.core.catalog.domain.Category category "
                         + "where category.id in :ids",
                 Category.class);
-        query.setParameter("ids", categoryIds);
+        query.setParameter("ids", sandBoxHelper.mergeCloneIds(CategoryImpl.class,
+                categoryIds.toArray(new Long[categoryIds.size()])));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
