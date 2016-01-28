@@ -125,7 +125,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 String propertyName = info.getPropertyName();
                 String propertyValue;
                 if (entityForm.getFields().containsKey(propertyName)) {
-                    propertyValue = entityForm.getFields().get(propertyName).getValue();
+                    propertyValue = entityForm.findField(propertyName).getValue();
                 } else {
                     propertyValue = info.getPropertyValue();
                 }
@@ -152,7 +152,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 customCriteria = info.getCustomCriteriaOverride();
             } else {
                 String propertyName = info.getPropertyName();
-                String propertyValue = entityForm.getFields().get(propertyName).getValue();
+                String propertyValue = entityForm.findField(propertyName).getValue();
                 customCriteria = new String[] { info.getCriteriaName(), entityForm.getId(), propertyName, propertyValue };
             }
 
@@ -187,7 +187,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     public PersistencePackageRequest getRequestForEntityForm(EntityForm entityForm, String[] customCriteria, List<SectionCrumb> sectionCrumbs) {
         // Ensure the ID property is on the form
-        Field idField = entityForm.getFields().get(entityForm.getIdProperty());
+        Field idField = entityForm.findField(entityForm.getIdProperty());
         if (idField == null) {
             idField = new Field();
             idField.setName(entityForm.getIdProperty());

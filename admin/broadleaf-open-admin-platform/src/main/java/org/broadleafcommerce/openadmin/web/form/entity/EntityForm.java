@@ -137,7 +137,7 @@ public class EntityForm {
             Map<String, Field> dynamicFormFields = entry.getValue().getFields();
             for (Entry<String, Field> dynamicField : dynamicFormFields.entrySet()) {
                 if (fields.containsKey(dynamicField.getKey())) {
-                    LOG.info("Excluding dynamic field " + dynamicField.getKey() + " as there is already an occurrance in" +
+                    LOG.info("Excluding dynamic field " + dynamicField.getKey() + " as there is already an occurrence in" +
                             " this entityForm");
                 } else {
                     fields.put(dynamicField.getKey(), dynamicField.getValue());
@@ -223,16 +223,9 @@ public class EntityForm {
 
     public Field findField(String fieldName) {
         fieldName = sanitizeFieldName(fieldName);
-        for (Tab tab : tabs) {
-            for (FieldGroup fieldGroup : tab.getFieldGroups()) {
-                for (Field field : fieldGroup.getFields()) {
-                    if (field.getName().equals(fieldName)) {
-                        return field;
-                    }
-                }
-            }
-        }
-        return fields == null ? null : fields.get(fieldName);
+        Map<String, Field> fields = getFields();
+
+        return fields.get(fieldName);
     }
 
     /**
@@ -414,6 +407,15 @@ public class EntityForm {
         }
 
         fieldGroup.addField(field);
+
+        // Make sure to add the field to the fields "cache".
+        // If getFields() was called before this field was added, the "cache" was set. Since we're
+        // adding another field here, we need to add the field to the fields "cache".
+        // If the fields map is null, then the "cache" is not set. Therefore, we should not add this field,
+        // but instead wait for getFields() to build the entire map.
+        if (fields != null) {
+            fields.put(field.getName(), field);
+        }
     }
 
     public void addListGrid(ClassMetadata cmd, ListGrid listGrid, String tabName, Integer tabOrder, String groupName, boolean isTabPresent) {

@@ -29,12 +29,22 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.broadleafcommerce.openadmin.dto.*;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
+import org.broadleafcommerce.openadmin.server.service.AdminSectionCustomCriteriaService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.*;
@@ -93,6 +103,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
+
+    @Resource(name = "blAdminSectionCustomCriteriaService")
+    protected AdminSectionCustomCriteriaService customCriteriaService;
 
     /**
      * Deprecated in favor of {@link org.broadleafcommerce.openadmin.web.controller.AdminAbstractControllerExtensionManager}
@@ -313,7 +326,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             Map<String, Field> fieldOverrides = dynamicFormOverride.getFields();
             for (Entry<String, Field> override : fieldOverrides.entrySet()) {
                 if (dynamicForm.getFields().containsKey(override.getKey())) {
-                    dynamicForm.getFields().get(override.getKey()).setValue(override.getValue().getValue());
+                    dynamicForm.findField(override.getKey()).setValue(override.getValue().getValue());
                 }
             }
         }
@@ -727,9 +740,10 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      */
     protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, 
             List<SectionCrumb> sectionCrumbs, Map<String, String> pathVars) {
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(sectionClassName, getSectionCustomCriteria());
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(sectionClassName)
-                .withCustomCriteria(getSectionCustomCriteria())
+                .withCustomCriteria(sectionCriteria)
                 .withSectionCrumbs(sectionCrumbs);
 
         attachSectionSpecificInfo(ppr, pathVars);
@@ -757,9 +771,10 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, 
             MultiValueMap<String, String> requestParams, List<SectionCrumb> sectionCrumbs, Map<String, String> pathVars) {
         FilterAndSortCriteria[] fascs = getCriteria(requestParams);
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(sectionClassName, getSectionCustomCriteria());
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(sectionClassName)
-                .withCustomCriteria(getSectionCustomCriteria())
+                .withCustomCriteria(sectionCriteria)
                 .withFilterAndSortCriteria(fascs)
                 .withStartIndex(getStartIndex(requestParams))
                 .withMaxIndex(getMaxIndex(requestParams))
