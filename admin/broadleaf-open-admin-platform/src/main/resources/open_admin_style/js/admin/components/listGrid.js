@@ -208,7 +208,7 @@
             var $modal = $listGridContainer.closest('.modal');
             if ($modal.length && typeof listGridId !== 'undefined') {
                 var $modalActionContainer = $modal.find('.modal-footer .listgrid-modal-actions');
-                updateListGridActionsForContainer($modalActionContainer.find("button.row-action[data-listgridid='" + listGridId + "']"), numSelected);
+                updateListGridActionsForContainer($modalActionContainer.find("button.row-action"), numSelected);
             }
 
             function updateListGridActionsForContainer($containerActions, numSelected) {
