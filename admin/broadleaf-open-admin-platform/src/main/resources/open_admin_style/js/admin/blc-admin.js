@@ -545,7 +545,7 @@ var BLCAdmin = (function($) {
             }
 
             $('select:not(".selectize-collection, .selectize-adder' + excludedSelectors + '")')
-                .selectize({
+                .blSelectize({
                     sortField: 'text',
                     closeAfterSelect: true,
                     dropdownParent: 'body',
@@ -703,8 +703,8 @@ var BLCAdmin = (function($) {
                     selectizeCollectionOptions['plugins'] = ['remove_button', 'silent_remove'];
                 }
 
-                $select_adder = $(selectizeAdder).selectize(selectizeAdderOptions);
-                $select_collection = $(selectizeCollection).selectize(selectizeCollectionOptions);
+                $select_adder = $(selectizeAdder).blSelectize(selectizeAdderOptions);
+                $select_collection = $(selectizeCollection).blSelectize(selectizeCollectionOptions);
 
                 select_collection  = $select_collection[0].selectize;
                 select_adder = $select_adder[0].selectize;
@@ -969,6 +969,22 @@ var BLCAdmin = (function($) {
     };
 
 })(jQuery);
+
+$.fn.blSelectize = function (settings_user) {
+    var $select = this.selectize(settings_user);
+
+    var selectize = $select[0].selectize;
+
+    $('.main-content').scroll(function () {
+        selectize.close();
+    });
+
+    $('.modal-body').scroll(function () {
+        selectize.close();
+    });
+
+    return $select;
+};
 
 // Replace the default AJAX error handler with this custom admin one that relies on the exception
 // being set on the model instead of a stack trace page when an error occurs on an AJAX request.
