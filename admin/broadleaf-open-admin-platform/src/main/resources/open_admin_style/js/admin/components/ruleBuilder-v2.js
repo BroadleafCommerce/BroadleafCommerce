@@ -832,7 +832,7 @@
             parent.find('select').each(function(i, el) {
                 var el = $(el);
                 if (el.hasClass('form-control')) {
-                    el.removeClass('form-control').blSelectize({ dropdownParent: 'body' });
+                    el.removeClass('form-control').blSelectize();
                 }
             });
 
@@ -984,7 +984,7 @@ $(document).ready(function() {
         $modal.find('.modal-body').find('select').each(function(i, el) {
             var el = $(el);
             if (el.hasClass('form-control')) {
-                el.removeClass('form-control').blSelectize({ dropdownParent: 'body' });
+                el.removeClass('form-control').blSelectize();
             }
         });
 
@@ -1061,7 +1061,7 @@ $(document).ready(function() {
         var el = $(e.target);
         if (el.is('select')) {
             if (el.hasClass('form-control')) {
-                el.removeClass('form-control').blSelectize({ dropdownParent: 'body' });
+                el.removeClass('form-control').blSelectize();
             }
         }
     });

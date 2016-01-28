@@ -1059,7 +1059,7 @@ $(document).ready(function() {
         $modal.find('.modal-body').find('select').each(function(i, el) {
             var el = $(el);
             if (el.hasClass('form-control')) {
-                el.removeClass('form-control').blSelectize({ dropdownParent: 'body' });
+                el.removeClass('form-control').blSelectize();
             }
 
             el.parent().parent().find('div.rule-filter-container > div > div.selectize-input').width("244px");
@@ -1176,7 +1176,7 @@ $(document).ready(function() {
                 var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
                 $(filterBuilder.builders[0]).queryBuilder('updateDisabledFilters');
                 el.find('option[disabled]').remove();
-                el.removeClass('form-control').blSelectize({ dropdownParent: 'body' });
+                el.removeClass('form-control').blSelectize();
             }
 
             el.parent().parent().find('div.rule-filter-container > div > div.selectize-input').width("222px");
