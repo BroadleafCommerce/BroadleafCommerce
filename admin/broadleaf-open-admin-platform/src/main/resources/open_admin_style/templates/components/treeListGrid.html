@@ -1,5 +1,5 @@
 <div class="listgrid-search row">
-    <div th:class="${!inModal}? 'col6' : ''">
+    <div th:class="${!isLookup}? 'col6' : ''">
         <!-- Search box -->
         <form class="custom-tree-search" th:action="${sectionUrl}" method="GET">
             <input id="tree-listgrid-search" type="search" name="table-search"
@@ -19,7 +19,7 @@
         <div class="tree-title-container">
             <span class="tree-title"></span>
 
-            <div class="tree-title-actions" th:if="${!inModal or isLookup}">
+            <div class="tree-title-actions">
                 <!-- Grid Functions -->
                 <a class="tree-list-view active" href="#"><i class="fa fa-columns"></i></a>
                 <a class="search-list-view" href="#"><i class="fa fa-list"></i></a>
