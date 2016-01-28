@@ -296,10 +296,14 @@ $(document).ready(function() {
 
         $(this).closest('.listgrid-container').find('.mCSB_container').css('top', '0px');
         $(this).closest('.listgrid-container').find('.listgrid-body-wrapper').mCustomScrollbar('update');
-        
+        var oldParams = BLCAdmin.history.getUrlParameters();
+        if (oldParams == null) {
+            oldParams = {};
+        }
+        var $url = $(this).closest('.filter-fields').data('action') + '?' + $.param(oldParams);
         BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
         BLC.ajax({
-            url: $(this).closest('.filter-fields').data('action'),
+            url: $url,
             type: "GET",
             data: $(nonBlankInputs).serialize()
         }, function(data) {
