@@ -28,12 +28,17 @@ import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -175,32 +180,36 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     public void decrementInventory(Map<Sku, Integer> skuQuantities, Map<String, Object> context) throws InventoryUnavailableException {
         ExtensionResultStatusType res = extensionManager.getProxy().decrementInventory(skuQuantities, context);
         if (ExtensionResultStatusType.NOT_HANDLED.equals(res)) {
-            for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
-                Sku sku = entry.getKey();
-                Integer quantity = entry.getValue();
-                if (quantity == null || quantity < 1) {
-                    throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
-                }
-                
-                if (checkBasicAvailablility(sku)) {
-                    if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                        Integer inventoryAvailable = retrieveQuantityAvailable(sku, context);
-                        if (inventoryAvailable == null) {
-                            return;
-                        }
-                        if (inventoryAvailable < quantity) {
-                            throw new InventoryUnavailableException(
-                                    "There was not enough inventory to fulfill this request.", sku.getId(), quantity, inventoryAvailable);
-                        }
-                        int newInventory = inventoryAvailable - quantity;
-                        sku.setQuantityAvailable(newInventory);
-                        catalogService.saveSku(sku);
-                    } else {
-                        LOG.info("Not decrementing inventory as the Sku has been marked as always available");
+            decrementSku(skuQuantities, context);
+        }
+    }
+
+    protected void decrementSku(Map<Sku, Integer> skuQuantities, Map<String, Object> context) throws InventoryUnavailableException {
+        for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
+            Sku sku = entry.getKey();
+            Integer quantity = entry.getValue();
+            if (quantity == null || quantity < 1) {
+                throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
+            }
+
+            if (checkBasicAvailablility(sku)) {
+                if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+                    Integer inventoryAvailable = retrieveQuantityAvailable(sku, context);
+                    if (inventoryAvailable == null) {
+                        return;
                     }
+                    if (inventoryAvailable < quantity) {
+                        throw new InventoryUnavailableException(
+                                "There was not enough inventory to fulfill this request.", sku.getId(), quantity, inventoryAvailable);
+                    }
+                    int newInventory = inventoryAvailable - quantity;
+                    sku.setQuantityAvailable(newInventory);
+                    catalogService.saveSku(sku);
                 } else {
-                    throw new InventoryUnavailableException("The Sku has been marked as unavailable", sku.getId(), quantity, 0);
+                    LOG.info("Not decrementing inventory as the Sku has been marked as always available");
                 }
+            } else {
+                throw new InventoryUnavailableException("The Sku has been marked as unavailable", sku.getId(), quantity, 0);
             }
         }
     }
@@ -218,25 +227,86 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     public void incrementInventory(Map<Sku, Integer> skuQuantities, Map<String, Object> context) {
         ExtensionResultStatusType res = extensionManager.getProxy().incrementInventory(skuQuantities, context);
         if (ExtensionResultStatusType.NOT_HANDLED.equals(res)) {
-            for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
-                Sku sku = entry.getKey();
-                Integer quantity = entry.getValue();
-                if (quantity == null || quantity < 1) {
-                    throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
+            incrementSku(skuQuantities, context);
+        }
+    }
+
+    protected void incrementSku(Map<Sku, Integer> skuQuantities, Map<String, Object> context) {
+        for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
+            Sku sku = entry.getKey();
+            Integer quantity = entry.getValue();
+            if (quantity == null || quantity < 1) {
+                throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
+            }
+            if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+                Integer currentInventoryAvailable = retrieveQuantityAvailable(sku, context);
+                if (currentInventoryAvailable == null) {
+                    throw new IllegalArgumentException("The current inventory for this Sku is null");
+                }
+                int newInventory = currentInventoryAvailable + quantity;
+                sku.setQuantityAvailable(newInventory);
+                catalogService.saveSku(sku);
+            } else {
+                LOG.info("Not incrementing inventory as the Sku has been marked as always available");
+            }
+        }
+    }
+
+    @Override
+    public void reconcileChangeOrderInventory(Map<Sku, Integer> decrementSkuQuantities, Map<Sku, Integer> incrementSkuQuantities, Map<String, Object> context) throws InventoryUnavailableException {
+        ExtensionResultStatusType res = extensionManager.getProxy().reconcileChangeOrderInventory(decrementSkuQuantities, incrementSkuQuantities, context);
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(res)) {
+            if (!decrementSkuQuantities.isEmpty()) {
+                decrementSku(decrementSkuQuantities, context);
+            }
+
+            if (!incrementSkuQuantities.isEmpty()) {
+                incrementSku(incrementSkuQuantities, context);
+            }
+        }
+    }
+
+    @Override
+    public Map<Sku, Integer> buildSkuInventoryMap(Order order) {
+        //map to hold skus and quantity purchased
+        HashMap<Sku, Integer> skuInventoryMap = new HashMap<Sku, Integer>();
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            if (orderItem instanceof DiscreteOrderItem) {
+                Sku sku = ((DiscreteOrderItem) orderItem).getSku();
+                Integer quantity = skuInventoryMap.get(sku);
+                if (quantity == null) {
+                    quantity = orderItem.getQuantity();
+                } else {
+                    quantity += orderItem.getQuantity();
                 }
                 if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                    Integer currentInventoryAvailable = retrieveQuantityAvailable(sku, context);
-                    if (currentInventoryAvailable == null) {
-                        throw new IllegalArgumentException("The current inventory for this Sku is null");
+                    skuInventoryMap.put(sku, quantity);
+                }
+            } else if (orderItem instanceof BundleOrderItem) {
+                BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
+                if (InventoryType.CHECK_QUANTITY.equals(bundleItem.getSku().getInventoryType())) {
+                    // add the bundle sku of quantities to decrement
+                    skuInventoryMap.put(bundleItem.getSku(), bundleItem.getQuantity());
+                }
+
+                // Now add all of the discrete items within the bundl
+                List<DiscreteOrderItem> discreteItems = bundleItem.getDiscreteOrderItems();
+                for (DiscreteOrderItem discreteItem : discreteItems) {
+                    if (InventoryType.CHECK_QUANTITY.equals(discreteItem.getSku().getInventoryType())) {
+                        Integer quantity = skuInventoryMap.get(discreteItem.getSku());
+                        if (quantity == null) {
+                            quantity = (discreteItem.getQuantity() * bundleItem.getQuantity());
+                        } else {
+                            quantity += (discreteItem.getQuantity() * bundleItem.getQuantity());
+                        }
+                        skuInventoryMap.put(discreteItem.getSku(), quantity);
                     }
-                    int newInventory = currentInventoryAvailable + quantity;
-                    sku.setQuantityAvailable(newInventory);
-                    catalogService.saveSku(sku);
-                } else {
-                    LOG.info("Not incrementing inventory as the Sku has been marked as always available");
                 }
             }
         }
+
+        return skuInventoryMap;
     }
 
 }
