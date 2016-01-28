@@ -20,11 +20,10 @@
   -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:task="http://www.springframework.org/schema/task"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.1.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
     
     <context:component-scan base-package="org.broadleafcommerce.core">
@@ -171,4 +170,40 @@
             </list>
         </property>
     </bean>
+
+    <!-- Begin Section Custom Criteria -->
+    <bean id="blProductSectionCustomCriteria" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>productDirectEdit</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blCategorySectionCustomCriteria" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>categoryDirectEdit</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blAdvancedPageSectionCustomCriteria" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>advancedPage</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blSectionCustomCriteriaMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="org.broadleafcommerce.core.catalog.domain.Product" value-ref="blProductSectionCustomCriteria"/>
+                <entry key="org.broadleafcommerce.core.catalog.domain.Category" value-ref="blCategorySectionCustomCriteria"/>
+                <entry key="org.broadleafcommerce.cms.page.domain.Page" value-ref="blAdvancedPageSectionCustomCriteria"/>
+            </map>
+        </property>
+    </bean>
+    <!-- End Section Custom Criteria -->
 </beans>
