@@ -554,10 +554,6 @@ button.disabled {
     font-size: 16px;
 }
 
-.listgrid-modal-actions {
-    padding-top: 10px;
-}
-
 .listgrid-modal-actions div {
     display: inline-block;
     padding-right: 10px;
