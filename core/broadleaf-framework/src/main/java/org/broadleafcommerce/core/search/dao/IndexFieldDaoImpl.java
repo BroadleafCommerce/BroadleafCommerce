@@ -28,7 +28,9 @@ import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -78,11 +80,9 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
         CriteriaQuery<IndexField> criteria = builder.createQuery(IndexField.class);
 
         Root<IndexFieldImpl> root = criteria.from(IndexFieldImpl.class);
-
+        
         criteria.select(root);
-        criteria.where(
-                builder.equal(root.get("field").get("entityType").as(String.class), entityType.getType())
-                );
+        criteria.where(root.get("field").get("entityType").as(String.class).in(entityType.getAllLookupTypes()));
 
         TypedQuery<IndexField> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -101,7 +101,7 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
         criteria.select(root);
         criteria.where(
                 builder.equal(root.get("searchable").as(Boolean.class), Boolean.TRUE),
-                builder.equal(root.get("field").get("entityType").as(String.class), entityType.getType())
+                root.get("field").get("entityType").as(String.class).in(entityType.getAllLookupTypes())
         );
 
         TypedQuery<IndexField> query = em.createQuery(criteria);

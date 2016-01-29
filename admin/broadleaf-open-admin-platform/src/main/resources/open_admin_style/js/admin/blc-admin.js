@@ -20,94 +20,94 @@
 /* Utility methods provided by Broadleaf Commerce for admin */
 var BLCAdmin = (function($) {
     
-	// This will keep track of our current active modals so that we are able to overlay them
-	var modals = [];
-	var preValidationFormSubmitHandlers = [];
-	var validationFormSubmitHandlers = [];
-	var postValidationFormSubmitHandlers = [];
-	var postFormSubmitHandlers = [];
-	var dependentFieldFilterHandlers = {};
-	var initializationHandlers = [];
+    // This will keep track of our current active modals so that we are able to overlay them
+    var modals = [];
+    var preValidationFormSubmitHandlers = [];
+    var validationFormSubmitHandlers = [];
+    var postValidationFormSubmitHandlers = [];
+    var postFormSubmitHandlers = [];
+    var dependentFieldFilterHandlers = {};
+    var initializationHandlers = [];
     var excludedSelectizeSelectors = [];
-	var updateHandlers = [];
-	var stackedModalOptions = {
-	    left: 20,
-	    top: 20
-	};
-	var originalStickyBarOffset = $('.sticky-container').offset().top;
-	
-    var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container span.display-value, .redactor_box, ' +
+    var updateHandlers = [];
+    var stackedModalOptions = {
+        left: 20,
+        top: 20
+    };
+    var originalStickyBarOffset = $('.sticky-container').offset().top;
+    
+    var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container, .redactor_box, ' +
                          '.asset-selector-container img, >div>select, div.custom-checkbox, div.small-enum-container, ' +
                          'textarea, div.radio-container, div.query-builder-rules-container, >.selectize-control>.selectize-input, .redactor-box';
     
-	function showModal($data, onModalHide, onModalHideArgs) {
-		// If we already have an active modal, we don't need another backdrop on subsequent modals
-		$data.modal({
-			backdrop: (modals.length < 1),
-			keyboard: false  // disable default keyboard behavior; wasn't intended to work with layered modals
-		});
-		
-		// If we already have an active modal, we need to modify its z-index so that it will be
-		// hidden by the current backdrop
-		if (modals.length > 0) {
-			modals.last().css('z-index', '1040');
-			var $backdrop = $('.modal-backdrop');
-			$backdrop.css('z-index', parseInt($backdrop.css('z-index')) + 1);
-			
-			// We will also offset modals by the given option values
-			$data.css('left', $data.position().left + (stackedModalOptions.left * modals.length) + 'px');
-			$data.css('top', $data.position().top + (stackedModalOptions.top * modals.length) + 'px');
-		}
-		
-		// Save our new modal into our stack
-		modals.push($data);
-		// Bind a callback for the modal hidden event...
-		$data.on('hidden', function() {
-			
-			// Allow custom callbacks
-			if (onModalHide != null) {
-				onModalHide(onModalHideArgs);
-			}
-			
-			// Remove the modal from the DOM and from our stack
-			$(this).remove();
-			modals.pop();
-			
-			// If this wasn't the only modal, take the last modal and put it above the backdrop
-			if (modals.length > 0) {
-				modals.last().css('z-index', '1050');
-			}
-			
-			if (BLCAdmin.currentModal()) {
-				BLCAdmin.currentModal().find('.submit-button').show();
-				BLCAdmin.currentModal().find('img.ajax-loader').hide();
-			}
-		});
+    function showModal($data, onModalHide, onModalHideArgs) {
+        // If we already have an active modal, we don't need another backdrop on subsequent modals
+        $data.modal({
+            backdrop: (modals.length < 1),
+            keyboard: false  // disable default keyboard behavior; wasn't intended to work with layered modals
+        });
+        
+        // If we already have an active modal, we need to modify its z-index so that it will be
+        // hidden by the current backdrop
+        if (modals.length > 0) {
+            modals.last().css('z-index', '1040');
+            var $backdrop = $('.modal-backdrop');
+            $backdrop.css('z-index', parseInt($backdrop.css('z-index')) + 1);
+            
+            // We will also offset modals by the given option values
+            $data.css('left', $data.position().left + (stackedModalOptions.left * modals.length) + 'px');
+            $data.css('top', $data.position().top + (stackedModalOptions.top * modals.length) + 'px');
+        }
+        
+        // Save our new modal into our stack
+        modals.push($data);
+        // Bind a callback for the modal hidden event...
+        $data.on('hidden', function() {
+            
+            // Allow custom callbacks
+            if (onModalHide != null) {
+                onModalHide(onModalHideArgs);
+            }
+            
+            // Remove the modal from the DOM and from our stack
+            $(this).remove();
+            modals.pop();
+            
+            // If this wasn't the only modal, take the last modal and put it above the backdrop
+            if (modals.length > 0) {
+                modals.last().css('z-index', '1050');
+            }
+            
+            if (BLCAdmin.currentModal()) {
+                BLCAdmin.currentModal().find('.submit-button').show();
+                BLCAdmin.currentModal().find('img.ajax-loader').hide();
+            }
+        });
 
-		BLCAdmin.initializeModalTabs($data);
+        BLCAdmin.initializeModalTabs($data);
         BLCAdmin.initializeModalButtons($data);
-		BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
-		BLCAdmin.initializeFields();
-	}
+        BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
+        BLCAdmin.initializeFields();
+    }
 
-	function getDependentFieldFilterKey(className, childFieldName) {
-	    return className + '-' + childFieldName;
-	}
-	
-	return {
-	    /**
-	     * Handlers to run before client-side validation takes place
-	     */
-	    addPreValidationSubmitHandler : function(fn) {
-	        preValidationFormSubmitHandlers.push(fn);
-	    },
-	    
-	    /**
-	     * Handlers explicitly designed to validate forms on the client before submitting to the server. If a single handler
-	     * in the list of client-side validation handlers returns 'false', then the form will not be submitted to the
-	     * server
-	     */
-	    addValidationSubmitHandler : function(fn) {
+    function getDependentFieldFilterKey(className, childFieldName) {
+        return className + '-' + childFieldName;
+    }
+    
+    return {
+        /**
+         * Handlers to run before client-side validation takes place
+         */
+        addPreValidationSubmitHandler : function(fn) {
+            preValidationFormSubmitHandlers.push(fn);
+        },
+        
+        /**
+         * Handlers explicitly designed to validate forms on the client before submitting to the server. If a single handler
+         * in the list of client-side validation handlers returns 'false', then the form will not be submitted to the
+         * server
+         */
+        addValidationSubmitHandler : function(fn) {
             validationFormSubmitHandlers.push(fn);
         },
         
@@ -129,31 +129,31 @@ var BLCAdmin = (function($) {
         addPostFormSubmitHandler : function(fn) {
             postFormSubmitHandlers.push(fn);
         },
-	    
-	    addInitializationHandler : function(fn) {
-	        initializationHandlers.push(fn);
-	    },
-	    
-	    addUpdateHandler : function(fn) {
-	        updateHandlers.push(fn);
-	    },
+        
+        addInitializationHandler : function(fn) {
+            initializationHandlers.push(fn);
+        },
+        
+        addUpdateHandler : function(fn) {
+            updateHandlers.push(fn);
+        },
 
         addExcludedSelectizeSelector : function(selector) {
             excludedSelectizeSelectors.push(selector);
         },
 
-    	runPreValidationSubmitHandlers : function($form) {
+        runPreValidationSubmitHandlers : function($form) {
             for (var i = 0; i < preValidationFormSubmitHandlers.length; i++) {
                 preValidationFormSubmitHandlers[i]($form);
             }
-    	},
-    	
-    	/**
-    	 * Returns false if a single validation handler returns false. All validation handlers are iterated through before
-    	 * returning. If this method returns false, then the form should not be submitted to the server
-    	 */
-    	runValidationSubmitHandlers : function($form) {
-    	    var pass = true;
+        },
+        
+        /**
+         * Returns false if a single validation handler returns false. All validation handlers are iterated through before
+         * returning. If this method returns false, then the form should not be submitted to the server
+         */
+        runValidationSubmitHandlers : function($form) {
+            var pass = true;
             for (var i = 0; i < validationFormSubmitHandlers.length; i++) {
                 pass = pass && validationFormSubmitHandlers[i]($form);
             }
@@ -186,16 +186,16 @@ var BLCAdmin = (function($) {
             BLCAdmin.runPostValidationSubmitHandlers($form);
             return submit;
         },
-    	
-    	setModalMaxHeight : function($modal) {
-    		// Resize the modal height to the user's browser
-    		var availableHeight = $(window).height()
-    		    - $modal.find('.modal-header').outerHeight()
-    		    - $modal.find('.modal-footer').outerHeight()
-    		    - ($(window).height() * 0.1);
+        
+        setModalMaxHeight : function($modal) {
+            // Resize the modal height to the user's browser
+            var availableHeight = $(window).height()
+                - $modal.find('.modal-header').outerHeight()
+                - $modal.find('.modal-footer').outerHeight()
+                - ($(window).height() * 0.1);
 
-    		$modal.find('.modal-body').css('max-height', availableHeight);
-    	},
+            $modal.find('.modal-body').css('max-height', availableHeight);
+        },
 
         getModalSkeleton : function getModalSkeleton() {
             var $modal = $('<div>', { 'class' : 'modal' });
@@ -223,250 +223,164 @@ var BLCAdmin = (function($) {
 
             return $modal;
         },
-    	
-    	initializeModalTabs : function($data) {
-			$.fn.broadleafTabs();
-    	},
-    	
-    	initializeModalButtons : function($data) {
+        
+        initializeModalTabs : function($data) {
+            $.fn.broadleafTabs();
+        },
+        
+        initializeModalButtons : function($data) {
             var $buttonDiv = $data.find('div.entity-form-actions');
-			if ($buttonDiv.length > 0) {
-				var $footer = $data.find('div.modal-footer');
-				if (!$footer.length) {
-					$footer = $('<div>', { 'class' : 'modal-footer' });
-					$data.append($footer);
-				}
-				$buttonDiv.remove().appendTo($footer);
-			}
+            if ($buttonDiv.length > 0) {
+                var $footer = $data.find('div.modal-footer');
+                if (!$footer.length) {
+                    $footer = $('<div>', { 'class' : 'modal-footer' });
+                    $data.append($footer);
+                }
+                $buttonDiv.remove().appendTo($footer);
+            }
 
-			var $buttonDiv = $data.find('div.listgrid-modal-actions');
-			if ($buttonDiv.length > 0) {
-				var $footer = $data.find('div.modal-footer');
-				if (!$footer.length) {
-					$footer = $('<div>', { 'class' : 'modal-footer' });
-					$data.append($footer);
-				}
-				$buttonDiv.remove().appendTo($footer);
-			}
-    	},
-    	
-    	showMessageAsModal : function(header, message) {
-			if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
-			    BLCAdmin.hideCurrentModal();
-			}
-			
-    	    var $modal = BLCAdmin.getModalSkeleton();
-    	    
-    	    $modal.find('.modal-header h3').text(header);
-    	    $modal.find('.modal-body').text(message);
-    	    $modal.find('.modal-body').css('padding-bottom', '20px');
-    	    
-            this.showElementAsModal($modal);
-    	},
-    	
-    	showElementAsModal : function($element, onModalHide, onModalHideArgs) {
-			if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
-			    BLCAdmin.hideCurrentModal();
-			}
-
-			if (!$element.find('.content-yield').length) {
-				var content = $('<div>', { 'class': 'content-yield'});
-				$element.find('.modal-body').wrapInner(content);
-			}
-			$('body').append($element);
-			showModal($element, onModalHide, onModalHideArgs);
-    	},
-    	
-    	showLinkAsModal : function(link, onModalHide, onModalHideArgs) {
-    	    // Show a loading message
-    	    var $modal = BLCAdmin.getModalSkeleton();
-    	    $modal.addClass('loading-modal');
-    	    $modal.find('.modal-header h3').text(BLCAdmin.messages.loading);
-    	    $modal.find('.modal-body').append($('<i>', { 'class' : 'fa-pulse fa fa-spinner' }));
-    	    $modal.find('.modal-body').css('text-align', 'center').css('font-size', '24px').css('padding-bottom', '15px');
-
-    	    BLCAdmin.showElementAsModal($modal, onModalHide, onModalHideArgs);
+            var $buttonDiv = $data.find('div.listgrid-modal-actions');
+            if ($buttonDiv.length > 0) {
+                var $footer = $data.find('div.modal-footer');
+                if (!$footer.length) {
+                    $footer = $('<div>', { 'class' : 'modal-footer' });
+                    $data.append($footer);
+                }
+                $buttonDiv.remove().appendTo($footer);
+            }
+        },
+        
+        showMessageAsModal : function(header, message) {
+            if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
+                BLCAdmin.hideCurrentModal();
+            }
             
-    	    // Then replace it with the actual requested link
-    	    BLCAdmin.modalNavigateTo(link);
-    	},
-    	
-    	// Convenience function for hiding the replacing the current modal with the given link
-    	modalNavigateTo : function(link) {
-    		if (BLCAdmin.currentModal()) {
-    		    BLCAdmin.currentModal().data('initialized', 'false');
-    		    BLC.ajax({
-    		        url : link,
-    		        type : "GET"
-    		    }, function(data) {
-        			// Create a modal out of the server response
-        			var $data = $(data);
+            var $modal = BLCAdmin.getModalSkeleton();
+            
+            $modal.find('.modal-header h3').text(header);
+            $modal.find('.modal-body').text(message);
+            $modal.find('.modal-body').css('padding-bottom', '20px');
+            
+            this.showElementAsModal($modal);
+        },
+        
+        showElementAsModal : function($element, onModalHide, onModalHideArgs) {
+            if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
+                BLCAdmin.hideCurrentModal();
+            }
 
-					// check if the modal has any additional classes
-					var classes = $data.attr('class').split(' ');
-					if (classes.length > 2) {
-						for (var i = 2; i < classes.length; i++) {
-							BLCAdmin.currentModal().addClass(classes[i]);
-						}
-					}
+            if (!$element.find('.content-yield').length) {
+                var content = $('<div>', { 'class': 'content-yield'});
+                $element.find('.modal-body').wrapInner(content);
+            }
+            $('body').append($element);
+            showModal($element, onModalHide, onModalHideArgs);
+        },
+        
+        showLinkAsModal : function(link, onModalHide, onModalHideArgs) {
+            // Show a loading message
+            var $modal = BLCAdmin.getModalSkeleton();
+            $modal.addClass('loading-modal');
+            $modal.find('.modal-header h3').text(BLCAdmin.messages.loading);
+            $modal.find('.modal-body').append($('<i>', { 'class' : 'fa-pulse fa fa-spinner' }));
+            $modal.find('.modal-body').css('text-align', 'center').css('font-size', '24px').css('padding-bottom', '15px');
 
-        			$data = $data.children();
+            BLCAdmin.showElementAsModal($modal, onModalHide, onModalHideArgs);
+            
+            // Then replace it with the actual requested link
+            BLCAdmin.modalNavigateTo(link);
+        },
+        
+        // Convenience function for hiding the replacing the current modal with the given link
+        modalNavigateTo : function(link) {
+            if (BLCAdmin.currentModal()) {
+                BLCAdmin.currentModal().data('initialized', 'false');
+                BLC.ajax({
+                    url : link,
+                    type : "GET"
+                }, function(data) {
+                    // Create a modal out of the server response
+                    var $data = $(data);
 
-        		    BLCAdmin.currentModal().empty().append($data);
+                    // check if the modal has any additional classes
+                    var classes = $data.attr('class').split(' ');
+                    if (classes.length > 2) {
+                        for (var i = 2; i < classes.length; i++) {
+                            BLCAdmin.currentModal().addClass(classes[i]);
+                        }
+                    }
 
-					if (!BLCAdmin.currentModal().find('.content-yield').length) {
-						var content = $('<div>', { 'class': 'content-yield'});
-						BLCAdmin.currentModal().find('.modal-body').wrapInner(content);
-					}
-        			BLCAdmin.initializeModalTabs(BLCAdmin.currentModal());
-        			BLCAdmin.initializeModalButtons(BLCAdmin.currentModal());
-        		    BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
-        			BLCAdmin.initializeFields(BLCAdmin.currentModal());
-        			
-        			BLCAdmin.currentModal().removeClass('loading-modal');
+                    $data = $data.children();
 
-					if (BLCAdmin.currentModal().hasClass('asset-selector')) {
-						var $header = BLCAdmin.currentModal().find('.modal-header');
-						var $closeBtn = $header.find('.close');
-						var $tabSection = BLCAdmin.currentModal().find('.modal-body .section-tabs');
+                    BLCAdmin.currentModal().empty().append($data);
 
-						$tabSection.append($closeBtn);
-						$header.hide();
-					}
-        		});
-    		} else {
-    		    showLinkAsModal(link);
-    		}
-    	},
-    	
-    	// Convenience function for returning the current modal
-    	currentModal : function() {
-    		return modals.last();
-    	},
-    	
-    	hideCurrentModal : function() {
-    		if (BLCAdmin.currentModal()) {
-    			BLCAdmin.currentModal().modal('hide');
-    		}
-    	},
-    	
-    	focusOnTopModal : function() {
-    	    if (BLCAdmin.currentModal()) {
-    	        BLCAdmin.currentModal().focus();
-    	    }
-    	},
-    	
-    	getActiveTab : function() {
-    	    var $modal = this.currentModal();
-    	    if ($modal != null) {
-        	    var $tabs = $modal.find('div.section-tabs');
-        	    
-        	    if ($tabs.length == 0) {
-        	        return $modal;
-        	    } else {
-        	        return $modal.find('.entityFormTab.active');
-        	    }
-    	        
-    	    } else {
-        	    var $body = $('body');
-        	    var $tabs = $body.find('div.section-tabs');
-        	    
-        	    if ($tabs.length == 0) {
-        	        return $body;
-        	    } else {
-        	        return $body.find('.entityFormTab.active');
-        	    }
-    	    }
-    	},
+                    if (!BLCAdmin.currentModal().find('.content-yield').length) {
+                        var content = $('<div>', { 'class': 'content-yield'});
+                        BLCAdmin.currentModal().find('.modal-body').wrapInner(content);
+                    }
+                    BLCAdmin.initializeModalTabs(BLCAdmin.currentModal());
+                    BLCAdmin.initializeModalButtons(BLCAdmin.currentModal());
+                    BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
+                    BLCAdmin.initializeFields(BLCAdmin.currentModal());
+                    
+                    BLCAdmin.currentModal().removeClass('loading-modal');
+
+                    if (BLCAdmin.currentModal().hasClass('asset-selector')) {
+                        var $header = BLCAdmin.currentModal().find('.modal-header');
+                        var $closeBtn = $header.find('.close');
+                        var $tabSection = BLCAdmin.currentModal().find('.modal-body .section-tabs');
+
+                        $tabSection.append($closeBtn);
+                        $header.hide();
+                    }
+                });
+            } else {
+                showLinkAsModal(link);
+            }
+        },
+        
+        // Convenience function for returning the current modal
+        currentModal : function() {
+            return modals.last();
+        },
+        
+        hideCurrentModal : function() {
+            if (BLCAdmin.currentModal()) {
+                BLCAdmin.currentModal().modal('hide');
+            }
+        },
+        
+        focusOnTopModal : function() {
+            if (BLCAdmin.currentModal()) {
+                BLCAdmin.currentModal().focus();
+            }
+        },
+        
+        getActiveTab : function() {
+            var $modal = this.currentModal();
+            if ($modal != null) {
+                var $tabs = $modal.find('div.section-tabs');
+                
+                if ($tabs.length == 0) {
+                    return $modal;
+                } else {
+                    return $modal.find('.entityFormTab.active');
+                }
+                
+            } else {
+                var $body = $('body');
+                var $tabs = $body.find('div.section-tabs');
+                
+                if ($tabs.length == 0) {
+                    return $body;
+                } else {
+                    return $body.find('.entityFormTab.active');
+                }
+            }
+        },
 
         initializeFields : function($container) {
-
-			function initializeDateFields($container) {
-
-				$container.find('.datetimepicker').each(function (index, element) {
-					// create a hidden clone, which will contain the actual value
-					var clone = $(this).clone();
-					var self = $(this);
-					clone.insertAfter(this);
-					clone.hide();
-
-					// rename the original field, used to contain the display value
-					$(this).attr('id', $(this).attr('id') + '-display');
-					$(this).attr('name', $(this).attr('name') + '-display');
-
-					// create the datetimepicker with the desired display format
-					$(this).datetimepicker({
-						format: "l, F d, Y \@ g:ia",
-						onClose: function(current_time, $input) {
-							if (current_time) {
-								var dateString = '' +
-									current_time.getFullYear() + '.' +
-									('0' + (current_time.getMonth() + 1).toString()).slice(-2) + '.' +
-									('0' + current_time.getDate().toString()).slice(-2) + ' ' +
-									('0' + current_time.getHours().toString()).slice(-2) + ':' +
-									('0' + current_time.getMinutes().toString()).slice(-2) + ':00';
-
-								if (dateString.endsWith("23:59:00")) {
-									dateString = dateString.replace("23:59:00", "23:59:59");
-								}
-								// need to escape ids for entity form
-								clone.attr('value',dateString);
-							}
-						}
-					});
-				});
-
-				$container.find('.timepicker').each(function (index, element) {
-					$(this).datetimepicker({
-						datepicker: false,
-						format:'h:i A',
-						formatTime: 'h:i A',
-						step: 15
-					});
-				});
-
-				// initialize datetimepicker fields
-				$container.find("[id$=display].datetimepicker").each(function() {
-					if ($(this).val().length) {
-						var d = new Date($(this).val());
-						$(this).val(d.dateFormat("l, F d, Y \@ g:ia"));
-					}
-				});
-
-				// initialize datetimepicker fields
-				$container.find(".dateFormat").each(function() {
-					if ($(this).html().length) {
-						var d = new Date($(this).html());
-						var timezone = d.toString().substring(d.toString().indexOf("("));
-						$(this).html(d.dateFormat("l, F d, Y \@ g:ia") + " " + timezone);
-					}
-				});
-
-				$container.find('.tooltip').each(function() {
-					var windowWidth = $(window).width();
-					if ($(this).offset().left > windowWidth / 2) {
-						$(this).find('span').addClass('left');
-					}
-				});
-
-				$container.find('.dropdown-menu-right').each(function() {
-					var windowWidth = $(window).width();
-					if ($(this).closest('.content-area-title-bar').length === 0
-                        && $(this).offset().left < windowWidth / 2) {
-						$(this).removeClass('dropdown-menu-right').addClass('dropdown-menu-left');
-					}
-				});
-			}
-
-			function initializeRadioFields($container) {
-				$container.find('.radio-label').on("click", function(e) {
-                    if (!$(this).hasClass('disabled')) {
-                        e.preventDefault();
-                        $(this).prev('input').prop("checked", true).change();
-                    }
-				});
-			}
-
+            
             // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
             if ($container == null) {
                 $container = BLCAdmin.getActiveTab();
@@ -476,33 +390,6 @@ var BLCAdmin = (function($) {
             if ($container.data('initialized') == 'true') {
                 return;
             }
-
-            // Set up rich-text HTML editors
-            if($.fn.redactor) {
-                $container.find('.redactor').redactor({
-                    plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize', 'video', 'table'],
-                    replaceDivs : false,
-                    buttonSource: true,
-                    paragraphize: false,
-                    minHeight: 140,
-                    tabKey: true,
-                    tabsAsSpaces: 4,
-                    deniedTags: []
-                });
-            }
-
-            $container.find('textarea.autosize').autosize();
-            
-            $container.find(".color-picker").spectrum({
-                showButtons: false,
-                preferredFormat: "hex6",
-                change: function(color) {
-                    $(this).closest('.field-group').find('input.color-picker-value').val(color);
-                },
-                move: function(color) {
-                    $(this).closest('.field-group').find('input.color-picker-value').val(color);
-                }
-            });
             
             // Set the blank value for foreign key lookups
             $container.find('.foreign-key-value-container').each(function(index, element) {
@@ -525,15 +412,130 @@ var BLCAdmin = (function($) {
             for (var i = 0; i < initializationHandlers.length; i++) {
                 initializationHandlers[i]($container);
             }
-
+            
+            BLCAdmin.initializeTextAreaFields($container);
+            BLCAdmin.initializeColorPickerFields($container);
             BLCAdmin.initializeSelectizeFields($container);
-            initializeRadioFields($container);
-			initializeDateFields($container);
+            BLCAdmin.initializeRadioFields($container);
+            BLCAdmin.initializeDateFields($container);
 
             // Mark this container as initialized
-    	    $container.data('initialized', 'true');
+            $container.data('initialized', 'true');
 
             return false;
+        },
+
+        initializeDateFields : function($container) {
+            $container.find('.datetimepicker').each(function (index, element) {
+                // create a hidden clone, which will contain the actual value
+                var clone = $(this).clone();
+                var self = $(this);
+                clone.insertAfter(this);
+                clone.hide();
+
+                // rename the original field, used to contain the display value
+                $(this).attr('id', $(this).attr('id') + '-display');
+                $(this).attr('name', $(this).attr('name') + '-display');
+
+                // create the datetimepicker with the desired display format
+                $(this).datetimepicker({
+                    format: "l, F d, Y \@ g:ia",
+                    onClose: function(current_time, $input) {
+                        if (current_time) {
+                            var dateString = '' +
+                                current_time.getFullYear() + '.' +
+                                ('0' + (current_time.getMonth() + 1).toString()).slice(-2) + '.' +
+                                ('0' + current_time.getDate().toString()).slice(-2) + ' ' +
+                                ('0' + current_time.getHours().toString()).slice(-2) + ':' +
+                                ('0' + current_time.getMinutes().toString()).slice(-2) + ':00';
+
+                            if (dateString.endsWith("23:59:00")) {
+                                dateString = dateString.replace("23:59:00", "23:59:59");
+                            }
+                            // need to escape ids for entity form
+                            clone.attr('value',dateString);
+                        }
+                    }
+                });
+            });
+
+            $container.find('.timepicker').each(function (index, element) {
+                $(this).datetimepicker({
+                    datepicker: false,
+                    format:'h:i A',
+                    formatTime: 'h:i A',
+                    step: 15
+                });
+            });
+
+            // initialize datetimepicker fields
+            $container.find("[id$=display].datetimepicker").each(function() {
+                if ($(this).val().length) {
+                    var d = new Date($(this).val());
+                    $(this).val(d.dateFormat("l, F d, Y \@ g:ia"));
+                }
+            });
+
+            // initialize datetimepicker fields
+            $container.find(".dateFormat").each(function() {
+                if ($(this).html().length) {
+                    var d = new Date($(this).html());
+                    var timezone = d.toString().substring(d.toString().indexOf("("));
+                    $(this).html(d.dateFormat("l, F d, Y \@ g:ia") + " " + timezone);
+                }
+            });
+
+            $container.find('.tooltip').each(function() {
+                var windowWidth = $(window).width();
+                if ($(this).offset().left > windowWidth / 2) {
+                    $(this).find('span').addClass('left');
+                }
+            });
+
+            $container.find('.dropdown-menu-right').each(function() {
+                var windowWidth = $(window).width();
+                if ($(this).closest('.content-area-title-bar').length === 0
+                    && $(this).offset().left < windowWidth / 2) {
+                    $(this).removeClass('dropdown-menu-right').addClass('dropdown-menu-left');
+                }
+            });
+        },
+        initializeRadioFields : function($container) {
+            $container.find('.radio-label').on("click", function(e) {
+                if (!$(this).hasClass('disabled')) {
+                    e.preventDefault();
+                    $(this).prev('input').prop("checked", true).change();
+                }
+            });
+        },
+        initializeTextAreaFields : function($container) {
+            // Set up rich-text HTML editors
+            if($.fn.redactor) {
+                $container.find('.redactor').redactor({
+                    plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize', 'video', 'table'],
+                    replaceDivs : false,
+                    buttonSource: true,
+                    paragraphize: false,
+                    minHeight: 140,
+                    tabKey: true,
+                    tabsAsSpaces: 4,
+                    deniedTags: []
+                });
+            }
+
+            $container.find('textarea.autosize').autosize();
+        },
+        initializeColorPickerFields : function($container) {
+            $container.find(".color-picker").spectrum({
+                showButtons: false,
+                preferredFormat: "hex6",
+                change: function(color) {
+                    $(this).closest('.field-group').find('input.color-picker-value').val(color);
+                },
+                move: function(color) {
+                    $(this).closest('.field-group').find('input.color-picker-value').val(color);
+                }
+            });
         },
 
         initializeSelectizeFields : function($container) {
@@ -546,7 +548,7 @@ var BLCAdmin = (function($) {
                 .selectize({
                     sortField: 'text',
                     closeAfterSelect: true,
-					dropdownParent: 'body',
+                    dropdownParent: 'body',
                     onItemAdd: function(value, $item) {
                         $item.closest('.selectize-input').find('input').blur();
                     }
@@ -560,8 +562,8 @@ var BLCAdmin = (function($) {
                 var selectizeSearchField = $(selectizeAdder).data("selectizesearch");
                 var placeholder = 'Add ' + $(selectizeAdder).data("selectizeplaceholder") + ' +';
 
-				var collectionParent = window.location.pathname.split('/')[2];
-				var collectionPlaceholder = 'This ' + collectionParent + ' is not restricted to certain customers';
+                var collectionParent = window.location.pathname.split('/')[2];
+                var collectionPlaceholder = 'This ' + collectionParent + ' is not restricted to certain customers';
 
                 var select_adder, $select_adder;
                 var select_collection, $select_collection;
@@ -574,7 +576,7 @@ var BLCAdmin = (function($) {
                     hideSelected: true,
                     closeAfterSelect: true,
                     placeholder: placeholder,
-					dropdownParent: 'body',
+                    dropdownParent: 'body',
                     onInitialize: function () {
                         var $selectize = this;
                         this.revertSettings.$children.each(function () {
@@ -649,7 +651,7 @@ var BLCAdmin = (function($) {
                         });
                     },
                     onItemRemove: function (value, $item) {
-						select_adder.addOption({value: $item.data('value'), text: $item.html()});
+                        select_adder.addOption({value: $item.data('value'), text: $item.html()});
                         $select_adder.siblings('.selectize-control.selectize-adder').find('.selectize-input input').attr('placeholder', placeholder);
                     }
                 }
@@ -657,8 +659,8 @@ var BLCAdmin = (function($) {
                 var selectizeCollectionOptions = {
                     maxItems: null,
                     persist: false,
-					placeholder: collectionPlaceholder,
-					dropdownParent: 'body',
+                    placeholder: collectionPlaceholder,
+                    dropdownParent: 'body',
                     onInitialize: function () {
                         var $selectize = this;
                         this.revertSettings.$children.each(function () {
@@ -709,54 +711,54 @@ var BLCAdmin = (function($) {
 
                 $select_adder.siblings('.selectize-control.selectize-adder').find('.selectize-input input').attr('placeholder', placeholder);
 
-				$('.selectize-control.selectize-collection input').attr('disabled','disabled');
+                $('.selectize-control.selectize-collection input').attr('disabled','disabled');
             });
-    	},
-    	
-    	updateFields : function($container) {
+        },
+        
+        updateFields : function($container) {
             for (var i = 0; i < updateHandlers.length; i++) {
                 updateHandlers[i]($container);
             }
-    	},
-    	
-    	getModals : function() {
-    	    var modalsCopy = [];
-    	    for (var i = 0; i < modals.length; i++) {
-    	        modalsCopy[i] = modals[i];
-    	    }
-    	    return modalsCopy;
-    	},
+        },
+        
+        getModals : function() {
+            var modalsCopy = [];
+            for (var i = 0; i < modals.length; i++) {
+                modalsCopy[i] = modals[i];
+            }
+            return modalsCopy;
+        },
  
-    	getForm : function($element) {
-    	    var $form;
-    	    
-    	    if ($element.closest('.modal').length > 0) {
-    	        $form = $element.closest('.modal').find('.modal-body form');
-    	    } else {
-    	        $form = $element.closest('form')
-    	    }
+        getForm : function($element) {
+            var $form;
+            
+            if ($element.closest('.modal').length > 0) {
+                $form = $element.closest('.modal').find('.modal-body form');
+            } else {
+                $form = $element.closest('form')
+            }
     
-    		if (!$form.length) {
-    		    $form = $('.entity-edit form');
-    		}
+            if (!$form.length) {
+                $form = $('.entity-edit form');
+            }
 
-			// If form is still empty, grab the form from the main content
-			if (!$form.length) {
-				$form = $('.content-yield form');
-			}
-    	    
-    		return $form;
-    	},
-    	
-    	getOriginalStickyBarOffset : function() {
-    	    return originalStickyBarOffset;
-    	},
-    	
-    	getFieldSelectors : function getFieldSelectors() {
-    	    return fieldSelectors.concat();
-    	},
-    	
-    	extractFieldValue : function extractFieldValue($field) {
+            // If form is still empty, grab the form from the main content
+            if (!$form.length) {
+                $form = $('.content-yield form');
+            }
+            
+            return $form;
+        },
+        
+        getOriginalStickyBarOffset : function() {
+            return originalStickyBarOffset;
+        },
+        
+        getFieldSelectors : function getFieldSelectors() {
+            return fieldSelectors.concat();
+        },
+        
+        extractFieldValue : function extractFieldValue($field) {
             var value = $field.find('input[type="radio"]:checked').val();
             if (value == null) {
                 value = $field.find('select').val();
@@ -768,14 +770,14 @@ var BLCAdmin = (function($) {
                 value = $field.find('input[type="text"]').val();
             }
             return value;
-    	},
-    	
-    	setFieldValue : function setFieldValue($field, value) {
-    	    if (value == null) {
-    	        $field.find('input[type="radio"]:checked').removeAttr('checked')
-    	    } else {
-    	        $field.find('input[type="radio"][value="' + value + '"]').attr('checked', 'checked');
-    	    }
+        },
+        
+        setFieldValue : function setFieldValue($field, value) {
+            if (value == null) {
+                $field.find('input[type="radio"]:checked').removeAttr('checked')
+            } else {
+                $field.find('input[type="radio"][value="' + value + '"]').attr('checked', 'checked');
+            }
 
             $field.find('select').val(value);
             $field.find('input[type="text"]').val(value);
@@ -784,7 +786,7 @@ var BLCAdmin = (function($) {
                 $field.find('button.clear-foreign-key').click();
             }
             $field.trigger('change');
-    	},
+        },
 
         /**
          * Adds an initialization handler that is responsible for toggling the visiblity of a child field based on the
@@ -808,7 +810,7 @@ var BLCAdmin = (function($) {
             BLCAdmin.addInitializationHandler(function($container) {
                 var $form = $container.find('form').length ? $container.find('form') : $container.closest('form');
                 var thisClass = $form.find('input[name="ceilingEntityClassname"]').val();
-				if (thisClass != null && thisClass.indexOf(className) >= 0) {
+                if (thisClass != null && thisClass.indexOf(className) >= 0) {
                     var toggleFunction = function(event) {
                         // Extract the parent and child field DOM elements from the data
                         var $parentField = event.data.$parentField;
@@ -818,11 +820,11 @@ var BLCAdmin = (function($) {
                         
                         // Either match the string or execute a function to figure out if the child field should be shown
                         var shouldShow = false;
-						if (typeof showIfValue == "function") {
-							shouldShow = showIfValue(parentValue, event.data.$container);
-						} else {
-							shouldShow = (parentValue == showIfValue);
-						}
+                        if (typeof showIfValue == "function") {
+                            shouldShow = showIfValue(parentValue, event.data.$container);
+                        } else {
+                            shouldShow = (parentValue == showIfValue);
+                        }
 
                         // Clear the data in the child field if that option was set and the parent value is null
                         if (options != null && options['clearChildData'] && !event.initialization) {
@@ -831,20 +833,20 @@ var BLCAdmin = (function($) {
 
                         // Toggle the visiblity of the child field appropriately
                         $childField.toggle(shouldShow);
-						if (shouldShow) {
-							$childField.removeClass('hidden');
-						}
+                        if (shouldShow) {
+                            $childField.removeClass('hidden');
+                        }
 
                         var $cardContent = $childField.closest('.fieldset-card-content');
                         var $card = $cardContent.closest('.fieldset-card');
                         var numTotalFields = $cardContent.find('.field-group').length;
-						var numHiddenFields = 0;
-						$cardContent.find('.field-group').each(function() {
-							if ($(this).css('display') == 'none') {
-								numHiddenFields += 1;
-							}
-						});
-						if (numTotalFields === numHiddenFields) {
+                        var numHiddenFields = 0;
+                        $cardContent.find('.field-group').each(function() {
+                            if ($(this).css('display') == 'none') {
+                                numHiddenFields += 1;
+                            }
+                        });
+                        if (numTotalFields === numHiddenFields) {
                             $card.hide();
                         } else {
                             $card.show();
@@ -964,7 +966,7 @@ var BLCAdmin = (function($) {
             $(".alert-box").removeClass("success").addClass("alert");
             $(".alert-box-message").text(alertMessage);
         }
-	};
+    };
 
 })(jQuery);
 
@@ -1061,17 +1063,17 @@ $('body').on('change', 'input.color-picker-value', function() {
 
 
 $('.boolean-link').each(function() {
-	$(this).next().find('input:not(:checked)').click();
+    $(this).next().find('input:not(:checked)').click();
 });
 $('body').on('click', '.boolean-link', function(e) {
-	e.preventDefault();
-	$(this).next().find('input:not(:checked)').click();
+    e.preventDefault();
+    $(this).next().find('input:not(:checked)').click();
 
-	if ($(this).hasClass('view-options')) {
-		$(this).removeClass('view-options').addClass('hide-options');
-	} else {
-		$(this).addClass('view-options').removeClass('hide-options');
-	}
+    if ($(this).hasClass('view-options')) {
+        $(this).removeClass('view-options').addClass('hide-options');
+    } else {
+        $(this).addClass('view-options').removeClass('hide-options');
+    }
 });
 
 /**
@@ -1120,9 +1122,9 @@ $('body').on('click', 'a.change-password', function(event) {
     BLC.ajax({
         url : $this.attr('href')
     }, function(data) {
-		var $modal = BLCAdmin.getModalSkeleton();
-		$modal.find('.modal-body').append($(data));
-		BLCAdmin.showElementAsModal($modal);
+        var $modal = BLCAdmin.getModalSkeleton();
+        $modal.find('.modal-body').append($(data));
+        BLCAdmin.showElementAsModal($modal);
 
         //$this.closest('div.attached').append(data);
         /*$this.parent().find('div.action-popup').find('div.generated-url-container').each(function(idx, el) {
@@ -1139,46 +1141,46 @@ $('body').on('click', 'button.change-password-confirm', function(event) {
     var $this = $(this);
     var $form = $this.closest('form');
 
-	// show the spinner
-	$this.closest('.action-popup').find('img.ajax-loader').show();
+    // show the spinner
+    $this.closest('.action-popup').find('img.ajax-loader').show();
 
-	// clear old errors
-	$this.closest('.action-popup').find('input[name=oldPassword]').css('border', '1px solid #D8D5D0');
-	$this.closest('.action-popup').find('input[name=password]').css('border', '1px solid #D8D5D0');
-	$this.closest('.action-popup').find('input[name=confirmPassword]').css('border', '1px solid #D8D5D0');
+    // clear old errors
+    $this.closest('.action-popup').find('input[name=oldPassword]').css('border', '1px solid #D8D5D0');
+    $this.closest('.action-popup').find('input[name=password]').css('border', '1px solid #D8D5D0');
+    $this.closest('.action-popup').find('input[name=confirmPassword]').css('border', '1px solid #D8D5D0');
 
-	BLC.ajax({
-		url: $form.attr('action'),
-		type: "POST",
-		data: $form.serialize(),
-		error: function(data) {
+    BLC.ajax({
+        url: $form.attr('action'),
+        type: "POST",
+        data: $form.serialize(),
+        error: function(data) {
             $this.closest('.actions').show();
-			$this.closest('.action-popup').find('img.ajax-loader').hide();
-    		BLC.defaultErrorHandler(data);
-		}
-	}, function(data) {
-	    if (data instanceof Object && data.hasOwnProperty('status') && data.status == 'error') {
-			//TODO: i18n
+            $this.closest('.action-popup').find('img.ajax-loader').hide();
+            BLC.defaultErrorHandler(data);
+        }
+    }, function(data) {
+        if (data instanceof Object && data.hasOwnProperty('status') && data.status == 'error') {
+            //TODO: i18n
 
-			if (data.errorText.indexOf('match') > 0) {
-				// confirm password doesnt match
-				$this.closest('.action-popup').find('input[name=password]').css('border', '1px solid #890923');
-				$this.closest('.action-popup').find('input[name=confirmPassword]').css('border', '1px solid #890923');
-			} else if (data.errorText === 'Please enter a valid password.') {
-				// new password is not valid
-				$this.closest('.action-popup').find('input[name=oldPassword]').css('border', '1px solid #890923');
-				$this.closest('.action-popup').find('input[name=password]').css('border', '1px solid #890923');
-			}
+            if (data.errorText.indexOf('match') > 0) {
+                // confirm password doesnt match
+                $this.closest('.action-popup').find('input[name=password]').css('border', '1px solid #890923');
+                $this.closest('.action-popup').find('input[name=confirmPassword]').css('border', '1px solid #890923');
+            } else if (data.errorText === 'Please enter a valid password.') {
+                // new password is not valid
+                $this.closest('.action-popup').find('input[name=oldPassword]').css('border', '1px solid #890923');
+                $this.closest('.action-popup').find('input[name=password]').css('border', '1px solid #890923');
+            }
 
             $this.closest('div.action-popup')
                 .find('span.submit-error')
                     .text(data.errorText)
                     .show();
 
-			// show the actions and hide the spinner
+            // show the actions and hide the spinner
             $this.closest('.actions').show();
-			$this.closest('.action-popup').find('img.ajax-loader').hide();
-		} else {
+            $this.closest('.action-popup').find('img.ajax-loader').hide();
+        } else {
             $this.closest('div.action-popup')
                 .find('span.submit-error')
                     .text(data.successMessage)
@@ -1188,22 +1190,22 @@ $('body').on('click', 'button.change-password-confirm', function(event) {
             $this.closest('.action-popup').find('img.ajax-loader').hide();
             
             setTimeout(function() {
-				$this.closest('.modal').find('.close').click();
+                $this.closest('.modal').find('.close').click();
             }, 2000);
             
-		    /*
+            /*
             $ef.find('input[name="fields[\'name\'].value"]').val($form.find('input[name="name"]').val());
             $ef.find('input[name="fields[\'path\'].value"]').val($form.find('input[name="path"]').val());
             $ef.find('input[name="fields[\'overrideGeneratedPath\'].value"]').val($form.find('input[name="overrideGeneratedPath"]').val());
             $ef.append($('<input type="hidden" name="fields[\'saveAsNew\'].value" value="true" />'));
             */
             
-		    $this.closest('')
+            $this.closest('')
             $this.closest('.actions').hide();
             
             //$ef.submit();
-		}
+        }
     });
-	
+    
     event.preventDefault();
 });

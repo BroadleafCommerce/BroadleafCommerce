@@ -39,12 +39,12 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
+import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
-import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -53,13 +53,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.net.URLDecoder;
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Handles admin operations for the {@link Product} entity. Editing a product requires custom criteria in order to properly
@@ -84,34 +83,6 @@ public class AdminProductController extends AdminBasicEntityController {
             return super.getSectionKey(pathVars);
         }
         return SECTION_KEY;
-    }
-    
-    @Override
-    public String[] getSectionCustomCriteria() {
-        return new String[]{"productDirectEdit"};
-    }
-
-    @Override
-    protected void modifyEntityForm(EntityForm ef, Map<String, String> pathVars) {
-        String defaultCategoryUrlPrefix = null;
-        Field defaultCategory = ef.findField("defaultCategory");
-        if (defaultCategory != null && StringUtils.isNotBlank(defaultCategory.getValue())) {
-            Category cat = catalogService.findCategoryById(Long.parseLong(defaultCategory.getValue()));
-            defaultCategoryUrlPrefix = cat.getUrl();
-        }
-
-        Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
-        overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
-        boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
-        Field fullUrl = ef.findField("url");
-        if (fullUrl != null) {
-            fullUrl.withAttribute("overriddenUrl", overriddenUrl)
-                    .withAttribute("sourceField", "defaultSku--name")
-                    .withAttribute("toggleField", "overrideGeneratedUrl")
-                    .withAttribute("prefix-selector", "#field-defaultCategory")
-                    .withAttribute("prefix", defaultCategoryUrlPrefix)
-                    .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
-        }
     }
 
     @Override

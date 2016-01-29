@@ -120,7 +120,7 @@ public class AdminPageController extends AdminBasicEntityController {
         if (result.hasErrors()) {
             info = entityForm.getDynamicFormInfo("pageTemplate");
             if (entityForm.getFields().containsKey("pageTemplate")) {
-                info.setPropertyValue(entityForm.getFields().get("pageTemplate").getValue());
+                info.setPropertyValue(entityForm.findField("pageTemplate").getValue());
             }
             
             //grab back the dynamic form that was actually put in

@@ -47,8 +47,8 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
         ),
         @AdminTabPresentation(name = CategoryAdminPresentation.TabName.Media,
             order = CategoryAdminPresentation.TabOrder.Media),
-        @AdminTabPresentation(name = CategoryAdminPresentation.TabName.SearchFacets,
-            order = CategoryAdminPresentation.TabOrder.SearchFacets),
+        @AdminTabPresentation(name = CategoryAdminPresentation.TabName.Search,
+            order = CategoryAdminPresentation.TabOrder.Search),
         @AdminTabPresentation(name = CategoryAdminPresentation.TabName.Subcategories,
             order = CategoryAdminPresentation.TabOrder.Subcategories
         ),
@@ -68,7 +68,7 @@ public interface CategoryAdminPresentation {
         public static final String General = "CategoryImpl_General_Tab";
         public static final String Marketing = "CategoryImpl_Marketing_Tab";
         public static final String Media = "CategoryImpl_Media_Tab";
-        public static final String SearchFacets = "CategoryImpl_Search_Facets_Tab";
+        public static final String Search = "CategoryImpl_Search_Tab";
         public static final String Subcategories = "CategoryImpl_Subcategories_Tab";
         public static final String Products = "CategoryImpl_Products_Tab";
     }
@@ -77,7 +77,7 @@ public interface CategoryAdminPresentation {
         public static final int General = 1000;
         public static final int Marketing = 2000;
         public static final int Media = 3000;
-        public static final int SearchFacets = 4000;
+        public static final int Search = 4000;
         public static final int Subcategories = 5000;
         public static final int Products = 6000;
     }
@@ -94,5 +94,9 @@ public interface CategoryAdminPresentation {
         public static final int ActiveDateRange = 1000;
         public static final int Miscellaneous = 2000;
         public static final int ProductDefaults = 1000;
+    }
+
+    public static class FieldOrder {
+        public static final int CustomAttributes = 9000;
     }
 }
