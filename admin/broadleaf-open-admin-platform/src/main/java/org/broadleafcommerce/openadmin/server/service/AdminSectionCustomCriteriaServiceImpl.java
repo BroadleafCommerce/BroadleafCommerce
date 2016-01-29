@@ -57,11 +57,13 @@ public class AdminSectionCustomCriteriaServiceImpl implements AdminSectionCustom
 
         // Some sections require additional logic to apply section custom criteria.
         // This is an extension point for more complex criteria assignment.
-        ArrayList<String> extensionCriteria = new ArrayList<String>();
-        extensionManager.getProxy().addAdditionalSectionCustomCriteria(extensionCriteria, ceilingEntityClassName);
-        sectionCriteria.removeAll(extensionCriteria);
-        sectionCriteria.addAll(extensionCriteria);
-
+        // Some controllers do not have a specific ceilingEntity, only perform if ceilingEntity is provided
+        if (ceilingEntityClassName != null) {
+            ArrayList<String> extensionCriteria = new ArrayList<String>();
+            extensionManager.getProxy().addAdditionalSectionCustomCriteria(extensionCriteria, ceilingEntityClassName);
+            sectionCriteria.removeAll(extensionCriteria);
+            sectionCriteria.addAll(extensionCriteria);
+        }
         return sectionCriteria.toArray(new String[sectionCriteria.size()]);
     }
 }
