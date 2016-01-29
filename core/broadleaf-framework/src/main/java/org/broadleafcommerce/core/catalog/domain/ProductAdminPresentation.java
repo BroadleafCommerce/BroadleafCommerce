@@ -44,7 +44,8 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                     order = ProductAdminPresentation.GroupOrder.ActiveDateRange,
                     column = 1),
                 @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Financial,
-                    order = ProductAdminPresentation.GroupOrder.Financial)
+                    order = ProductAdminPresentation.GroupOrder.Financial,
+                    column = 1)
             }
         ),
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Marketing,
@@ -118,14 +119,14 @@ public interface ProductAdminPresentation {
     public static class GroupOrder {
 
         public static final int General = 1000;
-        public static final int Image = 1000;
         public static final int Price = 2000;
-        public static final int ActiveDateRange = 3000;
+        public static final int Image = 1000;
+        public static final int ActiveDateRange = 2000;
+        public static final int Financial = 3000;
         public static final int Advanced = 1000;
         public static final int Inventory = 1000;
         public static final int Badges = 1000;
         public static final int Shipping = 1000;
-        public static final int Financial = 4000;
     }
 
     public static class FieldOrder {
