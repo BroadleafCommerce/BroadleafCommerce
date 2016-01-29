@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity;
 import org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity;
+import java.util.List;
 
 /**
  * DAO for auditing what went on with offers being added to an order
@@ -63,5 +64,13 @@ public interface OfferAuditDao {
      * @return
      */
     public Long countOfferCodeUses(Long offerCodeId);
+
+
+    /**
+     * Return all offer audits for a particular order
+     * @param orderId
+     * @return
+     */
+    public List<OfferAudit> readOfferAuditsByOrderId(Long orderId);
 
 }
