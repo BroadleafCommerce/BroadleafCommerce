@@ -39,22 +39,28 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
      */
     @Override
     public Boolean validate(ProductOption productOption, String value) {
-        ProductOptionValidationType validationType = productOption.getProductOptionValidationType();
-        if (validationType == null || validationType == ProductOptionValidationType.REGEX) {
-            if (!validateRegex(productOption.getValidationString(), value)) {
-                LOG.error(productOption.getErrorMessage() + ". Value [" + value + "] does not match regex string ["
-                        + productOption.getValidationString() + "]");
-                String exceptionMessage = productOption.getAttributeName() + " " + productOption.getErrorMessage()
-                        + ". Value [" + value + "] does not match regex string ["
-                        + productOption.getValidationString() + "]";
-                throw new ProductOptionValidationException(exceptionMessage, productOption.getErrorCode(),
-                        productOption.getAttributeName(), value, productOption.getValidationString(),
-                        productOption.getErrorMessage());
-            }
+        if (requiresValidation(productOption) && !validateRegex(productOption.getValidationString(), value)) {
+            LOG.error(productOption.getErrorMessage() + ". Value [" + value + "] does not match regex string ["
+                    + productOption.getValidationString() + "]");
+            String exceptionMessage = productOption.getAttributeName() + " " + productOption.getErrorMessage()
+                    + ". Value [" + value + "] does not match regex string ["
+                    + productOption.getValidationString() + "]";
+            throw new ProductOptionValidationException(exceptionMessage, productOption.getErrorCode(),
+                    productOption.getAttributeName(), value, productOption.getValidationString(),
+                    productOption.getErrorMessage());
         }
         return true;
     }
-    
+
+    protected Boolean requiresValidation(ProductOption productOption) {
+        ProductOptionValidationType validationType = productOption.getProductOptionValidationType();
+
+        Boolean typeRequiresValidation = validationType == null || validationType == ProductOptionValidationType.REGEX;
+        Boolean validationStringExists = productOption.getValidationString() != null;
+
+        return typeRequiresValidation && validationStringExists;
+    }
+
     protected Boolean validateRegex(String regex, String value) {
         if (value == null) {
             return false;
