@@ -573,6 +573,10 @@ button:disabled {
     white-space: nowrap;
 }
 
+.fa.fa-exclamation-triangle {
+    color: #D20A33;
+}
+
 .listgrid-search input {
     height: 36px !important;
     vertical-align: bottom;
