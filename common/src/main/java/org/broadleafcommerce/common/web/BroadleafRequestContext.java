@@ -20,6 +20,9 @@
 package org.broadleafcommerce.common.web;
 
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -41,19 +44,14 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-
-import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Convenient holder class for various objects to be automatically available on thread local without invoking the various
@@ -638,7 +636,7 @@ public class BroadleafRequestContext {
             context.setAdmin(Boolean.valueOf(json.get("admin")));
         }
         if (!json.get("adminUserId").equals("null")) {
-            context.setAdminUserId(Long.parseLong(json.get("ignoreSite")));
+            context.setAdminUserId(Long.parseLong(json.get("adminUserId")));
         }
         if (!json.get("broadleafCurrency").equals("null")) {
             context.setBroadleafCurrency(em.find(BroadleafCurrencyImpl.class, json.get("broadleafCurrency")));
