@@ -300,7 +300,7 @@ $(document).ready(function() {
         if (oldParams == null) {
             oldParams = {};
         }
-        var $url = $(this).closest('.filter-fields').data('action') + '?' + $.param(oldParams);
+        var $url = BLCAdmin.buildUrlWithParams($(this).closest('.filter-fields').data('action'), oldParams);
         BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
         BLC.ajax({
             url: $url,
@@ -383,7 +383,7 @@ $(document).ready(function() {
         }
 
         BLC.ajax({
-            url: $(this).closest('form').attr('action') + '?' + $.param(oldParams),
+            url: BLCAdmin.buildUrlWithParams($(this).closest('form').attr('action'), oldParams),
             type: "GET",
         }, function(data) {
             if ($(data).find('table').length === 1 && (BLCAdmin.currentModal() === undefined || BLCAdmin.currentModal().length === 0)) {

@@ -23,28 +23,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
-import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.dto.Entity;
-import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.dto.GroupMetadata;
-import org.broadleafcommerce.openadmin.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.dto.MapStructure;
-import org.broadleafcommerce.openadmin.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.dto.SectionCrumb;
-import org.broadleafcommerce.openadmin.dto.TabMetadata;
+import org.broadleafcommerce.openadmin.dto.*;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A DTO class used to seed a persistence package.
@@ -63,6 +45,7 @@ public class PersistencePackageRequest {
     protected ForeignKey foreignKey;
     protected Integer startIndex;
     protected Integer maxIndex;
+    protected Integer maxResults;
     protected SectionCrumb[] sectionCrumbs;
     protected String sectionEntityField;
     protected String requestingEntityName;
@@ -259,6 +242,11 @@ public class PersistencePackageRequest {
     
     public PersistencePackageRequest withMaxIndex(Integer maxIndex) {
         setMaxIndex(maxIndex);
+        return this;
+    }
+
+    public PersistencePackageRequest withMaxResults(Integer maxResults) {
+        setMaxResults(maxResults);
         return this;
     }
 
@@ -503,6 +491,14 @@ public class PersistencePackageRequest {
 
     public void setMaxIndex(Integer maxIndex) {
         this.maxIndex = maxIndex;
+    }
+
+    public Integer getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(Integer maxResults) {
+        this.maxResults = maxResults;
     }
 
     public SectionCrumb[] getSectionCrumbs() {

@@ -212,7 +212,7 @@ public class ListGridRecord {
             }
 
             return new ListGridRecordIcon()
-                .withCssClass("icon-exclamation-sign")
+                .withCssClass("fa fa-exclamation-triangle")
                 .withMessage(msgToUser)
                 .withHasDetails(true);
         }

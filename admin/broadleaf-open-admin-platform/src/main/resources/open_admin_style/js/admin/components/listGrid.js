@@ -208,7 +208,7 @@
             var $modal = $listGridContainer.closest('.modal');
             if ($modal.length && typeof listGridId !== 'undefined') {
                 var $modalActionContainer = $modal.find('.modal-footer .listgrid-modal-actions');
-                updateListGridActionsForContainer($modalActionContainer.find("button.row-action[data-listgridid='" + listGridId + "']"), numSelected);
+                updateListGridActionsForContainer($modalActionContainer.find("button.row-action"), numSelected);
             }
 
             function updateListGridActionsForContainer($containerActions, numSelected) {
@@ -295,6 +295,13 @@
                     $(this).html(day.fromNow());
                 }
             });
+
+	    // update duration fields
+            $($.find("[data-fieldname='durationLabel']")).each(function() {
+                var day = moment.duration(parseInt($(this).html())).format('h[h] m[m] s[s]');
+                $(this).html(day);
+            });
+
             // Run any additionally configured initialization handlers
             for (var i = 0; i < initializationHandlers.length; i++) {
                 initializationHandlers[i]($container.find('table:not([id$="-header"])'));
@@ -755,7 +762,8 @@ $(document).ready(function() {
         var link = BLCAdmin.listGrid.getActionLink($(this));
 
         if ($(this).closest('table').length
-            && $(this).closest('table').data('listgridtype') === 'tree') {
+            && $(this).closest('table').data('listgridtype') === 'tree'
+            && $(this).closest('.tree-column-wrapper').length) {
             // Expected uri structure: "/admin/{section}/{id}/{alternate-id}"
             // Desired uri structure: "/admin/{section}/{id}"
             link = link.substring(0, link.lastIndexOf('/'));

@@ -47,12 +47,7 @@ import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.AdminSectionCustomCriteriaService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
-import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
-import org.broadleafcommerce.openadmin.web.form.entity.Field;
-import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
-import org.broadleafcommerce.openadmin.web.form.entity.Tab;
+import org.broadleafcommerce.openadmin.web.form.entity.*;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -687,7 +682,22 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         List<String> maxIndex = requestParams.get(FilterAndSortCriteria.MAX_INDEX_PARAMETER);
         return CollectionUtils.isEmpty(maxIndex) ? null : Integer.parseInt(maxIndex.get(0));
     }
-    
+
+    /**
+     * Obtains the requested max index parameter
+     *
+     * @param requestParams
+     * @return
+     */
+    protected Integer getMaxResults(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> maxResults = requestParams.get(FilterAndSortCriteria.MAX_RESULTS_PARAMETER);
+        return CollectionUtils.isEmpty(maxResults) ? null : Integer.parseInt(maxResults.get(0));
+    }
+
     // ************************
     // GENERIC HELPER METHODS *
     // ************************
