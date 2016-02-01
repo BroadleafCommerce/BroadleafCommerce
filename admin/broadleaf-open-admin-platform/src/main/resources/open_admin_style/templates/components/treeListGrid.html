@@ -6,7 +6,7 @@
                    th:each="column, iterStat : ${treeListGrid.treeListGridColumns}"
                    th:if="${iterStat.index == 0}"
                    th:with="listGrid=${column.listGrid}"
-                   th:placeholder="#{Search_Placeholder(#{${entityFriendlyName}} + ' ' + #{${listGrid.headerFields[0].friendlyName}}, #{${entityFriendlyName}})}" />
+                   th:placeholder="#{Search_Placeholder(#{${entityFriendlyName}} + ' ' + ${overrideSearchString})}" />
             <div class="listgrid-search-actions">
                 <button class="button primary tree-search-button" th:inline="text" th:utext="#{Search}"></button>
             </div>
