@@ -146,6 +146,33 @@ public class CrossSaleProductImpl implements RelatedProduct, MultiTenantCloneabl
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
+
+        CrossSaleProductImpl that = (CrossSaleProductImpl) o;
+
+        if (sequence != null ? !sequence.equals(that.sequence) : that.sequence != null) return false;
+        if (category != null ? !category.equals(that.category) : that.category != null) return false;
+        if (product != null ? !product.equals(that.product) : that.product != null) return false;
+        if (relatedSaleProduct != null ? !relatedSaleProduct.equals(that.relatedSaleProduct) : that.relatedSaleProduct != null) return false;
+        if (promotionMessage != null ? !promotionMessage.equals(that.promotionMessage) : that.promotionMessage != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = category != null ? category.hashCode() : 0;
+        result = 31 * result + (product != null ? product.hashCode() : 0);
+        result = 31 * result + (relatedSaleProduct != null ? relatedSaleProduct.hashCode() : 0);
+        result = 31 * result + (sequence != null ? sequence.hashCode() : 0);
+        result = 31 * result + (promotionMessage != null ? promotionMessage.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public <G extends CrossSaleProductImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
