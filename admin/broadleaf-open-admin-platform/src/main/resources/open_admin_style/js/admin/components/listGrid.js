@@ -295,6 +295,13 @@
                     $(this).html(day.fromNow());
                 }
             });
+
+	    // update duration fields
+            $($.find("[data-fieldname='durationLabel']")).each(function() {
+                var day = moment.duration(parseInt($(this).html())).format('h[h] m[m] s[s]');
+                $(this).html(day);
+            });
+
             // Run any additionally configured initialization handlers
             for (var i = 0; i < initializationHandlers.length; i++) {
                 initializationHandlers[i]($container.find('table:not([id$="-header"])'));
