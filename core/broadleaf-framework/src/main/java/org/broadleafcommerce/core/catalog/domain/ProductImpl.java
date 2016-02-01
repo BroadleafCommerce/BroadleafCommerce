@@ -35,7 +35,14 @@ import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.presentation.*;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
@@ -47,16 +54,43 @@ import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.common.web.Locatable;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
-import java.math.BigDecimal;
-import java.util.*;
+import javax.persistence.Transient;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -87,6 +121,8 @@ import java.util.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
 @AdminPresentationMergeOverrides(
 {
+        @AdminPresentationMergeOverride(name = "defaultSku.displayTemplate", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "defaultSku.displayTemplate", mergeEntries =
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "defaultSku.urlKey", mergeEntries =
@@ -130,47 +166,43 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     protected Long id;
 
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order = ProductAdminPresentation.FieldOrder.URL,
-            group = ProductAdminPresentation.GroupName.General, groupOrder = ProductAdminPresentation.GroupOrder.General,
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Url",
+            group = GroupName.General, order = FieldOrder.URL,
             prominent = true, gridOrder = 3, columnWidth = "260px",
             requiredOverride = RequiredOverride.REQUIRED,
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     protected String url;
 
     @Column(name = "OVERRIDE_GENERATED_URL")
-    @AdminPresentation(friendlyName = "ProductImpl_Override_Generated_Url", group = ProductAdminPresentation.GroupName.General,
-            order = ProductAdminPresentation.FieldOrder.URL + 10)
+    @AdminPresentation(friendlyName = "ProductImpl_Override_Generated_Url",
+            group = GroupName.General, order = FieldOrder.URL + 10)
     protected Boolean overrideGeneratedUrl = false;
 
     @Column(name = "URL_KEY")
     @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey",
-            tab = ProductAdminPresentation.TabName.Advanced, tabOrder = ProductAdminPresentation.TabOrder.Advanced,
-            group = ProductAdminPresentation.GroupName.General, groupOrder = ProductAdminPresentation.GroupOrder.General,
+            group = GroupName.Advanced,
             excluded = true)
     protected String urlKey;
 
     @Column(name = "DISPLAY_TEMPLATE")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template",
-            tab = ProductAdminPresentation.TabName.Advanced, tabOrder = ProductAdminPresentation.TabOrder.Advanced,
-            group = ProductAdminPresentation.GroupName.Advanced, groupOrder = ProductAdminPresentation.GroupOrder.Advanced)
+            group = GroupName.Advanced)
     protected String displayTemplate;
 
     @Column(name = "MODEL")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Model",
-            tab = ProductAdminPresentation.TabName.Advanced, tabOrder = ProductAdminPresentation.TabOrder.Advanced,
-            group = ProductAdminPresentation.GroupName.Advanced, groupOrder = ProductAdminPresentation.GroupOrder.Advanced)
+            group = GroupName.Advanced)
     protected String model;
 
     @Column(name = "MANUFACTURE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order = ProductAdminPresentation.FieldOrder.MANUFACTURER,
-            group = ProductAdminPresentation.GroupName.General, groupOrder = ProductAdminPresentation.GroupOrder.General,
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer",
+            group = GroupName.General, order = FieldOrder.MANUFACTURER,
             prominent = true, gridOrder = 4)
     protected String manufacturer;
 
     @Column(name = "IS_FEATURED_PRODUCT", nullable = false)
     @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", requiredOverride = RequiredOverride.NOT_REQUIRED,
-            tab = ProductAdminPresentation.TabName.Marketing, tabOrder = ProductAdminPresentation.TabOrder.Marketing,
-            group = ProductAdminPresentation.GroupName.Badges, groupOrder = ProductAdminPresentation.GroupOrder.Badges,
+            group = GroupName.Badges,
             defaultValue = "false")
     protected Boolean isFeaturedProduct = false;
 
@@ -183,8 +215,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Column(name = "CAN_SELL_WITHOUT_OPTIONS")
     @AdminPresentation(friendlyName = "ProductImpl_Can_Sell_Without_Options",
-            tab = ProductAdminPresentation.TabName.Advanced, tabOrder = ProductAdminPresentation.TabOrder.Advanced,
-            group = ProductAdminPresentation.GroupName.Advanced, groupOrder = ProductAdminPresentation.GroupOrder.Advanced)
+            group = GroupName.Advanced)
     protected Boolean canSellWithoutOptions = false;
 
     @Transient
@@ -197,8 +228,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @OrderBy(value = "sequence")
-    @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle", order = 1000,
-            tab = ProductAdminPresentation.TabName.Marketing, tabOrder = ProductAdminPresentation.TabOrder.Marketing,
+    @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle",
+            tab = TabName.Marketing, order = 1000,
             targetObjectProperty = "relatedSaleProduct",
             sortProperty = "sequence",
             maintainedAdornedTargetFields = { "promotionMessage" },
@@ -209,8 +240,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @OrderBy(value = "sequence")
-    @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle", order = 2000,
-            tab = ProductAdminPresentation.TabName.Marketing, tabOrder = ProductAdminPresentation.TabOrder.Marketing,
+    @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle",
+            tab = TabName.Marketing, order = 2000,
             targetObjectProperty = "relatedSaleProduct",
             sortProperty = "sequence",
             maintainedAdornedTargetFields = { "promotionMessage" },
@@ -220,15 +251,15 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy = "product", cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "ProductImpl_Additional_Skus", order = 1000,
-            tab = ProductAdminPresentation.TabName.ProductOptions, tabOrder = ProductAdminPresentation.TabOrder.ProductOptions)
+    @AdminPresentationCollection(friendlyName = "ProductImpl_Additional_Skus",
+            tab = TabName.ProductOptions, order = 1000)
     protected List<Sku> additionalSkus = new ArrayList<Sku>();
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name = "PRODUCT_CATEGORY_INDEX", columnNames = { "DEFAULT_CATEGORY_ID" })
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order = ProductAdminPresentation.FieldOrder.DEFAULT_CATEGORY,
-            group = ProductAdminPresentation.GroupName.General, groupOrder = ProductAdminPresentation.GroupOrder.General,
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order = FieldOrder.DEFAULT_CATEGORY,
+            group = GroupName.General,
             prominent = true, gridOrder = 2,
             requiredOverride = RequiredOverride.REQUIRED)
     @AdminPresentationToOneLookup()
@@ -240,8 +271,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @OrderBy(value = "displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
-    @AdminPresentationAdornedTargetCollection(friendlyName = "allParentCategoriesTitle", order = 3000,
-            tab = ProductAdminPresentation.TabName.Marketing, tabOrder = ProductAdminPresentation.TabOrder.Marketing,
+    @AdminPresentationAdornedTargetCollection(friendlyName = "allParentCategoriesTitle",
+            tab = TabName.Marketing, order = 3000,
             targetObjectProperty = "category",
             parentObjectProperty = "product",
             gridVisibleFields = { "name" })
@@ -252,7 +283,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @MapKey(name = "name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "productAttributesTitle",
-            tab = ProductAdminPresentation.TabName.Advanced, tabOrder = ProductAdminPresentation.TabOrder.Advanced,
+            tab = TabName.General,
             deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name")
     protected Map<String, ProductAttribute> productAttributes = new HashMap<String, ProductAttribute>();
 
@@ -261,7 +292,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(friendlyName = "productOptionsTitle",
-            tab = ProductAdminPresentation.TabName.ProductOptions, tabOrder = ProductAdminPresentation.TabOrder.ProductOptions,
+            tab = TabName.ProductOptions,
             joinEntityClass = "org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl",
             targetObjectProperty = "productOption",
             parentObjectProperty = "product",

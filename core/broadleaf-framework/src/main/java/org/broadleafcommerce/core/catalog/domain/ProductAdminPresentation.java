@@ -44,7 +44,8 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                     order = ProductAdminPresentation.GroupOrder.ActiveDateRange,
                     column = 1),
                 @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Financial,
-                    order = ProductAdminPresentation.GroupOrder.Financial)
+                    order = ProductAdminPresentation.GroupOrder.Financial,
+                    column = 1)
             }
         ),
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Marketing,
@@ -118,24 +119,34 @@ public interface ProductAdminPresentation {
     public static class GroupOrder {
 
         public static final int General = 1000;
-        public static final int Image = 1000;
         public static final int Price = 2000;
-        public static final int ActiveDateRange = 3000;
+        public static final int Image = 1000;
+        public static final int ActiveDateRange = 2000;
+        public static final int Financial = 3000;
         public static final int Advanced = 1000;
         public static final int Inventory = 1000;
         public static final int Badges = 1000;
         public static final int Shipping = 1000;
-        public static final int Financial = 4000;
     }
 
     public static class FieldOrder {
 
         public static final int NAME = 1000;
         public static final int SHORT_DESCRIPTION = 2000;
-        public static final int PRIMARY_MEDIA = 3000;
-        public static final int LONG_DESCRIPTION = 4000;
-        public static final int DEFAULT_CATEGORY = 5000;
-        public static final int MANUFACTURER = 6000;
-        public static final int URL = 7000;
+        public static final int LONG_DESCRIPTION = 3000;
+        public static final int DEFAULT_CATEGORY = 4000;
+        public static final int MANUFACTURER = 5000;
+        public static final int URL = 6000;
+
+        public static final int RETAIL_PRICE = 1000;
+        public static final int SALE_PRICE = 2000;
+        public static final int COST = 3000;
+
+        public static final int PRIMARY_MEDIA = 1000;
+
+        public static final int ACTIVE_START_DATE = 1000;
+        public static final int ACTIVE_END_DATE = 2000;
+
+        public static final int TAXABLE = 1000;
     }
 }
