@@ -461,11 +461,4 @@ $(document).ready(function() {
         $(field).find('.description-text').html(descriptionText);
         $(field).find('.description-text').show();
     });
-
-    /**
-     * Intercepts the enter keypress from the main entity name input and updates the entity title
-     */
-    $('body').on('keyup', '.main-entity-name input', function(event) {
-        $(this).closest('.main-content').find('.mainEntityName').text($(this).val());
-    });
 });
