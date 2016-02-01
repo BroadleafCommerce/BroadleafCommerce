@@ -44,5 +44,9 @@ public abstract class AbstractInventoryServiceExtensionHandler extends AbstractE
     public ExtensionResultStatusType incrementInventory(Map<Sku, Integer> skuQuantities, Map<String, Object> context) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-    
+
+    @Override
+    public ExtensionResultStatusType reconcileChangeOrderInventory(Map<Sku, Integer> decrementSkuQuantities, Map<Sku, Integer> incrementSkuQuantities, Map<String, Object> context) throws InventoryUnavailableException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }
