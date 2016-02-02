@@ -227,12 +227,11 @@
         showAlert : function($container, message, options) {
             options = options || {};
     	    var alertType = options.alertType || '';
+            var autoClose = options.autoClose || 3000;
+
+            var $alert = $('<span>').addClass('alert-box').addClass(alertType);
     	    
-    	    var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass(alertType);
-    	    var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
-    	    
-    	    $alert.append('&nbsp;&nbsp;&nbsp;' + message);
-    	    $alert.append($closeLink);
+    	    $alert.append('&nbsp;&nbsp;' + message);
     	    
     	    if (options.clearOtherAlerts) {
                 $container.find('.alert-box').remove();
@@ -245,11 +244,9 @@
 
             setTimeout(function() {
                 alertTarget.append($alert);
-                if (options.autoClose) {
-                    setTimeout(function() {
-                        $closeLink.closest(".alert-box").remove();
-                    }, options.autoClose);
-                }
+                setTimeout(function() {
+                    $alert.fadeOut();
+                }, autoClose);
             });
         },
         
