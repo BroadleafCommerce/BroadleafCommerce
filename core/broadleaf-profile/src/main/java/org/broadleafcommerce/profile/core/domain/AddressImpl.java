@@ -734,6 +734,7 @@ public class AddressImpl implements Address {
         cloned.setDefault(isDefault);
         cloned.setEmailAddress(emailAddress);
         cloned.setFirstName(firstName);
+        cloned.setLastName(lastName);
         cloned.setFullName(fullName);
         cloned.setIsoCountryAlpha2(isoCountryAlpha2);
         cloned.setIsoCountrySubdivision(isoCountrySubdivision);
@@ -749,6 +750,8 @@ public class AddressImpl implements Address {
         cloned.setVerificationLevel(verificationLevel);
         cloned.setStateProvinceRegion(stateProvinceRegion);
         cloned.setPhoneSecondary(phoneSecondary);
+        cloned.setState(state);
+        cloned.setCountry(country);
         return createResponse;
     }
 }
