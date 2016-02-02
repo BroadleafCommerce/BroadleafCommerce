@@ -1,7 +1,7 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
-<div class="changes">
+<div class="changes" th:classappend="${group.column == 0} ? 'numeric-field'">
     <input type="text"
            th:disabled="${field.readOnly}"
            th:classappend="${group.column == 0} ? 'numeric-field'"
