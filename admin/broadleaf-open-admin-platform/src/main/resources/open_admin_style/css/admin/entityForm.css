@@ -117,6 +117,11 @@ fieldset:not(.untitledGroup) {
     margin-left: 5px;
 }
 
+.fieldset-card .titlebar .titlebar-title .alert-box {
+    text-transform: none;
+    font-weight: normal;
+}
+
 .fieldset-card .fieldset-card-content {
     padding: 15px 15px 0 !important;
 }
