@@ -889,7 +889,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 return null;
             }
         } else if (fieldType.equals(SupportedFieldType.BOOLEAN.toString())) {
-            if (!defaultValue.toLowerCase().equals("true") && !defaultValue.toLowerCase().equals("false")) {
+            if (!defaultValue.toLowerCase().equals("true") && !defaultValue.toLowerCase().equals("false")
+                    && !defaultValue.toUpperCase().equals("Y") && !defaultValue.toUpperCase().equals("N")) {
                 String msg = buildMsgForDefValException(SupportedFieldType.BOOLEAN.toString(), fmd, defaultValue);
                 LOG.warn(msg);
                 return null;

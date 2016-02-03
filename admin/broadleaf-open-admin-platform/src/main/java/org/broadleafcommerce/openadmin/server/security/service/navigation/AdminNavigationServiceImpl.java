@@ -209,7 +209,8 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         return sections;
     }
 
-    protected boolean checkPermissions(List<AdminPermission> authorizedPermissions, AdminPermission permission) {
+    @Override
+    public boolean checkPermissions(List<AdminPermission> authorizedPermissions, AdminPermission permission) {
         if (authorizedPermissions != null) {
             if (authorizedPermissions.contains(permission)){
                 return true;
