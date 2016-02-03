@@ -561,8 +561,7 @@ var BLCAdmin = (function($) {
                 var selectizeSearchField = $(selectizeAdder).data("selectizesearch");
                 var placeholder = 'Add ' + $(selectizeAdder).data("selectizeplaceholder") + ' +';
 
-                var collectionParent = window.location.pathname.split('/')[2];
-                var collectionPlaceholder = 'This ' + collectionParent + ' is not restricted to certain customers';
+                var collectionPlaceholder = 'No restrictions';
 
                 var select_adder, $select_adder;
                 var select_collection, $select_collection;
