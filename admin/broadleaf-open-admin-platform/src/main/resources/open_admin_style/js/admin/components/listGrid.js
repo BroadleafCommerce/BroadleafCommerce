@@ -624,6 +624,19 @@ $(document).ready(function() {
         return false;
     });
 
+    $('body').on('click', 'button.sub-list-grid-add-empty, a.sub-list-grid-add-empty', function() {
+        var link = $(this).attr('data-actionurl');
+        link = link.substring(0, link.indexOf("/add")) + "/addEmpty" + link.substring(link.indexOf("/add") + 4, link.length);
+        BLC.ajax({
+            url : link,
+            type : "POST"
+        }, function(data) {
+            link = link.substring(0, link.indexOf("/addEmpty")) + "/" + data.id + link.substring(link.indexOf("/addEmpty") + 9, link.length);
+            BLCAdmin.showLinkAsModal(link);
+        });
+        return false;
+    });
+
     $('body').on({
         mouseenter: function () {
             var $this = $(this);

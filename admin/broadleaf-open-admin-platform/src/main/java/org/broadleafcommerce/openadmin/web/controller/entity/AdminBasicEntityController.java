@@ -1026,6 +1026,37 @@ public class AdminBasicEntityController extends AdminAbstractController {
         return "views/standaloneListGrid";
     }
 
+    @RequestMapping(value = "/{id}/{collectionField:.*}/addEmpty", method = RequestMethod.POST)
+    public @ResponseBody String addEmptyCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+        String sectionKey = getSectionKey(pathVars);
+        String mainClassName = getClassNameForSection(sectionKey);
+        List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+
+        if (StringUtils.isBlank(entityForm.getEntityType())) {
+            FieldMetadata fmd = collectionProperty.getMetadata();
+            if (fmd instanceof BasicCollectionMetadata) {
+                entityForm.setEntityType(((BasicCollectionMetadata) fmd).getCollectionCeilingEntity());
+            }
+        }
+
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
+        // First, we must save the collection entity
+        PersistenceResponse persistenceResponse = service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, sectionCrumbs);
+        Entity savedEntity = persistenceResponse.getEntity();
+
+        return new JsonResponse(response)
+                .with("status", "complete")
+                .with("id", savedEntity.findProperty(entityForm.getIdProperty()).getValue())
+                .done();
+    }
+
     /**
      * Builds out all of the model information needed for showing the add modal for collection items on both the initial GET
      * as well as after a POST with validation errors
@@ -1279,7 +1310,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
         
         if (md instanceof BasicCollectionMetadata &&
-                ((BasicCollectionMetadata) md).getAddMethodType().equals(AddMethodType.PERSIST)) {
+                (((BasicCollectionMetadata) md).getAddMethodType().equals(AddMethodType.PERSIST) ||
+                        ((BasicCollectionMetadata) md).getAddMethodType().equals(AddMethodType.PERSIST_EMPTY))) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
