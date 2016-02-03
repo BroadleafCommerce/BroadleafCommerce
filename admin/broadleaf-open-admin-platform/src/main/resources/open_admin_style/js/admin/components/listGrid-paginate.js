@@ -496,12 +496,12 @@
          */
         updateSelectedRecords : function($tbody) {
             // if the "select-all" button is checked then make sure the newly loaded rows/records are checked as well
-            if( $tbody.closest('.listgrid-container').find('.listgrid-header-wrapper').find('input[type=checkbox].multiselect-checkbox')) {
+            if($tbody.closest('.listgrid-container').find('.listgrid-header-wrapper').find('input[type=checkbox].multiselect-checkbox').length) {
                 var $listgridBody = $tbody.closest(".listgrid-header-wrapper").next();
                 var $checkbox = $tbody.closest('.listgrid-container').find('.listgrid-header-wrapper').find('input[type=checkbox].multiselect-checkbox');
                 if ($checkbox.prop('checked')) {
                     $listgridBody.find(".listgrid-checkbox").prop('checked', true);
-                    $tbody.find("tr:not(.selected)").click();
+                    BLCAdmin.listGrid.inlineRowSelected(null, $tbody.find("tr:not(.selected)"), null, null, null, true);
                 }
             }
         },
