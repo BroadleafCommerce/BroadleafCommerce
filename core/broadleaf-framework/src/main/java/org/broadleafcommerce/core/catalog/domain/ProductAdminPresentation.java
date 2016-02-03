@@ -38,14 +38,22 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Image,
                     order = ProductAdminPresentation.GroupOrder.Image,
                     column = 1),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Price,
-                    order = ProductAdminPresentation.GroupOrder.Price),
                 @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ActiveDateRange,
                     order = ProductAdminPresentation.GroupOrder.ActiveDateRange,
                     column = 1),
                 @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Financial,
                     order = ProductAdminPresentation.GroupOrder.Financial,
                     column = 1)
+            }
+        ),
+        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Pricing,
+            order = ProductAdminPresentation.TabOrder.Pricing,
+            groups = {
+                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Price,
+                    order = ProductAdminPresentation.GroupOrder.Price),
+                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Discountable,
+                    order = ProductAdminPresentation.GroupOrder.Discountable,
+                    untitled = true, column = 1)
             }
         ),
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Marketing,
@@ -83,6 +91,7 @@ public interface ProductAdminPresentation {
     public static class TabName {
 
         public static final String General = "ProductImpl_General_Tab";
+        public static final String Pricing = "ProductImpl_Pricing_Tab";
         public static final String Marketing = "ProductImpl_Marketing_Tab";
         public static final String Media = "SkuImpl_Media_Tab";
         public static final String ProductOptions = "ProductImpl_Product_Options_Tab";
@@ -95,12 +104,13 @@ public interface ProductAdminPresentation {
     public static class TabOrder {
 
         public static final int General = 1000;
-        public static final int Marketing = 2000;
-        public static final int Media = 3000;
-        public static final int ProductOptions = 4000;
-        public static final int Inventory = 5000;
-        public static final int Shipping = 6000;
-        public static final int Advanced = 7000;
+        public static final int Pricing = 2000;
+        public static final int Marketing = 3000;
+        public static final int Media = 4000;
+        public static final int ProductOptions = 5000;
+        public static final int Inventory = 6000;
+        public static final int Shipping = 7000;
+        public static final int Advanced = 8000;
     }
 
     public static class GroupName {
@@ -110,6 +120,7 @@ public interface ProductAdminPresentation {
         public static final String Price = "SkuImpl_Price";
         public static final String ActiveDateRange = "ProductImpl_Product_Active_Date_Range";
         public static final String Advanced = "ProductImpl_Advanced";
+        public static final String Discountable = "SkuImpl_Sku_Discountable";
         public static final String Inventory = "SkuImpl_Sku_Inventory";
         public static final String Badges = "ProductImpl_Badges";
         public static final String Shipping = "ProductWeight_Shipping";
@@ -119,10 +130,13 @@ public interface ProductAdminPresentation {
     public static class GroupOrder {
 
         public static final int General = 1000;
-        public static final int Price = 2000;
         public static final int Image = 1000;
         public static final int ActiveDateRange = 2000;
         public static final int Financial = 3000;
+
+        public static final int Price = 1000;
+        public static final int Discountable = 1000;
+
         public static final int Advanced = 1000;
         public static final int Inventory = 1000;
         public static final int Badges = 1000;
