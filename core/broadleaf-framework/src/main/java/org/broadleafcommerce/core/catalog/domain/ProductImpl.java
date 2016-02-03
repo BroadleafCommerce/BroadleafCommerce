@@ -191,7 +191,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Column(name = "MODEL")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Model",
-            group = GroupName.Advanced)
+            excluded = true)
     protected String model;
 
     @Column(name = "MANUFACTURE")
@@ -200,10 +200,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             prominent = true, gridOrder = 4)
     protected String manufacturer;
 
+    @Deprecated
     @Column(name = "IS_FEATURED_PRODUCT", nullable = false)
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", requiredOverride = RequiredOverride.NOT_REQUIRED,
-            group = GroupName.Badges,
-            defaultValue = "false")
     protected Boolean isFeaturedProduct = false;
 
     @OneToOne(targetEntity = SkuImpl.class, cascade = { CascadeType.ALL })
@@ -398,11 +396,13 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         this.manufacturer = manufacturer;
     }
 
+    @Deprecated
     @Override
     public boolean isFeaturedProduct() {
         return isFeaturedProduct;
     }
 
+    @Deprecated
     @Override
     public void setFeaturedProduct(boolean isFeaturedProduct) {
         this.isFeaturedProduct = isFeaturedProduct;

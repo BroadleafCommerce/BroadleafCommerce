@@ -170,7 +170,8 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
     @Column(name = "EXTERNAL_ID")
     @Index(name="SKU_EXTERNAL_ID_INDEX", columnNames={"EXTERNAL_ID"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_ExternalID",
-            group = GroupName.Advanced)
+        group = GroupName.Miscellaneous, order = FieldOrder.EXTERNAL_ID,
+        tooltip = "SkuImpl_Sku_ExternalID_Tooltip")
     protected String externalId;
 
     @Column(name = "URL_KEY")
@@ -188,7 +189,7 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
     @Column(name = "UPC")
     @Index(name = "SKU_UPC_INDEX", columnNames = { "UPC" })
     @AdminPresentation(friendlyName = "SkuImpl_Sku_UPC",
-            group = GroupName.Advanced, order = 6000)
+            group = GroupName.Miscellaneous, order = FieldOrder.UPC)
     protected String upc;
 
     @Column(name = "SALE_PRICE", precision = 19, scale = 5)
@@ -395,7 +396,7 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
 
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType",
-        group = GroupName.Inventory, order = 1000,
+        group = GroupName.Shipping, order = 1000,
         helpText = "skuInventoryTypeHelpText",
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")

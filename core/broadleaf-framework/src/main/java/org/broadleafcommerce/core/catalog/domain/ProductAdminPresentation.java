@@ -43,7 +43,10 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                     column = 1),
                 @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Financial,
                     order = ProductAdminPresentation.GroupOrder.Financial,
-                    column = 1)
+                    column = 1),
+                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Miscellaneous,
+                    order = ProductAdminPresentation.GroupOrder.Miscellaneous,
+                    column = 1, collapsed = true)
             }
         ),
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Pricing,
@@ -57,11 +60,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             }
         ),
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Marketing,
-            order = ProductAdminPresentation.TabOrder.Marketing,
-            groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Badges,
-                    order = ProductAdminPresentation.GroupOrder.Badges)
-            }
+            order = ProductAdminPresentation.TabOrder.Marketing
         ),
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Media,
             order = ProductAdminPresentation.TabOrder.Media
@@ -122,9 +121,9 @@ public interface ProductAdminPresentation {
         public static final String Advanced = "ProductImpl_Advanced";
         public static final String Discountable = "SkuImpl_Sku_Discountable";
         public static final String Inventory = "SkuImpl_Sku_Inventory";
-        public static final String Badges = "ProductImpl_Badges";
         public static final String Shipping = "ProductWeight_Shipping";
         public static final String Financial = "ProductImpl_Financial";
+        public static final String Miscellaneous = "ProductImpl_General_Misc";
     }
 
     public static class GroupOrder {
@@ -133,13 +132,13 @@ public interface ProductAdminPresentation {
         public static final int Image = 1000;
         public static final int ActiveDateRange = 2000;
         public static final int Financial = 3000;
+        public static final int Miscellaneous = 4000;
 
         public static final int Price = 1000;
         public static final int Discountable = 1000;
 
         public static final int Advanced = 1000;
         public static final int Inventory = 1000;
-        public static final int Badges = 1000;
         public static final int Shipping = 1000;
     }
 
@@ -162,5 +161,8 @@ public interface ProductAdminPresentation {
         public static final int ACTIVE_END_DATE = 2000;
 
         public static final int TAXABLE = 1000;
+
+        public static final int UPC = 1000;
+        public static final int EXTERNAL_ID = 2000;
     }
 }
