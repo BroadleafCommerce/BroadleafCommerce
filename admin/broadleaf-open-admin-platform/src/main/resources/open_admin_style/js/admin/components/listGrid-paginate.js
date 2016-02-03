@@ -493,12 +493,10 @@
         /**
          * If the "select-all" checkbox is checked, then make sure all rows are checked
          * @param $tbody
-         * @param $checkbox
          */
         updateSelectedRecords : function($tbody) {
             // if the "select-all" button is checked then make sure the newly loaded rows/records are checked as well
             if( $tbody.closest('.listgrid-container').find('.listgrid-header-wrapper').find('input[type=checkbox].multiselect-checkbox')) {
-                debugger;
                 var $listgridBody = $tbody.closest(".listgrid-header-wrapper").next();
                 var $checkbox = $tbody.closest('.listgrid-container').find('.listgrid-header-wrapper').find('input[type=checkbox].multiselect-checkbox');
                 if ($checkbox.prop('checked')) {
