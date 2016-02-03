@@ -24,6 +24,7 @@
         showAlert : function($container, message, options) {
             options = options || {};
             var alertType = options.alertType || '';
+            var autoClose = options.autoClose || 3000;
             var $fieldGroup = $container.closest('.field-group');
             
             var $alert = $('<span>').addClass('alert-box').addClass(alertType);
@@ -43,12 +44,10 @@
             } else {
                 $container.append($alert);
             }
-            
-            if (options.autoClose) {
-                setTimeout(function() {
-                    $alert.fadeOut();
-                }, options.autoClose);
-            }
+
+            setTimeout(function() {
+                $alert.fadeOut();
+            }, autoClose);
         }
     };
 
