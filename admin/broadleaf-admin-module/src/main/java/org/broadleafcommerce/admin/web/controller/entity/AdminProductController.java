@@ -53,12 +53,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Handles admin operations for the {@link Product} entity. Editing a product requires custom criteria in order to properly
@@ -286,14 +287,19 @@ public class AdminProductController extends AdminBasicEntityController {
         //Skus have a specific toolbar action to generate Skus based on permutations
         EntityForm form = (EntityForm) model.asMap().get("entityForm");
         ListGridAction generateSkusAction = new ListGridAction(ListGridAction.GEN_SKUS).withDisplayText("Generate_Skus")
-                                                                .withIconClass("icon-fighter-jet")
-                                                                .withButtonClass("generate-skus")
-                                                                .withUrlPostfix("/generate-skus");
-        
+                .withIconClass("icon-fighter-jet")
+                .withButtonClass("generate-skus")
+                .withUrlPostfix("/generate-skus")
+                .withActionUrlOverride("/product/" + id + "/additionalSkus/generate-skus");
+
         ListGrid skusGrid = form.findListGrid("additionalSkus");
         if (skusGrid != null) {
-            skusGrid.addToolbarAction(generateSkusAction);
             skusGrid.setCanFilterAndSort(false);
+        }
+
+        ListGrid productOptionsGrid = form.findListGrid("productOptions");
+        if (productOptionsGrid != null) {
+            productOptionsGrid.addToolbarAction(generateSkusAction);
         }
         
         // When we're dealing with product bundles, we don't want to render the product options and additional skus
