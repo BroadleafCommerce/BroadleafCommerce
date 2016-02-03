@@ -200,6 +200,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             prominent = true, gridOrder = 4)
     protected String manufacturer;
 
+    @Deprecated
     @Column(name = "IS_FEATURED_PRODUCT", nullable = false)
     protected Boolean isFeaturedProduct = false;
 
@@ -395,11 +396,13 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         this.manufacturer = manufacturer;
     }
 
+    @Deprecated
     @Override
     public boolean isFeaturedProduct() {
         return isFeaturedProduct;
     }
 
+    @Deprecated
     @Override
     public void setFeaturedProduct(boolean isFeaturedProduct) {
         this.isFeaturedProduct = isFeaturedProduct;
