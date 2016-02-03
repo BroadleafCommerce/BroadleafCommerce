@@ -456,13 +456,13 @@ div.action-popup img.ajax-loader {
     float: left;
     padding: 0 2px;
     width: 100%;
- }
+}
 
 .listgrid-toolbar li.alert-box {
     padding-top: 8px;
     padding-left: 10px;
     color: #94AF39;
- }
+}
 
 div.alert-box.list-grid-alert.save-alert {
     display: inline-block;
@@ -473,6 +473,14 @@ div.alert-box.list-grid-alert.save-alert {
     border: none;
     color: #98B30A;
     text-shadow: none;
+}
+
+span.alert-box.save-alert {
+    color: #98B30A;
+}
+
+span.alert-box.error-alert {
+    color: #A80202;
 }
 
 div.alert-box.list-grid-alert.save-alert a.close {
