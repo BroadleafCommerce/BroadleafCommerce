@@ -83,6 +83,12 @@ public class DefaultListGridActions {
         .withDisplayText("Select")
         .withSingleActionOnly(true);
 
+    public static final ListGridAction TREE_JUMP_TO_CONTEXT = new ListGridAction(ListGridAction.TREE_JUMP_TO_CONTEXT)
+        .withButtonClass("tree-list-grid-jump-to-context")
+        .withUrlPostfix("/tree/jump-to-context")
+        .withIconClass("fa fa-columns")
+        .withDisplayText("Jump to Context");
+
     public static final ListGridAction ASSET_GRID_SINGLE_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
             .withButtonClass("asset-grid-single-select")
             .withDisplayText("Select")

@@ -3,7 +3,7 @@
 </comment>
 
 <div class="listgrid-modal-actions">
-    <div th:each="action : ${listGrid.activeModalRowActions}">
+    <th:block th:each="action : ${listGrid.activeModalRowActions}">
         <button th:disabled="${!#strings.contains(action.buttonClass,'additional-action')}"
                 class="tiny radius dark row-action button primary"
                 type="button"
@@ -15,5 +15,5 @@
                              data-listgridid=${#strings.replace(#strings.replace('listGrid-'+listGrid.listGridType+'-'+listGrid.subCollectionFieldName, '_', '-'), '.', '-')}">
             <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
         </button>
-    </div>
+    </th:block>
 </div>

@@ -208,7 +208,7 @@
             var $modal = $listGridContainer.closest('.modal');
             if ($modal.length && typeof listGridId !== 'undefined') {
                 var $modalActionContainer = $modal.find('.modal-footer .listgrid-modal-actions');
-                updateListGridActionsForContainer($modalActionContainer.find("button.row-action[data-listgridid='" + listGridId + "']"), numSelected);
+                updateListGridActionsForContainer($modalActionContainer.find("button.row-action"), numSelected);
             }
 
             function updateListGridActionsForContainer($containerActions, numSelected) {
@@ -762,7 +762,8 @@ $(document).ready(function() {
         var link = BLCAdmin.listGrid.getActionLink($(this));
 
         if ($(this).closest('table').length
-            && $(this).closest('table').data('listgridtype') === 'tree') {
+            && $(this).closest('table').data('listgridtype') === 'tree'
+            && $(this).closest('.tree-column-wrapper').length) {
             // Expected uri structure: "/admin/{section}/{id}/{alternate-id}"
             // Desired uri structure: "/admin/{section}/{id}"
             link = link.substring(0, link.lastIndexOf('/'));

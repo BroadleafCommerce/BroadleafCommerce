@@ -264,17 +264,6 @@ circle {
     box-shadow: none;
 }
 
-
-
-.button.disabled {
-    background-color: #EEEEEE !important;
-    box-shadow: none;
-    color: #B3B3B3 !important;
-    cursor: default;
-}
-
-
-
 .button-group:first-child {
     z-index: 999;
 }
@@ -491,8 +480,18 @@ div.alert-box.list-grid-alert.save-alert a.close {
 }
 
 button:disabled {
-    background-color: #999999 !important;
- }
+    background-color: #EEEEEE !important;
+    box-shadow: none;
+    color: #B3B3B3 !important;
+    cursor: default;
+}
+
+button.disabled {
+    background-color: #EEEEEE !important;
+    box-shadow: none;
+    color: #B3B3B3 !important;
+    cursor: default;
+}
 
 .listgrid-header-wrapper {
     background-color: #E1E0DD;
@@ -555,10 +554,6 @@ button:disabled {
     font-size: 16px;
 }
 
-.listgrid-modal-actions {
-    padding-top: 10px;
-}
-
 .listgrid-modal-actions div {
     display: inline-block;
     padding-right: 10px;
@@ -589,11 +584,11 @@ button:disabled {
 }
 
 .listgrid-search-actions {
-    padding-top: 6px;
     display: inline-block;
 }
 
 .listgrid-search-actions .button{
+    top: -1px;
     position: relative;
 }
 

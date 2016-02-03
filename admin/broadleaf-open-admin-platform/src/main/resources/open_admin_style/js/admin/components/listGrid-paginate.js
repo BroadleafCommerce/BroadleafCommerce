@@ -458,7 +458,8 @@
         // ************************* *
         
         getRowHeight : function($tbody) {
-            return $tbody.find('td:not(.blank-padding):first').css('height').replace('px', '');
+            // The first row will always be 1px shorter since it doesn't have a top boarder, therefore add 1 to the height.
+            return $tbody.find('td:not(.blank-padding):first').innerHeight() + 1;
         },
         
         getTopVisibleIndex : function($tbody) {
@@ -481,6 +482,10 @@
         
         scrollToIndex : function($tbody, index) {
             var offset = index * this.getRowHeight($tbody);
+            if (offset > 0) {
+                // make sure to account for the top boarder on each row other than the first
+                offset += 1;
+            }
             //console.log('scrolling to ' + offset);
             $tbody.closest('.listgrid-body-wrapper').find('.mCSB_container').css('top', '-' + offset + 'px');
         },
@@ -611,13 +616,19 @@
                 if ($wrapper.find('.mCS_no_scrollbar').length > 0 && $modalBody.length === 0) {
                     BLCAdmin.listGrid.paginate.updateUrlFromScroll($wrapper.find('tbody'));
                 }
-            } else if ($table.data('listgridtype') === 'asset_grid' || $table.data('listgridtype') === 'asset_grid_folder') {
+            } else if ($table.data('listgridtype') === 'asset_grid'
+                || $table.data('listgridtype') === 'asset_grid_folder'
+                || $table.data('listgridtype') === 'tree') {
                 var $window = $(window);
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
 
                 if ($modalBody.length > 0) {
-                    wrapperHeight = $tbody.closest('.select-group').height()
+                    wrapperHeight = $tbody.closest('.select-group').outerHeight();
                 }
+
+                // adjust for header and footer height
+                wrapperHeight -= $wrapper.prev('.listgrid-header-wrapper:visible').outerHeight();
+                wrapperHeight -= $wrapper.next('.listgrid-table-footer:visible').outerHeight();
 
                 $wrapper.css('max-height', wrapperHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
@@ -654,12 +665,6 @@
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
                 $modalBody.css('overflow-y', 'auto');
 
-            } else if ($table.data('listgridtype') === 'tree') {
-                var maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, treeListGridHeight);
-                $wrapper.css('max-height', maxHeight);
-                $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
-
-                $wrapper.mCustomScrollbar('update');
             } else {
                 // not in a modal, not the only grid on the screen, my size should be equal to max size of a grid
                 // There is a possibility, if pagination is limited on the packed, that
@@ -773,15 +778,15 @@
             $tbody = $clonedTable.find('tbody');
             $clonedTable.attr('id', $clonedTable.attr('id').replace('-header', ''));
 
-            // Get the first td's height
-            var tdHeight = $tbody.find('td:first').outerHeight();
+            // Get the first tr's height
+            var trHeight = parseInt(this.getRowHeight($tbody), 10);
 
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
                 theme: 'dark',
                 scrollEasing: "linear",
                 scrollInertia: 500,
-                mouseWheelPixels: tdHeight,
+                mouseWheelPixels: trHeight,
                 callbacks: {
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;

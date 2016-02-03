@@ -479,7 +479,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public Boolean getQualifiersCanBeQualifiers() {
-        return qualifiersCanBeQualifiers;
+        return qualifiersCanBeQualifiers==null?false:qualifiersCanBeQualifiers;
     }
 
     @Override
@@ -490,7 +490,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public Boolean getQualifiersCanBeTargets() {
-        return qualifiersCanBeTargets;
+        return qualifiersCanBeTargets==null?false:qualifiersCanBeTargets;
     }
 
     @Override
@@ -725,7 +725,9 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public void setStackableWithOtherOffers(StackabilityType stackableWithOtherOffers) {
-        this.stackableWithOtherOffers = stackableWithOtherOffers.getType();
+        if (stackableWithOtherOffers != null) {
+            this.stackableWithOtherOffers = stackableWithOtherOffers.getType();
+        }
     }
 
     @Override
