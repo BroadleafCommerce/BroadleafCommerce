@@ -195,6 +195,7 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
     @Column(name = "SALE_PRICE", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price",
         group = GroupName.Price, order = FieldOrder.SALE_PRICE,
+        tooltip = "SkuImpl_Sku_Sale_Price_tooltip",
         prominent = true, gridOrder = 6,
         fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
@@ -253,8 +254,10 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
     @Column(name = "DISCOUNTABLE_FLAG")
     @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable",
-        group = GroupName.Advanced, order = 2000)
-    protected Character discountable = 'Y';
+        group = GroupName.Discountable,
+        helpText = "SkuImpl_Sku_Discountable_helptext",
+        defaultValue = "Y")
+    protected Character discountable;
 
     @Column(name = "AVAILABLE_FLAG")
     @Index(name = "SKU_AVAILABLE_INDEX", columnNames = {"AVAILABLE_FLAG"})

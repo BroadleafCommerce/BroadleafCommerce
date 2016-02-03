@@ -118,6 +118,7 @@ public class Entity implements Serializable {
             if (myProperty != null) {
                 myProperty.setValue(property.getValue());
                 myProperty.setRawValue(property.getRawValue());
+                myProperty.setDisplayValue(property.getDisplayValue());
             }
         }
         pMap = null;
