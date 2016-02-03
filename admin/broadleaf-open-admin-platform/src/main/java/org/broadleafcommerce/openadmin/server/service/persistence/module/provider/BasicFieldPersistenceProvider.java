@@ -164,7 +164,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         populateValueRequest.getFieldManager().setFieldValue(instance,
                                 populateValueRequest.getProperty().getName(), v);
                     } catch (IllegalArgumentException e) {
-                        char c = v ? 'Y' : 'N';
+                        char c = "Y".equals(prop.getValue()) || new Character('Y').equals(origValue) ? 'Y' : 'N';
                         dirty = checkDirtyState(populateValueRequest, instance, c);
                         populateValueRequest.getFieldManager().setFieldValue(instance,
                                 populateValueRequest.getProperty().getName(), c);
