@@ -298,8 +298,9 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
 
     @Column(name = "IS_MACHINE_SORTABLE")
     @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable",
-        group = GroupName.Shipping, order = 10000)
-    protected Boolean isMachineSortable = true;
+        group = GroupName.ShippingOther, order = FieldOrder.IS_MACHINE_SORTABLE,
+        defaultValue = "false")
+    protected Boolean isMachineSortable;
 
     @OneToMany(mappedBy = "sku", targetEntity = SkuMediaXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @MapKey(name = "key")
@@ -409,7 +410,7 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
 
     @Column(name = "FULFILLMENT_TYPE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_FulfillmentType",
-        group = GroupName.Shipping, order = 1000,
+        group = GroupName.ShippingFulfillment, order = FieldOrder.FULFILLMENT_TYPE,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;

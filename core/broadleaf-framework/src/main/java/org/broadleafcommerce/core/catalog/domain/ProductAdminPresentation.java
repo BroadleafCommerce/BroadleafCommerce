@@ -84,8 +84,17 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Shipping,
             order = ProductAdminPresentation.TabOrder.Shipping,
             groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Shipping,
-                    order = ProductAdminPresentation.GroupOrder.Shipping)
+                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingDimensions,
+                    order = ProductAdminPresentation.GroupOrder.ShippingDimensions),
+                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingOther,
+                    order = ProductAdminPresentation.GroupOrder.ShippingOther,
+                    untitled = true),
+                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingFulfillment,
+                    order = ProductAdminPresentation.GroupOrder.ShippingFulfillment,
+                    untitled = true, column = 1),
+                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingContainer,
+                    order = ProductAdminPresentation.GroupOrder.ShippingContainer,
+                    untitled = true, column = 1)
             }
         ),
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Advanced,
@@ -139,6 +148,12 @@ public interface ProductAdminPresentation {
         public static final String Discountable = "SkuImpl_Sku_Discountable";
 
         public static final String Inventory = "SkuImpl_Sku_Inventory";
+
+        public static final String ShippingDimensions = "SkuImpl_Dimensions_Group";
+        public static final String ShippingFulfillment = "SkuImpl_Fulfillment_Group";
+        public static final String ShippingContainer = "SkuImpl_Container_Group";
+        public static final String ShippingOther = "SkuImpl_Other_Group";
+
         public static final String Advanced = "ProductImpl_Advanced";
     }
 
@@ -156,7 +171,11 @@ public interface ProductAdminPresentation {
         public static final int Discountable = 2000;
 
         public static final int Inventory = 1000;
-        public static final int Shipping = 1000;
+
+        public static final int ShippingDimensions = 1000;
+        public static final int ShippingOther = 2000;
+        public static final int ShippingFulfillment = 3000;
+        public static final int ShippingContainer = 4000;
 
         public static final int Advanced = 1000;
     }
@@ -183,5 +202,20 @@ public interface ProductAdminPresentation {
         public static final int RETAIL_PRICE = 1000;
         public static final int SALE_PRICE = 2000;
         public static final int COST = 3000;
+
+        public static final int WIDTH = 1000;
+        public static final int HEIGHT = 2000;
+        public static final int DEPTH = 3000;
+        public static final int GIRTH = 4000;
+        public static final int DIMENSION_UNIT_OF_MEASURE = 5000;
+
+        public static final int IS_MACHINE_SORTABLE = 1000;
+
+        public static final int FULFILLMENT_TYPE = 1000;
+        public static final int WEIGHT = 2000;
+        public static final int WEIGHT_UNIT_OF_MEASURE = 3000;
+
+        public static final int CONTAINER_SHAPE = 1000;
+        public static final int CONTAINER_SIZE = 2000;
     }
 }
