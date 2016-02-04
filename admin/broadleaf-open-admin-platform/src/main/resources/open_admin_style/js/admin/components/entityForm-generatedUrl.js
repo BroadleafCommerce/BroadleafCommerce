@@ -35,11 +35,11 @@
         
         setGeneratedUrl : function setGeneratedUrl($sourceField, $targetField) {
             var generatedPrefix;
-
+            
             if ($targetField.data('prefix-selector')) {
                 var $field = $($targetField.data('prefix-selector'));
                 generatedPrefix = $field.find('input.generated-url-prefix').val();
-
+                
                 $field.on('change', function() {
                     BLCAdmin.generatedUrl.setGeneratedUrl($sourceField, $targetField);
                 });
@@ -47,6 +47,11 @@
                 if (generatedPrefix == null || generatedPrefix == "") {
                     generatedPrefix = $targetField.data('prefix');
                 }
+
+                if (typeof generatedPrefix === 'undefined') {
+                    generatedPrefix = "";
+                }
+
                 if (generatedPrefix != '/') {
                     generatedPrefix += '/';
                 }

@@ -264,17 +264,6 @@ circle {
     box-shadow: none;
 }
 
-
-
-.button.disabled {
-    background-color: #EEEEEE !important;
-    box-shadow: none;
-    color: #B3B3B3 !important;
-    cursor: default;
-}
-
-
-
 .button-group:first-child {
     z-index: 999;
 }
@@ -466,13 +455,13 @@ div.action-popup img.ajax-loader {
     float: left;
     padding: 0 2px;
     width: 100%;
- }
+}
 
 .listgrid-toolbar li.alert-box {
     padding-top: 8px;
     padding-left: 10px;
     color: #94AF39;
- }
+}
 
 div.alert-box.list-grid-alert.save-alert {
     display: inline-block;
@@ -485,13 +474,31 @@ div.alert-box.list-grid-alert.save-alert {
     text-shadow: none;
 }
 
+span.alert-box.save-alert {
+    color: #98B30A;
+}
+
+span.alert-box.error-alert {
+    color: #A80202;
+}
+
 div.alert-box.list-grid-alert.save-alert a.close {
     display: none;
 }
 
 button:disabled {
-    background-color: #999999 !important;
- }
+    background-color: #EEEEEE !important;
+    box-shadow: none;
+    color: #B3B3B3 !important;
+    cursor: default;
+}
+
+button.disabled {
+    background-color: #EEEEEE !important;
+    box-shadow: none;
+    color: #B3B3B3 !important;
+    cursor: default;
+}
 
 .listgrid-header-wrapper {
     background-color: #E1E0DD;
@@ -554,10 +561,6 @@ button:disabled {
     font-size: 16px;
 }
 
-.listgrid-modal-actions {
-    padding-top: 10px;
-}
-
 .listgrid-modal-actions div {
     display: inline-block;
     padding-right: 10px;
@@ -588,11 +591,11 @@ button:disabled {
 }
 
 .listgrid-search-actions {
-    padding-top: 6px;
     display: inline-block;
 }
 
 .listgrid-search-actions .button{
+    top: -1px;
     position: relative;
 }
 

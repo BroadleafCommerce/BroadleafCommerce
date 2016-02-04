@@ -975,6 +975,21 @@ var BLCAdmin = (function($) {
             });
             $(".alert-box").removeClass("success").addClass("alert");
             $(".alert-box-message").text(alertMessage);
+        },
+
+        /**
+         * Add URL parameters to an existing url
+         * @param {url}     string
+         * @param {params}    map of parameter keys to values
+         */
+        buildUrlWithParams : function addUrlParam(url, params) {
+            if (url.lastIndexOf("?") > -1) {
+                url = url + "&" + $.param(params);
+            } else {
+                url = url + "?" + $.param(params);
+            }
+
+            return url;
         }
     };
 

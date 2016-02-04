@@ -81,6 +81,13 @@ class DecrementInventoryActivitySpec extends BaseCheckoutActivitySpec{
         context.seedData.order.orderItems << discreteOrderItem
         context.seedData.order.orderItems << bundleOrderItem
 
+        Map<Sku, Integer> skuIntegerMap = new HashMap<>()
+        skuIntegerMap.put(discreteOrderItem.sku, discreteOrderItem.quantity)
+        skuIntegerMap.put(discreteOrderItemForBundleOrderItem.sku, discreteOrderItemForBundleOrderItem.quantity)
+        skuIntegerMap.put(bundleOrderItem.sku, bundleOrderItem.quantity)
+
+        mockInventoryService.buildSkuInventoryMap(*_) >> skuIntegerMap
+
     }
 
 

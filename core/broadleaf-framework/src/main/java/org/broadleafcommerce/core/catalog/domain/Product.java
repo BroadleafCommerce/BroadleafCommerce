@@ -587,12 +587,14 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * Returns whether or not the product is featured
      * @return isFeaturedProduct as Boolean
      */
+    @Deprecated
     public boolean isFeaturedProduct();
 
     /**
      * Sets whether or not the product is featured
      * @param isFeaturedProduct
      */
+    @Deprecated
     public void setFeaturedProduct(boolean isFeaturedProduct);
 
     /**
