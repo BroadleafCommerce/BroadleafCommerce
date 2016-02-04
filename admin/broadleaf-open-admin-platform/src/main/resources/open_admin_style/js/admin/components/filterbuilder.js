@@ -523,6 +523,10 @@
                         fields[i].values = $.parseJSON(fields[i].values);
                     }
 
+                    if (opRef && opRef.indexOf('Numeric') >= 0) {
+                        fields[i].type = 'double';
+                    }
+
                     var valRef = fields[i].values;
                     if (valRef && typeof valRef === 'string') {
                         fields[i].values = window[valRef];
