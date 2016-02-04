@@ -60,14 +60,16 @@ public class Dimension implements Serializable {
     @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Size",
         group = ProductAdminPresentation.GroupName.ShippingContainer, order = ProductAdminPresentation.FieldOrder.CONTAINER_SIZE,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerSizeType")
+        broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerSizeType",
+        hideEnumerationIfEmpty = true)
     protected String size;
 
     @Column(name = "CONTAINER_SHAPE")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Shape",
         group = ProductAdminPresentation.GroupName.ShippingContainer, order = ProductAdminPresentation.FieldOrder.CONTAINER_SHAPE,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-        broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerShapeType")
+        broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerShapeType",
+        hideEnumerationIfEmpty = true)
     protected String container;
 
     @Column(name = "DIMENSION_UNIT_OF_MEASURE")

@@ -287,7 +287,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 metadata.setFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 metadata.setExplicitFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 metadata.setOptionListEntity(annot.optionListEntity().getName());
-                metadata.setOptionHideIfEmpty(annot.optionHideIfEmpty());
+                metadata.setHideEnumerationIfEmpty(annot.optionHideIfEmpty());
                 if (metadata.getOptionListEntity().equals(DataDrivenEnumerationValueImpl.class.getName())) {
                     metadata.setOptionValueFieldName("key");
                     metadata.setOptionDisplayFieldName("display");
@@ -404,6 +404,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 fieldMetadataOverride.setColumnWidth(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.BROADLEAFENUMERATION)) {
                 fieldMetadataOverride.setBroadleafEnumeration(stringValue);
+            }  else if (entry.getKey().equals(PropertyType.AdminPresentation.HIDEENUMERATIONIFEMPTY)) {
+                fieldMetadataOverride.setHideEnumerationIfEmpty(StringUtils.isEmpty(stringValue) ? entry.getValue().booleanOverrideValue() :
+                        Boolean.parseBoolean(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.FIELDCOMPONENTRENDERER)) {
                 fieldMetadataOverride.setFieldComponentRenderer(SupportedFieldType.valueOf(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.TOOLTIP)) {
@@ -480,7 +483,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONDISPLAYFIELDNAME)) {
                 fieldMetadataOverride.setOptionDisplayFieldName(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONHIDEIFEMPTY)) {
-                fieldMetadataOverride.setOptionHideIfEmpty(StringUtils.isEmpty(stringValue) ? entry.getValue()
+                fieldMetadataOverride.setHideEnumerationIfEmpty(StringUtils.isEmpty(stringValue) ? entry.getValue()
                         .booleanOverrideValue() : Boolean.parseBoolean(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONCANEDITVALUES)) {
                 fieldMetadataOverride.setOptionCanEditValues(StringUtils.isEmpty(stringValue) ? entry.getValue()
@@ -509,6 +512,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (annot != null) {
             FieldMetadataOverride override = new FieldMetadataOverride();
             override.setBroadleafEnumeration(annot.broadleafEnumeration());
+            override.setHideEnumerationIfEmpty(annot.hideEnumerationIfEmpty());
             override.setFieldComponentRenderer(annot.fieldComponentRenderer());
             override.setColumnWidth(annot.columnWidth());
             override.setExplicitFieldType(annot.fieldType());
@@ -563,7 +567,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 override.setExplicitFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 override.setFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 override.setOptionCanEditValues(dataDrivenEnumeration.optionCanEditValues());
-                override.setOptionHideIfEmpty(dataDrivenEnumeration.optionHideIfEmpty());
+                override.setHideEnumerationIfEmpty(dataDrivenEnumeration.optionHideIfEmpty());
                 override.setOptionDisplayFieldName(dataDrivenEnumeration.optionDisplayFieldName());
                 if (!ArrayUtils.isEmpty(dataDrivenEnumeration.optionFilterParams())) {
                     Serializable[][] params = new Serializable[dataDrivenEnumeration.optionFilterParams().length][3];
@@ -701,6 +705,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 throw new RuntimeException(e);
             }
         }
+        if (basicFieldMetadata.getHideEnumerationIfEmpty() != null) {
+            metadata.setHideEnumerationIfEmpty(basicFieldMetadata.getHideEnumerationIfEmpty());
+        }
         if (basicFieldMetadata.getReadOnly() != null) {
             metadata.setReadOnly(basicFieldMetadata.getReadOnly());
         }
@@ -751,9 +758,6 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             if (basicFieldMetadata.getOptionDisplayFieldName() != null) {
                 metadata.setOptionDisplayFieldName(basicFieldMetadata.getOptionDisplayFieldName());
             }
-        }
-        if (basicFieldMetadata.getOptionHideIfEmpty() != null) {
-            metadata.setOptionHideIfEmpty(basicFieldMetadata.getOptionHideIfEmpty());
         }
         if (!StringUtils.isEmpty(metadata.getOptionListEntity()) && (StringUtils.isEmpty(metadata.getOptionValueFieldName()) || StringUtils.isEmpty(metadata.getOptionDisplayFieldName()))) {
             throw new IllegalArgumentException("Problem setting up data driven enumeration for (" + field.getName() + "). The optionListEntity, optionValueFieldName and optionDisplayFieldName properties must all be included if not using DataDrivenEnumerationValueImpl as the optionListEntity.");
