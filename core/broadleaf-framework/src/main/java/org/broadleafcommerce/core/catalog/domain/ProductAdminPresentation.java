@@ -121,29 +121,31 @@ public interface ProductAdminPresentation {
 
         public static final String General = "ProductImpl_Product_Description";
         public static final String Image = "ProductImpl_Product_Image";
-        public static final String Price = "SkuImpl_Price";
         public static final String ActiveDateRange = "ProductImpl_Product_Active_Date_Range";
-        public static final String ProductOptionsAdvanced = "ProductImpl_Options_Advanced";
-        public static final String Discountable = "SkuImpl_Sku_Discountable";
-        public static final String Inventory = "SkuImpl_Sku_Inventory";
-        public static final String Shipping = "ProductWeight_Shipping";
         public static final String Financial = "ProductImpl_Financial";
         public static final String Miscellaneous = "ProductImpl_General_Misc";
+
+        public static final String ProductOptionsAdvanced = "ProductImpl_Options_Advanced";
+
+        public static final String Price = "SkuImpl_Price";
+        public static final String Discountable = "SkuImpl_Sku_Discountable";
+
+        public static final String Inventory = "SkuImpl_Sku_Inventory";
         public static final String Advanced = "ProductImpl_Advanced";
     }
 
     public static class GroupOrder {
 
         public static final int General = 1000;
-        public static final int Image = 1000;
-        public static final int ActiveDateRange = 2000;
-        public static final int Financial = 3000;
-        public static final int Miscellaneous = 4000;
+        public static final int Image = 2000;
+        public static final int ActiveDateRange = 3000;
+        public static final int Financial = 4000;
+        public static final int Miscellaneous = 5000;
 
         public static final int ProductOptionsAdvanced = 1000;
 
         public static final int Price = 1000;
-        public static final int Discountable = 1000;
+        public static final int Discountable = 2000;
 
         public static final int Inventory = 1000;
         public static final int Shipping = 1000;
@@ -160,10 +162,6 @@ public interface ProductAdminPresentation {
         public static final int MANUFACTURER = 5000;
         public static final int URL = 6000;
 
-        public static final int RETAIL_PRICE = 1000;
-        public static final int SALE_PRICE = 2000;
-        public static final int COST = 3000;
-
         public static final int PRIMARY_MEDIA = 1000;
 
         public static final int ACTIVE_START_DATE = 1000;
@@ -173,5 +171,9 @@ public interface ProductAdminPresentation {
 
         public static final int UPC = 1000;
         public static final int EXTERNAL_ID = 2000;
+
+        public static final int RETAIL_PRICE = 1000;
+        public static final int SALE_PRICE = 2000;
+        public static final int COST = 3000;
     }
 }
