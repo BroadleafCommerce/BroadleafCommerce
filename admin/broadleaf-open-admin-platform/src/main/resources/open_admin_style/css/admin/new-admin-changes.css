@@ -1207,7 +1207,23 @@ p.deployment-summary {
 
 .filter-info > .filter-button {
     margin-top: 6px;
+}
 
+.listgrid-toolbar .filter-info {
+    border-left: 1px solid #D8D5D0;
+    margin-left: 10px;
+    padding-left: 10px;
+}
+
+.listgrid-toolbar .filter-info > .filter-button {
+    margin: 0;
+}
+.listgrid-toolbar .filter-info .button-group {
+    margin: 0;
+}
+
+.listgrid-toolbar .filter-info .clear-filters i {
+    padding-top: 0;
 }
 
 .form-control {

@@ -554,13 +554,20 @@
             return config;
         },
 
-        applyFilters : function() {
-            var hiddenId = $("#hidden-id").data('hiddenid');
+        applyFilters : function(hiddenId) {
+            if (hiddenId == undefined) {
+                hiddenId = $("#hidden-id").data('hiddenid');
+            }
             var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
 
             var $filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
-            var $tbody = $filterButton.closest('.content-yield').find('.listgrid-body-wrapper .list-grid-table');
-            var $filterFields = $filterButton.closest('.content-yield').find('.filter-fields');
+            var $tbody = $('.list-grid-table[data-hiddenid=' + hiddenId + ']:not([id$=-header])');
+            var $filterFields = $tbody.closest('.listgrid-body-wrapper').prev().find('.filter-fields');
+
+            // if the listgrid found is of type 'asset_grid' we want to find the one thats 'asset_grid_folder'
+            if (!$tbody.length || $tbody.data('listgridtype') == 'asset_grid') {
+                $tbody = $('.list-grid-table[data-listgridtype=asset_grid_folder]:not([id$=-header])');
+            }
 
             // couldn't find filter builder so exit
             if (!filterBuilder) {
@@ -976,7 +983,7 @@ $(document).ready(function() {
         var jsonVal = JSON.stringify({ 'data' : [] });
         $('#' + hiddenId).val(jsonVal);
 
-        var $tbody = $filterButton.closest('.content-yield').find('.listgrid-body-wrapper .list-grid-table');
+        var $tbody = $('.list-grid-table[data-hiddenid=' + hiddenId + ']:not([id$=-header])');
         if ($tbody.data('listgridtype') == 'main') {
             // remove query string from URL
             $(BLCAdmin.history.getUrlParameters()).each(function (index, input) {
@@ -986,13 +993,15 @@ $(document).ready(function() {
             });
         }
 
-        // click the search button to reload the list grid
+        // clear the search field
         $filterButton.closest('.listgrid-search').find('.custom-entity-search input').val('');
-        $filterButton.closest('.listgrid-search').find('.custom-entity-search button.search-button').click();
 
         // for asset grid filters
         $filterButton.closest('.listgrid-search').find('.custom-asset-search input').val('');
         $filterButton.closest('.listgrid-search').find('.custom-asset-search button.asset-search-button').click();
+
+        // apply the empty filters
+        BLCAdmin.filterBuilders.applyFilters(hiddenId);
 
         // change "edit filter" button back to "filter"
         $filterButton.text("Filter");

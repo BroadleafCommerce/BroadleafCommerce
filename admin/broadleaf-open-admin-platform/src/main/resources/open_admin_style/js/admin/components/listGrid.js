@@ -84,7 +84,7 @@
                 var totalRecordsText = totalRecords == 1 ? '(' + totalRecords + ' Record)' : '(' + totalRecords + ' Records)';
                 $totalRecords.html(totalRecordsText);
 
-                if (totalRecords !== 0) {
+                if (totalRecords !== 0 || $listGridContainer.hasClass('filtered')) {
                     $fieldGroupListGridWrapperHeader.removeClass('hidden-body');
                     $fieldGroupListGridWrapperHeader.parent().find('.fieldgroup-listgrid-wrapper').removeClass('hidden');
                     BLCAdmin.listGrid.paginate.updateGridSize($tbody);
@@ -199,6 +199,20 @@
         updateActionButtons : function($listGridContainer) {
             if (!$listGridContainer.find('tr.list-grid-no-results').length) {
                 $listGridContainer.find('button.row-action.all-capable').removeAttr('disabled');
+                $listGridContainer.find('.filter-button').removeClass('disabled').removeAttr('disabled');
+            } else {
+                var hiddenid = $listGridContainer.find('.filter-button').data('hiddenid');
+                var filters = $('#' + hiddenid).val();
+                if (filters !== undefined) {
+                    var activeFilters = JSON.parse(filters).data;
+                    // disable the filter button if the listgrid is not currently filtered
+                    if (activeFilters.length && activeFilters[0].rules.length == 0) {
+                        $listGridContainer.find('.filter-button').addClass('disabled').prop('disabled', true);
+                    } else if (activeFilters.length && activeFilters[0].rules.length > 0) {
+                        // the listgrid is filtered but may not have any rows, we want to show the "no results"
+                        $listGridContainer.addClass('filtered');
+                    }
+                }
             }
 
             var listGridId = $listGridContainer.find('.listgrid-body-wrapper table').attr('id');
