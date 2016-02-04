@@ -29,6 +29,13 @@
                 var inputGroupAddon = $("<span>", {'class' : 'input-group-addon'});
                 inputGroupAddon.append(inputGroupIcon);
                 $form.find("#fields\\'value\\'\\.value").wrap(inputGroup).before(inputGroupAddon);
+
+                // Fix wrapper size for sandbox tags
+                var valueField = $form.find("#fields\\'value\\'\\.value");
+                var changesWrapper = valueField.closest('.changes');
+                var width = inputGroupAddon.outerWidth();
+                width += parseInt(changesWrapper.outerWidth()) + 5; // 5px is needed for border offset
+                changesWrapper.attr('style', 'width: ' + width + 'px !important');
             }
         },
     
@@ -199,7 +206,4 @@
     function hideShippingFields(compareValue) {
         return (compareValue == 'ORDER_ITEM' || compareValue == 'ORDER');
     }
-
-    // add extra padding to time zone to separate from other options
-    $('#field-offerMatchRules---TIME').css('padding-top', '10px');
 })(jQuery, BLCAdmin);

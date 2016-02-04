@@ -348,7 +348,6 @@ input[type="radio"].radio+label.radio-label.clr,
 .radio-container {
     padding: 0 10px;
     display: block;
-    min-width: 275px;
 }
 
 .table {
@@ -503,8 +502,8 @@ button.disabled {
 
 .listgrid-header-wrapper {
     background-color: #E1E0DD;
-    border-bottom: 3px solid #D4D2CF;
     margin-bottom: -1px;
+    border: 1px solid #B4B3B0;
 }
 
 .listgrid-table-footer {
@@ -778,6 +777,10 @@ input[type="radio"].radio {
 label {
     display: block;
     margin-bottom: 0;
+}
+
+.override-label {
+    line-height: 14px;
 }
 
 .override-label label {
@@ -1476,8 +1479,8 @@ div.uploadMessage {
 }
 
 .mCustomScrollBox > .mCSB_scrollTools {
-    border-right: 1px solid #DDD;
-    border-left: 1px solid #DDD;
+    border-right: 1px solid #B4B3B0;
+    border-left: 1px solid #B4B3B0;
 }
 
 .session-time {
@@ -1502,6 +1505,7 @@ div.uploadMessage {
 
 .mCustomScrollBox {
     background-color: #E0E0E0;
+    border: 1px solid #B4B3B0;
 }
 
 .mCSB_draggerContainer {
@@ -1513,7 +1517,7 @@ div.uploadMessage {
 }
 
 .override-generated-url {
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: .05em;
 }
 
