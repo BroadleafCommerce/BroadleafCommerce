@@ -43,6 +43,12 @@ public class DefaultListGridActions {
         .withIconClass("blc-icon-add-category")
         .withDisplayText("Add");
 
+    public static final ListGridAction ADD_EMPTY = new ListGridAction(ListGridAction.ADD)
+        .withButtonClass("sub-list-grid-add-empty")
+        .withUrlPostfix("/add")
+        .withIconClass("blc-icon-add-category")
+        .withDisplayText("Add");
+
     public static final ListGridAction TREE_ADD = new ListGridAction(ListGridAction.TREE_ADD)
         .withButtonClass("tree-list-grid-row-add")
         .withUrlPostfix("/new/enterprise-tree-add")

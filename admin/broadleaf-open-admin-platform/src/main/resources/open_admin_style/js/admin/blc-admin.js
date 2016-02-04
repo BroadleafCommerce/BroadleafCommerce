@@ -28,6 +28,7 @@ var BLCAdmin = (function($) {
     var postFormSubmitHandlers = [];
     var dependentFieldFilterHandlers = {};
     var initializationHandlers = [];
+    var selectizeInitializationHandlers = [];
     var excludedSelectizeSelectors = [];
     var updateHandlers = [];
     var stackedModalOptions = {
@@ -38,7 +39,8 @@ var BLCAdmin = (function($) {
     
     var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container, .redactor_box, ' +
                          '.asset-selector-container img, >div>select, div.custom-checkbox, div.small-enum-container, ' +
-                         'textarea, div.radio-container, div.query-builder-rules-container, >.selectize-control>.selectize-input, .redactor-box';
+                         'textarea, div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
+                         '.rule-builder-simple-time, .rule-builder-simple, .rule-builder-with-quantity, >div>div>input:not([type=hidden]), .selectize-wrapper';
     
     function showModal($data, onModalHide, onModalHideArgs) {
         // If we already have an active modal, we don't need another backdrop on subsequent modals
@@ -132,6 +134,10 @@ var BLCAdmin = (function($) {
         
         addInitializationHandler : function(fn) {
             initializationHandlers.push(fn);
+        },
+
+        addSelectizeInitializationHandler : function(fn) {
+            selectizeInitializationHandlers.push(fn);
         },
         
         addUpdateHandler : function(fn) {
@@ -561,8 +567,7 @@ var BLCAdmin = (function($) {
                 var selectizeSearchField = $(selectizeAdder).data("selectizesearch");
                 var placeholder = 'Add ' + $(selectizeAdder).data("selectizeplaceholder") + ' +';
 
-                var collectionParent = window.location.pathname.split('/')[2];
-                var collectionPlaceholder = 'This ' + collectionParent + ' is not restricted to certain customers';
+                var collectionPlaceholder = 'No restrictions';
 
                 var select_adder, $select_adder;
                 var select_collection, $select_collection;
@@ -580,6 +585,13 @@ var BLCAdmin = (function($) {
                         this.revertSettings.$children.each(function () {
                             $.extend($selectize.options[this.value], $(this).data());
                         });
+
+                        // dirty field check
+                        var $wrapper = $(selectizeWrapper);
+                        // Run any additionally configured initialization handlers
+                        for (var i = 0; i < selectizeInitializationHandlers.length; i++) {
+                            selectizeInitializationHandlers[i]($wrapper);
+                        }
                     },
                     load: function(query, callback) {
                         var queryData = {};

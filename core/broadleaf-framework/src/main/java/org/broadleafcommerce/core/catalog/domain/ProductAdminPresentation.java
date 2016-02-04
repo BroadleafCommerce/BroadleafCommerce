@@ -66,7 +66,12 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             order = ProductAdminPresentation.TabOrder.Media
         ),
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.ProductOptions,
-            order = ProductAdminPresentation.TabOrder.ProductOptions
+            order = ProductAdminPresentation.TabOrder.ProductOptions,
+            groups = {
+                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ProductOptionsAdvanced,
+                    order = ProductAdminPresentation.GroupOrder.ProductOptionsAdvanced,
+                    untitled = true, column = 1)
+            }
         ),
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Shipping,
             order = ProductAdminPresentation.TabOrder.Shipping,
@@ -78,8 +83,8 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Advanced,
             order = ProductAdminPresentation.TabOrder.Advanced,
             groups = {
-                    @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Advanced,
-                            order = ProductAdminPresentation.GroupOrder.Advanced)
+                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Advanced,
+                    order = ProductAdminPresentation.GroupOrder.Advanced)
             }
         )
     }
@@ -118,12 +123,13 @@ public interface ProductAdminPresentation {
         public static final String Image = "ProductImpl_Product_Image";
         public static final String Price = "SkuImpl_Price";
         public static final String ActiveDateRange = "ProductImpl_Product_Active_Date_Range";
-        public static final String Advanced = "ProductImpl_Advanced";
+        public static final String ProductOptionsAdvanced = "ProductImpl_Options_Advanced";
         public static final String Discountable = "SkuImpl_Sku_Discountable";
         public static final String Inventory = "SkuImpl_Sku_Inventory";
         public static final String Shipping = "ProductWeight_Shipping";
         public static final String Financial = "ProductImpl_Financial";
         public static final String Miscellaneous = "ProductImpl_General_Misc";
+        public static final String Advanced = "ProductImpl_Advanced";
     }
 
     public static class GroupOrder {
@@ -134,12 +140,15 @@ public interface ProductAdminPresentation {
         public static final int Financial = 3000;
         public static final int Miscellaneous = 4000;
 
+        public static final int ProductOptionsAdvanced = 1000;
+
         public static final int Price = 1000;
         public static final int Discountable = 1000;
 
-        public static final int Advanced = 1000;
         public static final int Inventory = 1000;
         public static final int Shipping = 1000;
+
+        public static final int Advanced = 1000;
     }
 
     public static class FieldOrder {

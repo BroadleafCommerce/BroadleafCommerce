@@ -65,12 +65,11 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SITE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "baseSite")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
-public class SiteImpl implements Site, AdminMainEntity {
+public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(SiteImpl.class);
@@ -90,26 +89,26 @@ public class SiteImpl implements Site, AdminMainEntity {
 
     @Column (name = "NAME")
     @AdminPresentation(friendlyName = "SiteImpl_Site_Name", order = 1000,
-            gridOrder = 1, prominent = true, requiredOverride = RequiredOverride.REQUIRED, translatable = true)
+            gridOrder = 1, prominent = true, requiredOverride = RequiredOverride.REQUIRED, translatable = true, group = GroupName.General)
     protected String name;
 
     @Column (name = "SITE_IDENTIFIER_TYPE")
     @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Type", order = 2000,
             gridOrder = 2, prominent = true,
             broadleafEnumeration = "org.broadleafcommerce.common.site.service.type.SiteResolutionType", requiredOverride=RequiredOverride.REQUIRED,
-            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION)
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, group = GroupName.General)
     protected String siteIdentifierType;
 
     @Column (name = "SITE_IDENTIFIER_VALUE")
     @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order = 3000,
-            gridOrder = 3, prominent = true, requiredOverride=RequiredOverride.REQUIRED)
+            gridOrder = 3, prominent = true, requiredOverride=RequiredOverride.REQUIRED, group = GroupName.General)
     @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
     @Column(name = "DEACTIVATED")
     @AdminPresentation(friendlyName = "SiteImpl_Deactivated", order = 4000,
             gridOrder = 4, excluded = false,
-            defaultValue = "false")
+            defaultValue = "false", group = GroupName.General)
     protected Boolean deactivated = false;
     
     @ManyToMany(targetEntity = CatalogImpl.class, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
