@@ -779,6 +779,10 @@ label {
     margin-bottom: 0;
 }
 
+.override-label {
+    line-height: 14px;
+}
+
 .override-label label {
     display: inline-block;
 }
@@ -1513,7 +1517,7 @@ div.uploadMessage {
 }
 
 .override-generated-url {
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: .05em;
 }
 
