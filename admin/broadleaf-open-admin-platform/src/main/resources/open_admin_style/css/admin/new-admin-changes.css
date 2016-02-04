@@ -264,17 +264,6 @@ circle {
     box-shadow: none;
 }
 
-
-
-.button.disabled {
-    background-color: #EEEEEE !important;
-    box-shadow: none;
-    color: #B3B3B3 !important;
-    cursor: default;
-}
-
-
-
 .button-group:first-child {
     z-index: 999;
 }
@@ -359,7 +348,6 @@ input[type="radio"].radio+label.radio-label.clr,
 .radio-container {
     padding: 0 10px;
     display: block;
-    min-width: 275px;
 }
 
 .table {
@@ -467,13 +455,13 @@ div.action-popup img.ajax-loader {
     float: left;
     padding: 0 2px;
     width: 100%;
- }
+}
 
 .listgrid-toolbar li.alert-box {
     padding-top: 8px;
     padding-left: 10px;
     color: #94AF39;
- }
+}
 
 div.alert-box.list-grid-alert.save-alert {
     display: inline-block;
@@ -486,18 +474,36 @@ div.alert-box.list-grid-alert.save-alert {
     text-shadow: none;
 }
 
+span.alert-box.save-alert {
+    color: #98B30A;
+}
+
+span.alert-box.error-alert {
+    color: #A80202;
+}
+
 div.alert-box.list-grid-alert.save-alert a.close {
     display: none;
 }
 
 button:disabled {
-    background-color: #999999 !important;
- }
+    background-color: #EEEEEE !important;
+    box-shadow: none;
+    color: #B3B3B3 !important;
+    cursor: default;
+}
+
+button.disabled {
+    background-color: #EEEEEE !important;
+    box-shadow: none;
+    color: #B3B3B3 !important;
+    cursor: default;
+}
 
 .listgrid-header-wrapper {
     background-color: #E1E0DD;
-    border-bottom: 3px solid #D4D2CF;
     margin-bottom: -1px;
+    border: 1px solid #B4B3B0;
 }
 
 .listgrid-table-footer {
@@ -555,10 +561,6 @@ button:disabled {
     font-size: 16px;
 }
 
-.listgrid-modal-actions {
-    padding-top: 10px;
-}
-
 .listgrid-modal-actions div {
     display: inline-block;
     padding-right: 10px;
@@ -589,11 +591,11 @@ button:disabled {
 }
 
 .listgrid-search-actions {
-    padding-top: 6px;
     display: inline-block;
 }
 
 .listgrid-search-actions .button{
+    top: -1px;
     position: relative;
 }
 
@@ -775,6 +777,10 @@ input[type="radio"].radio {
 label {
     display: block;
     margin-bottom: 0;
+}
+
+.override-label {
+    line-height: 14px;
 }
 
 .override-label label {
@@ -1473,8 +1479,8 @@ div.uploadMessage {
 }
 
 .mCustomScrollBox > .mCSB_scrollTools {
-    border-right: 1px solid #DDD;
-    border-left: 1px solid #DDD;
+    border-right: 1px solid #B4B3B0;
+    border-left: 1px solid #B4B3B0;
 }
 
 .session-time {
@@ -1499,6 +1505,7 @@ div.uploadMessage {
 
 .mCustomScrollBox {
     background-color: #E0E0E0;
+    border: 1px solid #B4B3B0;
 }
 
 .mCSB_draggerContainer {
@@ -1510,7 +1517,7 @@ div.uploadMessage {
 }
 
 .override-generated-url {
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: .05em;
 }
 

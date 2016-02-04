@@ -26,13 +26,12 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Implementations of this interface are used to hold data about a Category.  A category is a group of products.
@@ -109,6 +108,13 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * @return
      */
     Category getParentCategory();
+
+    /**
+     * Return the parent category xref of the default parent or first applicable parent
+     *
+     * @return
+     */
+    CategoryXref getParentCategoryXref();
 
     /**
      * Set the parent category of this category
@@ -459,7 +465,7 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * @return
      */
     
-    public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy);
+    public List<Category> buildDefaultParentCategoryPath(List<Category> currentHierarchy);
     
     /**
      * Build the full category hierarchy by walking up the default category tree and the all parent
@@ -468,7 +474,17 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * @param currentHierarchy
      * @return the full hierarchy
      */
-    public List<Category> buildFullCategoryHierarchy(List<Category> currentHierarchy);
+    public List<Category> buildParentCategoryPath(List<Category> currentHierarchy);
+
+    /**
+     * Build the full category hierarchy by walking up the default category tree and the all parent
+     * category tree.  Adds the option of only adding the first parent found.
+     *
+     * @param currentHierarchy
+     * @param firstParent
+     * @return the full hierarchy
+     */
+    public List<Category> buildParentCategoryPath(List<Category> currentHierarchy, Boolean firstParent);
 
     /**
      * Gets the attributes for this {@link Category}. In smaller sites, using these attributes might be preferred to
@@ -726,5 +742,4 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * @param externalId
      */
     public void setExternalId(String externalId);
-
 }

@@ -1,7 +1,7 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+    <div th:substituteby="components/fieldTranslation" />
 </label>
-<div th:substituteby="components/fieldTranslation" />
 
 <div class="redactor-field"
      th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">

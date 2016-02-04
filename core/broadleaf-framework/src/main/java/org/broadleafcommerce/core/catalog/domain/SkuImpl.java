@@ -170,7 +170,8 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
     @Column(name = "EXTERNAL_ID")
     @Index(name="SKU_EXTERNAL_ID_INDEX", columnNames={"EXTERNAL_ID"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_ExternalID",
-            group = GroupName.Advanced)
+        group = GroupName.Miscellaneous, order = FieldOrder.EXTERNAL_ID,
+        tooltip = "SkuImpl_Sku_ExternalID_Tooltip")
     protected String externalId;
 
     @Column(name = "URL_KEY")
@@ -188,12 +189,13 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
     @Column(name = "UPC")
     @Index(name = "SKU_UPC_INDEX", columnNames = { "UPC" })
     @AdminPresentation(friendlyName = "SkuImpl_Sku_UPC",
-            group = GroupName.Advanced, order = 6000)
+            group = GroupName.Miscellaneous, order = FieldOrder.UPC)
     protected String upc;
 
     @Column(name = "SALE_PRICE", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price",
         group = GroupName.Price, order = FieldOrder.SALE_PRICE,
+        tooltip = "SkuImpl_Sku_Sale_Price_tooltip",
         prominent = true, gridOrder = 6,
         fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
@@ -252,8 +254,10 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
     @Column(name = "DISCOUNTABLE_FLAG")
     @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable",
-        group = GroupName.Advanced, order = 2000)
-    protected Character discountable = 'Y';
+        group = GroupName.Discountable,
+        helpText = "SkuImpl_Sku_Discountable_helptext",
+        defaultValue = "Y")
+    protected Character discountable;
 
     @Column(name = "AVAILABLE_FLAG")
     @Index(name = "SKU_AVAILABLE_INDEX", columnNames = {"AVAILABLE_FLAG"})
@@ -392,7 +396,7 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
 
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType",
-        group = GroupName.Inventory, order = 1000,
+        group = GroupName.Shipping, order = 1000,
         helpText = "skuInventoryTypeHelpText",
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")

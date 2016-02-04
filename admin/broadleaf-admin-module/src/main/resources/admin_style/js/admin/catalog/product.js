@@ -44,11 +44,12 @@ $(document).ready(function() {
             url : $(this).data('actionurl'),
             type : "GET"
         }, function(data) {
-            var alertType = data.error ? 'alert' : '';
+            var alertType = data.error ? 'error-alert' : data.skusGenerated > 0 ? 'save-alert' : 'error-alert';
             
             BLCAdmin.listGrid.showAlert($container, data.message, {
                 alertType: alertType,
-                clearOtherAlerts: true
+                clearOtherAlerts: true,
+                autoClose: 5000
             });
             
             if (data.skusGenerated > 0) {

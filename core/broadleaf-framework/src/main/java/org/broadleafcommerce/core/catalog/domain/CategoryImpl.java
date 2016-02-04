@@ -615,6 +615,31 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
+    public CategoryXref getParentCategoryXref() {
+        CategoryXref response = null;
+        List<CategoryXref> xrefs = getAllParentCategoryXrefs();
+        if (!CollectionUtils.isEmpty(xrefs)) {
+            for (CategoryXref xref : xrefs) {
+                if (xref.getCategory().isActive() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                    response = xref;
+                    break;
+                }
+            }
+        }
+        if (response == null) {
+            if (!CollectionUtils.isEmpty(xrefs)) {
+                for (CategoryXref xref : xrefs) {
+                   if (xref.getCategory().isActive()) {
+                        response = xref;
+                        break;
+                    }
+                }
+            }
+        }
+        return response;
+    }
+
+    @Override
     public void setParentCategory(Category category) {
         List<CategoryXref> xrefs = getAllParentCategoryXrefs();
         boolean found = false;
@@ -763,43 +788,63 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
-    public List<Category> buildFullCategoryHierarchy(List<Category> currentHierarchy) {
-        if (currentHierarchy == null) {
-            currentHierarchy = new ArrayList<Category>();
-            currentHierarchy.add(this);
+    public List<Category> buildParentCategoryPath(List<Category> currentPath) {
+        return buildParentCategoryPath(currentPath, false);
+    }
+
+    @Override
+    public List<Category> buildParentCategoryPath(List<Category> currentPath, Boolean firstParent) {
+        // If firstParent is null, default it to false
+        if (firstParent == null) {
+            firstParent = false;
         }
 
+        // If the currentPath is null, this is the first iteration.
+        if (currentPath == null) {
+            currentPath = new ArrayList<Category>();
+            currentPath.add(0, this);
+        }
+
+        Boolean shouldAdd = true;
         List<Category> myParentCategories = new ArrayList<Category>();
         if (getDefaultParentCategory() != null) {
             myParentCategories.add(getDefaultParentCategory());
+            if (firstParent) {
+                shouldAdd = false;
+            }
         }
-        if (!CollectionUtils.isEmpty(getAllParentCategoryXrefs())) {
+
+        // Check if there are parent categories and we still want to add them
+        if (!CollectionUtils.isEmpty(getAllParentCategoryXrefs()) && shouldAdd) {
             for (CategoryXref parent : getAllParentCategoryXrefs()) {
                 myParentCategories.add(parent.getCategory());
+                if (firstParent) {
+                    break;
+                }
             }
         }
 
         for (Category category : myParentCategories) {
-            if (!currentHierarchy.contains(category)) {
-                currentHierarchy.add(category);
-                category.buildFullCategoryHierarchy(currentHierarchy);
+            if (!currentPath.contains(category)) {
+                currentPath.add(0, category);
+                category.buildParentCategoryPath(currentPath);
             }
         }
 
-        return currentHierarchy;
+        return currentPath;
     }
 
     @Override
-    public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy) {
-        if (currentHierarchy == null) {
-            currentHierarchy = new ArrayList<Category>();
-            currentHierarchy.add(this);
+    public List<Category> buildDefaultParentCategoryPath(List<Category> currentPath) {
+        if (currentPath == null) {
+            currentPath = new ArrayList<Category>();
+            currentPath.add(0, this);
         }
-        if (getDefaultParentCategory() != null && ! currentHierarchy.contains(getDefaultParentCategory())) {
-            currentHierarchy.add(getDefaultParentCategory());
-            getDefaultParentCategory().buildCategoryHierarchy(currentHierarchy);
+        if (getDefaultParentCategory() != null && ! currentPath.contains(getDefaultParentCategory())) {
+            currentPath.add(0, getDefaultParentCategory());
+            getDefaultParentCategory().buildDefaultParentCategoryPath(currentPath);
         }
-        return currentHierarchy;
+        return currentPath;
     }
 
     @Override
@@ -864,7 +909,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     public List<RelatedProduct> getCumulativeCrossSaleProducts() {
         Set<RelatedProduct> returnProductsSet = new LinkedHashSet<RelatedProduct>();
 
-        List<Category> categoryHierarchy = buildCategoryHierarchy(null);
+        List<Category> categoryHierarchy = buildDefaultParentCategoryPath(null);
         for (Category category : categoryHierarchy) {
             returnProductsSet.addAll(category.getCrossSaleProducts());
         }
@@ -878,7 +923,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     public List<RelatedProduct> getCumulativeUpSaleProducts() {
         Set<RelatedProduct> returnProductsSet = new LinkedHashSet<RelatedProduct>();
 
-        List<Category> categoryHierarchy = buildCategoryHierarchy(null);
+        List<Category> categoryHierarchy = buildDefaultParentCategoryPath(null);
         for (Category category : categoryHierarchy) {
             returnProductsSet.addAll(category.getUpSaleProducts());
         }
@@ -892,7 +937,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     public List<FeaturedProduct> getCumulativeFeaturedProducts() {
         Set<FeaturedProduct> returnProductsSet = new LinkedHashSet<FeaturedProduct>();
 
-        List<Category> categoryHierarchy = buildCategoryHierarchy(null);
+        List<Category> categoryHierarchy = buildDefaultParentCategoryPath(null);
         for (Category category : categoryHierarchy) {
             returnProductsSet.addAll(category.getFeaturedProducts());
         }

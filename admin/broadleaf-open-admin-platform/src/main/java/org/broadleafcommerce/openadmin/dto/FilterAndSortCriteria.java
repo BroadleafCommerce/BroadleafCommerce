@@ -37,6 +37,7 @@ public class FilterAndSortCriteria {
     public static final String SORT_DIRECTION_PARAMETER = "sortDirection";
     public static final String START_INDEX_PARAMETER = "startIndex";
     public static final String MAX_INDEX_PARAMETER = "maxIndex";
+    public static final String MAX_RESULTS_PARAMETER = "maxResults";
 
     public static final String IS_NULL_FILTER_VALUE = new String("BLC_SPECIAL_FILTER_VALUE:NULL").intern();
     public static final String IS_NOT_NULL_FILTER_VALUE = new String("BLC_SPECIAL_FILTER_VALUE:NOT_NULL").intern();

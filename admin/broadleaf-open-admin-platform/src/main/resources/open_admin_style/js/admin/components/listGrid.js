@@ -208,7 +208,7 @@
             var $modal = $listGridContainer.closest('.modal');
             if ($modal.length && typeof listGridId !== 'undefined') {
                 var $modalActionContainer = $modal.find('.modal-footer .listgrid-modal-actions');
-                updateListGridActionsForContainer($modalActionContainer.find("button.row-action[data-listgridid='" + listGridId + "']"), numSelected);
+                updateListGridActionsForContainer($modalActionContainer.find("button.row-action"), numSelected);
             }
 
             function updateListGridActionsForContainer($containerActions, numSelected) {
@@ -227,12 +227,11 @@
         showAlert : function($container, message, options) {
             options = options || {};
     	    var alertType = options.alertType || '';
+            var autoClose = options.autoClose || 3000;
+
+            var $alert = $('<span>').addClass('alert-box').addClass(alertType);
     	    
-    	    var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass(alertType);
-    	    var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
-    	    
-    	    $alert.append('&nbsp;&nbsp;&nbsp;' + message);
-    	    $alert.append($closeLink);
+    	    $alert.append('&nbsp;&nbsp;' + message);
     	    
     	    if (options.clearOtherAlerts) {
                 $container.find('.alert-box').remove();
@@ -245,11 +244,9 @@
 
             setTimeout(function() {
                 alertTarget.append($alert);
-                if (options.autoClose) {
-                    setTimeout(function() {
-                        $closeLink.closest(".alert-box").remove();
-                    }, options.autoClose);
-                }
+                setTimeout(function() {
+                    $alert.fadeOut();
+                }, autoClose);
             });
         },
         
@@ -762,7 +759,8 @@ $(document).ready(function() {
         var link = BLCAdmin.listGrid.getActionLink($(this));
 
         if ($(this).closest('table').length
-            && $(this).closest('table').data('listgridtype') === 'tree') {
+            && $(this).closest('table').data('listgridtype') === 'tree'
+            && $(this).closest('.tree-column-wrapper').length) {
             // Expected uri structure: "/admin/{section}/{id}/{alternate-id}"
             // Desired uri structure: "/admin/{section}/{id}"
             link = link.substring(0, link.lastIndexOf('/'));

@@ -117,6 +117,11 @@ fieldset:not(.untitledGroup) {
     margin-left: 5px;
 }
 
+.fieldset-card .titlebar .titlebar-title .alert-box {
+    text-transform: none;
+    font-weight: normal;
+}
+
 .fieldset-card .fieldset-card-content {
     padding: 15px 15px 0 !important;
 }
@@ -127,12 +132,13 @@ fieldset:not(.untitledGroup) {
     line-height: 14px;
     text-transform: uppercase !important;
     padding-bottom: 1px;
-    display: inline-block;
 }
 
 .fieldset-card .fieldset-card-content .show-translations {
     font-size: 12px;
     margin-left: 5px;
+    text-transform: lowercase;
+    font-weight: 400;
 }
 
 .fieldset-card:not(.dynamic-form):not(.inModal):first-child {
@@ -140,6 +146,7 @@ fieldset:not(.untitledGroup) {
 }
 
 .fieldset-card-content .fieldgroup-listgrid {
+    position: relative;
     background-color: white;
     border: 1px solid #D8D5D0;
 }
