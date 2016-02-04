@@ -73,6 +73,14 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                     untitled = true, column = 1)
             }
         ),
+        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Inventory,
+            order = ProductAdminPresentation.TabOrder.Inventory,
+            groups = {
+                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Inventory,
+                    order = ProductAdminPresentation.GroupOrder.Inventory,
+                    untitled = true)
+            }
+        ),
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Shipping,
             order = ProductAdminPresentation.TabOrder.Shipping,
             groups = {
