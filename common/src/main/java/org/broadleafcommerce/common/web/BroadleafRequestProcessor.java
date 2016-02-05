@@ -63,6 +63,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     public static String REPROCESS_PARAM_NAME = "REPROCESS_BLC_REQUEST";
     
     private static final String SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "site.strict.validate.production.changes";
+    public static final String SITE_DISABLE_SANDBOX_PREVIEW = "site.disable.sandbox.preview";
 
     @Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
@@ -90,6 +91,9 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
 
     @Value("${" + SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY + ":false}")
     protected boolean siteStrictValidateProductionChanges = false;
+
+    @Value("${" + SITE_DISABLE_SANDBOX_PREVIEW + ":false}")
+    protected boolean siteDisableSandboxPreview = false;
 
     @Resource(name = "blDeployBehaviorUtil")
     protected DeployBehaviorUtil deployBehaviorUtil;
@@ -155,7 +159,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         }
         
         
-        if (currentSandbox != null) {
+        if (!siteDisableSandboxPreview && currentSandbox != null) {
             SandBoxContext previewSandBoxContext = new SandBoxContext();
             previewSandBoxContext.setSandBoxId(currentSandbox.getId());
             previewSandBoxContext.setPreviewMode(true);
