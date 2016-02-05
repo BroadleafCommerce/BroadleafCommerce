@@ -73,6 +73,7 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
         ListGrid listGrid = new ListGrid();
         listGrid.getHeaderFields().addAll(headerFields);
         listGrid.setListGridType(ListGrid.Type.TRANSLATION);
+        listGrid.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
         listGrid.setCanFilterAndSort(false);
 
         // Allow add/update/remove actions, but provisioned especially for translation. Because of this, we will clone
@@ -84,12 +85,12 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
         removeAction.setButtonClass("translation-grid-remove");
         updateAction.setButtonClass("translation-grid-update");
         listGrid.addToolbarAction(addAction);
-        listGrid.addRowAction(removeAction);
         listGrid.addRowAction(updateAction);
+        listGrid.addRowAction(removeAction);
 
         //TODO rework code elsewhere so these don't have to be added
+        listGrid.setSectionKey(Translation.class.getCanonicalName());
         listGrid.setSubCollectionFieldName("translation");
-        listGrid.setSectionKey("translation");
 
         // Create records for each of the entries in the translations list
         for (Translation t : translations) {
@@ -115,6 +116,8 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
 
             listGrid.getRecords().add(record);
         }
+
+        listGrid.setTotalRecords(listGrid.getRecords().size());
 
         return listGrid;
     }
