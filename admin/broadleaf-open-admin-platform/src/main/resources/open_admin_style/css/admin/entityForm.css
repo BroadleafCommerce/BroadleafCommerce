@@ -137,8 +137,19 @@ fieldset:not(.untitledGroup) {
 .fieldset-card .fieldset-card-content .show-translations {
     font-size: 12px;
     margin-left: 5px;
-    text-transform: lowercase;
     font-weight: 400;
+}
+
+.fieldset-card .fieldset-card-content .show-translations i {
+    font-size: 14px;
+}
+
+.fieldset-card .fieldset-card-content .show-translations span {
+    font-size: 12px;
+    text-transform: none;
+    font-weight: 400;
+    padding-left: 1px;
+    vertical-align: middle;
 }
 
 .fieldset-card:not(.dynamic-form):not(.inModal):first-child {
