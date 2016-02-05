@@ -109,6 +109,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private Boolean prominent;
     private String columnWidth;
     private String broadleafEnumeration;
+    private Boolean hideEnumerationIfEmpty;
     private SupportedFieldType fieldComponentRenderer;
     private Boolean readOnly;
     private Map<String, List<Map<String, String>>> validationConfigurations;
@@ -123,7 +124,6 @@ public class FieldMetadataOverride extends MetadataOverride {
     private String optionValueFieldName;
     private String optionDisplayFieldName;
     private Boolean optionCanEditValues;
-    private Boolean optionHideIfEmpty;
     private Serializable[][] optionFilterValues;
     private String showIfProperty;
     private String ruleIdentifier;
@@ -330,6 +330,14 @@ public class FieldMetadataOverride extends MetadataOverride {
         this.broadleafEnumeration = broadleafEnumeration;
     }
 
+    public Boolean getHideEnumerationIfEmpty() {
+        return hideEnumerationIfEmpty;
+    }
+
+    public void setHideEnumerationIfEmpty(Boolean hideEnumerationIfEmpty) {
+        this.hideEnumerationIfEmpty = hideEnumerationIfEmpty;
+    }
+
     
     public SupportedFieldType getFieldComponentRenderer() {
         return fieldComponentRenderer;
@@ -519,14 +527,6 @@ public class FieldMetadataOverride extends MetadataOverride {
 
     public void setOptionFilterValues(Serializable[][] optionFilterValues) {
         this.optionFilterValues = optionFilterValues;
-    }
-
-    public Boolean getOptionHideIfEmpty() {
-        return optionHideIfEmpty;
-    }
-
-    public void setOptionHideIfEmpty(Boolean optionHideIfEmpty) {
-        this.optionHideIfEmpty = optionHideIfEmpty;
     }
 
     public String getRuleIdentifier() {

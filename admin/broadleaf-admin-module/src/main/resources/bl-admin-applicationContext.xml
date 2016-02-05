@@ -255,6 +255,7 @@
         <property name="sourceList">
             <list>
                 <value>admin/catalog/product.js</value>
+                <value>admin/catalog/productBundle.js</value>
                 <value>admin/catalog/productOptions.js</value>
                 <value>admin/catalog/offer.js</value>
                 <value>admin/catalog/category.js</value>
