@@ -317,6 +317,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         boolean modalMultiSelectable = false;
         boolean selectize = false;
         boolean isMedia = false;
+        FieldWrapper wrapper = new FieldWrapper();
+
 
         String idProperty = "id";
         for (Property property : cmd.getProperties()) {
@@ -345,6 +347,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                         Field hf = createHeaderField(p, md);
                         headerFields.add(hf);
+                        wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
                     }
                 }
             }
@@ -361,6 +364,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                     Field hf = createHeaderField(p, md);
                     headerFields.add(hf);
+                    wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
                 }
             } else {
                 for (Property p : cmd.getProperties()) {
@@ -370,6 +374,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                 && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                             Field hf = createHeaderField(p, md);
                             headerFields.add(hf);
+                            wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
                         }
                     }
                 }
@@ -401,6 +406,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                     Field hf = createHeaderField(p, md);
                     headerFields.add(hf);
+                    wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
                 }
             } else {
                 for (String fieldName : atcmd.getGridVisibleFields()) {
@@ -409,6 +415,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                     Field hf = createHeaderField(p, md);
                     headerFields.add(hf);
+                    wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
                 }
             }
 
@@ -430,6 +437,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             keyMd.setFriendlyName("Key");
             Field hf = createHeaderField(p2, keyMd);
             headerFields.add(hf);
+            wrapper.getFields().add(constructFieldDTOFromFieldData(hf, keyMd));
 
             if (mmd.isSimpleValue()) {
                 Property valueProperty = cmd.getPMap().get("value");
@@ -437,6 +445,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 valueMd.setFriendlyName("Value");
                 hf = createHeaderField(valueProperty, valueMd);
                 headerFields.add(hf);
+                wrapper.getFields().add(constructFieldDTOFromFieldData(hf, valueMd));
+
                 idProperty = "key";
                 hideIdColumn = true;
             } else {
@@ -467,6 +477,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                     && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                                 hf = createHeaderField(p, md);
                                 headerFields.add(hf);
+                                wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
 
                                 // Is this a media listgrid
                                 if (hf.getFieldType().equals("ASSET_LOOKUP")) {
@@ -515,6 +526,20 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         listGrid.setIsReadOnly(readOnly);
         listGrid.setHideIdColumn(hideIdColumn);
         listGrid.setCanFilterAndSort(canFilterAndSort);
+
+        // Set up the filter builder params
+        String friendlyName = field.getMetadata().getFriendlyName();
+        listGrid.setJsonFieldName(friendlyName + "Json");
+        listGrid.setFriendlyName(friendlyName);
+        listGrid.setFieldBuilder("RULE_SIMPLE");
+        listGrid.setFieldWrapper(wrapper);
+
+        String blankJsonString =  "{\"data\":[]}";
+        listGrid.setJson(blankJsonString);
+        DataWrapper dw = convertJsonToDataWrapper(blankJsonString);
+        if (dw != null) {
+            listGrid.setDataWrapper(dw);
+        }
 
         if (editable) {
             listGrid.getRowActions().add(DefaultListGridActions.UPDATE);

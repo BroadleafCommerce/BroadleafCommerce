@@ -30,4 +30,23 @@
             <span th:text="#{${action.displayText}}" th:remove="tag"></span>
         </button>
     </div>
+
+    <!-- Listgrid Filtering -->
+    <div class="filter-info" style="white-space: nowrap;" th:if="${listGrid.canFilterAndSort}">
+        <button class="button filter-button" th:inline="text" th:utext="#{Filter}" th:attr="data-hiddenid=${listGrid.jsonFieldName}"></button>
+
+        <div class="filter-builder-data" style="display: none;"
+             th:attr="data-hiddenid=${listGrid.jsonFieldName},
+                     data-containerid=${listGrid.friendlyName},
+                     data-fields=${listGrid.fieldWrapper.serialize()},
+                     data-data=${listGrid.dataWrapper.serialize()}">
+        </div>
+
+        <input type="hidden"
+               th:id="${listGrid.jsonFieldName}"
+               th:name="${listGrid.friendlyName}"
+               value="{&quot;data&quot;:[]}"/>
+
+        <div class="query-builder-filters-container" th:id="${listGrid.friendlyName}" style="display: none;"></div>
+    </div>
 </div>
