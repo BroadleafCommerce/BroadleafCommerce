@@ -123,8 +123,6 @@ import javax.persistence.Transient;
 {
         @AdminPresentationMergeOverride(name = "defaultSku.displayTemplate", mergeEntries =
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
-        @AdminPresentationMergeOverride(name = "defaultSku.displayTemplate", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "defaultSku.urlKey", mergeEntries =
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "defaultSku.retailPrice", mergeEntries =
@@ -213,7 +211,9 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Column(name = "CAN_SELL_WITHOUT_OPTIONS")
     @AdminPresentation(friendlyName = "ProductImpl_Can_Sell_Without_Options",
-            group = GroupName.Advanced)
+            group = GroupName.ProductOptionsAdvanced,
+            tooltip = "ProductImpl_Can_Sell_Without_Options_Tooltip",
+            defaultValue = "false")
     protected Boolean canSellWithoutOptions = false;
 
     @Transient

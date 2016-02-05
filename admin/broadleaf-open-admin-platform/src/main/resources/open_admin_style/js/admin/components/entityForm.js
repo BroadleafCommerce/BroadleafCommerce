@@ -288,7 +288,7 @@ $(document).ready(function() {
     });
 
     $('body').on('click', 'button.submit-button, a.submit-button', function(event) {
-        if ($(this).hasClass('disabled')) {
+        if ($(this).hasClass('disabled') || $(this).is(':disabled')) {
             return;
         }
 
@@ -322,7 +322,7 @@ $(document).ready(function() {
     }
 
     function hideTabSpinner($tab, $tabBody) {
-        $tabBody.find('button').prop("disabled", false);
+        $tabBody.find('button:not(.row-action)').prop("disabled", false);
         $tab.find('i.fa-spinner').hide();
     }
 

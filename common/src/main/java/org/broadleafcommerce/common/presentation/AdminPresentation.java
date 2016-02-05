@@ -227,6 +227,15 @@ public @interface AdminPresentation {
     String broadleafEnumeration() default "";
 
     /**
+     * <p>Optional - only required if you want to hide this field when there are no enumeration options provided</p>
+     *
+     * <p>Whether or not to show the field if no Enumeration options are provided.</p>
+     *
+     * @return whether or not to show the field if empty
+     */
+    boolean hideEnumerationIfEmpty() default false;
+
+    /**
      * Optional - drives the component that renders the UI
      *
      * When not specified, will default to the fieldType

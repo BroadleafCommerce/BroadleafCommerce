@@ -163,11 +163,11 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
             throws ServiceException {
         Entity entity = persistencePackage.getEntity();
         String idValue = entity.findProperty("id").getValue();
-        String userLoginToRemove = entity.findProperty("login").getValue();
+        String userLoginToRemove = entity.findProperty("login")==null?null:entity.findProperty("login").getValue();
 
         AdminUser persistentAdminUser = adminRemoteSecurityService.getPersistentAdminUser();
 
-        if (persistentAdminUser != null && persistentAdminUser.getLogin() != null) {
+        if (persistentAdminUser != null && persistentAdminUser.getLogin() != null && userLoginToRemove != null) {
             if (persistentAdminUser.getLogin().equals(userLoginToRemove)) {
                 throw new ValidationException(entity, "admin.cantDeleteCurrentUserError");
             }

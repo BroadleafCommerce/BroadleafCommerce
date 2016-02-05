@@ -67,6 +67,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected Integer gridOrder;
     protected String columnWidth;
     protected String broadleafEnumeration;
+    protected Boolean hideEnumerationIfEmpty;
     protected SupportedFieldType fieldComponentRenderer;
     protected Boolean readOnly;
     protected Map<String, List<Map<String, String>>> validationConfigurations = new HashMap<String, List<Map<String, String>>>(5);
@@ -284,6 +285,14 @@ public class BasicFieldMetadata extends FieldMetadata {
 
     public void setBroadleafEnumeration(String broadleafEnumeration) {
         this.broadleafEnumeration = broadleafEnumeration;
+    }
+
+    public Boolean getHideEnumerationIfEmpty() {
+        return hideEnumerationIfEmpty;
+    }
+
+    public void setHideEnumerationIfEmpty(Boolean hideEnumerationIfEmpty) {
+        this.hideEnumerationIfEmpty = hideEnumerationIfEmpty;
     }
 
     public SupportedFieldType getFieldComponentRenderer() {
@@ -583,6 +592,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.gridOrder = gridOrder;        
         metadata.columnWidth = columnWidth;
         metadata.broadleafEnumeration = broadleafEnumeration;
+        metadata.hideEnumerationIfEmpty = hideEnumerationIfEmpty;
         metadata.fieldComponentRenderer = fieldComponentRenderer;
         metadata.readOnly = readOnly;
         metadata.requiredOverride = requiredOverride;
@@ -659,6 +669,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         BasicFieldMetadata metadata = (BasicFieldMetadata) o;
 
         if (broadleafEnumeration != null ? !broadleafEnumeration.equals(metadata.broadleafEnumeration) : metadata.broadleafEnumeration != null) {
+            return false;
+        }
+        if (hideEnumerationIfEmpty != null ? !hideEnumerationIfEmpty.equals(metadata.hideEnumerationIfEmpty) : metadata.hideEnumerationIfEmpty != null) {
             return false;
         }
         if (fieldComponentRenderer != null ? !fieldComponentRenderer.equals(metadata.fieldComponentRenderer) : metadata.fieldComponentRenderer != null) {
@@ -833,6 +846,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (gridOrder != null ? gridOrder.hashCode() : 0);
         result = 31 * result + (columnWidth != null ? columnWidth.hashCode() : 0);
         result = 31 * result + (broadleafEnumeration != null ? broadleafEnumeration.hashCode() : 0);
+        result = 31 * result + (hideEnumerationIfEmpty != null ? hideEnumerationIfEmpty.hashCode() : 0);
         result = 31 * result + (fieldComponentRenderer != null ? fieldComponentRenderer.hashCode() : 0);
         result = 31 * result + (readOnly != null ? readOnly.hashCode() : 0);
         result = 31 * result + (validationConfigurations != null ? validationConfigurations.hashCode() : 0);

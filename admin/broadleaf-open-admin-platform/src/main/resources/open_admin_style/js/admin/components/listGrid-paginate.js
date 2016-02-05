@@ -437,10 +437,16 @@
                     } else {
                         BLCAdmin.listGrid.hideLoadingSpinner($tbody);
                     }
+
+                    if( $tbody.closest('.listgrid-container').find('.listgrid-header-wrapper').find('input[type=checkbox].multiselect-checkbox')) {
+                        BLCAdmin.listGrid.paginate.updateSelectedRecords($tbody)
+                    }
                     // Run any additionally configured initialization handlers
                     for (var i = 0; i < recordLoadHandlers.length; i++) {
                         recordLoadHandlers[i]($tbody.closest("table"));
                     }
+
+
                 });
             } else {
                 BLCAdmin.listGrid.paginate.releaseLock();
@@ -483,7 +489,23 @@
             //console.log('scrolling to ' + offset);
             $tbody.closest('.listgrid-body-wrapper').find('.mCSB_container').css('top', '-' + offset + 'px');
         },
-        
+
+        /**
+         * If the "select-all" checkbox is checked, then make sure all rows are checked
+         * @param $tbody
+         */
+        updateSelectedRecords : function($tbody) {
+            // if the "select-all" button is checked then make sure the newly loaded rows/records are checked as well
+            if($tbody.closest('.listgrid-container').find('.listgrid-header-wrapper').find('input[type=checkbox].multiselect-checkbox').length) {
+                var $listgridBody = $tbody.closest(".listgrid-header-wrapper").next();
+                var $checkbox = $tbody.closest('.listgrid-container').find('.listgrid-header-wrapper').find('input[type=checkbox].multiselect-checkbox');
+                if ($checkbox.prop('checked')) {
+                    $listgridBody.find(".listgrid-checkbox").prop('checked', true);
+                    BLCAdmin.listGrid.inlineRowSelected(null, $tbody.find("tr:not(.selected)"), null, null, null, true);
+                }
+            }
+        },
+
         updateTableFooter : function($tbody) {
             var topIndex = this.getTopVisibleIndex($tbody) + 1;
             var botIndex = this.getBottomVisibleIndex($tbody) + 1;

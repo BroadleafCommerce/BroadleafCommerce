@@ -213,9 +213,9 @@
 
             function updateListGridActionsForContainer($containerActions, numSelected) {
                 if (numSelected) {
-                    $containerActions.removeClass('disabled').prop('disabled', false);
+                    $containerActions.prop('disabled', false);
                 } else {
-                    $containerActions.addClass('disabled').prop('disabled', true);
+                    $containerActions.prop('disabled', true);
                 }
 
                 if (numSelected > 1) {
@@ -320,6 +320,34 @@
 
         addInitializationHandler : function(fn) {
             initializationHandlers.push(fn);
+        },
+
+        /**
+         * The rowSelected handler for the inline list grid ...
+         */
+        inlineRowSelected : function(event, $target, link, fields, currentUrl, multi) {
+            var $tr = $target !== null ? $target : $('tr[data-link="' + link + '"]');
+            var currentlySelected = $tr.hasClass('selected');
+            var $listGridContainer = $tr.closest('.listgrid-container');
+            var $tbody = $tr.closest("tbody");
+            var $listgridHeader = $tbody.closest(".listgrid-body-wrapper").prev();
+
+            if (!multi) {
+                $tbody.find('tr').removeClass('selected');
+                $tbody.find('tr').find('input[type=checkbox].listgrid-checkbox').prop('checked', false);
+            }
+
+            if (!currentlySelected) {
+                $tr.addClass("selected");
+                $tr.find('input[type=checkbox].listgrid-checkbox').prop('checked', true);
+            } else {
+                $tr.removeClass("selected");
+                $tr.find('input[type=checkbox].listgrid-checkbox').prop('checked', false);
+            }
+
+            updateMultiSelectCheckbox($tbody, $listgridHeader)
+
+            BLCAdmin.listGrid.updateActionButtons($listGridContainer);
         }
     };
     
@@ -343,6 +371,17 @@
             });
         });
     });
+
+    function updateMultiSelectCheckbox($tbody, $listgridHeader) {
+        var numRows = $tbody.find("input[type=checkbox].listgrid-checkbox").length;
+        var numCheckedRows = $tbody.find("input[type=checkbox].listgrid-checkbox:checked").length;
+
+        if (numRows === numCheckedRows) {
+            $listgridHeader.find("input[type=checkbox].multiselect-checkbox").prop('checked', true);
+        } else {
+            $listgridHeader.find("input[type=checkbox].multiselect-checkbox").prop('checked', false);
+        }
+    }
 
 })(jQuery, BLCAdmin);
 
@@ -424,44 +463,17 @@ $(document).ready(function() {
     $('body').on('listGrid-main-rowSelected', function(event, $target, link, fields, currentUrl) {
     });
 
-    /**
-     * The rowSelected handler for the inline list grid ...
-     */
-    function inlineRowSelected(event, $target, link, fields, currentUrl, multi) {
-        var $tr = $target !== null ? $target : $('tr[data-link="' + link + '"]');
-        var currentlySelected = $tr.hasClass('selected');
-        var $listGridContainer = $tr.closest('.listgrid-container');
-        var $tbody = $tr.closest("tbody");
-        var $listgridHeader = $tbody.closest(".listgrid-body-wrapper").prev();
-        
-        if (!multi) {
-            $tbody.find('tr').removeClass('selected');
-            $tbody.find('tr').find('input[type=checkbox].listgrid-checkbox').prop('checked', false);
-        }
-        
-        if (!currentlySelected) {
-            $tr.addClass("selected");
-            $tr.find('input[type=checkbox].listgrid-checkbox').prop('checked', true);
-        } else {
-            $tr.removeClass("selected");
-            $tr.find('input[type=checkbox].listgrid-checkbox').prop('checked', false);
-        }
-
-        updateMultiSelectCheckbox($tbody, $listgridHeader)
-        
-        BLCAdmin.listGrid.updateActionButtons($listGridContainer);
-    }
     $('body').on('listGrid-single_select-rowSelected', function(event, $target, link, fields, currentUrl) {
-        inlineRowSelected(event, $target, link, fields, currentUrl, false);
+        BLCAdmin.listGrid.inlineRowSelected(event, $target, link, fields, currentUrl, false);
     });
     $('body').on('listGrid-translation-rowSelected', function(event, $target, link, fields, currentUrl) {
-        inlineRowSelected(event, $target, link, fields, currentUrl, false);
+        BLCAdmin.listGrid.inlineRowSelected(event, $target, link, fields, currentUrl, false);
     });
     $('body').on('listGrid-multi_select-rowSelected', function(event, $target, link, fields, currentUrl) {
-        inlineRowSelected(event, $target, link, fields, currentUrl, true);
+        BLCAdmin.listGrid.inlineRowSelected(event, $target, link, fields, currentUrl, true);
     });
     $('body').on('listGrid-selectize-rowSelected', function(event, $target, link, fields, currentUrl) {
-        inlineRowSelected(event, $target, link, fields, currentUrl, false);
+        BLCAdmin.listGrid.inlineRowSelected(event, $target, link, fields, currentUrl, false);
     });
 
     /**
@@ -618,6 +630,19 @@ $(document).ready(function() {
     
     $('body').on('click', 'button.sub-list-grid-add, a.sub-list-grid-add', function() {
         BLCAdmin.showLinkAsModal($(this).attr('data-actionurl'));
+        return false;
+    });
+
+    $('body').on('click', 'button.sub-list-grid-add-empty, a.sub-list-grid-add-empty', function() {
+        var link = $(this).attr('data-actionurl');
+        link = link.substring(0, link.indexOf("/add")) + "/addEmpty" + link.substring(link.indexOf("/add") + 4, link.length);
+        BLC.ajax({
+            url : link,
+            type : "POST"
+        }, function(data) {
+            link = link.substring(0, link.indexOf("/addEmpty")) + "/" + data.id + link.substring(link.indexOf("/addEmpty") + 9, link.length);
+            BLCAdmin.showLinkAsModal(link);
+        });
         return false;
     });
 
@@ -910,10 +935,10 @@ $(document).ready(function() {
         var $listgridBody = $(this).closest(".listgrid-header-wrapper").next();
         if ($(this).prop('checked')) {
             $listgridBody.find(".listgrid-checkbox").prop('checked', true);
-            $listgridBody.find(".list-grid-table tbody tr:not(.selected)").click();
+            BLCAdmin.listGrid.inlineRowSelected(null, $listgridBody.find(".list-grid-table tbody tr:not(.selected)"), null, null, null, true);
         } else {
             $listgridBody.find(".listgrid-checkbox").prop('checked', false);
-            $listgridBody.find(".list-grid-table tbody tr.selected").click();
+            BLCAdmin.listGrid.inlineRowSelected(null, $listgridBody.find(".list-grid-table tbody tr.selected"), null, null, null, true);
         }
     });
 
@@ -927,17 +952,6 @@ $(document).ready(function() {
     $('body').on('click', 'td.listgrid-row-actions span', function(event) {
         return false;
     });
-
-    function updateMultiSelectCheckbox($tbody, $listgridHeader) {
-        var numRows = $tbody.find("input[type=checkbox].listgrid-checkbox").length;
-        var numCheckedRows = $tbody.find("input[type=checkbox].listgrid-checkbox:checked").length;
-
-        if (numRows === numCheckedRows) {
-            $listgridHeader.find("input[type=checkbox].multiselect-checkbox").prop('checked', true);
-        } else {
-            $listgridHeader.find("input[type=checkbox].multiselect-checkbox").prop('checked', false);
-        }
-    }
 
     $("input[type=checkbox].listgrid-checkbox").prop('checked', false);
     $("input[type=checkbox].multiselect-checkbox").prop('checked', false);
