@@ -338,7 +338,7 @@ $(document).ready(function() {
             BLC.ajax({
                 url: this.action,
                 type: "POST",
-                data: $(this).serialize()
+                data: BLCAdmin.serializeForm($(this))
             }, function(data) {
                 var $modal = BLCAdmin.currentModal();
                 BLCAdmin.entityForm.swapModalEntityForm($modal, data);
