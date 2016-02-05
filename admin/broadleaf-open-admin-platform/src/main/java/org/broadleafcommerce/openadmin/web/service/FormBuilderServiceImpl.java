@@ -762,7 +762,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         // We're dealing with fields that should render as drop-downs, so set their possible values
                         f = new ComboField();
                         ((ComboField) f).setOptions(fmd.getEnumerationValues());
-                        if (fmd.getOptionHideIfEmpty() != null && fmd.getOptionHideIfEmpty().booleanValue()
+                        if (fmd.getHideEnumerationIfEmpty() != null && fmd.getHideEnumerationIfEmpty().booleanValue()
                                 && ((ComboField) f).getOptions().size() == 0) {
                             f.setIsVisible(false);
                         }
