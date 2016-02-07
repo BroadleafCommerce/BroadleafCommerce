@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -176,6 +178,20 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
         }
 
         return clone;
+    }
+    
+    @Override
+    public CreateResponse<DiscreteOrderItemFeePrice> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<DiscreteOrderItemFeePrice> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        DiscreteOrderItemFeePrice cloned = createResponse.getClone();
+        cloned.setAmount(amount == null ? null : new Money(amount));
+        cloned.setDiscreteOrderItem((DiscreteOrderItem)discreteOrderItem.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setName(name);
+        cloned.setReportingCode(reportingCode);
+        return  createResponse;
     }
 
     @Override

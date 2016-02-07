@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import javax.annotation.Resource;
 
 
@@ -68,6 +69,11 @@ public class OfferAuditServiceImpl implements OfferAuditService {
     @Override
     public Long countOfferCodeUses(Long offerCodeId) {
         return offerAuditDao.countOfferCodeUses(offerCodeId);
+    }
+
+    @Override
+    public List<OfferAudit> readOfferAuditsByOrderId(Long orderId) {
+        return offerAuditDao.readOfferAuditsByOrderId(orderId);
     }
 
 

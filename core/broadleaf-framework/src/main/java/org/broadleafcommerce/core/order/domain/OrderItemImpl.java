@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
@@ -98,7 +97,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
-public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable, MultiTenantCloneable<OrderItemImpl> {
+public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable {
 
     private static final Log LOG = LogFactory.getLog(OrderItemImpl.class);
     private static final long serialVersionUID = 1L;
@@ -881,27 +880,28 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
-    public <G extends OrderItemImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OrderItem> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
         OrderItem cloned = createResponse.getClone();
-        cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setOrder(order.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setCategory(category);
         cloned.setName(name);
-        cloned.setOrderItemType(getOrderItemType());
-        cloned.setDiscountingAllowed(discountsAllowed);
+        cloned.setOrderItemType(convertOrderItemType(orderItemType));
         cloned.setTaxable(isTaxable());
-        cloned.setSalePriceOverride(salePriceOverride);
-        cloned.setSalePrice(getSalePrice());
-        cloned.setRetailPrice(getRetailPrice());
-        cloned.setRetailPriceOverride(retailPriceOverride);
         cloned.setQuantity(quantity);
         cloned.setPersonalMessage(personalMessage);
+        ((OrderItemImpl)cloned).retailPrice = retailPrice;
+        ((OrderItemImpl)cloned).salePrice = salePrice;
+        ((OrderItemImpl)cloned).discountsAllowed = discountsAllowed;
+        ((OrderItemImpl)cloned).salePriceOverride = salePriceOverride;
+        ((OrderItemImpl)cloned).retailPriceOverride = retailPriceOverride;
         // dont clone
-        cloned.setParentOrderItem(parentOrderItem);
+        cloned.setParentOrderItem(parentOrderItem == null ? null : parentOrderItem.createOrRetrieveCopyInstance(context).getClone());
         for(OrderItem entry : childOrderItems){
-            OrderItem clonedEntry = ((OrderItemImpl)entry).createOrRetrieveCopyInstance(context).getClone();
+            OrderItem clonedEntry = ((OrderItem)entry).createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setParentOrderItem(clonedEntry);
             cloned.getChildOrderItems().add(clonedEntry);
         }
@@ -922,6 +922,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             clonedEntry.setOrderItem(cloned);
             cloned.getOrderItemPriceDetails().add(clonedEntry);
         }
+        cloned.finalizePrice();
         return createResponse;
     }
 

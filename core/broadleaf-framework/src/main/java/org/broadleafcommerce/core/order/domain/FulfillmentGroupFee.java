@@ -19,12 +19,13 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 
 import java.io.Serializable;
 import java.util.List;
 
-public interface FulfillmentGroupFee extends Serializable {
+public interface FulfillmentGroupFee extends Serializable, MultiTenantCloneable<FulfillmentGroupFee> {
 
     public Long getId();
 

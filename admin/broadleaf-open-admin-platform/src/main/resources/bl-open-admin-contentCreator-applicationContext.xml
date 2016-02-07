@@ -308,6 +308,6 @@
    <bean id="adminCssResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
         <property name="locations" ref="blCssLocations"/>
         <property name="resourceTransformers" ref="blCssResourceTransformers" />             
-   </bean>  
-    
+   </bean>
+
 </beans>

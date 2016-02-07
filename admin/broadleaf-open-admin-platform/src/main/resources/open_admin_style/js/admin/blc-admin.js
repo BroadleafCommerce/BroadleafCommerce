@@ -31,6 +31,7 @@ var BLCAdmin = (function($) {
     var selectizeInitializationHandlers = [];
     var excludedSelectizeSelectors = [];
     var updateHandlers = [];
+    var fieldInitializationHandlers = [];
     var stackedModalOptions = {
         left: 20,
         top: 20
@@ -148,6 +149,17 @@ var BLCAdmin = (function($) {
             excludedSelectizeSelectors.push(selector);
         },
 
+        /**
+         * Add a field initialization handler that runs before normal field initialization. If any of the handlers return
+         * false then all subsequent execution is exited
+         * 
+         * Method signatures should take 1 argument:
+         *  $container - the html container that inputs are being initialized for
+         */
+        addFieldInitializationHandler : function(fn) {
+            fieldInitializationHandlers.push(fn);
+        },
+
         runPreValidationSubmitHandlers : function($form) {
             for (var i = 0; i < preValidationFormSubmitHandlers.length; i++) {
                 preValidationFormSubmitHandlers[i]($form);
@@ -191,6 +203,20 @@ var BLCAdmin = (function($) {
             var submit = BLCAdmin.runValidationSubmitHandlers($form);
             BLCAdmin.runPostValidationSubmitHandlers($form);
             return submit;
+        },
+        
+        /** 
+         * Runs all of the field initialization handlers. Returns a boolean indicating if normal field initialization
+         * should continue or not
+         */
+        runFieldInitializationHandlers : function($container) {
+            for (var i = 0; i < fieldInitializationHandlers.length; i++) {
+                var continueInitialization = fieldInitializationHandlers[i]($container);
+                if (continueInitialization != undefined && !continueInitialization) {
+                    return false;
+                }
+            }
+            return true;
         },
         
         setModalMaxHeight : function($modal) {
@@ -392,11 +418,14 @@ var BLCAdmin = (function($) {
                 $container = BLCAdmin.getActiveTab();
             }
 
+            // run field initialization handlers and see if we should continue initializing fields
+            var continueInitialization = BLCAdmin.runFieldInitializationHandlers($container);
+
             // If we've already initialized this container, we'll skip it.
-            if ($container.data('initialized') == 'true') {
+            if ($container.data('initialized') == 'true' || !continueInitialization) {
                 return;
             }
-            
+
             // Set the blank value for foreign key lookups
             $container.find('.foreign-key-value-container').each(function(index, element) {
                 var $displayValue = $(this).find('input.display-value');

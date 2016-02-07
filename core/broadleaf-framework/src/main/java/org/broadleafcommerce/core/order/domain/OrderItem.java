@@ -25,12 +25,11 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public interface OrderItem extends Serializable, Cloneable {
+public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable<OrderItem> {
 
     /**
      * The unique identifier of this OrderItem

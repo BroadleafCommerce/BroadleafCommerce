@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
@@ -37,15 +40,27 @@ import java.util.TreeMap;
  * @author jfischer
  *
  */
+@JsonAutoDetect
 public class ClassMetadata implements Serializable {
     
     private static final long serialVersionUID = 1L;
-    
+
+    @JsonProperty
     private String ceilingType;
+
+    @JsonProperty
     private String securityCeilingType;
+
+    @JsonIgnore
     private ClassTree polymorphicEntities;
+
+    @JsonProperty(value = "classProperties")
     private Property[] properties;
+
+    @JsonIgnore
     private Map<String, TabMetadata> tabAndGroupMetadata;
+
+    @JsonProperty
     private String currencyCode = "USD";
     
     private Map<String, Property> pMap = null;

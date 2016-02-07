@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
@@ -195,6 +197,21 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     @Override
     public String getCurrencyCode() {
         return ((CurrencyCodeIdentifiable) fulfillmentGroup).getCurrencyCode();
+    }
+    
+    @Override
+    public CreateResponse<FulfillmentGroupFee> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<FulfillmentGroupFee> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        FulfillmentGroupFee cloned = createResponse.getClone();
+        cloned.setAmount(new Money(amount));
+        cloned.setFulfillmentGroup(fulfillmentGroup.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setName(name);
+        cloned.setReportingCode(reportingCode);
+        cloned.setTaxable(feeTaxable);
+        return  createResponse;
     }
 
     @Override

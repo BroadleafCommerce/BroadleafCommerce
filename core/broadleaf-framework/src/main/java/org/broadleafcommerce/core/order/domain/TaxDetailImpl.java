@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
@@ -214,4 +216,23 @@ public class TaxDetailImpl implements TaxDetail {
         return this.country;
     }
     
+    @Override
+    public CreateResponse<TaxDetail> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<TaxDetail> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        TaxDetail cloned = createResponse.getClone();
+        cloned.setAmount(new Money(amount));
+        cloned.setCountry(country);
+        cloned.setCurrency(currency);
+        cloned.setJurisdictionName(jurisdictionName);
+        cloned.setModuleConfiguration(moduleConfiguation);
+        cloned.setRate(rate);
+        cloned.setRegion(region);
+        cloned.setRegion(region);
+        cloned.setTaxName(taxName);
+        cloned.setType(getType());
+        return  createResponse;
+    }
 }

@@ -803,13 +803,13 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         cloned.setOrderNumber(orderNumber);
         cloned.setTotalTax(getTotalTax());
         cloned.setSubmitDate(submitDate);
-        cloned.setCustomer(customer.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setCustomer(customer);
         cloned.setStatus(getStatus());
         cloned.setTotalFulfillmentCharges(getTotalFulfillmentCharges());
         cloned.setSubTotal(getSubTotal());
-        cloned.setTaxOverride(taxOverride);
+        cloned.setTaxOverride(taxOverride == null ? null : taxOverride);
         for(OrderItem entry : orderItems){
-            OrderItem clonedEntry = ((OrderItemImpl)entry).createOrRetrieveCopyInstance(context).getClone();
+            OrderItem clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setOrder(cloned);
             cloned.getOrderItems().add(clonedEntry);
         }
@@ -823,12 +823,24 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             clonedAttribute.setOrder(cloned);
             cloned.getOrderAttributes().put(entry.getKey(),clonedAttribute);
         }
-        // dont clone
-
-       for(OfferCode entry : addedOfferCodes){
+        for(FulfillmentGroup fulfillmentGroup: fulfillmentGroups) {
+            FulfillmentGroup fg = fulfillmentGroup.createOrRetrieveCopyInstance(context).getClone();
+            fg.setOrder(cloned);
+            cloned.getFulfillmentGroups().add(fg);
+        }
+        for(OrderPayment orderPayment : payments) {
+            if (orderPayment.isActive()) {
+                OrderPayment payment = orderPayment.createOrRetrieveCopyInstance(context).getClone();
+                payment.setOrder(cloned);
+                cloned.getPayments().add(payment);
+            }
+        }
+        for(OfferCode entry : addedOfferCodes){
            OfferCode clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
            cloned.getAddedOfferCodes().add(clonedEntry);
-       }
+        }
+
+        cloned.setTotal(total == null ? null : new Money(total));
 
         return  createResponse;
     }
