@@ -206,15 +206,15 @@
                 if (filters !== undefined) {
                     var activeFilters = JSON.parse(filters).data;
                     // disable the filter button if the listgrid is not currently filtered
-                    if (activeFilters.length && activeFilters[0].rules.length == 0) {
-                        $listGridContainer.find('.filter-button').addClass('disabled').prop('disabled', true);
+                    if (!activeFilters.length || (activeFilters.length && activeFilters[0].rules.length == 0)) {
+                        $listGridContainer.find('.filter-button').addClass('disabled').prop('disabled', true).prop("forceDisabled", true);
                     } else if (activeFilters.length && activeFilters[0].rules.length > 0) {
                         // the listgrid is filtered but may not have any rows, we want to show the "no results"
                         $listGridContainer.addClass('filtered');
                     }
                 }
             }
-
+            updateListGridActionsForEmptyContainer($listGridContainer.find('button.non-empty-required'), $listGridContainer.find('tr.clickable').length == 0);
             var listGridId = $listGridContainer.find('.listgrid-body-wrapper table').attr('id');
             var numSelected = $listGridContainer.find('tr.selected').length;
             updateListGridActionsForContainer($listGridContainer.find('button.row-action'), numSelected);
@@ -225,15 +225,27 @@
                 updateListGridActionsForContainer($modalActionContainer.find("button.row-action"), numSelected);
             }
 
+            function updateListGridActionsForEmptyContainer($containerActions, isEmpty) {
+                if (isEmpty) {
+                    if (!$containerActions.prop('disabled')) {
+                        $containerActions.prop('disabled', true).prop("forceDisabled", true);
+                    }
+                } else {
+                    if ($containerActions.prop('disabled')) {
+                        $containerActions.prop('disabled', false);
+                    }
+                }
+            }
+
             function updateListGridActionsForContainer($containerActions, numSelected) {
                 if (numSelected) {
                     $containerActions.prop('disabled', false);
                 } else {
-                    $containerActions.prop('disabled', true);
+                    $containerActions.prop('disabled', true).prop("forceDisabled", true);
                 }
 
                 if (numSelected > 1) {
-                    $containerActions.filter('.single-action-only').prop('disabled', true);
+                    $containerActions.filter('.single-action-only').prop('disabled', true).prop("forceDisabled", true);
                 }
             }
         },
@@ -359,7 +371,7 @@
                 $tr.find('input[type=checkbox].listgrid-checkbox').prop('checked', false);
             }
 
-            updateMultiSelectCheckbox($tbody, $listgridHeader)
+            updateMultiSelectCheckbox($tbody, $listgridHeader);
 
             BLCAdmin.listGrid.updateActionButtons($listGridContainer);
         }
