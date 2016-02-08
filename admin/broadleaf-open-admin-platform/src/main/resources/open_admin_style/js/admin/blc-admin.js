@@ -288,9 +288,9 @@ var BLCAdmin = (function($) {
             }
             
             var $modal = BLCAdmin.getModalSkeleton();
-            
+
             $modal.find('.modal-header h3').text(header);
-            $modal.find('.modal-body').text(message);
+            $modal.find('.modal-body').append(message);
             $modal.find('.modal-body').css('padding-bottom', '20px');
             
             this.showElementAsModal($modal);
