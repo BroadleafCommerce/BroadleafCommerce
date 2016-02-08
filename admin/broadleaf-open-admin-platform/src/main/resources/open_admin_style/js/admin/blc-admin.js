@@ -447,7 +447,7 @@ var BLCAdmin = (function($) {
             for (var i = 0; i < initializationHandlers.length; i++) {
                 initializationHandlers[i]($container);
             }
-            
+
             BLCAdmin.initializeTextAreaFields($container);
             BLCAdmin.initializeColorPickerFields($container);
             BLCAdmin.initializeSelectizeFields($container);
