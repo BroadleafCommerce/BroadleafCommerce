@@ -352,4 +352,9 @@ public class AdminTranslationController extends AdminAbstractController {
         return form;
     }
 
+    @Override
+    protected String getClassNameForSection(String sectionKey) {
+        return Translation.class.getName();
+    }
+
 }

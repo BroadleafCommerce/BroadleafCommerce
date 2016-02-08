@@ -831,7 +831,7 @@ $(document).ready(function() {
             BLC.ajax({
                 url: this.action,
                 type: "POST",
-                data: $(this).serialize()
+                data: BLCAdmin.serializeForm($form)
             }, function(data) {
                 BLCAdmin.entityForm.hideActionSpinner($form.closest('.modal').find('.entity-form-actions'));
 
