@@ -409,6 +409,9 @@ $(document).ready(function() {
             $collapser.text("(hide)");
             //$collapser.find('i').removeClass('fa-angle-down').addClass('fa-angle-up');
             $content.removeClass('content-collapsed');
+
+            // update content height
+            BLCAdmin.updateContentHeight($(this));
         } else {
             $collapser.removeClass('expanded').addClass('collapsed');
             $collapser.text("(show)");
