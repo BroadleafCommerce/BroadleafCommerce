@@ -577,6 +577,7 @@ button.disabled {
 
 .fa.fa-exclamation-triangle {
     color: #D20A33;
+    cursor: pointer !important;
 }
 
 .listgrid-search input {
@@ -675,7 +676,7 @@ button.disabled {
 }
 
 .modal-body {
-    padding: 0;
+    padding: 1px;
     background-color: #F9F7F3;
     /*overflow: visible;*/
 }
