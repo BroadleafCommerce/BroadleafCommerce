@@ -743,24 +743,28 @@
             var $container = $table.closest('.listgrid-container');
             var thWidths = [];
             var $modalBody = $container.closest('.modal-body');
-            
+
             // If we're in a modal, we need to hide overflow in the modal to calculate sizes correclty. We'll restore this.
             $modalBody.css('overflow-y', 'hidden');
-            
+
+            // We want to remove the padding on the right side
+            $table.css('padding-right', '0');
+
             // First, we'll adjust the size of the table to be 15px less, since this is the margin we need
             // for our scrollbar. This will ensure the widths are correct once we draw the scrollbar
-            $table.css('width', ($table.width() - 15) + 'px');
+            if ($table.width() == $container.width() - 2) {
+                $table.css('width', ($table.width() - 15) + 'px');
 
-            // Figure out what the currently drawn widths are for each row
-            // This is effectively the same for all rows for both the head and the body for now
-            // Also, set the width we determined directly on the element
-            $table.find('th').each(function(index, thElement) {
-                var $th = $(thElement);
-                var width = $th.width();
-                $th.css('width', width);
-                thWidths[index] = width;
-            });
-            
+                // Figure out what the currently drawn widths are for each row
+                // This is effectively the same for all rows for both the head and the body for now
+                // Also, set the width we determined directly on the element
+                $table.find('th').each(function (index, thElement) {
+                    var $th = $(thElement);
+                    var width = $th.width();
+                    $th.css('width', width);
+                    thWidths[index] = width;
+                });
+            }
             $tbody.remove();
             var $clonedTable = $table.clone();
             $table.parent().after($clonedTable);
