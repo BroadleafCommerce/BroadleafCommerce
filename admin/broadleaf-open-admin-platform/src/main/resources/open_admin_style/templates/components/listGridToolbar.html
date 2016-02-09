@@ -9,7 +9,7 @@
     <div class="listgrid-toolbar-actions"
          th:unless="${#arrays.isEmpty(listGrid.activeToolbarActions)}">
         <button type="button" class="button primary toolbar-action"
-                th:classappend="${action.buttonClass}"
+                th:classappend="${action.buttonClass + ' ' + (action.requiresNonEmptyGrid ? 'non-empty-required' : '')}"
                 th:each="action,iterStat : ${listGrid.activeToolbarActions}"
                 th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation} + ${#strings.isEmpty(action.actionTargetEntity) ? '' : '&amp;entityType=' + action.actionTargetEntity}},
                          data-urlpostfix=${action.urlPostfix},

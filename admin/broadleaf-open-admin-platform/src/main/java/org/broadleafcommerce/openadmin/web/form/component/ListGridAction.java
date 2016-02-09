@@ -52,6 +52,7 @@ public class ListGridAction implements Cloneable {
     protected Boolean allCapable = false;
     protected Boolean singleActionOnly = false;
     protected String actionTargetEntity = "";
+    protected Boolean requiresNonEmptyGrid = false;
     
     public ListGridAction(String actionId) {
         this.actionId = actionId;
@@ -78,6 +79,15 @@ public class ListGridAction implements Cloneable {
      */
     public ListGridAction withIconClass(String iconClass) {
         setIconClass(iconClass);
+        return this;
+    }
+
+    /**
+     *
+     * @see {@link #setRequiresNonEmptyGrid(Boolean)}
+     */
+    public ListGridAction withRequiresNonEmptyGrid(Boolean requiresNonEmptyGrid) {
+        setRequiresNonEmptyGrid(requiresNonEmptyGrid);
         return this;
     }
     
@@ -276,6 +286,19 @@ public class ListGridAction implements Cloneable {
         this.actionTargetEntity = actionTargetEntity;
     }
 
+    /**
+     * If a list grid action should be disabled unless there are one or more rows in the grid, this property should be true
+     *
+     * @return
+     */
+    public Boolean getRequiresNonEmptyGrid() {
+        return requiresNonEmptyGrid;
+    }
+
+    public void setRequiresNonEmptyGrid(Boolean requiresNonEmptyGrid) {
+        this.requiresNonEmptyGrid = requiresNonEmptyGrid;
+    }
+
     @Override
     public ListGridAction clone() {
         ListGridAction cloned = new ListGridAction(actionId);
@@ -288,6 +311,7 @@ public class ListGridAction implements Cloneable {
         cloned.actionId = actionId;
         cloned.actionUrlOverride = actionUrlOverride;
         cloned.singleActionOnly = singleActionOnly;
+        cloned.requiresNonEmptyGrid = requiresNonEmptyGrid;
         return cloned;
     }
 }
