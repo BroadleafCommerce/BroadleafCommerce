@@ -475,11 +475,15 @@ $(document).ready(function() {
             var $tr = $(this);
 
             if ($tr.has('a.sub-list-grid-reorder') && $tr.find('a.sub-list-grid-reorder').css('visibility') === 'hidden') {
-                $tr.find('a.sub-list-grid-reorder').css({opacity: 0.0, visibility: 'visible'}).animate({opacity: 1.0}, 400);
+                $tr.find('a.sub-list-grid-reorder').css({visibility: 'visible'});
+            }
+            if ($tr.has('.workflow-action') && $tr.find('.workflow-action').css('visibility') === 'hidden') {
+                $tr.find('.workflow-action').css({visibility: 'visible'});
             }
         },
         mouseleave:function () {
             $(this).find('a.sub-list-grid-reorder').css({visibility: 'hidden'});
+            $(this).find('.workflow-action').css({visibility: 'hidden'});
         }
     },'.list-grid-table tbody tr');
     
