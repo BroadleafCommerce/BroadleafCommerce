@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.openadmin.web.service;
 
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
@@ -89,10 +92,10 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-
+import javax.annotation.Resource;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -109,11 +112,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -1214,7 +1212,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                             ((BasicCollectionMetadata) md).getAddMethodType()?"sub-list-grid-add-empty":"sub-list-grid-add")
                                     .withActionTargetEntity(entityType.getFullyQualifiedClassname())
                                     .withUrlPostfix("/add")
-                                    .withIconClass("blc-icon-add-category")
+                                    .withIconClass("fa fa-plus")
                                     .withDisplayText("Add " + BLCMessageUtils.getMessage(entityType.getFriendlyName()));
                             listGrid.getToolbarActions().add(0, ADD);
                         }
