@@ -40,19 +40,19 @@ public class DefaultListGridActions {
     public static final ListGridAction ADD = new ListGridAction(ListGridAction.ADD)
         .withButtonClass("sub-list-grid-add")
         .withUrlPostfix("/add")
-        .withIconClass("blc-icon-add-category")
+        .withIconClass("fa fa-plus")
         .withDisplayText("Add");
 
     public static final ListGridAction ADD_EMPTY = new ListGridAction(ListGridAction.ADD)
         .withButtonClass("sub-list-grid-add-empty")
         .withUrlPostfix("/add")
-        .withIconClass("blc-icon-add-category")
+        .withIconClass("fa fa-plus")
         .withDisplayText("Add");
 
     public static final ListGridAction TREE_ADD = new ListGridAction(ListGridAction.TREE_ADD)
         .withButtonClass("tree-list-grid-row-add")
         .withUrlPostfix("/new/enterprise-tree-add")
-        .withIconClass("blc-icon-add-category")
+        .withIconClass("fa fa-plus")
         .withDisplayText("Add Child");
 
     // Actions for row-level
@@ -64,7 +64,7 @@ public class DefaultListGridActions {
     
     public static final ListGridAction UPDATE = new ListGridAction(ListGridAction.UPDATE)
         .withButtonClass("sub-list-grid-update")
-        .withIconClass("blc-icon-edit")
+        .withIconClass("fa fa-pencil")
         .withDisplayText("Edit");
 
     public static final ListGridAction VIEW = new ListGridAction(ListGridAction.VIEW)
@@ -76,7 +76,7 @@ public class DefaultListGridActions {
 
     public static final ListGridAction EDIT = new ListGridAction(ListGridAction.EDIT)
         .withButtonClass("sub-list-grid-edit")
-        .withIconClass("blc-icon-edit")
+        .withIconClass("fa fa-pencil")
         .withDisplayText("Edit");
 
     public static final ListGridAction SINGLE_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
