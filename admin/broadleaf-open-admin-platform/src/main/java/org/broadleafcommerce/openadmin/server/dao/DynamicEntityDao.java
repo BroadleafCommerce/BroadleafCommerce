@@ -22,11 +22,13 @@ package org.broadleafcommerce.openadmin.server.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.hibernate.Criteria;
@@ -134,4 +136,5 @@ public interface DynamicEntityDao {
 
     DynamicDaoHelper getDynamicDaoHelper();
 
+    Map<String, TabMetadata> getTabAndGroupMetadata(Class<?>[] clazz, ClassMetadata cmd);
 }

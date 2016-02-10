@@ -28,10 +28,12 @@ public enum SupportedFieldType {
     UNKNOWN,
     ID,
     BOOLEAN,
+    BOOLEAN_LINK,
     DATE,
     INTEGER,
     DECIMAL,
     STRING,
+    COLLECTION,
     PASSWORD,
     PASSWORD_CONFIRM,
     EMAIL,
@@ -50,10 +52,13 @@ public enum SupportedFieldType {
     ASSET_LOOKUP,
     MEDIA,
     RULE_SIMPLE,
+    RULE_SIMPLE_TIME,
     RULE_WITH_QUANTITY,
     STRING_LIST,
     IMAGE,
     COLOR,
     CODE,
-    GENERATED_URL
+    GENERATED_URL,
+    GENERATED_FIELD_VALUE,
+    DESCRIPTION
 }

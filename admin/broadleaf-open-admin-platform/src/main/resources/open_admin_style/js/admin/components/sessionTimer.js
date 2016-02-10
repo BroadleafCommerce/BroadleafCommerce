@@ -78,7 +78,7 @@
         },
         
         getTimeLeftSeconds : function(){
-            return sessionTimeLeft/1000;
+            return moment.duration(sessionTimeLeft/1000, 'seconds').format('m [min] s [sec]');
         },
 
         isExpired : function() {
@@ -132,7 +132,6 @@
         updateTimer : function() {
             
             BLCAdmin.sessionTimer.updateTimeLeft();
-            
             /*
              * If the time left is less than the expire message time, then we know to display the expire message.
              */
@@ -142,7 +141,7 @@
                  * If the session is expired: invalidate the session, and end the timeout loop by returning false.
                  */
                 if (BLCAdmin.sessionTimer.isExpired()) {
-                    $("#lightbox").fadeOut("slow");
+                    $("#lightbox").hide();
                     BLCAdmin.sessionTimer.invalidateSession();
                     return false;
                 }
@@ -158,7 +157,7 @@
                 /*
                  * Here we make sure that the session expiring lightbox is displayed.
                  */
-                $("#lightbox").fadeIn("slow");
+                $("#lightbox").show();
                 activityCount = 0;
 
                 return true;
@@ -179,7 +178,7 @@
              * If our code has reached this point then the session time left is greater than the warning interval and
              * the lightbox should not be showing.
              */
-            $("#lightbox").fadeOut("slow");
+            $("#lightbox").hide();
             return true;
         }
 
@@ -202,7 +201,7 @@ $(document).ready(function() {
          */
         $.doTimeout('update-admin-session');
         
-        $("#lightbox").fadeOut("slow");
+        $("#lightbox").hide();
         activityCount = 0;
         
         /*

@@ -1,8 +1,10 @@
-<div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
-<div th:substituteby="components/fieldTooltip" />
-<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
-
-<div class="datepicker-container">
-    <input type="text" class="three datepicker" th:field="*{fields['__${field.name}__'].value}" />
-    <i class="icon-calendar"></i>
+<label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}">
+    <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+</label>
+<div>
+    <input class="datetimepicker" type="text" th:field="*{fields['__${field.name}__'].value}"
+           th:disabled="${field.readOnly}"
+           th:classappend="${group.column == 0} ? 'date-field'"/>
 </div>
+
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />

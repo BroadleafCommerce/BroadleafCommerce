@@ -60,7 +60,8 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
         if (canHandleValidation(populateValueRequest)) {
             DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
             EntityManager em = populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager();
-            if (SupportedFieldType.RULE_SIMPLE.equals(populateValueRequest.getMetadata().getFieldType())) {
+            if (SupportedFieldType.RULE_SIMPLE.equals(populateValueRequest.getMetadata().getFieldType()) ||
+                    SupportedFieldType.RULE_SIMPLE_TIME.equals(populateValueRequest.getMetadata().getFieldType())) {
                 
                 //AntiSamy HTML encodes the rule JSON - pass the unHTMLEncoded version
                 DataWrapper dw = ruleFieldExtractionUtility.convertJsonToDataWrapper(populateValueRequest.getProperty().getUnHtmlEncodedValue());
@@ -98,12 +99,12 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                     }
                     if (dw != null && StringUtils.isEmpty(dw.getError())) {
                         for (DataDTO dto : dw.getData()) {
-                            if (dto.getId() != null) {
+                            if (dto.getPk() != null) {
                                 boolean foundIdToUpdate = false;
                                 for (QuantityBasedRule quantityBasedRule : existingRules) {
-                                    Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(quantityBasedRule.getClass(), dto.getId());
+                                    Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(quantityBasedRule.getClass(), dto.getPk());
                                     if (sandBoxVersionId == null) {
-                                        sandBoxVersionId = dto.getId();
+                                        sandBoxVersionId = dto.getPk();
                                     }
                                     if (sandBoxVersionId.equals(quantityBasedRule.getId())) {
                                         foundIdToUpdate = true;
@@ -115,7 +116,7 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                                     }
                                 }
                                 if (!foundIdToUpdate) {
-                                    return new PropertyValidationResult(false, "Tried to update QuantityBasedReule with ID " + dto.getId() + " but that rule does not exist");
+                                    return new PropertyValidationResult(false, "Tried to update QuantityBasedRule with ID " + dto.getPk() + " but that rule does not exist");
                                 }
                             } else {
                                 // This is a new rule, just validate that it parses successfully
@@ -144,7 +145,8 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
     
     protected boolean canHandleValidation(PopulateValueRequest populateValueRequest) {
         return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
-                populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
+                populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE ||
+                populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE_TIME;
     }
 
     @Override

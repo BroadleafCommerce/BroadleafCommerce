@@ -21,22 +21,56 @@
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class FieldGroup {
 
     protected String title;
+    protected String key;
     protected Integer order;
-    protected Set<Field> alternateOrderedFields = new HashSet<Field>();
-    protected Set<Field> fields = new HashSet<Field>();
+    protected Set<Field> alternateOrderedFields = new HashSet<>();
+    protected Set<Field> fields = new HashSet<>();
     protected Boolean isVisible;
+    protected Integer column;
+    protected Boolean isUntitled;
+    protected Boolean collapsed;
+    protected String toolTip;
+    protected Map<String, Object> groupAttributes = new HashMap<String, Object>();
+
+
+    Set<ListGrid> listGrids = new TreeSet<ListGrid>(new Comparator<ListGrid>() {
+        @Override
+        public int compare(ListGrid o1, ListGrid o2) {
+            return new CompareToBuilder()
+                .append(o1.getOrder(), o2.getOrder())
+                .append(o1.getSubCollectionFieldName(), o2.getSubCollectionFieldName())
+                .toComparison();
+        }
+    });
+
+    public void removeListGrid(ListGrid listGrid) {
+        listGrids.remove(listGrid);
+    }
+
+    public Set<ListGrid> getListGrids() {
+        return listGrids;
+    }
+
+    public void setListGrids(Set<ListGrid> listGrids) {
+        this.listGrids = listGrids;
+    }
 
     public Boolean getIsVisible() {
         if (isVisible != null) {
@@ -47,6 +81,9 @@ public class FieldGroup {
                 return true;
             }
         }
+        if (listGrids.size() > 0) {
+            return true;
+        }
         return false;
     }
 
@@ -54,8 +91,44 @@ public class FieldGroup {
         this.isVisible = isVisible;
     }
 
+    public Boolean getIsUntitled() {
+        if (isUntitled != null) {
+            return isUntitled;
+        }
+        return false;
+    }
+
+    public void setIsUntitled(Boolean isUntitled) {
+        this.isUntitled = isUntitled;
+    }
+
+    public Boolean getCollapsed() {
+        if (collapsed != null) {
+            return collapsed;
+        }
+        return false;
+    }
+
+    public void setCollapsed(Boolean collapsed) {
+        this.collapsed = collapsed;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
     public String getTitle() {
-        return title;
+        if (title != null) {
+            return title;
+        } else if (key != null) {
+            return BLCMessageUtils.getMessage(key);
+        }
+
+        return null;
     }
 
     public void setTitle(String title) {
@@ -69,7 +142,37 @@ public class FieldGroup {
     public void setOrder(Integer order) {
         this.order = order;
     }
-    
+
+    public Integer getColumn() {
+        return column;
+    }
+
+    public void setColumn(Integer column) {
+        this.column = column;
+    }
+
+    public String getToolTip() {
+        return toolTip;
+    }
+
+    public void setToolTip(String toolTip) {
+        this.toolTip = toolTip;
+    }
+
+    public Map<String, Object> getGroupAttributes() {
+        return groupAttributes;
+    }
+
+    public void setGroupAttributes(Map<String, Object> groupAttributes) {
+        this.groupAttributes = groupAttributes;
+    }
+
+
+    public FieldGroup withKey(String key) {
+        setKey(key);
+        return this;
+    }
+
     public FieldGroup withTitle(String title) {
         setTitle(title);
         return this;
@@ -159,7 +262,8 @@ public class FieldGroup {
     }
 
     public boolean isMasterFieldGroup() {
-        if (getTitle() != null && getTitle().toLowerCase().contains("master")) {
+        if ((getKey() != null && getKey().toLowerCase().contains("master"))
+                || (getTitle() != null && getTitle().toLowerCase().contains("master")) ) {
             return true;
         }
         return false;
@@ -174,4 +278,7 @@ public class FieldGroup {
         return false;
     }
 
+    public boolean hasFieldOrListGrid() {
+        return fields.size() > 0 || alternateOrderedFields.size() > 0|| listGrids.size() > 0;
+    }
 }

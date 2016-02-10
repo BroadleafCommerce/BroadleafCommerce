@@ -58,11 +58,11 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Column(name = "PRICING_MODEL")
     @AdminPresentation(friendlyName = "productBundlePricingModel", 
-            group = ProductImpl.Presentation.Group.Name.Price,
-            order = 1,
+        group = GroupName.Price, order = 1,
         helpText = "productBundlePricingModelHelp", 
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType",
+        defaultValue = "ITEM_SUM",
         requiredOverride = RequiredOverride.REQUIRED)
     protected String pricingModel;
 
@@ -86,7 +86,8 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "skuBundleItemsTitle")
+    @AdminPresentationCollection(friendlyName = "skuBundleItemsTitle",
+        tab = TabName.General)
     protected List<SkuBundleItem> skuBundleItems = new ArrayList<SkuBundleItem>();
     
     @Override

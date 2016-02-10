@@ -29,7 +29,7 @@ import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
@@ -54,9 +54,9 @@ public class AdvancedCollectionFieldMetadataProvider extends FieldMetadataProvid
     }
 
     @Override
-    public FieldProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest, metadata)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         CollectionMetadata fieldMetadata = (CollectionMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute();
         if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
@@ -112,7 +112,7 @@ public class AdvancedCollectionFieldMetadataProvider extends FieldMetadataProvid
         }
         
         metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(), fieldMetadata);
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
     
 }

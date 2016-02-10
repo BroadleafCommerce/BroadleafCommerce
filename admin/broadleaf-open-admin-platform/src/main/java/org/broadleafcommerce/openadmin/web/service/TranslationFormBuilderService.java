@@ -21,6 +21,7 @@
 package org.broadleafcommerce.openadmin.web.service;
 
 import org.broadleafcommerce.common.i18n.domain.Translation;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -41,10 +42,12 @@ public interface TranslationFormBuilderService {
     /**
      * Builds an EntityForm used to create or edit a translation value
      * 
+     *
+     * @param cmd
      * @param formProperties
      * @param action (values "add", "update" or "other")
      * @return the entity form
      */
-    public EntityForm buildTranslationForm(TranslationForm formProperties, TranslationFormAction action);
+    public EntityForm buildTranslationForm(ClassMetadata cmd, TranslationForm formProperties, TranslationFormAction action);
 
 }

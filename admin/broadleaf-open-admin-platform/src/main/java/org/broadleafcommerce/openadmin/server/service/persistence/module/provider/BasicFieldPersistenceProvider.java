@@ -50,7 +50,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.hibernate.Session;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -146,9 +146,9 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     }
 
     @Override
-    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
+    public MetadataProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
         if (!canHandlePersistence(populateValueRequest, instance)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         boolean dirty = false;
         try {
@@ -164,7 +164,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         populateValueRequest.getFieldManager().setFieldValue(instance,
                                 populateValueRequest.getProperty().getName(), v);
                     } catch (IllegalArgumentException e) {
-                        char c = v ? 'Y' : 'N';
+                        char c = "Y".equals(prop.getValue()) || new Character('Y').equals(origValue) ? 'Y' : 'N';
                         dirty = checkDirtyState(populateValueRequest, instance, c);
                         populateValueRequest.getFieldManager().setFieldValue(instance,
                                 populateValueRequest.getProperty().getName(), c);
@@ -398,14 +398,14 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             throw new PersistenceException(e);
         }
         populateValueRequest.getProperty().setIsDirty(dirty);
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest,
-            Property property) throws PersistenceException {
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest,
+                                              Property property) throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         try {
             if (extractValueRequest.getRequestedValue() != null) {
@@ -513,14 +513,14 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         } catch (IllegalAccessException e) {
             throw new PersistenceException(e);
         }
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     @Override
-    public FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest,
-            List<FilterMapping> filterMappings) {
+    public MetadataProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest,
+                                                  List<FilterMapping> filterMappings) {
         if (!canHandleSearchMapping(addSearchMappingRequest, filterMappings)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         Class clazz;
         try {
@@ -697,7 +697,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 }
             }
         }
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     @Override

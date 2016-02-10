@@ -25,7 +25,7 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -55,9 +55,9 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
     }
 
     @Override
-    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
+    public MetadataProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
         if (!canHandlePersistence(populateValueRequest, instance)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
 
         try {
@@ -73,13 +73,13 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
-        return FieldProviderResponse.HANDLED_BREAK;
+        return MetadataProviderResponse.HANDLED_BREAK;
     }
 
     @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
 
         if (extractValueRequest.getRequestedValue() != null) {
@@ -92,7 +92,7 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             property.setValue(val);
             property.setDisplayValue(extractValueRequest.getDisplayVal());
         }
-        return FieldProviderResponse.HANDLED_BREAK;
+        return MetadataProviderResponse.HANDLED_BREAK;
     }
 
     /**

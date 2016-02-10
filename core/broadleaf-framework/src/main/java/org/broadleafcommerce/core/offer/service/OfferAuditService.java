@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.offer.service;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import java.util.List;
 
 
 /**
@@ -63,5 +64,12 @@ public interface OfferAuditService {
      * @return
      */
     public Long countOfferCodeUses(Long offerCodeId);
-    
+
+    /**
+     * Read all audits by order id
+     * @param orderId
+     * @return
+     */
+    public List<OfferAudit> readOfferAuditsByOrderId(Long orderId);
+
 }

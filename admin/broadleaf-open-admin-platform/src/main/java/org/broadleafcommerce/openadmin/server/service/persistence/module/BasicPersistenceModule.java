@@ -35,6 +35,7 @@ import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -82,7 +83,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PopulateValueRequestValidator;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidationResult;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.springframework.beans.BeansException;
@@ -269,11 +270,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         FieldManager fieldManager = getFieldManager();
         boolean handled = false;
         for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-            FieldProviderResponse response = fieldPersistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity), unfilteredProperties);
-            if (FieldProviderResponse.NOT_HANDLED != response) {
+            MetadataProviderResponse response = fieldPersistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity), unfilteredProperties);
+            if (MetadataProviderResponse.NOT_HANDLED != response) {
                 handled = true;
             }
-            if (FieldProviderResponse.HANDLED_BREAK == response) {
+            if (MetadataProviderResponse.HANDLED_BREAK == response) {
                 break;
             }
         }
@@ -288,12 +289,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             public int compare(Property o1, Property o2) {
                 BasicFieldMetadata mo1 = (BasicFieldMetadata) mergedProperties.get(o1.getName());
                 BasicFieldMetadata mo2 = (BasicFieldMetadata) mergedProperties.get(o2.getName());
-                boolean isLate1 = mo1 != null && mo1.getFieldType() != null && mo1.getName() != null && (SupportedFieldType.RULE_SIMPLE == mo1.getFieldType() ||
-                        SupportedFieldType.RULE_WITH_QUANTITY == mo1.getFieldType() || SupportedFieldType.MEDIA == mo1.getFieldType() ||
-                        o1.getName().contains(FieldManager.MAPFIELDSEPARATOR));
-                boolean isLate2 = mo2 != null && mo2.getFieldType() != null && mo2.getName() != null && (SupportedFieldType.RULE_SIMPLE == mo2.getFieldType() ||
-                        SupportedFieldType.RULE_WITH_QUANTITY == mo2.getFieldType() || SupportedFieldType.MEDIA == mo2.getFieldType() ||
-                        o2.getName().contains(FieldManager.MAPFIELDSEPARATOR));
+                boolean isLate1 = mo1 != null && mo1.getFieldType() != null && mo1.getName() != null && (SupportedFieldType.RULE_SIMPLE==mo1.getFieldType() ||
+                        SupportedFieldType.RULE_WITH_QUANTITY==mo1.getFieldType() ||
+                        SupportedFieldType.RULE_SIMPLE_TIME==mo1.getFieldType() ||
+                        SupportedFieldType.MEDIA==mo1.getFieldType() || o1.getName().contains(FieldManager.MAPFIELDSEPARATOR));
+                boolean isLate2 = mo2 != null && mo2.getFieldType() != null && mo2.getName() != null && (SupportedFieldType.RULE_SIMPLE==mo2.getFieldType() ||
+                        SupportedFieldType.RULE_WITH_QUANTITY==mo2.getFieldType() ||
+                        SupportedFieldType.RULE_SIMPLE_TIME==mo2.getFieldType() ||
+                        SupportedFieldType.MEDIA==mo2.getFieldType() || o2.getName().contains(FieldManager.MAPFIELDSEPARATOR));
                 if (isLate1 && !isLate2) {
                     return 1;
                 } else if (!isLate1 && isLate2) {
@@ -361,11 +364,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     boolean isBreakDetected = false;
                                     for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
                                         if (!isBreakDetected || fieldPersistenceProvider.alwaysRun()) {
-                                            FieldProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
-                                            if (FieldProviderResponse.NOT_HANDLED != response) {
+                                            MetadataProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
+                                            if (MetadataProviderResponse.NOT_HANDLED != response) {
                                                 handled = true;
                                             }
-                                            if (FieldProviderResponse.HANDLED_BREAK == response) {
+                                            if (MetadataProviderResponse.HANDLED_BREAK == response) {
                                                 isBreakDetected = true;
                                             }
                                         }
@@ -395,7 +398,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     }
                 }
             }
-            validate(entity, instance, mergedProperties, validateUnsubmittedProperties);
+            // Only check validation if not the initial add
+            if (!entity.isPreAdd()) {
+                validate(entity, instance, mergedProperties, validateUnsubmittedProperties);
+            }
             //if validation failed, refresh the current instance so that none of the changes will be persisted
             if (entity.isValidationFailure()) {
                 //only refresh the instance if it was managed to begin with
@@ -599,13 +605,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             String displayVal = propertyItem.getDisplayValue();
                             boolean handled = false;
                             for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-                                FieldProviderResponse response = fieldPersistenceProvider.extractValue(
-                                        new ExtractValueRequest(props, fieldManager, metadata, value, displayVal,
+                                MetadataProviderResponse response = fieldPersistenceProvider.extractValue(
+                                        new ExtractValueRequest(props, fieldManager, metadata, value, displayVal, 
                                                 persistenceManager, this, entity), propertyItem);
-                                if (FieldProviderResponse.NOT_HANDLED != response) {
+                                if (MetadataProviderResponse.NOT_HANDLED != response) {
                                     handled = true;
                                 }
-                                if (FieldProviderResponse.HANDLED_BREAK == response) {
+                                if (MetadataProviderResponse.HANDLED_BREAK == response) {
                                     break;
                                 }
                             }
@@ -822,15 +828,15 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (mergedProperties.containsKey(propertyId)) {
                 boolean handled = false;
                 for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-                    FieldProviderResponse response = fieldPersistenceProvider.addSearchMapping(
+                    MetadataProviderResponse response = fieldPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
                                     ceilingEntityFullyQualifiedClassname, mergedProperties,
-                                    propertyId, getFieldManager(), this, this, customRestrictionFactory == null ? restrictionFactory
-                                            : customRestrictionFactory), filterMappings);
-                    if (FieldProviderResponse.NOT_HANDLED != response) {
+                                    propertyId, getFieldManager(), this, this, customRestrictionFactory==null?restrictionFactory
+                                    :customRestrictionFactory), filterMappings);
+                    if (MetadataProviderResponse.NOT_HANDLED != response) {
                         handled = true;
                     }
-                    if (FieldProviderResponse.HANDLED_BREAK == response) {
+                    if (MetadataProviderResponse.HANDLED_BREAK == response) {
                         break;
                     }
                 }
@@ -978,8 +984,16 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 //don't do anything - this is a valid case
             }
             if (primaryKey == null) {
+
                 Serializable instance = (Serializable) Class.forName(entity.getType()[0]).newInstance();
+
                 instance = createPopulatedInstance(instance, entity, mergedProperties, false);
+
+                if (entity.isPreAdd()) {
+                    if (Status.class.isAssignableFrom(instance.getClass())) {
+                        ((Status) instance).setArchived('Y');
+                    }
+                }
 
                 if (foreignKey != null && foreignKey.getSortField() != null) {
                     ExtensionResultHolder<Serializable> result = new ExtensionResultHolder<Serializable>();
@@ -1139,6 +1153,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
                 countFilterMappings.addAll(cto.getAdditionalFilterMappings());
             }
+//            persistencePackage.getPersistencePerspective().setShowArchivedFields(true);
             totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), countFilterMappings);
 
             payload = getRecords(mergedProperties, records, null, null);

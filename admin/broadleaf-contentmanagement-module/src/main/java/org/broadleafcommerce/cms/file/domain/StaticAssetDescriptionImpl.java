@@ -21,9 +21,11 @@ package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -31,7 +33,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -48,6 +49,9 @@ import javax.persistence.Table;
 @Table(name = "BLC_STATIC_ASSET_DESC")
 @EntityListeners(value = { AdminAuditableListener.class })
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
+})
 public class StaticAssetDescriptionImpl implements StaticAssetDescription {
 
     private static final long serialVersionUID = 1L;
@@ -64,10 +68,6 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     )
     @Column(name = "STATIC_ASSET_DESC_ID")
     protected Long id;
-
-    @Embedded
-    @AdminPresentation(excluded = true)
-    protected AdminAuditable auditable = new AdminAuditable();
 
     @Column (name = "DESCRIPTION")
     @AdminPresentation(friendlyName = "StaticAssetDescriptionImpl_Description", prominent = true)
@@ -114,16 +114,6 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
         newAssetDescription.longDescription = longDescription;
 
         return newAssetDescription;
-    }
-
-    @Override
-    public AdminAuditable getAuditable() {
-        return auditable;
-    }
-
-    @Override
-    public void setAuditable(AdminAuditable auditable) {
-        this.auditable = auditable;
     }
 
     @Override

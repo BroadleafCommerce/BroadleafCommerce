@@ -35,12 +35,15 @@ import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.persistence.PreviewStatus;
 import org.broadleafcommerce.common.persistence.Previewable;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -73,19 +76,29 @@ import javax.persistence.Transient;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "CustomerImpl_baseCustomer")
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "auditable.dateCreated", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerAdminPresentation.GroupName.Audit)),
+        @AdminPresentationMergeOverride(name = "auditable.createdBy", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerAdminPresentation.GroupName.Audit)),
+        @AdminPresentationMergeOverride(name = "auditable.dateUpdated", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerAdminPresentation.GroupName.Audit)),
+        @AdminPresentationMergeOverride(name = "auditable.updatedBy", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerAdminPresentation.GroupName.Audit))
+    }
+)
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
+public class CustomerImpl implements Customer, AdminMainEntity, Previewable, CustomerAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "CUSTOMER_ID")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", group = "CustomerImpl_Primary_Key",
-            visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Embedded
@@ -95,7 +108,9 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     protected PreviewStatus previewable = new PreviewStatus();
 
     @Column(name = "USER_NAME")
-    @AdminPresentation(friendlyName = "CustomerImpl_UserName", order = 4000, group = "CustomerImpl_Customer")
+    @AdminPresentation(friendlyName = "CustomerImpl_UserName",
+            group = GroupName.Customer, order = FieldOrder.USERNAME,
+            requiredOverride = RequiredOverride.REQUIRED)
     protected String username;
 
     @Column(name = "PASSWORD")
@@ -104,31 +119,32 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Column(name = "EMAIL_ADDRESS")
     @Index(name = "CUSTOMER_EMAIL_INDEX", columnNames = { "EMAIL_ADDRESS" })
-    @AdminPresentation(friendlyName = "CustomerImpl_Email_Address", order = 1000, group = "CustomerImpl_Customer",
+    @AdminPresentation(friendlyName = "CustomerImpl_Email_Address",
+            group = GroupName.Customer, order = FieldOrder.EMAIL,
             prominent = true, gridOrder = 1000)
     protected String emailAddress;
 
     @Column(name = "FIRST_NAME")
-    @AdminPresentation(friendlyName = "CustomerImpl_First_Name", order = 2000, group = "CustomerImpl_Customer",
+    @AdminPresentation(friendlyName = "CustomerImpl_First_Name",
+            group = GroupName.Customer, order = FieldOrder.FIRST_NAME,
             prominent = true, gridOrder = 2000)
     protected String firstName;
 
     @Column(name = "LAST_NAME")
-    @AdminPresentation(friendlyName = "CustomerImpl_Last_Name", order = 3000, group = "CustomerImpl_Customer",
+    @AdminPresentation(friendlyName = "CustomerImpl_Last_Name",
+            group = GroupName.Customer, order = FieldOrder.LAST_NAME,
             prominent = true, gridOrder = 3000)
     protected String lastName;
 
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnNames = { "CHALLENGE_QUESTION_ID" })
-    @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question", order = 4000,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+    @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question",
             excluded = true)
     protected ChallengeQuestion challengeQuestion;
 
     @Column(name = "CHALLENGE_ANSWER")
-    @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Answer", order = 5000,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+    @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Answer",
             excluded = true)
     protected String challengeAnswer;
 
@@ -137,25 +153,25 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     protected Boolean passwordChangeRequired = false;
 
     @Column(name = "RECEIVE_EMAIL")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Receive_Email", order = 1000,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Receive_Email",
+            group = GroupName.QualificationOptions, order = FieldOrder.RECIEVE_EMAIL)
     protected Boolean receiveEmail = true;
 
     @Column(name = "IS_REGISTERED")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Registered", order = 4000,
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Registered",
+            group = GroupName.QualificationOptions, order = FieldOrder.REGISTERED,
             prominent = true, gridOrder = 4000)
     protected Boolean registered = false;
 
     @Column(name = "DEACTIVATED")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Deactivated", order = 3000,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Deactivated",
+            group = GroupName.QualificationOptions, order = FieldOrder.DEACTIVATED)
     protected Boolean deactivated = false;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale", order = 4000,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-            excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",
+        excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Locale customerLocale;
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -163,40 +179,47 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     @MapKey(name = "name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "CustomerAttributeImpl_Attribute_Name",
-            deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name",
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
-    protected Map<String, CustomerAttribute> customerAttributes = new HashMap<String, CustomerAttribute>();
+            tab = CustomerAdminPresentation.TabName.Advanced,
+            deleteEntityUponRemove = true, forceFreeFormKeys = true,
+            keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name")
+    protected Map<String, CustomerAttribute> customerAttributes = new HashMap<>();
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @Where(clause = "archived != 'Y'")
-    @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Addresses", order = 1000,
-            addType = AddMethodType.PERSIST,
-            tab = Presentation.Tab.Name.Contact, tabOrder = Presentation.Tab.Order.Contact)
-    protected List<CustomerAddress> customerAddresses = new ArrayList<CustomerAddress>();
+    @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Addresses",
+            group = GroupName.ContactInfo, order = FieldOrder.ADDRESSES,
+            addType = AddMethodType.PERSIST)
+    protected List<CustomerAddress> customerAddresses = new ArrayList<>();
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerPhoneImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-    @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Phones", order = 2000,
-            addType = AddMethodType.PERSIST,
-            tab = Presentation.Tab.Name.Contact, tabOrder = Presentation.Tab.Order.Contact)
-    protected List<CustomerPhone> customerPhones = new ArrayList<CustomerPhone>();
+    @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Phones",
+            group = GroupName.ContactInfo, order = FieldOrder.PHONES,
+            addType = AddMethodType.PERSIST)
+    protected List<CustomerPhone> customerPhones = new ArrayList<>();
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Payments", order = 3000,
+    @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Payments",
+            tab = TabName.PaymentMethods, order = 1000,
             addType = AddMethodType.PERSIST,
-            readOnly = true,
-            tab = Presentation.Tab.Name.Contact, tabOrder = Presentation.Tab.Order.Contact)
-    protected List<CustomerPayment> customerPayments = new ArrayList<CustomerPayment>();
+            readOnly = true)
+    protected List<CustomerPayment> customerPayments = new ArrayList<>();
+
+    @Column(name = "IS_TAX_EXEMPT")
+    @AdminPresentation(friendlyName = "CustomerImpl_Is_Tax_Exempt",
+            group = GroupName.Pricing, order = FieldOrder.IS_TAX_EXEMPT,
+            defaultValue = "false")
+    protected Boolean isTaxExempt = false;
 
     @Column(name = "TAX_EXEMPTION_CODE")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_TaxExemptCode", order = 5000,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_TaxExemptCode",
+            group = GroupName.Pricing, order = FieldOrder.TAX_EXEMPTION_CODE,
             visibility = VisibilityEnum.GRID_HIDDEN)
     protected String taxExemptionCode;
 
@@ -465,6 +488,9 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
         if (!StringUtils.isEmpty(getFirstName()) && !StringUtils.isEmpty(getLastName())) {
             return getFirstName() + " " + getLastName();
         }
+        if (!StringUtils.isEmpty(getUsername())) {
+            return getUsername();
+        }
         return String.valueOf(getId());
     }
 
@@ -572,24 +598,6 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
         return createResponse;
     }
 
-    public static class Presentation {
-
-        public static class Tab {
-
-            public static class Name {
-
-                public static final String Contact = "CustomerImpl_Contact_Tab";
-                public static final String Advanced = "CustomerImpl_Advanced_Tab";
-            }
-
-            public static class Order {
-
-                public static final int Contact = 2000;
-                public static final int Advanced = 3000;
-            }
-        }
-    }
-
     @Override
     public String getTaxExemptionCode() {
         return this.taxExemptionCode;
@@ -598,11 +606,15 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     @Override
     public void setTaxExemptionCode(String exemption) {
         this.taxExemptionCode = exemption;
+
+        if (exemption != null) {
+            this.isTaxExempt = true;
+        }
     }
 
     @Override
     public boolean isTaxExempt() {
-        return StringUtils.isNotEmpty(taxExemptionCode);
+        return isTaxExempt != false &&  StringUtils.isNotEmpty(taxExemptionCode);
     }
 
 }

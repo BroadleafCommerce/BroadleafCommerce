@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -435,6 +437,20 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
+    }
+
+    @Override
+    public CreateResponse<BundleOrderItem> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<BundleOrderItem> createResponse = super.createOrRetrieveCopyInstance(context);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        BundleOrderItem cloned = createResponse.getClone();
+        cloned.setBaseRetailPrice(getBaseRetailPrice());
+        cloned.setBaseSalePrice(getBaseSalePrice());
+        cloned.setProductBundle(productBundle);
+        cloned.setSku(sku);
+        return  createResponse;
     }
 
     public static class Presentation {

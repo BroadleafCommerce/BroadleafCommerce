@@ -63,8 +63,8 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
     }
 
     @Override
-    public  CreateResponse<DiscreteOrderItemImpl> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<DiscreteOrderItemImpl> createResponse = super.createOrRetrieveCopyInstance(context);
+    public CreateResponse<DiscreteOrderItem> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<DiscreteOrderItem> createResponse = super.createOrRetrieveCopyInstance(context);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }

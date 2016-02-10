@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.common.presentation;
 
+import org.broadleafcommerce.common.presentation.override.AdminGroupPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminTabPresentationOverride;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -73,5 +76,28 @@ public @interface AdminPresentationClass {
      * @return Whether or not the admin should ignore this entity as a valid polymorphic type
      */
     boolean excludeFromPolymorphism() default false;
+
+    /**
+     * These AdminTabPresentation items define each tab that will be displayed in the entity's EntityForm.
+     *
+     * @return the tabs for the entity's EntityForm
+     */
+    AdminTabPresentation[] tabs() default {};
+
+    /**
+     * These AdminTabPresentationOverride items override a superclass' tab information by targeting the
+     * superclass' tab and the property to be overridden
+     *
+     * @return the tab overrides for the entity's EntityForm
+     */
+    AdminTabPresentationOverride[] tabOverrides() default {};
+
+    /**
+     * These AdminGroupPresentationOverride items override a superclass' group information by targeting the
+     * superclass' tab, group, and the property to be overridden
+     *
+     * @return the group overrides for the entity's EntityForm
+     */
+    AdminGroupPresentationOverride[] groupOverrides() default {};
 
 }

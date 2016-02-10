@@ -36,12 +36,13 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
+import org.broadleafcommerce.openadmin.dto.override.MetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
@@ -59,7 +60,7 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
     private static final Log LOG = LogFactory.getLog(DefaultFieldMetadataProvider.class);
 
     @Override
-    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse addMetadata(AddFieldMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         Map<String, Object> idMetadata = addMetadataRequest.getDynamicEntityDao().getIdMetadata(addMetadataRequest.getTargetClass());
         if (idMetadata != null) {
             String idField = (String) idMetadata.get("name");
@@ -88,41 +89,44 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
                 basicMetadata.setExcluded(false);
                 metadata.put(addMetadataRequest.getRequestedField().getName(), basicMetadata);
                 setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
-                return FieldProviderResponse.HANDLED;
+                return MetadataProviderResponse.HANDLED;
             }
         }
-        return FieldProviderResponse.NOT_HANDLED;
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
     public void overrideExclusionsFromXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
         //override any and all exclusions derived from xml
-        Map<String, FieldMetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getDynamicEntityDao(), overrideViaXmlRequest.getRequestedConfigKey(),
+        Map<String, MetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getDynamicEntityDao(), overrideViaXmlRequest.getRequestedConfigKey(),
                 overrideViaXmlRequest.getRequestedCeilingEntity());
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
-                final FieldMetadataOverride localMetadata = overrides.get(propertyName);
-                Boolean excluded = localMetadata.getExcluded();
-                for (String key : metadata.keySet()) {
-                    String testKey = overrideViaXmlRequest.getPrefix() + key;
-                    if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded != null &&
+                MetadataOverride localMetadata = overrides.get(propertyName);
+                if (localMetadata instanceof FieldMetadataOverride) {
+                    FieldMetadataOverride localFieldMetadata = (FieldMetadataOverride) localMetadata;
+                    Boolean excluded = localFieldMetadata.getExcluded();
+                    for (String key : metadata.keySet()) {
+                        String testKey = overrideViaXmlRequest.getPrefix() + key;
+                        if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded != null &&
                             excluded) {
-                        FieldMetadata fieldMetadata = metadata.get(key);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("setExclusionsBasedOnParents:Excluding " + key +
-                                    "because an override annotation declared "+ testKey + " to be excluded");
-                        }
-                        fieldMetadata.setExcluded(true);
-                        continue;
-                    }
-                    if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded != null &&
-                            !excluded) {
-                        FieldMetadata fieldMetadata = metadata.get(key);
-                        if (!overrideViaXmlRequest.getParentExcluded()) {
+                            FieldMetadata fieldMetadata = metadata.get(key);
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("setExclusionsBasedOnParents:Showing " + key +
-                                        "because an override annotation declared " + testKey + " to not be excluded");
+                                LOG.debug("setExclusionsBasedOnParents:Excluding " + key +
+                                    "because an override annotation declared " + testKey + " to be excluded");
                             }
-                            fieldMetadata.setExcluded(false);
+                            fieldMetadata.setExcluded(true);
+                            continue;
+                        }
+                        if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded != null &&
+                            !excluded) {
+                            FieldMetadata fieldMetadata = metadata.get(key);
+                            if (!overrideViaXmlRequest.getParentExcluded()) {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("setExclusionsBasedOnParents:Showing " + key +
+                                        "because an override annotation declared " + testKey + " to not be excluded");
+                                }
+                                fieldMetadata.setExcluded(false);
+                            }
                         }
                     }
                 }
@@ -131,7 +135,7 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
     }
 
     @Override
-    public FieldProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest,
+    public MetadataProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest,
                                                             FieldMetadata metadata) {
         BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) metadata;
         fieldMetadata.setFieldType(addMetadataFromMappingDataRequest.getType());
@@ -169,11 +173,11 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
                 throw new RuntimeException(e);
             }
         }
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     @Override
-    public FieldProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest,
+    public MetadataProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest,
                                                           Map<String, FieldMetadata> metadata) {
         if (addMetadataFromFieldTypeRequest.getPresentationAttribute() != null) {
             if (
@@ -493,9 +497,9 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
                         setForeignKeyDisplayValueProperty(lookupDisplayProperty);
             }
             //return type not supported - just skip this property
-            return FieldProviderResponse.HANDLED;
+            return MetadataProviderResponse.HANDLED;
         }
-        return FieldProviderResponse.NOT_HANDLED;
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
 }

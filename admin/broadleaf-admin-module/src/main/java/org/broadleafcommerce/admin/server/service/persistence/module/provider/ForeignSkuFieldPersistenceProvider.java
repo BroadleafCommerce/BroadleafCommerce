@@ -26,7 +26,7 @@ import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProviderAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -36,9 +36,9 @@ import org.springframework.stereotype.Component;
 public class ForeignSkuFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
     
     @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) {
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         
         try {
@@ -57,10 +57,10 @@ public class ForeignSkuFieldPersistenceProvider extends FieldPersistenceProvider
             property.setValue(val);
             property.setDisplayValue(displayVal);
         } catch (Exception e) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         
-        return FieldProviderResponse.HANDLED_BREAK;
+        return MetadataProviderResponse.HANDLED_BREAK;
     }
     
     protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {

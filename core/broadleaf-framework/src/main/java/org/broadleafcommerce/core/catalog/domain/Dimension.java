@@ -37,51 +37,47 @@ public class Dimension implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "WIDTH")
-    @AdminPresentation(friendlyName = "ProductDimension_Product_Width", order = 2000,
-        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
-        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping)
+    @AdminPresentation(friendlyName = "ProductDimension_Product_Width",
+            group = ProductAdminPresentation.GroupName.ShippingDimensions, order = ProductAdminPresentation.FieldOrder.WIDTH)
     protected BigDecimal width;
 
     @Column(name = "HEIGHT")
-    @AdminPresentation(friendlyName = "ProductDimension_Product_Height", order = 3000,
-        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
-        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping)
+    @AdminPresentation(friendlyName = "ProductDimension_Product_Height",
+            group = ProductAdminPresentation.GroupName.ShippingDimensions, order = ProductAdminPresentation.FieldOrder.HEIGHT)
     protected BigDecimal height;
 
     @Column(name = "DEPTH")
-    @AdminPresentation(friendlyName = "ProductDimension_Product_Depth", order = 4000,
-        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
-        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping)
+    @AdminPresentation(friendlyName = "ProductDimension_Product_Depth",
+        group = ProductAdminPresentation.GroupName.ShippingDimensions, order = ProductAdminPresentation.FieldOrder.DEPTH)
     protected BigDecimal depth;
 
     @Column(name = "GIRTH")
-    @AdminPresentation(friendlyName = "ProductDimension_Product_Girth", order = 5000,
-        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
-        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping)
+    @AdminPresentation(friendlyName = "ProductDimension_Product_Girth",
+        group = ProductAdminPresentation.GroupName.ShippingDimensions, order = ProductAdminPresentation.FieldOrder.GIRTH)
     protected BigDecimal girth;
 
     @Column(name = "CONTAINER_SIZE")
-    @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Size", order = 6000,
-        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
-        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping,
+    @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Size",
+        group = ProductAdminPresentation.GroupName.ShippingContainer, order = ProductAdminPresentation.FieldOrder.CONTAINER_SIZE,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerSizeType")
+        broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerSizeType",
+        hideEnumerationIfEmpty = true)
     protected String size;
 
     @Column(name = "CONTAINER_SHAPE")
-    @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Shape", order = 7000,
-        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
-        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping,
+    @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Shape",
+        group = ProductAdminPresentation.GroupName.ShippingContainer, order = ProductAdminPresentation.FieldOrder.CONTAINER_SHAPE,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-        broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerShapeType")
+        broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerShapeType",
+        hideEnumerationIfEmpty = true)
     protected String container;
 
     @Column(name = "DIMENSION_UNIT_OF_MEASURE")
-    @AdminPresentation(friendlyName = "ProductDimension_Product_Dimension_Units", order = 8000,
-        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
-        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping,
+    @AdminPresentation(friendlyName = "ProductDimension_Product_Dimension_Units",
+        group = ProductAdminPresentation.GroupName.ShippingDimensions, order = ProductAdminPresentation.FieldOrder.DIMENSION_UNIT_OF_MEASURE,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration = "org.broadleafcommerce.common.util.DimensionUnitOfMeasureType")
+        broadleafEnumeration = "org.broadleafcommerce.common.util.DimensionUnitOfMeasureType",
+        defaultValue = "CENTIMETERS")
     protected String dimensionUnitOfMeasure;
 
     public BigDecimal getWidth() {

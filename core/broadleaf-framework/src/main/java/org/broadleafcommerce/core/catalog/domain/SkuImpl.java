@@ -52,7 +52,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl.Presentation;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
@@ -148,7 +147,7 @@ import javax.persistence.Transient;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class SkuImpl implements Sku {
+public class SkuImpl implements Sku, ProductAdminPresentation {
     
     private static final Log LOG = LogFactory.getLog(SkuImpl.class);
     
@@ -171,62 +170,60 @@ public class SkuImpl implements Sku {
     @Column(name = "EXTERNAL_ID")
     @Index(name="SKU_EXTERNAL_ID_INDEX", columnNames={"EXTERNAL_ID"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_ExternalID",
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
+        group = GroupName.Miscellaneous, order = FieldOrder.EXTERNAL_ID,
+        tooltip = "SkuImpl_Sku_ExternalID_Tooltip")
     protected String externalId;
 
     @Column(name = "URL_KEY")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_UrlKey", order = 4000,
-        tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced,
-        group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced,
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_UrlKey",
+        group = GroupName.Advanced, order = 4000,
         excluded = true)
     protected String urlKey;
 
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Display_Template", order = 5000,
-        tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced,
-        group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced,
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Display_Template",
+        group = GroupName.Advanced, order = 5000,
         excluded = true)
     protected String displayTemplate;
 
     @Column(name = "UPC")
     @Index(name = "SKU_UPC_INDEX", columnNames = { "UPC" })
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_UPC", order = 6000,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_UPC",
+            group = GroupName.Miscellaneous, order = FieldOrder.UPC)
     protected String upc;
 
     @Column(name = "SALE_PRICE", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price", order = 2000, 
-        group = ProductImpl.Presentation.Group.Name.Price, groupOrder = ProductImpl.Presentation.Group.Order.Price,
-        prominent = true, gridOrder = 6, 
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price",
+        group = GroupName.Price, order = FieldOrder.SALE_PRICE,
+        tooltip = "SkuImpl_Sku_Sale_Price_tooltip",
+        prominent = true, gridOrder = 6,
         fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
     @Column(name = "RETAIL_PRICE", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Retail_Price", order = 1000, 
-        group = ProductImpl.Presentation.Group.Name.Price, groupOrder = ProductImpl.Presentation.Group.Order.Price,
-        prominent = true, gridOrder = 5, 
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Retail_Price",
+        group = GroupName.Price, order = FieldOrder.RETAIL_PRICE,
+        prominent = true, gridOrder = 5,
         fieldType = SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
     @Column(name = "COST", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Cost", order = 2500,
-            group = Presentation.Group.Name.Price, groupOrder = Presentation.Group.Order.Price,
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Cost",
+            group = GroupName.Price, order = FieldOrder.COST,
             fieldType = SupportedFieldType.MONEY)
     protected BigDecimal cost;
 
     @Column(name = "NAME")
     @Index(name = "SKU_NAME_INDEX", columnNames = {"NAME"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order = ProductImpl.Presentation.FieldOrder.NAME,
-        group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name",
+        group = GroupName.General, order = FieldOrder.NAME,
         prominent = true, gridOrder = 1, columnWidth = "260px",
         translatable = true)
     protected String name;
 
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Description", order = ProductImpl.Presentation.FieldOrder.SHORT_DESCRIPTION, 
-        group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Description",
+        group = GroupName.General, order = FieldOrder.SHORT_DESCRIPTION,
         largeEntry = true, 
         excluded = true,
         translatable = true)
@@ -235,31 +232,32 @@ public class SkuImpl implements Sku {
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order = ProductImpl.Presentation.FieldOrder.LONG_DESCRIPTION,
-        group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description",
+        group = GroupName.General, order = FieldOrder.LONG_DESCRIPTION,
         largeEntry = true, 
         fieldType = SupportedFieldType.HTML_BASIC,
         translatable = true)
     protected String longDescription;
 
     @Column(name = "TAX_CODE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_TaxCode", order = 1001, group = ProductImpl.Presentation.Group.Name.Financial)
-    @AdminPresentationDataDrivenEnumeration(optionCanEditValues = true, optionFilterParams = { @OptionFilterParam(
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_TaxCode", order = 1001, group = GroupName.Financial)
+    @AdminPresentationDataDrivenEnumeration(optionCanEditValues = true, optionHideIfEmpty = true, optionFilterParams = { @OptionFilterParam(
             param = "type.key", value = "TAX_CODE", paramType = OptionFilterParamType.STRING) })
     protected String taxCode;
 
     @Column(name = "TAXABLE_FLAG")
     @Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Taxable", order = 1000,
-            group = ProductImpl.Presentation.Group.Name.Financial)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Taxable",
+            group = GroupName.Financial, order = FieldOrder.TAXABLE)
     protected Character taxable;
 
     @Column(name = "DISCOUNTABLE_FLAG")
     @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable", order = 2000, 
-        tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced, 
-        group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced)
-    protected Character discountable = 'Y';
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable",
+        group = GroupName.Discountable,
+        helpText = "SkuImpl_Sku_Discountable_helptext",
+        defaultValue = "Y")
+    protected Character discountable;
 
     @Column(name = "AVAILABLE_FLAG")
     @Index(name = "SKU_AVAILABLE_INDEX", columnNames = {"AVAILABLE_FLAG"})
@@ -269,18 +267,16 @@ public class SkuImpl implements Sku {
 
     @Column(name = "ACTIVE_START_DATE")
     @Index(name="SKU_ACTIVE_START_INDEX")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order = 1000,
-        group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
-        groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date",
+        group = GroupName.ActiveDateRange, order = FieldOrder.ACTIVE_START_DATE,
         tooltip = "skuStartDateTooltip",
         defaultValue = "today")
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
     @Index(name="SKU_ACTIVE_END_INDEX")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 2000, 
-        group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
-        groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date",
+        group = GroupName.ActiveDateRange, order = FieldOrder.ACTIVE_END_DATE,
         tooltip = "skuEndDateTooltip",
         validationConfigurations = {
             @ValidationConfiguration(
@@ -301,17 +297,17 @@ public class SkuImpl implements Sku {
     protected DynamicSkuPrices dynamicPrices = null;
 
     @Column(name = "IS_MACHINE_SORTABLE")
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable", order = 10000,
-        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
-        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping)
-    protected Boolean isMachineSortable = true;
+    @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable",
+        group = GroupName.ShippingOther, order = FieldOrder.IS_MACHINE_SORTABLE,
+        defaultValue = "false")
+    protected Boolean isMachineSortable;
 
     @OneToMany(mappedBy = "sku", targetEntity = SkuMediaXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @MapKey(name = "key")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "SkuImpl_Sku_Media",
-        tab = ProductImpl.Presentation.Tab.Name.Media, tabOrder = ProductImpl.Presentation.Tab.Order.Media,
+        tab = TabName.Media,
         keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
         deleteEntityUponRemove = true,
         mediaField = "media.url",
@@ -324,9 +320,8 @@ public class SkuImpl implements Sku {
             @AdminPresentationMapField(
                     fieldName = "primary",
                     fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.MEDIA,
-                            group = ProductImpl.Presentation.Group.Name.General,
-                            groupOrder = ProductImpl.Presentation.Group.Order.General,
-                            order = ProductImpl.Presentation.FieldOrder.PRIMARY_MEDIA,
+                            group = GroupName.Image,
+                            order = FieldOrder.PRIMARY_MEDIA,
                             friendlyName = "SkuImpl_Primary_Media")
             )
     })
@@ -358,7 +353,7 @@ public class SkuImpl implements Sku {
     @MapKey(name="name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "skuAttributesTitle", 
-        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        tab = TabName.Advanced,
         deleteEntityUponRemove = true, forceFreeFormKeys = true)
     protected Map<String, SkuAttribute> skuAttributes = new HashMap<String, SkuAttribute>();
 
@@ -402,27 +397,20 @@ public class SkuImpl implements Sku {
 
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType",
-            helpText = "skuInventoryTypeHelpText",
-        order = 1000,
-        tab = ProductImpl.Presentation.Tab.Name.Inventory, tabOrder = ProductImpl.Presentation.Tab.Order.Inventory,
-        group = ProductImpl.Presentation.Group.Name.Inventory, groupOrder = ProductImpl.Presentation.Group.Order.Inventory,
+        group = GroupName.Inventory, order = 1000,
+        helpText = "skuInventoryTypeHelpText",
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")
     protected String inventoryType;
     
     @Column(name = "QUANTITY_AVAILABLE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_QuantityAvailable",
-            order = 1010,
-            tab = ProductImpl.Presentation.Tab.Name.Inventory,
-            tabOrder = ProductImpl.Presentation.Tab.Order.Inventory,
-            group = ProductImpl.Presentation.Group.Name.Inventory,
-            groupOrder = ProductImpl.Presentation.Group.Order.Inventory)
+            group = GroupName.Inventory, order = 1010)
     protected Integer quantityAvailable = 0;
 
     @Column(name = "FULFILLMENT_TYPE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_FulfillmentType", order = 1000,
-        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
-        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping,
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_FulfillmentType",
+        group = GroupName.ShippingFulfillment, order = FieldOrder.FULFILLMENT_TYPE,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
@@ -437,10 +425,9 @@ public class SkuImpl implements Sku {
      */
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "SkuImpl_Currency", order = 3000,
-            visibility = VisibilityEnum.HIDDEN_ALL,
-            tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced,
-            group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced)
+    @AdminPresentation(friendlyName = "SkuImpl_Currency",
+            group = GroupName.Advanced, order = 3000,
+            visibility = VisibilityEnum.HIDDEN_ALL)
     @AdminPresentationToOneLookup(lookupType = LookupType.DROPDOWN, lookupDisplayProperty = "friendlyName")
     protected BroadleafCurrency currency;
 

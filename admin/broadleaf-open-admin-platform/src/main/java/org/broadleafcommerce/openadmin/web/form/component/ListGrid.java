@@ -27,6 +27,8 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,7 +42,8 @@ public class ListGrid {
     protected String friendlyName = null;
     protected String idProperty;
     protected int order;
-    
+    protected boolean isSortable;
+
     protected Set<Field> headerFields = new TreeSet<Field>(new Comparator<Field>() {
 
         @Override
@@ -57,6 +60,9 @@ public class ListGrid {
     
     // These actions will start greyed out and unable to be clicked until a specific row has been selected
     protected List<ListGridAction> rowActions = new ArrayList<ListGridAction>();
+
+    // These actions will start greyed out and unable to be clicked until a specific row has been selected
+    protected List<ListGridAction> modalRowActions = new ArrayList<ListGridAction>();
     protected int totalRecords;
     protected int startIndex;
     protected int pageSize;
@@ -66,7 +72,10 @@ public class ListGrid {
     
     protected AddMethodType addMethodType;
     protected String listGridType;
-    
+    protected String selectType;
+
+    protected String selectizeUrl;
+
     // The section url that maps to this particular list grid
     protected String sectionKey;
 
@@ -83,16 +92,32 @@ public class ListGrid {
 
     public enum Type {
         MAIN,
-        INLINE,
-        INLINEMULTI,
         TO_ONE,
         BASIC,
         ADORNED,
         ADORNED_WITH_FORM,
         MAP,
         TRANSLATION,
-        ASSET
+        ASSET,
+        WORKFLOW,
+        TREE,
+        ASSET_GRID,
+        ASSET_GRID_FOLDER
     }
+
+    public enum SelectType {
+        SINGLE_SELECT,
+        MULTI_SELECT,
+        SELECTIZE,
+        NONE
+    }
+
+    /* Filter Builder required Fields */
+    protected String fieldBuilder;
+    protected DataWrapper dataWrapper;
+    protected String json;
+    protected String jsonFieldName;
+    protected FieldWrapper fieldWrapper;
 
     /* ************** */
     /* CUSTOM METHODS */
@@ -155,7 +180,7 @@ public class ListGrid {
             
             @Override
             public boolean eval(ListGridAction action) {
-                return action.getForListGridReadOnly().equals(getReadOnly());
+                return action.getForListGridReadOnly().equals(getIsReadOnly());
             }
         });
     }
@@ -170,13 +195,32 @@ public class ListGrid {
             
             @Override
             public boolean eval(ListGridAction action) {
-                return action.getForListGridReadOnly().equals(getReadOnly());
+                return action.getForListGridReadOnly().equals(getIsReadOnly());
+            }
+        });
+    }
+
+    /**
+     * Grabs a filtered list of row actions filtered by whether or not they match the same readonly state as the listgrid
+     * and are thus shown on the screen
+     */
+    @SuppressWarnings("unchecked")
+    public List<ListGridAction> getActiveModalRowActions() {
+        return (List<ListGridAction>) CollectionUtils.select(getModalRowActions(), new TypedPredicate<ListGridAction>() {
+
+            @Override
+            public boolean eval(ListGridAction action) {
+                return action.getForListGridReadOnly().equals(getIsReadOnly());
             }
         });
     }
     
     public void addRowAction(ListGridAction action) {
         getRowActions().add(action);
+    }
+
+    public void addModalRowAction(ListGridAction action) {
+        getModalRowActions().add(action);
     }
     
     public void addToolbarAction(ListGridAction action) {
@@ -189,6 +233,10 @@ public class ListGrid {
     
     public void removeAllRowActions() {
         getRowActions().clear();
+    }
+
+    public void removeAllModalRowActions() {
+        getModalRowActions().clear();
     }
     
     public ListGridAction findToolbarAction(String actionId) {
@@ -208,6 +256,15 @@ public class ListGrid {
         }
         return null;
     }
+
+    public ListGridAction findModalRowAction(String actionId) {
+        for (ListGridAction action : getModalRowActions()) {
+            if (action.getActionId().equals(actionId)) {
+                return action;
+            }
+        }
+        return null;
+    }
     
     /**
      * This grid is sortable if there is a reorder action defined in the toolbar. If records can be reordered, then the
@@ -218,8 +275,7 @@ public class ListGrid {
      * @return
      */
     public boolean isSortable() {
-        return getToolbarActions().contains(DefaultListGridActions.REORDER) || 
-                Type.MAP.toString().toLowerCase().equals(getListGridType());
+        return this.isSortable || Type.MAP.toString().toLowerCase().equals(getListGridType());
     }
 
     /* ************************ */
@@ -238,17 +294,25 @@ public class ListGrid {
     public void setListGridTypeString(String listGridType) {
         this.listGridType = listGridType;
     }
+
+    public void setSelectType(SelectType selectType) {
+        this.selectType = selectType.toString().toLowerCase();
+    }
+
+    public void setSelectTypeString(String selectType) {
+        this.selectType = selectType;
+    }
     
     public Boolean getCanFilterAndSort() {
         return (canFilterAndSort == null ? true : canFilterAndSort);
     }
 
-    public Boolean getReadOnly() {
+    public Boolean getIsReadOnly() {
         return isReadOnly == null ? false : isReadOnly;
     }
     
     public Boolean getClickable() {
-        return !"main".equals(listGridType);
+        return !"none".equals(selectType);
     }
     
     public Boolean getHideIdColumn() {
@@ -283,6 +347,14 @@ public class ListGrid {
         this.order = order;
     }
 
+    public boolean getIsSortable() {
+        return isSortable;
+    }
+
+    public void setIsSortable(boolean isSortable) {
+        this.isSortable = isSortable;
+    }
+
     public Set<Field> getHeaderFields() {
         return headerFields;
     }
@@ -313,6 +385,14 @@ public class ListGrid {
     
     public void setRowActions(List<ListGridAction> rowActions) {
         this.rowActions = rowActions;
+    }
+
+    public List<ListGridAction> getModalRowActions() {
+        return modalRowActions;
+    }
+
+    public void setModalRowActions(List<ListGridAction> modalRowActions) {
+        this.modalRowActions = modalRowActions;
     }
 
     public int getStartIndex() {
@@ -355,6 +435,10 @@ public class ListGrid {
         return listGridType;
     }
 
+    public String getSelectType() {
+        return selectType;
+    }
+
     public String getContainingEntityId() {
         return containingEntityId;
     }
@@ -386,6 +470,14 @@ public class ListGrid {
     public void setSectionKey(String sectionKey) {
         this.sectionKey = sectionKey;
     }
+
+    public String getSelectizeUrl() {
+        return selectizeUrl;
+    }
+
+    public void setSelectizeUrl(String selectizeUrl) {
+        this.selectizeUrl = selectizeUrl;
+    }
     
     public String getExternalEntitySectionKey() {
         return externalEntitySectionKey;
@@ -403,7 +495,7 @@ public class ListGrid {
         this.pathOverride = pathOverride;
     }
     
-    public void setReadOnly(Boolean readOnly) {
+    public void setIsReadOnly(Boolean readOnly) {
         this.isReadOnly = readOnly;
     }
 
@@ -421,5 +513,45 @@ public class ListGrid {
             return;
         }
         this.sectionCrumbs = sectionCrumbs;
+    }
+
+    public String getFieldBuilder() {
+        return fieldBuilder;
+    }
+
+    public void setFieldBuilder(String fieldBuilder) {
+        this.fieldBuilder = fieldBuilder;
+    }
+
+    public FieldWrapper getFieldWrapper() {
+        return fieldWrapper;
+    }
+
+    public void setFieldWrapper(FieldWrapper fieldWrapper) {
+        this.fieldWrapper = fieldWrapper;
+    }
+
+    public DataWrapper getDataWrapper() {
+        return dataWrapper;
+    }
+
+    public void setDataWrapper(DataWrapper dataWrapper) {
+        this.dataWrapper = dataWrapper;
+    }
+
+    public String getJson() {
+        return json;
+    }
+
+    public void setJson(String json) {
+        this.json = json;
+    }
+
+    public String getJsonFieldName() {
+        return jsonFieldName;
+    }
+
+    public void setJsonFieldName(String jsonFieldName) {
+        this.jsonFieldName = jsonFieldName;
     }
 }

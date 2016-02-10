@@ -1,0 +1,47 @@
+<blc:form method="post" class="uploadFileForm entityListWithUpload hidden"
+          enctype="multipart/form-data"
+          th:action="@{${'/asset/uploadAsset'}}"
+          id="assetUploadForm">
+
+    <span style="display: block; margin-bottom: 5px; margin-left: 60px;"><i class="blc-icon-product-image"></i> Upload Asset</span>
+    <input id="assetUploadFile" type="file" name="file" value="Upload Asset"/>
+</blc:form>
+
+<div class="content-yield" th:with="listGrid=${currentFolder.subFolders}">
+
+    <div class="listgrid-search row">
+        <div class="col6">
+            <!-- Search box -->
+            <form class="custom-asset-search" th:action="${currentUrl}" method="GET">
+                <input id="asset-listgrid-search" type="search" name="table-search"
+                       th:placeholder="#{Search_Placeholder('Asset Name', #{${entityFriendlyName}})}" />
+                <div class="listgrid-search-actions">
+                    <button class="button primary asset-search-button" th:inline="text" th:utext="#{Search}"></button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Filter button -->
+        <div class="col6 filter-info" style="white-space: nowrap;">
+            <!-- Filter information -->
+            <button class="button filter-button" th:inline="text" th:utext="#{Filter}" th:attr="data-hiddenid=${assetGrid.assetListGrid.jsonFieldName}"></button>
+
+            <div class="filter-builder-data" style="display: none;"
+                 th:attr="data-hiddenid=${assetGrid.assetListGrid.jsonFieldName},
+                 data-containerid=${assetGrid.assetListGrid.friendlyName},
+                 data-fields=${assetGrid.assetListGrid.fieldWrapper.serialize()},
+                 data-data=${assetGrid.assetListGrid.dataWrapper.serialize()}">
+            </div>
+
+            <input type="hidden"
+                   th:id="${assetGrid.assetListGrid.jsonFieldName}"
+                   th:name="${assetGrid.assetListGrid.friendlyName}"
+                   value="{&quot;data&quot;:[]}"/>
+
+            <div class="query-builder-filters-container" th:id="${assetGrid.assetListGrid.friendlyName}" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div th:include="components/assetGrid" th:object="${assetGrid}" th:remove="tag" />
+</div>
+

@@ -81,7 +81,7 @@ public class TimeDTOCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
             Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getSimpleMergedProperties(ceilingEntityFullyQualifiedClassname, persistencePackage.getPersistencePerspective());
             allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
-            ClassMetadata mergedMetadata = helper.getMergedClassMetadata(new Class<?>[]{Class.forName(ceilingEntityFullyQualifiedClassname)}, allMergedProperties);
+            ClassMetadata mergedMetadata = helper.buildClassMetadata(new Class<?>[]{Class.forName(ceilingEntityFullyQualifiedClassname)}, persistencePackage, allMergedProperties);
             DynamicResultSet results = new DynamicResultSet(mergedMetadata);
 
             return results;

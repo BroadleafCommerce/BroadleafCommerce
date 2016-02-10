@@ -23,19 +23,15 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * Handles admin operations for the {@link Offer} entity. Certain Offer fields should only render when specific values
@@ -47,7 +43,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/" + AdminOfferController.SECTION_KEY)
 public class AdminOfferController extends AdminBasicEntityController {
     
-    protected static final String SECTION_KEY = "offer";
+    public static final String SECTION_KEY = "offer";
     
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
@@ -100,7 +96,13 @@ public class AdminOfferController extends AdminBasicEntityController {
     protected void modifyModelAttributes(Model model) {
         model.addAttribute("additionalControllerClasses", "offer-form");
         EntityForm form = (EntityForm) model.asMap().get("entityForm");
-        form.findField("targetItemCriteria").setRequired(true);
+
+        // Format money and percents
+        Field field = form.findField("value");
+        String value = field.getValue().replaceAll("[\\%\\$]", "");
+        field.setValue(value);
+
+        //form.findField("targetItemCriteria").setRequired(true);
     }
     
 }

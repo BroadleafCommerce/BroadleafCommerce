@@ -23,26 +23,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
-import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.dto.Entity;
-import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.dto.MapStructure;
-import org.broadleafcommerce.openadmin.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.dto.*;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A DTO class used to seed a persistence package.
@@ -61,6 +45,7 @@ public class PersistencePackageRequest {
     protected ForeignKey foreignKey;
     protected Integer startIndex;
     protected Integer maxIndex;
+    protected Integer maxResults;
     protected SectionCrumb[] sectionCrumbs;
     protected String sectionEntityField;
     protected String requestingEntityName;
@@ -68,6 +53,7 @@ public class PersistencePackageRequest {
     protected Map<String, PersistencePackageRequest> subRequests = new LinkedHashMap<String, PersistencePackageRequest>();
     protected boolean validateUnsubmittedProperties = true;
     protected boolean isUpdateLookupType = false;
+    protected boolean isTreeCollection = false;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -100,7 +86,7 @@ public class PersistencePackageRequest {
     }
 
     /**
-     * Creates a semi-populate PersistencePacakageRequest based on the specified FieldMetadata. This initializer
+     * Creates a semi-populate PersistencePacakageRequest based on the specified Metadata. This initializer
      * will copy over persistence perspective items from the metadata as well as set the appropriate OperationTypes
      * as specified in the annotation/xml configuration for the field.
      * 
@@ -157,6 +143,18 @@ public class PersistencePackageRequest {
                 request.setMapStructure(mapStructure);
                 request.setForeignKey(foreignKey);
                 request.setCustomCriteria(fmd.getCustomCriteria());
+            }
+
+            @Override
+            public void visit(GroupMetadata gmd) {
+                request.setType(Type.STANDARD);
+                request.setCeilingEntityClassname(gmd.getOwningClass());
+            }
+
+            @Override
+            public void visit(TabMetadata tmd) {
+                request.setType(Type.STANDARD);
+                request.setCeilingEntityClassname(tmd.getOwningClass());
             }
         });
         
@@ -247,6 +245,11 @@ public class PersistencePackageRequest {
         return this;
     }
 
+    public PersistencePackageRequest withMaxResults(Integer maxResults) {
+        setMaxResults(maxResults);
+        return this;
+    }
+
     public PersistencePackageRequest withSectionCrumbs(List<SectionCrumb> sectionCrumbs) {
         setSectionCrumbs(sectionCrumbs.toArray(new SectionCrumb[sectionCrumbs.size()]));
         return this;
@@ -288,12 +291,24 @@ public class PersistencePackageRequest {
 
     public PersistencePackageRequest addCustomCriteria(String customCriteria) {
         if (this.customCriteria == null) {
-            this.customCriteria = new ArrayList<String>();
+            this.customCriteria = new ArrayList<>();
         }
         
         if (StringUtils.isNotBlank(customCriteria)) {
             this.customCriteria.add(customCriteria);
         }
+        return this;
+    }
+
+    public PersistencePackageRequest addCustomCriteria(String[] customCriteriaList) {
+        if (customCriteriaList != null && customCriteriaList.length > 0) {
+            if (this.customCriteria == null) {
+                this.customCriteria = new ArrayList<>(Arrays.asList(customCriteriaList));
+            } else {
+                this.customCriteria.addAll(new ArrayList<>(Arrays.asList(customCriteriaList)));
+            }
+        }
+
         return this;
     }
 
@@ -325,6 +340,15 @@ public class PersistencePackageRequest {
             if (fasc.getPropertyId().equals(name)) {
                 it.remove();
             }
+        }
+        return this;
+    }
+
+    public PersistencePackageRequest clearFilterAndSortCriteria() {
+        Iterator<FilterAndSortCriteria> it = filterAndSortCriteria.listIterator();
+        while (it.hasNext()) {
+            it.next();
+            it.remove();
         }
         return this;
     }
@@ -469,6 +493,14 @@ public class PersistencePackageRequest {
         this.maxIndex = maxIndex;
     }
 
+    public Integer getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(Integer maxResults) {
+        this.maxResults = maxResults;
+    }
+
     public SectionCrumb[] getSectionCrumbs() {
         return sectionCrumbs;
     }
@@ -523,5 +555,12 @@ public class PersistencePackageRequest {
     public void setUpdateLookupType(boolean isUpdateLookupType) {
         this.isUpdateLookupType = isUpdateLookupType;
     }
-    
+
+    public boolean isTreeCollection() {
+        return isTreeCollection;
+    }
+
+    public void setIsTreeCollection(boolean isTreeCollection) {
+        this.isTreeCollection = isTreeCollection;
+    }
 }

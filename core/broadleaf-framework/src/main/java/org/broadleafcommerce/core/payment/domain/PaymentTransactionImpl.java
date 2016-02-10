@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.payment.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
@@ -294,4 +296,26 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     }
 
 
+    @Override
+    public <G extends PaymentTransaction> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        PaymentTransaction cloned = createResponse.getClone();
+        cloned.setOrderPayment(orderPayment.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setArchived(getArchived());
+        cloned.setAmount(amount == null ? null : new Money(amount));
+        cloned.setCustomerIpAddress(customerIpAddress);
+        cloned.setDate(date);
+        cloned.setParentTransaction(parentTransaction);
+        cloned.setRawResponse(rawResponse);
+        cloned.setSuccess(success);
+        cloned.setType(PaymentTransactionType.getInstance(type));
+
+        for(Map.Entry<String, String> entry : additionalFields.entrySet()){
+            cloned.getAdditionalFields().put(entry.getKey(),entry.getValue());
+        }
+        return createResponse;
+    }
 }

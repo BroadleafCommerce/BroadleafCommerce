@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -759,6 +761,38 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
         result = prime * result + ((address == null) ? 0 : address.hashCode());
         result = prime * result + ((fulfillmentGroupItems == null) ? 0 : fulfillmentGroupItems.hashCode());
         return result;
+    }
+    
+    @Override
+    public <G extends FulfillmentGroup> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        FulfillmentGroup cloned = createResponse.getClone();
+        cloned.setAddress(address.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setDeliveryInstruction(deliveryInstruction);
+        cloned.setFulfillmentOption(fulfillmentOption);
+        cloned.setFulfillmentPrice(fulfillmentPrice == null ? null : new Money(fulfillmentPrice));
+        cloned.setIsShippingPriceTaxable(isShippingPriceTaxable == null ? null : isShippingPriceTaxable);
+        cloned.setMerchandiseTotal(merchandiseTotal == null ? null : new Money(merchandiseTotal));
+        cloned.setRetailFulfillmentPrice(fulfillmentPrice == null ? null : new Money(fulfillmentPrice));
+        cloned.setTotalItemTax(totalItemTax == null ? null : new Money(totalItemTax));
+        cloned.setTotalFulfillmentGroupTax(totalFulfillmentGroupTax == null ? null : new Money(totalFulfillmentGroupTax));
+        cloned.setTotalFeeTax(totalFeeTax == null ? null : new Money(totalFeeTax));
+        cloned.setTotalTax(totalTax == null ? null : new Money(totalTax));
+        cloned.setRetailFulfillmentPrice(retailFulfillmentPrice == null ? null : new Money(retailFulfillmentPrice));
+        cloned.setSaleFulfillmentPrice(saleFulfillmentPrice == null ? null : new Money(saleFulfillmentPrice));
+        cloned.setTotal(total == null ? null : new Money(total));
+        cloned.setOrder(order);
+        cloned.setPrimary(primary);
+        cloned.setType(getType());
+        for (FulfillmentGroupItem fgi: fulfillmentGroupItems) {
+            FulfillmentGroupItem fulfillmentGroupItem = fgi.createOrRetrieveCopyInstance(context).getClone();
+            fulfillmentGroupItem.setFulfillmentGroup(cloned);
+            cloned.getFulfillmentGroupItems().add(fulfillmentGroupItem);
+        }
+        return  createResponse;
     }
 
     @Override

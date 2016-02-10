@@ -25,7 +25,7 @@ public class DefaultEntityFormActions {
     
     public static final EntityFormAction SAVE = new EntityFormAction(EntityFormAction.SAVE)
         .withButtonType("submit")
-        .withButtonClass("submit-button")
+        .withButtonClass("submit-button primary")
         .withDisplayText("Save");
 
     public static final EntityFormAction DELETE = new EntityFormAction(EntityFormAction.DELETE)

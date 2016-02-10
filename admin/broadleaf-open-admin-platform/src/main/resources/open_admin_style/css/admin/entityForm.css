@@ -1,0 +1,390 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+
+
+
+/*************************** ENTITY FORM TITLE BAR (beginning of section) ***************************/
+.app-content .content .section-content .main-content .content-area-title-bar>.button-group .button {
+    margin-top: 0;
+    margin-left: -3px;
+}
+
+.app-content .content .section-content .main-content .content-area-title-bar>.button {
+    margin-top: 20px;
+}
+
+.app-content .content .section-content .main-content .content-area-title-bar>.button-group ul {
+    margin-top: -22px;
+}
+/*************************** ENTITY FORM TITLE BAR (end of section) ***************************/
+
+label .fa {
+    font-size: 13px;
+}
+
+select:not(#sandboxes) {
+    padding: 0 10px;
+    border: 1px solid #D8D5D0;
+    display: inline-block;
+    background: white;
+    height: 34px !important;
+    line-height: 34px;
+    vertical-align: middle;
+    width: 100%;
+    font-size: 13px;
+    box-shadow: none;
+    -webkit-appearance: none;
+    font-family: 'Open Sans', sans-serif;
+    margin: 0 0 ;
+    border-radius: 0;
+    box-sizing: border-box;
+    color: #303030;
+
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+select.selectize-adder {
+    margin-bottom: 4px;
+    height: 36px !important;
+}
+
+select.selectize-collection.read-only {
+    margin-bottom: 5px;
+    background-color: #eeeeee;
+}
+
+.required:after {
+    content: ' *';
+    color: #D20A33;
+}
+
+fieldset {
+    margin: 10px 0 0 0;
+}
+
+fieldset:not(.untitledGroup) {
+    background-color: #FBFAF7;
+}
+
+.app-content .fieldset-card, .modal-body .fieldset-card {
+    margin-bottom: 15px;
+}
+
+.app-content .fieldset-card.untitledGroup .titlebar, .modal-body .fieldset-card.untitledGroup .titlebar {
+    display: none;
+}
+
+.app-content .fieldset-card .titlebar {
+    width: 100%;
+    padding: 0 15px;
+    letter-spacing: 0;
+}
+
+.fieldset-card .titlebar .listgrid-toolbar {
+    display: inline-block;
+    float: right;
+    margin: 6px 0;
+}
+
+.fieldset-card .titlebar .titlebar-title, .fieldset-card .titlebar .collapser {
+    display: inline-block;
+    margin: 10px 0;
+    position: relative;
+}
+
+.fieldset-card .titlebar .titlebar-title .tooltip {
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.fieldset-card .titlebar .titlebar-title .alert-box {
+    text-transform: none;
+    font-weight: normal;
+}
+
+.fieldset-card .fieldset-card-content {
+    padding: 15px 15px 0 !important;
+}
+
+.fieldset-card .fieldset-card-content label {
+    font-size: 11px !important;
+    color: #616161;
+    line-height: 14px;
+    text-transform: uppercase !important;
+    padding-bottom: 1px;
+}
+
+.fieldset-card .fieldset-card-content .show-translations {
+    font-size: 12px;
+    margin-left: 5px;
+    font-weight: 400;
+}
+
+.fieldset-card .fieldset-card-content .show-translations i {
+    font-size: 14px;
+}
+
+.fieldset-card .fieldset-card-content .show-translations span {
+    font-size: 12px;
+    text-transform: none;
+    font-weight: 400;
+    padding-left: 1px;
+    vertical-align: middle;
+}
+
+.fieldset-card:not(.dynamic-form):not(.inModal):first-child {
+    margin-top: 22px;
+}
+
+.fieldset-card-content .fieldgroup-listgrid {
+    position: relative;
+    background-color: white;
+    border: 1px solid #D8D5D0;
+}
+
+.fieldgroup-listgrid-wrapper-header {
+    height: 43px;
+    overflow: hidden;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper-header {
+    margin: 0;
+    background-color: #FCFBF9;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0 10px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: #757575;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper-header.hidden-body {
+    border: none;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper-header span {
+    display: inline-block;
+    margin: 10px 0;
+    line-height: 20px;
+}
+
+.fieldgroup-listgrid-wrapper-header span.listgrid-friendly-name {
+    text-overflow: ellipsis;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.fieldgroup-listgrid-wrapper-header span.listgrid-total-records {
+    margin-left: 5px;
+    text-transform: none;
+    opacity: 0.5;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper-header .listgrid-toolbar {
+    display: inline-block;
+    float: right;
+    margin: 6px 0;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper {
+    padding: 10px 10px 0;
+}
+
+.fieldgroup-listgrid {
+    margin-bottom: 20px;
+}
+
+.fieldset-card .titlebar-title i.help-tip {
+    margin-left: 5px;
+}
+
+.field-group label span {
+    font-size:11px;
+    text-transform:uppercase;
+    /*color:#B3B3B3;*/
+    font-weight: 600;
+}
+
+.radio-label span {
+    font-weight: 500 !important;
+}
+
+.field-group label span.alert-wrapper {
+    font-size: 12px;
+    letter-spacing: .05em;
+    font-weight: normal;
+    margin-left: 10px;
+}
+
+.field-group label span.alert-wrapper .alert-box {
+    color: #8EAA2B !important;
+}
+
+.boolean-link {
+    font-size: 11px;
+    color: #94AF39;
+}
+
+a.boolean-link.view-options:before {
+    content: 'View';
+}
+
+a.boolean-link.hide-options:before {
+    content: 'Hide';
+}
+
+a.description-link {
+    font-size: 11px;
+    color: #94AF39;
+}
+
+.description-text {
+    height: 34px;
+    padding: 5px 10px;
+    background-color: #eeeeee;
+    font-size: 12px;
+    font-style: italic;
+    border: 1px solid #D8D5D0;
+}
+
+.description-hide {
+    float: right;
+    font-size: 11px;
+    color: #94AF39;
+}
+
+.xdsoft_current {
+    background: #94AF39 !important;
+    box-shadow: #94AF39 0 1px 3px 0 inset !important;
+}
+.xdsoft_datetimepicker .xdsoft_calendar td:hover, .xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box>div>div:hover {
+    color: #fff !important;
+    background: #F2B95A !important;
+    box-shadow: none !important;
+}
+.time-eod {
+    cursor: pointer;
+    color: #94AF39;
+    text-align: center;
+}
+.time-eod:hover {
+    color: #F2B95A;
+}
+
+.nav-tabs li a i {
+    position: absolute;
+    right: 12px;
+    top: 18px;
+}
+
+
+/*************************** IN MODAL (beginning of section) ***************************/
+
+.modal-body .fieldset-card{background-color:white;border:1px solid #e0e0e0;-moz-box-shadow:rgba(0,0,0,0.1) 0px 2px 5px;-webkit-box-shadow:rgba(0,0,0,0.1) 0px 2px 5px;box-shadow:rgba(0,0,0,0.1) 0px 2px 5px;margin-bottom:15px}
+.modal-body .fieldset-card .titlebar{background-color:#FCFBF9;border-bottom:1px solid #e0e0e0;padding: 0 20px;width:100%;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:#2c2c2c}
+.modal-body .fieldset-card .titlebar .fa{float:right;font-size:16px}
+.modal-body .fieldset-card .fieldset-card-content{padding:20px}
+.modal-body .fieldset-card .fieldset-card-content label{color:#2c2c2c;font-size:13px;font-weight:600;letter-spacing:normal;text-transform:none}
+.modal-body .fieldset-card .fieldset-card-content .radio-label{margin-bottom:5px;font-size:12px;font-weight:400}
+.modal-body .fieldset-card .fieldset-card-content .checkbox{padding:0}
+.modal-body .fieldset-card .fieldset-card-content .checkbox .checkbox-label{font-size:12px;margin-right:10px}
+.modal-body .field-group label span {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    /*color: #B3B3B3;*/
+}
+
+.modal-body fieldset:first-child {
+    margin: 0;
+    padding: 10px;
+}
+
+.modal-body fieldset:not(:first-child) {
+    padding: 10px;
+}
+
+.modal-body textarea {
+    height: 90px;
+}
+
+/*************************** IN MODAL (end of section) ***************************/
+
+
+/*************************** DYNAMIC FORM (beginning of section) ***************************/
+
+.content-item-add-button-wrapper {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.content-item-add-sc {
+    margin: 0 auto;
+}
+
+.pick-sctype-popup {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+    -webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+    box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+    padding: 10px 15px 15px;
+    margin: 10px auto;
+    text-align: left;
+    width: 550px;
+}
+
+.pick-sctype-popup .selectize-control {
+    width: 425px;
+    display: inline-block;
+}
+
+.pick-sctype-popup .actions {
+    float: right;
+    display: inline-block;
+}
+
+.pick-sctype-popup .actions .action-popup-cancel {
+    vertical-align: middle;
+}
+
+.dynamic-form-container .fieldset-card-content .content-item-action-wrapper {
+    margin-bottom: 15px;
+}
+
+/*************************** DYNAMIC FORM (end of section) ***************************/
+
+/*************************** ADORNED COLLECTION MODAL (beginning of section) ***************************/
+
+.modal-body .adorned-select-wrapper .content-yield:last-of-type {
+    padding-top: 0;
+}
+
+.modal-body .adorned-select-wrapper .fieldset-card .titlebar {
+    display: none;
+}
+
+/*************************** ADORNED COLLECTION MODAL (end of section) ***************************/

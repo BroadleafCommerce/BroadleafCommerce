@@ -22,13 +22,13 @@ package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -53,7 +53,7 @@ public class PasswordFieldMetadataProvider extends AbstractFieldMetadataProvider
     }
 
     @Override
-    public FieldProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
         if (addMetadataFromFieldTypeRequest.getPresentationAttribute() instanceof BasicFieldMetadata && 
                 SupportedFieldType.PASSWORD.equals(((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute()).getExplicitFieldType())) {
             //build the metadata for the password field
@@ -67,35 +67,35 @@ public class PasswordFieldMetadataProvider extends AbstractFieldMetadataProvider
             confirmMd.setExplicitFieldType(SupportedFieldType.PASSWORD_CONFIRM);
             confirmMd.setValidationConfigurations(new HashMap<String, List<Map<String,String>>>());
             metadata.put("passwordConfirm", confirmMd);
-            return FieldProviderResponse.HANDLED;
+            return MetadataProviderResponse.HANDLED;
         } else {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
     }
     
     @Override
-    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
-        return FieldProviderResponse.NOT_HANDLED;
+    public MetadataProviderResponse addMetadata(AddFieldMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public FieldProviderResponse lateStageAddMetadata(LateStageAddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
-        return FieldProviderResponse.NOT_HANDLED;
+    public MetadataProviderResponse lateStageAddMetadata(LateStageAddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public FieldProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
-        return FieldProviderResponse.NOT_HANDLED;
+    public MetadataProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public FieldProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
-        return FieldProviderResponse.NOT_HANDLED;
+    public MetadataProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public FieldProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata) {
-        return FieldProviderResponse.NOT_HANDLED;
+    public MetadataProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata) {
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
 }

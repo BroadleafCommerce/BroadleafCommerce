@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -72,6 +73,7 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
         ListGrid listGrid = new ListGrid();
         listGrid.getHeaderFields().addAll(headerFields);
         listGrid.setListGridType(ListGrid.Type.TRANSLATION);
+        listGrid.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
         listGrid.setCanFilterAndSort(false);
 
         // Allow add/update/remove actions, but provisioned especially for translation. Because of this, we will clone
@@ -83,12 +85,12 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
         removeAction.setButtonClass("translation-grid-remove");
         updateAction.setButtonClass("translation-grid-update");
         listGrid.addToolbarAction(addAction);
-        listGrid.addRowAction(removeAction);
         listGrid.addRowAction(updateAction);
+        listGrid.addRowAction(removeAction);
 
         //TODO rework code elsewhere so these don't have to be added
+        listGrid.setSectionKey(Translation.class.getCanonicalName());
         listGrid.setSubCollectionFieldName("translation");
-        listGrid.setSectionKey("translation");
 
         // Create records for each of the entries in the translations list
         for (Translation t : translations) {
@@ -115,11 +117,13 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
             listGrid.getRecords().add(record);
         }
 
+        listGrid.setTotalRecords(listGrid.getRecords().size());
+
         return listGrid;
     }
 
     @Override
-    public EntityForm buildTranslationForm(TranslationForm formProperties, TranslationFormAction action) {
+    public EntityForm buildTranslationForm(ClassMetadata cmd, TranslationForm formProperties, TranslationFormAction action) {
         EntityForm ef = new EntityForm();
 
         EntityFormAction saveAction = DefaultEntityFormActions.SAVE.clone();
@@ -127,7 +131,7 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
         ef.addAction(saveAction);
 
         ComboField comboField = getLocaleField(formProperties.getLocaleCode());
-        ef.addField(comboField);
+        ef.addField(cmd, comboField);
 
         Field translatedValueValueField = new Field()
                 .withName("translatedValue")
@@ -136,25 +140,25 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
                 .withValue(formProperties.getTranslatedValue())
                 .withOrder(10);
 
-        ef.addField(translatedValueValueField);
+        ef.addField(cmd, translatedValueValueField);
 
         if (action.equals(TranslationFormAction.UPDATE)) {
             comboField.setReadOnly(true);
         }
 
-        ef.addHiddenField(new Field()
+        ef.addHiddenField(cmd, new Field()
                 .withName("ceilingEntity")
                 .withValue(formProperties.getCeilingEntity()));
 
-        ef.addHiddenField(new Field()
+        ef.addHiddenField(cmd, new Field()
                 .withName("entityId")
                 .withValue(formProperties.getEntityId()));
 
-        ef.addHiddenField(new Field()
+        ef.addHiddenField(cmd, new Field()
                 .withName("propertyName")
                 .withValue(formProperties.getPropertyName()));
 
-        ef.addHiddenField(new Field()
+        ef.addHiddenField(cmd, new Field()
                 .withName("isRte")
                 .withValue(String.valueOf(formProperties.getIsRte())));
 

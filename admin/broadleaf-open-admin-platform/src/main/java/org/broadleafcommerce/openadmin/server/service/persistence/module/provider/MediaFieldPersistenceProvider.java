@@ -41,7 +41,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.broadleafcommerce.openadmin.web.service.MediaBuilderService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -88,9 +88,9 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     }
 
     @Override
-    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
+    public MetadataProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
         if (!canHandlePersistence(populateValueRequest, instance)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         String prop = populateValueRequest.getProperty().getName();
         if (prop.contains(FieldManager.MAPFIELDSEPARATOR)) {
@@ -99,7 +99,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 throw new UnsupportedOperationException("MediaFieldPersistenceProvider is currently only compatible with map fields when modelled using @OneToMany");
             }
         }
-        FieldProviderResponse response = FieldProviderResponse.HANDLED;
+        MetadataProviderResponse response = MetadataProviderResponse.HANDLED;
         boolean dirty = false;
         try {
             setNonDisplayableValues(populateValueRequest);
@@ -164,7 +164,8 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     }
                 }
                 if (dirty) {
-                    response = FieldProviderResponse.HANDLED_BREAK;
+                    updateMedia(populateValueRequest, newMedia, persist, media);
+		            response = MetadataProviderResponse.HANDLED_BREAK;
                 }
             } else {
                 throw new UnsupportedOperationException("MediaFields only work with Media types.");
@@ -178,9 +179,9 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     }
 
     @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
 
         if (extractValueRequest.getRequestedValue() != null) {
@@ -215,16 +216,16 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 property.setValue(jsonString);
                 property.setUnHtmlEncodedValue(jsonString);
                 property.setDisplayValue(extractValueRequest.getDisplayVal());
-                return FieldProviderResponse.HANDLED_BREAK;
+                return MetadataProviderResponse.HANDLED_BREAK;
             } else {
                 throw new UnsupportedOperationException("MEDIA type is currently only supported on fields of type Media");
             }
         }
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     @Override
-    public FieldProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
+    public MetadataProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
         // BP:  Basically copied this from RuleFieldPersistenceProvider
         List<Property> propertyList = new ArrayList<Property>();
         propertyList.addAll(Arrays.asList(addFilterPropertiesRequest.getEntity().getProperties()));
@@ -256,7 +257,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         }
         propertyList.addAll(additionalProperties);
         addFilterPropertiesRequest.getEntity().setProperties(propertyList.toArray(new Property[propertyList.size()]));
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     @Override

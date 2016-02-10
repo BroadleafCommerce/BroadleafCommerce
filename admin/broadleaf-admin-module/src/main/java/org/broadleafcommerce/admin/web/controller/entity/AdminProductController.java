@@ -39,12 +39,12 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
+import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
-import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -72,7 +72,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/" + AdminProductController.SECTION_KEY)
 public class AdminProductController extends AdminBasicEntityController {
     
-    protected static final String SECTION_KEY = "product";
+    public static final String SECTION_KEY = "product";
     
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -85,23 +85,12 @@ public class AdminProductController extends AdminBasicEntityController {
         }
         return SECTION_KEY;
     }
-    
-    @Override
-    public String[] getSectionCustomCriteria() {
-        return new String[]{"productDirectEdit"};
-    }
-
-    @Override
-    protected void modifyEntityForm(EntityForm ef, Map<String, String> pathVars) {
-        Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
-        overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
-    }
 
     @Override
     protected void modifyAddEntityForm(EntityForm ef, Map<String, String> pathVars) {
         String defaultCategoryUrlPrefix = null;
         Field defaultCategory = ef.findField("defaultCategory");
-        if (StringUtils.isNotBlank(defaultCategory.getValue())) {
+        if (defaultCategory != null && StringUtils.isNotBlank(defaultCategory.getValue())) {
             Category cat = catalogService.findCategoryById(Long.parseLong(defaultCategory.getValue()));
             defaultCategoryUrlPrefix = cat.getUrl();
         }
@@ -298,14 +287,19 @@ public class AdminProductController extends AdminBasicEntityController {
         //Skus have a specific toolbar action to generate Skus based on permutations
         EntityForm form = (EntityForm) model.asMap().get("entityForm");
         ListGridAction generateSkusAction = new ListGridAction(ListGridAction.GEN_SKUS).withDisplayText("Generate_Skus")
-                                                                .withIconClass("icon-fighter-jet")
-                                                                .withButtonClass("generate-skus")
-                                                                .withUrlPostfix("/generate-skus");
-        
+                .withIconClass("icon-fighter-jet")
+                .withButtonClass("generate-skus")
+                .withUrlPostfix("/generate-skus")
+                .withActionUrlOverride("/product/" + id + "/additionalSkus/generate-skus");
+
         ListGrid skusGrid = form.findListGrid("additionalSkus");
         if (skusGrid != null) {
-            skusGrid.addToolbarAction(generateSkusAction);
             skusGrid.setCanFilterAndSort(false);
+        }
+
+        ListGrid productOptionsGrid = form.findListGrid("productOptions");
+        if (productOptionsGrid != null) {
+            productOptionsGrid.addToolbarAction(generateSkusAction);
         }
         
         // When we're dealing with product bundles, we don't want to render the product options and additional skus

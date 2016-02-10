@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import java.io.Serializable;
@@ -30,20 +33,42 @@ import java.util.Date;
  * @author jfischer
  *
  */
+@JsonAutoDetect
 public class Property implements Serializable {
     
     private static final long serialVersionUID = 1L;
-    
+
+    @JsonProperty
     protected String name;
+
+    @JsonProperty
     protected String value;
+
+    @JsonProperty
     protected String displayValue;
+
+    @JsonProperty
     protected String originalDisplayValue;
+
+    @JsonProperty(value = "propertyMetadata")
     protected FieldMetadata metadata = new BasicFieldMetadata();
+
+    @JsonProperty
     protected boolean isAdvancedCollection = false;
+
+    @JsonProperty
     protected Boolean isDirty = false;
+
+    @JsonIgnore
     protected String unHtmlEncodedValue;
+
+    @JsonProperty
     protected String rawValue;
+
+    @JsonProperty
     protected String originalValue;
+
+    @JsonIgnore
     protected Date deployDate;
 
     public Property() {

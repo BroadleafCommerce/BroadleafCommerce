@@ -28,7 +28,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 public class RuleBuilderField extends Field {
 
     protected String fieldBuilder;
-    protected String styleClass;
+    protected String ruleType;
     protected DataWrapper dataWrapper;
     protected String json;
     protected String jsonFieldName;
@@ -41,12 +41,12 @@ public class RuleBuilderField extends Field {
         this.fieldBuilder = fieldBuilder;
     }
 
-    public String getStyleClass() {
-        return styleClass;
+    public String getRuleType() {
+        return ruleType;
     }
 
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setRuleType(String ruleType) {
+        this.ruleType = ruleType;
     }
 
     public DataWrapper getDataWrapper() {

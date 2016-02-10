@@ -4,40 +4,52 @@
     th:with="df=${entityForm.dynamicForms['__${dynamicPropertyName}__']}"
     th:attr="data-dynamicpropertyname=${dynamicPropertyName},
              data-currenturl=@{${'/' + sectionKey + '/' + dynamicPropertyName + '/dynamicForm'}}">
+
+    <img th:src="@{/img/admin/ajax-loader.gif}" class="ajax-loader" />
     
     <div th:unless="${#sets.isEmpty(df.tabs)}" th:remove="tag">
-        <fieldset th:each="group : ${df.tabs[0].fieldGroups}" 
-            th:classappend="${!group.isVisible}? 'hidden'" class="dynamic-form">
-            <legend th:text="#{${group.title}}" />
-        
-            <div th:each="field : ${group.fields}" 
-                 th:if="${field.name}"
-                 th:class="${'field-box' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}" 
-                 blc_admin:component_id="${field}"
-                 th:classappend="${!field.isVisible}? 'hidden'">
-                 
-                 <div th:if="${renderOriginalValue}"
-                      class="original-value"
-                      th:attr="data-original-value=${field.attributes['originalValue']},
-                               data-original-overriden-value=${field.attributes['originalOverridenValue']}" />
-                
-                <div th:if="${field.readOnly}" th:remove="tag">
-                    <div th:substituteby="fields/readonly" />
+        <div th:each="group : ${df.tabs[0].fieldGroups}"
+            th:classappend="${!group.isVisible}? 'hidden'" class="fieldset-card field-group dynamic-form">
+            <a class="titlebar" href="#">
+                <div class="titlebar-title">
+                    <span th:utext="#{${group.title}}"></span>
+                    <i class="fa fa-question-circle help-tip" th:unless="${#strings.isEmpty(group.toolTip)}" th:attr="data-tip=#{${group.toolTip}}"></i>
                 </div>
-                <div th:unless="${field.readOnly}" th:remove="tag">
-                    <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}" />
-                </div>
-    
-                <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
-            </div>
 
-            <div th:unless="${#strings.containsIgnoreCase(group.title, 'master')}" th:remove="tag">
-                <div th:if="${dynamicFormActionsTemplate}" th:remove="tag">
-                    <div th:substituteby="${dynamicFormActionsTemplate}" />
+                <div class="collapser">
+                    <span class="collapsed" href="#" th:if="${group.collapsed}"><i class="fa fa-angle-down"></i></span>
+                    <span class="expanded" href="#" th:unless="${group.collapsed}"><i class="fa fa-angle-up"></i></span>
+                </div>
+            </a>
+            <div class="fieldset-card-content" th:classappend="${(group.collapsed ? 'content-collapsed' : '')}">
+                <div th:each="field : ${group.fields}"
+                     th:if="${field.name}"
+                     th:class="${'field-group' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}"
+                     blc_admin:component_id="${field}"
+                     th:classappend="${!field.isVisible}? 'hidden'">
+
+                     <div th:if="${renderOriginalValue}"
+                          class="original-value"
+                          th:attr="data-original-value=${field.attributes['originalValue']},
+                                   data-original-overriden-value=${field.attributes['originalOverridenValue']}" />
+
+                    <div th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
+                        <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"/>
+                    </div>
+                    <div th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
+                        <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"/>
+                    </div>
+
+                    <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
+                </div>
+
+                <div th:unless="${#strings.containsIgnoreCase(group.title, 'master')}" th:remove="tag">
+                    <div th:if="${dynamicFormActionsTemplate}" th:remove="tag">
+                        <div th:substituteby="${dynamicFormActionsTemplate}" />
+                    </div>
                 </div>
             </div>
-
-        </fieldset>
+        </div>
     </div>
     
 </div>

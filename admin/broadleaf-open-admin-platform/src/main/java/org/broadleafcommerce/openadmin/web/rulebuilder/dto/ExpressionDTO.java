@@ -20,7 +20,6 @@
 package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
-
 import java.io.Serializable;
 
 /**
@@ -30,22 +29,18 @@ public class ExpressionDTO extends DataDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected String name;
+    protected String id;
 
     protected String operator;
 
     protected String value;
 
-    protected String start;
-
-    protected String end;
-
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getOperator() {
@@ -64,32 +59,14 @@ public class ExpressionDTO extends DataDTO implements Serializable {
         this.value = value;
     }
 
-    public String getStart() {
-        return start;
-    }
-
-    public void setStart(String start) {
-        this.start = start;
-    }
-
-    public String getEnd() {
-        return end;
-    }
-
-    public void setEnd(String end) {
-        this.end = end;
-    }
-    
     @Override
     public boolean equals(Object obj) {
         if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             ExpressionDTO that = (ExpressionDTO) obj;
             return super.equals(obj) && new EqualsBuilder()
-                .append(name, that.name)
+                .append(id, that.id)
                 .append(operator, that.operator)
                 .append(value, that.value)
-                .append(start, that.start)
-                .append(end, that.end)
                 .build();
         }
         return false;

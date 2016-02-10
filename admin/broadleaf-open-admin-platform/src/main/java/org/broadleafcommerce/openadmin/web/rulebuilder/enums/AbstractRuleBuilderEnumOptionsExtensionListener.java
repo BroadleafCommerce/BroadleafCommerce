@@ -31,10 +31,10 @@ import java.util.Map.Entry;
  * and {@link #getEnumClass()}. Generates a String with the following pattern:
  * 
  * var variableName = [
- *     { label : "enumFriendlyType", name : "enumType" },
- *     { label : "enumFriendlyType2", name : "enumType2" },
+ *     {"enumType": "enumFriendlyType"},
+ *     {"enumType2": "enumFriendlyType2"},
  *     ...
- *     { label : "enumFriendlyTypeN", name : "enumTypeN" }
+ *     {"enumTypeN": "enumFriendlyTypeN"}
  * ];
  * 
  * @author Andre Azzolini (apazzolini)
@@ -50,9 +50,7 @@ public abstract class AbstractRuleBuilderEnumOptionsExtensionListener implements
                 int i = 0;
                 Map<String, ? extends BroadleafEnumerationType> types = getTypes(entry.getValue());
                 for (Entry<String, ? extends BroadleafEnumerationType> entry2 : types.entrySet()) {
-                    sb.append("{ label : \"" + entry2.getValue().getFriendlyType() + "\"");
-                    sb.append(", ");
-                    sb.append(" name : \"" + entry2.getValue().getType() + "\" }");
+                    sb.append("{\"" + entry2.getValue().getType() + "\": \"" + entry2.getValue().getFriendlyType() + "\"}");
                     if (++i < types.size()) {
                         sb.append(", ");
                     }

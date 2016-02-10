@@ -1,0 +1,29 @@
+<!--<div th:substituteby="components/fieldTranslation" />-->
+<label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+    <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+</label>
+<div class="description-field">
+    <input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text"
+           th:disabled="${field.readOnly}"
+           th:required="${field.required}"
+           th:placeholder="${field.hint}"
+           th:field="*{fields['__${field.name}__'].value}"
+           style="display:none;"/>
+
+    <textarea th:if="*{fields['__${field.name}__'].isLargeEntry}"
+              th:disabled="${field.readOnly}"
+              th:field="*{fields['__${field.name}__'].value}"
+              th:placeholder="${field.hint}"
+              style="display: none;"
+              cols="30" rows="10"></textarea>
+
+    <div th:if="*{#strings.isEmpty(fields['__${field.name}__'].value)}" class="description-text">
+        No description provided, <a href="" class="description-link">add one</a>
+    </div>
+    <div th:unless="*{#strings.isEmpty(fields['__${field.name}__'].value)}" class="description-text">
+        <span th:text="*{fields['__${field.name}__'].value}" th:remove="tag"></span>
+        <a href="" class="description-link">&nbsp;&nbsp;(edit)</a>
+    </div>
+</div>
+
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />

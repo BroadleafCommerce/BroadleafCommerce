@@ -28,6 +28,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -63,6 +64,9 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
     public static final String GENERAL_ERRORS_TAB_KEY = "generalErrors";
     public static final String GENERAL_ERROR_FIELD_KEY = "generalError";
 
+    @Value("${admin.form.validation.errors.hideTopLevelFieldErrors:false}")
+    protected boolean hideTopLevelFieldErrors;
+
     public ErrorsProcessor() {
         super("errors");
     }
@@ -83,48 +87,50 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
 
             // Map of tab name -> (Map field Name -> list of error messages)
             Map<String, Map<String, List<String>>> result = new HashMap<String, Map<String, List<String>>>();
-            for (FieldError err : bindStatus.getErrors().getFieldErrors()) {
-                //attempt to look up which tab the field error is on. If it can't be found, just use
-                //the default tab for the group
-                String tabName = EntityForm.DEFAULT_TAB_NAME;
-                Tab tab = form.findTabForField(err.getField());
-                if (tab != null) {
-                    tabName = tab.getTitle();
-                }
-
-                Map<String, List<String>> tabErrors = result.get(tabName);
-                if (tabErrors == null) {
-                    tabErrors = new HashMap<String, List<String>>();
-                    result.put(tabName, tabErrors);
-                }
-                if (err.getField().contains(DynamicEntityFormInfo.FIELD_SEPARATOR)) {
-                    //at this point the field name actually occurs within some array syntax
-                    String fieldName = extractFieldName(err);
-                    String[] fieldInfo = fieldName.split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
-                    Field formField = form.getDynamicForm(fieldInfo[0]).getFields().get(fieldName);
-
-                    if (formField != null) {
-                        addFieldError(formField.getFriendlyName(), err.getCode(), tabErrors);
-                    } else {
-                        LOG.warn("Could not find field " + fieldName + " within the dynamic form " + fieldInfo[0]);
-                        addFieldError(fieldName, err.getCode(), tabErrors);
+            if (!hideTopLevelFieldErrors) {
+                for (FieldError err : bindStatus.getErrors().getFieldErrors()) {
+                    //attempt to look up which tab the field error is on. If it can't be found, just use
+                    //the default tab for the group
+                    String tabName = EntityForm.DEFAULT_TAB_NAME;
+                    Tab tab = form.findTabForField(err.getField());
+                    if (tab != null) {
+                        tabName = tab.getTitle();
                     }
-                } else {
-                    if (form.getTabs().size() > 0) {
-                        Field formField = form.findField(err.getField());
+
+                    Map<String, List<String>> tabErrors = result.get(tabName);
+                    if (tabErrors == null) {
+                        tabErrors = new HashMap<String, List<String>>();
+                        result.put(tabName, tabErrors);
+                    }
+                    if (err.getField().contains(DynamicEntityFormInfo.FIELD_SEPARATOR)) {
+                        //at this point the field name actually occurs within some array syntax
+                        String fieldName = extractFieldName(err);
+                        String[] fieldInfo = fieldName.split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
+                        Field formField = form.getDynamicForm(fieldInfo[0]).findField(fieldName);
+
                         if (formField != null) {
                             addFieldError(formField.getFriendlyName(), err.getCode(), tabErrors);
                         } else {
-                            LOG.warn("Could not find field " + err.getField() + " within the main form");
-                            addFieldError(err.getField(), err.getCode(), tabErrors);
+                            LOG.warn("Could not find field " + fieldName + " within the dynamic form " + fieldInfo[0]);
+                            addFieldError(fieldName, err.getCode(), tabErrors);
                         }
                     } else {
-                        //this is the code that is executed when a Translations add action contains errors
-                        //this branch of the code just puts a placeholder "tabErrors", to avoid errprProcessor parsing errors, and
-                        //avoids checking on tabs, fieldGroups or fields (which for translations are empty), thus skipping any warning
-                        Map<String, Object> localVariables = new HashMap<String, Object>();
-                        localVariables.put("tabErrors", tabErrors);
-                        return ProcessorResult.setLocalVariables(localVariables);
+                        if (form.getTabs().size() > 0) {
+                            Field formField = form.findField(err.getField());
+                            if (formField != null) {
+                                addFieldError(formField.getFriendlyName(), err.getCode(), tabErrors);
+                            } else {
+                                LOG.warn("Could not find field " + err.getField() + " within the main form");
+                                addFieldError(err.getField(), err.getCode(), tabErrors);
+                            }
+                        } else {
+                            //this is the code that is executed when a Translations add action contains errors
+                            //this branch of the code just puts a placeholder "tabErrors", to avoid errprProcessor parsing errors, and
+                            //avoids checking on tabs, fieldGroups or fields (which for translations are empty), thus skipping any warning
+                            Map<String, Object> localVariables = new HashMap<String, Object>();
+                            localVariables.put("tabErrors", tabErrors);
+                            return ProcessorResult.setLocalVariables(localVariables);
+                        }
                     }
                 }
             }

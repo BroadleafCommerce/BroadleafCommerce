@@ -201,8 +201,8 @@ public class CatalogServiceImpl implements CatalogService {
     }
     
     @Override
-    public List<Category> findAllParentCategories() {
-        return categoryDao.readAllParentCategories();
+    public Category findRootCategory() {
+        return categoryDao.readRootCategory();
     }
 
     @Override
@@ -412,5 +412,5 @@ public class CatalogServiceImpl implements CatalogService {
             return skus.get(0);
         }
     }
-    
+
 }

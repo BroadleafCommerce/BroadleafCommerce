@@ -33,7 +33,7 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProviderAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
@@ -57,9 +57,9 @@ public class ProductParentCategoryFieldPersistenceProvider extends FieldPersiste
     protected ProductParentCategoryFieldPersistenceProviderExtensionManager extensionManager;
 
     @Override
-    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
+    public MetadataProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
         if (!canHandlePersistence(populateValueRequest, instance)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         boolean handled = false;
         if (extensionManager != null) {
@@ -82,20 +82,20 @@ public class ProductParentCategoryFieldPersistenceProvider extends FieldPersiste
                 }
             }
         }
-        return FieldProviderResponse.HANDLED_BREAK;
+        return MetadataProviderResponse.HANDLED_BREAK;
     }
 
     @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) {
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         Category category = getDefaultCategory((Product) extractValueRequest.getEntity());
         if (category != null) {
             property.setValue(String.valueOf(category.getId()));
             property.setDisplayValue(category.getName());
         }
-        return FieldProviderResponse.HANDLED_BREAK;
+        return MetadataProviderResponse.HANDLED_BREAK;
     }
 
     protected boolean checkDirtyState(Product instance, Long checkValue) {

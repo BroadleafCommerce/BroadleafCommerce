@@ -27,7 +27,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.MessageSource;
 import org.springframework.core.Ordered;
 
@@ -43,23 +43,23 @@ import java.util.Map;
 public class FieldPersistenceProviderAdapter extends AbstractFieldPersistenceProvider {
 
     @Override
-    public FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, List<FilterMapping> filterMappings) {
-        return FieldProviderResponse.NOT_HANDLED;
+    public MetadataProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, List<FilterMapping> filterMappings) {
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
-        return FieldProviderResponse.NOT_HANDLED;
+    public MetadataProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) {
-        return FieldProviderResponse.NOT_HANDLED;
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) {
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public FieldProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
-        return FieldProviderResponse.NOT_HANDLED;
+    public MetadataProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override

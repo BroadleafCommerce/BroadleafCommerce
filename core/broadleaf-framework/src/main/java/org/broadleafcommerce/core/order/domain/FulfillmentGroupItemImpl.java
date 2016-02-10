@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
@@ -196,7 +198,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @Override
     public void setTotalItemAmount(Money amount) {
-        totalItemAmount = amount.getAmount();
+        totalItemAmount = Money.toAmount(amount);
     }
 
     @Override
@@ -206,7 +208,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @Override
     public void setProratedOrderAdjustmentAmount(Money proratedOrderAdjustment) {
-        this.proratedOrderAdjustment = proratedOrderAdjustment.getAmount();
+        this.proratedOrderAdjustment = Money.toAmount(proratedOrderAdjustment);
     }
 
     @Override
@@ -216,7 +218,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @Override
     public void setTotalItemTaxableAmount(Money taxableAmount) {
-        totalItemTaxableAmount = taxableAmount.getAmount();
+        totalItemTaxableAmount = Money.toAmount(taxableAmount);
     }
 
 
@@ -297,6 +299,26 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         }
 
         return clonedFulfillmentGroupItem;
+    }
+    
+    @Override
+    public <G extends FulfillmentGroupItem> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        FulfillmentGroupItem cloned = createResponse.getClone();
+        cloned.setFulfillmentGroup(fulfillmentGroup.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setOrderItem(orderItem.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setProratedOrderAdjustmentAmount(proratedOrderAdjustment == null ? null : new Money(proratedOrderAdjustment));
+        cloned.setQuantity(quantity);
+        if (getStatus() != null) {
+            cloned.setStatus(getStatus());
+        }
+        cloned.setTotalItemAmount(totalItemAmount == null ? null : new Money(totalItemAmount));
+        cloned.setTotalItemTaxableAmount(totalItemTaxableAmount == null ? null : new Money(totalItemTaxableAmount));
+        cloned.setTotalTax(totalTax == null ? null : new Money(totalTax));
+        return createResponse;
     }
 
     @Override

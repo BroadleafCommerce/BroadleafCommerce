@@ -24,22 +24,34 @@ package org.broadleafcommerce.common.presentation.override;
  */
 public class PropertyType {
 
+
+    public static class AdminTabPresentation {
+        public static final String NAME = "name";
+        public static final String ORDER = "order";
+    }
+
+    public static class AdminGroupPresentation {
+        public static final String NAME = "name";
+        public static final String ORDER = "order";
+        public static final String COLUMN = "column";
+        public static final String UNTITLED = "untitled";
+        public static final String TOOLTIP = "tooltip";
+        public static final String COLLAPSED = "collapsed";
+    }
+
     public static class AdminPresentation {
         public static final String FRIENDLYNAME = "friendlyName";
+        public static final String ADDFRIENDLYNAME = "addFriendlyName";
         public static final String SECURITYLEVEL = "securityLevel";
         public static final String ORDER = "order";
         public static final String GRIDORDER = "gridOrder";
         public static final String VISIBILITY = "visibility";
         public static final String FIELDTYPE = "fieldType";
-        public static final String GROUP = "group";
-        public static final String GROUPORDER = "groupOrder";
-        public static final String GROUPCOLLAPSED = "groupCollapsed";
-        public static final String TAB = "tab";
-        public static final String TABORDER = "tabOrder";
         public static final String LARGEENTRY = "largeEntry";
         public static final String PROMINENT = "prominent";
         public static final String COLUMNWIDTH = "columnWidth";
         public static final String BROADLEAFENUMERATION = "broadleafEnumeration";
+        public static final String HIDEENUMERATIONIFEMPTY = "hideEnumerationIfEmpty";
         public static final String FIELDCOMPONENTRENDERER = "fieldComponentRenderer";
         public static final String REQUIREDOVERRIDE = "requiredOverride";
         public static final String EXCLUDED = "excluded";
@@ -52,6 +64,15 @@ public class PropertyType {
         public static final String READONLY = "readOnly";
         public static final String VALIDATIONCONFIGURATIONS = "validationConfigurations";
         public static final String DEFAULTVALUE = "defaultValue";
+        public static final String GROUP = "group";
+        public static final String TAB = "tab";
+
+        @Deprecated
+        public static final String GROUPORDER = "groupOrder";
+        @Deprecated
+        public static final String GROUPCOLLAPSED = "groupCollapsed";
+        @Deprecated
+        public static final String TABORDER = "tabOrder";
     }
 
     public static class AdminPresentationToOneLookup {
@@ -69,6 +90,7 @@ public class PropertyType {
         public static final String OPTIONDISPLAYFIELDNAME = "optionDisplayFieldName";
         public static final String OPTIONCANEDITVALUES = "optionCanEditValues";
         public static final String OPTIONFILTERPARAMS = "optionFilterParams";
+        public static final String OPTIONHIDEIFEMPTY = "optionHideIfEmpty";
     }
 
     public static class AdminPresentationAdornedTargetCollection {
@@ -83,36 +105,48 @@ public class PropertyType {
         public static final String TARGETOBJECTPROPERTY = "targetObjectProperty";
         public static final String MAINTAINEDADORNEDTARGETFIELDS = "maintainedAdornedTargetFields";
         public static final String GRIDVISIBLEFIELDS = "gridVisibleFields";
+        public static final String SELECTIZEVISIBLEFIELD = "selectizeVisibleField";
         public static final String TARGETOBJECTIDPROPERTY = "targetObjectIdProperty";
         public static final String JOINENTITYCLASS = "joinEntityClass";
         public static final String SORTPROPERTY = "sortProperty";
         public static final String SORTASCENDING = "sortAscending";
         public static final String IGNOREADORNEDPROPERTIES = "ignoreAdornedProperties";
         public static final String ORDER = "order";
-        public static final String TAB = "tab";
-        public static final String TABORDER = "tabOrder";
         public static final String CUSTOMCRITERIA = "customCriteria";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
         public static final String OPERATIONTYPES = "operationTypes";
+        public static final String GROUP = "group";
+        public static final String ADORNEDTARGETADDTYPE = "adornedTargetAddType";
+
+        @Deprecated
+        public static final String TAB = "tab";
+        @Deprecated
+        public static final String TABORDER = "tabOrder";
     }
 
     public static class AdminPresentationCollection {
         public static final String FRIENDLYNAME = "friendlyName";
+        public static final String ADDFRIENDLYNAME = "addFriendlyName";
         public static final String SECURITYLEVEL = "securityLevel";
         public static final String EXCLUDED = "excluded";
         public static final String READONLY = "readOnly";
         public static final String USESERVERSIDEINSPECTIONCACHE = "useServerSideInspectionCache";
         public static final String ADDTYPE = "addType";
+        public static final String SELECTIZEVISIBLEFIELD = "selectizeVisibleField";
         public static final String MANYTOFIELD = "manyToField";
         public static final String ORDER = "order";
         public static final String SORTPROPERTY = "sortProperty";
         public static final String SORTASCENDING = "sortAscending";
-        public static final String TAB = "tab";
-        public static final String TABORDER = "tabOrder";
         public static final String CUSTOMCRITERIA = "customCriteria";
         public static final String OPERATIONTYPES = "operationTypes";
         public static final String SHOWIFPROPERTY = "showIfProperty";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
+        public static final String GROUP = "group";
+
+        @Deprecated
+        public static final String TAB = "tab";
+        @Deprecated
+        public static final String TABORDER = "tabOrder";
     }
 
     public static class AdminPresentationMap {
@@ -122,8 +156,6 @@ public class PropertyType {
         public static final String READONLY = "readOnly";
         public static final String USESERVERSIDEINSPECTIONCACHE = "useServerSideInspectionCache";
         public static final String ORDER = "order";
-        public static final String TAB = "tab";
-        public static final String TABORDER = "tabOrder";
         public static final String KEYCLASS = "keyClass";
         public static final String MAPKEYVALUEPROPERTY = "mapKeyValueProperty";
         public static final String KEYPROPERTYFRIENDLYNAME = "keyPropertyFriendlyName";
@@ -142,5 +174,11 @@ public class PropertyType {
         public static final String OPERATIONTYPES = "operationTypes";
         public static final String SHOWIFPROPERTY = "showIfProperty";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
+        public static final String GROUP = "group";
+
+        @Deprecated
+        public static final String TAB = "tab";
+        @Deprecated
+        public static final String TABORDER = "tabOrder";
     }
 }

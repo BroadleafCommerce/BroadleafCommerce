@@ -51,6 +51,13 @@ public class OrderFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options("[]")
                 .type(SupportedFieldType.MONEY)
                 .build());
+        fields.add(new FieldData.Builder()
+                .label("rule_localeCode")
+                .name("locale")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
     }
 
     @Override

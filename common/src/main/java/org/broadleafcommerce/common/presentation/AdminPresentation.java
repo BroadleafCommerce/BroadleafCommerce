@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.presentation;
 
+import org.broadleafcommerce.common.presentation.client.RuleBuilderDisplayType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 
@@ -47,7 +48,18 @@ public @interface AdminPresentation {
      * @return the friendly name
      */
     String friendlyName() default "";
-    
+
+    /**
+     * <p>Optional - only required if you want to display a friendly name to the user</p>
+     *
+     * <p><The add friendly name to present to a user for this field in the add GUI. If supporting i18N,
+     * the friendly name may be a key to retrieve a localized friendly name using
+     * the GWT support for i18N.</p>
+     *
+     * @return the friendly name
+     */
+    String addFriendlyName() default "";
+
     /**
      * Optional - only required if you want to restrict this field
      *
@@ -85,25 +97,39 @@ public @interface AdminPresentation {
      * @return whether or not to hide the form field.
      */
     VisibilityEnum visibility() default VisibilityEnum.VISIBLE_ALL;
-    
+
     /**
      * Optional - only required if you want to explicitly specify the field type. This
      * value is normally inferred by the system based on the field type in the entity class.
      *
      * Explicity specify the type the GUI should consider this field
      * Specifying UNKNOWN will cause the system to make its best guess
-     * 
+     *
      * @return the field type
      */
     SupportedFieldType fieldType() default SupportedFieldType.UNKNOWN;
-    
+
     /**
+     * Optional - only required if you want to explicitly specify the field type. This
+     * value is normally inferred by the system based on the field type in the entity class.
+     *
+     * Explicity specify the type the GUI should consider this field
+     * Specifying UNKNOWN will cause the system to make its best guess
+     *
+     * @return the field type
+     */
+    RuleBuilderDisplayType displayType() default RuleBuilderDisplayType.NORMAL;
+
+    /**
+     * Used to map the field to a group defined in AdminPresentationClass using AdminGroupPresentation.
+     * If the group cannot be found in AdminPresentationClass, the group (and the tab, if not present) will be
+     * created using the field-level AdminPresentation data.
+     *
      * Optional - only required if you want to specify a grouping for this field
      *
      * Specify a GUI grouping for this field
      * Fields in the same group will be visually grouped together in the GUI
-     * <br />
-     * <br />
+     *
      * Note: for support I18N, this can also be a key to retrieve a localized String
      * 
      * @return the group for this field
@@ -118,6 +144,7 @@ public @interface AdminPresentation {
      * 
      * @return the order for this group
      */
+    @Deprecated
     int groupOrder() default 99999;
 
     /**
@@ -128,6 +155,7 @@ public @interface AdminPresentation {
      * @return whether or not the group is collapsed by default
      * @deprecated not supported
      */
+    @Deprecated
     boolean groupCollapsed() default false;
     
     /**
@@ -137,6 +165,7 @@ public @interface AdminPresentation {
      * 
      * @return the tab for this field
      */
+    @Deprecated
     String tab() default "General";
 
     /**
@@ -145,11 +174,12 @@ public @interface AdminPresentation {
      * Specify an order for this tab. Tabs will be sorted int he resulting form in 
      * ascending order based on this parameter.
      * 
-     * The default tab will render with an order of 100.
+     * The default tab will render with an order of 99999.
      * 
      * @return the order for this tab
      */
-    int tabOrder() default 100;
+    @Deprecated
+    int tabOrder() default 99999;
 
     /**
      * Optional - only required if you want to give the user extra room to enter a value
@@ -197,13 +227,22 @@ public @interface AdminPresentation {
     String broadleafEnumeration() default "";
 
     /**
+     * <p>Optional - only required if you want to hide this field when there are no enumeration options provided</p>
+     *
+     * <p>Whether or not to show the field if no Enumeration options are provided.</p>
+     *
+     * @return whether or not to show the field if empty
+     */
+    boolean hideEnumerationIfEmpty() default false;
+
+    /**
      * Optional - drives the component that renders the UI
      *
      * When not specified, will default to the fieldType
      * 
      * @return the component name responsible for rendering this field
      */
-    String fieldComponentRenderer() default "";
+    SupportedFieldType fieldComponentRenderer() default SupportedFieldType.UNKNOWN;
 
     /**
      * Optional - only required if you want to make the field immutable

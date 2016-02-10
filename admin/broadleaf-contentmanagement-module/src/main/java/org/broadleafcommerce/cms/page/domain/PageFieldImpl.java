@@ -26,8 +26,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -35,7 +33,6 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -74,10 +71,6 @@ public class PageFieldImpl implements PageField, ProfileEntity {
     )
     @Column(name = "PAGE_FLD_ID")
     protected Long id;
-
-    @Embedded
-    @AdminPresentation(excluded = true)
-    protected AdminAuditable auditable = new AdminAuditable();
 
     @Column (name = "FLD_KEY")
     protected String fieldKey;
@@ -137,16 +130,6 @@ public class PageFieldImpl implements PageField, ProfileEntity {
             lobValue = null;
             stringValue = null;
         }
-    }
-
-    @Override
-    public AdminAuditable getAuditable() {
-        return auditable;
-    }
-
-    @Override
-    public void setAuditable(AdminAuditable auditable) {
-        this.auditable = auditable;
     }
 
     @Override

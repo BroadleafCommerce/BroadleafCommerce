@@ -22,10 +22,7 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
-import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.offer.service.type.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -113,14 +110,22 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     @Deprecated
     public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
-    
+
     public OfferItemRestrictionRuleType getOfferItemQualifierRuleType();
 
     public void setOfferItemQualifierRuleType(OfferItemRestrictionRuleType restrictionRuleType);
-    
+
     public OfferItemRestrictionRuleType getOfferItemTargetRuleType();
 
     public void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType);
+
+    public Boolean getQualifiersCanBeQualifiers();
+
+    public void setQualifiersCanBeQualifiers(Boolean qualifiersCanBeQualifiers);
+
+    public Boolean getQualifiersCanBeTargets();
+
+    public void setQualifiersCanBeTargets(Boolean qualifiersCanBeTargets);
 
     /**
      * Returns false if this offer is not combinable with other offers of the same type.
@@ -129,9 +134,31 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * 
      * @return
      */
+    @Deprecated
     public boolean isCombinableWithOtherOffers();
 
+    @Deprecated
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers);
+
+    public Boolean getCombinableWithOrderOffers();
+
+    public void setCombinableWithOrderOffers(Boolean combinableWithOrderOffers);
+
+    public Boolean getCombinableWithItemOffers();
+
+    public void setCombinableWithItemOffers(Boolean combinableWithItemOffers);
+
+    public Boolean getCombinableWithItemOffersImpactingOtherItems();
+
+    public void setCombinableWithItemOffersImpactingOtherItems(Boolean combinableWithItemOffersImpactingOtherItems);
+
+    public Boolean getCombinableWithShippingOffers();
+
+    public void setCombinableWithShippingOffers(Boolean combinableWithShippingOffers);
+
+    public StackabilityType getStackableWithOtherOffers();
+
+    public void setStackableWithOtherOffers(StackabilityType stackableWithOtherOffers);
 
     /**
      * Returns true if the offer system should automatically add this offer for consideration (versus requiring a code or 
@@ -145,14 +172,14 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * 
      * @return
      */
-    public boolean isAutomaticallyAdded();
+    public boolean getRequiresCode();
 
     /**
      * Sets whether or not this offer should be automatically considered for consideration (versus requiring a code or 
      * other delivery mechanism).
-     * @see #isAutomaticallyAdded()
+     * @see #getRequiresCode()
      */
-    public void setAutomaticallyAdded(boolean automaticallyAdded);
+    public void setRequiresCode(boolean requiresCode);
 
     /**
      * @deprecated Replaced by isAutomaticallyApplied property.   In prior versions of Broadleaf deliveryType was used to 
@@ -331,19 +358,23 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     
     public void setQualifyingItemSubTotal(Money qualifyingItemSubtotal);
 
+    public Money getOrderMinSubTotal();
+
+    public void setOrderMinSubTotal(Money orderMinSubTotal);
+
     public void setMarketingMessage(String marketingMessage);
 
     public String getMarketingMessage();
 
     /**
      * Returns the offer codes that can be used to retrieve this Offer. These codes would be used in situations where
-     * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}
+     * this Offer is not automatically considered (meaning {@link Offer#getRequiresCode()} is false}
      */
     public List<OfferCode> getOfferCodes();
     
     /**
      * Sets the offer codes that can be used to retrieve this Offer. These codes would be used in situations where
-     * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}
+     * this Offer is not automatically considered (meaning {@link Offer#getRequiresCode()} is false}
      */
     public void setOfferCodes(List<OfferCode> offerCodes);
 

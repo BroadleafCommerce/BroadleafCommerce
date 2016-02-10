@@ -21,7 +21,11 @@
 #lightbox {
     /** Default lightbox to hidden */
     display: none;
-    z-index: 1030;
+}
+
+#lightbox,
+#expire-message {
+    z-index: 2147483647;
 }
 
 #lightbox #expire-message {

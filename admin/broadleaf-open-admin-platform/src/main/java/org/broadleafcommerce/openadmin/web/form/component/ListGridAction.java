@@ -32,10 +32,15 @@ public class ListGridAction implements Cloneable {
     
     public static final String ADD = "ADD";
     public static final String GEN_SKUS = "GEN_SKUS";
-    public static final String REORDER = "REORDER";
     public static final String REMOVE = "REMOVE";
     public static final String UPDATE = "UPDATE";
     public static final String VIEW = "VIEW";
+    public static final String EDIT = "EDIT";
+    public static final String TREE_ADD = "TREE_ADD";
+    public static final String TREE_JUMP_TO_CONTEXT = "TREE_JUMP_TO_CONTEXT";
+    public static final String SINGLE_SELECT = "SINGLE_SELECT";
+    public static final String MULTI_SELECT = "MULTI_SELECT";
+    public static final String ASSET_ADD = "ASSET_ADD";
 
     protected String buttonClass = "";
     protected String urlPostfix = "";
@@ -46,6 +51,8 @@ public class ListGridAction implements Cloneable {
     protected String actionUrlOverride = null;
     protected Boolean allCapable = false;
     protected Boolean singleActionOnly = false;
+    protected String actionTargetEntity = "";
+    protected Boolean requiresNonEmptyGrid = false;
     
     public ListGridAction(String actionId) {
         this.actionId = actionId;
@@ -74,6 +81,15 @@ public class ListGridAction implements Cloneable {
         setIconClass(iconClass);
         return this;
     }
+
+    /**
+     *
+     * @see {@link #setRequiresNonEmptyGrid(Boolean)}
+     */
+    public ListGridAction withRequiresNonEmptyGrid(Boolean requiresNonEmptyGrid) {
+        setRequiresNonEmptyGrid(requiresNonEmptyGrid);
+        return this;
+    }
     
     /**
      * @see {@link #setDisplayText(String)}
@@ -95,7 +111,6 @@ public class ListGridAction implements Cloneable {
         setActionUrlOverride(actionUrlOverride);
         return this;
     }
-    
 
     /**
      * @see {@link #setAllCapable(Boolean)}
@@ -110,6 +125,14 @@ public class ListGridAction implements Cloneable {
      */
     public ListGridAction withSingleActionOnly(Boolean singleActionOnly) {
         setSingleActionOnly(singleActionOnly);
+        return this;
+    }
+
+    /**
+     * @see {@link #setActionTargetEntity(String)}
+     */
+    public ListGridAction withActionTargetEntity(String actionTargetEntity) {
+        setActionTargetEntity(actionTargetEntity);
         return this;
     }
     
@@ -245,6 +268,37 @@ public class ListGridAction implements Cloneable {
         this.singleActionOnly = singleActionOnly;
     }
 
+    /**
+     * Returns a fully qualified ceiling entity that this listgrid action targets
+     *
+     * @return
+     */
+    public String getActionTargetEntity() {
+        return actionTargetEntity;
+    }
+
+    /**
+     * This is used to specify a target entityType for use in listgrid actions
+     *
+     * @param actionTargetEntity
+     */
+    public void setActionTargetEntity(String actionTargetEntity) {
+        this.actionTargetEntity = actionTargetEntity;
+    }
+
+    /**
+     * If a list grid action should be disabled unless there are one or more rows in the grid, this property should be true
+     *
+     * @return
+     */
+    public Boolean getRequiresNonEmptyGrid() {
+        return requiresNonEmptyGrid;
+    }
+
+    public void setRequiresNonEmptyGrid(Boolean requiresNonEmptyGrid) {
+        this.requiresNonEmptyGrid = requiresNonEmptyGrid;
+    }
+
     @Override
     public ListGridAction clone() {
         ListGridAction cloned = new ListGridAction(actionId);
@@ -257,6 +311,7 @@ public class ListGridAction implements Cloneable {
         cloned.actionId = actionId;
         cloned.actionUrlOverride = actionUrlOverride;
         cloned.singleActionOnly = singleActionOnly;
+        cloned.requiresNonEmptyGrid = requiresNonEmptyGrid;
         return cloned;
     }
 }

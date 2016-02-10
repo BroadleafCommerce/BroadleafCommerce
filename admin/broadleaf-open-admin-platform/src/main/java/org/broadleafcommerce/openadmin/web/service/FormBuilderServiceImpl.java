@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.openadmin.web.service;
 
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
@@ -34,15 +37,19 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.media.domain.MediaDto;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.AdornedTargetAddMethodType;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -52,6 +59,7 @@ import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -64,11 +72,13 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFor
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.component.MediaField;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilderField;
 import org.broadleafcommerce.openadmin.web.form.entity.CodeField;
 import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
+import org.broadleafcommerce.openadmin.web.form.entity.DefaultAdornedEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -76,28 +86,32 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
+import org.codehaus.jettison.json.JSONObject;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-
+import javax.annotation.Resource;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import java.util.Set;
 
 
 /**
@@ -107,6 +121,8 @@ import javax.persistence.OneToOne;
 public class FormBuilderServiceImpl implements FormBuilderService {
 
     private static final Log LOG = LogFactory.getLog(FormBuilderServiceImpl.class);
+
+    public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
 
     @Resource(name = "blAdminEntityService")
     protected AdminEntityService adminEntityService;
@@ -132,6 +148,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     @Resource(name = "blListGridErrorMessageExtensionManager")
     protected ListGridErrorMessageExtensionManager listGridErrorExtensionManager;
 
+    @Resource(name = "blAdminNavigationService")
+    protected AdminNavigationService adminNavigationService;
+
     @Resource
     protected DataFormatProvider dataFormatProvider;
 
@@ -151,6 +170,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         ListGrid.Type type = ListGrid.Type.MAIN;
         String idProperty = "id";
 
+        FieldWrapper wrapper = new FieldWrapper();
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
@@ -163,6 +183,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         && !ArrayUtils.contains(getGridHiddenVisibilities(), fmd.getVisibility())) {
                     Field hf = createHeaderField(p, fmd);
                     headerFields.add(hf);
+
+                    wrapper.getFields().add(constructFieldDTOFromFieldData(hf, fmd));
+
                 }
             }
         }
@@ -177,8 +200,71 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             message += "Please mark some @AdminPresentation fields with 'prominent = true'";
             LOG.error(message);
         }
-        
+
+        Date c = new Date();
+        String friendlyName = "listGrid" + c.getTime();
+        // Set up the filter builder params
+        listGrid.setJsonFieldName(friendlyName + "Json");
+        listGrid.setFriendlyName(friendlyName);
+        listGrid.setFieldBuilder("RULE_SIMPLE");
+        listGrid.setFieldWrapper(wrapper);
+
+        String blankJsonString =  "{\"data\":[]}";
+        listGrid.setJson(blankJsonString);
+        DataWrapper dw = convertJsonToDataWrapper(blankJsonString);
+        if (dw != null) {
+            listGrid.setDataWrapper(dw);
+        }
+
         return listGrid;
+    }
+
+    protected FieldDTO constructFieldDTOFromFieldData(Field field, BasicFieldMetadata fmd) {
+        FieldDTO fieldDTO = new FieldDTO();
+        //translate the label to display
+        String label = field.getFriendlyName();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        MessageSource messages = context.getMessageSource();
+        if (messages != null) {
+            label = messages.getMessage(label, null, label, context.getJavaLocale());
+        }
+        fieldDTO.setLabel(label);
+
+        fieldDTO.setId(field.getName());
+        if (field.getFieldType().equals("STRING")) {
+            fieldDTO.setOperators("blcFilterOperators_Text");
+        } else if (field.getFieldType().equals("DATE")) {
+            fieldDTO.setOperators("blcFilterOperators_Date");
+        } else if (field.getFieldType().equals("NUMBER") || field.getFieldType().equals("MONEY") || field.getFieldType().equals("DECIMAL")) {
+            fieldDTO.setOperators("blcFilterOperators_Numeric");
+        } else if (field.getFieldType().equals("BOOLEAN")) {
+            fieldDTO.setOperators("blcFilterOperators_Boolean");
+        } else if (field.getFieldType().equals("BROADLEAF_ENUMERATION")) {
+            fieldDTO.setOperators("blcFilterOperators_Enumeration");
+            fieldDTO.setInput("select");
+            fieldDTO.setType("string");
+            String[][] enumerationValues = fmd.getEnumerationValues ();
+            Map<String, String> enumMap = new HashMap<String, String>();
+            for (int i = 0; i < enumerationValues.length; i++) {
+                enumMap.put(enumerationValues[i][0], enumerationValues[i][1]);
+            }
+
+            fieldDTO.setValues(new JSONObject(enumMap).toString());
+        } else if (field.getFieldType().equals("ADDITIONAL_FOREIGN_KEY")) {
+            fieldDTO.setOperators("blcFilterOperators_Selectize");
+            fieldDTO.setType("string");
+
+            AdminSection section = adminNavigationService.findAdminSectionByClassAndSectionId(fmd.getForeignKeyClass(), null);
+            if (section != null) {
+                fieldDTO.setSelectizeSectionKey(section.getSectionKey());
+            } else {
+                fieldDTO.setSelectizeSectionKey(context.getRequest().getServletPath());
+            }
+        } else {
+            fieldDTO.setOperators("blcFilterOperators_Text");
+        }
+
+        return fieldDTO;
     }
     
     protected Field createHeaderField(Property p, BasicFieldMetadata fmd) {
@@ -225,6 +311,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         boolean readOnly = false;
         boolean hideIdColumn = false;
         boolean canFilterAndSort = true;
+        boolean modalSingleSelectable = false;
+        boolean modalMultiSelectable = false;
+        boolean selectize = false;
+        boolean isMedia = false;
+        FieldWrapper wrapper = new FieldWrapper();
+
+
         String idProperty = "id";
         for (Property property : cmd.getProperties()) {
             if (property.getMetadata() instanceof BasicFieldMetadata &&
@@ -239,6 +332,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // kind of field this is.
         if (fmd instanceof BasicFieldMetadata) {
             readOnly = ((BasicFieldMetadata) fmd).getReadOnly();
+            modalSingleSelectable = true;
             for (Property p : cmd.getProperties()) {
                 if (p.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
@@ -251,6 +345,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                         Field hf = createHeaderField(p, md);
                         headerFields.add(hf);
+                        wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
                     }
                 }
             }
@@ -259,34 +354,67 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         } else if (fmd instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata bcm = (BasicCollectionMetadata) fmd;
             readOnly = !bcm.isMutable();
-            for (Property p : cmd.getProperties()) {
-                if (p.getMetadata() instanceof BasicFieldMetadata) {
+
+            if (bcm.getAddMethodType().equals(AddMethodType.SELECTIZE_LOOKUP)) {
+                Property p = cmd.getPMap().get(bcm.getSelectizeVisibleField());
+                if (p != null) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
-                    if (md.isProminent() != null && md.isProminent() 
-                            && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
-                        Field hf = createHeaderField(p, md);
-                        headerFields.add(hf);
+
+                    Field hf = createHeaderField(p, md);
+                    headerFields.add(hf);
+                    wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
+                }
+            } else {
+                for (Property p : cmd.getProperties()) {
+                    if (p.getMetadata() instanceof BasicFieldMetadata) {
+                        BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+                        if (md.isProminent() != null && md.isProminent()
+                                && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
+                            Field hf = createHeaderField(p, md);
+                            headerFields.add(hf);
+                            wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
+                        }
                     }
                 }
             }
 
             type = ListGrid.Type.BASIC;
             
-            if (bcm.getAddMethodType().equals(AddMethodType.PERSIST)) {
+            if (bcm.getAddMethodType().equals(AddMethodType.PERSIST) || bcm.getAddMethodType().equals(AddMethodType.PERSIST_EMPTY)) {
                 editable = true;
+            } else if (bcm.getAddMethodType().equals(AddMethodType.SELECTIZE_LOOKUP)) {
+                selectize = true;
+                modalSingleSelectable = true;
+            } else {
+                modalSingleSelectable = true;
             }
 
             sortable = StringUtils.isNotBlank(bcm.getSortProperty());
         } else if (fmd instanceof AdornedTargetCollectionMetadata) {
+            modalSingleSelectable = true;
             readOnly = !((AdornedTargetCollectionMetadata) fmd).isMutable();
             AdornedTargetCollectionMetadata atcmd = (AdornedTargetCollectionMetadata) fmd;
 
-            for (String fieldName : atcmd.getGridVisibleFields()) {
-                Property p = cmd.getPMap().get(fieldName);
-                BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
-                
-                Field hf = createHeaderField(p, md);
-                headerFields.add(hf);
+            if (atcmd.getAdornedTargetAddMethodType().equals(AdornedTargetAddMethodType.SELECTIZE_LOOKUP)) {
+                selectize = true;
+
+                Property p = cmd.getPMap().get(atcmd.getSelectizeVisibleField());
+                if (p != null) {
+                    BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+
+                    Field hf = createHeaderField(p, md);
+                    headerFields.add(hf);
+                    wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
+                }
+            } else {
+                for (String fieldName : atcmd.getGridVisibleFields()) {
+                    Property p = cmd.getPMap().get(fieldName);
+                    BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+
+                    Field hf = createHeaderField(p, md);
+                    headerFields.add(hf);
+                    wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
+                }
             }
 
             type = ListGrid.Type.ADORNED;
@@ -307,13 +435,16 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             keyMd.setFriendlyName("Key");
             Field hf = createHeaderField(p2, keyMd);
             headerFields.add(hf);
-            
+            wrapper.getFields().add(constructFieldDTOFromFieldData(hf, keyMd));
+
             if (mmd.isSimpleValue()) {
                 Property valueProperty = cmd.getPMap().get("value");
                 BasicFieldMetadata valueMd = (BasicFieldMetadata) valueProperty.getMetadata();
                 valueMd.setFriendlyName("Value");
                 hf = createHeaderField(valueProperty, valueMd);
                 headerFields.add(hf);
+                wrapper.getFields().add(constructFieldDTOFromFieldData(hf, valueMd));
+
                 idProperty = "key";
                 hideIdColumn = true;
             } else {
@@ -344,6 +475,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                     && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                                 hf = createHeaderField(p, md);
                                 headerFields.add(hf);
+                                wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
+
+                                // Is this a media listgrid
+                                if (hf.getFieldType().equals("ASSET_LOOKUP")) {
+                                    isMedia = true;
+                                }
                             }
                         }
                     }
@@ -365,8 +502,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (CollectionUtils.isEmpty(headerFields)) {
             String message = "There are no listgrid header fields configured for the class " + ceilingType + " and property '" +
             	field.getName() + "'.";
-            if (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM) {
+            if (selectize && (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM)) {
+                message += " Please configure 'selectizeVisibleField' in your @AdminPresentationAdornedTargetCollection configuration";
+            } else if (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM) {
                 message += " Please configure 'gridVisibleFields' in your @AdminPresentationAdornedTargetCollection configuration";
+            } else if (selectize && type == ListGrid.Type.BASIC) {
+                message += " Please configure 'selectizeVisibleField' in your @AdminPresentationCollection configuration";
             } else {
                 message += " Please mark some @AdminPresentation fields with 'prominent = true'";
             }
@@ -380,10 +521,24 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             listGrid.setFriendlyName(field.getName());
         }
         listGrid.setContainingEntityId(containingEntityId);
-        listGrid.setReadOnly(readOnly);
+        listGrid.setIsReadOnly(readOnly);
         listGrid.setHideIdColumn(hideIdColumn);
         listGrid.setCanFilterAndSort(canFilterAndSort);
-        
+
+        // Set up the filter builder params
+        String friendlyName = field.getMetadata().getFriendlyName();
+        listGrid.setJsonFieldName(friendlyName + "Json");
+        listGrid.setFriendlyName(friendlyName);
+        listGrid.setFieldBuilder("RULE_SIMPLE");
+        listGrid.setFieldWrapper(wrapper);
+
+        String blankJsonString =  "{\"data\":[]}";
+        listGrid.setJson(blankJsonString);
+        DataWrapper dw = convertJsonToDataWrapper(blankJsonString);
+        if (dw != null) {
+            listGrid.setDataWrapper(dw);
+        }
+
         if (editable) {
             listGrid.getRowActions().add(DefaultListGridActions.UPDATE);
         }
@@ -392,11 +547,105 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         if (sortable) {
             listGrid.setCanFilterAndSort(false);
-            listGrid.getToolbarActions().add(DefaultListGridActions.REORDER);
+            listGrid.setIsSortable(true);
+        }
+
+        if (modalSingleSelectable) {
+            listGrid.addModalRowAction(DefaultListGridActions.SINGLE_SELECT);
+        }
+        listGrid.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
+
+        if (selectize) {
+            listGrid.setSelectizeUrl(buildSelectizeUrl(listGrid));
+            listGrid.setSelectType(ListGrid.SelectType.SELECTIZE);
+        }
+
+        if (modalMultiSelectable) {
+            listGrid.addModalRowAction(DefaultListGridActions.MULTI_SELECT);
+            listGrid.setSelectType(ListGrid.SelectType.MULTI_SELECT);
         }
         listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
 
+        if (isMedia) {
+            listGrid.setListGridType(ListGrid.Type.ASSET_GRID);
+            listGrid.setSelectType(ListGrid.SelectType.NONE);
+        }
+
         return listGrid;
+    }
+
+    @Override
+    public Map<String, Object> buildSelectizeCollectionInfo(String containingEntityId, DynamicResultSet drs, Property field,
+        String sectionKey, List<SectionCrumb> sectionCrumbs)
+            throws ServiceException {
+        FieldMetadata fmd = field.getMetadata();
+        // Get the class metadata for this particular field
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(fmd, sectionCrumbs);
+        if (field != null) {
+            ppr.setSectionEntityField(field.getName());
+        }
+        ClassMetadata cmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+
+        Map<String, Object> result = constructSelectizeOptionMap(drs, cmd);
+
+        AdornedTargetList adornedList = ppr.getAdornedList();
+        if (adornedList != null && adornedList.getLinkedObjectPath() != null
+            && adornedList.getTargetObjectPath() != null && adornedList.getLinkedIdProperty() != null
+            && adornedList.getTargetIdProperty() != null) {
+            result.put("linkedObjectPath", adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty());
+            result.put("linkedObjectId", containingEntityId);
+            result.put("targetObjectPath", adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
+        }
+
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> constructSelectizeOptionMap(DynamicResultSet drs, ClassMetadata cmd) {
+        Map<String, Object> result = new HashMap<>();
+        List<Map<String, String>> options = new ArrayList<>();
+
+        List<Field> headerFields = new ArrayList<Field>();
+        for (Property p : cmd.getProperties()) {
+            if (p.getMetadata() instanceof BasicFieldMetadata) {
+                BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+                if (md.isProminent() != null && md.isProminent()
+                        && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
+                    Field hf = createHeaderField(p, md);
+                    headerFields.add(hf);
+                }
+            }
+        }
+
+        for (Entity e : drs.getRecords()) {
+            Map<String, String> selectizeOption = new HashMap<>();
+            for (Field headerField : headerFields) {
+                Property p = e.findProperty(headerField.getName());
+                if (p != null) {
+                    selectizeOption.put("name", p.getValue());
+                    break;
+                }
+            }
+            if (e.findProperty("id") != null) {
+                selectizeOption.put("id", e.findProperty("id").getValue());
+            }
+            if (e.findProperty(ALTERNATE_ID_PROPERTY) != null) {
+                selectizeOption.put("alternateId", e.findProperty(ALTERNATE_ID_PROPERTY).getValue());
+            }
+            options.add(selectizeOption);
+        }
+        result.put("options", options);
+
+        return result;
+    }
+
+    private String buildSelectizeUrl(ListGrid listGrid) {
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        String url = request.getContextPath();
+        url += url.endsWith("/") || listGrid.getSectionKey().startsWith("/") ? listGrid.getSectionKey() : "/" + listGrid.getSectionKey();
+        url += "/" + listGrid.getContainingEntityId();
+        url += "/" + listGrid.getSubCollectionFieldName();
+        return url;
     }
 
     protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, DynamicResultSet drs, 
@@ -420,6 +669,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             listGrid.setExternalEntitySectionKey(section.getUrl());
         }
 
+        // format date list grid cells
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, Y @ hh:mma");
+        DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
+        symbols.setAmPmStrings(new String[] { "am", "pm" });
+        formatter.setDateFormatSymbols(symbols);
+
         // For each of the entities (rows) in the list grid, we need to build the associated
         // ListGridRecord and set the required fields on the record. These fields are the same ones
         // that are used for the header fields.
@@ -431,11 +686,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (e.findProperty("hasError") != null) {
                 Boolean hasError = Boolean.parseBoolean(e.findProperty("hasError").getValue());
                 record.setIsError(hasError);
-                ExtensionResultStatusType messageResultStatus = listGridErrorExtensionManager
-                        .getProxy().determineErrorMessageForEntity(e, record);
-                
-                if (ExtensionResultStatusType.NOT_HANDLED.equals(messageResultStatus)) {
-                    record.setErrorKey("listgrid.record.error");
+                if (hasError) {
+                    ExtensionResultStatusType messageResultStatus = listGridErrorExtensionManager
+                            .getProxy().determineErrorMessageForEntity(e, record);
+
+                    if (ExtensionResultStatusType.NOT_HANDLED.equals(messageResultStatus)) {
+                        record.setErrorKey("listgrid.record.error");
+                    }
                 }
             }
 
@@ -454,7 +711,17 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         recordField.setValue(((ComboField) headerField).getOption(p.getValue()));
                         recordField.setDisplayValue(p.getDisplayValue());
                     } else {
-                        recordField.setValue(p.getValue());
+                        if (headerField.getFieldType().equals("DATE")) {
+                            try {
+                                Date date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").parse(p.getValue());
+                                String newValue = formatter.format(date);
+                                recordField.setValue(newValue);
+                            } catch (Exception ex) {
+                                recordField.setValue(p.getValue());
+                            }
+                        } else {
+                            recordField.setValue(p.getValue());
+                        }
                         recordField.setDisplayValue(p.getDisplayValue());
                     }
                     
@@ -496,7 +763,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return BooleanUtils.isTrue(((BasicFieldMetadata) p.getMetadata()).getIsDerived());
     }
 
-    protected void setEntityFormFields(EntityForm ef, List<Property> properties) {
+    protected void setEntityFormFields(ClassMetadata cmd, EntityForm ef, List<Property> properties) {
+        List<Field> homelessFields = new ArrayList<>();
+
         for (Property property : properties) {
             if (property.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) property.getMetadata();
@@ -516,16 +785,22 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         // We're dealing with fields that should render as drop-downs, so set their possible values
                         f = new ComboField();
                         ((ComboField) f).setOptions(fmd.getEnumerationValues());
+                        if (fmd.getHideEnumerationIfEmpty() != null && fmd.getHideEnumerationIfEmpty().booleanValue()
+                                && ((ComboField) f).getOptions().size() == 0) {
+                            f.setIsVisible(false);
+                        }
                     } else if (fieldType.equals(SupportedFieldType.CODE.toString())) {
                         f = new CodeField();
                     } else if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
+                            || fieldType.equals(SupportedFieldType.RULE_SIMPLE_TIME.toString())
                             || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
                         // We're dealing with rule builders, so we'll create those specialized fields
                         f = new RuleBuilderField();
                         ((RuleBuilderField) f).setJsonFieldName(property.getName() + "Json");
                         ((RuleBuilderField) f).setDataWrapper(new DataWrapper());
                         ((RuleBuilderField) f).setFieldBuilder(fmd.getRuleIdentifier());
-                        
+                        ((RuleBuilderField) f).setDisplayType(fmd.getDisplayType().toString());
+
                         String blankJsonString =  "{\"data\":[]}";
                         ((RuleBuilderField) f).setJson(blankJsonString);
                         DataWrapper dw = convertJsonToDataWrapper(blankJsonString);
@@ -534,9 +809,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         }
                         
                         if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())) {
-                            ((RuleBuilderField) f).setStyleClass("rule-builder-simple");
+                            ((RuleBuilderField) f).setRuleType("rule-builder-simple");
                         } else if (fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
-                            ((RuleBuilderField) f).setStyleClass("rule-builder-complex");
+                            ((RuleBuilderField) f).setRuleType("rule-builder-with-quantity");
+                        } else if (fieldType.equals(SupportedFieldType.RULE_SIMPLE_TIME.toString())) {
+                            ((RuleBuilderField) f).setRuleType("rule-builder-simple-time");
                         }
                     } else if (LookupType.DROPDOWN.equals(fmd.getLookupType())) {
                         // We're dealing with a to-one field that wants to be rendered as a dropdown instead of in a 
@@ -557,7 +834,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                     f.withName(property.getName())
                          .withFieldType(fieldType)
-                         .withFieldComponentRenderer(fmd.getFieldComponentRenderer())
+                         .withFieldComponentRenderer(fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString())
                          .withOrder(fmd.getOrder())
                          .withFriendlyName(fmd.getFriendlyName())
                          .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
@@ -574,7 +851,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup());
 
                     String defaultValue = fmd.getDefaultValue();
-                    if (StringUtils.isNotEmpty(defaultValue)) {
+                    if (defaultValue != null) {
                         defaultValue = extractDefaultValueFromFieldData(fieldType, fmd);
                         f.withValue(defaultValue);
                     }
@@ -584,7 +861,29 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
 
                     // Add the field to the appropriate FieldGroup
-                    ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
+                    if (fmd.getGroup() == null) {
+                        homelessFields.add(f);
+                    } else {
+                        ef.addField(cmd, f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
+                    }
+                }
+            }
+        }
+
+        for (Field f : homelessFields) {
+            ef.addField(cmd, f, null, null, null, null);
+        }
+    }
+
+    protected void setEntityFormTabsAndGroups(EntityForm ef, Map<String, TabMetadata> tabMetadataMap) {
+        if (tabMetadataMap != null) {
+            Set<String> tabMetadataKeySet = tabMetadataMap.keySet();
+            for (String tabKey : tabMetadataKeySet) {
+                TabMetadata tabMetadata = tabMetadataMap.get(tabKey);
+                String unprocessedTabName = ef.addTabFromTabMetadata(tabMetadata);
+                Set<String> groupMetadataKeySet = tabMetadata.getGroupMetadata().keySet();
+                for (String groupKey : groupMetadataKeySet) {
+                    ef.addGroupFromGroupMetadata(tabMetadata.getGroupMetadata().get(groupKey), unprocessedTabName);
                 }
             }
         }
@@ -594,6 +893,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     public String extractDefaultValueFromFieldData(String fieldType, BasicFieldMetadata fmd) {
         String defaultValue = fmd.getDefaultValue();
         if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
+                || fieldType.equals(SupportedFieldType.RULE_SIMPLE_TIME.toString())
                 || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
             return null;
         } else if (fieldType.equals(SupportedFieldType.INTEGER.toString())) {
@@ -604,16 +904,18 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 LOG.warn(msg);
                 return null;
             }
-        } else if (fieldType.equals(SupportedFieldType.DECIMAL.toString())) {
+        } else if (fieldType.equals(SupportedFieldType.DECIMAL.toString())
+                || fieldType.equals(SupportedFieldType.MONEY.toString())) {
             try {
                 BigDecimal val = new BigDecimal(defaultValue);
             } catch (NumberFormatException  e) {
-                String msg = buildMsgForDefValException(SupportedFieldType.DECIMAL.toString(), fmd, defaultValue);
+                String msg = buildMsgForDefValException(fieldType.toString(), fmd, defaultValue);
                 LOG.warn(msg);
                 return null;
             }
         } else if (fieldType.equals(SupportedFieldType.BOOLEAN.toString())) {
-            if (!defaultValue.toLowerCase().equals("true") && !defaultValue.toLowerCase().equals("false")) {
+            if (!defaultValue.toLowerCase().equals("true") && !defaultValue.toLowerCase().equals("false")
+                    && !defaultValue.toUpperCase().equals("Y") && !defaultValue.toUpperCase().equals("N")) {
                 String msg = buildMsgForDefValException(SupportedFieldType.BOOLEAN.toString(), fmd, defaultValue);
                 LOG.warn(msg);
                 return null;
@@ -682,7 +984,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         ef.setSectionCrumbsImpl(sectionCrumbs);
 
-        setEntityFormFields(ef, Arrays.asList(cmd.getProperties()));
+        setEntityFormTabsAndGroups(ef, cmd.getTabAndGroupMetadata());
+
+        setEntityFormFields(cmd, ef, Arrays.asList(cmd.getProperties()));
         
         populateDropdownToOneFields(ef, cmd);
         
@@ -759,6 +1063,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             field.setDirty(entityProp.getIsDirty());
                         }
                         if (basicFM.getFieldType()==SupportedFieldType.RULE_SIMPLE
+                                || basicFM.getFieldType()==SupportedFieldType.RULE_SIMPLE_TIME
                                 || basicFM.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY) {
                             RuleBuilderField rbf = (RuleBuilderField) field;
                             if (entity.getPMap().containsKey(rbf.getJsonFieldName())) {
@@ -894,22 +1199,47 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 DynamicResultSet subCollectionEntities = collectionRecords.get(p.getName());
                 String containingEntityId = entity.getPMap().get(ef.getIdProperty()).getValue();
                 ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p, ef.getSectionKey(), sectionCrumbs);
-                listGrid.setListGridType(ListGrid.Type.INLINE);
 
                 CollectionMetadata md = ((CollectionMetadata) p.getMetadata());
-                ef.addListGrid(listGrid, md.getTab(), md.getTabOrder());
+                if (md instanceof BasicCollectionMetadata) {
+                    PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
+                    ClassMetadata collectionCmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+                    if (collectionCmd.getPolymorphicEntities().getChildren().length != 0) {
+                        List<ClassTree> entityTypes = collectionCmd.getPolymorphicEntities().getCollapsedClassTrees();
+                        for (ClassTree entityType : entityTypes) {
+                            ListGridAction ADD = new ListGridAction(ListGridAction.ADD)
+                                    .withButtonClass(AddMethodType.PERSIST_EMPTY==
+                                            ((BasicCollectionMetadata) md).getAddMethodType()?"sub-list-grid-add-empty":"sub-list-grid-add")
+                                    .withActionTargetEntity(entityType.getFullyQualifiedClassname())
+                                    .withUrlPostfix("/add")
+                                    .withIconClass("fa fa-plus")
+                                    .withDisplayText("Add " + BLCMessageUtils.getMessage(entityType.getFriendlyName()));
+                            listGrid.getToolbarActions().add(0, ADD);
+                        }
+                    } else {
+                        listGrid.getToolbarActions().add(0, AddMethodType.PERSIST_EMPTY==
+                                ((BasicCollectionMetadata) md).getAddMethodType()?DefaultListGridActions.ADD_EMPTY:DefaultListGridActions.ADD);
+                    }
+                } else {
+                    listGrid.getToolbarActions().add(0, DefaultListGridActions.ADD);
+                }
+                if (subCollectionEntities.getUnselectedTabMetadata().get(md.getTab())!=null) {
+                    ef.addListGrid(cmd, listGrid, md.getTab(), md.getTabOrder(), md.getGroup(), true);
+                } else {
+                    ef.addListGrid(cmd, listGrid, md.getTab(), md.getTabOrder(), md.getGroup(), false);
+                }
             }
         }
         
-        for (ListGrid lg : ef.getAllListGrids()) {
-            // We always want the add option to be the first toolbar action for consistency
-            if (lg.getToolbarActions().isEmpty()) {
-                lg.addToolbarAction(DefaultListGridActions.ADD);
-            } else {
-                lg.getToolbarActions().add(0, DefaultListGridActions.ADD);
-            }
-        }
-        
+//        for (ListGrid lg : ef.getAllListGrids()) {
+//            // We always want the add option to be the first toolbar action for consistency
+//            if (lg.getToolbarActions().isEmpty()) {
+//                lg.addToolbarAction(DefaultListGridActions.ADD);
+//            } else {
+//                lg.getToolbarActions().add(0, DefaultListGridActions.ADD);
+//            }
+//        }
+
         if (CollectionUtils.isEmpty(ef.getActions())) {
             ef.addAction(DefaultEntityFormActions.SAVE);
         }
@@ -1071,12 +1401,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public void populateAdornedEntityFormFields(EntityForm ef, Entity entity, AdornedTargetList adornedList) {
-        Field field = ef.getFields().get(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
+        Field field = ef.findField(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
         Property entityProp = entity.findProperty(ef.getIdProperty());
         field.setValue(entityProp.getValue());
 
         if (StringUtils.isNotBlank(adornedList.getSortField())) {
-            field = ef.getFields().get(adornedList.getSortField());
+            field = ef.findField(adornedList.getSortField());
             entityProp = entity.findProperty(adornedList.getSortField());
             if (field != null && entityProp != null) {
                 field.setValue(entityProp.getValue());
@@ -1086,7 +1416,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public void populateMapEntityFormFields(EntityForm ef, Entity entity) {
-        Field field = ef.getFields().get("priorKey");
+        Field field = ef.findField("priorKey");
         Property entityProp = entity.findProperty("key");
         if (field != null && entityProp != null) {
             field.setValue(entityProp.getValue());
@@ -1097,7 +1427,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
             String parentId, boolean isViewCollectionItem)
             throws ServiceException {
-        EntityForm ef = createStandardEntityForm();
+        EntityForm ef = createStandardAdornedEntityForm();
         return buildAdornedListForm(adornedMd, adornedList, parentId, isViewCollectionItem, ef);
     }
     
@@ -1128,26 +1458,26 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
 
         // Set the maintained fields on the form
-        setEntityFormFields(ef, entityFormProperties);
+        setEntityFormFields(collectionMetadata, ef, entityFormProperties);
 
         // Add these two additional hidden fields that are required for persistence
         Field f = new Field()
                 .withName(adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty())
                 .withFieldType(SupportedFieldType.HIDDEN.toString())
                 .withValue(parentId);
-        ef.addHiddenField(f);
+        ef.addHiddenField(collectionMetadata, f);
 
         f = new Field()
                 .withName(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty())
                 .withFieldType(SupportedFieldType.HIDDEN.toString())
                 .withIdOverride("adornedTargetIdProperty");
-        ef.addHiddenField(f);
+        ef.addHiddenField(collectionMetadata, f);
 
         if (StringUtils.isNotBlank(adornedList.getSortField())) {
             f = new Field()
                     .withName(adornedList.getSortField())
                     .withFieldType(SupportedFieldType.HIDDEN.toString());
-            ef.addHiddenField(f);
+            ef.addHiddenField(collectionMetadata, f);
         }
 
         ef.setParentId(parentId);
@@ -1200,7 +1530,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                 .withFriendlyName("Key");
         }
         keyField.setRequired(true);
-        ef.addMapKeyField(keyField);
+        ef.addMapKeyField(cmd, keyField);
         
         // Set the fields for this form
         List<Property> mapFormProperties;
@@ -1220,12 +1550,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             });
         }
 
-        setEntityFormFields(ef, mapFormProperties);
+        setEntityFormFields(cmd, ef, mapFormProperties);
 
         Field f = new Field()
                 .withName("priorKey")
                 .withFieldType(SupportedFieldType.HIDDEN.toString());
-        ef.addHiddenField(f);
+        ef.addHiddenField(cmd, f);
 
         ef.setParentId(parentId);
 
@@ -1235,6 +1565,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     protected EntityForm createStandardEntityForm() {
         EntityForm ef = new EntityForm();
         ef.addAction(DefaultEntityFormActions.SAVE);
+        return ef;
+    }
+
+    protected EntityForm createStandardAdornedEntityForm() {
+        EntityForm ef = new EntityForm();
+        ef.addAction(DefaultAdornedEntityFormActions.Add);
         return ef;
     }
     

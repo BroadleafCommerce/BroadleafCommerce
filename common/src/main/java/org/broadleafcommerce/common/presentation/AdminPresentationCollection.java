@@ -49,6 +49,17 @@ public @interface AdminPresentationCollection {
     String friendlyName() default "";
 
     /**
+     * <p>Optional - field name will be used if not specified</p>
+     *
+     * <p>The add friendly name to present to a user for this field in the add GUI. If supporting i18N,
+     * the friendly name may be a key to retrieve a localized friendly name using
+     * the GWT support for i18N.</p>
+     *
+     * @return the add friendly name
+     */
+    String addFriendlyName() default "";
+
+    /**
      * <p>Optional - only required if you wish to apply security to this field</p>
      *
      * <p>If a security level is specified, it is registered with the SecurityManager.
@@ -140,6 +151,7 @@ public @interface AdminPresentationCollection {
      * 
      * @return the tab for this field
      */
+    @Deprecated
     String tab() default "General";
 
     /**
@@ -148,11 +160,12 @@ public @interface AdminPresentationCollection {
      * Specify an order for this tab. Tabs will be sorted int he resulting form in 
      * ascending order based on this parameter.
      * 
-     * The default tab will render with an order of 100.
+     * The default tab will render with an order of 99999.
      * 
      * @return the order for this tab
      */
-    int tabOrder() default 100;
+    @Deprecated
+    int tabOrder() default 99999;
 
     /**
      * <p>Optional - only required if you need to specially handle CRUD operations for this
@@ -214,4 +227,42 @@ public @interface AdminPresentationCollection {
      * @return the sort direction
      */
     boolean sortAscending() default true;
+    
+    
+    /**
+     * <p>Optional - fields are eagerly fetched by default</p>
+     *
+     * <p>Specify true if this field should be lazily fetched</p>
+     *
+     * @return whether or not the field should be fetched
+     */
+   
+    boolean lazyFetch() default true;
+
+    /**
+     * Used to map the collection to a group defined in AdminPresentationClass using AdminGroupPresentation.
+     *
+     * If the group cannot be found in AdminPresentationClass, then the tab specified in AdminPresentationCollection
+     * is used to map the collection to a tab defined in AdminPresentationClass using AdminTabPresentation.
+     * If the tab cannot be found, then the collection will be placed in a tab created using the information
+     * specified in AdminPresentationCollection.
+     *
+     * Optional - only required if you want the field to appear under a specific group
+     *
+     * Specify a GUI group for this collection
+     *
+     * @return the group for this collection
+     */
+    String group() default "";
+
+    /**
+     * <p>Optional - only required when using the "SELECTIZE_LOOKUP" addType for a collection </p>
+     *
+     * <p>Field visible in the selectize collection UI in the admin tool.
+     * Fields are referenced relative to the the target entity. For example, in CrossSaleProductImpl,
+     * to show the product name field, the selectizeVisibleField value would be : "name"</p>
+     *
+     * @return Field visible in the selectize collection UI in the admin tool
+     */
+    String selectizeVisibleField() default "";
 }

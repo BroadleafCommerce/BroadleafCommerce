@@ -19,8 +19,8 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
-import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.LookupType;
+import org.broadleafcommerce.common.presentation.client.RuleBuilderDisplayType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
@@ -58,16 +58,17 @@ public class BasicFieldMetadata extends FieldMetadata {
     //@AdminPresentation derived fields
     protected String name;
     protected VisibilityEnum visibility;
-    protected String group;
-    protected Integer groupOrder;
+    @Deprecated
     protected Boolean groupCollapsed;
     protected SupportedFieldType explicitFieldType;
+    protected RuleBuilderDisplayType displayType;
     protected Boolean largeEntry;
     protected Boolean prominent;
     protected Integer gridOrder;
     protected String columnWidth;
     protected String broadleafEnumeration;
-    protected String fieldComponentRenderer;
+    protected Boolean hideEnumerationIfEmpty;
+    protected SupportedFieldType fieldComponentRenderer;
     protected Boolean readOnly;
     protected Map<String, List<Map<String, String>>> validationConfigurations = new HashMap<String, List<Map<String, String>>>(5);
     protected Boolean requiredOverride;
@@ -81,6 +82,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String optionValueFieldName;
     protected String optionDisplayFieldName;
     protected Boolean optionCanEditValues;
+    protected Boolean optionHideIfEmpty;
     protected String[][] optionFilterParams;
     protected String[] customCriteria;
     protected Boolean useServerSideInspectionCache;
@@ -245,12 +247,12 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.explicitFieldType = fieldType;
     }
 
-    public String getGroup() {
-        return group;
+    public RuleBuilderDisplayType getDisplayType() {
+        return displayType;
     }
 
-    public void setGroup(String group) {
-        this.group = group;
+    public void setDisplayType(RuleBuilderDisplayType displayType) {
+        this.displayType = displayType;
     }
 
     public Boolean isLargeEntry() {
@@ -285,20 +287,20 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.broadleafEnumeration = broadleafEnumeration;
     }
 
-    /**
-     * Returns the component renderer for the field.  Defaults to the fieldType unless otherwise set.
-     * 
-     * @return String
-     */
-    public String getFieldComponentRenderer() {
-        if ((StringUtils.isEmpty(fieldComponentRenderer) || fieldComponentRenderer == SupportedFieldType.UNKNOWN.toString()) && fieldType != null) {
-            return fieldType.toString();
-        }
+    public Boolean getHideEnumerationIfEmpty() {
+        return hideEnumerationIfEmpty;
+    }
+
+    public void setHideEnumerationIfEmpty(Boolean hideEnumerationIfEmpty) {
+        this.hideEnumerationIfEmpty = hideEnumerationIfEmpty;
+    }
+
+    public SupportedFieldType getFieldComponentRenderer() {
         return fieldComponentRenderer;
     }
 
     
-    public void setFieldComponentRenderer(String fieldComponentRenderer) {
+    public void setFieldComponentRenderer(SupportedFieldType fieldComponentRenderer) {
         this.fieldComponentRenderer = fieldComponentRenderer;
     }
 
@@ -310,14 +312,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.readOnly = readOnly;
     }
 
-    public Integer getGroupOrder() {
-        return groupOrder;
-    }
-
-    public void setGroupOrder(Integer groupOrder) {
-        this.groupOrder = groupOrder;
-    }
-    
     public Integer getGridOrder() {
         return gridOrder;
     }
@@ -346,10 +340,12 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.requiredOverride = requiredOverride;
     }
 
+    @Deprecated
     public Boolean getGroupCollapsed() {
         return groupCollapsed;
     }
 
+    @Deprecated
     public void setGroupCollapsed(Boolean groupCollapsed) {
         this.groupCollapsed = groupCollapsed;
     }
@@ -415,6 +411,14 @@ public class BasicFieldMetadata extends FieldMetadata {
 
     public void setOptionCanEditValues(Boolean optionCanEditValues) {
         this.optionCanEditValues = optionCanEditValues;
+    }
+
+    public Boolean getOptionHideIfEmpty() {
+        return optionHideIfEmpty;
+    }
+
+    public void setOptionHideIfEmpty(Boolean optionHideIfEmpty) {
+        this.optionHideIfEmpty = optionHideIfEmpty;
     }
 
     public String getOptionDisplayFieldName() {
@@ -580,17 +584,15 @@ public class BasicFieldMetadata extends FieldMetadata {
 
         metadata.name = name;
         metadata.visibility = visibility;
-        metadata.group = group;
-        metadata.groupOrder = groupOrder;
         metadata.groupCollapsed = groupCollapsed;
-        metadata.setTab(getTab());
-        metadata.setTabOrder(getTabOrder());
         metadata.explicitFieldType = explicitFieldType;
+        metadata.displayType = displayType;
         metadata.largeEntry = largeEntry;
         metadata.prominent = prominent;
         metadata.gridOrder = gridOrder;        
         metadata.columnWidth = columnWidth;
         metadata.broadleafEnumeration = broadleafEnumeration;
+        metadata.hideEnumerationIfEmpty = hideEnumerationIfEmpty;
         metadata.fieldComponentRenderer = fieldComponentRenderer;
         metadata.readOnly = readOnly;
         metadata.requiredOverride = requiredOverride;
@@ -614,6 +616,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.enableTypeaheadLookup = enableTypeaheadLookup;
         metadata.optionListEntity = optionListEntity;
         metadata.optionCanEditValues = optionCanEditValues;
+        metadata.optionHideIfEmpty = optionHideIfEmpty;
         metadata.optionDisplayFieldName = optionDisplayFieldName;
         metadata.optionValueFieldName = optionValueFieldName;
         if (optionFilterParams != null) {
@@ -668,6 +671,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (broadleafEnumeration != null ? !broadleafEnumeration.equals(metadata.broadleafEnumeration) : metadata.broadleafEnumeration != null) {
             return false;
         }
+        if (hideEnumerationIfEmpty != null ? !hideEnumerationIfEmpty.equals(metadata.hideEnumerationIfEmpty) : metadata.hideEnumerationIfEmpty != null) {
+            return false;
+        }
         if (fieldComponentRenderer != null ? !fieldComponentRenderer.equals(metadata.fieldComponentRenderer) : metadata.fieldComponentRenderer != null) {
             return false;
         }
@@ -678,6 +684,9 @@ public class BasicFieldMetadata extends FieldMetadata {
             return false;
         }
         if (explicitFieldType != metadata.explicitFieldType) {
+            return false;
+        }
+        if (displayType != metadata.displayType) {
             return false;
         }
         if (fieldType != metadata.fieldType) {
@@ -695,13 +704,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (foreignKeyProperty != null ? !foreignKeyProperty.equals(metadata.foreignKeyProperty) : metadata.foreignKeyProperty != null) {
             return false;
         }
-        if (group != null ? !group.equals(metadata.group) : metadata.group != null) {
-            return false;
-        }
         if (groupCollapsed != null ? !groupCollapsed.equals(metadata.groupCollapsed) : metadata.groupCollapsed != null) {
-            return false;
-        }
-        if (groupOrder != null ? !groupOrder.equals(metadata.groupOrder) : metadata.groupOrder != null) {
             return false;
         }
         if (helpText != null ? !helpText.equals(metadata.helpText) : metadata.helpText != null) {
@@ -735,6 +738,9 @@ public class BasicFieldMetadata extends FieldMetadata {
             return false;
         }
         if (optionCanEditValues != null ? !optionCanEditValues.equals(metadata.optionCanEditValues) : metadata.optionCanEditValues != null) {
+            return false;
+        }
+        if (optionHideIfEmpty != null ? !optionHideIfEmpty.equals(metadata.optionHideIfEmpty) : metadata.optionHideIfEmpty != null) {
             return false;
         }
         if (optionDisplayFieldName != null ? !optionDisplayFieldName.equals(metadata.optionDisplayFieldName) : metadata.optionDisplayFieldName != null) {
@@ -832,15 +838,15 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (enumerationClass != null ? enumerationClass.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (visibility != null ? visibility.hashCode() : 0);
-        result = 31 * result + (group != null ? group.hashCode() : 0);
-        result = 31 * result + (groupOrder != null ? groupOrder.hashCode() : 0);
         result = 31 * result + (groupCollapsed != null ? groupCollapsed.hashCode() : 0);
         result = 31 * result + (explicitFieldType != null ? explicitFieldType.hashCode() : 0);
+        result = 31 * result + (displayType != null ? displayType.hashCode() : 0);
         result = 31 * result + (largeEntry != null ? largeEntry.hashCode() : 0);
         result = 31 * result + (prominent != null ? prominent.hashCode() : 0);
         result = 31 * result + (gridOrder != null ? gridOrder.hashCode() : 0);
         result = 31 * result + (columnWidth != null ? columnWidth.hashCode() : 0);
         result = 31 * result + (broadleafEnumeration != null ? broadleafEnumeration.hashCode() : 0);
+        result = 31 * result + (hideEnumerationIfEmpty != null ? hideEnumerationIfEmpty.hashCode() : 0);
         result = 31 * result + (fieldComponentRenderer != null ? fieldComponentRenderer.hashCode() : 0);
         result = 31 * result + (readOnly != null ? readOnly.hashCode() : 0);
         result = 31 * result + (validationConfigurations != null ? validationConfigurations.hashCode() : 0);
@@ -855,6 +861,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (optionValueFieldName != null ? optionValueFieldName.hashCode() : 0);
         result = 31 * result + (optionDisplayFieldName != null ? optionDisplayFieldName.hashCode() : 0);
         result = 31 * result + (optionCanEditValues != null ? optionCanEditValues.hashCode() : 0);
+        result = 31 * result + (optionHideIfEmpty != null ? optionHideIfEmpty.hashCode() : 0);
         result = 31 * result + (ruleIdentifier != null ? ruleIdentifier.hashCode() : 0);
         result = 31 * result + (mapFieldValueClass != null ? mapFieldValueClass.hashCode() : 0);
         result = 31 * result + (searchable != null ? searchable.hashCode() : 0);

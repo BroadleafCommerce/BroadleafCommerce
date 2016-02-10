@@ -47,13 +47,13 @@ $(document).ready(function() {
 		BLC.ajax({
 			url: $form.attr('action'),
 			type: "POST",
-			data: $form.serialize()
+			data: BLCAdmin.serializeForm($form)
 		}, function(data) {
 			//prevenSubmit is a hidden field whose value is sent from the translations controller, when there are errors
 			//"data" contains the new copy of the form, validated 
 			var preventSubmit = $(data).find(".modal-body").find("input[name=preventSubmit]").attr("value");
 			if (!preventSubmit){
-              BLCAdmin.listGrid.replaceRelatedListGrid($(data));
+              BLCAdmin.listGrid.replaceRelatedCollection($(data));
               BLCAdmin.hideCurrentModal();
 			}else{
 				var errorMapString = $(data).find(".modal-body").find("input[name=jsErrorMapString]").attr("value");
@@ -112,7 +112,7 @@ $(document).ready(function() {
             data: properties,
             type: "POST"
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($(data));
+            BLCAdmin.listGrid.replaceRelatedCollection($(data));
         });
         
         return false;

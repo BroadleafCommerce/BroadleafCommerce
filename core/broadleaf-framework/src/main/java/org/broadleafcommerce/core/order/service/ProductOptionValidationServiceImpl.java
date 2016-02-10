@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.order.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
 import org.broadleafcommerce.core.order.service.exception.ProductOptionValidationException;
 import org.springframework.stereotype.Service;

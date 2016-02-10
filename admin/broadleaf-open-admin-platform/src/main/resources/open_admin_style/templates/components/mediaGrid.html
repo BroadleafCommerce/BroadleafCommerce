@@ -1,0 +1,89 @@
+<div class="asset-listgrid-container" th:attr="data-collectionname=${listGrid.subCollectionFieldName}">
+
+    <div class="asset-ribbon">
+        <div class="asset-title-container">
+            <span class="asset-title" th:utext="#{${listGrid.friendlyName}}"></span>
+
+            <!-- Asset Ribbon Actions -->
+            <div class="asset-title-actions">
+
+                <!-- Asset Functions -->
+                <a th:each="action,iterStat : ${listGrid.activeToolbarActions}"
+                   class="button primary"
+                   th:href="@{'/' + ${sectionKey + action.urlPostfix}}"
+                   th:classappend="${action.buttonClass}"
+                   th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                             data-urlpostfix=${action.urlPostfix},
+                             data-queryparams=${listGrid.sectionCrumbRepresentation},
+                             disabled=${action.actionId == 'SPLIT'} ? 'disabled'">
+                    <span th:text="#{${action.displayText}}" th:remove="tag" />
+                </a>
+                <div class="asset-title-divider"></div>
+
+                <!-- Grid Functions -->
+                <a class="asset-image-view active" href="#"><i class="fa fa-th"></i></a>
+                <a class="asset-list-view" href="#"><i class="fa fa-list"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="select-group">
+        <div class="asset-grid">
+            <div class="asset-grid-container"
+                 th:attr="data-recordranges=${listGrid.startIndex + '-' + (listGrid.startIndex + #lists.size(listGrid.records) - 1)},
+                        data-totalrecords=${listGrid.totalRecords},
+                        data-pagesize=${listGrid.pageSize}">
+                <div th:each="asset : ${listGrid.records}" class="asset-item">
+
+                    <div class="image-wrapper">
+                        <img class="thumbnail"
+                             th:src="@{${asset.getField('media.url').getValue() + '?largeAdminThumbnail'}}"
+                             th:attr="data-fullurl=@{${asset.getField('media.url').getValue()}},
+                             data-rowid=${asset.id},
+                             data-link=@{${asset.path}},
+                             data-index=${asset.index},
+                             data-hiddenfields=${asset.getHiddenFieldsJson()}" />
+
+                        <div class="asset-actions">
+                            <span th:each="action : ${listGrid.activeRowActions}" th:remove="tag">
+                                <a href="#"
+                                   th:if="#{${action.displayText}} == 'Delete'"
+                                   class="media-grid-remove"
+                                   th:attr="data-urlpostfix=${action.urlPostfix},
+                                     data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                                     data-queryparams=${listGrid.sectionCrumbRepresentation}"
+                                   th:title="#{${action.displayText}}">
+                                    <i class="fa fa-close"></i>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Title and Key links -->
+                     <span th:each="action : ${listGrid.activeRowActions}" th:remove="tag" th:if="#{${action.displayText}} == 'Edit'">
+                        <a href="#"
+                           class="media-link"
+                           th:attr="data-urlpostfix=${action.urlPostfix},
+                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                             data-queryparams=${listGrid.sectionCrumbRepresentation}"
+                           th:title="#{${action.displayText}}" th:text="${asset.getField('media.title').getValue()}">
+                        </a>
+                         <a href="#"
+                            class="media-link media-key"
+                            th:attr="data-urlpostfix=${action.urlPostfix},
+                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                             data-queryparams=${listGrid.sectionCrumbRepresentation}"
+                            th:title="#{${action.displayText}}"
+                            th:text="${'key: ' + asset.getField('key').getValue()}">
+                         </a>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="asset-listgrid-wrapper" style="display: none;">
+            <div class="asset-listgrid listgrid-container"  th:include="components/listGrid" th:with="listGrid=${listGrid}"></div>
+        </div>
+    </div>
+</div>
+
+

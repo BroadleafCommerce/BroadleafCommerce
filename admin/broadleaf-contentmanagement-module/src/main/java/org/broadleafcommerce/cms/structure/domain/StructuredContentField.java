@@ -20,7 +20,6 @@
 package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import java.io.Serializable;
 
@@ -92,22 +91,6 @@ public interface StructuredContentField extends Serializable, Cloneable,MultiTen
      */
     @Nonnull
     public String getValue();
-
-    /**
-     * Returns audit information for this content item.
-     *
-     * @return
-     */
-    @Nullable
-    public AdminAuditable getAuditable();
-
-    /**
-     * Sets audit information for this content item.   Default implementations automatically
-     * populate this data during persistence.
-     *
-     * @param auditable
-     */
-    public void setAuditable(@Nullable AdminAuditable auditable);
 
     /**
      * @return a deep copy of this object. By default, clones the fieldKey and value fields and ignores the auditable

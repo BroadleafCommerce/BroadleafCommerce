@@ -27,12 +27,13 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.*;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
@@ -59,16 +60,16 @@ import java.util.Map;
             @AdminPresentationOverride(name="auditable.updatedBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
             @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
             @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL, group = StaticAssetAdminPresentation.GroupName.File_Details)),
+            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL, group = StaticAssetAdminPresentation.GroupName.File_Details)),
             @AdminPresentationOverride(name="sandbox", value=@AdminPresentation(excluded = true))
         }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
-public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
+public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAssetAdminPresentation {
 
     private static final long serialVersionUID = 6990685254640110350L;
 
@@ -85,22 +86,21 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
     @Column(name = "STATIC_ASSET_ID")
     protected Long id;
 
-    @Embedded
-    @AdminPresentation(excluded = true)
-    protected AdminAuditable auditable = new AdminAuditable();
-
     @Column(name = "NAME", nullable = false)
     @AdminPresentation(friendlyName = "StaticAssetImpl_Item_Name",
-            order = Presentation.FieldOrder.NAME,
+            group = GroupName.General,
             requiredOverride = RequiredOverride.NOT_REQUIRED,
-            gridOrder = Presentation.FieldOrder.NAME,
+            order = FieldOrder.NAME,
+            gridOrder = 1000,
+            readOnly = true,
             prominent = true)
     protected String name;
 
     @Column(name ="FULL_URL", nullable = false)
     @AdminPresentation(friendlyName = "StaticAssetImpl_Full_URL",
-            order = Presentation.FieldOrder.URL,
-            gridOrder = Presentation.FieldOrder.URL,
+            group = GroupName.Image,
+            order = FieldOrder.URL,
+            gridOrder = 2000,
             requiredOverride = RequiredOverride.REQUIRED,
             fieldType = SupportedFieldType.ASSET_URL,
             prominent = true)
@@ -109,34 +109,36 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
 
     @Column(name = "TITLE", nullable = true)
     @AdminPresentation(friendlyName = "StaticAssetImpl_Title",
-            order = Presentation.FieldOrder.TITLE,
+            group = GroupName.General,
+            order = FieldOrder.TITLE,
             translatable = true)
     protected String title;
 
     @Column(name = "ALT_TEXT", nullable = true)
     @AdminPresentation(friendlyName = "StaticAssetImpl_Alt_Text",
-            order = Presentation.FieldOrder.ALT_TEXT,
+            group = GroupName.General,
+            order = FieldOrder.ALT_TEXT,
             translatable = true)
     protected String altText;
 
     @Column(name = "MIME_TYPE")
     @AdminPresentation(friendlyName = "StaticAssetImpl_Mime_Type",
-            order = Presentation.FieldOrder.MIME_TYPE,
-            tab = Presentation.Tab.Name.File_Details, tabOrder = Presentation.Tab.Order.File_Details,
+            order = FieldOrder.MIME_TYPE,
+            group = GroupName.File_Details,
             readOnly = true)
     protected String mimeType;
 
     @Column(name = "FILE_SIZE")
     @AdminPresentation(friendlyName = "StaticAssetImpl_File_Size_Bytes",
-            order = Presentation.FieldOrder.FILE_SIZE,
-            tab = Presentation.Tab.Name.File_Details, tabOrder = Presentation.Tab.Order.File_Details,
+            order = FieldOrder.FILE_SIZE,
+            group = GroupName.File_Details,
             readOnly = true)
     protected Long fileSize;
 
     @Column(name = "FILE_EXTENSION")
     @AdminPresentation(friendlyName = "StaticAssetImpl_File_Extension",
-            order = Presentation.FieldOrder.FILE_EXTENSION,
-            tab = Presentation.Tab.Name.File_Details, tabOrder = Presentation.Tab.Order.File_Details,
+            order = FieldOrder.FILE_EXTENSION,
+            group = GroupName.File_Details,
             readOnly = true)
     protected String fileExtension;
 
@@ -148,14 +150,14 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @BatchSize(size = 20)
     @AdminPresentationMap(
-        excluded = true,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-        friendlyName = "assetDescriptionTitle",
-        keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
-        deleteEntityUponRemove = true,
-        mapKeyOptionEntityClass = LocaleImpl.class,
-        mapKeyOptionEntityDisplayField = "friendlyName",
-        mapKeyOptionEntityValueField = "localeCode"
+            excluded = true,
+            tab = TabName.Advanced, tabOrder = TabOrder.Advanced,
+            friendlyName = "assetDescriptionTitle",
+            keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
+            deleteEntityUponRemove = true,
+            mapKeyOptionEntityClass = LocaleImpl.class,
+            mapKeyOptionEntityDisplayField = "friendlyName",
+            mapKeyOptionEntityValueField = "localeCode"
 )
     protected Map<String,StaticAssetDescription> contentMessageValues = new HashMap<String,StaticAssetDescription>();
 
@@ -234,16 +236,6 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
     }
 
     @Override
-    public AdminAuditable getAuditable() {
-        return auditable;
-    }
-
-    @Override
-    public void setAuditable(AdminAuditable auditable) {
-        this.auditable = auditable;
-    }
-
-    @Override
     public Long getId() {
         return id;
     }
@@ -299,41 +291,6 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
         }
 
         return createResponse;
-    }
-
-    public static class Presentation {
-
-        public static class Tab {
-
-            public static class Name {
-
-                public static final String File_Details = "StaticAssetImpl_FileDetails_Tab";
-                public static final String Advanced = "StaticAssetImpl_Advanced_Tab";
-            }
-
-            public static class Order {
-
-                public static final int File_Details = 2000;
-                public static final int Advanced = 3000;
-            }
-        }
-
-        public static class FieldOrder {
-
-            // General Fields
-            public static final int NAME = 1000;
-            public static final int URL = 2000;
-            public static final int TITLE = 3000;
-            public static final int ALT_TEXT = 4000;
-
-            public static final int MIME_TYPE = 5000;
-            public static final int FILE_EXTENSION = 6000;
-            public static final int FILE_SIZE = 7000;
-            
-            // Used by subclasses to know where the last field is.
-            public static final int LAST = 7000;
-
-        }
     }
 
     @Override

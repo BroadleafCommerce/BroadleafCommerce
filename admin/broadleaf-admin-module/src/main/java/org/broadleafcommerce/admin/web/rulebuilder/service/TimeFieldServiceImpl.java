@@ -40,7 +40,7 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_timeHourOfDay")
                 .name("hour")
-                .operators("blcOperators_Enumeration")
+                .operators("blcOperators_Selectize_Enumeration")
                 .options("blcOptions_HourOfDay")
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
@@ -48,7 +48,7 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_timeDayOfWeek")
                 .name("dayOfWeek")
-                .operators("blcOperators_Enumeration")
+                .operators("blcOperators_Selectize_Enumeration")
                 .options("blcOptions_DayOfWeek")
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
@@ -56,7 +56,7 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_timeMonth")
                 .name("month")
-                .operators("blcOperators_Enumeration")
+                .operators("blcOperators_Selectize_Enumeration")
                 .options("blcOptions_Month")
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
@@ -64,7 +64,7 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_timeDayOfMonth")
                 .name("dayOfMonth")
-                .operators("blcOperators_Enumeration")
+                .operators("blcOperators_Selectize_Enumeration")
                 .options("blcOptions_DayOfMonth")
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
@@ -72,7 +72,7 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_timeMinute")
                 .name("minute")
-                .operators("blcOperators_Enumeration")
+                .operators("blcOperators_Selectize_Enumeration")
                 .options("blcOptions_Minute")
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());

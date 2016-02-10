@@ -79,6 +79,7 @@
                 <ref bean="blAdminPermissionCustomPersistenceHandler" />
                 <ref bean="blSystemPropertyCustomPersistenceHandler" />
                 <ref bean="blTranslationCustomPersistenceHandler" />
+                <ref bean="blOfferCustomPersistenceHandler" />
             </list>
         </property>
     </bean>
@@ -105,6 +106,7 @@
                 <value>classpath:/messages/GeneratedMessagesEntityOpenAdmin</value>
                 <value>classpath:/messages/GeneratedMessagesEntityProfile</value>
                 <value>classpath:/messages/OpenAdminMessages</value>
+                <value>classpath:/messages/OpenAdminJavascriptMessages</value>
             </list>
         </property>
     </bean>
@@ -272,7 +274,7 @@
         </property>
     </bean>
     
-               <!--  Spring 4.1 Admin Resource Resolvers --> 
+    <!--  Spring 4.1 Admin Resource Resolvers -->
     <bean id="blAdminResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
@@ -284,11 +286,12 @@
                 <ref bean="blSystemPropertyJSResolver" />
                 <ref bean="blRuleBuilderOptionResourceResolver" />
                 <ref bean="blPathResourceResolver" />
+                <ref bean="blMessagesResourceResolver" />
             </list>
         </property>
     </bean>
     
-  <!--  Spring 4.1 Admin Resource Handling Base Classes -->
+   <!--  Spring 4.1 Admin Resource Handling Base Classes -->
    <bean id="adminResourceHttpRequestHandlerBase" abstract="true" 
         class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">   
         <!--  property name="themesBaseDirectory" value="/WEB-INF/" / -->
@@ -305,6 +308,6 @@
    <bean id="adminCssResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
         <property name="locations" ref="blCssLocations"/>
         <property name="resourceTransformers" ref="blCssResourceTransformers" />             
-   </bean>  
-    
+   </bean>
+
 </beans>
