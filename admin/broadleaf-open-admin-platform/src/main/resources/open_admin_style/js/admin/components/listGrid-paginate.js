@@ -342,7 +342,7 @@
                     maxIndex = topIndex + pageSize - 1;
                 }
             } else if (!topIndexLoaded && botIndexLoaded) {
-                maxIndex = this.findFirstLoadedIndex($tbody, topIndex) - 1;
+                maxIndex = Math.max(this.findFirstLoadedIndex($tbody, topIndex) - 1, 0);
                 
                 var potentialStart = this.findLastLoadedIndex($tbody, topIndex);
                 
@@ -475,7 +475,7 @@
             var scrollOffset = $tbody.closest('.mCSB_container').position().top;
             var trHeight = this.getRowHeight($tbody);
             var topVisibleIndex = Math.floor(scrollOffset * -1 / trHeight);
-            return topVisibleIndex;
+            return Math.max(topVisibleIndex, 0);
         },
         
         getBottomVisibleIndex : function($tbody) {
