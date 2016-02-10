@@ -20,6 +20,9 @@
 
 package org.broadleafcommerce.common.util;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -29,9 +32,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
-
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jettison.json.JSONObject;
 
 public class StringUtil {
 
@@ -47,7 +47,7 @@ public class StringUtil {
             throw new RuntimeException(e);
         }
     }
-
+    
     /**
      * Checks if a string is included in the beginning of another string, but only in dot-separated segment leaps.
      * Examples:
