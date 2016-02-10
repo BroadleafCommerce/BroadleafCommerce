@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.MinimumTargetsRequired;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
@@ -94,4 +95,16 @@ public interface PromotableCandidateItemOffer extends Serializable {
     public List<PromotableOrderItem> getLegacyCandidateTargets();
 
     public void setLegacyCandidateTargets(List<PromotableOrderItem> candidateTargets);
+
+    /**
+     * @see MiniumTargetsRequired
+     */
+    public void setMinimumTargetsRequired(Integer minimumTargetsRequired);
+
+    /**
+     * Returns the required target quantity for the offer.
+     * @see MinimumTargetsRequired
+     * @return
+     */
+    public int getMinimumRequiredTargetQuantity();
 }
