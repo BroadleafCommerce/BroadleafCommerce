@@ -91,7 +91,7 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     protected String name;
     
     @Column(name="AUTHOR")
-    @AdminPresentation(friendlyName = "SandBoxImpl_Author", group = SandboxAdminPresentation.GroupName.Description, prominent = false,
+    @AdminPresentation(friendlyName = "SandBoxImpl_Author", group = SandboxAdminPresentation.GroupName.Description,
         gridOrder = 3000, order = 3000, visibility = VisibilityEnum.FORM_HIDDEN)
     protected Long author;
 
