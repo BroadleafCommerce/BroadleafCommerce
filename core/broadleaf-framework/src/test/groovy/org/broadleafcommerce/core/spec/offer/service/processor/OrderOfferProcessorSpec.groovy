@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.spec.offer.service.processor
 
 import org.apache.commons.collections4.CollectionUtils
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl
+import org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl
 import org.broadleafcommerce.core.catalog.domain.ProductImpl
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor
@@ -51,6 +52,14 @@ class OrderOfferProcessorSpec extends Specification {
         product.id = 100
         product.defaultSku = sku
 
+        def productAttribute = new ProductAttributeImpl()
+        productAttribute.id = 100
+        productAttribute.product = product;
+        productAttribute.name="myProductAttribute"
+        productAttribute.value="myProductAttributeValue"
+
+        product.productAttributes << ["myProductAttribute":productAttribute]
+
         discreteOrderItem.category = category
         discreteOrderItem.product = product
         discreteOrderItem.sku = sku
@@ -69,11 +78,15 @@ class OrderOfferProcessorSpec extends Specification {
         boolean catNameCorrect = orderOfferProcessor.executeExpression("MvelHelper.toUpperCase(orderItem.?category.?name)==MvelHelper.toUpperCase(\"test category\")", ruleVars);
         boolean catNameIncorrect = orderOfferProcessor.executeExpression("MvelHelper.toUpperCase(orderItem.?category.?name)==MvelHelper.toUpperCase(\"wrong\")", ruleVars);
         boolean containsCorrect = orderOfferProcessor.executeExpression("[\"-100\", \"100\", \"500\"].contains(discreteOrderItem.?product.?id.toString()) && orderItem.?category.?name == \"Test Category\"", ruleVars);
+        boolean mapCorrect = orderOfferProcessor.executeExpression("orderItem.?product.?getProductAttributes().?get(\"myProductAttribute\").?getValue()==\"myProductAttributeValue\"", ruleVars);
+        boolean mapIncorrect = orderOfferProcessor.executeExpression("orderItem.?product.?getProductAttributes().?get(\"myProductAttribute2\").?getValue()==\"myProductAttributeValue\"", ruleVars);
 
         then: "The result of executing the expression should be as expected"
         catNameCorrect
         !catNameIncorrect
         containsCorrect
+        mapCorrect
+        !mapIncorrect
     }
 
     def "Test AbstractBaseProcessor MVEL executeExpression with different variables and custom MVEL imports"() {

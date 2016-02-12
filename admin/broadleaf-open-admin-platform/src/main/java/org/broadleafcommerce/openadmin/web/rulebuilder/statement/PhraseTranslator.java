@@ -175,7 +175,7 @@ public class PhraseTranslator {
         if (typeMethodPos >= 0) {
            field = field.substring(0, typeMethodPos);
         }
-        
+
         Expression expression = new Expression();
         expression.setField(field);
         BLCOperator operatorId = getOperator(field, operator, value, isNegation, isFieldComparison, isIgnoreCase);
@@ -258,7 +258,13 @@ public class PhraseTranslator {
             if (components[0].startsWith("MvelHelper.convertField(")) {
                 components[0] = components[0].substring(components[0].indexOf("(") + 1, components[0].length()-1);
             }
+        } else if (components[0].matches(".*\\?get\\(\".*?\"\\)\\.\\?getValue\\(\\).*")) {
+            //this is using null-safe map access syntax - must be a map field
+            components[0] = components[0].substring(0, components[0].lastIndexOf(".?get(")) + FieldManager.MAPFIELDSEPARATOR +
+                    components[0].substring(components[0].lastIndexOf(".?get(") + 7, components[0].lastIndexOf(").?getValue()") - 1) +
+                    components[0].substring(components[0].lastIndexOf(").?getValue()") + 13, components[0].length());
         }
+
         return components;
     }
 

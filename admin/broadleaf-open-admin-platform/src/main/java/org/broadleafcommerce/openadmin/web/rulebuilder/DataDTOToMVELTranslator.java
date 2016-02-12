@@ -404,9 +404,19 @@ public class DataDTOToMVELTranslator {
         boolean isMapField = false;
         if (convertedField.contains(FieldManager.MAPFIELDSEPARATOR)) {
             //This must be a map field, convert the field name to syntax MVEL can understand for map access
-            convertedField = convertedField.substring(0, convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR))
+
+            if (SupportedFieldType.VALUE_ASSIGNABLE_MAP.equals(type)) {
+                //If this is a value assignable map, we can't use the normal "[]" map access notation since it isn't null-safe.
+                //In this case, we'll use the null-safe ".?get()" syntax instead.
+                convertedField = convertedField.substring(0, convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR))
+                        + ".get(\"" + convertedField.substring(convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR) +
+                        FieldManager.MAPFIELDSEPARATOR.length(), convertedField.length()) + "\")";
+            } else {
+                convertedField = convertedField.substring(0, convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR))
                     + "[\"" + convertedField.substring(convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR) +
                     FieldManager.MAPFIELDSEPARATOR.length(), convertedField.length()) + "\"]";
+            }
+
             isMapField = true;
         }
         if (isMapField) {
@@ -432,6 +442,16 @@ public class DataDTOToMVELTranslator {
                     response.append(buildFieldName(entityKey, convertedField));
                     response.append(")");
                     break;
+                case VALUE_ASSIGNABLE_MAP:
+                    if (ignoreCase) {
+                        response.append("MvelHelper.toUpperCase(");
+                    }
+                    response.append(buildFieldName(entityKey, convertedField));
+                    response.append(".?getValue()");
+                    if (ignoreCase) {
+                        response.append(")");
+                    }
+                    break;
                 case STRING:
                     if (ignoreCase) {
                         response.append("MvelHelper.toUpperCase(");
@@ -450,12 +470,8 @@ public class DataDTOToMVELTranslator {
         } else {
             switch(type) {
                 case BROADLEAF_ENUMERATION:
-                    if (isMapField) {
-                        throw new UnsupportedOperationException("Enumerations are not supported for map fields in the rule builder.");
-                    } else {
-                        response.append(buildFieldName(entityKey, convertedField));
-                        response.append(".getType()");
-                    }
+                    response.append(buildFieldName(entityKey, convertedField));
+                    response.append(".getType()");
                     break;
                 case MONEY:
                     response.append(buildFieldName(entityKey, convertedField));
