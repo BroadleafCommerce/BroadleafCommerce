@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
+
 import java.util.Map;
 
 
@@ -38,6 +41,21 @@ public class SearchCriteria {
     protected Integer pageSize;
     protected String sortQuery;
     protected Map<String, String[]> filterCriteria;
+    /**
+     * The category that the user searched on
+     */
+    protected Category category;
+
+    /**
+     * The query that the user actually typed into the search box, fully sanitized
+     */
+    protected String query;
+    
+    /**
+     * Whether or not to do category filtering based on {@link SolrHelperService#getExplicitCategoryFieldName()} or
+     * {@link SolrHelperService#getCategoryFieldName()}
+     */
+    protected boolean searchExplicitCategory = false;
     
     public Integer getPage() {
         return page;
@@ -70,5 +88,28 @@ public class SearchCriteria {
     public void setFilterCriteria(Map<String, String[]> filterCriteria) {
         this.filterCriteria = filterCriteria;
     }
-    
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public boolean getSearchExplicitCategory() {
+        return searchExplicitCategory;
+    }
+
+    public void setSearchExplicitCategory(boolean searchExplicitCategory) {
+        this.searchExplicitCategory = searchExplicitCategory;
+    }
 }

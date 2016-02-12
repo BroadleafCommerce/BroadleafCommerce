@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -86,6 +87,20 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public Category readCategoryById(Long categoryId) {
         return em.find(CategoryImpl.class, categoryId);
+    }
+
+    @Override
+    public List<Category> readCategoriesByIds(List<Long> categoryIds) {
+        TypedQuery<Category> query = em.createQuery(
+                "select category from org.broadleafcommerce.core.catalog.domain.Category category "
+                        + "where category.id in :ids",
+                Category.class);
+        query.setParameter("ids", sandBoxHelper.mergeCloneIds(CategoryImpl.class,
+                categoryIds.toArray(new Long[categoryIds.size()])));
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
     }
 
     @Override
@@ -147,6 +162,20 @@ public class CategoryDaoImpl implements CategoryDao {
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         query.setFirstResult(offset);
         query.setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    @Nonnull
+    @Override
+    public List<Category> readCategoriesByNames(List<String> names) {
+        TypedQuery<Category> query = em.createQuery(
+                "select category from org.broadleafcommerce.core.catalog.domain.Category category "
+                        + "where category.name in :names",
+                Category.class);
+        query.setParameter("names", names);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
         return query.getResultList();
     }

@@ -19,19 +19,13 @@
  */
 package org.broadleafcommerce.core.spec.checkout.service.workflow
 
-import org.broadleafcommerce.common.config.service.SystemPropertiesService
 import org.broadleafcommerce.common.money.Money
 import org.broadleafcommerce.common.payment.PaymentGatewayType
 import org.broadleafcommerce.common.payment.PaymentTransactionType
 import org.broadleafcommerce.common.payment.PaymentType
-import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationServiceProvider
-import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionConfirmationService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException
+import org.broadleafcommerce.core.checkout.service.strategy.OrderPaymentConfirmationStrategy
 import org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity
 import org.broadleafcommerce.core.payment.domain.OrderPayment
 import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl
@@ -39,7 +33,8 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction
 import org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl
 import org.broadleafcommerce.core.payment.service.DefaultPaymentGatewayCheckoutService
 import org.broadleafcommerce.core.payment.service.OrderPaymentService
-import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService
+import org.broadleafcommerce.core.payment.service.OrderPaymentStatusService
+import org.broadleafcommerce.core.payment.service.OrderPaymentStatusServiceImpl
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl
 import org.broadleafcommerce.core.workflow.state.RollbackStateLocal
 
@@ -47,6 +42,8 @@ import org.broadleafcommerce.core.workflow.state.RollbackStateLocal
  * @author Elbert Bautista (elbertbautista)
  */
 class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
+
+    OrderPaymentStatusService statusService = new OrderPaymentStatusServiceImpl()
 
     OrderPayment confirmedCC = new OrderPaymentImpl()
     PaymentTransaction confirmedCCTransaction = new PaymentTransactionImpl()
@@ -100,7 +97,10 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
     }
 
     def reset() {
-        activity = new ValidateAndConfirmPaymentActivity()
+        activity = new ValidateAndConfirmPaymentActivity().with {
+            orderPaymentStatusService = statusService;
+            it
+        }
         context.seedData.order.payments = new ArrayList<OrderPayment>()
         context.seedData.order.total = null
     }
@@ -135,22 +135,6 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
 
     }
 
-    def "Test undefined PaymentGatewayConfigurationServiceProvider"() {
-        setup: "I have one unconfirmed THIRD_PARTY_ACCOUNT order payment transaction on the order but no Provider implemented"
-        reset()
-        context.seedData.order.payments << unconfirmedTP
-        context.seedData.order.total = new Money(12)
-
-        when: "I execute the ValidateAndConfirmPaymentActivity"
-        context = activity.execute(context)
-
-        then: "A CheckoutException should be thrown stating that there is no provider configured"
-        CheckoutException ex = thrown()
-        ex.message == "There are unconfirmed payment transactions on this payment but no payment gateway" +
-                " configuration or transaction confirmation service configured"
-
-    }
-
     def "Test SUCCESSFULLY confirming all unconfirmed THIRD_PARTY_ACCOUNT transactions on the order"() {
         setup: "I have one unconfirmed THIRD_PARTY_ACCOUNT order payment transaction on the order"
         reset()
@@ -164,29 +148,18 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
                 .successful(true)
                 .paymentTransactionType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE)
 
-        SystemPropertiesService mockSPS = Mock()
-        mockSPS.resolveBooleanSystemProperty(*_) >> false
+        OrderPaymentConfirmationStrategy mockStrategy = Mock()
+        mockStrategy.confirmTransaction(*_) >> responseDTO
 
-        PaymentGatewayTransactionConfirmationService mockConfirmationService = Mock()
-        mockConfirmationService.confirmTransaction(_) >> {PaymentRequestDTO dto -> responseDTO}
-
-        PaymentGatewayConfigurationService mockConfigService = Mock()
-        mockConfigService.getTransactionConfirmationService() >> mockConfirmationService
-
-        PaymentGatewayConfigurationServiceProvider mockProvider = Mock()
-        mockProvider.getGatewayConfigurationService(_) >> {PaymentGatewayType type -> mockConfigService}
-        OrderToPaymentRequestDTOService mockRequestService = Mock()
-        mockRequestService.translatePaymentTransaction(*_) >> new PaymentRequestDTO()
         OrderPaymentService mockOrderPaymentService = Mock()
         mockOrderPaymentService.createTransaction() >> new PaymentTransactionImpl()
         mockOrderPaymentService.save(_ as OrderPayment) >> {OrderPayment payment -> payment}
         mockOrderPaymentService.save(_ as PaymentTransaction) >> {PaymentTransaction transaction -> transaction}
 
         activity = new ValidateAndConfirmPaymentActivity().with {
-            paymentConfigurationServiceProvider = mockProvider
-            orderToPaymentRequestService = mockRequestService
+            orderPaymentStatusService = statusService;
+            orderPaymentConfirmationStrategy = mockStrategy
             orderPaymentService = mockOrderPaymentService
-            systemPropertiesService = mockSPS
             it
         }
 
@@ -213,16 +186,9 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
                 .successful(false)
                 .paymentTransactionType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE)
 
-        PaymentGatewayTransactionConfirmationService mockConfirmationService = Mock()
-        mockConfirmationService.confirmTransaction(_) >> {PaymentRequestDTO dto -> responseDTO}
+        OrderPaymentConfirmationStrategy mockStrategy = Mock()
+        mockStrategy.confirmTransaction(*_) >> responseDTO
 
-        PaymentGatewayConfigurationService mockConfigService = Mock()
-        mockConfigService.getTransactionConfirmationService() >> mockConfirmationService
-
-        PaymentGatewayConfigurationServiceProvider mockProvider = Mock()
-        mockProvider.getGatewayConfigurationService(_) >> {PaymentGatewayType type -> mockConfigService}
-        OrderToPaymentRequestDTOService mockRequestService = Mock()
-        mockRequestService.translatePaymentTransaction(*_) >> new PaymentRequestDTO()
         OrderPaymentService mockOrderPaymentService = Mock()
         
         PaymentTransaction tx = new PaymentTransactionImpl().with {
@@ -242,8 +208,8 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
         mockCheckoutService.orderPaymentService = mockOrderPaymentService
 
         activity = new ValidateAndConfirmPaymentActivity().with {
-            paymentConfigurationServiceProvider = mockProvider
-            orderToPaymentRequestService = mockRequestService
+            orderPaymentStatusService = statusService;
+            orderPaymentConfirmationStrategy = mockStrategy
             orderPaymentService = mockOrderPaymentService
             paymentGatewayCheckoutService = mockCheckoutService
             it
@@ -274,33 +240,18 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
                 .successful(true)
                 .paymentTransactionType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE)
 
-        SystemPropertiesService mockSPS = Mock()
-        mockSPS.resolveBooleanSystemProperty(*_) >> false
+        OrderPaymentConfirmationStrategy mockStrategy = Mock()
+        mockStrategy.confirmTransaction(*_) >> responseDTO
 
-        PaymentGatewayConfiguration mockConfiguration = Mock()
-        mockConfiguration.isPerformAuthorizeAndCapture() >> true
-
-        PaymentGatewayTransactionService mockTransactionService = Mock()
-        mockTransactionService.authorizeAndCapture(_) >> responseDTO
-
-        PaymentGatewayConfigurationService mockConfigService = Mock()
-        mockConfigService.getTransactionService() >> mockTransactionService
-        mockConfigService.getConfiguration() >> mockConfiguration
-
-        PaymentGatewayConfigurationServiceProvider mockProvider = Mock()
-        mockProvider.getGatewayConfigurationService(_) >> {PaymentGatewayType type -> mockConfigService}
-        OrderToPaymentRequestDTOService mockRequestService = Mock()
-        mockRequestService.translatePaymentTransaction(*_) >> new PaymentRequestDTO()
         OrderPaymentService mockOrderPaymentService = Mock()
         mockOrderPaymentService.createTransaction() >> new PaymentTransactionImpl()
         mockOrderPaymentService.save(_ as OrderPayment) >> {OrderPayment payment -> payment}
         mockOrderPaymentService.save(_ as PaymentTransaction) >> {PaymentTransaction transaction -> transaction}
 
         activity = new ValidateAndConfirmPaymentActivity().with {
-            paymentConfigurationServiceProvider = mockProvider
-            orderToPaymentRequestService = mockRequestService
+            orderPaymentStatusService = statusService;
+            orderPaymentConfirmationStrategy = mockStrategy
             orderPaymentService = mockOrderPaymentService
-            systemPropertiesService = mockSPS
             it
         }
 

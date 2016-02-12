@@ -181,8 +181,8 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                     }
                 }
                 if (!productOption.getRequired() && StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
-                    //if the productoption is not required, and user has not set the optional value, then we dont need to validate
-                } else if (productOption.getProductOptionValidationType() != null && (productOption.getProductOptionValidationStrategyType() == null || productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank())) {
+                    //if the product option is not required, and user has not set the optional value, then we dont need to validate
+                } else if (productOption.getProductOptionValidationStrategyType() == null || productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank()) {
                         productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
                 }
                 if((productOption.getProductOptionValidationStrategyType() != null && productOption.getProductOptionValidationStrategyType().getRank() > ProductOptionValidationStrategyType.ADD_ITEM.getRank()))

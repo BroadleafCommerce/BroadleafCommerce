@@ -53,10 +53,6 @@ public abstract class CustomerPaymentGatewayAbstractController extends Broadleaf
 
     protected static final Log LOG = LogFactory.getLog(CustomerPaymentGatewayAbstractController.class);
 
-    protected static String baseRedirect = "redirect:/";
-    protected static String baseErrorView = "/error";
-    protected static String baseCustomerProfileRedirect = "redirect:/account";
-
     @Resource(name = "blPaymentGatewayWebResponsePrintService")
     protected PaymentGatewayWebResponsePrintService webResponsePrintService;
 
@@ -121,29 +117,18 @@ public abstract class CustomerPaymentGatewayAbstractController extends Broadleaf
             handleProcessingException(e, redirectAttributes);
         }
 
-        return getErrorViewRedirect();
+        return getCustomerPaymentErrorRedirect();
     }
-
-    public abstract String getGatewayContextKey();
 
     public abstract PaymentGatewayWebResponseService getWebResponseService();
 
     public abstract PaymentGatewayConfiguration getConfiguration();
 
+    public abstract String getCustomerPaymentViewRedirect(String customerPaymentId);
+
+    public abstract String getCustomerPaymentErrorRedirect();
+
     public abstract void handleProcessingException(Exception e, final RedirectAttributes redirectAttributes)
             throws PaymentException;
-
-    protected String getErrorViewRedirect() {
-        //delegate to the modules endpoint as there may be additional processing that is involved
-        return baseRedirect + getGatewayContextKey() + baseErrorView;
-    }
-
-    public String getBaseCustomerProfileRedirect() {
-        return baseCustomerProfileRedirect;
-    }
-
-    protected String getCustomerPaymentViewRedirect(String customerPaymentId) {
-        return getBaseCustomerProfileRedirect() + "/payment" + customerPaymentId;
-    }
 
 }

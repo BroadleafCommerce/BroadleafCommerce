@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.payment.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.dto.AddressDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.CustomerPaymentGatewayService;
@@ -66,8 +67,8 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
             throw new IllegalArgumentException("Invalid customer token responses cannot be parsed into the customer payment domain");
         }
 
-        if (config == null || responseDTO.getCustomer() == null) {
-            throw new IllegalArgumentException("PaymentGatewayConfiguration and the customer on the ResponseDTO cannot be null");
+        if (config == null || responseDTO.getCustomer() == null || responseDTO.getCustomer().getCustomerId() == null) {
+            throw new IllegalArgumentException("PaymentGatewayConfiguration and the customer/customer ID on the ResponseDTO cannot be null. Check your Web Response Service.");
         }
 
         Long customerId = Long.parseLong(responseDTO.getCustomer().getCustomerId());
@@ -80,10 +81,32 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
             customerPayment.setPaymentType(responseDTO.getPaymentType());
             dtoToEntityService.populateCustomerPaymentToken(responseDTO, customerPayment);
 
-            Address billingAddress = addressService.create();
-            AddressDTO<PaymentResponseDTO> billToDTO = responseDTO.getBillTo();
-            dtoToEntityService.populateAddressInfo(billToDTO, billingAddress);
-            customerPayment.setBillingAddress(billingAddress);
+            if (responseDTO.getBillTo() != null && responseDTO.getBillTo().addressPopulated()) {
+                Address billingAddress = addressService.create();
+                dtoToEntityService.populateAddressInfo(responseDTO.getBillTo(), billingAddress);
+                customerPayment.setBillingAddress(billingAddress);
+            }
+
+            if (responseDTO.getCreditCard() !=null && responseDTO.getCreditCard().creditCardPopulated()) {
+                if (responseDTO.getCreditCard().getCreditCardHolderName() != null) {
+                    customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.NAME_ON_CARD.getType(), responseDTO.getCreditCard().getCreditCardHolderName());
+                }
+                if (responseDTO.getCreditCard().getCreditCardLastFour() != null) {
+                    customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.LAST_FOUR.getType(), responseDTO.getCreditCard().getCreditCardLastFour());
+                }
+                if (responseDTO.getCreditCard().getCreditCardType() != null) {
+                    customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.CARD_TYPE.getType(), responseDTO.getCreditCard().getCreditCardType());
+                }
+                if (responseDTO.getCreditCard().getCreditCardExpDate() != null) {
+                    customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.EXP_DATE.getType(), responseDTO.getCreditCard().getCreditCardExpDate());
+                }
+                if (responseDTO.getCreditCard().getCreditCardExpMonth() != null) {
+                    customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.EXP_MONTH.getType(), responseDTO.getCreditCard().getCreditCardExpMonth());
+                }
+                if (responseDTO.getCreditCard().getCreditCardExpYear() != null) {
+                    customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.EXP_YEAR.getType(), responseDTO.getCreditCard().getCreditCardExpYear());
+                }
+            }
 
             customerPayment = customerPaymentService.saveCustomerPayment(customerPayment);
             customer.getCustomerPayments().add(customerPayment);

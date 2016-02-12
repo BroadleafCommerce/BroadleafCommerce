@@ -58,6 +58,8 @@ public interface PaymentGatewayConfigurationService {
 
     public PaymentGatewayTransparentRedirectService getTransparentRedirectService();
 
+    public PaymentGatewayClientTokenService getClientTokenService();
+
     public TRCreditCardExtensionHandler getCreditCardExtensionHandler();
 
     public PaymentGatewayFieldExtensionHandler getFieldExtensionHandler();
