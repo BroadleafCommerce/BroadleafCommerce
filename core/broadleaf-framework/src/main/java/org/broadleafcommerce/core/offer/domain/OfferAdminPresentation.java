@@ -98,7 +98,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 public interface OfferAdminPresentation {
 
     public static class TabName {
-        public static final String General = "OfferImpl_General_Tab";
+        public static final String General = "General";
         public static final String Marketing = "OfferImpl_Marketing_Tab";
         public static final String Qualifiers = "OfferImpl_Qualifiers_Tab";
         public static final String Codes = "OfferImpl_Codes_Tab";

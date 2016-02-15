@@ -46,7 +46,7 @@ public interface SearchRedirectAdminPresentation {
 
 
     public static class TabName {
-        public static final String General = "SearchRedirectImpl_Tab_General";
+        public static final String General = "General";
     }
 
     public static class TabOrder {
@@ -55,7 +55,7 @@ public interface SearchRedirectAdminPresentation {
 
     public static class GroupName {
 
-        public static final String General = "SearchRedirectImpl_Group_Description";
+        public static final String General = "General";
         public static final String Dates = "SearchRedirectImpl_Group_Dates";
     }
 

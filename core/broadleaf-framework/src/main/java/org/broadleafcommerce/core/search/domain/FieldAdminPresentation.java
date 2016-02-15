@@ -43,7 +43,7 @@ public interface FieldAdminPresentation {
     }
 
     public static class GroupName {
-        public static final String General = "FieldImpl_General";
+        public static final String General = "General";
     }
 
     public static class GroupOrder {

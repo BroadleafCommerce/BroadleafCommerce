@@ -43,7 +43,7 @@ public interface IndexFieldAdminPresentation {
     }
 
     public static class GroupName {
-        public static final String General = "IndexFieldImpl_description";
+        public static final String General = "General";
     }
 
     public static class GroupOrder {

@@ -111,7 +111,7 @@ public interface ProductAdminPresentation {
 
     public static class TabName {
 
-        public static final String General = "ProductImpl_General_Tab";
+        public static final String General = "General";
         public static final String Pricing = "ProductImpl_Pricing_Tab";
         public static final String Marketing = "ProductImpl_Marketing_Tab";
         public static final String Media = "SkuImpl_Media_Tab";
@@ -136,7 +136,7 @@ public interface ProductAdminPresentation {
 
     public static class GroupName {
 
-        public static final String General = "ProductImpl_Product_Description";
+        public static final String General = "General";
         public static final String Image = "ProductImpl_Product_Image";
         public static final String ActiveDateRange = "ProductImpl_Product_Active_Date_Range";
         public static final String Financial = "ProductImpl_Financial";

@@ -56,7 +56,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 public interface SearchFacetAdminPresentation {
 
     public static class TabName {
-        public static final String General = "SearchFacetImpl_General_Tab";
+        public static final String General = "General";
         public static final String Dependent = "SearchFacetImpl_Dependent_Tab";
     }
 
@@ -67,7 +67,7 @@ public interface SearchFacetAdminPresentation {
 
     public static class GroupName {
 
-        public static final String General = "SearchFacetImpl_description";
+        public static final String General = "General";
         public static final String Ranges = "SearchFacetImpl_ranges";
         public static final String Options = "SearchFacetImpl_options";
         public static final String Dependent = "SearchFacetImpl_dependent";

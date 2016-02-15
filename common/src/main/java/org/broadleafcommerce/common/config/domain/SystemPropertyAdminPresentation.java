@@ -46,7 +46,7 @@ public interface SystemPropertyAdminPresentation {
     }
 
     public static class GroupName {
-        public static final String General = "SystemPropertyImpl_general";
+        public static final String General = "General";
         public static final String Placement = "SystemPropertyImpl_placement";
     }
 
