@@ -22,26 +22,30 @@
                 </div>
             </a>
             <div class="fieldset-card-content" th:classappend="${(group.collapsed ? 'content-collapsed' : '')}">
-                <div th:each="field : ${group.fields}"
-                     th:if="${field.name}"
-                     th:class="${'field-group' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}"
-                     blc_admin:component_id="${field}"
-                     th:classappend="${!field.isVisible}? 'hidden'">
 
-                     <div th:if="${renderOriginalValue}"
-                          class="original-value"
-                          th:attr="data-original-value=${field.attributes['originalValue']},
-                                   data-original-overriden-value=${field.attributes['originalOverridenValue']}" />
+                <th:block  th:each="groupItem, groupItemStat : ${group.groupItems}">
+                    <th:block th:if="${groupItem.isField()}" th:with="field=${groupItem.field}">
+                        <div th:if="${field.name}"
+                             th:class="${'field-group' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}"
+                             blc_admin:component_id="${field}"
+                             th:classappend="${!field.isVisible}? 'hidden'">
 
-                    <div th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
-                        <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"/>
-                    </div>
-                    <div th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
-                        <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"/>
-                    </div>
+                             <div th:if="${renderOriginalValue}"
+                                  class="original-value"
+                                  th:attr="data-original-value=${field.attributes['originalValue']},
+                                           data-original-overriden-value=${field.attributes['originalOverridenValue']}" />
 
-                    <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
-                </div>
+                            <div th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
+                                <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"/>
+                            </div>
+                            <div th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
+                                <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"/>
+                            </div>
+
+                            <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
+                        </div>
+                    </th:block>
+                </th:block>
 
                 <div th:unless="${#strings.containsIgnoreCase(group.title, 'master')}" th:remove="tag">
                     <div th:if="${dynamicFormActionsTemplate}" th:remove="tag">

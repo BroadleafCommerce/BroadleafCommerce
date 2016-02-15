@@ -327,9 +327,9 @@ public class EntityForm {
             containingTab.removeListGrid(lgToRemove);
         }
 
-        if (containingGroup != null && containingGroup.getListGrids().size() == 0 && containingGroup.getFields().size() == 0) {
+        if (containingGroup != null && containingGroup.getGroupItems().isEmpty()) {
             removeGroup(containingGroup);
-        } else if (containingTab != null && containingTab.getListGrids().size() == 0 && containingTab.getFields().size() == 0) {
+        } else if (containingTab != null && containingTab.getListGrids().isEmpty() && containingTab.getFields().isEmpty()) {
             removeTab(containingTab);
         }
 
@@ -446,7 +446,7 @@ public class EntityForm {
         FieldGroup fieldGroup = findGroup(groupName);
         Tab tab = findTab(tabName);
         if (fieldGroup != null) {
-            fieldGroup.getListGrids().add(listGrid);
+            fieldGroup.addListGrid(listGrid);
         } else if (fieldGroup == null && tab != null) {
             tab.getListGrids().add(listGrid);
         } else {
