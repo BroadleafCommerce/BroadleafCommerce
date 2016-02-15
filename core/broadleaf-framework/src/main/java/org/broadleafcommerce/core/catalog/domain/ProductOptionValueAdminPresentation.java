@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.redirect.domain;
+package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.presentation.AdminGroupPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -27,23 +27,20 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 /**
  * @author Jon Fleschler (jfleschler)
  */
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "SearchRedirectImpl_friendyName",
+@AdminPresentationClass(friendlyName = "Product Option Value",
     tabs = {
-        @AdminTabPresentation(name = SearchRedirectAdminPresentation.TabName.General,
-            order = SearchRedirectAdminPresentation.TabOrder.General,
-                groups = {
-                        @AdminGroupPresentation(name = SearchRedirectAdminPresentation.GroupName.General,
-                                order = SearchRedirectAdminPresentation.GroupOrder.General),
-                        @AdminGroupPresentation(name = SearchRedirectAdminPresentation.GroupName.Dates,
-                                order = SearchRedirectAdminPresentation.GroupOrder.Dates,
-                                column = 1)
-                }
+        @AdminTabPresentation(name = ProductOptionValueAdminPresentation.TabName.General,
+            order = ProductOptionValueAdminPresentation.TabOrder.General,
+            groups = {
+                @AdminGroupPresentation(name = ProductOptionValueAdminPresentation.GroupName.General,
+                    order = ProductOptionValueAdminPresentation.GroupOrder.General,
+                    untitled = true)
+            }
         )
     }
 )
 
-public interface SearchRedirectAdminPresentation {
-
+public interface ProductOptionValueAdminPresentation {
 
     public static class TabName {
         public static final String General = "General";
@@ -54,15 +51,16 @@ public interface SearchRedirectAdminPresentation {
     }
 
     public static class GroupName {
-
         public static final String General = "General";
-        public static final String Dates = "SearchRedirectImpl_Group_Dates";
     }
 
     public static class GroupOrder {
-
         public static final int General = 1000;
-        public static final int Dates = 2000;
+    }
 
+    public static class FieldOrder {
+        public static final int value = 1000;
+        public static final int adjustment = 2000;
+        public static final int order = 3000;
     }
 }

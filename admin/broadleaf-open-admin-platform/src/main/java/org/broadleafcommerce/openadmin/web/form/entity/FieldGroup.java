@@ -33,15 +33,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class FieldGroup {
 
     protected String title;
     protected String key;
     protected Integer order;
-    protected Set<Field> alternateOrderedFields = new HashSet<>();
-    protected Set<Field> fields = new HashSet<>();
+    protected Set<FieldGroupItem> alternateOrderedGroupItems = new HashSet<>();
+    protected Set<FieldGroupItem> groupItems = new HashSet<>();
     protected Boolean isVisible;
     protected Integer column;
     protected Boolean isUntitled;
@@ -49,40 +48,19 @@ public class FieldGroup {
     protected String toolTip;
     protected Map<String, Object> groupAttributes = new HashMap<String, Object>();
 
-
-    Set<ListGrid> listGrids = new TreeSet<ListGrid>(new Comparator<ListGrid>() {
-        @Override
-        public int compare(ListGrid o1, ListGrid o2) {
-            return new CompareToBuilder()
-                .append(o1.getOrder(), o2.getOrder())
-                .append(o1.getSubCollectionFieldName(), o2.getSubCollectionFieldName())
-                .toComparison();
-        }
-    });
-
     public void removeListGrid(ListGrid listGrid) {
-        listGrids.remove(listGrid);
-    }
-
-    public Set<ListGrid> getListGrids() {
-        return listGrids;
-    }
-
-    public void setListGrids(Set<ListGrid> listGrids) {
-        this.listGrids = listGrids;
+        FieldGroupItem groupItem = findFieldGroupItemByListGrid(listGrid);
+        groupItems.remove(groupItem);
     }
 
     public Boolean getIsVisible() {
         if (isVisible != null) {
             return isVisible;
         }
-        for (Field f : getFields()) {
-            if (f.getIsVisible()) {
+        for (FieldGroupItem groupItem : getGroupItems()) {
+            if (groupItem.isVisible()) {
                 return true;
             }
-        }
-        if (listGrids.size() > 0) {
-            return true;
         }
         return false;
     }
@@ -185,26 +163,36 @@ public class FieldGroup {
 
     public boolean addField(Field field) {
         if (field.getAlternateOrdering()) {
-            return alternateOrderedFields.add(field);
+            return alternateOrderedGroupItems.add(new FieldGroupItem(field));
         } else {
-            return fields.add(field);
+            return groupItems.add(new FieldGroupItem(field));
         }
+    }
+
+    public void addFields(Set<Field> fields) {
+        for (Field field : fields) {
+            addField(field);
+        }
+    }
+
+    public void addListGrid(ListGrid listGrid) {
+        groupItems.add(new FieldGroupItem(listGrid));
     }
 
     public boolean removeField(Field field) {
+        FieldGroupItem groupItem = findFieldGroupItemByField(field);
         if (field.getAlternateOrdering()) {
-            return alternateOrderedFields.remove(field);
+            return alternateOrderedGroupItems.remove(groupItem);
         } else {
-            return fields.remove(field);
+            return groupItems.remove(groupItem);
         }
     }
 
-    public Set<Field> getFields() {
-        List<Field> myFields = new ArrayList<Field>();
-        myFields.addAll(fields);
-        Collections.sort(myFields, new Comparator<Field>() {
+    public Set<FieldGroupItem> getGroupItems() {
+        List<FieldGroupItem> myGroupItems = new ArrayList<>(groupItems);
+        Collections.sort(myGroupItems, new Comparator<FieldGroupItem>() {
             @Override
-            public int compare(Field o1, Field o2) {
+            public int compare(FieldGroupItem o1, FieldGroupItem o2) {
                 return new CompareToBuilder()
                     .append(o1.getOrder(), o2.getOrder())
                     .append(o1.getFriendlyName(), o2.getFriendlyName())
@@ -212,11 +200,11 @@ public class FieldGroup {
                     .toComparison();
             }
         });
-        if (!alternateOrderedFields.isEmpty()) {
-            List<Field> mapFieldsList = new ArrayList<Field>(alternateOrderedFields);
-            Collections.sort(mapFieldsList, new Comparator<Field>() {
+        if (!alternateOrderedGroupItems.isEmpty()) {
+            List<FieldGroupItem> mapGroupItemsList = new ArrayList<>(alternateOrderedGroupItems);
+            Collections.sort(mapGroupItemsList, new Comparator<FieldGroupItem>() {
                 @Override
-                public int compare(Field o1, Field o2) {
+                public int compare(FieldGroupItem o1, FieldGroupItem o2) {
                     return new CompareToBuilder()
                         .append(o1.getOrder(), o2.getOrder())
                         .append(o1.getFriendlyName(), o2.getFriendlyName())
@@ -228,37 +216,65 @@ public class FieldGroup {
             alternate ordered fields whose order is less or equal to zero appear first and are
             prepended to the response list in order
              */
-            List<Field> smallOrderFields = new ArrayList<Field>();
-            for (Field mapField : mapFieldsList) {
+            List<FieldGroupItem> smallOrderGroupItems = new ArrayList<>();
+            for (FieldGroupItem mapField : mapGroupItemsList) {
                 if (mapField.getOrder() <= 0) {
-                    smallOrderFields.add(mapField);
+                    smallOrderGroupItems.add(mapField);
                 }
             }
-            myFields.addAll(0, smallOrderFields);
+            myGroupItems.addAll(0, smallOrderGroupItems);
             /*
             Alternate ordered fields (specifically custom fields) have a different ordering rule than regular fields. For example,
             if a user enters 3 for the field order value for a custom field, that custom field should be the third
             on the form. Regular BLC AdminPresentation fields tends to have orders like 1000, 2000, etc..., so this
             distinction is necessary.
              */
-            for (Field mapField : mapFieldsList) {
+            for (FieldGroupItem mapField : mapGroupItemsList) {
                 if (mapField.getOrder() <= 0) {
                     continue;
                 }
-                if (mapField.getOrder() < myFields.size() + 1) {
-                    myFields.add(mapField.getOrder() - 1, mapField);
+                if (mapField.getOrder() < myGroupItems.size() + 1) {
+                    myGroupItems.add(mapField.getOrder() - 1, mapField);
                     continue;
                 }
-                myFields.add(mapField);
+                myGroupItems.add(mapField);
             }
         }
 
         //don't allow any modification of the fields
-        return Collections.unmodifiableSet(new LinkedHashSet<Field>(myFields));
+        return Collections.unmodifiableSet(new LinkedHashSet<>(myGroupItems));
     }
 
-    public void setFields(Set<Field> fields) {
-        this.fields = fields;
+    public void setGroupItems(Set<FieldGroupItem> groupItems) {
+        this.groupItems = groupItems;
+    }
+
+    public FieldGroupItem findFieldGroupItemByField(Field field) {
+        for (FieldGroupItem groupItem : groupItems) {
+            if (groupItem.isField() && field != null && field.equals(groupItem.getField())) {
+                return groupItem;
+            }
+        }
+        for (FieldGroupItem groupItem : alternateOrderedGroupItems) {
+            if (groupItem.isField() && field != null && field.equals(groupItem.getField())) {
+                return groupItem;
+            }
+        }
+        return null;
+    }
+
+    public FieldGroupItem findFieldGroupItemByListGrid(ListGrid listGrid) {
+        for (FieldGroupItem groupItem : groupItems) {
+            if (groupItem.isListGrid() && listGrid != null && listGrid.equals(groupItem.getListGrid())) {
+                return groupItem;
+            }
+        }
+        for (FieldGroupItem groupItem : alternateOrderedGroupItems) {
+            if (groupItem.isListGrid() && listGrid != null && listGrid.equals(groupItem.getListGrid())) {
+                return groupItem;
+            }
+        }
+        return null;
     }
 
     public boolean isMasterFieldGroup() {
@@ -270,15 +286,38 @@ public class FieldGroup {
     }
 
     public boolean containsFieldData() {
-        for (Field field : fields) {
-            if (field.getValue() != null) {
-                return true;
+        for (FieldGroupItem groupItem : groupItems) {
+            if (groupItem.isField() && groupItem.getField() != null) {
+                Field field = groupItem.getField();
+                if (field.getValue() != null) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     public boolean hasFieldOrListGrid() {
-        return fields.size() > 0 || alternateOrderedFields.size() > 0|| listGrids.size() > 0;
+        return groupItems.size() > 0 || alternateOrderedGroupItems.size() > 0;
+    }
+
+    public Set<Field> getFields() {
+        Set<Field> fields = new HashSet<>();
+        for (FieldGroupItem groupItem : getGroupItems()) {
+            if (groupItem.isField()) {
+                fields.add(groupItem.getField());
+            }
+        }
+        return fields;
+    }
+
+    public Set<ListGrid> getListGrids() {
+        Set<ListGrid> listGrids = new HashSet<>();
+        for (FieldGroupItem groupItem : getGroupItems()) {
+            if (groupItem.isListGrid()) {
+                listGrids.add(groupItem.getListGrid());
+            }
+        }
+        return listGrids;
     }
 }

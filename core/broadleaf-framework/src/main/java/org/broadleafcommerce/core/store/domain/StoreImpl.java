@@ -229,7 +229,7 @@ public class StoreImpl implements Store {
 
         public static class Group {
             public static class Name {
-                public static final String General = "StoreImpl_Store_General";
+                public static final String General = "General";
                 public static final String Location = "StoreImpl_Store_Location";
                 public static final String Geocoding = "StoreImpl_Store_Geocoding";
             }

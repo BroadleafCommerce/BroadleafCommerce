@@ -65,7 +65,7 @@ public interface OrderAdminPresentation {
     }
     
     public static class GroupName {
-        public static final String General = "OrderImpl_Order";
+        public static final String General = "General";
     }
 
     public static class GroupOrder {

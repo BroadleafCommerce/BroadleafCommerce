@@ -307,6 +307,7 @@ public class AdminProductController extends AdminBasicEntityController {
         if (ProductBundle.class.isAssignableFrom(Class.forName(form.getEntityType()))) {
             form.removeListGrid("additionalSkus");
             form.removeListGrid("productOptions");
+            form.removeField("canSellWithoutOptions");
         }
         
         form.removeListGrid("defaultSku.skuAttributes");
