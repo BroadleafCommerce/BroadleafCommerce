@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.search.domain.SearchFacetAdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -43,12 +44,11 @@ import java.math.BigDecimal;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_OPTION_VALUE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
-@AdminPresentationClass(friendlyName = "Product Option Value")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class ProductOptionValueImpl implements ProductOptionValue {
+public class ProductOptionValueImpl implements ProductOptionValue, ProductOptionValueAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,18 +66,21 @@ public class ProductOptionValueImpl implements ProductOptionValue {
 
     @Column(name = "ATTRIBUTE_VALUE")
     @AdminPresentation(friendlyName = "productOptionValue_attributeValue", 
-            prominent = true, order = Presentation.FieldOrder.ATTRIBUTE_VALUE,
-            translatable = true, gridOrder = Presentation.FieldOrder.ATTRIBUTE_VALUE)
+            prominent = true, order = FieldOrder.value,
+            translatable = true, gridOrder = FieldOrder.value,
+            group = GroupName.General)
     protected String attributeValue;
 
     @Column(name = "DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "productOptionValue_displayOrder", prominent = true,
-            gridOrder = Presentation.FieldOrder.DISPLAY_ORDER, order = Presentation.FieldOrder.DISPLAY_ORDER)
+            gridOrder =FieldOrder.order, order = FieldOrder.order,
+            group = GroupName.General)
     protected Long displayOrder;
 
     @Column(name = "PRICE_ADJUSTMENT", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "productOptionValue_adjustment", fieldType = SupportedFieldType.MONEY,
-            prominent = true, gridOrder = Presentation.FieldOrder.PRICE_ADJUSTMENT, order = Presentation.FieldOrder.PRICE_ADJUSTMENT)
+            prominent = true, gridOrder = FieldOrder.adjustment, order = FieldOrder.adjustment,
+            group = GroupName.General)
     protected BigDecimal priceAdjustment;
 
     @ManyToOne(targetEntity = ProductOptionImpl.class, cascade = CascadeType.REFRESH)
@@ -191,15 +194,4 @@ public class ProductOptionValueImpl implements ProductOptionValue {
         
         return  createResponse;
     }
-
-    public static class Presentation {
-
-        public static class FieldOrder {
-
-            public static final int ATTRIBUTE_VALUE = 1000;
-            public static final int DISPLAY_ORDER = 3000;
-            public static final int PRICE_ADJUSTMENT = 2000;
-        }
-    }
-
 }
