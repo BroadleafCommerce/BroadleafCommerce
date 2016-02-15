@@ -47,7 +47,7 @@ public interface URLHandlerAdminPresentation {
 
 
     public static class TabName {
-        public static final String General = "URLHandlerImpl_tab_General";
+        public static final String General = "General";
     }
 
     public static class TabOrder {
@@ -55,7 +55,7 @@ public interface URLHandlerAdminPresentation {
     }
 
     public static class GroupName {
-        public static final String General = "URLHandlerImpl_group_General";
+        public static final String General = "General";
         public static final String Redirect = "URLHandlerImpl_group_Redirect";
     }
 

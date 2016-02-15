@@ -45,7 +45,7 @@ import org.broadleafcommerce.common.presentation.AdminTabPresentation;
 public interface AdminUserAdminPresentation {
 
     public static class TabName {
-        public static final String General = "General_Tab";
+        public static final String General = "General";
     }
 
     public static class TabOrder {

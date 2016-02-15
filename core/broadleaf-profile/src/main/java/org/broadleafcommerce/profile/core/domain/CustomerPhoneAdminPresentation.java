@@ -44,7 +44,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 )
 public interface CustomerPhoneAdminPresentation {
     public static class TabName {
-        public static final String General = "CustomerImpl_General_Tab";
+        public static final String General = "General";
     }
 
     public static class TabOrder {

@@ -45,7 +45,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 )
 public interface PageAdminPresentation {
     public static class TabName {
-        public static final String General = "PageImpl_General_Tab";
+        public static final String General = "General";
     }
 
     public static class TabOrder {

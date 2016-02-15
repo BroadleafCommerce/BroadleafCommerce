@@ -65,7 +65,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 public interface CategoryAdminPresentation {
 
     public static class TabName {
-        public static final String General = "CategoryImpl_General_Tab";
+        public static final String General = "General";
         public static final String Marketing = "CategoryImpl_Marketing_Tab";
         public static final String Media = "CategoryImpl_Media_Tab";
         public static final String Search = "CategoryImpl_Search_Tab";
@@ -83,7 +83,7 @@ public interface CategoryAdminPresentation {
     }
 
     public static class GroupName {
-        public static final String General = "CategoryImpl_General";
+        public static final String General = "General";
         public static final String ActiveDateRange = "CategoryImpl_Active_Date_Range";
         public static final String Miscellaneous = "CategoryImpl_Category_Miscellaneous";
         public static final String ProductDefaults = "CategoryImpl_ProductDefaults";

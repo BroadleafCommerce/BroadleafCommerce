@@ -49,7 +49,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 public interface ProductOptionAdminPresentation {
 
     public static class TabName {
-        public static final String General = "ProductImpl_General_Tab";
+        public static final String General = "General";
     }
 
     public static class TabOrder {
@@ -57,7 +57,7 @@ public interface ProductOptionAdminPresentation {
     }
 
     public static class GroupName {
-        public static final String General = "productOption_general";
+        public static final String General = "General";
         public static final String Details = "productOption_details";
         public static final String Validation = "productOption_validation";
     }

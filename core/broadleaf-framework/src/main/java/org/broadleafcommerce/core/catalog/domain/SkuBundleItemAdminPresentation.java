@@ -44,7 +44,7 @@ public interface SkuBundleItemAdminPresentation {
 
     public static class TabName {
 
-        public static final String General = "bundleItem_General_Tab";
+        public static final String General = "General";
 
     }
 
@@ -55,7 +55,7 @@ public interface SkuBundleItemAdminPresentation {
 
     public static class GroupName {
 
-        public static final String General = "bundleItem_General_Group";
+        public static final String General = "General";
     }
 
     public static class GroupOrder {

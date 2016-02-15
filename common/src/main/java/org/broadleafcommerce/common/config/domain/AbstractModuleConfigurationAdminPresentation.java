@@ -48,7 +48,7 @@ import org.broadleafcommerce.common.presentation.AdminTabPresentation;
 public interface AbstractModuleConfigurationAdminPresentation {
 
     public static class TabName {
-        public static final String General = "AbstractModuleConfiguration_General_Tab";
+        public static final String General = "General";
     }
 
     public static class TabOrder {
@@ -57,7 +57,7 @@ public interface AbstractModuleConfigurationAdminPresentation {
     }
 
     public static class GroupName {
-        public static final String General = "AbstractModuleConfiguration_General";
+        public static final String General = "General";
         public static final String ActiveDates = "AbstractModuleConfiguration_Active_Dates";
         public static final String Options = "AbstractModuleConfiguration_Options";
     }

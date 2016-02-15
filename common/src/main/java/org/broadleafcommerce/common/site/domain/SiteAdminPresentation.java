@@ -45,7 +45,7 @@ import org.broadleafcommerce.common.presentation.AdminTabPresentation;
 public interface SiteAdminPresentation {
 
     public static class TabName {
-        public static final String General = "SiteImpl_General_Tab";
+        public static final String General = "General";
     }
 
     public static class TabOrder {
@@ -53,7 +53,7 @@ public interface SiteAdminPresentation {
     }
 
     public static class GroupName {
-        public static final String General = "SiteImpl_General_Description";
+        public static final String General = "General";
         public static final String Security = "SiteImpl_Security_Description";
     }
 
