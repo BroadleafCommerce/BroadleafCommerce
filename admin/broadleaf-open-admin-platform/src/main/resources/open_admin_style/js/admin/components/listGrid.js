@@ -197,7 +197,8 @@
         },
 
         updateActionButtons : function($listGridContainer) {
-            if (!$listGridContainer.find('tr.list-grid-no-results').length) {
+            if (!$listGridContainer.find('tr.list-grid-no-results').length &&
+                !$listGridContainer.find('table:not([id$=-header])').find('tr:not(.list-grid-no-results):not(.progress)').length) {
                 $listGridContainer.find('button.row-action.all-capable').removeAttr('disabled');
                 $listGridContainer.find('.filter-button').removeClass('disabled').removeAttr('disabled');
             } else {
