@@ -40,11 +40,6 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -56,6 +51,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -92,7 +91,7 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     protected String name;
     
     @Column(name="AUTHOR")
-    @AdminPresentation(friendlyName = "SandBoxImpl_Author", group = SandboxAdminPresentation.GroupName.Description, prominent = true, 
+    @AdminPresentation(friendlyName = "SandBoxImpl_Author", group = SandboxAdminPresentation.GroupName.Description,
         gridOrder = 3000, order = 3000, visibility = VisibilityEnum.FORM_HIDDEN)
     protected Long author;
 

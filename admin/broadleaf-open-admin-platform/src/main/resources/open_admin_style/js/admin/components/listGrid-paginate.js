@@ -70,8 +70,10 @@
         },
         
         getRange : function(rangeDescription) {
-            var range = rangeDescription.split('-');
-            rangeObj = {lo : parseInt(range[0]), hi : parseInt(range[1])};
+            var seperator = rangeDescription.indexOf('-');
+            var lo = Math.max(rangeDescription.substring(0, seperator), 0);
+            var hi = Math.max(rangeDescription.substring(seperator + 1), 0);
+            rangeObj = {lo : parseInt(lo), hi : parseInt(hi)};
             return rangeObj;
         },
         
@@ -323,9 +325,9 @@
                 }
                 
                 if (potentialMax == null) {
-                    potentialMax = totalRecords - 1;
+                    potentialMax = Math.max(totalRecords - 1, 0);
                 } else {
-                    potentialMax = potentialMax - 1;
+                    potentialMax = Math.max(potentialMax - 1, 0);
                 }
                 
                 if (pageSize < potentialMax - topIndex) {
@@ -342,7 +344,7 @@
                     maxIndex = topIndex + pageSize - 1;
                 }
             } else if (!topIndexLoaded && botIndexLoaded) {
-                maxIndex = this.findFirstLoadedIndex($tbody, topIndex) - 1;
+                maxIndex = Math.max(this.findFirstLoadedIndex($tbody, topIndex) - 1, 0);
                 
                 var potentialStart = this.findLastLoadedIndex($tbody, topIndex);
                 
@@ -475,7 +477,7 @@
             var scrollOffset = $tbody.closest('.mCSB_container').position().top;
             var trHeight = this.getRowHeight($tbody);
             var topVisibleIndex = Math.floor(scrollOffset * -1 / trHeight);
-            return topVisibleIndex;
+            return Math.max(topVisibleIndex, 0);
         },
         
         getBottomVisibleIndex : function($tbody) {
@@ -828,7 +830,7 @@
             // Figure out how large to make the top and bottom paddings
             var range = this.getLoadedRecordRanges($tbody)[0];
             var recordsAbove = range.lo;
-            var recordsBelow = this.getTotalRecords($tbody) - 1 - range.hi;
+            var recordsBelow = Math.max(this.getTotalRecords($tbody) - 1 - range.hi, 0);
             var rowHeight = this.getRowHeight($tbody);
             
             if (recordsAbove) {

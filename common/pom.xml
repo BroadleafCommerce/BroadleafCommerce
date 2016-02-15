@@ -3,7 +3,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>4.1.0-ADMIN-UX-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-common</artifactId>
@@ -66,6 +66,17 @@
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Spec*</include>
+                        <include>**/*Test*</include>
+                    </includes>
+                    <argLine>${surefire.argLine}</argLine>
+                </configuration>
             </plugin>
         </plugins>
         <resources>
@@ -377,24 +388,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.gebish</groupId>
-            <artifactId>geb-core</artifactId>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-support</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-firefox-driver</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-chrome-driver</artifactId>
-            <scope>test</scope>
-        </dependency>      
     </dependencies>
 </project>
