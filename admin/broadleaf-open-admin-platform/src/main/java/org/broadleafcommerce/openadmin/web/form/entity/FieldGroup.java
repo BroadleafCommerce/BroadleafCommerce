@@ -169,7 +169,7 @@ public class FieldGroup {
         }
     }
 
-    public void addFields(HashSet<Field> fields) {
+    public void addFields(Set<Field> fields) {
         for (Field field : fields) {
             addField(field);
         }
