@@ -550,6 +550,10 @@ button.disabled {
     background-color: #F7EFDC !important;
 }
 
+.list-grid-table tbody tr.progress {
+    background-color: #E3F7D8 !important;
+}
+
 .list-grid-table tbody tr.clickable {
     cursor: pointer;
 }
