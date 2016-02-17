@@ -365,6 +365,12 @@ var BLCAdmin = (function($) {
                         $tabSection.append($closeBtn);
                         $header.hide();
                     }
+
+                    // disable submit button if adorned/adornedWith form (must select a listGrid item to enable submission)
+                    if (BLCAdmin.currentModal().find('.adorned-select-wrapper').length) {
+                        var $submitButton = BLCAdmin.currentModal().find("button[type='submit']");
+                        $submitButton.prop('disabled', true);
+                    }
                 });
             } else {
                 showLinkAsModal(link);
