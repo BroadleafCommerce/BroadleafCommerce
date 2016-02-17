@@ -22,11 +22,25 @@
     width: 260px;
     margin: 0;
     background-color: rgba(0,0,0,0.1);
-    padding: 0 22px !important;
+    padding: 0 30px 0 80px !important;
 }
 
 .sandbox-bar .selectize-control.single .selectize-input.input-active {
     background-color: rgba(0,0,0,0.1);
+}
+
+.selectize-dropdown.sandboxes {
+    border: none;
+}
+
+.selectize-dropdown.sandboxes .option.selected, .selectize-dropdown.sandboxes .option.selected.active {
+    background-color: rgba(0,0,0,0.2);
+    color: #efbc62;
+}
+
+.selectize-dropdown.sandboxes .option.active {
+    background-color: rgba(0,0,0,0.2);
+    color: white;
 }
 
 .dataTables_wrapper .dataTables_length {
@@ -206,5 +220,5 @@
 }
 
 .selectize-control.single .selectize-input.has-items {
-    padding: 0px 10px;
+    padding: 0 10px;
 }

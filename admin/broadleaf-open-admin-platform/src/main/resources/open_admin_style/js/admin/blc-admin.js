@@ -449,16 +449,16 @@ var BLCAdmin = (function($) {
                 }
             }
 
-            // Run any additionally configured initialization handlers
-            for (var i = 0; i < initializationHandlers.length; i++) {
-                initializationHandlers[i]($container);
-            }
-
             BLCAdmin.initializeTextAreaFields($container);
             BLCAdmin.initializeColorPickerFields($container);
             BLCAdmin.initializeSelectizeFields($container);
             BLCAdmin.initializeRadioFields($container);
             BLCAdmin.initializeDateFields($container);
+
+            // Run any additionally configured initialization handlers
+            for (var i = 0; i < initializationHandlers.length; i++) {
+                initializationHandlers[i]($container);
+            }
 
             // Mark this container as initialized
             $container.data('initialized', 'true');
@@ -1063,6 +1063,7 @@ $.fn.blSelectize = function (settings_user) {
         }
         // add default settings here
         settings_user['dropdownParent'] = 'body';
+        settings_user['hideSelected'] = true;
 
         var $select = $(el).selectize(settings_user);
         var selectize = $select[0].selectize;
