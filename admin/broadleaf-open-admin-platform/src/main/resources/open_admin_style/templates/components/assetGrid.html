@@ -20,12 +20,23 @@
                              th:src="@{${asset.fullUrl + '?largeAdminThumbnail'}}"
                              th:attr="data-fullurl=@{${asset.fullUrl}}, data-rowid=${asset.id}" />
 
-                        <div class="asset-actions asset-grid-lock" th:if="${asset.locked}">
-                            <i class="fa fa-lock"></i>
+                        <!-- Show VIEW icon if asset is locked -->
+                        <div class="asset-actions" th:if="${asset.locked and not inModal}">
+                            <a class="asset-grid-view" th:href="@{${'/assets/' + asset.id}}"><i class="fa fa-eye"></i></a>
+                        </div>
+
+                        <!-- Show EDIT icon if asset is not locked -->
+                        <div class="asset-actions" th:if="${not asset.locked and not inModal}">
+                            <a class="asset-grid-edit" th:href="@{${'/assets/' + asset.id}}"><i class="fa fa-pencil"></i></a>
                         </div>
                     </div>
 
-                    <a th:href="@{${'/assets/' + asset.id}}" th:text="${asset.name}"></a>
+                    <a th:if="${not asset.locked or inModal}" href="#" class="asset-name" th:text="${asset.name}"></a>
+                    <span th:unless="${not asset.locked or inModal}" class="locked-name" th:text="${asset.name}"></span>
+
+                    <div th:if="${asset.locked and not inModal}" class="asset-grid-lock">
+                        <i class="fa fa-lock"></i>
+                    </div>
                 </div>
             </div>
         </div>
