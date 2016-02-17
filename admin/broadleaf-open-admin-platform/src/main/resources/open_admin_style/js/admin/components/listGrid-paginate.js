@@ -631,8 +631,6 @@
                     wrapperHeight = $tbody.closest('.select-group').outerHeight();
                 }
 
-                // adjust for header and footer height
-                wrapperHeight -= $wrapper.prev('.listgrid-header-wrapper:visible').outerHeight();
                 wrapperHeight -= $wrapper.next('.listgrid-table-footer:visible').outerHeight();
 
                 $wrapper.css('max-height', wrapperHeight);
