@@ -444,7 +444,7 @@ $(document).ready(function() {
         if ($tr.find('tr.list-grid-no-results').length == 0 && !$table.hasClass('reordering')) {
 
             // Avoid rebuilding "next" columns if row is already selected
-            if ((listGridType === 'tree' || listGridType === 'asset_grid_folder') && !$tr.hasClass('selected')) {
+            if (!$tr.hasClass('selected')) {
                 $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$tr, link, fields, currentUrl]);
             }
 
