@@ -539,13 +539,14 @@ $(document).ready(function() {
                 clearOtherAlerts: true
             });
             BLCAdmin.hideCurrentModal();
-        })
+        });
     });
     
     /**
      * The rowSelected handler for an adornedTarget list grid. This is specific to adorned target
      * lists that do not have any additional maintained fields. In this case, we can simply
-     * submit the form directly.
+     * submit the form directly. Also need to enable or disable the submit
+     * button based on whether the row is being de/selected.
      */
     $('body').on('listGrid-adorned-rowSelected', function(event, $target, link, fields, currentUrl) {
         var $adornedTargetId = $(this).find('input#adornedTargetIdProperty');
@@ -554,11 +555,18 @@ $(document).ready(function() {
         } else {
             $adornedTargetId.val(fields['id']);
         }
+        // if selecting a row -> enable submit button, else deselecting -> disable submit button
+        if ($target.hasClass('selected')) {
+            $('button[type="submit"]').prop('disabled', false);
+        } else {
+            $('button[type="submit"]').prop('disabled', true);
+        }
     });
     
     /**
      * The rowSelected handler for an adornedTargetWithForm list grid. Once the user selects an entity,
-     * show the form with the additional maintained fields.
+     * show the form with the additional maintained fields. Also need to enable or disable the submit
+     * button based on whether the row is being de/selected.
      */
     $('body').on('listGrid-adorned_with_form-rowSelected', function(event, $target, link, fields, currentUrl) {
         var $adornedTargetId = $(this).find('input#adornedTargetIdProperty');
@@ -566,6 +574,12 @@ $(document).ready(function() {
             $adornedTargetId.val('');
         } else {
             $adornedTargetId.val(fields['id']);
+        }
+        // if selecting a row -> enable submit button, else deselecting -> disable submit button
+        if ($target.hasClass('selected')) {
+            $('button[type="submit"]').prop('disabled', false);
+        } else {
+            $('button[type="submit"]').prop('disabled', true);
         }
     });
     
@@ -607,7 +621,7 @@ $(document).ready(function() {
             $this.find('button.clear-foreign-key').show();
             
             // Ensure that the external link button points to the correct URL
-            var $externalLink = $this.find('span.external-link-container a')
+            var $externalLink = $this.find('span.external-link-container a');
             $externalLink.attr('href', $externalLink.data('foreign-key-link') + '/' + fields['id']);
             $externalLink.parent().show();
             
