@@ -528,7 +528,7 @@ var BLCAdmin = (function($) {
 
             $container.find('.tooltip').each(function() {
                 var windowWidth = $(window).width();
-                if ($(this).offset().left > windowWidth / 2) {
+                if ($(this).offset().left > windowWidth / 2 || $(this).closest('.col4').length) {
                     $(this).find('span').addClass('left');
                 }
             });
