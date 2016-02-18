@@ -749,7 +749,7 @@ $(document).ready(function() {
                         url : url,
                         type : "POST",
                         data : {
-                            newSequence : ui.item.index(),
+                            newSequence : BLCAdmin.listGrid.paginate.getActualRowIndex(ui.item),
                             parentId : parentId
                         }
                     }, function(data) {
