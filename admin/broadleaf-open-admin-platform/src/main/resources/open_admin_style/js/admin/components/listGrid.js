@@ -291,7 +291,9 @@
                 $spinner.css('position', 'absolute');
                 $spinner.css('top', spinnerOffset + 'px');
             }
-            $spinner.css('width',$tbody.width());
+
+            // Subtract 2 to account for left & right boarder lines
+            $spinner.css('width',$tbody.innerWidth() - 2);
             $spinner.css('display', 'block');
         },
         
