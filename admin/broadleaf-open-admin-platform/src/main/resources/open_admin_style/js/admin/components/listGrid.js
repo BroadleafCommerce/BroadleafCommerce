@@ -444,7 +444,7 @@ $(document).ready(function() {
         if ($tr.find('tr.list-grid-no-results').length == 0 && !$table.hasClass('reordering')) {
 
             // Avoid rebuilding "next" columns if row is already selected
-            if (!$tr.hasClass('selected')) {
+            if (listGridType === 'tree' && !$tr.hasClass('selected')) {
                 $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$tr, link, fields, currentUrl]);
             }
 
@@ -460,7 +460,10 @@ $(document).ready(function() {
 
             // If Adorned or Asset ListGrid, process row click by adding item id to form.
             // Else, wait for confirmation button click.
-            if (listGridType === 'adorned_with_form' || listGridType === 'adorned'|| listGridType === 'asset') {
+            if (listGridType === 'adorned_with_form' ||
+                listGridType === 'adorned'||
+                listGridType === 'asset' ||
+                listGridType === 'productionInventorySkuSelection') {
                 $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$tr, link, fields, currentUrl]);
             }
 
