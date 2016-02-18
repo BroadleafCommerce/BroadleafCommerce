@@ -709,6 +709,22 @@ $(document).ready(function() {
 
             $tbody.sortable({
                 helper : BLCAdmin.listGrid.fixHelper,
+                change: function( event, ui ) {
+                    var prevDisplayOrder = ui.placeholder.prev().data('displayorder');
+                    var nextDisplayOrder = ui.placeholder.next().data('displayorder');
+                    if (!$.isNumeric(prevDisplayOrder) || prevDisplayOrder == nextDisplayOrder) {
+                        ui.placeholder.hide();
+                    } else {
+                        ui.placeholder.show();
+                    }
+                },
+                beforeStop: function(ev, ui) {
+                    var prevDisplayOrder = ui.placeholder.prev().prev().data('displayorder');
+                    var nextDisplayOrder = ui.placeholder.next().data('displayorder');
+                    if (!$.isNumeric(prevDisplayOrder) || prevDisplayOrder == nextDisplayOrder) {
+                        $(this).sortable("cancel");
+                    }
+                },
                 update : function(event, ui) {
                     var url = ui.item.data('link') + '/sequence';
 
