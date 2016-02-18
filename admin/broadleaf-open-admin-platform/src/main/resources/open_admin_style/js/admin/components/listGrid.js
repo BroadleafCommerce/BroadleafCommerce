@@ -766,7 +766,7 @@ $(document).ready(function() {
                             var $parent = $container.prev().find('tr.selected');
                             if (!$parent.hasClass('dirty')) {
                                 $parent.addClass('dirty');
-                                var changeIcon = '<a class="blc-icon-site-updates has-tip hover-cursor workflow-icon" data-width="200" ' +
+                                var changeIcon = '<a class="blc-icon-triangle-right has-tip hover-cursor workflow-icon" data-width="200" ' +
                                     'title="This record has been modified in the current sandbox"></a>';
 
                                 if ($parent.find('.workflow-change-icon').length) {
