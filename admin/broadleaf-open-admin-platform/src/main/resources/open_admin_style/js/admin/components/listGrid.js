@@ -759,6 +759,8 @@ $(document).ready(function() {
                                 }
                             }
                         }
+
+                        ui.item.data('displayorder', data.newDisplayOrder);
                     });
                 }
             }).disableSelection();
