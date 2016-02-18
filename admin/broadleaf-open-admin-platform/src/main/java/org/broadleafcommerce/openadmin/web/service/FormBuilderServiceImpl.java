@@ -409,11 +409,14 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             } else {
                 for (String fieldName : atcmd.getGridVisibleFields()) {
                     Property p = cmd.getPMap().get(fieldName);
-                    BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+                    if (p != null){
+                        BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
 
-                    Field hf = createHeaderField(p, md);
-                    headerFields.add(hf);
-                    wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
+                        Field hf = createHeaderField(p, md);
+                        headerFields.add(hf);
+                        wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
+                    }
+
                 }
             }
 
