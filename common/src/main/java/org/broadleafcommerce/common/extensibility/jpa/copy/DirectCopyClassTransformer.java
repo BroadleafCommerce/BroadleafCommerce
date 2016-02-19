@@ -19,6 +19,23 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.LoaderClassPath;
+import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.AnnotationMemberValue;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.MemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
+
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.logging.LifeCycleEvent;
@@ -43,23 +60,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityListeners;
-
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.AnnotationMemberValue;
-import javassist.bytecode.annotation.ArrayMemberValue;
-import javassist.bytecode.annotation.BooleanMemberValue;
-import javassist.bytecode.annotation.MemberValue;
-import javassist.bytecode.annotation.StringMemberValue;
 
 /**
  * This class transformer will copy fields, methods, and interface definitions from a source class to a target class,
@@ -126,8 +126,10 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 }
             } else {
                 if (annotationTransformedClasses.contains(convertedClassName)) {
-                    logger.warn(convertedClassName + " has already been transformed by a previous instance of DirectCopyTransfomer. " +
-                            "Skipping this annotation based transformation. Generally, annotation-based transformation is handled " +
+                    logger.warn(convertedClassName + " has already been transformed by a previous instance of " +
+                            "DirectCopyTransfomer. " +
+                            "Skipping this annotation based transformation. Generally, annotation-based " +
+                            "transformation is handled " +
                             "by bean id blAnnotationDirectCopyClassTransformer with template tokens being added to " +
                             "blDirectCopyTransformTokenMap via EarlyStageMergeBeanPostProcessor.");
                 }
@@ -152,8 +154,10 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 if (isValidPattern) {
                     classPool = ClassPool.getDefault();
                     clazz = classPool.makeClass(new ByteArrayInputStream(classfileBuffer), false);
-                    XFormParams params = reviewDirectCopyTransformAnnotations(clazz, mySkipOverlaps, myRenameMethodOverlaps, matchedPatterns);
-                    XFormParams conditionalParams = reviewConditionalDirectCopyTransforms(convertedClassName, matchedPatterns);
+                    XFormParams params = reviewDirectCopyTransformAnnotations(clazz, mySkipOverlaps,
+                            myRenameMethodOverlaps, matchedPatterns);
+                    XFormParams conditionalParams = reviewConditionalDirectCopyTransforms(convertedClassName,
+                            matchedPatterns);
                     if (conditionalParams != null && !conditionalParams.isEmpty()) {
                         params = combineXFormParams(params, conditionalParams);
                     }
@@ -398,21 +402,26 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                                 AnnotationMemberValue member = (AnnotationMemberValue) arrayMemberValue;
                                 Annotation memberAnnot = member.getValue();
                                 ArrayMemberValue annot = (ArrayMemberValue) memberAnnot.getMemberValue("templateTokens");
+                                int tokenLength = 0;
                                 for (MemberValue memberValue : annot.getValue()) {
                                     String val = ((StringMemberValue) memberValue).getValue();
-                                    reviewTemplateTokens(matchedPatterns, templates, val);
+                                    tokenLength += reviewTemplateTokens(matchedPatterns, templates, val);
                                 }
                                 BooleanMemberValue skipAnnot = (BooleanMemberValue) memberAnnot.getMemberValue("skipOverlaps");
-                                if (skipAnnot != null) {
-                                    skips.add(skipAnnot.getValue());
-                                } else {
-                                    skips.add(mySkipOverlaps);
+                                for (int j=0;j<tokenLength;j++) {
+                                    if (skipAnnot != null) {
+                                        skips.add(skipAnnot.getValue());
+                                    } else {
+                                        skips.add(mySkipOverlaps);
+                                    }
                                 }
                                 BooleanMemberValue renameAnnot = (BooleanMemberValue) memberAnnot.getMemberValue("renameMethodOverlaps");
-                                if (renameAnnot != null) {
-                                    renames.add(renameAnnot.getValue());
-                                } else {
-                                    renames.add(myRenameMethodOverlaps);
+                                for (int j=0;j<tokenLength;j++) {
+                                    if (renameAnnot != null) {
+                                        renames.add(renameAnnot.getValue());
+                                    } else {
+                                        renames.add(myRenameMethodOverlaps);
+                                    }
                                 }
                             }
                             response.setXformVals(templates.toArray(new String[templates.size()]));
@@ -460,7 +469,8 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
         return response;
     }
 
-    protected void reviewTemplateTokens(List<DirectCopyIgnorePattern> matchedPatterns, List<String> templates, String val) {
+    protected int reviewTemplateTokens(List<DirectCopyIgnorePattern> matchedPatterns, List<String> templates, String val) {
+        int response = 0;
         if (val != null && templateTokens.containsKey(val)) {
             templateCheck: {
                 for (DirectCopyIgnorePattern matchedPattern : matchedPatterns) {
@@ -472,8 +482,10 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 }
                 String[] templateVals = templateTokens.get(val).split(",");
                 templates.addAll(Arrays.asList(templateVals));
+                response = templateVals.length;
             }
         }
+        return response;
     }
 
     protected void buildClassLevelAnnotations(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {

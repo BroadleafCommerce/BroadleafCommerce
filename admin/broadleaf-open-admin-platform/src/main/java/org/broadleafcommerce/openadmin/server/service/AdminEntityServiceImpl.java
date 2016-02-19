@@ -453,6 +453,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withEntity(new Entity());
+        ppr.getEntity().setIsPreAdd(parentEntity.isPreAdd());
 
         if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
