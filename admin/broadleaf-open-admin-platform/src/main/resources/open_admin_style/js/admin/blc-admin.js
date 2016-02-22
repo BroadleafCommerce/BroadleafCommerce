@@ -443,7 +443,12 @@ var BLCAdmin = (function($) {
             // Show tab error indicators
             if ($container.find('.field-group.has-error').length) {
                 var tabId = '#' + $container.attr("class").substring(0, 4);
+
                 var $tabWithError = $('a[href=' + tabId + ']');
+                if (BLCAdmin.currentModal().length) {
+                    $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
+                }
+
                 if ($tabWithError.length) {
                     $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
                 }
