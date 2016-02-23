@@ -77,7 +77,7 @@
 }
 
 .app-content .content .sandbox-bar #sandboxes {
-    padding: 0 10px 2px;
+    padding: 0 68px 2px;
 }
 
 .entityFormTab {
@@ -294,7 +294,7 @@ tr {
 
 .app-content .content .sandbox-bar .sandbox-actions .button {
     background-color: rgba(0,0,0,0.1);
-    margin: 5px 0 0 5px;
+    margin: 4px 0 0 5px;
     padding: 0;
     line-height: normal;
     height: inherit;
@@ -1040,8 +1040,8 @@ span.workflow-action {
     font-size: 16px;
     margin-right: -6px;
     visibility: hidden;
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     display: inline-block;
 }
 

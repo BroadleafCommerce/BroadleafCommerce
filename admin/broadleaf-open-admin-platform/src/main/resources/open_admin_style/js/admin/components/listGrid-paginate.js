@@ -558,7 +558,7 @@
                 //$headerTable.closest('.listgrid-container').find('th').css('width', '');
 
                 // Figure out what the new table width will be
-                var newWidth = ($headerTable.width() - 15) + 'px';
+                var newWidth = $headerTable.width() + 'px';
                 $headerTable.css('width', newWidth);
                 $table.css('width', newWidth);
             }
@@ -631,8 +631,6 @@
                     wrapperHeight = $tbody.closest('.select-group').outerHeight();
                 }
 
-                // adjust for header and footer height
-                wrapperHeight -= $wrapper.prev('.listgrid-header-wrapper:visible').outerHeight();
                 wrapperHeight -= $wrapper.next('.listgrid-table-footer:visible').outerHeight();
 
                 $wrapper.css('max-height', wrapperHeight);
@@ -875,16 +873,18 @@ $(document).ready(function() {
     
     $(window).resize(function() {
         $.doTimeout('resizeListGrid', 0, function() {
-            BLCAdmin.getActiveTab().find('tbody').each(function(index, element) {
-                if ($(element).is(':visible')) {
-                    BLCAdmin.listGrid.paginate.updateGridSize($(element));
-                } else {
-                    $(element).addClass('needsupdate');
-                }
-            });
-            BLCAdmin.getActiveTab().find('.fieldgroup-listgrid-wrapper-header').each(function(index, element) {
-                BLCAdmin.listGrid.updateGridTitleBarSize($(element));
-            });
+            if ($('.oms').length == 0) {
+                BLCAdmin.getActiveTab().find('tbody').each(function (index, element) {
+                    if ($(element).is(':visible')) {
+                        BLCAdmin.listGrid.paginate.updateGridSize($(element));
+                    } else {
+                        $(element).addClass('needsupdate');
+                    }
+                });
+                BLCAdmin.getActiveTab().find('.fieldgroup-listgrid-wrapper-header').each(function (index, element) {
+                    BLCAdmin.listGrid.updateGridTitleBarSize($(element));
+                });
+            }
         });
     });
     

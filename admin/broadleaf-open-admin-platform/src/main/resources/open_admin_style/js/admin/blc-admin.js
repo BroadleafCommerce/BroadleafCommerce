@@ -365,6 +365,12 @@ var BLCAdmin = (function($) {
                         $tabSection.append($closeBtn);
                         $header.hide();
                     }
+
+                    // disable submit button if adorned/adornedWith form (must select a listGrid item to enable submission)
+                    if (BLCAdmin.currentModal().find('.adorned-select-wrapper').length) {
+                        var $submitButton = BLCAdmin.currentModal().find("button[type='submit']");
+                        $submitButton.prop('disabled', true);
+                    }
                 });
             } else {
                 showLinkAsModal(link);
@@ -443,16 +449,16 @@ var BLCAdmin = (function($) {
                 }
             }
 
-            // Run any additionally configured initialization handlers
-            for (var i = 0; i < initializationHandlers.length; i++) {
-                initializationHandlers[i]($container);
-            }
-
             BLCAdmin.initializeTextAreaFields($container);
             BLCAdmin.initializeColorPickerFields($container);
             BLCAdmin.initializeSelectizeFields($container);
             BLCAdmin.initializeRadioFields($container);
             BLCAdmin.initializeDateFields($container);
+
+            // Run any additionally configured initialization handlers
+            for (var i = 0; i < initializationHandlers.length; i++) {
+                initializationHandlers[i]($container);
+            }
 
             // Mark this container as initialized
             $container.data('initialized', 'true');
@@ -506,7 +512,7 @@ var BLCAdmin = (function($) {
             // initialize datetimepicker fields
             $container.find("[id$=display].datetimepicker").each(function() {
                 if ($(this).val().length) {
-                    var d = new Date($(this).val());
+                    var d = moment($(this).attr('value'), 'YYYY.MM.DD HH:mm:ss').toDate();
                     $(this).val(d.dateFormat("l, F d, Y \@ g:ia"));
                 }
             });
@@ -522,7 +528,7 @@ var BLCAdmin = (function($) {
 
             $container.find('.tooltip').each(function() {
                 var windowWidth = $(window).width();
-                if ($(this).offset().left > windowWidth / 2) {
+                if ($(this).offset().left > windowWidth / 2 || $(this).closest('.col4').length) {
                     $(this).find('span').addClass('left');
                 }
             });
@@ -1057,6 +1063,7 @@ $.fn.blSelectize = function (settings_user) {
         }
         // add default settings here
         settings_user['dropdownParent'] = 'body';
+        settings_user['hideSelected'] = true;
 
         var $select = $(el).selectize(settings_user);
         var selectize = $select[0].selectize;
