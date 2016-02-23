@@ -29,8 +29,6 @@ public class CategorySearchFacetDaoImpl implements CategorySearchFacetDao {
         TypedQuery<CategorySearchFacet> query = em.createNamedQuery("BC_READ_DISTINCT_CATEGORY_SEARCH_FACETS_BY_SEARCH_FACET", CategorySearchFacet.class);
         query.setParameter("searchFacetId", id);
 
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-
         return query.getResultList();
     }
 

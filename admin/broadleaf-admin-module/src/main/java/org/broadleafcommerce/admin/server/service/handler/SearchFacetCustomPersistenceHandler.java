@@ -54,7 +54,7 @@ public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandle
             adminInstance = (SearchFacet) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = dynamicEntityDao.merge(adminInstance);
 
-            if(csfService.readCategorySearchFacetsBySearchFacet(adminInstance.getId()) != null) {
+            if(csfService.readCategorySearchFacetsBySearchFacet(adminInstance.getId()).size() > 0) {
                 // check if search facet is in use by a category (i.e., is it a CategorySearchFacet?)
                 entity.addGlobalValidationError("Cannot delete this SearchFacet because it is referenced by a Category");
                 throw new ValidationException(entity, "SearchFacet_error_inUse");
