@@ -512,7 +512,7 @@ var BLCAdmin = (function($) {
             // initialize datetimepicker fields
             $container.find("[id$=display].datetimepicker").each(function() {
                 if ($(this).val().length) {
-                    var d = new Date($(this).val());
+                    var d = moment($(this).attr('value'), 'YYYY.MM.DD HH:mm:ss').toDate();
                     $(this).val(d.dateFormat("l, F d, Y \@ g:ia"));
                 }
             });
