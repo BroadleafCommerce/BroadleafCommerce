@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
@@ -104,7 +105,8 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID")
     @AdminPresentation(friendlyName = "Sku",
         group = GroupName.General, order = FieldOrder.SKU,
-        prominent = true, gridOrder = FieldOrder.SKU)
+        prominent = true, gridOrder = FieldOrder.SKU,
+        validationConfigurations = @ValidationConfiguration(validationImplementation = "blProductBundleSkuBundleItemValidator"))
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
