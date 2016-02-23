@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
@@ -109,4 +110,12 @@ public interface AdminAbstractControllerExtensionHandler extends ExtensionHandle
                                                                      String sectionKey,
                                                                      String id,
                                                                      MultiValueMap<String, String> requestParams, MapMetadata md);
+
+    /**
+     * Extension point to determine if the entity requested is a new empty add request.
+     *
+     * @param entity
+     * @return
+     */
+    public ExtensionResultStatusType isAddRequest(Entity entity, ExtensionResultHolder<Boolean> resultHolder);
 }

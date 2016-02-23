@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -78,6 +79,11 @@ public class AbstractAdminAbstractControllerExtensionHandler extends AbstractExt
                                                                      String sectionKey,
                                                                      String id,
                                                                      MultiValueMap<String, String> requestParams, MapMetadata md) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType isAddRequest(Entity entity, ExtensionResultHolder<Boolean> resultHolder) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 }
