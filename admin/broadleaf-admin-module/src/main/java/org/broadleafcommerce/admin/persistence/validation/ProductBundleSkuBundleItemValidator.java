@@ -65,7 +65,7 @@ public class ProductBundleSkuBundleItemValidator extends ValidationConfiguration
             ProductBundle productBundle = (ProductBundle) catalogService.findProductById(Long.valueOf(bundleId));
             Long defaultSkuOrigId = sandBoxHelper.getOriginalId(Sku.class, productBundle.getDefaultSku().getId()).getOriginalId();
 
-            if (Long.valueOf(skuId) == defaultSkuOrigId) {
+            if (Long.valueOf(skuId).equals(defaultSkuOrigId)) {
                 return new PropertyValidationResult(false, ERROR_MESSAGE);
             }
         }
