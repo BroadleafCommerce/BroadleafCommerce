@@ -276,6 +276,14 @@ a.description-link {
     color: #94AF39;
 }
 
+.foreign-key-value-container .input-group-btn .button.secondary:disabled {
+    border: 1px solid #D8D5D0;
+}
+
+.foreign-key-value-container .input-group-btn .button.secondary:disabled:first-of-type {
+    border-left: none;
+}
+
 .xdsoft_current {
     background: #94AF39 !important;
     box-shadow: #94AF39 0 1px 3px 0 inset !important;
@@ -298,6 +306,25 @@ a.description-link {
     position: absolute;
     right: 12px;
     top: 18px;
+}
+
+.col4 .fieldset-card-content .asset-selector-container {
+    text-align: center;
+}
+
+.col10 .fieldset-card-content .asset-selector-container,
+.col8 .fieldset-card-content .asset-selector-container {
+    display: inline-block;
+}
+
+.fieldset-card-content .asset-selector-container label {
+    display: inline-block;
+}
+
+.override-generated-url,
+.show-asset-freeform-url {
+    font-size: 11px;
+    letter-spacing: .05em;
 }
 
 

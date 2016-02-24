@@ -121,7 +121,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         } catch (Exception e) {
             throw ExceptionHelper.refineException(PersistenceException.class, PersistenceException.class, e);
         }
-        populateValueRequest.getProperty().setIsDirty(dirty);
+        populateValueRequest.getProperty().setIsDirty(!populateValueRequest.getPreAdd() && dirty);
 
         return MetadataProviderResponse.HANDLED_BREAK;
     }

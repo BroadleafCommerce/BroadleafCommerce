@@ -1303,10 +1303,6 @@ blockquote::before{
     object-fit: cover;
 }
 
-.fieldset-card-content .asset-selector-container {
-    text-align: center;
-}
-
 .media-image-container {
     position: relative;
     display: inline-block;
@@ -1513,11 +1509,6 @@ div.uploadMessage {
 
 .radio-label.disabled {
     color: #B3B3B3;
-}
-
-.override-generated-url {
-    font-size: 11px;
-    letter-spacing: .05em;
 }
 
 .content-collapsed {

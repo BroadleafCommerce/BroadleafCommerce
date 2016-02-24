@@ -29,7 +29,7 @@
                th:attr="data-ruletype=${field.ruleType}"
                th:checked="${!#arrays.isEmpty(field.dataWrapper.data) or field.dataWrapper.error != null}" />
         <label th:for="${field.name + '-true'}" class="radio-label">
-            <span style="margin-right: 10px;" th:text="#{Yes}" />
+            <span style="margin-right: 10px;" th:text="#{Yes}"></span>
         </label>
 
         <input type="radio" class="radio clear-rules"
@@ -37,16 +37,16 @@
                th:id="${field.name + '-false'}"
                th:checked="${#arrays.isEmpty(field.dataWrapper.data) and field.dataWrapper.error == null }" />
         <label th:for="${field.name + '-false'}" class="radio-label">
-            <span style="margin-right: 10px;" th:text="#{No}" />
+            <span style="margin-right: 10px;" th:text="#{No}"></span>
         </label>
     </div>
 
-    <br th:if="${field.displayType != null AND field.displayType == 'RADIO'}" />
 
-    <div th:substituteby="components/fieldTooltip" />
+    <div th:substituteby="components/fieldTooltip"></div>
  
-    <div th:classappend="${field.ruleType}">
-    
+    <div th:classappend="${field.ruleType}"
+         th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO')) ? 'display: none;' : ''}">
+
         <input type="hidden"
                th:id="${field.jsonFieldName}"
                th:name="'fields[\&#39;'+${field.jsonFieldName}+'\&#39;].value'"
@@ -54,49 +54,49 @@
 
         <div class="rule-builder-required-field"
             th:attr="data-ruletype=${field.ruleType},
-                     data-modal=${field.displayType != null AND field.displayType == 'MODAL'}" />
+                     data-modal=${field.displayType != null AND field.displayType == 'MODAL'}"></div>
 
         <!--/* For: "MODAL" display type */-->
         <div class="rule-modal-zone">
-        <div th:id="${field.jsonFieldName + '-readable'}"
-             th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
-             class="read-only-rule">
-            <span class="readable-no-rule">
-                No rules applied yet, add some
-            </span>
-        </div>
+            <div th:id="${field.jsonFieldName + '-readable'}"
+                 th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
+                 class="read-only-rule">
+                <span class="readable-no-rule">
+                    No rules applied yet, add some
+                </span>
+            </div>
 
-        <div class="launch-modal-rule-builder"
-             th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
-             th:attr="data-hiddenId=${field.jsonFieldName},
-                     data-ruleType=${field.ruleType},
-                     data-ruleTitleId=${field.name + '-header'}">
-            <i class="fa fa-pencil"></i>
-            <!--<span>Edit Rule</span>-->
-        </div>
+            <div class="launch-modal-rule-builder"
+                 th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
+                 th:attr="data-hiddenId=${field.jsonFieldName},
+                         data-ruleType=${field.ruleType},
+                         data-ruleTitleId=${field.name + '-header'}">
+                <i class="fa fa-pencil"></i>
+                <!--<span>Edit Rule</span>-->
+            </div>
 
-        <div class="clear-rule-builder"
-             th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
-             th:attr="data-hiddenId=${field.jsonFieldName},
-                     data-ruleType=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'},
-                     data-ruleTitleId=${field.name + '-header'}">
-            <i class="fa fa-times"></i>
-            <!--<span>Clear Rule</span>-->
-        </div>
+            <div class="clear-rule-builder"
+                 th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
+                 th:attr="data-hiddenId=${field.jsonFieldName},
+                         data-ruleType=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'},
+                         data-ruleTitleId=${field.name + '-header'}">
+                <i class="fa fa-times"></i>
+                <!--<span>Clear Rule</span>-->
+            </div>
         </div>
 
         
         <!--/* For: All display types */-->
         <h4 th:id="${field.name + '-header'}" class="field-label" th:text="#{${field.friendlyName}}"
             th:classappend="${!field.required ? 'query-builder-rules-header' : 'required'}"
-            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.displayType == 'MODAL') ? 'display: none;' : ''}"/>
+            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.displayType == 'MODAL') ? 'display: none;' : ''}"></h4>
 
         <div class="query-builder-rules-container"
             th:classappend="${(field.required ? 'required-query-builder' : '')
                               + (field.dataWrapper.error != null ? 'rule-data-error' : '')}"
-            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.dataWrapper.error != null OR field.displayType == 'MODAL') ? 'display: none;' : ''}"
+            th:style="${(field.displayType == 'MODAL') ? 'display: none;' : ''}"
             th:id="${field.name}"
-            th:attr="data-itemsthatsatisfytext=${#messages.msgOrNull(field.fieldBuilder + '_ItemsThatSatisfyText')}"/>
+            th:attr="data-itemsthatsatisfytext=${#messages.msgOrNull(field.fieldBuilder + '_ItemsThatSatisfyText')}"></div>
         
         <!--/* For: All display types - rule parsing errors */-->
         <div class="field-label error"
@@ -111,7 +111,7 @@
             th:if="${field.dataWrapper.error != null}"
             th:classappend="${field.required ? 'required-query-builder' : ''}"
             th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}">
-                <textarea disabled="disabled" style="width: 98%;" th:text="${field.dataWrapper.rawMvel}"/>
+                <textarea disabled="disabled" style="width: 98%;" th:text="${field.dataWrapper.rawMvel}"></textarea>
         </div>
 
         <!--/* For: All display types - raw data needed to construct the query builder */-->
@@ -121,9 +121,9 @@
                      data-fields=${fieldWrapper.serialize()},
                      data-data=${field.dataWrapper.serialize()},
                      data-modal=${field.displayType != null AND field.displayType == 'MODAL'},
-                     data-ruletype=${field.ruleType}" />
+                     data-ruletype=${field.ruleType}"></div>
     
     </div>
 
-    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}"></span>
 </blc_admin:admin_field_builder>
