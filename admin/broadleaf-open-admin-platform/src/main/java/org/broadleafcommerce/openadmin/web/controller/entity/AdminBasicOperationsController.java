@@ -146,6 +146,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", ModalHeaderType.SELECT_COLLECTION_ITEM.getType());
         model.addAttribute("collectionProperty", collectionProperty);
+        model.addAttribute("sectionCrumbs", request.getParameter("sectionCrumbs"));
         setModelAttributes(model, owningClass);
         return "modules/modalContainer";
     }
