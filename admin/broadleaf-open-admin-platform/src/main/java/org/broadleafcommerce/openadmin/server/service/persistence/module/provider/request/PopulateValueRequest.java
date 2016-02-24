@@ -40,8 +40,9 @@ public class PopulateValueRequest {
     private final String requestedValue;
     private final PersistenceManager persistenceManager;
     private final DataFormatProvider dataFormatProvider;
+    private final Boolean isPreAdd;
 
-    public PopulateValueRequest(Boolean setId, FieldManager fieldManager, Property property, BasicFieldMetadata metadata, Class<?> returnType, String requestedValue, PersistenceManager persistenceManager, DataFormatProvider dataFormatProvider) {
+    public PopulateValueRequest(Boolean setId, FieldManager fieldManager, Property property, BasicFieldMetadata metadata, Class<?> returnType, String requestedValue, PersistenceManager persistenceManager, DataFormatProvider dataFormatProvider, Boolean isPreAdd) {
         this.setId = setId;
         this.fieldManager = fieldManager;
         this.property = property;
@@ -50,10 +51,11 @@ public class PopulateValueRequest {
         this.requestedValue = requestedValue;
         this.persistenceManager = persistenceManager;
         this.dataFormatProvider = dataFormatProvider;
+        this.isPreAdd = isPreAdd;
     }
 
     public Boolean getSetId() {
-        return setId;
+        return setId != null && setId;
     }
 
     public FieldManager getFieldManager() {
@@ -82,5 +84,9 @@ public class PopulateValueRequest {
 
     public DataFormatProvider getDataFormatProvider() {
         return dataFormatProvider;
+    }
+
+    public Boolean getPreAdd() {
+        return isPreAdd != null && isPreAdd;
     }
 }

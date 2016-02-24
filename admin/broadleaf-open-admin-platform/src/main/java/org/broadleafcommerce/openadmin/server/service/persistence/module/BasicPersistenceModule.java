@@ -348,7 +348,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         if (value != null) {
                             handled = false;
                             PopulateValueRequest request = new PopulateValueRequest(setId,
-                                    fieldManager, property, metadata, returnType, value, persistenceManager, this);
+                                    fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd());
 
                             boolean attemptToPopulate = true;
                             for (PopulateValueRequestValidator validator : populateValidators) {
@@ -375,7 +375,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     }
                                     if (!handled) {
                                         defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId,
-                                                fieldManager, property, metadata, returnType, value, persistenceManager, this), instance);
+                                                fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd()), instance);
                                     }
                                 } catch (ParentEntityPersistenceException | javax.validation.ValidationException e) {
                                     entityPersistenceException = e;
@@ -385,7 +385,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             }
                         } else {
                             try {
-                                if (fieldManager.getFieldValue(instance, property.getName()) != null && (metadata.getFieldType() != SupportedFieldType.ID || setId) && metadata.getFieldType() != SupportedFieldType.PASSWORD) {
+                                if (fieldManager.getFieldValue(instance, property.getName()) != null && !entity.isPreAdd() && (metadata.getFieldType() != SupportedFieldType.ID || setId) && metadata.getFieldType() != SupportedFieldType.PASSWORD) {
                                     if (fieldManager.getFieldValue(instance, property.getName()) != null) {
                                         property.setIsDirty(true);
                                     }
