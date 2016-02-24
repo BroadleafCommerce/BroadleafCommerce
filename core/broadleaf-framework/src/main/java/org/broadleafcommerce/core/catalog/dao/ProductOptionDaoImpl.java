@@ -35,6 +35,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -84,12 +85,20 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
                     Projections.projectionList()
                     .add(Projections.property("product.id"), "productId")
                     .add(Projections.property("productOption.attributeName"), "productOptionAttrName")
-                    .add(Projections.property("productOptionValue.id"), "productOptionValueId")
+                    .add(Projections.property("productOptionValue"), "productOptionValue")
+                    .add(Projections.property("sku"), "sku")
                 )
             ).setResultTransformer(Transformers.aliasToBean(AssignedProductOptionDTO.class))
             .add(Restrictions.eq("product.id", productId))
             .addOrder(Order.asc("productOption.attributeName")).list();
-        return dtoList;
+        List<AssignedProductOptionDTO> results = new ArrayList<AssignedProductOptionDTO>();
+        for (Object o : dtoList) {
+            AssignedProductOptionDTO dto = (AssignedProductOptionDTO) o;
+            if (dto.getSku().isActive()) {
+                results.add(dto);
+            }
+        }
+        return results;
     }
 
     @Override

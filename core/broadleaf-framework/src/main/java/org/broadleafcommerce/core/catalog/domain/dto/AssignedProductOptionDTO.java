@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.core.catalog.domain.dto;
 
+import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+
 /**
  * DTO used to carry back the found {@link org.broadleafcommerce.core.catalog.domain.ProductOptionValue#getId()} and
  * {@link org.broadleafcommerce.core.catalog.domain.ProductOption#getAttributeName()} on a given
@@ -30,7 +33,8 @@ public class AssignedProductOptionDTO {
 
     private Long productId;
     private String productOptionAttrName;
-    private Long productOptionValueId;
+    private ProductOptionValue productOptionValue;
+    private Sku sku;
 
     public Long getProductId() {
         return productId;
@@ -48,11 +52,19 @@ public class AssignedProductOptionDTO {
         this.productOptionAttrName = productOptionAttrName;
     }
 
-    public Long getProductOptionValueId() {
-        return productOptionValueId;
+    public ProductOptionValue getProductOptionValue() {
+        return productOptionValue;
     }
 
-    public void setProductOptionValueId(Long productOptionValueId) {
-        this.productOptionValueId = productOptionValueId;
+    public void setProductOptionValue(ProductOptionValue productOptionValue) {
+        this.productOptionValue = productOptionValue;
+    }
+
+    public Sku getSku() {
+        return sku;
+    }
+
+    public void setSku(Sku sku) {
+        this.sku = sku;
     }
 }
