@@ -22,16 +22,18 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Transformer;
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
-import org.broadleafcommerce.common.util.BLCMapUtils;
-import org.broadleafcommerce.common.util.TypedClosure;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * Thread-local cache structure that contains all of the {@link Translation}s for a batch of processing. This is mainly
@@ -43,43 +45,36 @@ import java.util.Map;
  */
 public class TranslationBatchReadCache {
     
-    protected static final ThreadLocal<Map> TRANSLATION_CACHE = ThreadLocalManager.createThreadLocal(Map.class, false);
+    public static final String CACHE_NAME = "blBatchTranslationCache";
 
-    public static void setCache(Map<String, Translation> cache) {
-        TRANSLATION_CACHE.set(cache);
-    }
-    
-    @SuppressWarnings("unchecked")
-    public static Map<String, Translation> getCache() {
-        return TRANSLATION_CACHE.get();
+    public static Cache getCache() {
+        return CacheManager.getInstance().getCache(CACHE_NAME);
     }
     
     public static void clearCache() {
-        TRANSLATION_CACHE.remove();
+        getCache().removeAll();
     }
     
     public static void addToCache(List<Translation> translations) {
-        Map<String, Translation> translationMap = BLCMapUtils.keyedMap(translations, new TypedClosure<String, Translation>() {
+        Collection<Element> translationCacheElements = CollectionUtils.collect(translations, new Transformer<Translation, Element>() {
 
             @Override
-            public String getKey(Translation value) {
-                return buildCacheKey(value);
+            public Element transform(Translation input) {
+                return new Element(buildCacheKey(input), input);
             }
+            
         });
-        if (getCache() == null) {
-            setCache(new HashMap<String, Translation>());
-        }
-        getCache().putAll(translationMap);
+        getCache().putAll(translationCacheElements);
     }
     
     public static Translation getFromCache(TranslatedEntity entityType, String id, String propertyName, String localeCode) {
-        Translation translation = getCache().get(buildCacheKey(entityType, id, propertyName, localeCode));
-        if (translation == null && StringUtils.contains(localeCode, '_')) {
+        Element cacheEntry = getCache().get(buildCacheKey(entityType, id, propertyName, localeCode));
+        if (cacheEntry == null && StringUtils.contains(localeCode, '_')) {
             String languageWithoutCountryCode = localeCode.substring(localeCode.indexOf('_') + 1);
-            translation = getCache().get(buildCacheKey(entityType, id, propertyName, languageWithoutCountryCode));
+            cacheEntry = getCache().get(buildCacheKey(entityType, id, propertyName, languageWithoutCountryCode));
         }
         
-        return (translation == null) ? null : translation;
+        return (cacheEntry == null) ? null : (Translation) cacheEntry.getObjectValue();
     }
     
     public static String buildCacheKey(Translation translation) {
