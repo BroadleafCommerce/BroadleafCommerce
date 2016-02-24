@@ -66,19 +66,12 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-
-        if (IndexField.class.getName().equals(ceilingEntityFullyQualifiedClassname) ||
-                IndexFieldTypeImpl.class.getName().equals(ceilingEntityFullyQualifiedClassname)) {
-            return true;
-        }
-        return false;
+        return IndexField.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-
-        return IndexField.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return canHandleAdd(persistencePackage);
     }
 
     @Override
@@ -90,13 +83,13 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             IndexField adminInstance = (IndexField) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
-            return getIndexFieldEntity(persistencePackage, dynamicEntityDao, helper, entity, adminProperties, adminInstance);
+            return getEntity(persistencePackage, dynamicEntityDao, helper, entity, adminProperties, adminInstance);
         } catch (Exception e) {
             throw new ServiceException("Unable to perform update for entity: " + IndexField.class.getName(), e);
         }
     }
 
-    protected Entity getIndexFieldEntity(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper, Entity entity, Map<String, FieldMetadata> adminProperties, IndexField adminInstance) throws ServiceException {
+    protected Entity getEntity(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper, Entity entity, Map<String, FieldMetadata> adminProperties, IndexField adminInstance) throws ServiceException {
         adminInstance = (IndexField) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
         adminInstance = dynamicEntityDao.merge(adminInstance);
 
@@ -124,35 +117,14 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
-        if(entity.getType()[0].equalsIgnoreCase(IndexFieldImpl.class.getName())){
-            try {
-                PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-                IndexField adminInstance = (IndexField) Class.forName(entity.getType()[0]).newInstance();
-                Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(IndexField.class.getName(), persistencePerspective);
-                return getIndexFieldEntity(persistencePackage, dynamicEntityDao, helper, entity, adminProperties, adminInstance);
-            } catch (Exception e) {
-                throw new ServiceException("Unable to perform add for entity: " + IndexField.class.getName(), e);
-            }
-        } else {
-            try {
-                PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-                IndexFieldType adminInstance = (IndexFieldType) Class.forName(entity.getType()[0]).newInstance();
-                Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(IndexFieldType.class.getName(), persistencePerspective);
-                IndexField field;
-                Property idProperty = entity.findProperty("indexField");
-                Property typeProperty = entity.findProperty("fieldType");
-                Long fieldId = Long.parseLong(idProperty.getValue());
-                field = (IndexField)dynamicEntityDao.find(IndexFieldImpl.class,fieldId);
-                adminInstance.setIndexField(field);
-                adminInstance.setFieldType(FieldType.getInstance(typeProperty.getValue()));
-                adminInstance = dynamicEntityDao.merge(adminInstance);
-                return helper.getRecord(adminProperties,adminInstance,null,null);
-            } catch (Exception e) {
-                throw new ServiceException("Unable to perform add for entity: " + entity.getType()[0], e);
-
-            }
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            IndexField adminInstance = (IndexField) Class.forName(entity.getType()[0]).newInstance();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(IndexField.class.getName(), persistencePerspective);
+            return getEntity(persistencePackage, dynamicEntityDao, helper, entity, adminProperties, adminInstance);
+        } catch (Exception e) {
+            throw new ServiceException("Unable to perform add for entity: " + IndexField.class.getName(), e);
         }
-
     }
 
 
