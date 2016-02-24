@@ -276,6 +276,14 @@ a.description-link {
     color: #94AF39;
 }
 
+.foreign-key-value-container .input-group-btn .button.secondary:disabled {
+    border: 1px solid #D8D5D0;
+}
+
+.foreign-key-value-container .input-group-btn .button.secondary:disabled:first-of-type {
+    border-left: none;
+}
+
 .xdsoft_current {
     background: #94AF39 !important;
     box-shadow: #94AF39 0 1px 3px 0 inset !important;
