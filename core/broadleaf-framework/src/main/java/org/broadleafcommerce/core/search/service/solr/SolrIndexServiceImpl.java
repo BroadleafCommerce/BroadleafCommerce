@@ -217,6 +217,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     public void execute() throws ServiceException {
                         int page = 0;
                         while ((page * pageSize) < numItemsToIndex) {
+                            LOG.info(String.format("Building page number %s", page));
                             buildIncrementalIndex(page, pageSize);
                             page++;
                         }
