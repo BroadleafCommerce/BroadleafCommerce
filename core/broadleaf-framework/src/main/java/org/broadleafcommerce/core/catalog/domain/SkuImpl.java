@@ -1121,13 +1121,13 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
 
     @Override
     public Map<String, SkuAttribute> getSkuAttributes() {
-        Map<String, SkuAttribute> multiValueMap = new HashMap<String, SkuAttribute>();
+        Map<String, SkuAttribute> attributeMap = new HashMap<String, SkuAttribute>();
 
         for (SkuAttribute skuAttribute : skuAttributes) {
-            multiValueMap.put(skuAttribute.getName(), skuAttribute);
+            attributeMap.put(skuAttribute.getName(), skuAttribute);
         }
 
-        return multiValueMap;
+        return attributeMap;
     }
 
     @Override
