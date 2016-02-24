@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -400,9 +401,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
     }
 
     private boolean isAddRequest(Entity entity) {
-        Map<String, Property> pMap = entity.getPMap();
-        Property dateUpdated = pMap == null ? null : entity.getPMap().get("auditable.dateUpdated");
-        return dateUpdated == null || dateUpdated.getValue() == null;
+        ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<Boolean>();
+        ExtensionResultStatusType result = extensionManager.getProxy().isAddRequest(entity, resultHolder);
+        if (result.equals(ExtensionResultStatusType.NOT_HANDLED)) {
+            Map<String, Property> pMap = entity.getPMap();
+            Property dateUpdated = pMap == null ? null : entity.getPMap().get("auditable.dateUpdated");
+            return dateUpdated == null || dateUpdated.getValue() == null;
+        }
+
+        return resultHolder.getResult();
     }
 
     /**
