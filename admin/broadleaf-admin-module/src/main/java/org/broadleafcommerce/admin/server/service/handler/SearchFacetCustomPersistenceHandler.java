@@ -5,20 +5,15 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
-import org.broadleafcommerce.core.search.service.CategorySearchFacetService;
 import org.broadleafcommerce.openadmin.dto.Entity;
-import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
-import java.util.Map;
 
 /**
  * When deleting a {@link SearchFacet}, there needs to be a check to see if it is applied to a
@@ -32,9 +27,6 @@ import java.util.Map;
 public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(SearchFacetCustomPersistenceHandler.class);
-
-    @Resource(name = "blCategorySearchFacetService")
-    protected CategorySearchFacetService csfService;
 
     @Override
     public Boolean canHandleRemove(PersistencePackage persistencePackage) {
