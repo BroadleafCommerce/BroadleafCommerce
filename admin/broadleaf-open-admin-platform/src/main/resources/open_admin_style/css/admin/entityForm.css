@@ -300,6 +300,25 @@ a.description-link {
     top: 18px;
 }
 
+.col4 .fieldset-card-content .asset-selector-container {
+    text-align: center;
+}
+
+.col10 .fieldset-card-content .asset-selector-container,
+.col8 .fieldset-card-content .asset-selector-container {
+    display: inline-block;
+}
+
+.fieldset-card-content .asset-selector-container label {
+    display: inline-block;
+}
+
+.override-generated-url,
+.show-asset-freeform-url {
+    font-size: 11px;
+    letter-spacing: .05em;
+}
+
 
 /*************************** IN MODAL (beginning of section) ***************************/
 
