@@ -677,6 +677,11 @@ $(document).ready(function () {
             type: "POST"
         }, function (data) {
             link = link.substring(0, link.indexOf("/addEmpty")) + "/" + data.id + link.substring(link.indexOf("/addEmpty") + 9, link.length);
+            if (link.indexOf("?") < 0) {
+                link += "?isPostAdd=true";
+            } else {
+                link += "&isPostAdd=true";
+            }
             BLCAdmin.showLinkAsModal(link);
         });
         return false;
