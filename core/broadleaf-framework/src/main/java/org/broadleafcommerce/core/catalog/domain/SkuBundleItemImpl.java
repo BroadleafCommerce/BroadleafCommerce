@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
@@ -104,9 +105,15 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID")
     @AdminPresentation(friendlyName = "Sku",
         group = GroupName.General, order = FieldOrder.SKU,
-        prominent = true, gridOrder = FieldOrder.SKU)
+        prominent = true, gridOrder = FieldOrder.SKU,
+        validationConfigurations = @ValidationConfiguration(validationImplementation = "blProductBundleSkuBundleItemValidator"))
     @AdminPresentationToOneLookup()
     protected Sku sku;
+
+    /** The display order. */
+    @Column(name = "SEQUENCE", precision = 10, scale = 6)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    protected BigDecimal sequence;
 
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
@@ -194,7 +201,17 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     public void setSku(Sku sku) {
         this.sku = sku;
     }
-    
+
+    @Override
+    public BigDecimal getSequence() {
+        return sequence;
+    }
+
+    @Override
+    public void setSequence(BigDecimal sequence) {
+        this.sequence = sequence;
+    }
+
     @Override
     public void clearDynamicPrices() {
         dynamicPrices = null;
@@ -210,6 +227,7 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
         SkuBundleItem cloned = createResponse.getClone();
         cloned.setQuantity(quantity);
         cloned.setSalePrice(getSalePrice());
+        cloned.setSequence(sequence);
         if (sku != null) {
             cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
         }

@@ -89,7 +89,7 @@ public class FieldPersistenceProviderAdapter extends AbstractFieldPersistencePro
             }
             dirty = value == null || !value.equals(checkValue);
         }
-        return dirty;
+        return !request.getPreAdd() && dirty;
     }
 
     protected void setNonDisplayableValues(PopulateValueRequest request) {
