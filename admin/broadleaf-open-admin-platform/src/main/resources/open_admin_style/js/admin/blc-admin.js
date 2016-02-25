@@ -90,7 +90,6 @@ var BLCAdmin = (function($) {
         BLCAdmin.initializeModalTabs($data);
         BLCAdmin.initializeModalButtons($data);
         BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
-        BLCAdmin.initializeFields();
     }
 
     function getDependentFieldFilterKey(className, childFieldName) {
@@ -353,8 +352,7 @@ var BLCAdmin = (function($) {
                     BLCAdmin.initializeModalTabs(BLCAdmin.currentModal());
                     BLCAdmin.initializeModalButtons(BLCAdmin.currentModal());
                     BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
-                    BLCAdmin.initializeFields(BLCAdmin.currentModal());
-                    
+
                     BLCAdmin.currentModal().removeClass('loading-modal');
 
                     if (BLCAdmin.currentModal().hasClass('asset-selector')) {
