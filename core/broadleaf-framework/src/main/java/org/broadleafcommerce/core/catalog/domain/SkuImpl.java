@@ -1120,6 +1120,7 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
     }
 
     @Override
+    @Deprecated
     public Map<String, SkuAttribute> getSkuAttributes() {
         Map<String, SkuAttribute> attributeMap = new HashMap<String, SkuAttribute>();
 

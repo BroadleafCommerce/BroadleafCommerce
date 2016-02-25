@@ -390,6 +390,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      *
      * @return the attributes for this Sku
      */
+    @Deprecated
     public Map<String, SkuAttribute> getSkuAttributes();
 
     /**
