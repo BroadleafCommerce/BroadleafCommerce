@@ -463,10 +463,15 @@
         // ************************* *
         // CUSTOM SCROLLER FUNCTIONS *
         // ************************* *
-        
+
         getRowHeight : function($tbody) {
-            // The first row will always be 1px shorter since it doesn't have a top boarder, therefore add 1 to the height.
-            return $tbody.find('td:not(.blank-padding):first').innerHeight() + 1;
+            return $tbody.find('td:not(.blank-padding):first').outerHeight();
+        },
+
+        getActualRowIndex : function($tr) {
+            var trPlacementTop = $tr.position().top;
+            var rowHeight = this.getRowHeight($tr.closest('tbody'));
+            return trPlacementTop / rowHeight;
         },
         
         getTopVisibleIndex : function($tbody) {
