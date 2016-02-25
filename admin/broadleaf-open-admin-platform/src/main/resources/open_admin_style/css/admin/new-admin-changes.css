@@ -1038,11 +1038,14 @@ div.action-popup span.deploy-error button {
 
 span.workflow-action {
     font-size: 16px;
-    margin-right: -6px;
     visibility: hidden;
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     display: inline-block;
+}
+
+span.workflow-action:nth-child(2) {
+    margin-left: -6px;
 }
 
 .listgrid-row-actions span.workflow-action a {
