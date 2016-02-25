@@ -19,10 +19,6 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -54,6 +50,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 
 @Service("blTranslationService")
@@ -174,6 +174,14 @@ public class TranslationServiceImpl implements TranslationService {
         if (StringUtils.isNotBlank(locale.getCountry())) {
             localeCountryCode += "_" + locale.getCountry();
         }
+        
+        if (TranslationBatchReadCache.getCache() != null) {
+            Translation translation = TranslationBatchReadCache.getFromCache(entityType, entityId, property, localeCountryCode);
+            if (translation != null) {
+                return translation.getTranslatedValue();
+            }
+        }
+        
         boolean isValidForCache = false;
         if (extensionManager != null) {
             ExtensionResultHolder<Boolean> response = new ExtensionResultHolder<Boolean>();
@@ -424,6 +432,7 @@ public class TranslationServiceImpl implements TranslationService {
         }
     }
 
+    @Override
     public String getDefaultTranslationValue(Object entity, String property, Locale locale,
             String requestedDefaultValue) {
 

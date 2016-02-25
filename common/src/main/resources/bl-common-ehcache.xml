@@ -26,6 +26,14 @@
         eternal="false"
         overflowToDisk="true"
         timeToLiveSeconds="3600"/>
+    
+    <!-- 1 hour cache for batch reading translation elements -->
+    <cache
+        name="blBatchTranslationCache"
+        maxElementsInMemory="10000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="3600"/>  
         
     <!-- 10 minute cache -->
     <cache

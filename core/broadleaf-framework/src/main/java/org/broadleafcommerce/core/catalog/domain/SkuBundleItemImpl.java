@@ -110,6 +110,11 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
+    /** The display order. */
+    @Column(name = "SEQUENCE", precision = 10, scale = 6)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    protected BigDecimal sequence;
+
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
 
@@ -196,7 +201,17 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     public void setSku(Sku sku) {
         this.sku = sku;
     }
-    
+
+    @Override
+    public BigDecimal getSequence() {
+        return sequence;
+    }
+
+    @Override
+    public void setSequence(BigDecimal sequence) {
+        this.sequence = sequence;
+    }
+
     @Override
     public void clearDynamicPrices() {
         dynamicPrices = null;
@@ -212,6 +227,7 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
         SkuBundleItem cloned = createResponse.getClone();
         cloned.setQuantity(quantity);
         cloned.setSalePrice(getSalePrice());
+        cloned.setSequence(sequence);
         if (sku != null) {
             cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
         }
