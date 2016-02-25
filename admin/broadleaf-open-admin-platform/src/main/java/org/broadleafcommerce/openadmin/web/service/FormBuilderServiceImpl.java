@@ -216,6 +216,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             listGrid.setDataWrapper(dw);
         }
 
+        listGrid.addModalRowAction(DefaultListGridActions.SINGLE_SELECT);
+        listGrid.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
+
         return listGrid;
     }
 
