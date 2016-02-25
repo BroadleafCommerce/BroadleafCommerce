@@ -24,13 +24,17 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -38,6 +42,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -62,293 +68,126 @@ public class StoreImpl implements Store {
     )
     @Column(name = "STORE_ID", nullable = false)
     @AdminPresentation(friendlyName = "StoreImpl_Store_ID", visibility = VisibilityEnum.HIDDEN_ALL)
-    private Long id;
+    protected Long id;
 
     @Column(name = "STORE_NAME", nullable = false)
     @AdminPresentation(friendlyName = "StoreImpl_Store_Name", order = Presentation.FieldOrder.NAME,
             group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
             prominent = true, gridOrder = 1, columnWidth = "200px",
             requiredOverride = RequiredOverride.REQUIRED)
-    private String name;
+    protected String name;
+    
+    @Column(name = "STORE_NUMBER")
+    @AdminPresentation(friendlyName = "StoreImpl_Store_Number")
+    protected String storeNumber;
 
+    @Column(name = "OPEN")
+    @AdminPresentation(friendlyName = "StoreImpl_Open")
+    protected Boolean open;
 
-    @Column(name = "ADDRESS_1")
-    @AdminPresentation(friendlyName = "StoreImpl_address1", order = Presentation.FieldOrder.ADDRESS_1,
-            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
-            gridOrder = 2, columnWidth = "200px")
-    private String address1;
+    @Column(name = "STORE_HOURS")
+    @AdminPresentation(friendlyName = "StoreImpl_Store_Hours", fieldType = SupportedFieldType.HTML)
+    protected String storeHours;
 
-    @Column(name = "ADDRESS_2")
-    @AdminPresentation(friendlyName = "StoreImpl_address2", order = Presentation.FieldOrder.ADDRESS_2,
-            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
-            gridOrder = 3, columnWidth = "200px")
-    private String address2;
-
-    @Column(name = "STORE_CITY")
-    @AdminPresentation(friendlyName = "StoreImpl_city", order = Presentation.FieldOrder.CITY,
-            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
-            prominent = true, gridOrder = 4)
-    private String city;
-
-    @Column(name = "STORE_STATE")
-    @AdminPresentation(friendlyName = "StoreImpl_State", order = Presentation.FieldOrder.STATE,
-            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
-            prominent = true, gridOrder = 5)
-    private String state;
-
-    @Column(name = "STORE_ZIP")
-    @AdminPresentation(friendlyName = "StoreImpl_Zip", order = Presentation.FieldOrder.ZIP,
-            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
-            prominent = true, gridOrder = 6)
-    private String zip;
-
-    @Column(name = "STORE_COUNTRY")
-    @AdminPresentation(friendlyName = "StoreImpl_Country", order = Presentation.FieldOrder.COUNTRY,
-            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
-            gridOrder = 7, columnWidth = "200px")
-    private String country;
-
-    @Column(name = "STORE_PHONE")
-    @AdminPresentation(friendlyName = "StoreImpl_Phone", order = Presentation.FieldOrder.PHONE,
-            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
-            gridOrder = 8, columnWidth = "200px")
-    private String phone;
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class)
+    @JoinColumn(name = "ADDRESS_ID")
+    protected Address address;
 
     @Column(name = "LATITUDE")
     @AdminPresentation(friendlyName = "StoreImpl_lat", order = Presentation.FieldOrder.LATITUDE,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             group = Presentation.Group.Name.Geocoding, groupOrder = Presentation.Group.Order.Geocoding,
             gridOrder = 9, columnWidth = "200px")
-    private Double latitude;
+    protected Double latitude;
 
     @Column(name = "LONGITUDE")
     @AdminPresentation(friendlyName = "StoreImpl_lng", order = Presentation.FieldOrder.LONGITUDE,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             group = Presentation.Group.Name.Geocoding, groupOrder = Presentation.Group.Order.Geocoding,
             gridOrder = 10, columnWidth = "200px")
-    private Double longitude;
-
+    protected Double longitude;
+    
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getId()
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getId()
-     */
+    @Override
     public Long getId() {
         return id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setId(java.lang.Long)
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setId(java.lang.Long)
-     */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getName()
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getName()
-     */
+    @Override
     public String getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setName(java.lang.String)
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setName(java.lang.String)
-     */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getAddress1()
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getAddress1()
-     */
-    public String getAddress1() {
-        return address1;
+    @Override
+    public Address getAddress() {
+        return address;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setAddress1(java.lang.String)
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setAddress1(java.lang.String)
-     */
-    public void setAddress1(String address1) {
-        this.address1 = address1;
+    @Override
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getAddress2()
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getAddress2()
-     */
-    public String getAddress2() {
-        return address2;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setAddress2(java.lang.String)
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setAddress2(java.lang.String)
-     */
-    public void setAddress2(String address2) {
-        this.address2 = address2;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getCity()
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getCity()
-     */
-    public String getCity() {
-        return city;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setCity(java.lang.String)
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setCity(java.lang.String)
-     */
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getZip()
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getZip()
-     */
-    public String getZip() {
-        return zip;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setZip(java.lang.String)
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setZip(java.lang.String)
-     */
-    public void setZip(String zip) {
-        this.zip = zip;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getCountry()
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getCountry()
-     */
-    public String getCountry() {
-        return country;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setCountry(java.lang.String)
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setCountry(java.lang.String)
-     */
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getPhone()
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getPhone()
-     */
-    public String getPhone() {
-        return phone;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setPhone(java.lang.String)
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setPhone(java.lang.String)
-     */
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getLongitude()
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getLongitude()
-     */
+    @Override
     public Double getLongitude() {
         return longitude;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setLongitude(java.lang.Float)
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setLongitude(java.lang.Float)
-     */
+    @Override
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getLatitude()
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getLatitude()
-     */
+    @Override
     public Double getLatitude() {
         return latitude;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setLatitude(java.lang.Float)
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setLatitude(java.lang.Float)
-     */
+    @Override
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setState(java.lang.String)
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setState(java.lang.String)
-     */
-    public void setState(String state) {
-        this.state = state;
+    
+    @Override
+    public String getStoreNumber() {
+        return storeNumber;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getState()
-     */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#getState()
-     */
-    public String getState() {
-        return state;
+    @Override
+    public void setStoreNumber(String storeNumber) {
+        this.storeNumber = storeNumber;
+    }
+
+    @Override
+    public Boolean getOpen() {
+        return open;
+    }
+
+    @Override
+    public void setOpen(Boolean open) {
+        this.open = open;
+    }
+
+    @Override
+    public String getStoreHours() {
+        return storeHours;
+    }
+
+    @Override
+    public void setStoreHours(String storeHours) {
+        this.storeHours = storeHours;
     }
 
     @Override
@@ -404,13 +243,6 @@ public class StoreImpl implements Store {
 
         public static class FieldOrder {
             public static final int NAME = 1000;
-            public static final int ADDRESS_1 = 2000;
-            public static final int ADDRESS_2 = 3000;
-            public static final int CITY = 4000;
-            public static final int STATE = 5000;
-            public static final int ZIP = 6000;
-            public static final int COUNTRY = 7000;
-            public static final int PHONE = 8000;
             public static final int LATITUDE = 9000;
             public static final int LONGITUDE = 10000;
         }

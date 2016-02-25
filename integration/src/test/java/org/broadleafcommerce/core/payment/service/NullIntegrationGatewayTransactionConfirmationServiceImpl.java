@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
-import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionConfirmationService;
+import org.broadleafcommerce.common.payment.service.AbstractPaymentGatewayTransactionConfirmationService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.springframework.stereotype.Service;
@@ -35,18 +35,18 @@ import org.springframework.stereotype.Service;
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-@Service("blNullPaymentGatewayHostedTransactionConfirmationService")
-public class NullPaymentGatewayTransactionConfirmationServiceImpl implements PaymentGatewayTransactionConfirmationService {
+@Service("blNullIntegrationGatewayHostedTransactionConfirmationService")
+public class NullIntegrationGatewayTransactionConfirmationServiceImpl extends AbstractPaymentGatewayTransactionConfirmationService {
 
-    protected static final Log LOG = LogFactory.getLog(NullPaymentGatewayTransactionConfirmationServiceImpl.class);
+    protected static final Log LOG = LogFactory.getLog(NullIntegrationGatewayTransactionConfirmationServiceImpl.class);
 
     private static Money oneHundred = new Money(100);
     private static Money twoHundred = new Money(200);
 
-    @Resource(name = "blNullPaymentGatewayHostedConfiguration")
-    protected NullPaymentGatewayHostedConfiguration configuration;
+    @Resource(name = "blNullIntegrationGatewayHostedConfiguration")
+    protected NullIntegrationGatewayHostedConfiguration configuration;
 
-    @Resource(name = "blNullPaymentGatewayTransactionService")
+    @Resource(name = "blNullIntegrationGatewayTransactionService")
     protected PaymentGatewayTransactionService transactionService;
 
     @Override

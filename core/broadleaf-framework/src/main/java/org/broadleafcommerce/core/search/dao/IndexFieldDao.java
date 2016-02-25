@@ -22,6 +22,8 @@ package org.broadleafcommerce.core.search.dao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.search.domain.IndexFieldType;
+import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.util.List;
 
@@ -47,4 +49,14 @@ public interface IndexFieldDao {
      */
     public List<IndexField> readFieldsByEntityType(FieldEntity entityType);
 
+    /**
+     * Reads all of the {@link IndexField}s that are searchable on the entity type
+     * @param entityType
+     * @return
+     */
+    public List<IndexField> readSearchableFieldsByEntityType(FieldEntity entityType);
+
+    List<IndexFieldType> getIndexFieldTypesByAbbreviation(String abbreviation);
+
+    List<IndexFieldType> getIndexFieldTypes(FieldType facetFieldType);
 }

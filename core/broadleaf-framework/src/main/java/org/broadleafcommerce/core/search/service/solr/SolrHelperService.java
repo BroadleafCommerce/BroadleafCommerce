@@ -417,13 +417,12 @@ public interface SolrHelperService {
 
     /**
      * Sets up the sorting criteria. This will support sorting by multiple fields at a time
-     * 
+     *
      * @param query
      * @param searchCriteria
      * @param defaultSort
-     * @param fields
      */
-    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort, List<IndexField> fields);
+    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort);
 
     /* 
      * Builds a map of the fields with the abbreviation 
@@ -468,4 +467,8 @@ public interface SolrHelperService {
      * @return
      */
     public String getDocumentType(Indexable indexable);
+
+    List<IndexField> getSearchableIndexFields();
+
+    public List<Long> getCategoryFilterIds(Category category, SearchCriteria searchCriteria);
 }

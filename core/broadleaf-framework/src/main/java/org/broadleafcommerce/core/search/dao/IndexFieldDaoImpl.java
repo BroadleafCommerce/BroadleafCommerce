@@ -24,6 +24,9 @@ import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
+import org.broadleafcommerce.core.search.domain.IndexFieldType;
+import org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl;
+import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -78,13 +81,69 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
         CriteriaQuery<IndexField> criteria = builder.createQuery(IndexField.class);
 
         Root<IndexFieldImpl> root = criteria.from(IndexFieldImpl.class);
+        
+        criteria.select(root);
+        criteria.where(root.get("field").get("entityType").as(String.class).in(entityType.getAllLookupTypes()));
+
+        TypedQuery<IndexField> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<IndexField> readSearchableFieldsByEntityType(FieldEntity entityType) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<IndexField> criteria = builder.createQuery(IndexField.class);
+
+        Root<IndexFieldImpl> root = criteria.from(IndexFieldImpl.class);
 
         criteria.select(root);
         criteria.where(
-                builder.equal(root.get("field").get("entityType").as(String.class), entityType.getType())
-                );
+                builder.equal(root.get("searchable").as(Boolean.class), Boolean.TRUE),
+                root.get("field").get("entityType").as(String.class).in(entityType.getAllLookupTypes())
+        );
 
         TypedQuery<IndexField> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<IndexFieldType> getIndexFieldTypesByAbbreviation(String abbreviation) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<IndexFieldType> criteria = builder.createQuery(IndexFieldType.class);
+
+        Root<IndexFieldTypeImpl> root = criteria.from(IndexFieldTypeImpl.class);
+
+        criteria.select(root);
+        criteria.where(
+                builder.equal(root.get("indexField").get("field").get("abbreviation").as(String.class), abbreviation)
+        );
+
+        TypedQuery<IndexFieldType> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<IndexFieldType> getIndexFieldTypes(FieldType facetFieldType) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<IndexFieldType> criteria = builder.createQuery(IndexFieldType.class);
+
+        Root<IndexFieldTypeImpl> root = criteria.from(IndexFieldTypeImpl.class);
+
+        criteria.select(root);
+        criteria.where(
+                builder.equal(root.get("fieldType").as(String.class), facetFieldType.getType())
+        );
+
+        TypedQuery<IndexFieldType> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 

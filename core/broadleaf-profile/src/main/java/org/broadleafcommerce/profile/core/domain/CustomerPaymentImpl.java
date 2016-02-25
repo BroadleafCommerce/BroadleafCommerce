@@ -22,10 +22,14 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
@@ -35,6 +39,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -108,6 +113,19 @@ public class CustomerPaymentImpl implements CustomerPayment {
             groupOrder = Presentation.Group.Order.PAYMENT)
     protected String paymentToken;
 
+    @Column(name = "PAYMENT_TYPE")
+    @Index(name="CUSTOMERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Payment_Type", prominent=true,
+            fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentType")
+    protected String paymentType;
+
+    @Column(name = "GATEWAY_TYPE")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Gateway_Type", prominent=true,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentGatewayType")
+    protected String paymentGatewayType;
+
     @Column(name = "IS_DEFAULT")
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_isDefault",
             tab = Presentation.Tab.Name.PAYMENT,
@@ -170,6 +188,32 @@ public class CustomerPaymentImpl implements CustomerPayment {
     @Override
     public void setPaymentToken(String paymentToken) {
         this.paymentToken = paymentToken;
+    }
+
+    @Override
+    public PaymentType getPaymentType() {
+        if (PaymentType.getInstance(paymentType) != null) {
+            return PaymentType.getInstance(paymentType);
+        }
+
+        //support legacy customer payments that may have stored the type on the additional fields map
+        return !additionalFields.containsKey(PaymentAdditionalFieldType.PAYMENT_TYPE.getType()) ? null :
+                PaymentType.getInstance(additionalFields.get(PaymentAdditionalFieldType.PAYMENT_TYPE.getType()));
+    }
+
+    @Override
+    public void setPaymentType(PaymentType paymentType) {
+        this.paymentType = paymentType == null ? null : paymentType.getType();
+    }
+
+    @Override
+    public PaymentGatewayType getPaymentGatewayType() {
+        return PaymentGatewayType.getInstance(paymentGatewayType);
+    }
+
+    @Override
+    public void setPaymentGatewayType(PaymentGatewayType paymentGatewayType) {
+        this.paymentGatewayType = paymentGatewayType == null ? null : paymentGatewayType.getType();
     }
 
     @Override

@@ -46,8 +46,8 @@
     </developers>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>4.1.6.RELEASE</spring.version>
-        <spring.security.version>3.2.6.RELEASE</spring.security.version>
+        <spring.version>4.1.8.RELEASE</spring.version>
+        <spring.security.version>3.2.9.RELEASE</spring.security.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
         <geb.version>0.10.0</geb.version>
@@ -61,6 +61,7 @@
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</connection>
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
+        <tag>HEAD</tag>
     </scm>
     <build>
         <pluginManagement>
@@ -106,6 +107,14 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>2.3.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                    <configuration>
+                        <deployAtEnd>true</deployAtEnd>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
@@ -213,11 +222,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.2.1</version>
-                <configuration>
-                    <!-- Only here for the Spock SNAPSHOT dependency since it has not been fully released -->
-                    <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
-                </configuration>
+                <version>2.5.3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -226,6 +231,14 @@
                 <configuration>
                     <!-- Don't create source as a default part of the release -->
                     <attach>false</attach>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+                <configuration>
+                    <deployAtEnd>true</deployAtEnd>
                 </configuration>
             </plugin>
             <plugin>
@@ -377,7 +390,7 @@
             </build>
         </profile>
         <profile>
-            <id>aggregate-javadocs</id>
+            <id>javadocs</id>
             <activation>
                 <property>
                     <name>performRelease</name>
@@ -394,7 +407,7 @@
                             <execution>
                                 <id>attach-javadocs</id>
                                 <goals>
-                                    <goal>aggregate-jar</goal>
+                                    <goal>jar</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -402,6 +415,40 @@
                             <minmemory>128m</minmemory>
                             <maxmemory>1g</maxmemory>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>sources</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>snapshots</id>
+                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-source-snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>releases</id>
+                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-source-releases</url>
+                </repository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven.source.plugin.version}</version>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                    <goal>test-jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

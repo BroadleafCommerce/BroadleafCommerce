@@ -55,8 +55,10 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.RequiredFacet;
@@ -118,6 +120,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Resource(name = "blSearchFacetDao")
     protected SearchFacetDao searchFacetDao;
 
+    @Resource(name = "blIndexFieldDao")
+    protected IndexFieldDao indexFieldDao;
+
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
     
@@ -151,7 +156,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
                         .setAliasedCollections(reindexCollectionName).process(primary);
                 new CollectionAdminRequest.CreateAlias().setAliasName(reindex.getDefaultCollection())
-                        .setAliasedCollections(primaryCollectionName).process(primary);
+                        .setAliasedCollections(primaryCollectionName).process(reindex);
             } catch (Exception e) {
                 LOG.error("An exception occured swapping cores.", e);
                 throw new ServiceException("Unable to swap SolrCloud collections after a full reindex.", e);
@@ -563,6 +568,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 facetDTO.getFacetValues().add(resultDTO);
             }
         }
+
+        searchExtensionManager.getProxy().setFacetResults(namedFacetMap, response);
     }
 
     @Override
@@ -589,19 +596,23 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
             SearchFacetDTO dto = entry.getValue();
 
-            // Clone the list - we don't want to remove these facets from the DB
-            List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
+            ExtensionResultStatusType status = searchExtensionManager.getProxy().attachFacet(query, entry.getKey(), dto);
 
-            if (searchExtensionManager != null) {
-                searchExtensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
-            }
+            if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+                // Clone the list - we don't want to remove these facets from the DB
+                List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
 
-            if (facetRanges != null && facetRanges.size() > 0) {
-                for (SearchFacetRange range : facetRanges) {
-                    query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
+                if (searchExtensionManager != null) {
+                    searchExtensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
                 }
-            } else {
-                query.addFacetField(getSolrTaggedFieldString(entry.getKey(), "ex", null));
+
+                if (facetRanges != null && facetRanges.size() > 0) {
+                    for (SearchFacetRange range : facetRanges) {
+                        query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
+                    }
+                } else {
+                    query.addFacetField(getSolrTaggedFieldString(entry.getKey(), "ex", null));
+                }
             }
         }
     }
@@ -633,9 +644,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort, List<IndexField> fields) {
-        Map<String, String> solrFieldKeyMap = getSolrFieldKeyMap(searchCriteria, fields);
-
+    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
         String sortQuery = searchCriteria.getSortQuery();
         if (StringUtils.isBlank(sortQuery)) {
             sortQuery = defaultSort;
@@ -643,22 +652,25 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
         if (StringUtils.isNotBlank(sortQuery)) {
             String[] sortFields = sortQuery.split(",");
+
             for (String sortField : sortFields) {
-                String field = sortField.split(" ")[0];
-                if (solrFieldKeyMap.containsKey(field)) {
-                    field = solrFieldKeyMap.get(field);
-                }
-                ORDER order = ORDER.asc;
-                String[] sortFieldsSegments = sortField.split(" ");
-                if (sortFieldsSegments.length < 2) {
-                    StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
-                    msg.append("\nDefaulting to ASCending");
-                    LOG.warn(msg.toString());
-                } else if ("desc".equals(sortFieldsSegments[1])) {
-                    order = ORDER.desc;
-                }
-                if (field != null) {
-                    query.addSort(new SortClause(field, order));
+                List<IndexFieldType> fieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviation(sortField.split(" ")[0]);
+
+                for (IndexFieldType fieldType : fieldTypes) {
+                    String field = getPropertyNameForIndexField(fieldType.getIndexField(), fieldType.getFieldType());
+
+                    ORDER order = ORDER.asc;
+                    String[] sortFieldsSegments = sortField.split(" ");
+                    if (sortFieldsSegments.length < 2) {
+                        StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
+                        msg.append("\nDefaulting to ASCending");
+                        LOG.warn(msg.toString());
+                    } else if ("desc".equals(sortFieldsSegments[1])) {
+                        order = ORDER.desc;
+                    }
+                    if (field != null) {
+                        query.addSort(new SortClause(field, order));
+                    }
                 }
             }
         }
@@ -683,7 +695,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             @Override
             public String getKey(SearchFacetDTO facet) {
                 return getPropertyNameForIndexField(facet.getFacet().getFieldType().getIndexField(),
-                    FieldType.getInstance(facet.getFacet().getFacetFieldType()));
+                        FieldType.getInstance(facet.getFacet().getFacetFieldType()));
             }
         });
     }
@@ -720,19 +732,28 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                             selectedValues[i] = "\"" + scrubFacetValue(selectedValues[i]) + "\"";
                         }
                     }
-                    StringBuilder valueString = new StringBuilder();
-                    if (rangeQuery) {
-                        valueString.append(solrKey).append(":(");
-                        valueString.append(StringUtils.join(selectedValues, " OR "));
-                        valueString.append(")");
-                    } else {
-                        valueString.append("{!tag=").append(solrKey).append("}");
-                        valueString.append(solrKey).append(":(");
-                        valueString.append(StringUtils.join(selectedValues, " OR "));
-                        valueString.append(")");
+
+                    FieldEntity entityType = namedFacetMap.get(solrKey).getFacet().getFieldType().getIndexField().getField().getEntityType();
+                    List<String> valueStrings = new ArrayList<>();
+                    ExtensionResultStatusType status = searchExtensionManager.getProxy().buildActiveFacetFilter(entityType, solrKey, selectedValues, valueStrings);
+
+                    if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+                        StringBuilder valueString = new StringBuilder();
+
+                        if (rangeQuery) {
+                            valueString.append(solrKey).append(":(");
+                            valueString.append(StringUtils.join(selectedValues, " OR "));
+                            valueString.append(")");
+                        } else {
+                            valueString.append("{!tag=").append(solrKey).append("}");
+                            valueString.append(solrKey).append(":(");
+                            valueString.append(StringUtils.join(selectedValues, " OR "));
+                            valueString.append(")");
+                        }
+                        valueStrings.add(valueString.toString());
                     }
 
-                    query.addFilterQuery(valueString.toString());
+                    query.addFilterQuery(valueStrings.toArray(new String[valueStrings.size()]));
                 }
             }
         }
@@ -816,5 +837,31 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         }
     }
 
+    @Override
+    public List<IndexField> getSearchableIndexFields() {
+        List<IndexField> fields = new ArrayList<>();
 
+        ExtensionResultStatusType status = searchExtensionManager.getProxy().getSearchableIndexFields(fields);
+
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+            if (useSku) {
+                fields = indexFieldDao.readSearchableFieldsByEntityType(FieldEntity.SKU);
+            } else {
+                fields = indexFieldDao.readSearchableFieldsByEntityType(FieldEntity.PRODUCT);
+            }
+        }
+
+        return fields;
+    }
+
+    @Override
+    public List<Long> getCategoryFilterIds(Category category, SearchCriteria searchCriteria) {
+        List<Long> categoryIds = new ArrayList<>();
+
+        categoryIds.add(getCategoryId(category));
+
+        searchExtensionManager.getProxy().addAdditionalCategoryIds(category, searchCriteria, categoryIds);
+
+        return categoryIds;
+    }
 }

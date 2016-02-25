@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Framework Web
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,16 @@
  * limitations under the License.
  * #L%
  */
-
-package org.broadleafcommerce.core.payment.service;
-
-import org.broadleafcommerce.common.payment.PaymentGatewayType;
+package org.broadleafcommerce.common.payment;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public class NullPaymentGatewayType extends PaymentGatewayType {
+public class TransparentRedirectConstants {
 
-    public static final PaymentGatewayType NULL_GATEWAY  = new PaymentGatewayType("NULL_GATEWAY", "Null Payment Gateway Implementation");
-    public static final PaymentGatewayType NULL_HOSTED_GATEWAY  = new PaymentGatewayType("NULL_HOSTED_GATEWAY", "Null Hosted Payment Gateway Implementation");
-
+    public static final String OVERRIDE_CREATE_TOKEN_RETURN_URL = "OVERRIDE_CREATE_TOKEN_RETURN_URL";
+    public static final String OVERRIDE_CREATE_TOKEN_CANCEL_URL = "OVERRIDE_CREATE_TOKEN_CANCEL_URL";
+    public static final String OVERRIDE_UPDATE_TOKEN_RETURN_URL = "OVERRIDE_UPDATE_TOKEN_RETURN_URL";
+    public static final String OVERRIDE_UPDATE_TOKEN_CANCEL_URL = "OVERRIDE_UPDATE_TOKEN_CANCEL_URL";
 
 }

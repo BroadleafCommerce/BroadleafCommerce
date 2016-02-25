@@ -21,7 +21,6 @@ package org.broadleafcommerce.test;
 
 import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
@@ -33,6 +32,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -55,25 +55,26 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
                 // Note that as of 2.2.0, this array will no longer include "bl-applicationContext-test", as we want that to
                 // be the very last context loaded.
                 String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
-                
-                // After the framework applicationContexts are loaded, we want the module ones
-                List<String> additionalContexts = new ArrayList<String>(moduleContexts);
+                List<String> allContexts = new ArrayList<String>(Arrays.asList(contexts));
 
                 // We need the content applicationContexts and admin applicationContexts
-                additionalContexts.add("bl-open-admin-contentClient-applicationContext.xml");
-                additionalContexts.add("bl-open-admin-contentCreator-applicationContext.xml");
-                additionalContexts.add("bl-admin-applicationContext.xml");
+                allContexts.add("bl-open-admin-contentClient-applicationContext.xml");
+                allContexts.add("bl-open-admin-contentCreator-applicationContext.xml");
+                allContexts.add("bl-admin-applicationContext.xml");
+
+                // After the framework applicationContexts are loaded, we want the module ones
+                allContexts.addAll(moduleContexts);
                 
                 // Lastly, we want the test applicationContext
-                additionalContexts.add("bl-applicationContext-test.xml");
+                allContexts.add("bl-applicationContext-test.xml");
 
                 // If we're running in legacy test mode, we need that one too
                 if (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Dlegacy=true")) {
-                    additionalContexts.add("bl-applicationContext-test-legacy.xml");
+                    allContexts.add("bl-applicationContext-test-legacy.xml");
                 }
                 
-                String[] strArray = new String[additionalContexts.size()];
-                mergeContext = new MergeClassPathXMLApplicationContext(contexts, additionalContexts.toArray(strArray));
+                String[] strArray = new String[allContexts.size()];
+                mergeContext = new MergeClassPathXMLApplicationContext(allContexts.toArray(strArray), new String[]{});
                 
                 //allow for request-scoped beans that can occur in web application contexts
                 RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest()));
