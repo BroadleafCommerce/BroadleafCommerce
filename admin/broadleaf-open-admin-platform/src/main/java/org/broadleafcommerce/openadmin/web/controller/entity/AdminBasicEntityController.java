@@ -1600,9 +1600,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
             field.setValue(String.valueOf(sequenceValue));
             
             Map<String, Object> responseMap = new HashMap<String, Object>();
-            service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, alternateId, sectionCrumbs);
+            PersistenceResponse persistenceResponse = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, alternateId, sectionCrumbs);
+            Property displayOrder = persistenceResponse.getEntity().findProperty("displayOrder");
+
             responseMap.put("status", "ok");
             responseMap.put("field", collectionField);
+            responseMap.put("newDisplayOrder", displayOrder == null ? null : displayOrder.getValue());
             return responseMap;
         } else if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata cd = (BasicCollectionMetadata) md;
@@ -1625,10 +1628,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 field.setValue(String.valueOf(sequenceValue));
             }
 
-            service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, sectionCrumbs);
+            PersistenceResponse persistenceResponse = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, sectionCrumbs);
+            Property displayOrder = persistenceResponse.getEntity().findProperty("displayOrder");
 
             responseMap.put("status", "ok");
             responseMap.put("field", collectionField);
+            responseMap.put("newDisplayOrder", displayOrder == null ? null : displayOrder.getValue());
             return responseMap;
         } else {
             throw new UnsupportedOperationException("Cannot handle sequencing for non adorned target collection fields.");

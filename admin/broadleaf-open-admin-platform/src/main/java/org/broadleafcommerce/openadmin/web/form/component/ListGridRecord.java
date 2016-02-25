@@ -34,6 +34,7 @@ public class ListGridRecord {
 
     protected ListGrid listGrid;
     protected String id;
+    protected String displayOrder;
     protected String altId;
     protected List<Field> fields = new ArrayList<Field>();
     protected List<Field> hiddenFields = new ArrayList<Field>();
@@ -80,7 +81,15 @@ public class ListGridRecord {
     public void setId(String id) {
         this.id = id;
     }
-    
+
+    public String getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(String displayOrder) {
+        this.displayOrder = displayOrder;
+    }
+
     public int getIndex() {
         return listGrid.getStartIndex() + listGrid.getRecords().indexOf(this);
     }
