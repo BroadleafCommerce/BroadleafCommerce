@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
+import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -100,11 +101,11 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
         if (result.equals(ExtensionResultStatusType.NOT_HANDLED)) {
             // If there is no searchable field types then we need to add a default as String
             if (ListUtils.isEmpty(adminInstance.getFieldTypes())) {
-                PersistencePackage pp = createPersistencePackage(adminInstance, FieldType.TEXT);
-
-                PersistenceManager pm = PersistenceManagerFactory.getPersistenceManager();
-
-                pm.add(pp);
+                IndexFieldType indexFieldType = new IndexFieldTypeImpl();
+                indexFieldType.setFieldType(FieldType.TEXT);
+                indexFieldType.setIndexField(adminInstance);
+                adminInstance.getFieldTypes().add(indexFieldType);
+                adminInstance = dynamicEntityDao.merge(adminInstance);
             }
         }
 

@@ -817,6 +817,12 @@
                             } else {
                                 url += "?inModal=" + inModal;
                             }
+
+                            var sectionCrumbs = $tbody.closest('table').data('sectioncrumbs');
+                            if (typeof sectionCrumbs !== 'undefined') {
+                                url += "&sectionCrumbs=" + sectionCrumbs;
+                            }
+
                             BLCAdmin.listGrid.paginate.loadRecords($tbody, url);
                         });
                         
