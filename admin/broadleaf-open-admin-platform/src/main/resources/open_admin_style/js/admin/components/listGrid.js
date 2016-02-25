@@ -702,7 +702,7 @@ $(document).ready(function () {
                 change: function( event, ui ) {
                     var prevDisplayOrder = ui.placeholder.prev().data('displayorder');
                     var nextDisplayOrder = ui.placeholder.next().data('displayorder');
-                    if (!$.isNumeric(prevDisplayOrder) || prevDisplayOrder == nextDisplayOrder) {
+                    if ((!$.isNumeric(prevDisplayOrder) || prevDisplayOrder == nextDisplayOrder) && typeof prevDisplayOrder !== 'undefined') {
                         ui.placeholder.hide();
                     } else {
                         ui.placeholder.show();
@@ -711,7 +711,7 @@ $(document).ready(function () {
                 beforeStop: function(ev, ui) {
                     var prevDisplayOrder = ui.placeholder.prev().prev().data('displayorder');
                     var nextDisplayOrder = ui.placeholder.next().data('displayorder');
-                    if (!$.isNumeric(prevDisplayOrder) || prevDisplayOrder == nextDisplayOrder) {
+                    if ((!$.isNumeric(prevDisplayOrder) || prevDisplayOrder == nextDisplayOrder) && typeof prevDisplayOrder !== 'undefined') {
                         $(this).sortable("cancel");
                     }
                 },
