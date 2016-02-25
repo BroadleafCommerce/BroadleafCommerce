@@ -697,12 +697,16 @@ $(document).ready(function () {
 
             $trs.removeClass('clickable').addClass('draggable');
 
+            function isReorderToFirst(prevDisplayOrder, nextDisplayOrder) {
+                return typeof prevDisplayOrder === 'undefined' && typeof nextDisplayOrder !== 'undefined';
+            }
+
             $tbody.sortable({
                 helper : BLCAdmin.listGrid.fixHelper,
                 change: function( event, ui ) {
                     var prevDisplayOrder = ui.placeholder.prev().data('displayorder');
                     var nextDisplayOrder = ui.placeholder.next().data('displayorder');
-                    if ((!$.isNumeric(prevDisplayOrder) || prevDisplayOrder == nextDisplayOrder) && typeof prevDisplayOrder !== 'undefined') {
+                    if ((!$.isNumeric(prevDisplayOrder) || prevDisplayOrder == nextDisplayOrder) && !isReorderToFirst(prevDisplayOrder, nextDisplayOrder)) {
                         ui.placeholder.hide();
                     } else {
                         ui.placeholder.show();
@@ -711,7 +715,7 @@ $(document).ready(function () {
                 beforeStop: function(ev, ui) {
                     var prevDisplayOrder = ui.placeholder.prev().prev().data('displayorder');
                     var nextDisplayOrder = ui.placeholder.next().data('displayorder');
-                    if ((!$.isNumeric(prevDisplayOrder) || prevDisplayOrder == nextDisplayOrder) && typeof prevDisplayOrder !== 'undefined') {
+                    if ((!$.isNumeric(prevDisplayOrder) || prevDisplayOrder == nextDisplayOrder) && !isReorderToFirst(prevDisplayOrder, nextDisplayOrder)) {
                         $(this).sortable("cancel");
                     }
                 },
