@@ -216,7 +216,7 @@
                 }
             }
             updateListGridActionsForEmptyContainer($listGridContainer.find('button.non-empty-required'), $listGridContainer.find('tr.clickable').length == 0);
-            var listGridId = $listGridContainer.find('.listgrid-body-wrapper table').attr('id');
+            var listGridId = $listGridContainer.find('.listgrid-header-wrapper table').attr('id');
             var numSelected = $listGridContainer.find('tr.selected').length;
             updateListGridActionsForContainer($listGridContainer.find('button.row-action'), numSelected);
 
