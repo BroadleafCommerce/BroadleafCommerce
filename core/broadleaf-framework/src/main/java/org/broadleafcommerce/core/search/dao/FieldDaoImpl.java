@@ -89,7 +89,7 @@ public class FieldDaoImpl implements FieldDao {
 
         criteria.select(root);
         criteria.where(
-                builder.equal(root.get("entityType").as(String.class), entityType.getType())
+                root.get("entityType").as(String.class).in(entityType.getAllLookupTypes())
                 );
 
         TypedQuery<Field> query = em.createQuery(criteria);

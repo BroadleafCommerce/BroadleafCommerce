@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * Represents the {@link org.broadleafcommerce.core.catalog.domain.Sku} being sold in a bundle along with metadata
@@ -72,4 +73,16 @@ public interface SkuBundleItem extends Serializable, MultiTenantCloneable<SkuBun
      * Removes any currently stored dynamic pricing
      */
     public void clearDynamicPrices();
+
+    /**
+     * Get the sequence order.
+     * @return
+     */
+    public BigDecimal getSequence() ;
+
+    /**
+     * Set the order the item shows up in the display.
+     * @param sequence
+     */
+    public void setSequence(BigDecimal sequence);
 }
