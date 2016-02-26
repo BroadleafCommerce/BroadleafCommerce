@@ -23,6 +23,7 @@ package org.broadleafcommerce.admin.server.service.handler;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,11 +32,14 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
@@ -55,6 +59,7 @@ import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -74,6 +79,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -445,6 +451,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             
             //allow subclasses to provide additional criteria before executing the query
             applyProductOptionValueCriteria(filterMappings, cto, persistencePackage, null);
+            applySkuBundleItemValueCriteria(filterMappings, cto, persistencePackage);
             applyAdditionalFetchCriteria(filterMappings, cto, persistencePackage);
 
             List<Serializable> records = helper.getPersistentRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
@@ -483,6 +490,61 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         } catch (Exception e) {
             throw new ServiceException("Unable to perform fetch for entity: " + ceilingEntityFullyQualifiedClassname, e);
         }
+    }
+
+    /**
+     * Add filter restriction such that a ProductBundle cannot add its own default sku as a Sku Bundle Item
+     */
+    private void applySkuBundleItemValueCriteria(List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
+        SectionCrumb[] sectionCrumbs = persistencePackage.getSectionCrumbs();
+        if (isSkuBundleItemLookup(persistencePackage, sectionCrumbs)) {
+            final Long defaultSkuId = getOwningProductBundlesDefaultSkuId(sectionCrumbs[0]);
+
+            filterMappings.add(new FilterMapping()
+                    .withDirectFilterValues(Collections.singletonList(defaultSkuId))
+                    .withRestriction(new Restriction()
+                                    .withPredicateProvider(new PredicateProvider() {
+                                        @Override
+                                        public Predicate buildPredicate(CriteriaBuilder builder,
+                                                FieldPathBuilder fieldPathBuilder,
+                                                From root, String ceilingEntity,
+                                                String fullPropertyName, Path explicitPath,
+                                                List directValues) {
+                                            return builder.notEqual(root, directValues.get(0));
+                                        }
+                                    })
+                    ));
+        }
+    }
+
+    private boolean isSkuBundleItemLookup(PersistencePackage pkg, SectionCrumb[] sectionCrumbs) {
+        boolean owningClassMatch = false;
+        boolean requestingFieldMatch = false;
+
+        if (pkg.getCustomCriteria() == null || ArrayUtils.isEmpty(sectionCrumbs)) {
+            return false;
+        }
+
+        for (String criteria : pkg.getCustomCriteria()) {
+            if ("owningClass=org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl".equals(criteria)) {
+                owningClassMatch = true;
+            } else if ("requestingField=sku".equals(criteria)) {
+                requestingFieldMatch = true;
+            }
+        }
+
+        boolean sectionCrumbMatch = ProductImpl.class.getCanonicalName().equals(sectionCrumbs[0].getSectionIdentifier());
+
+        return owningClassMatch && requestingFieldMatch && sectionCrumbMatch;
+    }
+
+    private Long getOwningProductBundlesDefaultSkuId(SectionCrumb sectionCrumb) {
+        if (ProductImpl.class.getCanonicalName().equals(sectionCrumb.getSectionIdentifier())
+                && sectionCrumb.getSectionId() != null) {
+            ProductBundle productBundle = (ProductBundle) catalogService.findProductById(Long.valueOf(sectionCrumb.getSectionId()));
+            return productBundle.getDefaultSku().getId();
+        }
+        return null;
     }
 
     public void applyProductOptionValueCriteria(List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage, String skuPropertyPrefix) {

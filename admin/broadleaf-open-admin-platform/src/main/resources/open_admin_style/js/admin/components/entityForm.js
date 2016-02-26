@@ -59,8 +59,11 @@
                         // Add an error indicator to the fields tab
                         // this can happen more than once because the indicator is absolute positioning
                         var tabId = '#' + fieldGroup.parents('.entityFormTab').attr("class").substring(0, 4);
-                        var tab = $('a[href=' + tabId + ']');
-                        tab.prepend('<span class="tab-error-indicator danger"></span>');
+                        var $tabWithError = $('a[href=' + tabId + ']');
+                        if (BLCAdmin.currentModal() !== undefined) {
+                            $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
+                        }
+                        $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
 
                         // Mark the field as an error
                         var fieldError = "<div class='error'";
@@ -126,7 +129,7 @@
 
             if (submit) {
                 BLC.ajax({
-                    url: $form.action,
+                    url: $form.attr('action'),
                     dataType: "json",
                     type: "POST",
                     data: $form.serializeArray(),

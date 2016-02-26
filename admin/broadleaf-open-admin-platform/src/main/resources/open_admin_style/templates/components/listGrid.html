@@ -10,7 +10,8 @@
                     data-currenturl=${currentUrl},
                     data-path=@{${listGrid.path}},
                     data-hiddenid=${listGrid.jsonFieldName},
-                    data-currentparams=${currentParams}"
+                    data-currentparams=${currentParams},
+                    data-sectioncrumbs=${sectionCrumbs}"
            blc_admin:component_id="${listGrid}">
         <thead>
             <tr>
@@ -57,11 +58,6 @@
                         </ul>
                     </div>
                 </th>
-                <!--<th th:if="${listGrid.listGridType} == 'main'">-->
-                    <!--<th:comment th:remove="all">-->
-                        <!--This entry acting as placeholder for Edit links-->
-                    <!--</th:comment>-->
-                <!--</th>-->
                 <th class="listgrid-row-actions"
                     th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
                     <th:comment th:remove="all">
@@ -121,6 +117,7 @@
                 th:attr="data-link=@{${record.path}},
                          data-index=${record.index},
                          data-rowid=${record.id},
+                         data-displayorder=${record.displayOrder},
                          data-hiddenfields=${record.getHiddenFieldsJson()}">
 
                 <td class="listgrid-checkbox" th:if="${listGrid.selectType} == 'multi_select'">
@@ -222,16 +219,6 @@
                               th:remove="tag" th:utext="${field.displayValue}"></span>
                     </span>
                 </td>
-
-                <!--<td th:if="${listGrid.listGridType} == 'main'" th:unless="${#lists.isEmpty(listGrid.records)}">-->
-                    <!--<span>-->
-                        <!--<a th:href="@{${record.path}}" th:text="#{Edit}"-->
-                           <!--th:attr="data-link=@{${record.path}},-->
-                                     <!--data-index=${record.index},-->
-                                     <!--data-rowid=${record.id},-->
-                                     <!--data-hiddenfields=${record.getHiddenFieldsJson()}">Edit</a>-->
-                    <!--</span>-->
-                <!--</td>-->
 
                 <td class="listgrid-row-actions"
                     th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">

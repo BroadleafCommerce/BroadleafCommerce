@@ -409,11 +409,14 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             } else {
                 for (String fieldName : atcmd.getGridVisibleFields()) {
                     Property p = cmd.getPMap().get(fieldName);
-                    BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+                    if (p != null){
+                        BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
 
-                    Field hf = createHeaderField(p, md);
-                    headerFields.add(hf);
-                    wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
+                        Field hf = createHeaderField(p, md);
+                        headerFields.add(hf);
+                        wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
+                    }
+
                 }
             }
 
@@ -551,7 +554,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
 
         if (modalSingleSelectable) {
-            listGrid.addModalRowAction(DefaultListGridActions.SINGLE_SELECT);
+            if (readOnly) {
+                listGrid.addModalRowAction(DefaultListGridActions.SINGLE_SELECT.clone().withForListGridReadOnly(true));
+            } else {
+                listGrid.addModalRowAction(DefaultListGridActions.SINGLE_SELECT);
+
+            }
         }
         listGrid.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
 

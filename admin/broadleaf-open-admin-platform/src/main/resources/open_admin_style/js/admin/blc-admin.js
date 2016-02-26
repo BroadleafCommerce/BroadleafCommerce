@@ -443,7 +443,12 @@ var BLCAdmin = (function($) {
             // Show tab error indicators
             if ($container.find('.field-group.has-error').length) {
                 var tabId = '#' + $container.attr("class").substring(0, 4);
+
                 var $tabWithError = $('a[href=' + tabId + ']');
+                if (BLCAdmin.currentModal().length) {
+                    $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
+                }
+
                 if ($tabWithError.length) {
                     $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
                 }
@@ -512,7 +517,7 @@ var BLCAdmin = (function($) {
             // initialize datetimepicker fields
             $container.find("[id$=display].datetimepicker").each(function() {
                 if ($(this).val().length) {
-                    var d = new Date($(this).val());
+                    var d = moment($(this).attr('value'), 'YYYY.MM.DD HH:mm:ss').toDate();
                     $(this).val(d.dateFormat("l, F d, Y \@ g:ia"));
                 }
             });

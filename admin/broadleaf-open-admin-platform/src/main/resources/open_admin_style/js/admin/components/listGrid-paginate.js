@@ -463,10 +463,15 @@
         // ************************* *
         // CUSTOM SCROLLER FUNCTIONS *
         // ************************* *
-        
+
         getRowHeight : function($tbody) {
-            // The first row will always be 1px shorter since it doesn't have a top boarder, therefore add 1 to the height.
-            return $tbody.find('td:not(.blank-padding):first').innerHeight() + 1;
+            return $tbody.find('td:not(.blank-padding):first').outerHeight();
+        },
+
+        getActualRowIndex : function($tr) {
+            var trPlacementTop = $tr.position().top;
+            var rowHeight = this.getRowHeight($tr.closest('tbody'));
+            return trPlacementTop / rowHeight;
         },
         
         getTopVisibleIndex : function($tbody) {
@@ -558,7 +563,7 @@
                 //$headerTable.closest('.listgrid-container').find('th').css('width', '');
 
                 // Figure out what the new table width will be
-                var newWidth = ($headerTable.width() - 15) + 'px';
+                var newWidth = $headerTable.width() + 'px';
                 $headerTable.css('width', newWidth);
                 $table.css('width', newWidth);
             }
@@ -812,6 +817,12 @@
                             } else {
                                 url += "?inModal=" + inModal;
                             }
+
+                            var sectionCrumbs = $tbody.closest('table').data('sectioncrumbs');
+                            if (typeof sectionCrumbs !== 'undefined') {
+                                url += "&sectionCrumbs=" + sectionCrumbs;
+                            }
+
                             BLCAdmin.listGrid.paginate.loadRecords($tbody, url);
                         });
                         
@@ -873,16 +884,18 @@ $(document).ready(function() {
     
     $(window).resize(function() {
         $.doTimeout('resizeListGrid', 0, function() {
-            BLCAdmin.getActiveTab().find('tbody').each(function(index, element) {
-                if ($(element).is(':visible')) {
-                    BLCAdmin.listGrid.paginate.updateGridSize($(element));
-                } else {
-                    $(element).addClass('needsupdate');
-                }
-            });
-            BLCAdmin.getActiveTab().find('.fieldgroup-listgrid-wrapper-header').each(function(index, element) {
-                BLCAdmin.listGrid.updateGridTitleBarSize($(element));
-            });
+            if ($('.oms').length == 0) {
+                BLCAdmin.getActiveTab().find('tbody').each(function (index, element) {
+                    if ($(element).is(':visible')) {
+                        BLCAdmin.listGrid.paginate.updateGridSize($(element));
+                    } else {
+                        $(element).addClass('needsupdate');
+                    }
+                });
+                BLCAdmin.getActiveTab().find('.fieldgroup-listgrid-wrapper-header').each(function (index, element) {
+                    BLCAdmin.listGrid.updateGridTitleBarSize($(element));
+                });
+            }
         });
     });
     

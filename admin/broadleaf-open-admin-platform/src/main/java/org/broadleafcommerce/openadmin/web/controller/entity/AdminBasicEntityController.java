@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -400,9 +401,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
     }
 
     private boolean isAddRequest(Entity entity) {
-        Map<String, Property> pMap = entity.getPMap();
-        Property dateUpdated = pMap == null ? null : entity.getPMap().get("auditable.dateUpdated");
-        return dateUpdated == null || dateUpdated.getValue() == null;
+        ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<Boolean>();
+        ExtensionResultStatusType result = extensionManager.getProxy().isAddRequest(entity, resultHolder);
+        if (result.equals(ExtensionResultStatusType.NOT_HANDLED)) {
+            Map<String, Property> pMap = entity.getPMap();
+            Property dateUpdated = pMap == null ? null : entity.getPMap().get("auditable.dateUpdated");
+            return dateUpdated == null || dateUpdated.getValue() == null;
+        }
+
+        return resultHolder.getResult();
     }
 
     /**
@@ -1593,9 +1600,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
             field.setValue(String.valueOf(sequenceValue));
             
             Map<String, Object> responseMap = new HashMap<String, Object>();
-            service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, alternateId, sectionCrumbs);
+            PersistenceResponse persistenceResponse = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, alternateId, sectionCrumbs);
+            Property displayOrder = persistenceResponse.getEntity().findProperty("displayOrder");
+
             responseMap.put("status", "ok");
             responseMap.put("field", collectionField);
+            responseMap.put("newDisplayOrder", displayOrder == null ? null : displayOrder.getValue());
             return responseMap;
         } else if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata cd = (BasicCollectionMetadata) md;
@@ -1618,10 +1628,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 field.setValue(String.valueOf(sequenceValue));
             }
 
-            service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, sectionCrumbs);
+            PersistenceResponse persistenceResponse = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, sectionCrumbs);
+            Property displayOrder = persistenceResponse.getEntity().findProperty("displayOrder");
 
             responseMap.put("status", "ok");
             responseMap.put("field", collectionField);
+            responseMap.put("newDisplayOrder", displayOrder == null ? null : displayOrder.getValue());
             return responseMap;
         } else {
             throw new UnsupportedOperationException("Cannot handle sequencing for non adorned target collection fields.");

@@ -130,7 +130,19 @@ var BLC = (function($) {
         if (options.type == null) {
             options.type = 'GET';
         }
-        
+
+        var baseUrl = window.location.href;
+        if (baseUrl.indexOf('isPostAdd') != -1) {
+            if (options.url.indexOf('isPostAdd') < 0) {
+                if (options.url.indexOf('?') > 0) {
+                    options.url += "&";
+                } else {
+                    options.url += "?";
+                }
+                options.url += "isPostAdd=true";
+            }
+        }
+
         if (options.type.toUpperCase() == 'POST') {
             if (typeof options.data == 'string') {
                 if (options.data.indexOf('csrfToken') < 0) {
