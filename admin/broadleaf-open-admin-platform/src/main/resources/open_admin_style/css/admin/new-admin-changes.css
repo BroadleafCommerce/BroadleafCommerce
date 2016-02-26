@@ -1308,7 +1308,6 @@ blockquote::before{
 
 .media-image-container {
     position: relative;
-    display: inline-block;
 }
 
 .fieldset-card-content .media-image-container {
