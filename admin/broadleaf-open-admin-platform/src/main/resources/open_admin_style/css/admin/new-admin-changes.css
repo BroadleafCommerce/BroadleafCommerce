@@ -590,7 +590,7 @@ button.disabled {
 }
 
 .listgrid-search input {
-    -webkit-appearance: none;
+    -webkit-appearance: none; /* for safari */
     height: 36px !important;
     vertical-align: bottom;
     width: 300px;
@@ -987,7 +987,7 @@ input.color-picker-value {
     font-size: 12px;
     color: #B3B3B3;
     font-family: 'Open Sans', sans-serif;
-    /*line-height: 1.5em;*/ /* Not rendering correctly for unknown reasons */
+    /*line-height: 1.5em;*/ /* Not rendering correctly for unknown reasons, but removing it works */
 }
 
 :-ms-input-placeholder {
