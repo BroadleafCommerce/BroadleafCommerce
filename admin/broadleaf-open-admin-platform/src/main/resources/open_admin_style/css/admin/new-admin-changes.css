@@ -590,6 +590,7 @@ button.disabled {
 }
 
 .listgrid-search input {
+    -webkit-appearance: none;
     height: 36px !important;
     vertical-align: bottom;
     width: 300px;
