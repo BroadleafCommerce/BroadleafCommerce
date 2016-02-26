@@ -49,7 +49,8 @@ import java.io.Serializable;
 @Table(name = "BLC_INDEX_FIELD_TYPE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
 })
 @AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "indexField.field.friendlyName", mergeEntries = {
