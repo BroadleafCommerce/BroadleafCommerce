@@ -31,7 +31,7 @@
             }
         },
 
-        replaceRelatedListGrid: function ($headerWrapper, alert, opts) {
+        findRelatedTable: function ($headerWrapper) {
             var $table = $headerWrapper.find('table');
             var tableId = $table.attr('id');
             var $oldTable = null;
@@ -51,6 +51,12 @@
             if ($oldTable == null || $oldTable.length == 0) {
                 $oldTable = $('#' + tableId);
             }
+            return $oldTable;
+        },
+
+        replaceRelatedListGrid: function ($headerWrapper, alert, opts) {
+            var $table = $headerWrapper.find('table');
+            var $oldTable = BLCAdmin.listGrid.findRelatedTable($headerWrapper);
 
             var currentIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($oldTable.find('tbody'));
 
