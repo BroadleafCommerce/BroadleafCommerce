@@ -24,7 +24,7 @@
     BLCAdmin.typeahead = {
             
         setToOneSelectionId : function setToOneSelectionId($input) {
-            var $fieldBox = $input.closest('.field-box');
+            var $fieldBox = $input.closest('.field-group');
             var $extLink = $fieldBox.find('.external-link-container a');
             var val = $input.val();
             var valId = null;
@@ -56,7 +56,7 @@
                     url: $input.data('typeahead-url') + '&query=%QUERY',
                     filter: function(response) {
                         // Store the response locally so we can leverage it later
-                        var fieldName = $input.closest('.field-box').attr('id');
+                        var fieldName = $input.closest('.field-group').attr('id');
                         typeaheadMatches[fieldName] = response;
 
                         return response;

@@ -23,12 +23,17 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 
@@ -92,4 +97,25 @@ public interface AdminAbstractControllerExtensionHandler extends ExtensionHandle
      * @return
      */
     public ExtensionResultStatusType modifyDynamicForm(EntityForm form, String parentEntityId);
+
+    /**
+     * Extension point to modify the model for specific collection types
+     *
+     * @param md
+     * @return
+     */
+    public ExtensionResultStatusType modifyModelForAddCollectionType(HttpServletRequest request,
+                                                                     HttpServletResponse response,
+                                                                     Model model,
+                                                                     String sectionKey,
+                                                                     String id,
+                                                                     MultiValueMap<String, String> requestParams, MapMetadata md);
+
+    /**
+     * Extension point to determine if the entity requested is a new empty add request.
+     *
+     * @param entity
+     * @return
+     */
+    public ExtensionResultStatusType isAddRequest(Entity entity, ExtensionResultHolder<Boolean> resultHolder);
 }

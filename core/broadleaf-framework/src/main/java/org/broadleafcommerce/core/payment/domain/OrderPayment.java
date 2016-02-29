@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.payment.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
@@ -53,7 +54,7 @@ import java.util.List;
  * @see {@link PaymentType}
  * @author Phillip Verheyden (phillipuniverse)
  */
-public interface OrderPayment extends Serializable, Status {
+public interface OrderPayment extends Serializable, Status, MultiTenantCloneable<OrderPayment> {
 
     public Long getId();
 

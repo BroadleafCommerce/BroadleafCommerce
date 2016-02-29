@@ -21,6 +21,23 @@
     
     // Add utility functions for offers to the BLCAdmin object
     BLCAdmin.offer = {
+
+        initValueFieldStyle : function ($form) {
+            if (!$form.find("#fields\\'value\\'\\.value").parent().hasClass('input-group')) {
+                var inputGroup = $("<div>", {'class' : 'input-group'});
+                var inputGroupIcon = $("<i>", {'class' : BLCAdmin.messages.percentIconClass});
+                var inputGroupAddon = $("<span>", {'class' : 'input-group-addon'});
+                inputGroupAddon.append(inputGroupIcon);
+                $form.find("#fields\\'value\\'\\.value").wrap(inputGroup).before(inputGroupAddon);
+
+                // Fix wrapper size for sandbox tags
+                var valueField = $form.find("#fields\\'value\\'\\.value");
+                var changesWrapper = valueField.closest('.changes');
+                var width = inputGroupAddon.outerWidth();
+                width += parseInt(changesWrapper.outerWidth()) + 5; // 5px is needed for border offset
+                changesWrapper.attr('style', 'width: ' + width + 'px !important');
+            }
+        },
     
         addOnChangeTriggers : function($form) {
             $form.find('#field-type').on('change', function() {
@@ -30,6 +47,10 @@
             $form.find('#field-deliveryType').on('change', function() {
                 BLCAdmin.offer.initializeDeliveryTypeField($form);
             });
+
+            $form.find('#field-discountType').on('change', function() {
+                BLCAdmin.offer.initializeDiscountTypeField($form);
+            });
         },
         
         /**
@@ -38,9 +59,28 @@
         initializeOfferFormFields : function($form) {
             this.initializeOfferTypeField($form);
             this.initializeDeliveryTypeField($form);
+            this.initializeDiscountTypeField($form);
+        },
+
+        initializeDiscountTypeField : function($form) {
+            var $offerDiscountType = $form.find('#field-discountType');
+            var offerDiscountType;
+            if ($offerDiscountType.find('select').length > 0) {
+                offerDiscountType = $offerDiscountType.find('select').val();
+            } else {
+                offerDiscountType = $offerDiscountType.find('input[type="radio"]:checked').val();
+            }
+
+            $form.find("#fields\\'value\\'\\.value").siblings().find('i').removeClass();
+            if (offerDiscountType == "PERCENT_OFF") {
+                $form.find("#fields\\'value\\'\\.value").siblings().find('i').addClass(BLCAdmin.messages.percentIconClass);
+            } else {
+                $form.find("#fields\\'value\\'\\.value").siblings().find('i').addClass(BLCAdmin.messages.currencyIconClass);
+            }
         },
         
         initializeOfferTypeField : function($form) {
+
             var $offerType = $form.find('#field-type');
             var offerTypeValue;
             if ($offerType.find('select').length > 0) {
@@ -48,28 +88,24 @@
             } else {
                 offerTypeValue = $offerType.find('input[type="radio"]:checked').val();
             }
-            
+
             var $fgCriteria = $form.find('#field-offerMatchRules---FULFILLMENT-GROUP');
             var $itemTarget = $form.find('#field-targetItemCriteria');
-            var $itemTargetFieldset = $itemTarget.closest('fieldset');
-            
+
             if (offerTypeValue == "ORDER") {
                 $fgCriteria.addClass('hidden');
                 $itemTarget.addClass('hidden');
-                $itemTargetFieldset.addClass('hidden');
             } else if (offerTypeValue == 'ORDER_ITEM') {
                 $fgCriteria.addClass('hidden');
                 $itemTarget.removeClass('hidden');
-                $itemTargetFieldset.removeClass('hidden');
             } else if (offerTypeValue == 'FULFILLMENT_GROUP') {
                 $fgCriteria.removeClass('hidden');
                 $itemTarget.addClass('hidden');
-                $itemTargetFieldset.addClass('hidden');
             } else {
                 $fgCriteria.addClass('hidden');
                 $itemTarget.addClass('hidden');
-                $itemTargetFieldset.addClass('hidden');
             }
+
         },
         
         initializeDeliveryTypeField : function($form) {
@@ -85,10 +121,89 @@
         
     };
 
+    BLCAdmin.addExcludedSelectizeSelector(".query-builder-rules-container select");
+
     BLCAdmin.addInitializationHandler(function($container) {
         var $form = $container.closest('form.offer-form');
         BLCAdmin.offer.addOnChangeTriggers($form);
         BLCAdmin.offer.initializeOfferFormFields($form);
+        BLCAdmin.offer.initValueFieldStyle($form);
     });
-    
+
+    $.each(['org.broadleafcommerce.core.offer.domain.Offer'], function(idx, clazz) {
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-showAdvancedVisibilityOptions',
+            '#field-offerMatchRules---TIME',
+            'true'
+        );
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-showAdvancedVisibilityOptions',
+            '#field-embeddableAdvancedOffer--offerTimeZoneType',
+            'true'
+        );
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-type',
+            '#field-combinableWithOrderOffers',
+            hideOrderFields
+        );
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-type',
+            '#field-combinableWithItemOffers',
+            hideItemFields
+        );
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-type',
+            '#field-combinableWithItemOffersImpactingOtherItems',
+            'ORDER_ITEM'
+        );
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-type',
+            '#field-combinableWithShippingOffers',
+            hideShippingFields
+        );
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-type',
+            '#field-applyToSalePrice',
+            'ORDER_ITEM'
+        );
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-offerMatchRules---CUSTOMER',
+            '#field-maxUsesPerCustomer',
+            function(value) {
+                return value !== undefined && value.length != 0;
+            }
+        );
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#listGrid-adorned-embeddableCustomerSegmentCollection-customerSegmentXrefs',
+            '#field-maxUsesPerCustomer',
+            function(value) {
+                return value !== undefined && value.length != 0;
+            }
+        );
+    });
+
+    function hideOrderFields(compareValue) {
+        return (compareValue == 'ORDER_ITEM' || compareValue == 'FULFILLMENT_GROUP');
+    }
+
+    function hideItemFields(compareValue) {
+        return (compareValue == 'ORDER' || compareValue == 'FULFILLMENT_GROUP');
+    }
+
+    function hideShippingFields(compareValue) {
+        return (compareValue == 'ORDER_ITEM' || compareValue == 'ORDER');
+    }
 })(jQuery, BLCAdmin);

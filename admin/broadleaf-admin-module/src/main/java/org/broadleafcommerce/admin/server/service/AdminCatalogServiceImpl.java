@@ -45,7 +45,7 @@ import javax.persistence.PersistenceContext;
 
 /**
  * 
- * @author Phillip Verheyden\
+ * @author Phillip Verheyden
  *
  */
 @Service("blAdminCatalogService")
@@ -156,9 +156,10 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
         }
         
         ProductOption currentOption = options.get(currentTypeIndex);
+        List<ProductOptionValue> allowedValues = currentOption.getAllowedValues();
         if (!currentOption.getUseInSkuGeneration()) {
-            //This flag means do not generate skus and so do not create permutations for this productoption, 
-            //end it here and return the current list of permutations.
+            // This flag means do not generate skus and so do not create permutations for this ProductOption,
+            // end it here and return the current list of permutations.
             result.addAll(generatePermutations(currentTypeIndex + 1, currentPermutation, options));
             return result;
         }
@@ -166,14 +167,14 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
         if (currentOption.getAllowedValues().isEmpty()) {
             return null;
         }
-        for (ProductOptionValue option : currentOption.getAllowedValues()) {
+        for (ProductOptionValue option : allowedValues) {
             List<ProductOptionValue> permutation = new ArrayList<ProductOptionValue>();
             permutation.addAll(currentPermutation);
             permutation.add(option);
             result.addAll(generatePermutations(currentTypeIndex + 1, permutation, options));
         }
-        if (currentOption.getAllowedValues().size() == 0) {
-            //There are still product options left in our array to compute permutations, even though this productOption does not have any values associated.
+        if (allowedValues.size() == 0) {
+            // There are still product options left in our array to compute permutations, even though this ProductOption does not have any values associated.
             result.addAll(generatePermutations(currentTypeIndex + 1, currentPermutation, options));
         }
         

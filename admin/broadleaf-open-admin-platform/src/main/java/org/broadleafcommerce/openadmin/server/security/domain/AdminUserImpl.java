@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
@@ -79,11 +78,12 @@ import javax.persistence.Transient;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADMIN_USER")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "AdminUserImpl_baseAdminUser")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINUSER)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINUSER),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD)
 })
-public class AdminUserImpl implements AdminUser, AdminMainEntity {
+public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdminPresentation {
 
     private static final Log LOG = LogFactory.getLog(AdminUserImpl.class);
     private static final long serialVersionUID = 1L;
@@ -105,19 +105,21 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
 
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINUSER_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Name", gridOrder = 1000, order = 1000,
-            group = "AdminUserImpl_User", prominent = true)
+    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Name",
+            group = GroupName.User, order = FieldOrder.NAME,
+            prominent = true, gridOrder = 1000)
     protected String name;
 
     @Column(name = "LOGIN", nullable=false)
-    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Login", gridOrder = 2000, order = 2000,
-            group = "AdminUserImpl_User", prominent = true)
+    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Login",
+            group = GroupName.User, order = FieldOrder.LOGIN,
+            prominent = true, gridOrder = 2000)
     protected String login;
 
     @Column(name = "PASSWORD")
     @AdminPresentation(
-            friendlyName = "AdminUserImpl_Admin_Password", order = 6000,
-            group = "AdminUserImpl_User",
+            friendlyName = "AdminUserImpl_Admin_Password",
+            group = GroupName.User, order = FieldOrder.PASSWORD,
             fieldType = SupportedFieldType.PASSWORD,
             validationConfigurations = { @ValidationConfiguration(
                     validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.MatchesFieldValidator",
@@ -131,37 +133,44 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
 
     @Column(name = "EMAIL", nullable=false)
     @Index(name="ADMINPERM_EMAIL_INDEX", columnNames={"EMAIL"})
-    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Email_Address", order = 3000, group = "AdminUserImpl_User")
+    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Email_Address",
+            group = GroupName.User, order = FieldOrder.EMAIL)
     protected String email;
 
     @Column(name = "PHONE_NUMBER")
-    @AdminPresentation(friendlyName = "AdminUserImpl_Phone_Number", order = 5000, group = "AdminUserImpl_User")
+    @AdminPresentation(friendlyName = "AdminUserImpl_Phone_Number",
+            group = GroupName.User, order = FieldOrder.PHONE_NUMBER)
     protected String phoneNumber;
 
     @Column(name = "ACTIVE_STATUS_FLAG")
     @AdminPresentation(friendlyName = "AdminUserImpl_Active_Status",
-            order = 4000, group = "AdminUserImpl_User",
+            group = GroupName.Miscellaneous, order = FieldOrder.ACTIVE_STATUS_FLAG,
             defaultValue = "true")
-    protected Boolean activeStatusFlag = Boolean.TRUE;
+    protected Boolean activeStatusFlag;
 
     /** All roles that this user has */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRoleImpl.class)
     @JoinTable(name = "BLC_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "roleListTitle", manyToField = "allUsers",
-                operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
+    @AdminPresentationCollection(friendlyName = "roleListTitle",
+        group = GroupName.RolesAndPermissions, order = FieldOrder.ROLES,
+        addType = AddMethodType.SELECTIZE_LOOKUP, selectizeVisibleField = "description",
+        manyToField = "allUsers",
+        operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
     @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.LOOKUP,
-            friendlyName = "permissionListTitle",
-            customCriteria = "includeFriendlyOnly",
-            manyToField = "allUsers",
-            operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
+    @AdminPresentationCollection(friendlyName = "permissionListTitle",
+        group = GroupName.RolesAndPermissions, order = FieldOrder.PERMISSIONS,
+        addType = AddMethodType.SELECTIZE_LOOKUP,
+        selectizeVisibleField = "description",
+        customCriteria = "includeFriendlyOnly",
+        manyToField = "allUsers",
+        operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
 
     @Transient
@@ -182,6 +191,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     @MapKey(name = "name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "AdminUserImpl_additional_fields",
+            group = GroupName.AdditionalFields,
             deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "AdminUserAttributeImpl_Key")
     protected Map<String, AdminUserAttribute> additionalFields = new HashMap<String, AdminUserAttribute>();
 

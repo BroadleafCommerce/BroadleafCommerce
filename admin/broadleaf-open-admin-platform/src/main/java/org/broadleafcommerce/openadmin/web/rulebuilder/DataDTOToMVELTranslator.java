@@ -56,9 +56,9 @@ public class DataDTOToMVELTranslator {
         if (dataDTO instanceof ExpressionDTO) {
             operator = BLCOperator.valueOf(((ExpressionDTO) dataDTO).getOperator());
         } else {
-            operator = BLCOperator.valueOf(dataDTO.getGroupOperator());
+            operator = BLCOperator.valueOf(dataDTO.getCondition());
         }
-        ArrayList<DataDTO> groups = dataDTO.getGroups();
+        ArrayList<DataDTO> groups = dataDTO.getRules();
         if (sb.length() != 0 && sb.charAt(sb.length() - 1) != '(' && groupOperator != null) {
             BLCOperator groupOp = BLCOperator.valueOf(groupOperator);
             switch(groupOp) {
@@ -81,7 +81,7 @@ public class DataDTOToMVELTranslator {
             }
             if (includeTopLevelParenthesis) sb.append("(");
             for (DataDTO dto : groups) {
-                buildMVEL(dto, sb, entityKey, dataDTO.getGroupOperator(), fieldService);
+                buildMVEL(dto, sb, entityKey, dataDTO.getCondition(), fieldService);
             }
             if (includeTopLevelParenthesis) sb.append(")");
         }
@@ -90,7 +90,7 @@ public class DataDTOToMVELTranslator {
     protected void buildExpression(ExpressionDTO expressionDTO, StringBuffer sb, String entityKey,
             BLCOperator operator, RuleBuilderFieldService fieldService)
             throws MVELTranslationException {
-        String field = expressionDTO.getName();
+        String field = expressionDTO.getId();
         SupportedFieldType type = fieldService.getSupportedFieldType(field);
         SupportedFieldType secondaryType = fieldService.getSecondaryFieldType(field);
         Object[] value;
@@ -101,24 +101,7 @@ public class DataDTOToMVELTranslator {
                     "specified: ("+field+")");
         }
 
-        if (
-            SupportedFieldType.DATE.toString().equals(type.toString()) &&
-                !BLCOperator.CONTAINS_FIELD.equals(operator) &&
-                !BLCOperator.ENDS_WITH_FIELD.equals(operator) &&
-                !BLCOperator.EQUALS_FIELD.equals(operator) &&
-                !BLCOperator.GREATER_OR_EQUAL_FIELD.equals(operator) &&
-                !BLCOperator.GREATER_THAN_FIELD.equals(operator) &&
-                !BLCOperator.LESS_OR_EQUAL_FIELD.equals(operator) &&
-                !BLCOperator.LESS_THAN_FIELD.equals(operator) &&
-                !BLCOperator.NOT_EQUAL_FIELD.equals(operator) &&
-                !BLCOperator.STARTS_WITH_FIELD.equals(operator) &&
-                !BLCOperator.BETWEEN.equals(operator) &&
-                !BLCOperator.BETWEEN_INCLUSIVE.equals(operator)
-            ) {
-            value = extractDate(expressionDTO, operator, "value");
-        } else {
-            value = extractBasicValues(expressionDTO.getValue());
-        }
+        value = extractBasicValues(expressionDTO.getValue());
 
         switch(operator) {
             case CONTAINS: {
@@ -284,73 +267,39 @@ public class DataDTOToMVELTranslator {
                 buildExpression(sb, entityKey, field, value, type, secondaryType, ".size()==", false, false, false, false, true);
                 break;
             }
+            case COLLECTION_IN:{
+                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, ".size()>0", false, false, false, false, true);
+                break;
+            }
+            case COLLECTION_NOT_IN:{
+                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, ".size()==0", false, false, false, false, true);
+                break;
+            }
             case BETWEEN: {
-                if (SupportedFieldType.DATE.toString().equals(type.toString())) {
+                if (value != null && value.length==2) {
                     sb.append("(");
-                    buildExpression(sb, entityKey, field, extractDate(expressionDTO, BLCOperator.GREATER_THAN, "start"),
-                            type, secondaryType, ">", false, false, false, false, false);
-                    sb.append("&&");
-                    buildExpression(sb, entityKey, field, extractDate(expressionDTO, BLCOperator.LESS_THAN, "end"),
-                            type, secondaryType, "<", false, false, false, false, false);
-                    sb.append(")");
-                } else {
-                    sb.append("(");
-                    buildExpression(sb, entityKey, field, new Object[]{expressionDTO.getStart()}, type, secondaryType, ">",
+                    buildExpression(sb, entityKey, field, new Object[]{value[0]}, type, secondaryType, ">",
                             false, false, false, false, false);
                     sb.append("&&");
-                    buildExpression(sb, entityKey, field, new Object[]{expressionDTO.getEnd()}, type, secondaryType, "<",
+                    buildExpression(sb, entityKey, field, new Object[]{value[1]}, type, secondaryType, "<",
                             false, false, false, false, false);
                     sb.append(")");
                 }
                 break;
             }
             case BETWEEN_INCLUSIVE: {
-                if (
-                        SupportedFieldType.DATE.toString().equals(type.toString())
-                        ) {
+                if (value != null && value.length==2) {
                     sb.append("(");
-                    buildExpression(sb, entityKey, field,
-                            extractDate(expressionDTO, BLCOperator.GREATER_OR_EQUAL, "start"), type,
-                            secondaryType, ">=", false, false, false, false, false);
-                    sb.append("&&");
-                    buildExpression(sb, entityKey, field, extractDate(expressionDTO, BLCOperator.LESS_OR_EQUAL, "end"),
-                            type, secondaryType, "<=", false, false, false, false, false);
-                    sb.append(")");
-                } else {
-                    sb.append("(");
-                    buildExpression(sb, entityKey, field, new Object[]{expressionDTO.getStart()}, type, secondaryType, ">=",
+                    buildExpression(sb, entityKey, field, new Object[]{value[0]}, type, secondaryType, ">=",
                             false, false, false, false, false);
                     sb.append("&&");
-                    buildExpression(sb, entityKey, field, new Object[]{expressionDTO.getEnd()}, type, secondaryType, "<=",
+                    buildExpression(sb, entityKey, field, new Object[]{value[1]}, type, secondaryType, "<=",
                             false, false, false, false, false);
                     sb.append(")");
                 }
                 break;
             }
         }
-    }
-
-    @SuppressWarnings({ "rawtypes", "deprecation", "unchecked" })
-    protected Object[] extractDate(ExpressionDTO expressionDTO, BLCOperator operator, String key) {
-        String value;
-
-        if ("start".equals(key)) {
-            value = expressionDTO.getStart();
-        } else if ("end".equals(key)) {
-            value = expressionDTO.getEnd();
-        } else {
-            value = expressionDTO.getValue();
-        }
-
-        //TODO handle Date Time Format
-//        if (BLCOperator.GREATER_THAN.equals(operator) || BLCOperator.LESS_OR_EQUAL.equals(operator)) {
-//            ((Date) value).setHours(23);
-//            ((Date) value).setMinutes(59);
-//        } else {
-//            ((Date) value).setHours(0);
-//            ((Date) value).setMinutes(0);
-//        }
-        return new Object[]{value};
     }
 
     protected Object[] extractBasicValues(Object value) {
@@ -383,6 +332,28 @@ public class DataDTOToMVELTranslator {
     public boolean isProjection(Object value) {
         String stringValue = value.toString().trim();
         return stringValue.startsWith("[") && stringValue.endsWith("]") && stringValue.indexOf(",") > 0;
+    }
+
+    protected void buildCollectionExpression(StringBuffer sb, String entityKey, String field, Object[] value,
+                                             SupportedFieldType type, SupportedFieldType secondaryType, String operator,
+                                             boolean includeParenthesis, boolean isFieldComparison, boolean ignoreCase,
+                                             boolean isNegation, boolean ignoreQuotes)
+            throws MVELTranslationException {
+        sb.append("CollectionUtils.intersection(");
+        sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+        sb.append(",");
+        if (value.length > 1) {
+            sb.append("[");
+            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+                    ignoreCase, ignoreQuotes));
+            sb.append("])");
+        } else {
+            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+                    ignoreCase, ignoreQuotes));
+            sb.append(")");
+        }
+
+        sb.append(operator);
     }
 
     protected void buildExpression(StringBuffer sb, String entityKey, String field, Object[] value,
@@ -433,9 +404,19 @@ public class DataDTOToMVELTranslator {
         boolean isMapField = false;
         if (convertedField.contains(FieldManager.MAPFIELDSEPARATOR)) {
             //This must be a map field, convert the field name to syntax MVEL can understand for map access
-            convertedField = convertedField.substring(0, convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR))
+
+            if (SupportedFieldType.VALUE_ASSIGNABLE_MAP.equals(type)) {
+                //If this is a value assignable map, we can't use the normal "[]" map access notation since it isn't null-safe.
+                //In this case, we'll use the null-safe ".?get()" syntax instead.
+                convertedField = convertedField.substring(0, convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR))
+                        + ".get(\"" + convertedField.substring(convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR) +
+                        FieldManager.MAPFIELDSEPARATOR.length(), convertedField.length()) + "\")";
+            } else {
+                convertedField = convertedField.substring(0, convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR))
                     + "[\"" + convertedField.substring(convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR) +
                     FieldManager.MAPFIELDSEPARATOR.length(), convertedField.length()) + "\"]";
+            }
+
             isMapField = true;
         }
         if (isMapField) {
@@ -461,6 +442,16 @@ public class DataDTOToMVELTranslator {
                     response.append(buildFieldName(entityKey, convertedField));
                     response.append(")");
                     break;
+                case VALUE_ASSIGNABLE_MAP:
+                    if (ignoreCase) {
+                        response.append("MvelHelper.toUpperCase(");
+                    }
+                    response.append(buildFieldName(entityKey, convertedField));
+                    response.append(".?getValue()");
+                    if (ignoreCase) {
+                        response.append(")");
+                    }
+                    break;
                 case STRING:
                     if (ignoreCase) {
                         response.append("MvelHelper.toUpperCase(");
@@ -479,12 +470,8 @@ public class DataDTOToMVELTranslator {
         } else {
             switch(type) {
                 case BROADLEAF_ENUMERATION:
-                    if (isMapField) {
-                        throw new UnsupportedOperationException("Enumerations are not supported for map fields in the rule builder.");
-                    } else {
-                        response.append(buildFieldName(entityKey, convertedField));
-                        response.append(".getType()");
-                    }
+                    response.append(buildFieldName(entityKey, convertedField));
+                    response.append(".getType()");
                     break;
                 case MONEY:
                     response.append(buildFieldName(entityKey, convertedField));

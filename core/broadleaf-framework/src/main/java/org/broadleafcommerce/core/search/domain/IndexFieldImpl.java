@@ -30,27 +30,17 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 /**
  * @author Chad Harchar (charchar)
@@ -60,9 +50,10 @@ import javax.persistence.Table;
 @Table(name = "BLC_INDEX_FIELD")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
 })
-public class IndexFieldImpl implements IndexField, Serializable {
+public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdminPresentation {
 
     private static final long serialVersionUID = 2915813511754425605L;
 
@@ -82,14 +73,18 @@ public class IndexFieldImpl implements IndexField, Serializable {
     protected Long id;
     
     @Column(name = "SEARCHABLE")
-    @AdminPresentation(friendlyName = "IndexFieldImpl_searchable", defaultValue = "true", prominent = true, tooltip = "IndexFieldImpl_searchable_tooltip")
+    @AdminPresentation(friendlyName = "IndexFieldImpl_searchable",
+            defaultValue = "false",
+            prominent = true,
+            group = GroupName.General,
+            tooltip = "IndexFieldImpl_searchable_tooltip")
     protected Boolean searchable;
 
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
     @JoinColumn(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "IndexFieldImpl_field", order = 1000, group = "IndexFieldImpl_description",
+    @AdminPresentation(friendlyName = "IndexFieldImpl_field", order = 1000, group = GroupName.General,
             prominent = true, gridOrder = 1000)
-    @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName", customCriteria = { "fieldImplOnly" })
     protected Field field;
 
     @OneToMany(mappedBy = "indexField", targetEntity = IndexFieldTypeImpl.class, cascade = CascadeType.ALL)

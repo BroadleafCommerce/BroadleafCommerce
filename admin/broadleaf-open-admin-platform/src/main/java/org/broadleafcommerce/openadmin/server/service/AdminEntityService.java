@@ -107,10 +107,19 @@ public interface AdminEntityService {
             throws ServiceException;
 
     /**
+     * Gets the PersistencePackageRequest for the passed in EntityForm
+     *
+     * @param entityForm
+     * @param customCriteria
+     * @param sectionCrumbs
+     */
+    public PersistencePackageRequest getRequestForEntityForm(EntityForm entityForm, String[] customCriteria, List<SectionCrumb> sectionCrumbs);
+
+    /**
      * Thin layer on top of {@link DynamicEntityService#add(org.broadleafcommerce.openadmin.dto.PersistencePackage)} that
      * swallows all {@link ValidationException}s that could be thrown and still just returns a {@link PersistenceResponse}
      * with the {@link Entity} that failed validation.
-     * 
+     *
      * @param request
      * @return
      * @throws ServiceException if there were exceptions other than a {@link ValidationException} that was thrown as a
@@ -201,8 +210,23 @@ public interface AdminEntityService {
      * @throws ServiceException
      */
     public PersistenceResponse getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
-            Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumb, String alternateId)
+            Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumbs, String alternateId)
             throws ServiceException;
+
+    /**
+     * Gets an Entity representing a specific collection item
+     *
+     * @param containingClassMetadata
+     * @param containingEntity
+     * @param collectionProperty
+     * @param collectionItemId
+     * @param customCriteria
+     * @return the Entity
+     * @throws ServiceException
+     */
+    public PersistenceResponse getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
+            Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumbs, String alternateId,
+            String[] customCriteria) throws ServiceException;
 
     /**
      * Returns the DynamicResultSet representing the records that belong to the specified collectionProperty for the 
@@ -374,5 +398,20 @@ public interface AdminEntityService {
      * @return the friendly name for the given foreign entity
      */
     public String getForeignEntityName(String owningClass, String id);
+
+
+    /**
+     * Returns all records for selected tab of the specified request and its primary key
+     * 
+     * @param cmd
+     * @param containingEntity
+     * @return all Entity[] for selected tab for the specified containingClass
+     * @throws ServiceException
+     * 
+     * @see #getRecordsForCollection(ClassMetadata, String, Property)
+     */
+    public Map<String, DynamicResultSet> getRecordsForSelectedTab(ClassMetadata cmd , Entity containingEntity,
+            List<SectionCrumb> sectionCrumb, String currentTabName)
+            throws ServiceException;
 
 }

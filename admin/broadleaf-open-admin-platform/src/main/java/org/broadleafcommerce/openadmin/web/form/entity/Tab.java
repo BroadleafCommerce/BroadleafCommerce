@@ -22,6 +22,7 @@ package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
@@ -33,15 +34,19 @@ import java.util.TreeSet;
 public class Tab {
 
     protected String title;
+    protected String key;
     protected Integer order;
     protected String tabClass;
+    protected Boolean isMultiColumn;
+    private boolean isTabsPresent = false;
 
-    Set<FieldGroup> fieldGroups = new TreeSet<FieldGroup>(new Comparator<FieldGroup>() {
+    TreeSet<FieldGroup> fieldGroups = new TreeSet<FieldGroup>(new Comparator<FieldGroup>() {
         @Override
         public int compare(FieldGroup o1, FieldGroup o2) {
             return new CompareToBuilder()
                     .append(o1.getOrder(), o2.getOrder())
                     .append(o1.getTitle(), o2.getTitle())
+                    .append(o1.getKey(), o2.getKey())
                     .toComparison();
         }
     });
@@ -55,9 +60,34 @@ public class Tab {
                     .toComparison();
         }
     });
+
+    public Tab withTitle(String title) {
+        setTitle(title);
+        return this;
+    }
+
+    public Tab withKey(String key) {
+        setKey(key);
+        return this;
+    }
+
+    public Tab withOrder(Integer order) {
+        setOrder(order);
+        return this;
+    }
+
+    public Tab withTabClass(String tabClass) {
+        setTabClass(tabClass);
+        return this;
+    }
+
+    public Tab withIsMultiColumn(Boolean isMultiColumn) {
+        setIsMultiColumn(isMultiColumn);
+        return this;
+    }
     
     public Boolean getIsVisible() {
-        if (listGrids.size() > 0) {
+        if (listGrids.size() > 0 || isTabsPresent) {
             return true;
         }
 
@@ -70,9 +100,32 @@ public class Tab {
         return false;
     }
 
-    public FieldGroup findGroup(String groupTitle) {
+    public boolean hasFieldOrListGrid() {
+        if (listGrids.size() > 0) {
+            return true;
+        }
+
         for (FieldGroup fg : fieldGroups) {
-            if (fg.getTitle() != null && fg.getTitle().equals(groupTitle)) {
+            if (fg.hasFieldOrListGrid()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public FieldGroup findGroupByKey(String key) {
+        for (FieldGroup fg : fieldGroups) {
+            if (fg.getKey() != null && fg.getKey().equals(key)) {
+                return fg;
+            }
+        }
+        return null;
+    }
+
+    public FieldGroup findGroupByTitle(String title) {
+        for (FieldGroup fg : fieldGroups) {
+            if (fg.getTitle() != null && fg.getTitle().equals(title)) {
                 return fg;
             }
         }
@@ -86,6 +139,10 @@ public class Tab {
         }
         return fields;
     }
+
+    public void removeFieldGroup(FieldGroup fieldGroup) {
+        fieldGroups.remove(fieldGroup);
+    }
     
     public void removeListGrid(ListGrid listGrid) {
         listGrids.remove(listGrid);
@@ -96,11 +153,25 @@ public class Tab {
     }
 
     public String getTitle() {
-        return title;
+        if (title != null) {
+            return title;
+        } else if (key != null) {
+            return BLCMessageUtils.getMessage(key);
+        }
+
+        return null;
     }
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public Integer getOrder() {
@@ -116,7 +187,8 @@ public class Tab {
     }
 
     public void setFieldGroups(Set<FieldGroup> fieldGroups) {
-        this.fieldGroups = fieldGroups;
+        this.fieldGroups.clear();
+        this.fieldGroups.addAll(fieldGroups);
     }
 
     public Set<ListGrid> getListGrids() {
@@ -130,7 +202,23 @@ public class Tab {
     public void setTabClass(String tabClass) {
         this.tabClass = tabClass;
     }
-    
+
+    public Boolean getIsMultiColumn() {
+        return isMultiColumn == null ? false : isMultiColumn;
+    }
+
+    public void setIsMultiColumn(Boolean isMultiColumn) {
+        this.isMultiColumn = isMultiColumn;
+    }
+
+    public boolean isTabsPresent() {
+        return isTabsPresent;
+    }
+
+    public void setTabsPresent(boolean isTabsPresent) {
+        this.isTabsPresent = isTabsPresent;
+    }
+
 }
 
 

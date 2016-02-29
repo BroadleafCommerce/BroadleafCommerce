@@ -21,39 +21,48 @@ package org.broadleafcommerce.openadmin.web.controller;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.util.BLCMapUtils;
-import org.broadleafcommerce.common.util.TypedClosure;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.broadleafcommerce.openadmin.dto.*;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
+import org.broadleafcommerce.openadmin.server.service.AdminSectionCustomCriteriaService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
-import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
-import org.broadleafcommerce.openadmin.web.form.entity.Field;
-import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
-import org.broadleafcommerce.openadmin.web.form.entity.Tab;
+import org.broadleafcommerce.openadmin.web.form.entity.*;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for the Admin
@@ -65,6 +74,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author apazzolini
  */
 public abstract class AdminAbstractController extends BroadleafAbstractController {
+    protected static final Log LOG = LogFactory.getLog(AdminAbstractController.class);
     
     public static final String FILTER_VALUE_SEPARATOR = "|";
     public static final String FILTER_VALUE_SEPARATOR_REGEX = "\\|";
@@ -93,6 +103,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
+
+    @Resource(name = "blAdminSectionCustomCriteriaService")
+    protected AdminSectionCustomCriteriaService customCriteriaService;
 
     /**
      * Deprecated in favor of {@link org.broadleafcommerce.openadmin.web.controller.AdminAbstractControllerExtensionManager}
@@ -198,7 +211,6 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
         ListGrid listGrid = formService.buildCollectionListGrid(entity.findProperty(idProperty).getValue(), drs,
                 collectionProperty, sectionKey, sectionCrumbs);
-        listGrid.setListGridType(ListGrid.Type.INLINE);
 
         return listGrid;
     }
@@ -242,7 +254,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             Map<String, Field> fieldOverrides = dynamicFormOverride.getFields();
             for (Entry<String, Field> override : fieldOverrides.entrySet()) {
                 if (dynamicForm.getFields().containsKey(override.getKey())) {
-                    dynamicForm.getFields().get(override.getKey()).setValue(override.getValue().getValue());
+                    dynamicForm.findField(override.getKey()).setValue(override.getValue().getValue());
                 }
             }
         }
@@ -303,7 +315,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                 field.setFriendlyName(bfmd.getFriendlyName());
                 field.setRequired(bfmd.getRequired());
             }
-            dynamicForm.addField(field);
+            dynamicForm.addField(cmd, field);
         }
         setSpecializedNameForFields(info, dynamicForm);
 
@@ -327,10 +339,11 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     /**
      * This method will scan the entityForm for all dynamic form fields and pull them out
      * as appropriate.
-     * 
+     *
+     * @param cmd
      * @param entityForm
      */
-    protected void extractDynamicFormFields(EntityForm entityForm) {
+    protected void extractDynamicFormFields(ClassMetadata cmd, EntityForm entityForm) {
         Map<String, Field> dynamicFields = new HashMap<String, Field>();
         
         // Find all of the dynamic form fields
@@ -358,7 +371,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             }
             
             entry.getValue().setName(fieldName[1]);
-            dynamicForm.addField(entry.getValue());
+            dynamicForm.addField(cmd, entry.getValue());
         }
     }
 
@@ -405,7 +418,8 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         if (requestParams == null || requestParams.isEmpty()) {
             return null;
         }
-        
+        Map<String, FilterAndSortCriteria> fasMap = new HashMap<String, FilterAndSortCriteria>();
+
         List<FilterAndSortCriteria> result = new ArrayList<FilterAndSortCriteria>();
         for (Entry<String, List<String>> entry : requestParams.entrySet()) {
             if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER)
@@ -424,9 +438,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                         collapsedValues.add(value);
                     }
                 }
-                
+
                 FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), collapsedValues);
-                result.add(fasCriteria);
+                fasMap.put(entry.getKey(),fasCriteria);
             }
         }
 
@@ -434,13 +448,6 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         List<String> sortDirections = getSortDirections(requestParams);
         if (CollectionUtils.isNotEmpty(sortProperties)) {
             //set up a map to determine if there is already some criteria set for the sort property
-            Map<String, FilterAndSortCriteria> fasMap = BLCMapUtils.keyedMap(result, new TypedClosure<String, FilterAndSortCriteria>() {
-    
-                @Override
-                public String getKey(FilterAndSortCriteria value) {
-                    return value.getPropertyId();
-                }
-            });
             for (int i = 0; i < sortProperties.size(); i++) {
                 boolean sortAscending = SortDirection.ASCENDING.toString().equals(sortDirections.get(i));
                 FilterAndSortCriteria propertyCriteria = fasMap.get(sortProperties.get(i));
@@ -449,13 +456,14 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                 if (propertyCriteria != null) {
                     propertyCriteria.setSortAscending(sortAscending);
                 } else {
-                    FilterAndSortCriteria fasc = new FilterAndSortCriteria(sortProperties.get(i));
-                    fasc.setSortAscending(sortAscending);
-                    result.add(fasc);
+                    propertyCriteria = new FilterAndSortCriteria(sortProperties.get(i));
+                    propertyCriteria.setSortAscending(sortAscending);
+                    fasMap.put(sortProperties.get(i),propertyCriteria);
                 }
             }
         }
-        
+
+        result.addAll(fasMap.values());
         return result.toArray(new FilterAndSortCriteria[result.size()]);
     }
     
@@ -552,7 +560,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * 
      * @param entityForm
      */
-    protected void modifyEntityForm(EntityForm entityForm, Map<String, String> pathVars) {
+    protected void modifyEntityForm(EntityForm entityForm, Map<String, String> pathVars) throws Exception {
         
     }
 
@@ -605,7 +613,22 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         List<String> maxIndex = requestParams.get(FilterAndSortCriteria.MAX_INDEX_PARAMETER);
         return CollectionUtils.isEmpty(maxIndex) ? null : Integer.parseInt(maxIndex.get(0));
     }
-    
+
+    /**
+     * Obtains the requested max index parameter
+     *
+     * @param requestParams
+     * @return
+     */
+    protected Integer getMaxResults(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> maxResults = requestParams.get(FilterAndSortCriteria.MAX_RESULTS_PARAMETER);
+        return CollectionUtils.isEmpty(maxResults) ? null : Integer.parseInt(maxResults.get(0));
+    }
+
     // ************************
     // GENERIC HELPER METHODS *
     // ************************
@@ -648,9 +671,10 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      */
     protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, 
             List<SectionCrumb> sectionCrumbs, Map<String, String> pathVars) {
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(sectionClassName, getSectionCustomCriteria());
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(sectionClassName)
-                .withCustomCriteria(getSectionCustomCriteria())
+                .withCustomCriteria(sectionCriteria)
                 .withSectionCrumbs(sectionCrumbs);
 
         attachSectionSpecificInfo(ppr, pathVars);
@@ -678,9 +702,10 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, 
             MultiValueMap<String, String> requestParams, List<SectionCrumb> sectionCrumbs, Map<String, String> pathVars) {
         FilterAndSortCriteria[] fascs = getCriteria(requestParams);
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(sectionClassName, getSectionCustomCriteria());
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(sectionClassName)
-                .withCustomCriteria(getSectionCustomCriteria())
+                .withCustomCriteria(sectionCriteria)
                 .withFilterAndSortCriteria(fascs)
                 .withStartIndex(getStartIndex(requestParams))
                 .withMaxIndex(getMaxIndex(requestParams))
@@ -718,5 +743,48 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             }
         }
         return myCrumbs;
+    }
+
+    /**
+     * Populates the given <b>json</b> response object based on the given <b>form</b> and <b>result</b>
+     * @return the same <b>result</b> that was passed in
+     */
+    protected JsonResponse populateJsonValidationErrors(EntityForm form, BindingResult result, JsonResponse json) {
+        List<Map<String, Object>> errors = new ArrayList<Map<String, Object>>();
+        for (FieldError e : result.getFieldErrors()){
+            Map<String, Object> errorMap = new HashMap<String, Object>();
+            errorMap.put("errorType", "field");
+            String fieldName = e.getField().substring(e.getField().indexOf("[") + 1, e.getField().indexOf("]")).replace("_", "-");
+            errorMap.put("field", fieldName);
+
+            errorMap.put("message", translateErrorMessage(e));
+            errorMap.put("code", e.getCode());
+            String tabFieldName = fieldName.replaceAll("-+", ".");
+            Tab errorTab = form.findTabForField(tabFieldName);
+            if (errorTab != null) {
+                errorMap.put("tab", errorTab.getTitle());
+            }
+            errors.add(errorMap);
+        }
+        for (ObjectError e : result.getGlobalErrors()) {
+            Map<String, Object> errorMap = new HashMap<String, Object>();
+            errorMap.put("errorType", "global");
+            errorMap.put("code", e.getCode());
+            errorMap.put("message", translateErrorMessage(e));
+            errors.add(errorMap);
+        }
+        json.with("errors", errors);
+
+        return json;
+    }
+
+    protected String translateErrorMessage(ObjectError error) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            return context.getMessageSource().getMessage(error.getCode(), null, error.getCode(), context.getJavaLocale());
+        } else {
+            LOG.warn("Could not find the MessageSource on the current request, not translating the message key");
+            return error.getCode();
+        }
     }
 }

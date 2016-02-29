@@ -27,7 +27,7 @@
                 url : listGridUrl,
                 type : "GET"
             }, function(data) {
-                BLCAdmin.listGrid.replaceRelatedListGrid($(data));
+                BLCAdmin.listGrid.replaceRelatedCollection($(data));
             });
         }
 
@@ -44,11 +44,12 @@ $(document).ready(function() {
             url : $(this).data('actionurl'),
             type : "GET"
         }, function(data) {
-            var alertType = data.error ? 'alert' : '';
+            var alertType = data.error ? 'error-alert' : data.skusGenerated > 0 ? 'save-alert' : 'error-alert';
             
             BLCAdmin.listGrid.showAlert($container, data.message, {
                 alertType: alertType,
-                clearOtherAlerts: true
+                clearOtherAlerts: true,
+                autoClose: 5000
             });
             
             if (data.skusGenerated > 0) {
@@ -60,7 +61,7 @@ $(document).ready(function() {
     });
 
     $('body').on('change', "input[name=\"fields['defaultCategory'].value\"]", function(event, fields) {
-        var $fieldBox = $(event.target).closest('.field-box');
+        var $fieldBox = $(event.target).closest('.field-group');
         var $prefix = $fieldBox.find('input.generated-url-prefix');
 
         if (!$prefix.length) {
@@ -69,7 +70,7 @@ $(document).ready(function() {
                 'class' : "generated-url-prefix"
             })).find('input.generated-url-prefix');
         }
-        
+
         $prefix.val(fields['url']);
     });
 });

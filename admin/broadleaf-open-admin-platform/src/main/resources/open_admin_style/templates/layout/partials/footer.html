@@ -4,7 +4,7 @@
 
     <script th:inline="text">
         //<![CDATA[
-        window.jQuery || document.write('<script src="[[@{/js/lib/jquery-1.9.1.js}]]"><\/script>');
+        window.jQuery || document.write('<script src="[[@{/js/admin/vendor/jquery-2.1.1.min.js}]]"><\/script>');
         //]]>
     </script>
 
@@ -12,24 +12,39 @@
     <script th:with="adminUser=${adminUser}" th:inline="javascript">
         var BLC_USER_PREFS = /*[[${adminUser.flatAdditionalFields}]]*/ {};
     </script>
-    
-    <blc:bundle name="adminlib.js" 
+
+    <blc:bundle name="adminlib.js"
                 mapping-prefix="/js/"
-                files="admin/lib/plugins/jquery.cookie.js,
+                files="admin/vendor/jquery.fluidbox.min.js,
+                       admin/vendor/jquery.remodal.min.js,
+                       admin/vendor/jquery.extendext.js,
+                       admin/vendor/jquery.easing.1.3.js,
+                       admin/vendor/modernizr-2.8.2.min.js,
+                       admin/vendor/selectize.min.js,
+                       admin/vendor/dropdown.js,
+                       admin/vendor/doT.js,
+                       admin/vendor/query-builder.js,
+                       admin/vendor/moment-with-locales.min.js,
+                       admin/vendor/moment-duration-format.js,
+
+                       admin/lib/plugins/redactor/fontfamily.js,
+                       admin/lib/plugins/redactor/fontcolor.js,
+                       admin/lib/plugins/redactor/fontsize.js,
+                       admin/lib/plugins/redactor/selectasset.js,
+                       admin/lib/plugins/redactor/video.js,
+                       admin/lib/plugins/redactor/table.js,
+                       admin/lib/redactor.js,
+
+                       admin/lib/plugins/spectrum.js,
+                       admin/lib/plugins/selectize-silent-remove.js,
+
+                       admin/lib/plugins/query-builder.en.js,
+                       admin/lib/plugins/blc-admin-query-builder.js,
+                       admin/lib/plugins/blc-admin-filter-builder.js,
+
+                       admin/lib/plugins/jquery.cookie.js,
                        admin/lib/plugins/jquery.event.move.js,
                        admin/lib/plugins/jquery.event.swipe.js,
-                       admin/lib/plugins/jquery.foundation.accordion.js,
-                       admin/lib/plugins/jquery.foundation.alerts.js,
-                       admin/lib/plugins/jquery.foundation.buttons.js,
-                       admin/lib/plugins/jquery.foundation.clearing.js,
-                       admin/lib/plugins/jquery.foundation.joyride.js,
-                       admin/lib/plugins/jquery.foundation.magellan.js,
-                       admin/lib/plugins/jquery.foundation.mediaQueryToggle.js,
-                       admin/lib/plugins/jquery.foundation.navigation.js,
-                       admin/lib/plugins/jquery.foundation.orbit.js,
-                       admin/lib/plugins/jquery.foundation.tabs.js,
-                       admin/lib/plugins/jquery.foundation.tooltips.js,
-                       admin/lib/plugins/jquery.foundation.topbar.js,
                        admin/lib/plugins/jquery.placeholder.js,
                        admin/lib/plugins/jquery.mousewheel.js,
                        admin/lib/plugins/jquery.mCustomScrollbar.js,
@@ -39,50 +54,48 @@
                        admin/lib/plugins/jquery.iframe-transport.js,
                        admin/lib/plugins/jquery.ui.widget.js,
                        admin/lib/plugins/jquery.autosize.js,
-                       admin/lib/plugins/spectrum.js,
-                       admin/lib/plugins/redactor/fontfamily.js,
-                       admin/lib/plugins/redactor/fontcolor.js,
-                       admin/lib/plugins/redactor/fontsize.js,
-                       admin/lib/plugins/redactor/selectasset.js,
-                       admin/lib/plugins/redactor/video.js,
-                       admin/lib/plugins/redactor/table.js,
-                       admin/lib/redactor.js,
+                       admin/lib/plugins/jqfloat.min.js,
                        admin/lib/plugins/bootstrap.js,
-                       admin/lib/blc-conditions-builder.js,
-                       admin/lib/plugins/typeahead.bundle.js" />
-                      
-    <blc:bundle name="admin.js" 
+                       admin/lib/plugins/jquery.datetimepicker.js" />
+
+    <blc:bundle name="admin.js"
                 mapping-prefix="/js/"
                 files="BLC.js,
                        BLC-system-property.js,
                        blc-dates.js,
+                       admin/new-admin.js,
                        admin/blc-admin.js,
                        admin/blc-admin-history.js,
                        admin/blc-admin-breadcrumb.js,
-                      
+
                        admin/ui/dates.js,
-                       admin/ui/messages_en.js,
+                       admin/ui/messages.js,
                        admin/ui/accordion.js,
                        admin/ui/modal.js,
                        admin/ui/imagezoom.js,
-                      
+                       admin/ui/navigation.js,
+                       admin/ui/tabs.js,
+
                        admin/components/entityForm.js,
                        admin/components/entityForm-generatedUrl.js,
+                       admin/components/entityForm-generatedFieldValue.js,
                        admin/components/translations.js,
                        admin/components/assetSelector.js,
-                       admin/components/ruleBuilder-operators.js,
+                       admin/components/ruleBuilder-operators-v2.js,
                        admin/components/ruleBuilder-options.js,
-                       admin/components/ruleBuilder.js,
+                       admin/components/ruleBuilder-v2.js,
                        admin/components/listGrid.js,
+                       admin/components/alert.js,
                        admin/components/listGrid-filter.js,
                        admin/components/listGrid-paginate.js,
+                       admin/components/filterbuilder.js,
                        admin/components/typeahead.js,
                        admin/components/sessionTimer.js" />
-                      
-    <blc:bundle name="admin-init.js" 
+
+    <blc:bundle name="admin-init.js"
                 mapping-prefix="/js/"
                 files="admin/blc-admin-init.js" />
-                          
+
 
     <div th:substituteby="layout/partials/postFooterContent" />
 

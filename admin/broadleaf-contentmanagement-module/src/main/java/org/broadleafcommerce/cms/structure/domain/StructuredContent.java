@@ -21,7 +21,6 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -188,22 +187,6 @@ public interface StructuredContent extends Serializable,MultiTenantCloneable<Str
      * @param priority
      */
     public void setPriority(@Nullable Integer priority);
-
-    /**
-     * Returns audit information for this content item.
-     *
-     * @return
-     */
-    @Nullable
-    public AdminAuditable getAuditable();
-
-    /**
-     * Sets audit information for this content item.   Default implementations automatically
-     * populate this data during persistence.
-     *
-     * @param auditable
-     */
-    public void setAuditable(@Nullable AdminAuditable auditable);
 
     /**
      * @deprecated - Not supported - simplifying interface

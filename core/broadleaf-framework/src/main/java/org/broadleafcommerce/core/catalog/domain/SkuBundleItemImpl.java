@@ -26,10 +26,9 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
@@ -60,12 +59,11 @@ import javax.persistence.Transient;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_BUNDLE_ITEM")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE)
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class SkuBundleItemImpl implements SkuBundleItem {
+public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
@@ -81,16 +79,20 @@ public class SkuBundleItemImpl implements SkuBundleItem {
         }
     )
     @Column(name = "SKU_BUNDLE_ITEM_ID")
-    @AdminPresentation(friendlyName = "SkuBundleItemImpl_ID", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "SkuBundleItemImpl_ID", group = GroupName.General, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName = "bundleItemQuantity", prominent = true,
+    @AdminPresentation(friendlyName = "bundleItemQuantity",
+        group = GroupName.General, order = FieldOrder.QUANTITY,
+        prominent = true, gridOrder = FieldOrder.QUANTITY,
         requiredOverride = RequiredOverride.REQUIRED)
     protected Integer quantity;
 
     @Column(name = "ITEM_SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "bundleItemSalePrice", prominent = true,
+    @AdminPresentation(friendlyName = "bundleItemSalePrice",
+        group = GroupName.General, order = FieldOrder.ITEM_SALE_PRICE,
+        prominent = true, gridOrder = FieldOrder.ITEM_SALE_PRICE,
         tooltip="bundleItemSalePriceTooltip", 
         fieldType = SupportedFieldType.MONEY)
     protected BigDecimal itemSalePrice;
@@ -101,10 +103,17 @@ public class SkuBundleItemImpl implements SkuBundleItem {
 
     @ManyToOne(targetEntity = SkuImpl.class, optional = false)
     @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID")
-    @AdminPresentation(friendlyName = "Sku", prominent = true, 
-        order = 0, gridOrder = 0)
+    @AdminPresentation(friendlyName = "Sku",
+        group = GroupName.General, order = FieldOrder.SKU,
+        prominent = true, gridOrder = FieldOrder.SKU,
+        validationConfigurations = @ValidationConfiguration(validationImplementation = "blProductBundleSkuBundleItemValidator"))
     @AdminPresentationToOneLookup()
     protected Sku sku;
+
+    /** The display order. */
+    @Column(name = "SEQUENCE", precision = 10, scale = 6)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    protected BigDecimal sequence;
 
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
@@ -192,7 +201,17 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     public void setSku(Sku sku) {
         this.sku = sku;
     }
-    
+
+    @Override
+    public BigDecimal getSequence() {
+        return sequence;
+    }
+
+    @Override
+    public void setSequence(BigDecimal sequence) {
+        this.sequence = sequence;
+    }
+
     @Override
     public void clearDynamicPrices() {
         dynamicPrices = null;
@@ -208,6 +227,7 @@ public class SkuBundleItemImpl implements SkuBundleItem {
         SkuBundleItem cloned = createResponse.getClone();
         cloned.setQuantity(quantity);
         cloned.setSalePrice(getSalePrice());
+        cloned.setSequence(sequence);
         if (sku != null) {
             cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
         }

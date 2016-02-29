@@ -12,21 +12,58 @@
         </xsd:complexType>
     </xsd:element>
 
+    <xsd:element name="tab">
+        <xsd:complexType>
+            <xsd:group ref="tabPropertyGroup"/>
+            <xsd:attribute name="tabName" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="group">
+        <xsd:complexType>
+            <xsd:group ref="groupPropertyGroup"/>
+            <xsd:attribute name="groupName" use="required"/>
+            <xsd:attribute name="tabName"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:group name="tabPropertyGroup">
+        <xsd:sequence>
+            <xsd:element name="property" minOccurs="1" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:attribute name="property" use="required" type="tab-props"/>
+                    <xsd:attribute name="value" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:group>
+
+    <xsd:group name="groupPropertyGroup">
+        <xsd:sequence>
+            <xsd:element name="property" minOccurs="1" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:attribute name="property" use="required" type="group-props"/>
+                    <xsd:attribute name="value" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:group>
+
     <xsd:group name="basicGroup">
-      <xsd:sequence>
-          <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
-              <xsd:complexType>
-                  <xsd:attribute name="name" use="required" type="basic-props"/>
-                  <xsd:attribute name="value" use="required"/>
-              </xsd:complexType>
-          </xsd:element>
-          <xsd:element ref="validation" minOccurs="0" maxOccurs="unbounded"/>
-          <xsd:element ref="optionFilterValue" minOccurs="0" maxOccurs="unbounded"/>
-          <xsd:element ref="mapKey" minOccurs="0" maxOccurs="unbounded"/>
-          <xsd:element ref="customCriteria" minOccurs="0" maxOccurs="unbounded"/>
-          <xsd:element ref="maintainedAdornedTargetField" minOccurs="0" maxOccurs="unbounded"/>
-          <xsd:element ref="gridVisibleField" minOccurs="0" maxOccurs="unbounded"/>
-      </xsd:sequence>
+        <xsd:sequence>
+            <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:attribute name="name" use="required" type="basic-props"/>
+                    <xsd:attribute name="value" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element ref="validation" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element ref="optionFilterValue" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element ref="mapKey" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element ref="customCriteria" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element ref="maintainedAdornedTargetField" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element ref="gridVisibleField" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
     </xsd:group>
 
     <xsd:element name="optionFilterValue">
@@ -55,6 +92,12 @@
         </xsd:complexType>
     </xsd:element>
 
+    <xsd:element name="selectizeVisibleField">
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
     <xsd:element name="mapKey">
         <xsd:complexType>
             <xsd:attribute name="value" use="required"/>
@@ -66,10 +109,10 @@
         <xsd:complexType>
             <xsd:sequence>
                 <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
-                  <xsd:complexType>
-                      <xsd:attribute name="name" use="required"/>
-                      <xsd:attribute name="value" use="required"/>
-                  </xsd:complexType>
+                    <xsd:complexType>
+                        <xsd:attribute name="name" use="required"/>
+                        <xsd:attribute name="value" use="required"/>
+                    </xsd:complexType>
                 </xsd:element>
             </xsd:sequence>
             <xsd:attribute name="className" use="required"/>
@@ -79,7 +122,9 @@
     <xsd:element name="overrideItem">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="field" minOccurs="1" maxOccurs="unbounded"/>
+                <xsd:element ref="tab" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="group" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="field" minOccurs="0" maxOccurs="unbounded"/>
             </xsd:sequence>
             <xsd:attribute name="configurationKey"/>
             <xsd:attribute name="ceilingEntity"/>
@@ -119,6 +164,7 @@
             <xsd:enumeration value="group"/>
             <xsd:enumeration value="groupOrder"/>
             <xsd:enumeration value="groupCollapsed"/>
+            <xsd:enumeration value="isUntitledGroup"/>
             <xsd:enumeration value="tab"/>
             <xsd:enumeration value="tabOrder"/>
             <xsd:enumeration value="largeEntry"/>
@@ -133,6 +179,7 @@
             <xsd:enumeration value="optionListEntity"/>
             <xsd:enumeration value="optionValueFieldName"/>
             <xsd:enumeration value="optionDisplayFieldName"/>
+            <xsd:enumeration value="optionHideIfEmpty"/>
             <xsd:enumeration value="requiredOverride"/>
             <xsd:enumeration value="addType"/>
             <xsd:enumeration value="removeType"/>
@@ -168,6 +215,24 @@
             <xsd:enumeration value="translatable"/>
             <xsd:enumeration value="defaultValue"/>
             <xsd:enumeration value="fieldComponentRenderer"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="tab-props">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="name"/>
+            <xsd:enumeration value="order"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="group-props">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="name"/>
+            <xsd:enumeration value="order"/>
+            <xsd:enumeration value="untitled"/>
+            <xsd:enumeration value="column"/>
+            <xsd:enumeration value="collapsed"/>
+            <xsd:enumeration value="tooltip"/>
         </xsd:restriction>
     </xsd:simpleType>
 </xsd:schema>

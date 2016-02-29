@@ -21,6 +21,7 @@ package org.broadleafcommerce.openadmin.server.security.service.navigation;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 
@@ -65,5 +66,7 @@ public interface AdminNavigationService {
     public AdminSection save(AdminSection adminSection);
 
     public void remove(AdminSection adminSection);
+
+    boolean checkPermissions(List<AdminPermission> authorizedPermissions, AdminPermission permission);
 
 }

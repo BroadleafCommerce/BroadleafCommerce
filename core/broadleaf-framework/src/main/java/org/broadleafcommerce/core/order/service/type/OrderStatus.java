@@ -54,6 +54,7 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
      */
     public static final OrderStatus SUBMITTED = new OrderStatus("SUBMITTED", "Submitted");
     public static final OrderStatus CANCELLED = new OrderStatus("CANCELLED", "Cancelled");
+    public static final OrderStatus ARCHIVED = new OrderStatus("ARCHIVED", "Archived");
     
     /**
      * Used when a CSR has locked a cart to act on behalf of a customer

@@ -173,7 +173,7 @@ public class OfferServiceImpl implements OfferService {
         }
         
         if (extensionManager != null) {
-            extensionManager.getProxy().applyAdditionalFilters(offers);
+            extensionManager.getProxy().applyAdditionalFilters(offers, order);
         }
         
         return offers;

@@ -76,23 +76,35 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
         FieldWrapper wrapper = new FieldWrapper();
 
         for (FieldData field : getFields()) {
-            FieldDTO fieldDTO = new FieldDTO();
-            fieldDTO.setLabel(field.getFieldLabel());
-
-            //translate the label to display
-            String label = field.getFieldLabel();
-            BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-            MessageSource messages = context.getMessageSource();
-            label = messages.getMessage(label, null, label, context.getJavaLocale());
-            fieldDTO.setLabel(label);
-
-            fieldDTO.setName(field.getFieldName());
-            fieldDTO.setOperators(field.getOperators());
-            fieldDTO.setOptions(field.getOptions());
-            wrapper.getFields().add(fieldDTO);
+            wrapper.getFields().add(constructFieldDTOFromFieldData(field));
         }
 
         return wrapper;
+    }
+
+    protected FieldDTO constructFieldDTOFromFieldData(FieldData field) {
+        FieldDTO fieldDTO = new FieldDTO();
+        //translate the label to display
+        String label = field.getFieldLabel();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        MessageSource messages = context.getMessageSource();
+        if (messages != null) {
+            label = messages.getMessage(label, null, label, context.getJavaLocale());
+        }
+        fieldDTO.setLabel(label);
+
+        fieldDTO.setId(field.getFieldName());
+        fieldDTO.setOperators(field.getOperators());
+        fieldDTO.setSelectizeSectionKey(field.getSelectizeSectionKey());
+        fieldDTO.setValues(field.getOptions());
+
+        if (SupportedFieldType.BROADLEAF_ENUMERATION.equals(field.getFieldType())){
+            fieldDTO.setInput("select");
+        } else {
+            fieldDTO.setInput("text");
+        }
+
+        return fieldDTO;
     }
 
     @Override
@@ -125,12 +137,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     public FieldDTO getField(String fieldName) {
         for (FieldData field : getFields()) {
             if (field.getFieldName().equals(fieldName)) {
-                FieldDTO fieldDTO = new FieldDTO();
-                fieldDTO.setLabel(field.getFieldLabel());
-                fieldDTO.setName(field.getFieldName());
-                fieldDTO.setOperators(field.getOperators());
-                fieldDTO.setOptions(field.getOptions());
-                return fieldDTO;
+                return constructFieldDTOFromFieldData(field);
             }
         }
         return null;
@@ -237,10 +244,31 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
 
             try {
                 init();
+                validateRuleBuilderState(this);
             } finally {
                 if (contextWasNull) {
                     BroadleafRequestContext.setBroadleafRequestContext(null);
                 }
+            }
+        }
+    }
+
+    protected void validateRuleBuilderState(RuleBuilderFieldService fieldService) {
+        for (FieldData fieldData : fieldService.getFields()) {
+            if (StringUtils.isBlank(fieldData.getOperators()) ||
+                    StringUtils.isBlank(fieldData.getFieldLabel()) ||
+                    StringUtils.isBlank(fieldData.getFieldName())) {
+                throw new IllegalStateException(String.format("Unable to initialize RuleBuilderFieldService[%s] : FieldData[%s] - " +
+                        "All RuleBuilders must initialize at least a Label, Name, and Operators",
+                        fieldService.getName(), fieldData.getFieldName()));
+            }
+
+            if ("blcOperators_Selectize".equals(fieldData.getOperators()) &&
+                    StringUtils.isBlank(fieldData.getSelectizeSectionKey())) {
+
+                throw new IllegalStateException(String.format("Unable to initialize RuleBuilderFieldService[%s] : FieldData[%s]- " +
+                        "If registering a selectize field, an Admin Section Key must also be defined",
+                        fieldService.getName(), fieldData.getFieldName()));
             }
         }
     }

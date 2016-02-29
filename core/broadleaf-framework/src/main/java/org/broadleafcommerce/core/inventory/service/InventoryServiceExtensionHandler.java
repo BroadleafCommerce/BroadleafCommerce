@@ -67,5 +67,15 @@ public interface InventoryServiceExtensionHandler extends ExtensionHandler {
      * @see {@link ContextualInventoryService#incrementInventory(Map, Map)}
      */
     public ExtensionResultStatusType incrementInventory(Map<Sku, Integer> skuQuantities, Map<String, Object> context);
+
+    /**
+     * Usually invoked via the OMS {@link ReconcileInventoryChangeOrderActivity} to determine how to handle a change order.
+     * @param decrementSkuQuantities
+     * @param incrementSkuQuantities
+     * @param context
+     * @return
+     * @throws InventoryUnavailableException
+     */
+    public ExtensionResultStatusType reconcileChangeOrderInventory(Map<Sku, Integer> decrementSkuQuantities, Map<Sku, Integer> incrementSkuQuantities, Map<String, Object> context) throws InventoryUnavailableException;
     
 }

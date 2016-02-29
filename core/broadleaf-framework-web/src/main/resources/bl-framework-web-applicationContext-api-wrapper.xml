@@ -72,5 +72,5 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.CartMessageWrapper" class="org.broadleafcommerce.core.web.api.wrapper.CartMessageWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.ISOCountryWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ISOCountryWrapper" scope="prototype" />
 
-
+    <bean id="org.broadleafcommerce.openadmin.dto.ClassMetadata" class="org.broadleafcommerce.openadmin.dto.ClassMetadata" scope="prototype"></bean>
 </beans>

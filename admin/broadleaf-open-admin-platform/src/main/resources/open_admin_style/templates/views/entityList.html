@@ -1,5 +1,14 @@
-<div class="listgrid-container" th:id="'main'">
+<div th:if="${#lists.isEmpty(listGrid.records) and !isFilter}" class="content-yield" id="main">
+    <h4 class="empty-main-list-grid">
+        No <span th:inline="text">[[#{#{${entityFriendlyName}}}]]</span> could be found.
+    </h4>
+    <h4 class="empty-main-list-grid">
+        Please use the "Add <span th:inline="text">[[#{${entityFriendlyName}}]]</span>" button
+        above to create a new <span th:inline="text" style="text-transform: lowercase;">[[#{${entityFriendlyName}}]]</span>.
+    </h4>
+</div>
+<div th:unless="${#lists.isEmpty(listGrid.records) and !isFilter}" class="content-yield listgrid-container" id="main">
     <div th:include="components/searchFields" th:object="${listGrid}" th:remove="tag" />
-    <div th:include="components/listGridToolbar" th:object="${listGrid}" th:remove="tag" />
+    <!--<div th:include="components/listGridToolbar" th:object="${listGrid}" th:remove="tag" />-->
     <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
 </div>

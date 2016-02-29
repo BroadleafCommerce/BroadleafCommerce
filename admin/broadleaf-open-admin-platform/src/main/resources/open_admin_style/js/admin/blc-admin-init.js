@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-;(function ($, window, undefined) {
+(function ($, window, undefined) {
     'use strict';
     
     var $doc = $(document),
@@ -42,6 +42,7 @@
         $.fn.foundationClearing         ? $doc.foundationClearing() : null;
         $.fn.placeholder                ? $('input, textarea').placeholder() : null;
         $.fn.broadleafAccordion         ? $doc.broadleafAccordion() : null;
+        $.fn.broadleafTabs              ? $doc.broadleafTabs() : null;
         $.fn.broadleafListgrid          ? $doc.broadleafListgrid() : null;
     
         BLCAdmin.initializeFields();

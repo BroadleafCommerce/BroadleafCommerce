@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
@@ -81,13 +82,31 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 
             // Item Qualification - new for 1.5!
             if (fgLevelQualification) {
+                
                 CandidatePromotionItems candidates = couldOfferApplyToOrderItems(offer, fulfillmentGroup.getDiscountableOrderItems());
+                // couldn't qualify based on the items within this fulfillment group, jump out and now try to validate based
+                // on all the items in the order across all fulfillment groups (not the default behavior)
+                if (!candidates.isMatchedQualifier() && getQualifyGroupAcrossAllOrderItems(fulfillmentGroup)) {
+                    candidates = couldOfferApplyToOrderItems(offer, order.getAllOrderItems());
+                }
+                
                 if (candidates.isMatchedQualifier()) {
                     PromotableCandidateFulfillmentGroupOffer candidateOffer = createCandidateFulfillmentGroupOffer(offer, qualifiedFGOffers, fulfillmentGroup);
                     candidateOffer.getCandidateQualifiersMap().putAll(candidates.getCandidateQualifiersMap());
                 }
             }
         }
+    }
+    
+    /**
+     * Whether or not items across the entire order should be considered in item-level qualifiers for the given fulfillment 
+     * group. Default behavior is to use only the items within the fulfillment group for the item-level qualifiers.
+     * 
+     * @param fg the fulfillment group that we are attempting to apply item-level qualifiers to
+     * @return
+     */
+    protected boolean getQualifyGroupAcrossAllOrderItems(PromotableFulfillmentGroup fg) {
+        return BLCSystemProperty.resolveBooleanSystemProperty("promotion.fulfillmentgroup.qualifyAcrossAllOrderItems", false);
     }
 
     @Override

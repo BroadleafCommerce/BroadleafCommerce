@@ -1,8 +1,9 @@
-<div th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}">
-    <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
-    <div th:substituteby="components/fieldTooltip" />
-    
-    <select class="six" th:field="*{fields['__${field.name}__'].value}" th:if="${! #maps.isEmpty(field.options)}">
+<div th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}" th:remove="tag">
+    <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+        <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+    </label>
+
+    <select class="six" th:field="*{fields['__${field.name}__'].value}" th:if="${! #maps.isEmpty(field.options)}" th:disabled="${field.readOnly}">
         <option value="" th:text="#{Default_Select}" />
         <option th:each="entry : *{fields['__${field.name}__'].options}"
                 th:value="${entry.key}"
@@ -23,41 +24,44 @@
     <input type="hidden" class="value" th:field="*{fields['__${field.name}__'].value}" th:attr="data-onchangetrigger=${field.onChangeTrigger}" />
     <input type="hidden" class="hidden-display-value" th:field="*{fields['__${field.name}__'].displayValue}" />
 
-    <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
-    <div th:substituteby="components/fieldTooltip" />
+    <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+        <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+    </label>
 
     <div class="foreign-key-value-container">
         
         <div th:remove="tag" th:unless="${field.isTypeaheadEnabled}">
-            <span class="display-value-none-selected" style="display: none;" th:inline="text">&lt;[[#{No_Value_Selected}]]&gt;</span>
-            <span class="display-value read-only"
-                th:text="*{fields['__${field.name}__'].displayValue}" />
-                
-            <button class="clear-foreign-key tiny radius secondary button hover-cursor"
-                type="button" th:inline="text"
-                th:unless="${field.required}"
-                th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
-                <i class="icon-remove"></i>&nbsp;[[#{Clear}]]
-            </button>
-            
-            <button class="to-one-lookup tiny radius secondary button hover-cursor"
-                type="button" th:inline="text"
-                th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})},
-                         data-dynamic-field=${field.attributes['dynamicField']}">
-                <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
-            </button>
 
-            <span class="external-link-container" th:style="${!field.canLinkToExternalEntity or #strings.isEmpty(field.value)}? 'display: none;'">
-               <a th:href="@{${'/' + field.entityViewPath}}" 
-                  th:attr="data-foreign-key-link=@{${'/' + field.foreignKeyClass}}"
-                  class="modal-view">
-                    <i class="icon-external-link"></i>
-               </a>
-            </span>
+
+            <div class="input-group">
+                <input class="display-value-none-selected form-control" type="text" style="display: none;" readonly="readonly" th:value="#{No_Value_Selected}" />
+                <input class="display-value read-only form-control" type="text" th:value="*{fields['__${field.name}__'].displayValue}" readonly="readonly"/>
+                <span class="input-group-btn">
+                    <button class="clear-foreign-key secondary button"
+                            th:disabled="${field.readOnly}"
+                            type="button" th:inline="text"
+                            th:unless="${field.required}"
+                            th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
+                        <i class="fa fa-times"></i>
+                    </button>
+
+                    <button class="to-one-lookup secondary button"
+                            th:disabled="${field.readOnly}"
+                            type="button" th:inline="text"
+                            th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})},
+                                 data-dynamic-field=${field.attributes['dynamicField']}">
+                        <i class="blc-icon-search"></i>
+                    </button>
+                </span>
+            </div>
+
+
+
         </div>
 
         <div th:remove="tag" th:if="${field.isTypeaheadEnabled}">
             <input type="text" class="to-one-typeahead twelve"
+                th:disabled="${field.readOnly}"
                 th:placeholder="#{typeahead.placeholder(#{${field.friendlyName}})}"
                 th:value="*{fields['__${field.name}__'].displayValue}"
                 th:attr="data-typeahead-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/typeahead'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})}" />

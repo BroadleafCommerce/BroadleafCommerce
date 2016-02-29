@@ -19,9 +19,11 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 
-public interface PersonalMessage extends Serializable {
+public interface PersonalMessage extends Serializable, MultiTenantCloneable<PersonalMessage> {
 
     public Long getId();
 

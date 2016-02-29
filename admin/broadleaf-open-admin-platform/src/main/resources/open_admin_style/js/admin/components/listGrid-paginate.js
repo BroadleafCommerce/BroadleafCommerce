@@ -18,13 +18,16 @@
  * #L%
  */
 (function($, BLCAdmin) {
-    
+
+    var recordLoadHandlers = [];
+
     var LISTGRID_AJAX_LOCK = 0;
     var fetchDebounce = 200;
     var updateUrlDebounce = 700;
     var lockDebounce = 100;
     var maxSubCollectionListGridHeight = 360;
-    
+    var treeListGridHeight = 400;
+
     var tableResizing = {
         active : false,
         headerTable : undefined,
@@ -67,13 +70,20 @@
         },
         
         getRange : function(rangeDescription) {
-            var range = rangeDescription.split('-');
-            rangeObj = {lo : parseInt(range[0]), hi : parseInt(range[1])};
+            var seperator = rangeDescription.indexOf('-');
+            var lo = Math.max(rangeDescription.substring(0, seperator), 0);
+            var hi = Math.max(rangeDescription.substring(seperator + 1), 0);
+            rangeObj = {lo : parseInt(lo), hi : parseInt(hi)};
             return rangeObj;
         },
         
         getLoadedRecordRanges : function($tbody) {
-            var rangeDescriptions = $tbody.data('recordranges').split(',');
+            var rangeDescriptions;
+            if($tbody.data('recordranges')) {
+                rangeDescriptions = $tbody.data('recordranges').split(',');
+            } else {
+                rangeDescriptions = [];
+            }
             var ranges = [];
             
             for (var i = 0; i < rangeDescriptions.length; i++) {
@@ -162,12 +172,18 @@
             $tbody.find('tr.blank-padding').each(function(index, element) {
                 var $e = $(element);
                 var pr = _this.getRange($e.data('range'));
-                
+
                 if ((padRange == null || padRange.lo < pr.lo)  && pr.lo <= newRange.lo) {
                     $pad = $e;
                     padRange = pr;
                 }
             });
+
+            // If there is no padding, these rows were probably already loaded.
+            if (padRange == null) {
+                return;
+            }
+
             // Create the top split (potentially nothing)
             var blankRangeAbove = {
                 lo : padRange.lo,
@@ -309,9 +325,9 @@
                 }
                 
                 if (potentialMax == null) {
-                    potentialMax = totalRecords - 1;
+                    potentialMax = Math.max(totalRecords - 1, 0);
                 } else {
-                    potentialMax = potentialMax - 1;
+                    potentialMax = Math.max(potentialMax - 1, 0);
                 }
                 
                 if (pageSize < potentialMax - topIndex) {
@@ -328,7 +344,7 @@
                     maxIndex = topIndex + pageSize - 1;
                 }
             } else if (!topIndexLoaded && botIndexLoaded) {
-                maxIndex = this.findFirstLoadedIndex($tbody, topIndex) - 1;
+                maxIndex = Math.max(this.findFirstLoadedIndex($tbody, topIndex) - 1, 0);
                 
                 var potentialStart = this.findLastLoadedIndex($tbody, topIndex);
                 
@@ -384,7 +400,7 @@
                     delta = (topIndex + botIndex) / 2;
                 }
                 delta = delta - topIndex;
-                spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (this.getRowHeight($tbody) * delta);
+                var spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (this.getRowHeight($tbody) * delta);
                 BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
 
                 var params =  BLCAdmin.history.getUrlParameters();
@@ -394,11 +410,27 @@
 
                 var url = BLCAdmin.history.getUrlWithParameter('startIndex', startIndex, null, baseUrl);
                 url = BLCAdmin.history.getUrlWithParameter('maxIndex', maxIndex, null, url);
-                
+
+                // also grab the sorts and ensure those inputs are also serialized
+                var $sorts = $tbody.closest('.listgrid-container').find('input.sort-direction.active, input.sort-property.active');
+                $sorts.each(function(index, input) {
+                    //only submit fields that have a value set and are not a sort field. Sort fields will be added separately
+                    if ($(input).val()) {
+                        url = BLCAdmin.history.getUrlWithParameter($(input).data('name'), $(input).val(), null, url);
+                    }
+                });
+
                 //console.log('Loading more records -- ' + url);
                 
                 BLC.ajax({ url: url, type: 'GET' }, function(data) {
-                    var $newTbody = data.find('tbody');
+                    var $newTbody;
+                    if ($tbody.closest('.tree-column-wrapper').length) {
+                        var treeColumnParentId = $tbody.closest('.select-column').data('parentid');
+                        $newTbody = $(data).find(".select-column[data-parentid='" + treeColumnParentId + "']").find('tbody');
+                    } else {
+                        var listGridId = $tbody.closest('table').attr('id');
+                        $newTbody = $(data).find('table#' + listGridId).find('tbody');
+                    }
                     BLCAdmin.listGrid.paginate.injectRecords($tbody, $newTbody);
                     BLCAdmin.listGrid.paginate.releaseLock();
                     
@@ -412,6 +444,16 @@
                     } else {
                         BLCAdmin.listGrid.hideLoadingSpinner($tbody);
                     }
+
+                    if( $tbody.closest('.listgrid-container').find('.listgrid-header-wrapper').find('input[type=checkbox].multiselect-checkbox')) {
+                        BLCAdmin.listGrid.paginate.updateSelectedRecords($tbody)
+                    }
+                    // Run any additionally configured initialization handlers
+                    for (var i = 0; i < recordLoadHandlers.length; i++) {
+                        recordLoadHandlers[i]($tbody.closest("table"));
+                    }
+
+
                 });
             } else {
                 BLCAdmin.listGrid.paginate.releaseLock();
@@ -421,9 +463,15 @@
         // ************************* *
         // CUSTOM SCROLLER FUNCTIONS *
         // ************************* *
-        
+
         getRowHeight : function($tbody) {
-            return $tbody.find('tr:not(.blank-padding):first').height();
+            return $tbody.find('td:not(.blank-padding):first').outerHeight();
+        },
+
+        getActualRowIndex : function($tr) {
+            var trPlacementTop = $tr.position().top;
+            var rowHeight = this.getRowHeight($tr.closest('tbody'));
+            return trPlacementTop / rowHeight;
         },
         
         getTopVisibleIndex : function($tbody) {
@@ -434,7 +482,7 @@
             var scrollOffset = $tbody.closest('.mCSB_container').position().top;
             var trHeight = this.getRowHeight($tbody);
             var topVisibleIndex = Math.floor(scrollOffset * -1 / trHeight);
-            return topVisibleIndex;
+            return Math.max(topVisibleIndex, 0);
         },
         
         getBottomVisibleIndex : function($tbody) {
@@ -446,41 +494,79 @@
         
         scrollToIndex : function($tbody, index) {
             var offset = index * this.getRowHeight($tbody);
+            if (offset > 0) {
+                // make sure to account for the top boarder on each row other than the first
+                offset += 1;
+            }
             //console.log('scrolling to ' + offset);
             $tbody.closest('.listgrid-body-wrapper').find('.mCSB_container').css('top', '-' + offset + 'px');
         },
-        
+
+        /**
+         * If the "select-all" checkbox is checked, then make sure all rows are checked
+         * @param $tbody
+         */
+        updateSelectedRecords : function($tbody) {
+            // if the "select-all" button is checked then make sure the newly loaded rows/records are checked as well
+            if($tbody.closest('.listgrid-container').find('.listgrid-header-wrapper').find('input[type=checkbox].multiselect-checkbox').length) {
+                var $listgridBody = $tbody.closest(".listgrid-header-wrapper").next();
+                var $checkbox = $tbody.closest('.listgrid-container').find('.listgrid-header-wrapper').find('input[type=checkbox].multiselect-checkbox');
+                if ($checkbox.prop('checked')) {
+                    $listgridBody.find(".listgrid-checkbox").prop('checked', true);
+                    BLCAdmin.listGrid.inlineRowSelected(null, $tbody.find("tr:not(.selected)"), null, null, null, true);
+                }
+            }
+        },
+
         updateTableFooter : function($tbody) {
             var topIndex = this.getTopVisibleIndex($tbody) + 1;
             var botIndex = this.getBottomVisibleIndex($tbody) + 1;
             var totalRecords = this.getTotalRecords($tbody);
             var $footer = $tbody.closest('.listgrid-container').find('.listgrid-table-footer');
-            
-            $footer.find('.low-index').text(topIndex);
-            $footer.find('.high-index').text(botIndex);
+
+            if (totalRecords > 0){
+                $footer.find('.low-index').text(topIndex);
+                $footer.find('.high-index').text(botIndex);
+            } else {
+                $footer.find('.low-index').text("0");
+                $footer.find('.high-index').text("0");
+            }
             $footer.find('.total-records').text(totalRecords);
         },
         
         updateGridSize : function($tbody) {
             var $table = $tbody.closest('table.list-grid-table');
-            var $headerTable = $table.closest('div.listgrid-container').find('.listgrid-header-wrapper table');
+            var $headerTable = $table.closest('.listgrid-container').find('.listgrid-header-wrapper table');
             var thWidths = [];
             var $modalBody = $tbody.closest('.modal-body');
-            
+
             if ($modalBody.length > 0) {
                 $modalBody.css('overflow-y', 'hidden');
             }
-            
-            // Clear out widths
-            $headerTable.css('width', '');
-            $table.css('width', '');
-            $headerTable.closest('.listgrid-container').find('th').css('width', '');
-            
-            // Figure out what the new table width will be
-            var newWidth = ($headerTable.width() - 15) + 'px';
-            $headerTable.css('width', newWidth);
-            $table.css('width', newWidth);
-            
+
+            if ($table.data('listgridtype') == 'asset_grid' && $table.closest('.select-group').find('.select-column:visible').length > 0) {
+                var fullWidth = $table.closest('.select-group').width() - 320;
+
+                $headerTable.css('width', '');
+                $table.css('width', '');
+                $table.css('table-layout', 'fixed');
+
+                // Figure out what the new table width will be
+                var newWidth = (fullWidth) + 'px';
+                $headerTable.css('width', newWidth);
+                $table.css('width', newWidth);
+            } else {
+                // Clear out widths
+                $headerTable.css('width', '');
+                $table.css('width', '');
+                $table.css('table-layout', 'fixed');
+                //$headerTable.closest('.listgrid-container').find('th').css('width', '');
+
+                // Figure out what the new table width will be
+                var newWidth = $headerTable.width() + 'px';
+                $headerTable.css('width', newWidth);
+                $table.css('width', newWidth);
+            }
             // Determine if we need to ignore any explicitly set column widths
             var $explicitSizeThs = $headerTable.closest('.listgrid-container').find('th.explicit-size');
             if (($table.data('listgridtype') == 'main' && $table.outerWidth() < 960) || 
@@ -510,32 +596,63 @@
             });
             $table.find('th').each(function(index, thElement) {
                 $(thElement).css('width', thWidths[index]);
+                var columnNo = $(thElement).index();
+                $(thElement).closest("table")
+                    .find("tr td:nth-child(" + (columnNo+1) + ")")
+                    .css("max-width", thWidths[index]);
             });
             
             var $wrapper = $tbody.closest('.listgrid-body-wrapper');
-            
+
             // If we're the only grid on the page, we should stretch to the bottom of the screen if we are not encapsulated
             // inside of an entity-form
             var listGridsCount = BLCAdmin.listGrid.getListGridCount($);
-            if (listGridsCount == 1 && $wrapper.parents('.entity-form').length == 0) {
+            if (listGridsCount == 1 && $wrapper.parents('.entity-form').length == 0 &&
+                $table.data('listgridtype') !== 'tree' &&
+                $table.data('listgridtype') !== 'asset_grid' &&
+                $table.data('listgridtype') !== 'asset_grid_folder') {
+
                 var $window = $(window);
                 
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
                 wrapperHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, wrapperHeight);
-                
+
                 $wrapper.css('max-height', wrapperHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
                 
                 $wrapper.mCustomScrollbar('update');
                 
                 // If we are showing all records from the single grid page, ensure the url is updated
-                if ($wrapper.find('.mCS_no_scrollbar').length > 0) {
+                if ($wrapper.find('.mCS_no_scrollbar').length > 0 && $modalBody.length === 0) {
                     BLCAdmin.listGrid.paginate.updateUrlFromScroll($wrapper.find('tbody'));
                 }
+            } else if ($table.data('listgridtype') === 'asset_grid'
+                || $table.data('listgridtype') === 'asset_grid_folder'
+                || $table.data('listgridtype') === 'tree') {
+                var $window = $(window);
+                var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
+
+                if ($modalBody.length > 0) {
+                    wrapperHeight = $tbody.closest('.select-group').outerHeight();
+                }
+
+                wrapperHeight -= $wrapper.next('.listgrid-table-footer:visible').outerHeight();
+
+                $wrapper.css('max-height', wrapperHeight);
+                $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
+
+                $wrapper.css('height', wrapperHeight);
+                $wrapper.find('.mCustomScrollBox').css('height', wrapperHeight);
+                $modalBody.css('overflow-y', 'auto');
+
+                $wrapper.mCustomScrollbar('update');
             } else if ($modalBody.length > 0) {
                 // If this is inside of a modal, the max height should be the size of the modal
-                
-                var maxHeight = $modalBody.height() - $wrapper.prev().height() - $wrapper.next().height() - 28;
+                var maxHeight = $modalBody.height() - $wrapper.prev().outerHeight(true) - $wrapper.next().outerHeight(true) - 32;
+
+                $wrapper.closest('.adorned-select-wrapper').find('fieldset').each(function(index, fieldset) {
+                    maxHeight -= $(fieldset).height();
+                });
                 
                 if ($wrapper.parent().find('label').length > 0) {
                     maxHeight -= $wrapper.parent().find('label').outerHeight();
@@ -551,14 +668,15 @@
                     maxHeight = minHeight;
                 }
                 
-                maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, maxHeight);
+                //maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, maxHeight);
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
                 $modalBody.css('overflow-y', 'auto');
+
             } else {
                 // not in a modal, not the only grid on the screen, my size should be equal to max size of a grid
-                // There is a possibility, if pagination is limited on the packed, that 
-                
+                // There is a possibility, if pagination is limited on the packed, that
+
                 var maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, maxSubCollectionListGridHeight);
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
@@ -583,7 +701,7 @@
             var paddedRowsHeight = rowHeight * numPaddedRows;
             
             var maxHeight = desiredMaxHeight;
-            
+
             // If we added visible padding and there isn't enough rows to cover the entire viewport that we want
             // (maxSubCollectionListGridHeight), then we need to shrink the size such that scrolling occurs. Otherwise,
             // we end up in a scenario in which you have some visible rows, padding is there, but no scrolling will
@@ -592,6 +710,10 @@
             if (paddedRowsHeight != 0 && visibleRowsHeight <= desiredMaxHeight) {
                 // shrink the size of the grid by just enough so that scrolling is activated
                 maxHeight = visibleRowsHeight + paddedRowsHeight - 3;
+            }
+
+            if (maxHeight < rowHeight) {
+                maxHeight = rowHeight;
             }
             
             return maxHeight;
@@ -627,27 +749,32 @@
         
         initialize : function($container) {
             var $table = $container.find('table.list-grid-table');
-            var $tbody = $table.find('tbody');
+            var $tbody = $table.children('tbody');
+            var $container = $table.closest('.listgrid-container');
             var thWidths = [];
             var $modalBody = $container.closest('.modal-body');
-            
+
             // If we're in a modal, we need to hide overflow in the modal to calculate sizes correclty. We'll restore this.
             $modalBody.css('overflow-y', 'hidden');
-            
+
+            // We want to remove the padding on the right side
+            $table.css('padding-right', '0');
+
             // First, we'll adjust the size of the table to be 15px less, since this is the margin we need
             // for our scrollbar. This will ensure the widths are correct once we draw the scrollbar
-            $table.css('width', ($table.width() - 15) + 'px');
-            
-            // Figure out what the currently drawn widths are for each row
-            // This is effectively the same for all rows for both the head and the body for now
-            // Also, set the width we determined directly on the element
-            $table.find('th').each(function(index, thElement) {
-                var $th = $(thElement);
-                var width = $th.width();
-                $th.css('width', width);
-                thWidths[index] = width;
-            });
-            
+            if ($table.width() == $container.width() - 2) {
+                $table.css('width', ($table.width() - 15) + 'px');
+
+                // Figure out what the currently drawn widths are for each row
+                // This is effectively the same for all rows for both the head and the body for now
+                // Also, set the width we determined directly on the element
+                $table.find('th').each(function (index, thElement) {
+                    var $th = $(thElement);
+                    var width = $th.width();
+                    $th.css('width', width);
+                    thWidths[index] = width;
+                });
+            }
             $tbody.remove();
             var $clonedTable = $table.clone();
             $table.parent().after($clonedTable);
@@ -658,31 +785,49 @@
             $clonedTable.wrap($('<div>', { 'class' : 'listgrid-body-wrapper' }));
             var $wrapper = $clonedTable.parent();
             
-            $clonedTable.find('thead').find('tr').addClass('width-control-header').find('th').empty();
+            $clonedTable.find('thead').find('tr').addClass('width-control-header').find('th').empty().css("padding",0,"height",0);
             $clonedTable.append($tbody);
             $tbody = $clonedTable.find('tbody');
             $clonedTable.attr('id', $clonedTable.attr('id').replace('-header', ''));
-            
+
+            // Get the first tr's height
+            var trHeight = parseInt(this.getRowHeight($tbody), 10);
+
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
                 theme: 'dark',
-                scrollInertia: 70,
+                scrollEasing: "linear",
+                scrollInertia: 500,
+                mouseWheelPixels: trHeight,
                 callbacks: {
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;
-                        var isAssetGrid = $tbody.closest('table').data('listgridtype') == 'asset';
-            
+                        var inModal = $tbody.closest('.modal-body').length === 1;
+                        var listGridType = $table.data('listgridtype');
+
                         // Update the currently visible range
                         BLCAdmin.listGrid.paginate.updateTableFooter($tbody);
                         
                         // Fetch records if necessary
                         $.doTimeout('fetch', fetchDebounce, function() {
                         	var url = $tbody.closest('table').data('path');
+                            if ($container.data('parentid')) {
+                                url += "?parentId=" + $container.data('parentid');
+                                url += "&inModal=" + inModal;
+                            } else {
+                                url += "?inModal=" + inModal;
+                            }
+
+                            var sectionCrumbs = $tbody.closest('table').data('sectioncrumbs');
+                            if (typeof sectionCrumbs !== 'undefined') {
+                                url += "&sectionCrumbs=" + sectionCrumbs;
+                            }
+
                             BLCAdmin.listGrid.paginate.loadRecords($tbody, url);
                         });
                         
                         // Also update the URL if this is the only grid on the page
-                        if (singleGrid) {
+                        if (singleGrid && !inModal && listGridType !== 'tree') {
                             $.doTimeout('updateurl', updateUrlDebounce, function(){
                                 BLCAdmin.listGrid.paginate.updateUrlFromScroll($tbody);
                             });
@@ -694,7 +839,7 @@
             // Figure out how large to make the top and bottom paddings
             var range = this.getLoadedRecordRanges($tbody)[0];
             var recordsAbove = range.lo;
-            var recordsBelow = this.getTotalRecords($tbody) - 1 - range.hi;
+            var recordsBelow = Math.max(this.getTotalRecords($tbody) - 1 - range.hi, 0);
             var rowHeight = this.getRowHeight($tbody);
             
             if (recordsAbove) {
@@ -719,6 +864,10 @@
             $modalBody.css('overflow-y', 'auto');
             
             this.initializeTableResizing($table, $clonedTable);
+        },
+
+        addRecordLoadHandler : function(fn) {
+            recordLoadHandlers.push(fn);
         }
     };
     
@@ -734,14 +883,19 @@
 $(document).ready(function() {
     
     $(window).resize(function() {
-        $.doTimeout('resizeListGrid', 150, function() {
-            $('tbody').each(function(index, element) {
-                if ($(element).is(':visible')) {
-                    BLCAdmin.listGrid.paginate.updateGridSize($(element));
-                } else {
-                    $(element).addClass('needsupdate');
-                }
-            });
+        $.doTimeout('resizeListGrid', 0, function() {
+            if ($('.oms').length == 0) {
+                BLCAdmin.getActiveTab().find('tbody').each(function (index, element) {
+                    if ($(element).is(':visible')) {
+                        BLCAdmin.listGrid.paginate.updateGridSize($(element));
+                    } else {
+                        $(element).addClass('needsupdate');
+                    }
+                });
+                BLCAdmin.getActiveTab().find('.fieldgroup-listgrid-wrapper-header').each(function (index, element) {
+                    BLCAdmin.listGrid.updateGridTitleBarSize($(element));
+                });
+            }
         });
     });
     

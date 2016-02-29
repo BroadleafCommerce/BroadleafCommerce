@@ -152,7 +152,7 @@ class ValidateProductOptionsActivitySpec extends BaseCheckoutActivitySpec {
         setup:
 
         productOption.setRequired(false)
-        productOption.setProductOptionValidationStrategyType(new ProductOptionValidationStrategyType("1", 3000, "1"))
+        productOption.setProductOptionValidationStrategyType(new ProductOptionValidationStrategyType("1", 4000, "1"))
         productOption.setProductOptionValidationType(null)
         productOptionXref.setProductOption(productOption)
         productOptions << productOptionXref

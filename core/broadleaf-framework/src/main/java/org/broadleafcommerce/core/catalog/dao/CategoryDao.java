@@ -46,6 +46,14 @@ public interface CategoryDao {
     public Category readCategoryById(@Nonnull Long categoryId);
 
     /**
+     * Retrieves a List of Category IDs
+     *
+     * @param categoryIds
+     * @return
+     */
+    public List<Category> readCategoriesByIds(List<Long> categoryIds);
+
+    /**
      * Retrieve a {@link Category} instance by the external id
      * @param externalId
      * @return
@@ -69,7 +77,7 @@ public interface CategoryDao {
     /**
      * @return a list of all categories that do not have a defaultParentCategory set
      */
-    public List<Category> readAllParentCategories();
+    public Category readRootCategory();
 
     /**
      * Retrieve a list of {@code Category} instances by name.
@@ -82,6 +90,9 @@ public interface CategoryDao {
 
     @Nonnull
     public List<Category> readCategoriesByName(@Nonnull String categoryName, int limit, int offset);
+
+    @Nonnull
+    public List<Category> readCategoriesByNames(List<String> names);
 
     /**
      * Persist a {@code Category} instance to the datastore

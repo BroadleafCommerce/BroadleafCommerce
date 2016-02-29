@@ -30,6 +30,7 @@ import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.springframework.validation.BindingResult;
@@ -72,6 +73,26 @@ public interface FormBuilderService {
      */
     public ListGrid buildCollectionListGrid(String containingEntityId, DynamicResultSet drs, Property field, String sectionKey, List<SectionCrumb> sectionCrumbs)
             throws ServiceException;
+
+    /**
+     *
+     * @param containingEntityId
+     * @param drs
+     * @param field
+     * @param sectionKey
+     * @return the ListGrid
+     * @throws ServiceException
+     */
+    public Map<String, Object> buildSelectizeCollectionInfo(String containingEntityId, DynamicResultSet drs, Property field, String sectionKey, List<SectionCrumb> sectionCrumbs)
+            throws ServiceException;
+
+    /**
+     * constructs the selectize option map based on the dynamic result set and class metadata
+     * @param drs
+     * @param cmd
+     * @return
+     */
+    public Map<String, Object> constructSelectizeOptionMap(DynamicResultSet drs, ClassMetadata cmd);
 
     /**
      * Extracts the DefaultValue from the FieldMetaData and parses it based on the

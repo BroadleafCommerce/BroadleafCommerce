@@ -25,10 +25,11 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.util.BLCAnnotationUtils;
 import org.broadleafcommerce.common.util.Tuple;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
+import org.broadleafcommerce.openadmin.dto.override.MetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 
@@ -49,7 +50,7 @@ import javax.persistence.OneToMany;
  */
 public abstract class AbstractFieldMetadataProvider implements FieldMetadataProvider {
 
-    protected Map<String, Map<String, FieldMetadataOverride>> metadataOverrides;
+    protected Map<String, Map<String, MetadataOverride>> metadataOverrides;
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
@@ -76,9 +77,9 @@ public abstract class AbstractFieldMetadataProvider implements FieldMetadataProv
             AdminPresentationClass adminPresentationClass;
             if (parentClass != null) {
                 metadata.setOwningClass(parentClass.getName());
-                adminPresentationClass = parentClass.getAnnotation(AdminPresentationClass.class);
+                adminPresentationClass = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, parentClass);
             } else {
-                adminPresentationClass = targetClass.getAnnotation(AdminPresentationClass.class);
+                adminPresentationClass = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, targetClass);
             }
             if (adminPresentationClass != null) {
                 String friendlyName = adminPresentationClass.friendlyName();
@@ -117,14 +118,14 @@ public abstract class AbstractFieldMetadataProvider implements FieldMetadataProv
      * @return override value
      */
     @Deprecated
-    protected Map<String, FieldMetadataOverride> getTargetedOverride(String configurationKey, String ceilingEntityFullyQualifiedClassname) {
+    protected Map<String, MetadataOverride> getTargetedOverride(String configurationKey, String ceilingEntityFullyQualifiedClassname) {
         if (metadataOverrides != null && (configurationKey != null || ceilingEntityFullyQualifiedClassname != null)) {
             return metadataOverrides.containsKey(configurationKey)?metadataOverrides.get(configurationKey):metadataOverrides.get(ceilingEntityFullyQualifiedClassname);
         }
         return null;
     }
 
-    protected Map<String, FieldMetadataOverride> getTargetedOverride(DynamicEntityDao dynamicEntityDao, String configurationKey, String ceilingEntityFullyQualifiedClassname) {
+    protected Map<String, MetadataOverride> getTargetedOverride(DynamicEntityDao dynamicEntityDao, String configurationKey, String ceilingEntityFullyQualifiedClassname) {
         if (metadataOverrides != null && (configurationKey != null || ceilingEntityFullyQualifiedClassname != null)) {
             if (metadataOverrides.containsKey(configurationKey)) {
                 return metadataOverrides.get(configurationKey);

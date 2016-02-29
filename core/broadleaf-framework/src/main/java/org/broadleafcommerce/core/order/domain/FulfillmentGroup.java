@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
@@ -42,7 +43,7 @@ import java.util.List;
  * @author Phillip Verheyden
  * @see {@link Order}, {@link FulfillmentOption}, {@link Address}, {@link FulfillmentGroupItem}
  */
-public interface FulfillmentGroup extends Serializable {
+public interface FulfillmentGroup extends Serializable, MultiTenantCloneable<FulfillmentGroup> {
 
     public Long getId();
 

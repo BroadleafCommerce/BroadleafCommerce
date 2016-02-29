@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -42,9 +43,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 /**
  * 
@@ -89,6 +87,20 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     @Override
+    public List<Category> readCategoriesByIds(List<Long> categoryIds) {
+        TypedQuery<Category> query = em.createQuery(
+                "select category from org.broadleafcommerce.core.catalog.domain.Category category "
+                        + "where category.id in :ids",
+                Category.class);
+        query.setParameter("ids", sandBoxHelper.mergeCloneIds(CategoryImpl.class,
+                categoryIds.toArray(new Long[categoryIds.size()])));
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
+    @Override
     public Category readCategoryByExternalId(@Nonnull String externalId) {
         TypedQuery<Category> query = new TypedQueryBuilder<Category>(Category.class, "cat")
                 .addRestriction("cat.externalId", "=", externalId)
@@ -112,22 +124,11 @@ public class CategoryDaoImpl implements CategoryDao {
     }
     
     @Override
-    public List<Category> readAllParentCategories() {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Category> criteria = builder.createQuery(Category.class);
-        Root<CategoryImpl> category = criteria.from(CategoryImpl.class);
-
-        criteria.select(category);
-        criteria.where(builder.isNull(category.get("defaultParentCategory")));
-        TypedQuery<Category> query = em.createQuery(criteria);
+    public Category readRootCategory() {
+        Query query = em.createNamedQuery("BC_READ_ROOT_CATEGORY");
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-
-        try {
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
+        return (Category) query.getSingleResult();
     }
 
     @Override
@@ -147,6 +148,20 @@ public class CategoryDaoImpl implements CategoryDao {
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         query.setFirstResult(offset);
         query.setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    @Nonnull
+    @Override
+    public List<Category> readCategoriesByNames(List<String> names) {
+        TypedQuery<Category> query = em.createQuery(
+                "select category from org.broadleafcommerce.core.catalog.domain.Category category "
+                        + "where category.name in :names",
+                Category.class);
+        query.setParameter("names", names);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
         return query.getResultList();
     }

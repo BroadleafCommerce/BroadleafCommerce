@@ -19,11 +19,20 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.broadleafcommerce.common.util.BLCMapUtils;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -31,14 +40,27 @@ import java.util.Map;
  * @author jfischer
  *
  */
+@JsonAutoDetect
 public class ClassMetadata implements Serializable {
     
     private static final long serialVersionUID = 1L;
-    
+
+    @JsonProperty
     private String ceilingType;
+
+    @JsonProperty
     private String securityCeilingType;
+
+    @JsonIgnore
     private ClassTree polymorphicEntities;
+
+    @JsonProperty(value = "classProperties")
     private Property[] properties;
+
+    @JsonIgnore
+    private Map<String, TabMetadata> tabAndGroupMetadata;
+
+    @JsonProperty
     private String currencyCode = "USD";
     
     private Map<String, Property> pMap = null;
@@ -91,8 +113,16 @@ public class ClassMetadata implements Serializable {
         return properties;
     }
     
-    public void setProperties(Property[] property) {
-        this.properties = property;
+    public void setProperties(Property[] properties) {
+        this.properties = properties;
+    }
+
+    public Map<String, TabMetadata> getTabAndGroupMetadata() {
+        return tabAndGroupMetadata;
+    }
+
+    public void setTabAndGroupMetadata(Map<String, TabMetadata> tabAndGroupMetadata) {
+        this.tabAndGroupMetadata = tabAndGroupMetadata;
     }
 
     public String getCurrencyCode() {
@@ -101,5 +131,52 @@ public class ClassMetadata implements Serializable {
 
     public void setCurrencyCode(String currencyCode) {
         this.currencyCode = currencyCode;
+    }
+
+    public TabMetadata getTabMetadataUsingTabKey(String tabKey) {
+        return tabAndGroupMetadata.get(tabKey);
+    }
+
+    public TabMetadata getTabMetadataUsingGroupKey(String groupKey) {
+        for (TabMetadata tab : tabAndGroupMetadata.values()) {
+            if (tab.getGroupMetadata() != null) {
+                for (GroupMetadata group : tab.getGroupMetadata().values()) {
+                    if (group.getGroupName() != null && group.getGroupName().equals(groupKey)) {
+                        return tab;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public TabMetadata getFirstTab() {
+        Iterator<TabMetadata> tabMetadataIterator = tabAndGroupMetadata.values().iterator();
+        TabMetadata result = tabMetadataIterator.hasNext() ? tabMetadataIterator.next() : null;
+
+        while(tabMetadataIterator.hasNext()) {
+            TabMetadata next = tabMetadataIterator.next();
+            if (result.getTabOrder() == null) {
+                result = next;
+            } else if (next.getTabOrder() != null && next.getTabOrder() < result.getTabOrder()) {
+                result = next;
+            }
+        }
+
+        return result;
+    }
+
+    public String[][] getGroupOptionsFromTabAndGroupMetadata() {
+        List<String[]> result = new ArrayList<>();
+
+        for (TabMetadata tab : tabAndGroupMetadata.values()) {
+            for (GroupMetadata group : tab.getGroupMetadata().values()) {
+                String key = group.getGroupName();
+                String displayValue = BLCMessageUtils.getMessage(tab.getTabName()) + " : " + BLCMessageUtils.getMessage(group.getGroupName());
+                result.add(new String[]{key, displayValue});
+            }
+        }
+
+        return result.toArray(new String[result.size()][2]);
     }
 }

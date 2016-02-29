@@ -1,43 +1,48 @@
 <div class="asset-selector-container"
      th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
 
-    <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
-    <div th:substituteby="components/fieldTooltip" />
-    <br />
+    <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+        <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+    </label>
     <input type="hidden" class="mediaItem" th:field="*{fields['__${field.name}__'].value}" />
-    
-    <span th:if="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
-        <img class="thumbnail" th:attrappend="data-fullurl=@{*{fields['__${field.name}__'].media.url}}"
-            th:src="@{*{fields['__${field.name}__'].media.url + '?largeAdminThumbnail'}}" />
-            <img class="placeholder" style="display:none" th:src="@{/img/admin/placeholder-60x60.gif}" />
-    </span>
-    
-    <span th:unless="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
-        <img class="thumbnail placeholder-image" th:src="@{/img/admin/placeholder-60x60.gif}" />
-        <img class="placeholder" style="display:none" th:src="@{/img/admin/placeholder-60x60.gif}" />
-    </span>
-        
-    
-    <button class="clear-asset-selector tiny radius secondary button hover-cursor"
-        type="button" th:inline="text"
-        th:unless="${field.required}"
-        th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
-        <i class="icon-remove"></i>&nbsp;[[#{Clear}]]
-    </button>
 
-    <button class="show-asset-selector tiny radius secondary button hover-cursor"
-        type="button" th:inline="text"
-        th:if="${overrideAssetSectionKey}"
-        th:attr="data-select-url=@{${'/'+overrideAssetSectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
-        <i class="icon-camera"></i>&nbsp;[[#{Select_Upload_Image}]]
-    </button>
+    <div class="media-image-container" th:classappend="${field.readOnly}? 'disabled'">
+        <div class="media-image">
+            <span th:if="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
+                <img class="thumbnail" th:attrappend="data-fullurl=@{*{fields['__${field.name}__'].media.url}}"
+                    th:src="@{*{fields['__${field.name}__'].media.url}}" />
+                    <img class="placeholder" style="display:none" th:src="@{/img/admin/placeholder-60x60.gif}" />
+            </span>
 
-    <button class="show-asset-selector tiny radius secondary button hover-cursor"
-        type="button" th:inline="text"
-        th:unless="${overrideAssetSectionKey}"
-        th:attr="data-select-url=@{${'/'+sectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
-        <i class="icon-camera"></i>&nbsp;[[#{Select_Upload_Image}]]
-    </button>
+            <span th:unless="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
+                <img class="thumbnail placeholder-image" th:src="@{/img/admin/placeholder-60x60.gif}" />
+                <img class="placeholder" style="display:none" th:src="@{/img/admin/placeholder-60x60.gif}" />
+            </span>
+        </div>
+        <div class="media-actions" style="background: transparent;">
+            <!-- lookup buttons -->
+            <button class="show-asset-selector tiny radius secondary button hover-cursor"
+                    type="button" th:inline="text"
+                    th:if="${overrideAssetSectionKey}"
+                    th:attr="data-select-url=@{${'/'+overrideAssetSectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
+                <i class="fa fa-search"></i>
+            </button>
+            <button class="show-asset-selector tiny radius secondary button hover-cursor"
+                    type="button" th:inline="text"
+                    th:unless="${overrideAssetSectionKey}"
+                    th:attr="data-select-url=@{${'/'+sectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
+                <i class="fa fa-search"></i>
+            </button>
+
+            <!-- clear image button -->
+            <button class="clear-asset-selector tiny radius secondary button hover-cursor"
+                type="button" th:inline="text"
+                th:unless="${field.required}"
+                th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
 
     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 </div>

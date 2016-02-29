@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -42,7 +43,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTOToMVELTranslator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELToDataWrapperTranslator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
@@ -52,20 +53,12 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldS
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.OneToMany;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * Provides persistence (read/write) behavior for rule builder fields. This includes two types: Rule with quantity, and
@@ -81,12 +74,14 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
 
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
         return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
-                populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
+                populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE ||
+                populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE_TIME;
     }
 
     protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
         return extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
-                extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
+                extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE ||
+                extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE_TIME;
     }
 
     @Resource(name = "blRuleBuilderFieldServiceFactory")
@@ -102,9 +97,9 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
     protected RuleFieldPersistenceProviderExtensionManager extensionManager;
 
     @Override
-    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
+    public MetadataProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
         if (!canHandlePersistence(populateValueRequest, instance)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         boolean dirty = false;
         try {
@@ -118,33 +113,38 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                     dirty = populateSimpleRule(populateValueRequest, instance);
                     break;
                 }
+                case RULE_SIMPLE_TIME:{
+                    dirty = populateSimpleRule(populateValueRequest, instance);
+                    break;
+                }
             }
         } catch (Exception e) {
             throw ExceptionHelper.refineException(PersistenceException.class, PersistenceException.class, e);
         }
-        populateValueRequest.getProperty().setIsDirty(dirty);
+        populateValueRequest.getProperty().setIsDirty(!populateValueRequest.getPreAdd() && dirty);
 
-        return FieldProviderResponse.HANDLED_BREAK;
+        return MetadataProviderResponse.HANDLED_BREAK;
     }
 
     @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         ObjectMapper mapper = new ObjectMapper();
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
-        if (extractValueRequest.getMetadata().getFieldType()== SupportedFieldType.RULE_SIMPLE) {
+        if (extractValueRequest.getMetadata().getFieldType()== SupportedFieldType.RULE_SIMPLE ||
+                extractValueRequest.getMetadata().getFieldType()== SupportedFieldType.RULE_SIMPLE_TIME) {
             extractSimpleRule(extractValueRequest, property, mapper, translator);
         }
         if (extractValueRequest.getMetadata().getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY) {
             extractQuantityRule(extractValueRequest, mapper, translator);
         }
-        return FieldProviderResponse.HANDLED_BREAK;
+        return MetadataProviderResponse.HANDLED_BREAK;
     }
 
     @Override
-    public FieldProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
+    public MetadataProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
         //This may contain rule Json fields - convert and filter out
         List<Property> propertyList = new ArrayList<Property>();
         propertyList.addAll(Arrays.asList(addFilterPropertiesRequest.getEntity().getProperties()));
@@ -154,9 +154,11 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             Property prop = itr.next();
             if (prop.getName().endsWith("Json")) {
                 for (Map.Entry<String, FieldMetadata> entry : properties.entrySet()) {
-                    if (prop.getName().startsWith(entry.getKey())) {
+                    String propName = prop.getName().substring(0, prop.getName().length()-4);
+                    if (propName.equals(entry.getKey())) {
                         BasicFieldMetadata originalFM = (BasicFieldMetadata) entry.getValue();
                         if (originalFM.getFieldType() == SupportedFieldType.RULE_SIMPLE ||
+                                originalFM.getFieldType() == SupportedFieldType.RULE_SIMPLE_TIME ||
                                 originalFM.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY) {
                             Property originalProp = addFilterPropertiesRequest.getEntity().findProperty(entry.getKey());
                             if (originalProp == null) {
@@ -176,7 +178,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         }
         propertyList.addAll(additionalProperties);
         addFilterPropertiesRequest.getEntity().setProperties(propertyList.toArray(new Property[propertyList.size()]));
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     protected void extractSimpleRule(ExtractValueRequest extractValueRequest, Property property, ObjectMapper mapper, MVELToDataWrapperTranslator translator) {
@@ -409,7 +411,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             if (dw != null && StringUtils.isEmpty(dw.getError())) {
                 List<QuantityBasedRule> updatedRules = new ArrayList<QuantityBasedRule>();
                 for (DataDTO dto : dw.getData()) {
-                    if (dto.getId() != null && !CollectionUtils.isEmpty(criteriaList)) {
+                    if (dto.getPk() != null && !CollectionUtils.isEmpty(criteriaList)) {
                         checkId: {
                             //updates are comprehensive, even data that was not changed
                             //is submitted here
@@ -417,7 +419,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             for (QuantityBasedRule quantityBasedRule : criteriaList) {
                                 //make compatible with enterprise module
                                 Long id = sandBoxHelper.getOriginalId(quantityBasedRule);
-                                boolean isMatch = dto.getId().equals(id) || dto.getId().equals(quantityBasedRule.getId());
+                                boolean isMatch = dto.getPk().equals(id) || dto.getPk().equals(quantityBasedRule.getId());
                                 if (isMatch){
                                     String mvel;
                                     //don't update if the data has not changed
@@ -450,7 +452,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                                 }
                             }
                             throw new IllegalArgumentException("Unable to update the rule of type (" + memberType.getName() +
-                                    ") because an update was requested for id (" + dto.getId() + "), which does not exist.");
+                                    ") because an update was requested for id (" + dto.getPk() + "), which does not exist.");
                         }
                     } else {
                         //Create a new Criteria
@@ -467,7 +469,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             throw new RuntimeException(e);
                         }
                         em.persist(quantityBasedRule);
-                        dto.setId(quantityBasedRule.getId());
+                        dto.setPk(quantityBasedRule.getId());
                         if (extensionManager != null) {
                             ExtensionResultHolder resultHolder = new ExtensionResultHolder();
                             extensionManager.getProxy().postAdd(quantityBasedRule, resultHolder);

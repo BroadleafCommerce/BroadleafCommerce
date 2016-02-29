@@ -39,13 +39,19 @@ public abstract class FieldMetadata implements Serializable {
     private String[] availableToTypes;
     private Boolean excluded;
     private String friendlyName;
+    private String addFriendlyName;
     private String securityLevel;
     private Integer order;
     private String owningClassFriendlyName;
 
     private String tab;
+    @Deprecated
     private Integer tabOrder;
-
+    private String group;
+    @Deprecated
+    private Integer groupOrder;
+    private Boolean lazyFetch;
+    
     //temporary fields
     private Boolean childrenExcluded;
     private String targetClass;
@@ -99,9 +105,14 @@ public abstract class FieldMetadata implements Serializable {
         }
         metadata.excluded = excluded;
         metadata.friendlyName = friendlyName;
+        metadata.addFriendlyName = addFriendlyName;
         metadata.owningClassFriendlyName = owningClassFriendlyName;
         metadata.securityLevel = securityLevel;
         metadata.order = order;
+        metadata.group = group;
+        metadata.groupOrder = groupOrder;
+        metadata.tab = tab;
+        metadata.tabOrder = tabOrder;
         metadata.targetClass = targetClass;
         metadata.owningClass = owningClass;
         metadata.prefix = prefix;
@@ -109,6 +120,7 @@ public abstract class FieldMetadata implements Serializable {
         metadata.fieldName = fieldName;
         metadata.showIfProperty = showIfProperty;
         metadata.currencyCodeField = currencyCodeField;
+        metadata.lazyFetch = lazyFetch;
         for (Map.Entry<String, Object> entry : additionalMetadata.entrySet()) {
             metadata.additionalMetadata.put(entry.getKey(), entry.getValue());
         }
@@ -137,6 +149,14 @@ public abstract class FieldMetadata implements Serializable {
 
     public void setFriendlyName(String friendlyName) {
         this.friendlyName = friendlyName;
+    }
+
+    public String getAddFriendlyName() {
+        return addFriendlyName;
+    }
+
+    public void setAddFriendlyName(String addFriendlyName) {
+        this.addFriendlyName = addFriendlyName;
     }
 
     public String getSecurityLevel() {
@@ -211,12 +231,40 @@ public abstract class FieldMetadata implements Serializable {
         this.tab = tab;
     }
 
+    @Deprecated
     public Integer getTabOrder() {
         return tabOrder;
     }
 
+    @Deprecated
     public void setTabOrder(Integer tabOrder) {
         this.tabOrder = tabOrder;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    @Deprecated
+    public Integer getGroupOrder() {
+        return groupOrder;
+    }
+
+    @Deprecated
+    public void setGroupOrder(Integer groupOrder) {
+        this.groupOrder = groupOrder;
+    }
+
+    public Boolean getLazyFetch() {
+        return lazyFetch;
+    }
+
+    public void setLazyFetch(Boolean lazyFetch) {
+        this.lazyFetch = lazyFetch;
     }
 
     public abstract FieldMetadata cloneFieldMetadata();
@@ -258,6 +306,8 @@ public abstract class FieldMetadata implements Serializable {
             return false;
         if (tab != null ? !tab.equals(that.tab) : that.tab != null) return false;
         if (tabOrder != null ? !tabOrder.equals(that.tabOrder) : that.tabOrder != null) return false;
+        if (group != null ? !group.equals(that.group) : that.group != null) return false;
+        if (groupOrder != null ? !groupOrder.equals(that.groupOrder) : that.groupOrder != null) return false;
         if (targetClass != null ? !targetClass.equals(that.targetClass) : that.targetClass != null) return false;
 
         return true;
@@ -274,6 +324,8 @@ public abstract class FieldMetadata implements Serializable {
         result = 31 * result + (owningClassFriendlyName != null ? owningClassFriendlyName.hashCode() : 0);
         result = 31 * result + (tab != null ? tab.hashCode() : 0);
         result = 31 * result + (tabOrder != null ? tabOrder.hashCode() : 0);
+        result = 31 * result + (group != null ? group.hashCode() : 0);
+        result = 31 * result + (groupOrder != null ? groupOrder.hashCode() : 0);
         result = 31 * result + (childrenExcluded != null ? childrenExcluded.hashCode() : 0);
         result = 31 * result + (targetClass != null ? targetClass.hashCode() : 0);
         result = 31 * result + (owningClass != null ? owningClass.hashCode() : 0);

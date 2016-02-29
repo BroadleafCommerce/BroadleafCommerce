@@ -40,38 +40,79 @@ public class DefaultListGridActions {
     public static final ListGridAction ADD = new ListGridAction(ListGridAction.ADD)
         .withButtonClass("sub-list-grid-add")
         .withUrlPostfix("/add")
-        .withIconClass("icon-plus")
+        .withIconClass("fa fa-plus")
         .withDisplayText("Add");
-    
-    public static final ListGridAction REORDER = new ListGridAction(ListGridAction.REORDER)
-        .withButtonClass("sub-list-grid-reorder")
-        .withUrlPostfix("/update")
-        .withIconClass("icon-move")
-        .withDisplayText("Reorder");
+
+    public static final ListGridAction ADD_EMPTY = new ListGridAction(ListGridAction.ADD)
+        .withButtonClass("sub-list-grid-add-empty")
+        .withUrlPostfix("/add")
+        .withIconClass("fa fa-plus")
+        .withDisplayText("Add");
+
+    public static final ListGridAction TREE_ADD = new ListGridAction(ListGridAction.TREE_ADD)
+        .withButtonClass("tree-list-grid-row-add")
+        .withUrlPostfix("/new/enterprise-tree-add")
+        .withIconClass("fa fa-plus")
+        .withDisplayText("Add Child");
 
     // Actions for row-level
     public static final ListGridAction REMOVE = new ListGridAction(ListGridAction.REMOVE)
         .withButtonClass("sub-list-grid-remove")
         .withUrlPostfix("/delete")
-        .withIconClass("icon-remove")
+        .withIconClass("blc-icon-close")
         .withDisplayText("Delete");
     
     public static final ListGridAction UPDATE = new ListGridAction(ListGridAction.UPDATE)
         .withButtonClass("sub-list-grid-update")
-        .withIconClass("icon-pencil")
+        .withIconClass("fa fa-pencil")
         .withDisplayText("Edit");
 
     public static final ListGridAction VIEW = new ListGridAction(ListGridAction.VIEW)
         .withButtonClass("sub-list-grid-view")
-        .withIconClass("icon-book")
+        .withIconClass("blc-icon-view")
         .withDisplayText("View")
         .withUrlPostfix("/view")
         .withForListGridReadOnly(true);
 
+    public static final ListGridAction EDIT = new ListGridAction(ListGridAction.EDIT)
+        .withButtonClass("sub-list-grid-edit")
+        .withIconClass("fa fa-pencil")
+        .withDisplayText("Edit");
+
+    public static final ListGridAction SINGLE_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
+        .withButtonClass("list-grid-single-select")
+        .withDisplayText("Select")
+        .withSingleActionOnly(true);
+
+    public static final ListGridAction TREE_LOOKUP_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
+        .withButtonClass("tree-list-grid-lookup-select")
+        .withDisplayText("Select")
+        .withSingleActionOnly(true);
+
+    public static final ListGridAction TREE_JUMP_TO_CONTEXT = new ListGridAction(ListGridAction.TREE_JUMP_TO_CONTEXT)
+        .withButtonClass("tree-list-grid-jump-to-context")
+        .withUrlPostfix("/tree/jump-to-context")
+        .withIconClass("fa fa-columns")
+        .withDisplayText("Jump to Context");
+
+    public static final ListGridAction ASSET_GRID_SINGLE_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
+            .withButtonClass("asset-grid-single-select")
+            .withDisplayText("Select")
+            .withSingleActionOnly(true);
+
+    public static final ListGridAction ASSET_ADD = new ListGridAction(ListGridAction.ASSET_ADD)
+            .withButtonClass("upload-asset additional-action")
+            .withUrlPostfix("/assets")
+            .withDisplayText("Upload_Asset");
+
+    public static final ListGridAction MULTI_SELECT = new ListGridAction(ListGridAction.MULTI_SELECT)
+        .withButtonClass("list-grid-multi-select")
+        .withDisplayText("Select");
+
 
     public static final ListGridAction PREVIEW = new ListGridAction("PREVIEW")
-            .withButtonClass("workflow-preview")
-            .withIconClass("icon-eye-open")
-            .withDisplayText("Workflow_button_preview");
+        .withButtonClass("workflow-preview")
+        .withIconClass("blc-icon-view")
+        .withDisplayText("Workflow_button_preview");
 
 }

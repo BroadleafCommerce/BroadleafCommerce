@@ -77,6 +77,7 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
             }
         }
 
+        addressService.populateAddressISOCountrySub(billingForm.getAddress());
         billingInfoFormValidator.validate(billingForm, result);
         if (result.hasErrors()) {
             return getCheckoutView();

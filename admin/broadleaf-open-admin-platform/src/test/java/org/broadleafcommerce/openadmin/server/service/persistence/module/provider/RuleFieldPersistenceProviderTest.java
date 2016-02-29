@@ -45,14 +45,14 @@ public class RuleFieldPersistenceProviderTest {
         String json = "{\"data\":[{\"id\":1,\"quantity\":1,\"groupOperator\":\"AND\",\"groups\":[{\"id\":null,\"quantity\":null,\"groupOperator\":null,\"groups\":[],\"name\":\"category.name\",\"operator\":\"IEQUALS\",\"value\":\"merchandise\"}]}]}";
         DataWrapper expected = new DataWrapper();
         DataDTO leftSide = new DataDTO();
-        leftSide.setId(1l);
+        leftSide.setPk(1l);
         leftSide.setQuantity(1);
-        leftSide.setGroupOperator("AND");
+        leftSide.setCondition("AND");
         ExpressionDTO rightSide = new ExpressionDTO();
-        rightSide.setName("category.name");
+        rightSide.setId("category.name");
         rightSide.setOperator("IEQUALS");
         rightSide.setValue("merchandise");
-        leftSide.setGroups(new ArrayList<DataDTO>(Arrays.asList((DataDTO) rightSide)));
+        leftSide.setRules(new ArrayList<DataDTO>(Arrays.asList((DataDTO) rightSide)));
         expected.setData(new ArrayList<DataDTO>(Arrays.asList(leftSide)));
         
         RuleFieldExtractionUtility extractor = new RuleFieldExtractionUtility();

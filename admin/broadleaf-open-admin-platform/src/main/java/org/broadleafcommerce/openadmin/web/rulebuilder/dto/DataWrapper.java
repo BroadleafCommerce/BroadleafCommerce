@@ -36,29 +36,31 @@ import java.util.ArrayList;
  * (This is an example of a complex Item Rule)
  *
  * {'data': [
- *      {'id':'100',
+ *      {'pk':'100',
  *      'quantity':'1',
- *      'groupOperator':'AND',
- *      'groups':[
- *          {'id':null,
+ *      'condition':'AND',
+ *      'rules':[
+ *          {'pk':null,
  *          'quantity':null,
- *          'groupOperator':null,
- *          'groups':null,
- *          'name':'name',
+ *          'condition':null,
+ *          'rules':null,
+ *          'id':'name',
  *          'operator':'IEQUALS',
  *          'value':'merchandise'}]},
- *      {'id':'200',
+ *      {'pk':'200',
  *      'quantity':'2',
- *      'groupOperator':'AND',
- *      'groups':[
- *          {'id':null,
+ *      'condition':'AND',
+ *      'rules':[
+ *          {'pk':null,
  *          'quantity':null,
- *          'groupOperator':null,
- *          'groups':null,
- *          'name':'retailPrice',
+ *          'condition':null,
+ *          'rules':null,
+ *          'id':'retailPrice',
  *          'operator':'GREATER_THAN',
  *          'value':'20.00'}]}
- * ]}
+ *      ],
+ * "error":null,
+ * "rawMvel":null}
  *
  */
 public class DataWrapper implements Serializable {

@@ -25,8 +25,11 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
@@ -47,10 +50,11 @@ public class EntityForm {
 
     public static final String HIDDEN_GROUP = "hiddenGroup";
     public static final String MAP_KEY_GROUP = "keyGroup";
-    public static final String DEFAULT_GROUP_NAME = "Default";
+    public static final String DEFAULT_GROUP_NAME = "General";
     public static final Integer DEFAULT_GROUP_ORDER = 99999;
+    public static final Integer DEFAULT_COLUMN = 0;
     public static final String DEFAULT_TAB_NAME = "General";
-    public static final Integer DEFAULT_TAB_ORDER = 100;
+    public static final Integer DEFAULT_TAB_ORDER = 99999;
 
     protected String id;
     protected String parentId;
@@ -76,13 +80,14 @@ public class EntityForm {
     protected String translationCeilingEntity;
     protected String translationId;
 
-    protected Set<Tab> tabs = new TreeSet<Tab>(new Comparator<Tab>() {
+    protected TreeSet<Tab> tabs = new TreeSet<Tab>(new Comparator<Tab>() {
 
         @Override
         public int compare(Tab o1, Tab o2) {
             return new CompareToBuilder()
                     .append(o1.getOrder(), o2.getOrder())
                     .append(o1.getTitle(), o2.getTitle())
+                    .append(o1.getKey(), o2.getKey())
                     .toComparison();
         }
     });
@@ -132,7 +137,7 @@ public class EntityForm {
             Map<String, Field> dynamicFormFields = entry.getValue().getFields();
             for (Entry<String, Field> dynamicField : dynamicFormFields.entrySet()) {
                 if (fields.containsKey(dynamicField.getKey())) {
-                    LOG.info("Excluding dynamic field " + dynamicField.getKey() + " as there is already an occurrance in" +
+                    LOG.info("Excluding dynamic field " + dynamicField.getKey() + " as there is already an occurrence in" +
                             " this entityForm");
                 } else {
                     fields.put(dynamicField.getKey(), dynamicField.getValue());
@@ -158,6 +163,11 @@ public class EntityForm {
             for (ListGrid lg : tab.getListGrids()) {
                 list.add(lg);
             }
+            for (FieldGroup group : tab.getFieldGroups()){
+                for (ListGrid lg : group.getListGrids()) {
+                    list.add(lg);
+                }
+            }
         }
         return list;
     }
@@ -178,9 +188,19 @@ public class EntityForm {
         return null;
     }
 
+    public FieldGroup findGroup(String groupName) {
+        for (Tab tab : tabs) {
+            FieldGroup fieldGroup = tab.findGroupByKey(groupName);
+            if (fieldGroup != null) {
+                return fieldGroup;
+            }
+        }
+        return null;
+    }
+
     public Tab findTab(String tabTitle) {
         for (Tab tab : tabs) {
-            if (tab.getTitle() != null && tab.getTitle().equals(tabTitle)) {
+            if (tab.getKey() != null && tab.getKey().equals(tabTitle)) {
                 return tab;
             }
         }
@@ -203,16 +223,9 @@ public class EntityForm {
 
     public Field findField(String fieldName) {
         fieldName = sanitizeFieldName(fieldName);
-        for (Tab tab : tabs) {
-            for (FieldGroup fieldGroup : tab.getFieldGroups()) {
-                for (Field field : fieldGroup.getFields()) {
-                    if (field.getName().equals(fieldName)) {
-                        return field;
-                    }
-                }
-            }
-        }
-        return null;
+        Map<String, Field> fields = getFields();
+
+        return fields.get(fieldName);
     }
 
     /**
@@ -257,6 +270,12 @@ public class EntityForm {
         return fieldToRemove;
     }
 
+    public void removeGroup(FieldGroup group) {
+        for (Tab tab : getTabs()) {
+            tab.removeFieldGroup(group);
+        }
+    }
+
     public void removeTab(Tab tab) {
         tabs.remove(tab);
     }
@@ -266,7 +285,8 @@ public class EntityForm {
             Iterator<Tab> tabIterator = tabs.iterator();
             while (tabIterator.hasNext()) {
                 Tab currentTab = tabIterator.next();
-                if (tabName.equals(currentTab.getTitle())) {
+                if (tabName.equals(currentTab.getKey())
+                        || tabName.equals(currentTab.getTitle())) {
                     tabIterator.remove();
                 }
             }
@@ -276,8 +296,10 @@ public class EntityForm {
     public ListGrid removeListGrid(String subCollectionFieldName) {
         ListGrid lgToRemove = null;
         Tab containingTab = null;
+        FieldGroup containingGroup = null;
 
-        findLg: {
+        findLg:
+        {
             for (Tab tab : tabs) {
                 for (ListGrid lg : tab.getListGrids()) {
                     if (subCollectionFieldName.equals(lg.getSubCollectionFieldName())) {
@@ -286,84 +308,156 @@ public class EntityForm {
                         break findLg;
                     }
                 }
+                for (FieldGroup group : tab.getFieldGroups()) {
+                    for (ListGrid lg : group.getListGrids()) {
+                        if (subCollectionFieldName.equals(lg.getSubCollectionFieldName())) {
+                            lgToRemove = lg;
+                            containingTab = tab;
+                            containingGroup = group;
+                            break findLg;
+                        }
+                    }
+                }
             }
         }
 
-        if (lgToRemove != null) {
+        if (lgToRemove != null && containingGroup != null) {
+            containingGroup.removeListGrid(lgToRemove);
+        } else if (lgToRemove != null && containingGroup == null) {
             containingTab.removeListGrid(lgToRemove);
         }
 
-        if (containingTab != null && containingTab.getListGrids().size() == 0 && containingTab.getFields().size() == 0) {
+        if (containingGroup != null && containingGroup.getGroupItems().isEmpty()) {
+            removeGroup(containingGroup);
+        } else if (containingTab != null && containingTab.getListGrids().isEmpty() && containingTab.getFields().isEmpty()) {
             removeTab(containingTab);
         }
 
         return lgToRemove;
     }
 
-    public void addHiddenField(Field field) {
+    public void addHiddenField(ClassMetadata cmd, Field field) {
         if (StringUtils.isBlank(field.getFieldType())) {
             field.setFieldType(SupportedFieldType.HIDDEN.toString());
         }
-        addField(field, HIDDEN_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
+        addField(cmd, field, HIDDEN_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 
-    public void addField(Field field) {
-        addField(field, DEFAULT_GROUP_NAME, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
+    public void addField(ClassMetadata cmd, Field field) {
+        addField(cmd, field, DEFAULT_GROUP_NAME, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 
-    public void addMapKeyField(Field field) {
-        addField(field, MAP_KEY_GROUP, 0, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
+    public void addMapKeyField(ClassMetadata cmd, Field field) {
+        addField(cmd, field, MAP_KEY_GROUP, 0, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 
-    public void addField(Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
-        groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
-        groupOrder = groupOrder == null ? DEFAULT_GROUP_ORDER : groupOrder;
-        tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
-        tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
+    public void addField(ClassMetadata cmd, Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
+        // Note: If a field creates a new tab/group (expected to be a rare occurrence), the firstTab/firstGroup may change
+        //      as fields are added for a given EntityForm.
+        Tab firstTab = tabs.isEmpty() ? null : tabs.first();
+        FieldGroup firstGroup = firstTab == null || firstTab.getFieldGroups().isEmpty() ? null : ((TreeSet<FieldGroup>) firstTab.getFieldGroups()).first();
 
-        // Tabs and groups should be looked up by their display, translated name since 2 unique strings can display the same
-        // thing when they are looked up in message bundles after display
-        // When displayed on the form the duplicate groups and tabs look funny
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getMessageSource() != null) {
-            groupName = context.getMessageSource().getMessage(groupName, null, groupName, context.getJavaLocale());
-            tabName = context.getMessageSource().getMessage(tabName, null, tabName, context.getJavaLocale());
+        tabName = tabName == null ? (firstTab == null || firstTab.getKey() == null ? DEFAULT_TAB_NAME : firstTab.getKey()) : tabName;
+        tabOrder = tabOrder == null ? (firstTab == null || firstTab.getOrder() == null ? DEFAULT_TAB_ORDER : firstTab.getOrder()) : tabOrder;
+        groupName = groupName == null ? (firstGroup == null || firstGroup.getKey() == null ? DEFAULT_GROUP_NAME : firstGroup.getKey()) : groupName;
+        groupOrder = groupOrder == null ? (firstGroup == null || firstGroup.getOrder() == null ? DEFAULT_GROUP_ORDER : firstGroup.getOrder()) : groupOrder;
+
+        // Check CMD for Tab/Group name overrides so that Tabs/Groups can be properly found by their display names
+        boolean groupFound = false;
+        Map<String, TabMetadata> tabMetadataMap = cmd.getTabAndGroupMetadata();
+        if (tabMetadataMap != null) {
+            for (String tabKey : tabMetadataMap.keySet()) {
+                Map<String, GroupMetadata> groupMetadataMap = tabMetadataMap.get(tabKey).getGroupMetadata();
+                for (String groupKey : groupMetadataMap.keySet()) {
+                    if (groupKey.equals(groupName) || groupMetadataMap.get(groupKey).getGroupName().equals(groupName)) {
+                        groupName = groupMetadataMap.get(groupKey).getGroupName();
+                        groupFound = true;
+                        break;
+                    }
+                }
+                if (groupFound) {
+                    break;
+                }
+                if ((tabKey.equals(tabName)) ||
+                        (tabMetadataMap.get(tabKey).getTabName() != null
+                                && tabMetadataMap.get(tabKey).getTabName().equals(tabName))) {
+                    tabName = tabMetadataMap.get(tabKey).getTabName();
+                }
+            }
         }
 
-        Tab tab = findTab(tabName);
-        if (tab == null) {
-            tab = new Tab();
-            tab.setTitle(tabName);
-            tab.setOrder(tabOrder);
-            tabs.add(tab);
-        }
-
-        FieldGroup fieldGroup = tab.findGroup(groupName);
+        FieldGroup fieldGroup = findGroup(groupName);
         if (fieldGroup == null) {
+            Tab tab = findTab(tabName);
+            if (tab == null) {
+                tab = new Tab();
+                tab.setKey(tabName);
+                tab.setTitle(BLCMessageUtils.getMessage(tabName));
+                tab.setOrder(tabOrder);
+                tabs.add(tab);
+            }
+
+            // Add new group for the field to be placed into
+            // If group exists, this code will not run
             fieldGroup = new FieldGroup();
-            fieldGroup.setTitle(groupName);
+            fieldGroup.setKey(groupName);
+            fieldGroup.setTitle(BLCMessageUtils.getMessage(groupName));
             fieldGroup.setOrder(groupOrder);
             tab.getFieldGroups().add(fieldGroup);
         }
 
         fieldGroup.addField(field);
+
+        // Make sure to add the field to the fields "cache".
+        // If getFields() was called before this field was added, the "cache" was set. Since we're
+        // adding another field here, we need to add the field to the fields "cache".
+        // If the fields map is null, then the "cache" is not set. Therefore, we should not add this field,
+        // but instead wait for getFields() to build the entire map.
+        if (fields != null) {
+            fields.put(field.getName(), field);
+        }
     }
 
-    public void addListGrid(ListGrid listGrid, String tabName, Integer tabOrder) {
-        // Tabs should be looked up and referenced by their display name
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getMessageSource() != null) {
-            tabName = context.getMessageSource().getMessage(tabName, null, tabName, context.getJavaLocale());
-        }
-        Tab tab = findTab(tabName);
-        if (tab == null) {
-            tab = new Tab();
-            tab.setTitle(tabName);
-            tab.setOrder(tabOrder);
-            tabs.add(tab);
+    public void addListGrid(ClassMetadata cmd, ListGrid listGrid, String tabName, Integer tabOrder, String groupName, boolean isTabPresent) {
+        groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
+        tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
+        tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
+
+        // Check CMD for Tab/Group name overrides so that Tabs/Groups can be properly found by their display names
+        boolean groupFound = false;
+        Map<String, TabMetadata> tabMetadataMap = cmd.getTabAndGroupMetadata();
+        for (String tabKey : tabMetadataMap.keySet()) {
+            Map<String, GroupMetadata> groupMetadataMap = tabMetadataMap.get(tabKey).getGroupMetadata();
+            for (String groupKey : groupMetadataMap.keySet()) {
+                if (groupKey.equals(groupName) || groupMetadataMap.get(groupKey).getGroupName().equals(groupName)) {
+                    groupName = groupMetadataMap.get(groupKey).getGroupName();
+                    groupFound = true;
+                    break;
+                }
+            }
+            if (groupFound) {
+                break;
+            }
+            if (tabKey.equals(tabName) || tabMetadataMap.get(tabKey).getTabName().equals(tabName)) {
+                tabName = tabMetadataMap.get(tabKey).getTabName();
+            }
         }
 
-        tab.getListGrids().add(listGrid);
+        FieldGroup fieldGroup = findGroup(groupName);
+        Tab tab = findTab(tabName);
+        if (fieldGroup != null) {
+            fieldGroup.addListGrid(listGrid);
+        } else if (fieldGroup == null && tab != null) {
+            tab.getListGrids().add(listGrid);
+        } else {
+            tab = new Tab();
+            tab.setKey(tabName);
+            tab.setTitle(BLCMessageUtils.getMessage(tabName));
+            tab.setOrder(tabOrder);
+            tab.setTabsPresent(isTabPresent);
+            tabs.add(tab);
+            tab.getListGrids().add(listGrid);
+        }
     }
 
     /**
@@ -432,7 +526,7 @@ public class EntityForm {
 
         if (getAllListGrids() != null) {
             for (ListGrid lg : getAllListGrids()) {
-                lg.setReadOnly(readOnly);
+                lg.setIsReadOnly(readOnly);
             }
         }
 
@@ -552,7 +646,8 @@ public class EntityForm {
     }
 
     public void setTabs(Set<Tab> tabs) {
-        this.tabs = tabs;
+        this.tabs.clear();
+        this.tabs.addAll(tabs);
     }
 
     public Map<String, EntityForm> getDynamicForms() {
@@ -633,6 +728,36 @@ public class EntityForm {
 
     public void setJsErrorMap(String jsErrorMap) {
         this.jsErrorMap = jsErrorMap;
+    }
+
+    public String addTabFromTabMetadata(TabMetadata tabMetadata) {
+        Tab newTab = new Tab();
+        newTab.setKey(tabMetadata.getTabName());
+        if (tabMetadata.getTabName() != null) {
+            newTab.setTitle(BLCMessageUtils.getMessage(tabMetadata.getTabName()));
+        }
+        newTab.setOrder(tabMetadata.getTabOrder());
+        tabs.add(newTab);
+        return newTab.getKey();
+    }
+
+    public void addGroupFromGroupMetadata(GroupMetadata groupMetadata, String unprocessedTabName) {
+        FieldGroup newGroup = new FieldGroup();
+        newGroup.setKey(groupMetadata.getGroupName());
+        newGroup.setTitle(BLCMessageUtils.getMessage(groupMetadata.getGroupName()));
+        newGroup.setOrder(groupMetadata.getGroupOrder());
+        newGroup.setColumn(groupMetadata.getColumn());
+        newGroup.setIsUntitled(groupMetadata.getUntitled());
+        newGroup.setToolTip(groupMetadata.getTooltip());
+        newGroup.setCollapsed(groupMetadata.getCollapsed());
+        newGroup.setToolTip(groupMetadata.getTooltip());
+
+        Tab tab = findTab(unprocessedTabName);
+        if (groupMetadata.getColumn() != DEFAULT_COLUMN) {
+            tab.setIsMultiColumn(true);
+        }
+
+        tab.getFieldGroups().add(newGroup);
     }
 
 }

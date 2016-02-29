@@ -19,13 +19,14 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 
 import java.io.Serializable;
 import java.util.List;
 
-public interface FulfillmentGroupItem extends Serializable {
+public interface FulfillmentGroupItem extends Serializable, MultiTenantCloneable<FulfillmentGroupItem> {
 
     public Long getId();
 

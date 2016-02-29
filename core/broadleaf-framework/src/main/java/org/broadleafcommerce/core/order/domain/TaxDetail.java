@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 
@@ -31,7 +32,7 @@ import java.math.BigDecimal;
  * including a tax type, amount, and rate.
  *
  */
-public interface TaxDetail extends Serializable {
+public interface TaxDetail extends Serializable, MultiTenantCloneable<TaxDetail> {
 
     /**
      * Gets the id.

@@ -21,10 +21,8 @@ package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -160,9 +158,5 @@ public interface StaticAsset extends Serializable, MultiTenantCloneable<StaticAs
      * @param storageType
      */
     public void setStorageType(StorageType storageType);
-
-    public AdminAuditable getAuditable();
-
-    public void setAuditable(AdminAuditable auditable);
 
 }

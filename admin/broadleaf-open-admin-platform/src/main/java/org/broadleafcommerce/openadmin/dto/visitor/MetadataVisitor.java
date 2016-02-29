@@ -22,7 +22,9 @@ package org.broadleafcommerce.openadmin.dto.visitor;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
 
 /**
  * @author Jeff Fischer
@@ -36,4 +38,8 @@ public interface MetadataVisitor {
     public void visit(AdornedTargetCollectionMetadata metadata);
 
     public void visit(MapMetadata metadata);
+
+    public void visit(GroupMetadata metadata);
+
+    public void visit(TabMetadata metadata);
 }

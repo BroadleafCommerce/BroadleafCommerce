@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.profile.core.domain.Address;
 
 /**
@@ -30,7 +31,7 @@ import org.broadleafcommerce.profile.core.domain.Address;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public interface OrderMultishipOption {
+public interface OrderMultishipOption extends MultiTenantCloneable<OrderMultishipOption>{
 
     /**
      * Returns the internal id of this OrderMultishipOption

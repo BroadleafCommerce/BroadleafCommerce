@@ -20,8 +20,10 @@
 package org.broadleafcommerce.openadmin.dto.override;
 
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.AdornedTargetAddMethodType;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.RuleBuilderDisplayType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.UnspecifiedBooleanType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -34,13 +36,14 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-public class FieldMetadataOverride {
+public class FieldMetadataOverride extends MetadataOverride {
 
     //fields everyone depends on
     private Boolean excluded;
     private String friendlyName;
+    private String addFriendlyName;
     private String securityLevel;
-    private Integer order;
+    private Boolean lazyFetch;
 
     public Boolean getExcluded() {
         return excluded;
@@ -58,20 +61,20 @@ public class FieldMetadataOverride {
         this.friendlyName = friendlyName;
     }
 
+    public String getAddFriendlyName() {
+        return addFriendlyName;
+    }
+
+    public void setAddFriendlyName(String addFriendlyName) {
+        this.addFriendlyName = addFriendlyName;
+    }
+
     public String getSecurityLevel() {
         return securityLevel;
     }
 
     public void setSecurityLevel(String securityLevel) {
         this.securityLevel = securityLevel;
-    }
-
-    public Integer getOrder() {
-        return order;
-    }
-
-    public void setOrder(Integer order) {
-        this.order = order;
     }
 
     //basic fields
@@ -101,11 +104,13 @@ public class FieldMetadataOverride {
     private Integer tabOrder;
     private Boolean groupCollapsed;
     private SupportedFieldType explicitFieldType;
+    private RuleBuilderDisplayType displayType;
     private Boolean largeEntry;
     private Boolean prominent;
     private String columnWidth;
     private String broadleafEnumeration;
-    private String fieldComponentRenderer;
+    private Boolean hideEnumerationIfEmpty;
+    private SupportedFieldType fieldComponentRenderer;
     private Boolean readOnly;
     private Map<String, List<Map<String, String>>> validationConfigurations;
     private Boolean requiredOverride;
@@ -277,6 +282,14 @@ public class FieldMetadataOverride {
         this.explicitFieldType = fieldType;
     }
 
+    public RuleBuilderDisplayType getDisplayType() {
+        return displayType;
+    }
+
+    public void setDisplayType(RuleBuilderDisplayType displayType) {
+        this.displayType = displayType;
+    }
+
     public String getGroup() {
         return group;
     }
@@ -317,13 +330,20 @@ public class FieldMetadataOverride {
         this.broadleafEnumeration = broadleafEnumeration;
     }
 
-    
-    public String getFieldComponentRenderer() {
-        return fieldComponentRenderer;
+    public Boolean getHideEnumerationIfEmpty() {
+        return hideEnumerationIfEmpty;
+    }
+
+    public void setHideEnumerationIfEmpty(Boolean hideEnumerationIfEmpty) {
+        this.hideEnumerationIfEmpty = hideEnumerationIfEmpty;
     }
 
     
-    public void setFieldComponentRenderer(String fieldComponentRenderer) {
+    public SupportedFieldType getFieldComponentRenderer() {
+        return fieldComponentRenderer;
+    }
+
+    public void setFieldComponentRenderer(SupportedFieldType fieldComponentRenderer) {
         this.fieldComponentRenderer = fieldComponentRenderer;
     }
 
@@ -355,10 +375,12 @@ public class FieldMetadataOverride {
         this.tab = tab;
     }
 
+    @Deprecated
     public Integer getTabOrder() {
         return tabOrder;
     }
 
+    @Deprecated
     public void setTabOrder(Integer tabOrder) {
         this.tabOrder = tabOrder;
     }
@@ -367,10 +389,12 @@ public class FieldMetadataOverride {
         this.readOnly = readOnly;
     }
 
+    @Deprecated
     public Integer getGroupOrder() {
         return groupOrder;
     }
 
+    @Deprecated
     public void setGroupOrder(Integer groupOrder) {
         this.groupOrder = groupOrder;
     }
@@ -399,10 +423,12 @@ public class FieldMetadataOverride {
         this.requiredOverride = requiredOverride;
     }
 
+    @Deprecated
     public Boolean getGroupCollapsed() {
         return groupCollapsed;
     }
 
+    @Deprecated
     public void setGroupCollapsed(Boolean groupCollapsed) {
         this.groupCollapsed = groupCollapsed;
     }
@@ -535,6 +561,7 @@ public class FieldMetadataOverride {
     private OperationType fetchType;
     private OperationType inspectType;
     private Boolean useServerSideInspectionCache;
+    private String selectizeVisibleField;
 
     public String[] getCustomCriteria() {
         return customCriteria;
@@ -592,6 +619,14 @@ public class FieldMetadataOverride {
         this.updateType = updateType;
     }
 
+    public String getSelectizeVisibleField() {
+        return selectizeVisibleField;
+    }
+
+    public void setSelectizeVisibleField(String selectizeVisibleField) {
+        this.selectizeVisibleField = selectizeVisibleField;
+    }
+
     //basic collection fields
     private AddMethodType addMethodType;
     private String manyToField;
@@ -623,6 +658,7 @@ public class FieldMetadataOverride {
     private String sortProperty;
     private Boolean sortAscending;
     private Boolean ignoreAdornedProperties;
+    private AdornedTargetAddMethodType adornedTargetAddMethodType;
 
     public String[] getGridVisibleFields() {
         return gridVisibleFields;
@@ -702,6 +738,14 @@ public class FieldMetadataOverride {
 
     public void setTargetObjectProperty(String targetObjectProperty) {
         this.targetObjectProperty = targetObjectProperty;
+    }
+
+    public AdornedTargetAddMethodType getAdornedTargetAddMethodType() {
+        return adornedTargetAddMethodType;
+    }
+
+    public void setAdornedTargetAddMethodType(AdornedTargetAddMethodType adornedTargetAddMethodType) {
+        this.adornedTargetAddMethodType = adornedTargetAddMethodType;
     }
 
     //Map fields
@@ -865,6 +909,14 @@ public class FieldMetadataOverride {
 
     public void setMapKeyValueProperty(String mapKeyValueProperty) {
         this.mapKeyValueProperty = mapKeyValueProperty;
+    }
+
+    public Boolean getLazyFetch() {
+        return lazyFetch;
+    }
+
+    public void setLazyFetch(Boolean lazyFetch) {
+        this.lazyFetch = lazyFetch;
     }
     
 }

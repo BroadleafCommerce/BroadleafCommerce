@@ -38,6 +38,7 @@ public class Field {
     protected String name;
     protected String friendlyName;
     protected String fieldType;
+    protected String displayType;
     protected String value;
     protected String displayValue;
     protected String fieldComponentRenderer;
@@ -85,7 +86,12 @@ public class Field {
         setFieldType(fieldType);
         return this;
     }
-    
+
+    public Field withDisplayType(String displayType) {
+        setDisplayType(displayType);
+        return this;
+    }
+
     public Field withFieldComponentRenderer(String fieldComponentRenderer) {
         setFieldComponentRenderer(fieldComponentRenderer);
         return this;
@@ -213,8 +219,11 @@ public class Field {
     public Boolean getIsVisible() {
         String[] invisibleTypes = new String[] {
                 SupportedFieldType.ID.toString(),
+                SupportedFieldType.ID.toString().toLowerCase(),
                 SupportedFieldType.HIDDEN.toString(),
-                SupportedFieldType.FOREIGN_KEY.toString()
+                SupportedFieldType.HIDDEN.toString().toLowerCase(),
+                SupportedFieldType.FOREIGN_KEY.toString(),
+                SupportedFieldType.FOREIGN_KEY.toString().toLowerCase()
         };
         
         return isVisible == null ? !ArrayUtils.contains(invisibleTypes, fieldType) : isVisible;
@@ -318,19 +327,18 @@ public class Field {
         this.fieldType = fieldType;
     }
 
-    /**
-     * Returns the component renderer for the field.  Defaults to the fieldType unless otherwise set.
-     * 
-     * @return String
-     */
+    public String getDisplayType() {
+        return displayType;
+    }
+
+    public void setDisplayType(String displayType) {
+        this.displayType = displayType;
+    }
+
     public String getFieldComponentRenderer() {
-        if ((StringUtils.isEmpty(fieldComponentRenderer) || fieldComponentRenderer == SupportedFieldType.UNKNOWN.toString()) && fieldType != null) {
-            return fieldType.toString();
-        }
         return fieldComponentRenderer;
     }
 
-    
     public void setFieldComponentRenderer(String fieldComponentRenderer) {
         this.fieldComponentRenderer = fieldComponentRenderer;
     }

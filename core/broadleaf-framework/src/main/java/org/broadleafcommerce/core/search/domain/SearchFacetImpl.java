@@ -19,56 +19,42 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 
-import com.google.common.base.Strings;
-
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SEARCH_FACET")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD)
 })
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
-public class SearchFacetImpl implements SearchFacet, Serializable {
+public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEntity, SearchFacetAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
@@ -83,35 +69,35 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
         }
     )
     @Column(name = "SEARCH_FACET_ID")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = GroupName.General, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_name", group = "SearchFacetImpl_description",
+    @AdminPresentation(friendlyName = "SearchFacetImpl_name", group = GroupName.General,
             groupOrder = 2, order = 2, prominent = true, translatable = true, gridOrder = 500, requiredOverride = RequiredOverride.REQUIRED)
     protected String name;
     
     @Column(name = "LABEL")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description",
-            groupOrder = 1000, prominent = true, translatable = true, gridOrder = 1000)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = GroupName.General,
+            prominent = true, translatable = true, gridOrder = 1000)
     protected String label;
 
-    @ManyToOne(optional=false, targetEntity = IndexFieldTypeImpl.class)
+    @ManyToOne(targetEntity = IndexFieldTypeImpl.class)
     @JoinColumn(name = "INDEX_FIELD_TYPE_ID")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_field", order = 2000, group = "SearchFacetImpl_description",
+    @AdminPresentation(friendlyName = "SearchFacetImpl_field", order = 2000, group = GroupName.General,
             prominent = true, gridOrder = 2000, requiredOverride = RequiredOverride.REQUIRED)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "indexField.field.friendlyName")
     protected IndexFieldType fieldType;
-    
+
     @Column(name =  "SHOW_ON_SEARCH")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 4000,
-            group = "SearchFacetImpl_description", groupOrder = 1, prominent = false,
+    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 2000,
+            group = GroupName.Options, prominent = false,
             tooltip = "SearchFacetImpl_showOnSearchTooltip")
     protected Boolean showOnSearch = false;
 
     @Column(name = "USE_FACET_RANGES")
     @AdminPresentation(friendlyName = "SearchFacetImpl_useFacetRanges", order = 5000,
-            group = "SearchFacetImpl_description",
+            group = GroupName.Ranges,
             groupOrder = 1,
             tooltip = "SearchFacetImpl_useFacetRangesTooltip",
             defaultValue = "false")
@@ -119,28 +105,25 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     
     @Column(name = "SEARCH_DISPLAY_PRIORITY")
     @AdminPresentation(friendlyName = "SearchFacetImpl_searchPriority",
-            order = 5000,
-            group = "SearchFacetImpl_description",
-            groupOrder = 1,
+            order = 6000,
+            group = GroupName.Options,
             tooltip = "SearchFacetImpl_searchPriorityTooltip",
-            tab = "SearchFacetImpl_Advanced_tab",
-            tabOrder = 2000,
             visibility = VisibilityEnum.GRID_HIDDEN)
     protected Integer searchDisplayPriority = 1;
     
     @Column(name = "MULTISELECT")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 6000,
-            group = "SearchFacetImpl_description",
-            groupOrder = 1,
+    @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 5000,
+            group = GroupName.Options,
             tooltip = "SearchFacetImpl_multiselectTooltip",
-            tab = "SearchFacetImpl_Advanced_tab",
-            tabOrder = 2000)
+         defaultValue = "false")
     protected Boolean canMultiselect = true;
     
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "newRangeTitle")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST,
+            friendlyName = "newRangeTitle",
+            group = GroupName.Ranges)
     protected List<SearchFacetRange> searchFacetRanges  = new ArrayList<SearchFacetRange>();
     
     @OneToMany(mappedBy = "searchFacet", targetEntity = RequiredFacetImpl.class, cascade = {CascadeType.ALL})
@@ -148,18 +131,16 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @AdminPresentationAdornedTargetCollection(targetObjectProperty = "requiredFacet", friendlyName = "requiredFacetTitle",
             gridVisibleFields = { "name", "label", "fieldType.indexField.field.friendlyName" },
-            tab = "SearchFacetImpl_Advanced_tab",
+            group = GroupName.Dependent,
             tabOrder = 4000)
     protected List<RequiredFacet> requiredFacets = new ArrayList<RequiredFacet>();
     
     @Column(name = "REQUIRES_ALL_DEPENDENT")
     @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets",
             order = 7000,
-            group = "SearchFacetImpl_description",
-            groupOrder = 1,
             tooltip = "SearchFacetImpl_requiresAllDependentFacetsTooltip",
-            tab = "SearchFacetImpl_Advanced_tab",
-            tabOrder = 3000)
+            group = GroupName.Dependent,
+            defaultValue = "false")
     protected Boolean requiresAllDependentFacets = false;
 
     @Override
@@ -329,5 +310,10 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
         }
 
         return createResponse;
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getLabel();
     }
 }

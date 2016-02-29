@@ -34,6 +34,14 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.admin.web.controller.*"/>
     </context:component-scan>
 
+    <bean id="blFieldMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blCustomerUsernameFieldMetadataProvider"/>
+            </list>
+        </property>
+    </bean>
+
     <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
@@ -48,6 +56,8 @@
                 <ref bean="blSearchFacetRangeCustomPersistenceHandler" />
                 <ref bean="blIndexFieldCustomPersistenceHandler" />
                 <ref bean="blProductOptionsCustomPersistenceHandler" />
+                <ref bean="blFieldOnlyPropertiesCustomPersistenceHandler" />
+                <ref bean="blSearchFacetCustomPersistenceHandler" />
             </list>
         </property>
     </bean>
@@ -246,8 +256,12 @@
         <property name="sourceList">
             <list>
                 <value>admin/catalog/product.js</value>
+                <value>admin/catalog/productBundle.js</value>
+                <value>admin/catalog/productOptions.js</value>
                 <value>admin/catalog/offer.js</value>
                 <value>admin/catalog/category.js</value>
+                <value>admin/customers/customer.js</value>
+                <value>admin/users/adminUser.js</value>
             </list>
         </property>
     </bean>

@@ -1,4 +1,4 @@
-<div class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" th:classappend="${modalClass}">
     <div class="modal-header">
     
         <h3 id="myModalLabel" th:inline="text" th:switch="${modalHeaderType}">
@@ -14,9 +14,12 @@
             </span>
             
             <span th:case="'addCollectionItem'" th:remove="tag">
-                [[#{modal.title.add}]] 
-                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" />
-                <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" />
+                [[#{modal.title.add}]]
+                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.addFriendlyName)}">
+                    <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" />
+                    <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" />
+                </span>
+                <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.addFriendlyName)}" th:text="#{${collectionProperty.metadata.addFriendlyName}}"></span>
             </span>
             
             <span th:case="'selectCollectionItem'" th:remove="tag">
@@ -54,11 +57,14 @@
             </span>
 
             <span th:case="'custom'" th:remove="tag">
-                [[#{${modalTitle}}]]
+                <span th:remove="tag" th:utext="#{${modalTitle}}" />
             </span>
-            
+
+            <span th:case="'customWithVar'" th:remove="tag" th:utext="#{${modalTitle}(${modalTitleVar})}">
+            </span>
+
             <span th:case="*" th:remove="tag">
-                [[#{modal.title.default}]]
+                <span th:remove="tag" th:utext="#{modal.title.default}" />
             </span>
         </h3>
         
@@ -66,7 +72,7 @@
     </div>
     
     <div class="modal-body">
-        <div th:substituteby="${'views/' + viewType}" />
+        <div th:include="${'views/' + viewType}" th:with="inModal=(${showActions == null}? true : false)" th:remove="tag"/>
     </div>
     
 </div>

@@ -264,7 +264,7 @@
             </list>
         </property>
     </bean>
-    
+
     <!--  Spring 4.1 Resource Resolvers -->
     <bean id="blJsResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
@@ -278,7 +278,7 @@
             <list>         
             </list>
         </property>
-    </bean>     
+    </bean>
 
     <!--  Spring 4.1 Resource Transformers -->
     <bean id="blJsResourceTransformers" class="org.springframework.beans.factory.config.ListFactoryBean" >
@@ -298,7 +298,7 @@
             </list>
         </property>
     </bean>
-    
+
     <!--  Spring 4.1 Site Resource Handling Base Classes -->
     <bean id="siteResourceHttpRequestHandlerBase" abstract="true" 
             class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">
@@ -313,13 +313,12 @@
     
     <bean id="siteCssResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
         <property name="locations" ref="blCssLocations" />
-        <property name="resourceTransformers" ref="blCssResourceTransformers" />    
+        <property name="resourceTransformers" ref="blCssResourceTransformers" />
     </bean>
-    
+
     <bean id="siteImageResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
         <property name="locations" ref="blImageLocations" />
-        <property name="resourceTransformers" ref="blCssResourceTransformers" />    
-    </bean> 
+    </bean>
     
     <bean id="siteFontResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
         <property name="locations" ref="blFontLocations"/>            
@@ -433,16 +432,17 @@
         <property name="conditionalProperty" value="enable.site.map.mt.disc"/>
     </bean>
 
-    <bean id="blOptionalIncludeAdminUserTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+    <bean id="blOptionalIncludeAdminMainEntityWeaveMap" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry key="archiveOnly" value="org.broadleafcommerce.common.weave.WeaveArchiveStatus"/>
+                <entry key="auditableOnly" value="org.broadleafcommerce.openadmin.weave.WeaveAdminAuditable"/>
             </map>
         </property>
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blOptionalIncludeAdminUserTokenMap"/>
+        <property name="collectionRef" value="blOptionalIncludeAdminMainEntityWeaveMap"/>
         <property name="targetRef" value="blDirectCopyTransformTokenMap"/>
     </bean>
 

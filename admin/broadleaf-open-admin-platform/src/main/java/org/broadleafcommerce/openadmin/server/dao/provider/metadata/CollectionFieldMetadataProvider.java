@@ -40,12 +40,13 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
+import org.broadleafcommerce.openadmin.dto.override.MetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -64,7 +65,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
 
     private static final Log LOG = LogFactory.getLog(CollectionFieldMetadataProvider.class);
 
-    protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    protected boolean canHandleFieldForConfiguredMetadata(AddFieldMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         AdminPresentationCollection annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationCollection.class);
         return annot != null;
     }
@@ -76,9 +77,9 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
     }
 
     @Override
-    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse addMetadata(AddFieldMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleFieldForConfiguredMetadata(addMetadataRequest, metadata)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         AdminPresentationCollection annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationCollection
                 .class);
@@ -87,13 +88,13 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         buildCollectionMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(),
                 metadata, info, override, addMetadataRequest.getPrefix());
         setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     @Override
-    public FieldProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleAnnotationOverride(overrideViaAnnotationRequest, metadata)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides = new HashMap<String, AdminPresentationCollectionOverride>();
 
@@ -154,50 +155,53 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             }
         }
 
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     @Override
-    public FieldProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
-        Map<String, FieldMetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getDynamicEntityDao(), overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
+    public MetadataProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
+        Map<String, MetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getDynamicEntityDao(), overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
-                final FieldMetadataOverride localMetadata = overrides.get(propertyName);
-                for (String key : metadata.keySet()) {
-                    if (key.equals(propertyName)) {
-                        try {
-                            if (metadata.get(key) instanceof BasicCollectionMetadata) {
-                                BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) metadata.get(key);
-                                if (serverMetadata.getTargetClass() != null)  {
-                                    Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
-                                    Class<?> parentClass = null;
-                                    if (serverMetadata.getOwningClass() != null) {
-                                        parentClass = Class.forName(serverMetadata.getOwningClass());
-                                    }
-                                    String fieldName = serverMetadata.getFieldName();
-                                    Field field = overrideViaXmlRequest.getDynamicEntityDao().getFieldManager().getField(targetClass, fieldName);
-                                    Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                                    temp.put(field.getName(), serverMetadata);
-                                    FieldInfo info = buildFieldInfo(field);
-                                    buildCollectionMetadata(parentClass, targetClass, temp, info, localMetadata, overrideViaXmlRequest.getPrefix());
-                                    serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
-                                    metadata.put(key, serverMetadata);
-                                    if (overrideViaXmlRequest.getParentExcluded()) {
-                                        if (LOG.isDebugEnabled()) {
-                                            LOG.debug("applyCollectionMetadataOverrides:Excluding " + key + "because parent is marked as excluded.");
+                MetadataOverride localMetadata = overrides.get(propertyName);
+                if (localMetadata instanceof FieldMetadataOverride) {
+                    FieldMetadataOverride localFieldMetadata = (FieldMetadataOverride) localMetadata;
+                    for (String key : metadata.keySet()) {
+                        if (key.equals(propertyName)) {
+                            try {
+                                if (metadata.get(key) instanceof BasicCollectionMetadata) {
+                                    BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) metadata.get(key);
+                                    if (serverMetadata.getTargetClass() != null) {
+                                        Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
+                                        Class<?> parentClass = null;
+                                        if (serverMetadata.getOwningClass() != null) {
+                                            parentClass = Class.forName(serverMetadata.getOwningClass());
                                         }
-                                        serverMetadata.setExcluded(true);
+                                        String fieldName = serverMetadata.getFieldName();
+                                        Field field = overrideViaXmlRequest.getDynamicEntityDao().getFieldManager().getField(targetClass, fieldName);
+                                        Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                                        temp.put(field.getName(), serverMetadata);
+                                        FieldInfo info = buildFieldInfo(field);
+                                        buildCollectionMetadata(parentClass, targetClass, temp, info, localFieldMetadata, overrideViaXmlRequest.getPrefix());
+                                        serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
+                                        metadata.put(key, serverMetadata);
+                                        if (overrideViaXmlRequest.getParentExcluded()) {
+                                            if (LOG.isDebugEnabled()) {
+                                                LOG.debug("applyCollectionMetadataOverrides:Excluding " + key + "because parent is marked as excluded.");
+                                            }
+                                            serverMetadata.setExcluded(true);
+                                        }
                                     }
                                 }
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
                             }
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
                         }
                     }
                 }
             }
         }
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     protected void buildAdminPresentationCollectionOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides, String propertyName, String key, DynamicEntityDao dynamicEntityDao) {
@@ -266,6 +270,8 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             String stringValue = entry.getValue().overrideValue();
             if (entry.getKey().equals(PropertyType.AdminPresentationCollection.ADDTYPE)) {
                 fieldMetadataOverride.setAddType(OperationType.valueOf(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SELECTIZEVISIBLEFIELD)) {
+                fieldMetadataOverride.setSelectizeVisibleField(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.CURRENCYCODEFIELD)) {
                 fieldMetadataOverride.setCurrencyCodeField(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.CUSTOMCRITERIA)) {
@@ -276,6 +282,8 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                         Boolean.parseBoolean(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.FRIENDLYNAME)) {
                 fieldMetadataOverride.setFriendlyName(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.ADDFRIENDLYNAME)) {
+                fieldMetadataOverride.setAddFriendlyName(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.MANYTOFIELD)) {
                 fieldMetadataOverride.setManyToField(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.OPERATIONTYPES)) {
@@ -328,17 +336,20 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         if (annotColl != null) {
             FieldMetadataOverride override = new FieldMetadataOverride();
             override.setAddMethodType(annotColl.addType());
+            override.setSelectizeVisibleField(annotColl.selectizeVisibleField());
             override.setManyToField(annotColl.manyToField());
             override.setCustomCriteria(annotColl.customCriteria());
             override.setUseServerSideInspectionCache(annotColl.useServerSideInspectionCache());
             override.setExcluded(annotColl.excluded());
             override.setFriendlyName(annotColl.friendlyName());
+            override.setAddFriendlyName(annotColl.addFriendlyName());
             override.setReadOnly(annotColl.readOnly());
             override.setSortProperty(annotColl.sortProperty());
             override.setSortAscending(annotColl.sortAscending());
             override.setOrder(annotColl.order());
             override.setTab(annotColl.tab());
             override.setTabOrder(annotColl.tabOrder());
+            override.setGroup(annotColl.group());
             override.setSecurityLevel(annotColl.securityLevel());
             override.setAddType(annotColl.operationTypes().addType());
             override.setFetchType(annotColl.operationTypes().fetchType());
@@ -347,6 +358,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             override.setInspectType(annotColl.operationTypes().inspectType());
             override.setShowIfProperty(annotColl.showIfProperty());
             override.setCurrencyCodeField(annotColl.currencyCodeField());
+            override.setLazyFetch(annotColl.lazyFetch());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationCollection annotation not found on Field");
@@ -396,7 +408,8 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             dtoOperationTypes.setUpdateType(collectionMetadata.getUpdateType());
         }
 
-        if (AddMethodType.LOOKUP == metadata.getAddMethodType()) {
+        if (AddMethodType.LOOKUP == metadata.getAddMethodType()
+                || AddMethodType.SELECTIZE_LOOKUP == metadata.getAddMethodType()) {
             dtoOperationTypes.setRemoveType(OperationType.NONDESTRUCTIVEREMOVE);
         }
 
@@ -498,9 +511,18 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             }
             metadata.setExcluded(collectionMetadata.getExcluded());
         }
+
+        if (collectionMetadata.getLazyFetch() != null) {
+            metadata.setLazyFetch(collectionMetadata.getLazyFetch());
+        }
+
         if (collectionMetadata.getFriendlyName() != null) {
             metadata.setFriendlyName(collectionMetadata.getFriendlyName());
         }
+        if (collectionMetadata.getAddFriendlyName() != null) {
+            metadata.setAddFriendlyName(collectionMetadata.getAddFriendlyName());
+        }
+
         if (collectionMetadata.getSecurityLevel() != null) {
             metadata.setSecurityLevel(collectionMetadata.getSecurityLevel());
         }
@@ -513,6 +535,10 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         }
         if (collectionMetadata.getTabOrder() != null) {
             metadata.setTabOrder(collectionMetadata.getTabOrder());
+        }
+
+        if (collectionMetadata.getGroup() != null) {
+            metadata.setGroup(collectionMetadata.getGroup());
         }
 
         if (collectionMetadata.getSortProperty() != null) {
@@ -529,6 +555,10 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
 
         if (collectionMetadata.getCurrencyCodeField()!=null) {
             metadata.setCurrencyCodeField(collectionMetadata.getCurrencyCodeField());
+        }
+
+        if (collectionMetadata.getSelectizeVisibleField()!=null) {
+            metadata.setSelectizeVisibleField(collectionMetadata.getSelectizeVisibleField());
         }
 
         attributes.put(field.getName(), metadata);

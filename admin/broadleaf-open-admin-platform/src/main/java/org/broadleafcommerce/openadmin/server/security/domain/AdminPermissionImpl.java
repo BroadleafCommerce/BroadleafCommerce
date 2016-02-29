@@ -98,8 +98,7 @@ public class AdminPermissionImpl implements AdminPermission {
 
     @Column(name = "PERMISSION_TYPE", nullable=false)
     @AdminPresentation(friendlyName = "AdminPermissionImpl_Permission_Type", order = 3000,
-            group = "AdminPermissionImpl_Permission",
-            prominent = true, gridOrder = 2000,
+            group = "AdminPermissionImpl_Permission", gridOrder = 2000,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.openadmin.server.security.service.type.PermissionType")
     protected String type;

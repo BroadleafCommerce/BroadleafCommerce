@@ -4,13 +4,13 @@
                                entityId=${entityForm.translationId},
                                propertyName=${field.translationFieldName},
                                isRte=${field.fieldType == 'HTML' || field.fieldType == 'HTML_BASIC'})}">
-        <img th:src="@{/img/admin/button/translate.png}" />&nbsp;translate
+        <i class="blc-icon-globe" style="color: #94AF39; vertical-align: middle;"></i><span th:utext="#{Translation}"></span>
     </a>
     <a class="show-translations" th:if="${df}"
        th:href="@{/translation(ceilingEntity=${df.translationCeilingEntity},
                                entityId=${df.translationId},
                                propertyName=${field.translationFieldName},
                                isRte=${field.fieldType == 'HTML' || field.fieldType == 'HTML_BASIC'})}">
-        <img th:src="@{/img/admin/button/translate.png}" />&nbsp;translate
+        <i class="blc-icon-globe" style="color: #94AF39; vertical-align: middle;"></i><span th:utext="#{Translation}"></span>
     </a>
 </div>

@@ -111,9 +111,10 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
     public void init(OrderItemPriceDetail orderItemPriceDetail, Offer offer, String reason) {
         this.orderItemPriceDetail = orderItemPriceDetail;
         setOffer(offer);
-        if (reason == null) {
-            this.reason = reason;
+        if (reason == null && offer != null) {
             this.reason = offer.getName();
+        } else {
+            this.reason = reason;
         }
 
     }
@@ -167,7 +168,7 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
 
     @Override
     public void setOfferName(String offerName) {
-        this.offerName = offer.getName();
+        this.offerName = offerName;
     }
 
     protected BroadleafCurrency getCurrency() {
@@ -294,13 +295,11 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
             return createResponse;
         }
         OrderItemPriceDetailAdjustment cloned = createResponse.getClone();
+        cloned.init(orderItemPriceDetail, offer, reason);
         cloned.setOfferName(offerName);
         cloned.setAppliedToSalePrice(appliedToSalePrice);
-        // dont clone
-        cloned.setOrderItemPriceDetail(orderItemPriceDetail);
         cloned.setSalesPriceValue(getSalesPriceValue());
         cloned.setRetailPriceValue(getRetailPriceValue());
-        cloned.setReason(reason);
         cloned.setValue(getValue());
         return createResponse;
     }

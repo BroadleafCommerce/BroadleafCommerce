@@ -23,10 +23,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
+import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -39,12 +42,11 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
-import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
-import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.ListUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +76,38 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
     }
 
     @Override
+    public Boolean canHandleRemove(PersistencePackage persistencePackage) {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+
+        if (IndexField.class.getName().equalsIgnoreCase(ceilingEntityFullyQualifiedClassname) ||
+                IndexFieldTypeImpl.class.getName().equalsIgnoreCase(ceilingEntityFullyQualifiedClassname)) {
+            return true;
+        }
+        return super.canHandleRemove(persistencePackage);
+    }
+
+    @Override
+    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(IndexField.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            Serializable instance = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]),primaryKey);
+            if (instance instanceof Status) {
+                ((Status)instance).setArchived('Y');
+                dynamicEntityDao.merge(instance);
+                return;
+            }
+
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to perform remove for entity: " + entity.getType()[0], ex);
+
+        }
+        super.remove(persistencePackage, dynamicEntityDao, helper);
+    }
+
+    @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
         try {
@@ -100,11 +134,11 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
         if (result.equals(ExtensionResultStatusType.NOT_HANDLED)) {
             // If there is no searchable field types then we need to add a default as String
             if (ListUtils.isEmpty(adminInstance.getFieldTypes())) {
-                PersistencePackage pp = createPersistencePackage(adminInstance, FieldType.TEXT);
-
-                PersistenceManager pm = PersistenceManagerFactory.getPersistenceManager();
-
-                pm.add(pp);
+                IndexFieldType indexFieldType = new IndexFieldTypeImpl();
+                indexFieldType.setFieldType(FieldType.TEXT);
+                indexFieldType.setIndexField(adminInstance);
+                adminInstance.getFieldTypes().add(indexFieldType);
+                adminInstance = dynamicEntityDao.merge(adminInstance);
             }
         }
 

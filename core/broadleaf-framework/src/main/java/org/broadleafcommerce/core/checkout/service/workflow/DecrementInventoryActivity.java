@@ -21,18 +21,13 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.inventory.service.ContextualInventoryService;
-import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 
 /**
@@ -56,42 +51,7 @@ public class DecrementInventoryActivity extends BaseActivity<ProcessContext<Chec
         List<OrderItem> orderItems = seed.getOrder().getOrderItems();
 
         //map to hold skus and quantity purchased
-        HashMap<Sku, Integer> skuInventoryMap = new HashMap<Sku, Integer>();
-
-        for (OrderItem orderItem : orderItems) {
-            if (orderItem instanceof DiscreteOrderItem) {
-                Sku sku = ((DiscreteOrderItem) orderItem).getSku();
-                Integer quantity = skuInventoryMap.get(sku);
-                if (quantity == null) {
-                    quantity = orderItem.getQuantity();
-                } else {
-                    quantity += orderItem.getQuantity();
-                }
-                if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                    skuInventoryMap.put(sku, quantity);
-                }
-            } else if (orderItem instanceof BundleOrderItem) {
-                BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
-                if (InventoryType.CHECK_QUANTITY.equals(bundleItem.getSku().getInventoryType())) {
-                    // add the bundle sku of quantities to decrement
-                    skuInventoryMap.put(bundleItem.getSku(), bundleItem.getQuantity());
-                }
-                
-                // Now add all of the discrete items within the bundl
-                List<DiscreteOrderItem> discreteItems = bundleItem.getDiscreteOrderItems();
-                for (DiscreteOrderItem discreteItem : discreteItems) {
-                    if (InventoryType.CHECK_QUANTITY.equals(discreteItem.getSku().getInventoryType())) {
-                        Integer quantity = skuInventoryMap.get(discreteItem.getSku());
-                        if (quantity == null) {
-                            quantity = (discreteItem.getQuantity() * bundleItem.getQuantity());
-                        } else {
-                            quantity += (discreteItem.getQuantity() * bundleItem.getQuantity());
-                        }
-                        skuInventoryMap.put(discreteItem.getSku(), quantity);
-                    }
-                }
-            }
-        }
+        Map<Sku, Integer> skuInventoryMap = inventoryService.buildSkuInventoryMap(seed.getOrder());
 
         Map<String, Object> rollbackState = new HashMap<String, Object>();
         if (getRollbackHandler() != null && !getAutomaticallyRegisterRollbackHandler()) {

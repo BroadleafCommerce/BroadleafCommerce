@@ -45,5 +45,8 @@ public class DirectCopyTransformTypes {
     public static final String MULTITENANT_ADMINUSER = "multiTenantAdminUser";
     //Class should receive fields describing ARCHIVE STATUS
     public static final String ARCHIVE_ONLY = "archiveOnly";
-
+    //Class should receive fields describing Admin Auditable
+    public static final String AUDITABLE_ONLY = "auditableOnly";
+    //Class should receive addition status related fields (these are included automatically with SANDBOX marked entities)
+    public static final String MULTI_PHASE_ADD = "multiPhaseAdd";
 }

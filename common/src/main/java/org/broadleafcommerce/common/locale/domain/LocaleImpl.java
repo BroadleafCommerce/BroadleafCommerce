@@ -48,7 +48,8 @@ import javax.persistence.Table;
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(friendlyName = "LocaleImpl_baseLocale")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
 public class LocaleImpl implements Locale, AdminMainEntity {
 
@@ -70,20 +71,20 @@ public class LocaleImpl implements Locale, AdminMainEntity {
     @Column (name = "DEFAULT_FLAG")
     @AdminPresentation(friendlyName = "LocaleImpl_Is_Default", order = 3, 
         group = "LocaleImpl_Details", 
-        prominent = true, gridOrder = 3)
+        prominent = false, gridOrder = 3)
     protected Boolean defaultFlag = false;
 
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(friendlyName = "LocaleImpl_Currency", order = 4, 
         group = "LocaleImpl_Details", 
-        prominent = true)
+        prominent = false)
     protected BroadleafCurrency defaultCurrency;
 
     @Column (name = "USE_IN_SEARCH_INDEX")
     @AdminPresentation(friendlyName = "LocaleImpl_Use_In_Search_Index", order = 5, 
         group = "LocaleImpl_Details", 
-        prominent = true, gridOrder = 3)
+        prominent = false, gridOrder = 3)
     protected Boolean useInSearchIndex = false;
     
     @Override

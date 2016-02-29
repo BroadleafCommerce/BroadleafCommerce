@@ -26,7 +26,7 @@ import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferAuditImpl;
 import org.springframework.stereotype.Repository;
-
+import java.util.List;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -86,6 +86,14 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
         Long result =  query.getSingleResult();
         return result;
+    }
+
+    @Override
+    public List<OfferAudit> readOfferAuditsByOrderId(Long orderId) {
+        TypedQuery<OfferAudit> query = new TypedQueryBuilder<OfferAudit>(OfferAudit.class, "offerAudit")
+                .addRestriction("offerAudit.orderId", "=", orderId)
+                .toQuery(em);
+        return query.getResultList();
     }
 
 }

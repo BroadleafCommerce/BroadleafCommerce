@@ -1,0 +1,17 @@
+<a href="#" class="boolean-link" th:attr="data-target=*{fields['__${field.name}__'].value}"
+    th:classappend="*{fields['__${field.name}__'].value} ? 'view-options' : 'hide-options'">
+        <span th:text="#{${field.friendlyName}}" th:remove="tag"/>
+</a>
+<div class="radio-container" style="display: none;">
+    <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" ></label>
+
+    <input type="radio" class="radio" th:id="${field.name + '-true'}" th:value="${true}" th:field="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}"/>
+    <label th:for="${field.name + '-true'}" th:inline="text" class="radio-label" th:classappend="${field.readOnly}? 'disabled'">
+        <span th:text="#{Yes}" />
+    </label>
+
+    <input type="radio" class="radio" th:id="${field.name + '-false'}" th:value="${false}" th:field="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}"/>
+    <label th:for="${field.name + '-false'}" th:inline="text" class="radio-label" th:classappend="${field.readOnly}? 'disabled'">
+        <span style="margin-right: 10px;" th:text="#{No}" />
+    </label>
+</div>
