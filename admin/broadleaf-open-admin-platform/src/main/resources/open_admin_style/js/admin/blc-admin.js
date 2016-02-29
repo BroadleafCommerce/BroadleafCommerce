@@ -1075,7 +1075,7 @@ $.fn.blSelectize = function (settings_user) {
         settings_user['dropdownParent'] = 'body';
         settings_user['hideSelected'] = true;
         settings_user['selectOnTab'] = true;
-        //settings_user['plugins'] = ['clear_on_type'];
+        settings_user['plugins'] = ['clear_on_type'];
         settings_user['placeholder'] = 'Click here to select ...';
         settings_user['positionDropdown'] = 'auto';
 
