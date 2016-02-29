@@ -1076,6 +1076,12 @@ $.fn.blSelectize = function (settings_user) {
         settings_user['plugins'] = ['clear_on_type'];
         settings_user['placeholder'] = 'Click here to select ...';
         settings_user['positionDropdown'] = 'auto';
+        settings_user['onInitialize'] = function() {
+            if (Object.keys(this.options).length <= 1) {
+                // Remove the dropdown css
+                this.$control.addClass('remove-caret');
+            }
+        };
 
         var $select = $(el).selectize(settings_user);
         var selectize = $select[0].selectize;

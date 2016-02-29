@@ -1450,7 +1450,7 @@
 				}
 			} else {
 				// give control focus
-				if (!defaultPrevented) {
+				if (!defaultPrevented && self.items.count > 1) {
 					window.setTimeout(function() {
 						self.focus();
 					}, 0);
@@ -1646,8 +1646,8 @@
 		onFocus: function(e) {
 			var self = this;
 			var wasFocused = self.isFocused;
-	
-			if (self.isDisabled) {
+
+			if (self.isDisabled || Object.keys(this.options).length <= 1) {
 				self.blur();
 				e && e.preventDefault();
 				return false;
