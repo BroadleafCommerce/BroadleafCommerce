@@ -978,7 +978,6 @@ $(document).ready(function() {
 
         $modalContainer.show();
         $modal.find('.modal-body').append($modalContainer);
-        $modal.find('.modal-body').css('overflow', 'visible');
         $modal.find('.modal-footer').append(BLCAdmin.ruleBuilders.getSaveModalRuleLink(hiddenId));
 
         $modal.find('.modal-body').find('select').each(function(i, el) {
