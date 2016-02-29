@@ -310,6 +310,8 @@ a.description-link {
 
 .col4 .fieldset-card-content .asset-selector-container {
     text-align: center;
+    text-align: -webkit-center;
+    text-align: -moz-center;
 }
 
 .col10 .fieldset-card-content .asset-selector-container,

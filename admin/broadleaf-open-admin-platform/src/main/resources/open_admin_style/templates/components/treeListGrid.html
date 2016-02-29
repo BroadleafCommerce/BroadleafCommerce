@@ -30,6 +30,7 @@
         <div class="tree-column-wrapper" th:style="'width: ' + ${320 * #arrays.length(treeListGrid.treeListGridColumns)} + 'px;'">
             <div type="hidden" id="treeParentPathJson" th:if="${treeParentPathJson != null}"
                  th:attr="data-parentpathjson=${treeParentPathJson}" />
+            <div type="hidden" id="targetId" th:if="${targetId != null}" th:attr="data-targetid=${targetId}" />
             <div class="select-column listgrid-container"
                  th:each="column, iterStat : ${treeListGrid.treeListGridColumns}"
                  th:attr="data-parentid=${column.parentId}, data-columndepth=${iterStat.index}">

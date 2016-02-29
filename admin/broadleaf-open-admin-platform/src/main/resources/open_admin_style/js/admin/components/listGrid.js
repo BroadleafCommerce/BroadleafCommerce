@@ -31,7 +31,7 @@
             }
         },
 
-        replaceRelatedListGrid: function ($headerWrapper, alert, opts) {
+        findRelatedTable: function ($headerWrapper) {
             var $table = $headerWrapper.find('table');
             var tableId = $table.attr('id');
             var $oldTable = null;
@@ -51,6 +51,12 @@
             if ($oldTable == null || $oldTable.length == 0) {
                 $oldTable = $('#' + tableId);
             }
+            return $oldTable;
+        },
+
+        replaceRelatedListGrid: function ($headerWrapper, alert, opts) {
+            var $table = $headerWrapper.find('table');
+            var $oldTable = BLCAdmin.listGrid.findRelatedTable($headerWrapper);
 
             var currentIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($oldTable.find('tbody'));
 
@@ -291,7 +297,9 @@
                 $spinner.css('position', 'absolute');
                 $spinner.css('top', spinnerOffset + 'px');
             }
-            $spinner.css('width', $tbody.width());
+
+            // Subtract 2 to account for left & right boarder lines
+            $spinner.css('width',$tbody.innerWidth() - 2);
             $spinner.css('display', 'block');
         },
 
@@ -677,6 +685,11 @@ $(document).ready(function () {
             type: "POST"
         }, function (data) {
             link = link.substring(0, link.indexOf("/addEmpty")) + "/" + data.id + link.substring(link.indexOf("/addEmpty") + 9, link.length);
+            if (link.indexOf("?") < 0) {
+                link += "?isPostAdd=true";
+            } else {
+                link += "&isPostAdd=true";
+            }
             BLCAdmin.showLinkAsModal(link);
         });
         return false;
@@ -695,9 +708,29 @@ $(document).ready(function () {
 
             $trs.removeClass('clickable').addClass('draggable');
 
+            function isReorderToFirst(prevDisplayOrder, nextDisplayOrder) {
+                return typeof prevDisplayOrder === 'undefined' && typeof nextDisplayOrder !== 'undefined';
+            }
+
             $tbody.sortable({
-                helper: BLCAdmin.listGrid.fixHelper,
-                update: function (event, ui) {
+                helper : BLCAdmin.listGrid.fixHelper,
+                change: function( event, ui ) {
+                    var prevDisplayOrder = ui.placeholder.prev().data('displayorder');
+                    var nextDisplayOrder = ui.placeholder.next().data('displayorder');
+                    if ((!$.isNumeric(prevDisplayOrder) || prevDisplayOrder == nextDisplayOrder) && !isReorderToFirst(prevDisplayOrder, nextDisplayOrder)) {
+                        ui.placeholder.hide();
+                    } else {
+                        ui.placeholder.show();
+                    }
+                },
+                beforeStop: function(ev, ui) {
+                    var prevDisplayOrder = ui.placeholder.prev().prev().data('displayorder');
+                    var nextDisplayOrder = ui.placeholder.next().data('displayorder');
+                    if ((!$.isNumeric(prevDisplayOrder) || prevDisplayOrder == nextDisplayOrder) && !isReorderToFirst(prevDisplayOrder, nextDisplayOrder)) {
+                        $(this).sortable("cancel");
+                    }
+                },
+                update : function(event, ui) {
                     var url = ui.item.data('link') + '/sequence';
 
                     if (ui.item.closest('table.list-grid-table').length && ui.item.closest('table.list-grid-table').data('listgridtype') === 'tree') {
@@ -717,11 +750,11 @@ $(document).ready(function () {
                     }
 
                     BLC.ajax({
-                        url: url,
-                        type: "POST",
-                        data: {
-                            newSequence: ui.item.index(),
-                            parentId: parentId
+                        url : url,
+                        type : "POST",
+                        data : {
+                            newSequence : BLCAdmin.listGrid.paginate.getActualRowIndex(ui.item),
+                            parentId : parentId
                         }
                     }, function (data) {
                         var $container = $('div.listgrid-container#' + data.field);
@@ -735,7 +768,7 @@ $(document).ready(function () {
                             var $parent = $container.prev().find('tr.selected');
                             if (!$parent.hasClass('dirty')) {
                                 $parent.addClass('dirty');
-                                var changeIcon = '<a class="blc-icon-site-updates has-tip hover-cursor workflow-icon" data-width="200" ' +
+                                var changeIcon = '<a class="blc-icon-triangle-right has-tip hover-cursor workflow-icon" data-width="200" ' +
                                     'title="This record has been modified in the current sandbox"></a>';
 
                                 if ($parent.find('.workflow-change-icon').length) {
@@ -746,6 +779,8 @@ $(document).ready(function () {
                                 }
                             }
                         }
+
+                        ui.item.data('displayorder', data.newDisplayOrder);
                     });
                 }
             }).disableSelection();
