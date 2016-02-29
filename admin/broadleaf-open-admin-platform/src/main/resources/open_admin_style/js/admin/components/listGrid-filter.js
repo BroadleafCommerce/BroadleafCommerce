@@ -397,7 +397,11 @@ $(document).ready(function() {
             if ($(data).find('table').length > 1) {
                 $relatedListGrid = $(data).find("div.listgrid-container:has(table#" + tableId +")");
             } else {
-                $relatedListGrid = $(data);
+                if ($(data).hasClass('listgrid-container')) {
+                    $relatedListGrid = $(data);
+                } else {
+                    $relatedListGrid = $(data).find("div.listgrid-container");
+                }
             }
             BLCAdmin.listGrid.replaceRelatedCollection($relatedListGrid, null, { isRefresh : false});
             $firstInput.trigger('input');
