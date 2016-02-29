@@ -1210,6 +1210,19 @@ BLC.addPreAjaxCallbackHandler(function($data) {
     return true;
 });
 
+var getCurrentHash = function() {
+    var baseHash = window.location.hash;
+    if(baseHash.indexOf('?') > -1) {
+        return baseHash.substr(0, baseHash.indexOf('?'));
+    } else {
+        return baseHash;
+    }
+};
+var getCurrentHashVal = function() {
+    var hash = getCurrentHash();
+    return hash.substr(1);
+};
+
 $(document).ready(function() {
     $(window).resize(function() {
         $.doTimeout('resize', 150, function() {
@@ -1218,16 +1231,25 @@ $(document).ready(function() {
             }
         });
     });
-    
-    if (window.location.hash) {
-        var $listGrid = $('div.listgrid-container' + window.location.hash);
-        if ($listGrid.length) {
-            var $tab = $listGrid.closest('li.entityFormTab');
-            var idx = $tab.index() + 1;
-            var $tabLink = $('div.tabs-container dl dd:nth-child(' + idx + ')');
-            $.fn.foundationTabs('set_tab', $tabLink);
-            $(window).scrollTop($(window.location.hash).offset().top);
+
+    // Synchronize URL hash to tabs
+    if($(document).find('.nav-tabs').length > 0) {
+        // initial page visit
+        if (window.location.hash === '') {
+            window.location.hash = $('.nav-tabs li.active > a').attr('href');
+        } else {
+            $('.nav-tabs li > a[href="' + getCurrentHash() + '"]').click();
         }
+
+        window.onhashchange = function() {
+            $('.nav-tabs li').removeClass('active');
+            $('.nav-tabs li > a[href="' + window.location.hash + '"]').closest('li').addClass('active');
+            $('.tabs-content .entityFormTab').removeClass('active');
+            $('.tabs-content .entityFormTab.' + getCurrentHashVal() + 'Tab').addClass('active');
+        };
+        $(document).on('click', '.nav-tabs li > a', function () {
+            window.location.hash = $(this).attr('href');
+        });
     }
 
     // Ensure that the breadcrumb will render behind the entity form actions
