@@ -1615,6 +1615,7 @@
 				self.refreshOptions();
 				self.trigger('type', value);
 			}
+			self.positionDropdown();
 		},
 	
 		/**
@@ -3136,7 +3137,7 @@
 			if (cache) {
 				self.renderCache[templateName][value] = html;
 			}
-	
+
 			return html;
 		},
 	

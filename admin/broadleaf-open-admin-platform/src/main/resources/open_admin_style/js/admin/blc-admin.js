@@ -620,6 +620,8 @@ var BLCAdmin = (function($) {
                     hideSelected: true,
                     closeAfterSelect: true,
                     placeholder: placeholder,
+                    dropdownParent: 'body',
+                    selectOnTab: true,
                     onInitialize: function () {
                         var $selectize = this;
                         this.revertSettings.$children.each(function () {
@@ -710,6 +712,9 @@ var BLCAdmin = (function($) {
                     maxItems: null,
                     persist: false,
                     placeholder: collectionPlaceholder,
+                    dropdownParent: 'body',
+                    hideSelected: true,
+                    selectOnTab: true,
                     onInitialize: function () {
                         var $selectize = this;
                         this.revertSettings.$children.each(function () {
@@ -752,8 +757,8 @@ var BLCAdmin = (function($) {
                     selectizeCollectionOptions['plugins'] = ['remove_button', 'silent_remove'];
                 }
 
-                $select_adder = $(selectizeAdder).blSelectize(selectizeAdderOptions);
-                $select_collection = $(selectizeCollection).blSelectize(selectizeCollectionOptions);
+                $select_adder = $(selectizeAdder).selectize(selectizeAdderOptions);
+                $select_collection = $(selectizeCollection).selectize(selectizeCollectionOptions);
 
                 select_collection  = $select_collection[0].selectize;
                 select_adder = $select_adder[0].selectize;
@@ -1070,7 +1075,7 @@ $.fn.blSelectize = function (settings_user) {
         settings_user['dropdownParent'] = 'body';
         settings_user['hideSelected'] = true;
         settings_user['selectOnTab'] = true;
-        settings_user['plugins'] = ['clear_on_type'];
+        //settings_user['plugins'] = ['clear_on_type'];
         settings_user['placeholder'] = 'Click here to select ...';
         settings_user['positionDropdown'] = 'auto';
 
@@ -1101,7 +1106,6 @@ Selectize.prototype.positionDropdown = function() {
     var dropdownBottom = $control.offset().top + controlHeight + dropdownHeight;
     var windowBottom = $(window).height();
     var optDirection = dropdownBottom < windowBottom ? 'down' : 'up';
-
 
     if (optDirection === 'down') {
         self.isDropUp = false;
