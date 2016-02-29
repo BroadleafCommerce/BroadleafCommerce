@@ -1248,7 +1248,9 @@ $(document).ready(function() {
             $('.tabs-content .entityFormTab.' + getCurrentHashVal() + 'Tab').addClass('active');
         };
         $(document).on('click', '.nav-tabs li > a', function () {
-            window.location.hash = $(this).attr('href');
+            if (BLCAdmin.getModals().length == 0) {debugger;
+                window.location.hash = $(this).attr('href');
+            }
         });
     }
 
