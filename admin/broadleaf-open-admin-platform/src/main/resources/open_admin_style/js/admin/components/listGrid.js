@@ -578,6 +578,31 @@ $(document).ready(function () {
         // if selecting a row -> enable submit button, else deselecting -> disable submit button
         if ($target.hasClass('selected')) {
             $('button[type="submit"]').prop('disabled', false);
+            var $a = $('a#adornedModalTab2Link');
+            BLC.ajax({
+                url: link + '/verify',
+                type: "POST"
+            }, function (data) {
+                var autoSubmit = false;
+                for (prop in data) {
+                    if (data.hasOwnProperty(prop)) {
+                        var fixedKey = prop.replace(".", "__");
+                        var value = data[prop];
+                        if (prop == 'autoSubmit' && value == 'true') {
+                            autoSubmit = true;
+                        } else {
+                            var inputField = $('input[name="fields[\'' + fixedKey + '\'].value"]');
+                            inputField.val(value);
+                        }
+                    }
+                }
+                $a.removeClass('disabled');
+                $a.click();
+                $a.addClass('disabled');
+                if (autoSubmit) {
+                    BLCAdmin.currentModal().find('.submit-button').click();
+                }
+            });
         } else {
             $('button[type="submit"]').prop('disabled', true);
         }

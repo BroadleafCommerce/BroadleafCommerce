@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -49,6 +50,7 @@ import javax.persistence.criteria.Root;
  * Implementations of this class should extend from the {@link AbstractRowLevelSecurityProvider}
  * 
  * @author Phillip Verheyden (phillipuniverse)
+ * @author Jeff Fischer
  * @see {@link AbstractRowLevelSecurityProvider}
  * @see {@link RowLevelSecurityService}
  */
@@ -144,7 +146,7 @@ public interface RowLevelSecurityProvider {
      * <p>
      * Hook to determine if the given <b>entity</b> can be deleted by a user. This is used to drive the {@link DefaultEntityFormActions#DELETE}
      * button from appearing on the admin frontend.
-     * 
+     *
      * <p>
      * You might consider tying the remove to {@link #canUpdate(AdminUser, Entity)} and explicitly invoking that action yourself.
      * 
@@ -154,6 +156,17 @@ public interface RowLevelSecurityProvider {
      * @see {@link FormBuilderServiceImpl#addDeleteActionIfAllowed}
      */
     public boolean canRemove(AdminUser currentUser, Entity entity);
+
+    /**
+     * <p>
+     * Hook to determine if the given <b>entity</b> can be added by a user.
+     *
+     * @param currentUser the currently logged in {@link AdminUser}
+     * @param sectionClassname
+     * @param cmd
+     * @return <b>true</b> if the given <b>entity</b> can be added, <b>false</b> otherwise
+     */
+    public boolean canAdd(AdminUser currentUser, String sectionClassname, ClassMetadata cmd);
     
     /**
      * <p>
@@ -168,7 +181,7 @@ public interface RowLevelSecurityProvider {
      * {@link PropertyValidator} instead.
      * 
      * <p>
-     * For convenience, this is usually a simple invocation to {@link #canUpdate(Entity)}. However, it might be that you want
+     * For convenience, this is usually a simple invocation to {@link #canUpdate(AdminUser, Entity)}. However, it might be that you want
      * to allow the user to see certain update fields but not allow the user to save certain fields for update.
      * 
      * @param currentUser the currently logged in {@link AdminUser}
@@ -192,7 +205,7 @@ public interface RowLevelSecurityProvider {
      * {@link PropertyValidator} instead.
      * 
      * <p>
-     * This is usually a simple invocation to {@link #canDelete(Entity)}.
+     * This is usually a simple invocation to {@link #canDelete(AdminUser, Entity)}.
      * 
      * @param currentUser the currently logged in {@link AdminUser}
      * @param entity the DTO representation that is attempting to be deleted. Comes from {@link PersistencePackage#getEntity()}
@@ -201,5 +214,28 @@ public interface RowLevelSecurityProvider {
      * <b>entity</b> failed row-level security validation or not.
      */
     public GlobalValidationResult validateRemoveRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage);
+
+    /**
+     * <p>
+     * Validates whether a user has permissions to actually perform the record addition. The result of this method is a
+     * validation result that indicates if something in the entire entity is in error. The message key from the resulting
+     * {@link GlobalValidationResult} will be automatically added to the given <b>entity</b> {@link Entity#getGlobalValidationErrors()}.
+     *
+     * <p>
+     * If you would like to add individual property errors, you can do that with the given <b>entity</b> by using
+     * {@link Entity#addValidationError(String, String)}. Even if you attach errors to specific properties you should still
+     * return an appropriate {@link GlobalValidationResult}. In that case however, it might be more suitable to use a
+     * {@link PropertyValidator} instead.
+     *
+     * <p>
+     * This is usually a simple invocation to {@link #canAdd(AdminUser, Entity)}.
+     *
+     * @param currentUser the currently logged in {@link AdminUser}
+     * @param entity the DTO representation that is attempting to be deleted. Comes from {@link PersistencePackage#getEntity()}
+     * @param persistencePackage the full request sent from the frontend through the admin pipeline
+     * @return a {@link GlobalValidationResult} with {@link GlobalValidationResult#isValid()} set to denote if the given
+     * <b>entity</b> failed row-level security validation or not.
+     */
+    public GlobalValidationResult validateAddRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage);
 
 }
