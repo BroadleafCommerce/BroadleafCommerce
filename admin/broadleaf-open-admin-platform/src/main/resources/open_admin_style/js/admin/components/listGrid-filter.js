@@ -374,6 +374,9 @@ $(document).ready(function() {
             oldParams = {};
         }
 
+        // Remove startIndex from the request
+        delete oldParams["startIndex"];
+
         if (search.length > 0) {
             oldParams[$firstInput.data('name')] = search;
         } else {
