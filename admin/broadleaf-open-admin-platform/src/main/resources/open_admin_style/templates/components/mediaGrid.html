@@ -65,14 +65,16 @@
                            class="media-link"
                            th:attr="data-urlpostfix=${action.urlPostfix},
                              data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
-                             data-queryparams=${listGrid.sectionCrumbRepresentation}"
+                             data-queryparams=${listGrid.sectionCrumbRepresentation},
+                             data-link=@{${asset.path}}"
                            th:title="#{${action.displayText}}" th:text="${asset.getField('media.title').getValue()}">
                         </a>
                          <a href="#"
                             class="media-link media-key"
                             th:attr="data-urlpostfix=${action.urlPostfix},
                              data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
-                             data-queryparams=${listGrid.sectionCrumbRepresentation}"
+                             data-queryparams=${listGrid.sectionCrumbRepresentation},
+                             data-link=@{${asset.path}}"
                             th:title="#{${action.displayText}}"
                             th:text="${'key: ' + asset.getField('key').getValue()}">
                          </a>
@@ -81,7 +83,7 @@
             </div>
         </div>
         <div class="asset-listgrid-wrapper" style="display: none;">
-            <div class="asset-listgrid listgrid-container"  th:include="components/listGrid" th:with="listGrid=${listGrid}"></div>
+            <div class="asset-listgrid listgrid-container"  th:include="components/mediaListGrid" th:with="listGrid=${listGrid}"></div>
         </div>
     </div>
 </div>

@@ -357,9 +357,7 @@ $(document).ready(function() {
     $('body').on('click', 'a.media-link', function(event) {
         event.preventDefault();
 
-        var asset = $(this).closest('.asset-item').find('img');
-        var link = $(asset).attr('data-link');
-        //link += $(this).attr('data-urlpostfix');
+        var link = $(this).attr('data-link');
         link += $(this).attr('data-queryparams');
 
         BLCAdmin.showLinkAsModal(link);
