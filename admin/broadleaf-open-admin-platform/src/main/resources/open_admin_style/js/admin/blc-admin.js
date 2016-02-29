@@ -618,6 +618,8 @@ var BLCAdmin = (function($) {
                     hideSelected: true,
                     closeAfterSelect: true,
                     placeholder: placeholder,
+                    dropdownParent: 'body',
+                    selectOnTab: true,
                     onInitialize: function () {
                         var $selectize = this;
                         this.revertSettings.$children.each(function () {
@@ -708,6 +710,9 @@ var BLCAdmin = (function($) {
                     maxItems: null,
                     persist: false,
                     placeholder: collectionPlaceholder,
+                    dropdownParent: 'body',
+                    hideSelected: true,
+                    selectOnTab: true,
                     onInitialize: function () {
                         var $selectize = this;
                         this.revertSettings.$children.each(function () {
@@ -750,8 +755,8 @@ var BLCAdmin = (function($) {
                     selectizeCollectionOptions['plugins'] = ['remove_button', 'silent_remove'];
                 }
 
-                $select_adder = $(selectizeAdder).blSelectize(selectizeAdderOptions);
-                $select_collection = $(selectizeCollection).blSelectize(selectizeCollectionOptions);
+                $select_adder = $(selectizeAdder).selectize(selectizeAdderOptions);
+                $select_collection = $(selectizeCollection).selectize(selectizeCollectionOptions);
 
                 select_collection  = $select_collection[0].selectize;
                 select_adder = $select_adder[0].selectize;
@@ -1067,6 +1072,10 @@ $.fn.blSelectize = function (settings_user) {
         // add default settings here
         settings_user['dropdownParent'] = 'body';
         settings_user['hideSelected'] = true;
+        settings_user['selectOnTab'] = true;
+        settings_user['plugins'] = ['clear_on_type'];
+        settings_user['placeholder'] = 'Click here to select ...';
+        settings_user['positionDropdown'] = 'auto';
 
         var $select = $(el).selectize(settings_user);
         var selectize = $select[0].selectize;
@@ -1080,15 +1089,77 @@ $.fn.blSelectize = function (settings_user) {
         $('.modal-body').scroll(function () {
             selectize.close();
         });
-
-        // add scroll handler for the body
-        $('body').scroll(function () {
-            selectize.close();
-        });
     });
 
     return this;
 };
+
+Selectize.prototype.positionDropdown = function() {
+    var $control = this.$control;
+    var offset = this.settings.dropdownParent === 'body' ? $control.offset() : $control.position();
+    offset.top += $control.outerHeight(true);
+    var controlHeight = $control.outerHeight(true);
+    var dropdownHeight = this.$dropdown.outerHeight(true);
+
+    var dropdownBottom = $control.offset().top + controlHeight + dropdownHeight;
+    var windowBottom = $(window).height();
+    var optDirection = dropdownBottom < windowBottom ? 'down' : 'up';
+
+    if (optDirection === 'down') {
+        self.isDropUp = false;
+    } else if (optDirection === 'up') {
+        offset.top -= dropdownHeight;
+        offset.top -= controlHeight;
+        self.isDropUp = true;
+    }
+
+    this.$dropdown.css({
+        width : $control.outerWidth(),
+        top   : offset.top,
+        left  : offset.left
+    });
+
+};
+
+Selectize.define('clear_on_type', function(options) {
+    var self = this;
+
+    options.text = options.text || function(option) {
+            return option[this.settings.labelField];
+        };
+
+    this.onKeyDown = (function() {
+        var original = self.onKeyDown;
+        return function(e) {
+            var index, option;
+            if (this.$control_input.val() === '' && !this.$activeItems.length) {
+                index = this.caretPos - 1;
+                if (index >= 0) {
+                    this.previousValue = this.options[this.items[index]];
+                }
+                if (index >= 0 && index < this.items.length) {
+                    if (this.deleteSelection(e)) {
+                        this.clear();
+                        this.setTextboxValue(String.fromCharCode(e.keyCode));
+                        this.refreshOptions(true);
+                    }
+                    e.preventDefault();
+                    return;
+                }
+            }
+
+            if (e.keyCode === 27 && this.previousValue !== undefined) {
+                this.clear();
+                this.setTextboxValue(this.previousValue.text);
+                this.setActiveItem();
+                this.refreshOptions(true);
+
+                return;
+            }
+            return original.apply(this, arguments);
+        };
+    })();
+});
 
 // Replace the default AJAX error handler with this custom admin one that relies on the exception
 // being set on the model instead of a stack trace page when an error occurs on an AJAX request.
