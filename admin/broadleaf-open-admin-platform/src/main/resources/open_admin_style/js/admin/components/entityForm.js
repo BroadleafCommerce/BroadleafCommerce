@@ -279,12 +279,17 @@ $(document).ready(function() {
             $('.has-error').removeClass('has-error');
 
             if (!data.errors) {
-                $(".alert-box").removeClass("alert").addClass("success");
-                $(".alert-box-message").text("Successfully deleted");
+                var $titleBar = $form.closest('.main-content').find('.content-area-title-bar');
+                BLCAdmin.alert.showAlert($titleBar, 'Successfully ' + BLCAdmin.messages.deleted + '!', {
+                    alertType: 'save-alert',
+                    autoClose: 2000,
+                    clearOtherAlerts: true
+                });
             } else {
                 BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemDeleting);
             }
-            
+
+            BLCAdmin.runPostFormSubmitHandlers($form, data);
         });
         
         event.preventDefault();
