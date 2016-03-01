@@ -28,6 +28,8 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
@@ -90,7 +92,13 @@ public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
     protected BigDecimal minValue;
 
     @Column(name = "MAX_VALUE", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_maxValue", order = 3, gridOrder = 3, group = "SearchFacetRangeImpl_Description", prominent = true)
+    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_maxValue", order = 3, gridOrder = 3, group = "SearchFacetRangeImpl_Description", prominent = true, validationConfigurations = {
+            @ValidationConfiguration(
+                    validationImplementation = "blMaxGreaterThanMinValidator",
+                    configurationItems = {
+                            @ConfigurationItem(itemName = "otherField", itemValue = "minValue")
+                    })
+    })
     protected BigDecimal maxValue;
 
     @Override
