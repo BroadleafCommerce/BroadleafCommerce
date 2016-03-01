@@ -23,11 +23,30 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
+import java.util.List;
+
 /**
  * @author Jeff Fischer
  */
 public interface BroadleafFileServiceExtensionHandler extends ExtensionHandler {
 
+    /**
+     * Attempts to resolve a resource path given a particular site
+     * @param prefix
+     * @param resourceName
+     * @param holder
+     * @return
+     */
     public ExtensionResultStatusType processPathForSite(String prefix, String resourceName, ExtensionResultHolder<String> holder);
+
+    /**
+     * Builds a list of all possible resource paths.
+     * @param prefix
+     * @param resourceName
+     * @param holder
+     * @return
+     */
+    public ExtensionResultStatusType retrieveAllSitePaths(String prefix, String resourceName,  ExtensionResultHolder<List<String>> holder);
+
 
 }
