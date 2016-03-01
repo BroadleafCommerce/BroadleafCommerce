@@ -1572,3 +1572,10 @@ div.uploadMessage {
 .input-group {
     width: 100%;
 }
+
+.selectize-control.single .selectize-input.remove-caret:after {
+    content: none;
+}
+.selectize-control.single .selectize-input.remove-caret:hover {
+    cursor: auto;
+}
