@@ -33,7 +33,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 /**
- * Validator that checks if a max value field is actually greater than a min value field.
+ * Validator that checks if a max value field is actually greater than or equal to a min value field.
  *
  * @author Nathan Moore (nathandmoore)
  */
