@@ -22,23 +22,24 @@ package org.broadleafcommerce.admin.server.service.handler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.PersistenceException;
+
+
+import javax.annotation.Resource;
+
 
 /**
- * When deleting a {@link SearchFacet}, there needs to be a check to see if it is applied to a
- * {@link org.broadleafcommerce.core.catalog.domain.Category} already. If so, then trying to removed it should cause a
- * validation error letting the user know that the {@link SearchFacet} cannot be deleted until its reference is removed.
- * Otherwise, a Hibernate exception will be displayed to users, which will not contain meaningful information for them.
+ * When deleting a {@link SearchFacet}, we want to make sure it is a soft delete.
  *
  * @author Nathan Moore (nathandmoore)
  */
@@ -46,6 +47,9 @@ import javax.persistence.PersistenceException;
 public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(SearchFacetCustomPersistenceHandler.class);
+
+    @Resource(name = "blSearchFacetDao")
+    protected SearchFacetDao searchFacetDao;
 
     @Override
     public Boolean canHandleRemove(PersistencePackage persistencePackage) {
@@ -57,22 +61,25 @@ public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandle
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper)
             throws ServiceException {
         Entity entity = persistencePackage.getEntity();
+
         try {
-            OperationType opType = persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType();
-            if (opType != null) {
-                helper.getCompatibleModule(opType).remove(persistencePackage);
-            } else {
-                helper.getCompatibleModule(OperationType.BASIC).remove(persistencePackage);
+            Object adminInstance = Class.forName(entity.getType()[0]).newInstance();
+            Property idProperty = entity.findProperty("id");
+            if (idProperty != null ) {
+                Long instanceId = Long.parseLong(idProperty.getValue());
+                if (instanceId != null) {
+                    adminInstance = dynamicEntityDao.find(adminInstance.getClass(),instanceId);
+                }
             }
+            if (Status.class.isAssignableFrom(adminInstance.getClass())) {
+                ((Status) adminInstance).setArchived('Y');
+                searchFacetDao.save((SearchFacet)adminInstance);
+                return;
+            }
+
         } catch (Exception e) {
-            if (e.getCause() instanceof PersistenceException) {
-                // If a persistence exception (should be a foreign key constraint)
-                LOG.error("Unable to execute persistence activity because entity in use", e);
-                throw new ValidationException(entity, "Unable to remove entity for this Search Facet: In use by a Category.");
-            } else {
-                LOG.error("Unable to execute persistence activity", e);
-                throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
-            }
+            LOG.error("Unable to execute persistence activity", e);
+            throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
         }
     }
 }
