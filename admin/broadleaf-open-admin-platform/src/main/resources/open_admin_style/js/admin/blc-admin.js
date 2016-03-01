@@ -263,6 +263,8 @@ var BLCAdmin = (function($) {
         
         initializeModalTabs : function($data) {
             $.fn.broadleafTabs();
+
+            BLCAdmin.currentModal().find('.nav-tabs li.active > a').click();
         },
         
         initializeModalButtons : function($data) {
