@@ -40,7 +40,7 @@ import java.util.Map;
 @Component("blMaxGreaterThanMinValidator")
 public class MaxGreaterThanMinValidator extends ValidationConfigurationBasedPropertyValidator {
 
-    private static final String MIN_GREATER_THAN_MAX = "Max value must be greater than min";
+    private static final String MIN_GREATER_THAN_MAX = "Max value must be greater than or equal to Min";
 
     @Override
     public PropertyValidationResult validate(Entity entity,
