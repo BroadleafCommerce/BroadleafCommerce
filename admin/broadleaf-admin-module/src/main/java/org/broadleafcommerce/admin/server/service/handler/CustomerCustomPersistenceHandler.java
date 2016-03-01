@@ -155,15 +155,7 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
     	try {
             Long entityId = Long.parseLong(entity.findProperty("id").getValue());
             if (entityId != null) {
-                roleDao.removeCustomerRolesByCustomerId(entityId);
                 Customer adminInstance = customerService.readCustomerById(entityId);
-                List<CustomerAddress> addressList = adminInstance.getCustomerAddresses();
-                for (CustomerAddress address : addressList) {
-                    if (Status.class.isAssignableFrom(address.getClass())) {
-                        ((Status)address).setArchived('Y');
-                    }
-                }
-                adminInstance = dynamicEntityDao.merge(adminInstance);
                 if (Status.class.isAssignableFrom(adminInstance.getClass())) {
                     ((Status) adminInstance).setArchived('Y');
                     customerService.saveCustomer(adminInstance);
