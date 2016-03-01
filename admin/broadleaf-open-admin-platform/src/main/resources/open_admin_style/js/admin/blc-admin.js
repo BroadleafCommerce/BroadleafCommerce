@@ -87,15 +87,17 @@ var BLCAdmin = (function($) {
             }
         });
 
-        BLCAdmin.initializeModalTabs($data);
-        BLCAdmin.initializeModalButtons($data);
-        BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
 
         // Only initialize all fields if NOT a normal EntityForm in modal
         // Should initialize for lookups
         if (BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0) {
             BLCAdmin.initializeFields(BLCAdmin.currentModal());
+        } else {
+            BLCAdmin.initializeModalTabs($data);
         }
+
+        BLCAdmin.initializeModalButtons($data);
+        BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
     }
 
     function getDependentFieldFilterKey(className, childFieldName) {
@@ -357,15 +359,17 @@ var BLCAdmin = (function($) {
                         var content = $('<div>', { 'class': 'content-yield'});
                         BLCAdmin.currentModal().find('.modal-body').wrapInner(content);
                     }
-                    BLCAdmin.initializeModalTabs(BLCAdmin.currentModal());
-                    BLCAdmin.initializeModalButtons(BLCAdmin.currentModal());
-                    BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
 
                     // Only initialize all fields if NOT a normal EntityForm in modal
                     // Should initialize for lookups
                     if (BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0) {
                         BLCAdmin.initializeFields(BLCAdmin.currentModal());
+                    } else {
+                        BLCAdmin.initializeModalTabs($data);
                     }
+
+                    BLCAdmin.initializeModalButtons(BLCAdmin.currentModal());
+                    BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
 
                     BLCAdmin.currentModal().removeClass('loading-modal');
 
