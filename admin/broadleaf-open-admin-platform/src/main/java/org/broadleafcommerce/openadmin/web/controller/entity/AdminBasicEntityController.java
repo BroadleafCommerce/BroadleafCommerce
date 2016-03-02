@@ -505,6 +505,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
             json.with("dirty", dirtyList);
         }
 
+        ExtensionResultHolder<String> resultHolder = new ExtensionResultHolder<>();
+        ExtensionResultStatusType resultStatusType = extensionManager.getProxy().overrideSaveEntityJsonResponse(response, result.hasErrors(), getSectionKey(pathVars), id, resultHolder);
+        if (resultStatusType.equals(ExtensionResultStatusType.HANDLED)) {
+            return resultHolder.getResult();
+        }
+
         return json.done();
     }
     
