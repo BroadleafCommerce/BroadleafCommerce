@@ -120,8 +120,8 @@ public class NodeUtil {
      * The comparison criteria is a single-attribute comparator, whose attribute name is also given as a parameter
      * The original NodeLists are not modified. They can be null. They are not assumed to be sorted.
      * @param Node   the target node (assumed childless, and within the same document) to which the merged children will be appended 
-     * @param list1
-     * @param list2
+     * @param list1 the original list to merge
+     * @param list2 the second list to merge which will overwrite values from <b>list1</b>
      * @param attribute
      */
     public static void mergeNodeLists(Node targetNode, org.w3c.dom.NodeList list1, org.w3c.dom.NodeList list2, String attributeName) {

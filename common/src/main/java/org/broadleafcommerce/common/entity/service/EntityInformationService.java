@@ -20,7 +20,10 @@
 package org.broadleafcommerce.common.entity.service;
 
 import org.broadleafcommerce.common.entity.dto.EntityInformationDto;
+import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+
+import java.util.List;
 
 /**
  * Class that provides guidance to modules that need to react when running in a multi-tenant mode.   Especially, 
@@ -58,5 +61,12 @@ public interface EntityInformationService {
      * @return
      */
     boolean getOkayToUseSiteDiscriminator(Object o);
+
+    /**
+     * Returns all of the catalogs, using multi-tenant mode
+     *
+     * @return
+     */
+    List<Catalog> findAllCatalogs();
 
 }

@@ -48,6 +48,7 @@ public class DynamicSupportedFieldType implements Serializable, BroadleafEnumera
     public static final DynamicSupportedFieldType ASSET_LOOKUP = new DynamicSupportedFieldType("ASSET_LOOKUP", "Image");
     public static final DynamicSupportedFieldType PRODUCT_LOOKUP = new DynamicSupportedFieldType("ADDITIONAL_FOREIGN_KEY|org.broadleafcommerce.core.catalog.domain.Product", "Product Lookup");
     public static final DynamicSupportedFieldType CATEGORY_LOOKUP = new DynamicSupportedFieldType("ADDITIONAL_FOREIGN_KEY|org.broadleafcommerce.core.catalog.domain.Category", "Category Lookup");
+    public static final DynamicSupportedFieldType DATE = new DynamicSupportedFieldType("DATE", "Date");
 
     public static DynamicSupportedFieldType getInstance(final String type) {
         return TYPES.get(type);

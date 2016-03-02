@@ -3,7 +3,7 @@
     <parent>
         <artifactId>core</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>4.0.5-SNAPSHOT</version>
+        <version>4.0.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-framework</artifactId>
@@ -53,20 +53,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven.source.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <excludes>
@@ -92,6 +78,7 @@
                 <configuration>
                     <includes>
                         <include>**/*Spec*</include>
+                        <include>**/*Test*</include>
                     </includes>
                     <argLine>${surefire.argLine}</argLine>
                 </configuration>

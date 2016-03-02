@@ -44,6 +44,8 @@ public interface SandBoxDao {
 
     public Map<Long, String> retrieveAuthorNamesForSandBoxes(Set<Long> sandBoxIds);
 
+    List<SandBox> retrieveSandBoxesForAuthor(Long authorId, SandBoxType sandBoxType);
+
     public SandBox persist(SandBox entity);
 
     public SandBox createSandBox(String sandBoxName, SandBoxType sandBoxType);

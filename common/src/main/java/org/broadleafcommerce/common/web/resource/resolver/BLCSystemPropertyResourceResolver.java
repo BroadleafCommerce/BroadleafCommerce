@@ -102,7 +102,7 @@ public class BLCSystemPropertyResourceResolver extends AbstractResourceResolver 
                 String propertyName = m.group(1);
 
                 String propVal = BLCSystemProperty.resolveSystemProperty(propertyName);
-                if (!StringUtils.isEmpty(propVal)) {
+                if (propVal == null) {
                     propVal = "";
                 }
 

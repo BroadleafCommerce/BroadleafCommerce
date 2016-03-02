@@ -80,7 +80,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Column(name = "BUNDLE_PRIORITY")
     @AdminPresentation(excluded = true, friendlyName = "productBundlePriority", group="productBundleGroup")
-    protected int priority=99;
+    protected Integer priority=99;
 
     @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
@@ -128,7 +128,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Override
     public Money getBundleItemsRetailPrice() {
-        Money price = new Money(BigDecimal.ZERO);
+        Money price = Money.ZERO;
         for (SkuBundleItem item : getSkuBundleItems()) {
             price = price.add(item.getRetailPrice().multiply(item.getQuantity()));
         }
@@ -137,7 +137,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Override
     public Money getBundleItemsSalePrice() {
-        Money price = new Money(BigDecimal.ZERO);
+        Money price = Money.ZERO;
         for (SkuBundleItem item : getSkuBundleItems()){
             if (item.getSalePrice() != null) {
                 price = price.add(item.getSalePrice().multiply(item.getQuantity()));

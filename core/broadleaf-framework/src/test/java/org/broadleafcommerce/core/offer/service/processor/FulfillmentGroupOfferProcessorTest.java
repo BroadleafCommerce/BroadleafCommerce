@@ -88,6 +88,19 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 
     protected FulfillmentGroupOfferProcessorImpl fgProcessor;
 
+    /**
+     * Created to work around a dependency in FulfillmentGroupOfferProcessorImpl to a live application context and
+     * system properties service since it uses BLCSystemProperty
+     * 
+     * @author Phillip Verheyden (phillipuniverse)
+     */
+    protected static class TestableFulfillmentGroupOfferProcessor extends FulfillmentGroupOfferProcessorImpl {
+        @Override
+        protected boolean getQualifyGroupAcrossAllOrderItems(PromotableFulfillmentGroup fg) {
+            return false;
+        }
+    }
+
     @Override
     protected void setUp() throws Exception {
         offerService = new OfferServiceImpl();
@@ -102,7 +115,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         fgServiceMock = EasyMock.createMock(FulfillmentGroupService.class);
         multishipOptionServiceMock = EasyMock.createMock(OrderMultishipOptionService.class);
 
-        fgProcessor = new FulfillmentGroupOfferProcessorImpl();
+        fgProcessor = new TestableFulfillmentGroupOfferProcessor();
         fgProcessor.setOfferDao(offerDaoMock);
         fgProcessor.setOrderItemDao(orderItemDaoMock);
         fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
@@ -134,7 +147,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         offerService.setPromotableItemFactory(new PromotableItemFactoryImpl());
         offerService.setOrderService(orderServiceMock);
     }
-
+    
     public void replay() {
         EasyMock.replay(offerDaoMock);
         EasyMock.replay(orderItemDaoMock);

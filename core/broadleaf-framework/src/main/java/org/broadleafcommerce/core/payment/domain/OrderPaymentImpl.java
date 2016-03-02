@@ -303,7 +303,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
 
     @Override
     public boolean isFinalPayment() {
-        return PaymentType.CREDIT_CARD.equals(getType()) || PaymentType.THIRD_PARTY_ACCOUNT.equals(getType());
+        return getType().getIsFinalPayment();
     }
 
     @Override

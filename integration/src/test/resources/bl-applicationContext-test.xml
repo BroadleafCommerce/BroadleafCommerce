@@ -112,7 +112,51 @@
         </property>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
-
+    
+    <bean id="testRollbackWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.common.workflow.RollbackTest.DummyProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <bean class="org.broadleafcommerce.common.workflow.RollbackTest.SimpleActivity">
+                    <constructor-arg value="Activity1"></constructor-arg>
+                    <property name="rollbackHandler">
+                        <bean class="org.broadleafcommerce.common.workflow.RollbackTest.SimpleRollbackHandler" />
+                    </property>
+                </bean>
+                <bean class="org.broadleafcommerce.common.workflow.RollbackTest.SimpleActivity">
+                    <constructor-arg value="Activity2"></constructor-arg>
+                    <property name="rollbackHandler">
+                        <bean class="org.broadleafcommerce.common.workflow.RollbackTest.SimpleRollbackHandler" />
+                    </property>
+                </bean>
+                <bean class="org.broadleafcommerce.common.workflow.RollbackTest.NestedActivity">
+                    <constructor-arg name="workflow">
+                        <bean class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+                            <property name="processContextFactory">
+                                <bean class="org.broadleafcommerce.common.workflow.RollbackTest.DummyProcessContextFactory"/>
+                            </property>
+                            <property name="activities">
+                                <list>
+                                    <bean class="org.broadleafcommerce.common.workflow.RollbackTest.SimpleActivity">
+                                        <constructor-arg value="ActivityA"></constructor-arg>
+                                        <property name="rollbackHandler">
+                                            <bean class="org.broadleafcommerce.common.workflow.RollbackTest.SimpleRollbackHandler" />
+                                        </property>
+                                    </bean>
+                                    <bean class="org.broadleafcommerce.common.workflow.RollbackTest.ExceptionActivity" />
+                                </list>
+                            </property>
+                            <property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
+                        </bean>
+                    </constructor-arg>
+                </bean>
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
+    </bean>
+    
     <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>

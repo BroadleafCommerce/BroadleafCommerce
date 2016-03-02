@@ -38,16 +38,17 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
 
     private static final Map<String, PaymentType> TYPES = new LinkedHashMap<String, PaymentType>();
 
-    public static final PaymentType GIFT_CARD = new PaymentType("GIFT_CARD", "Gift Card");
-    public static final PaymentType CREDIT_CARD = new PaymentType("CREDIT_CARD", "Credit Card");
-    public static final PaymentType BANK_ACCOUNT = new PaymentType("BANK_ACCOUNT", "Bank Account");
-    public static final PaymentType CHECK = new PaymentType("CHECK", "Check");
-    public static final PaymentType ELECTRONIC_CHECK = new PaymentType("ELECTRONIC_CHECK", "Electronic Check");
-    public static final PaymentType WIRE = new PaymentType("WIRE", "Wire Transfer");
-    public static final PaymentType MONEY_ORDER = new PaymentType("MONEY_ORDER", "Money Order");
-    public static final PaymentType CUSTOMER_CREDIT = new PaymentType("CUSTOMER_CREDIT", "Customer Credit");
-    public static final PaymentType COD = new PaymentType("COD", "Collect On Delivery");
-    public static final PaymentType CUSTOMER_PAYMENT = new PaymentType("CUSTOMER_PAYMENT", "Customer Payment");
+    public static final PaymentType GIFT_CARD = new PaymentType("GIFT_CARD", "Gift Card", false);
+    public static final PaymentType CREDIT_CARD = new PaymentType("CREDIT_CARD", "Credit Card", true);
+    public static final PaymentType BANK_ACCOUNT = new PaymentType("BANK_ACCOUNT", "Bank Account", false);
+    public static final PaymentType CHECK = new PaymentType("CHECK", "Check", false);
+    public static final PaymentType ELECTRONIC_CHECK = new PaymentType("ELECTRONIC_CHECK", "Electronic Check", false);
+    public static final PaymentType WIRE = new PaymentType("WIRE", "Wire Transfer", false);
+    public static final PaymentType MONEY_ORDER = new PaymentType("MONEY_ORDER", "Money Order", false);
+    public static final PaymentType CUSTOMER_CREDIT = new PaymentType("CUSTOMER_CREDIT", "Customer Credit", false);
+    public static final PaymentType COD = new PaymentType("COD", "Collect On Delivery", false);
+    public static final PaymentType CUSTOMER_PAYMENT = new PaymentType("CUSTOMER_PAYMENT", "Customer Payment", true);
+    public static final PaymentType PURCHASE_ORDER = new PaymentType("PURCHASE_ORDER", "Purchase Order", false);
     /**
      * Intended for modules like PayPal Express Checkout
      *
@@ -58,7 +59,7 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
      * Note that not all third party gateways support this feature described above.
      * Make sure to the gateway does before assigning this type to your Order Payment.
      */
-    public static final PaymentType THIRD_PARTY_ACCOUNT = new PaymentType("THIRD_PARTY_ACCOUNT", "3rd-Party Account");
+    public static final PaymentType THIRD_PARTY_ACCOUNT = new PaymentType("THIRD_PARTY_ACCOUNT", "3rd-Party Account", true);
 
     public static PaymentType getInstance(final String type) {
         return TYPES.get(type);
@@ -66,6 +67,7 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
 
     private String type;
     private String friendlyType;
+    private boolean isFinalPayment;
 
     public PaymentType() {
         //do nothing
@@ -74,8 +76,19 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
     public PaymentType(final String type, final String friendlyType) {
         this.friendlyType = friendlyType;
         setType(type);
+        this.isFinalPayment = false;
     }
-
+    
+    public PaymentType(final String type, final String friendlyType, final boolean isFinalPayment) {
+        this.friendlyType = friendlyType;
+        this.isFinalPayment = isFinalPayment;
+        setType(type);
+    }
+    
+    public boolean getIsFinalPayment() {
+        return isFinalPayment;
+    }
+    
     @Override
     public String getType() {
         return type;

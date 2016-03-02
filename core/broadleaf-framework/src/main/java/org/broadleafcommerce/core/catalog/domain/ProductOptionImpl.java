@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -29,6 +30,7 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
@@ -90,8 +92,8 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     protected Boolean required;
 
     @Column(name = "USE_IN_SKU_GENERATION")
-    @AdminPresentation(friendlyName = "productOption_UseInSKUGeneration")
-    private Boolean useInSkuGeneration;
+    @AdminPresentation(friendlyName = "productOption_UseInSKUGeneration", defaultValue = "true")
+    private Boolean useInSkuGeneration = Boolean.TRUE;
 
     @Column(name = "DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "productOption_displayOrder")
@@ -102,7 +104,9 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     private String productOptionValidationStrategyType;
 
     @Column(name = "VALIDATION_TYPE")
-    @AdminPresentation(friendlyName = "productOption_validationType", group = "productOption_validation", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType")
+    @AdminPresentation(friendlyName = "productOption_validationType", visibility = VisibilityEnum.HIDDEN_ALL,
+            group = "productOption_validation", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType")
     private String productOptionValidationType;
 
     @Column(name = "VALIDATION_STRING")
@@ -126,6 +130,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "productOption")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @ClonePolicyCollectionOverride
     protected List<ProductOptionXref> products = new ArrayList<ProductOptionXref>();
     
     @Override
