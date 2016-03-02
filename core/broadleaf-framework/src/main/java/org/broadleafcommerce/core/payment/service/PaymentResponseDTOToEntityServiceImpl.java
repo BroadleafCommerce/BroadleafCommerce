@@ -141,6 +141,8 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
             billingPhone.setPhoneNumber(dto.getAddressPhone());
             address.setPhonePrimary(billingPhone);
         }
+
+        addressService.populateAddressISOCountrySub(address);
     }
 
     @Override
