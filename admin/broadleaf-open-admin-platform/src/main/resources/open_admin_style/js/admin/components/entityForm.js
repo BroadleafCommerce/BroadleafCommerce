@@ -132,9 +132,10 @@
                     url: $form.attr('action'),
                     dataType: "json",
                     type: "POST",
-                    data: $form.serializeArray(),
-                    complete: BLCAdmin.entityForm.hideActionSpinner
+                    data: $form.serializeArray()
                 }, function (data) {
+                    BLCAdmin.entityForm.hideActionSpinner();
+
                     $(".errors, .error, .tab-error-indicator, .tabError").remove();
                     $('.has-error').removeClass('has-error');
 

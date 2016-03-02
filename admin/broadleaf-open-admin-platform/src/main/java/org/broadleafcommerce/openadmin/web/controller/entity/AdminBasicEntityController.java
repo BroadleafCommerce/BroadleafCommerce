@@ -382,6 +382,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
             modifyEntityForm(entityForm, pathVars);
         }
 
+        if (request.getParameter("headerFlash") != null) {
+            model.addAttribute("headerFlash", request.getParameter("headerFlash"));
+        }
+
         model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("currentUrl", request.getRequestURL().toString());
