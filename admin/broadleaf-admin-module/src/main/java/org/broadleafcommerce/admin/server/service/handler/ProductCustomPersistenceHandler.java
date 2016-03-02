@@ -176,7 +176,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 criteria.select(root.get("product").get("id").as(Long.class));
                 List<Predicate> restrictions = new ArrayList<Predicate>();
                 restrictions.add(builder.equal(root.get("defaultReference"), Boolean.TRUE));
-                restrictions.add(root.get("category").get("id").in(transformedValues));
+                if (!transformedValues.isEmpty()) {
+                    restrictions.add(root.get("category").get("id").in(transformedValues));
+                }
                 //archived?
                 QueryUtils.notArchived(builder, restrictions, root, "archiveStatus");
                 criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
