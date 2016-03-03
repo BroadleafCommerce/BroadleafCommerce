@@ -44,10 +44,11 @@ public class ExtractValueRequest {
     protected final PersistenceManager persistenceManager;
     protected final RecordHelper recordHelper;
     protected final Serializable entity;
+    protected final String[] customCriteria;
 
     public ExtractValueRequest(List<Property> props, FieldManager fieldManager, BasicFieldMetadata metadata, 
             Object requestedValue, String displayVal, PersistenceManager persistenceManager, 
-            RecordHelper recordHelper, Serializable entity) {
+            RecordHelper recordHelper, Serializable entity, String[] customCriteria) {
         this.props = props;
         this.fieldManager = fieldManager;
         this.metadata = metadata;
@@ -56,6 +57,7 @@ public class ExtractValueRequest {
         this.persistenceManager = persistenceManager;
         this.recordHelper = recordHelper;
         this.entity = entity;
+        this.customCriteria = customCriteria;
     }
 
     public List<Property> getProps() {
@@ -97,5 +99,8 @@ public class ExtractValueRequest {
     public Serializable getEntity() {
         return entity;
     }
-    
+
+    public String[] getCustomCriteria() {
+        return customCriteria;
+    }
 }
