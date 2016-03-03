@@ -475,6 +475,13 @@
         <property name="conditionalProperty" value="enable.admin.user.archive"/>
     </bean>
 
+    <bean id="blCustomerConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
+        <property name="templateTokens">
+            <util:constant static-field="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes.ARCHIVE_ONLY"/>
+        </property>
+        <property name="conditionalProperty" value="enable.customer.archive"/>
+    </bean>
+
 
     <!-- This is to conditionally add workflow annotation to FulfillmentPriceBandImpl -->
     <bean id="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
@@ -514,7 +521,7 @@
                 <entry key="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl" value-ref="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember"/>
                 <entry key="org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl" value-ref="blAdminUserConditionalDirectCopyTransformerMember" />
                 <entry key="org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl" value-ref="blAdminSectionConditionalDirectCopyTransformerMember" />
-
+                <entry key="org.broadleafcommerce.profile.core.domain.CustomerImpl" value-ref="blCustomerConditionalDirectCopyTransformerMember" />
             </map>
         </property>
     </bean>
