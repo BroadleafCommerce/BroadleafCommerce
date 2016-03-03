@@ -1270,9 +1270,10 @@ $(document).ready(function() {
             $('.nav-tabs li > a[href="' + window.location.hash + '"]').closest('li').addClass('active');
             $('.tabs-content .entityFormTab').removeClass('active');
             $('.tabs-content .entityFormTab.' + getCurrentHashVal() + 'Tab').addClass('active');
+            $('.nav-tabs li > a[href="' + getCurrentHash() + '"]').click();
         };
         $(document).on('click', '.nav-tabs li > a', function () {
-            if (BLCAdmin.getModals().length == 0) {debugger;
+            if (BLCAdmin.getModals().length == 0) {
                 window.location.hash = $(this).attr('href');
             }
         });
