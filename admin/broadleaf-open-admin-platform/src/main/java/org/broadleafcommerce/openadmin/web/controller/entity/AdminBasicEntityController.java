@@ -50,7 +50,9 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
+import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
+import org.broadleafcommerce.openadmin.server.service.persistence.extension.AdornedTargetAutoPopulateExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
@@ -102,10 +104,12 @@ import javax.servlet.http.HttpServletResponse;
  * entity that is not explicitly customized by its own controller.
  * 
  * @author Andre Azzolini (apazzolini)
+ * @author Jeff Fischer
  */
 @Controller("blAdminBasicEntityController")
 @RequestMapping("/{sectionKey:.+}")
 public class AdminBasicEntityController extends AdminAbstractController {
+
     protected static final Log LOG = LogFactory.getLog(AdminBasicEntityController.class);
 
     @Resource(name="blSandBoxHelper")
@@ -113,6 +117,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
     @Value("${admin.form.validation.errors.hideTopLevelErrors}")
     protected boolean hideTopLevelErrors = false;
+
+    @Resource(name = "blAdornedTargetAutoPopulateExtensionManager")
+    protected AdornedTargetAutoPopulateExtensionManager adornedTargetAutoPopulateExtensionManager;
+
+    @Resource(name = "blRowLevelSecurityService")
+    protected RowLevelSecurityService rowLevelSecurityService;
 
     // ******************************************
     // REQUEST-MAPPING BOUND CONTROLLER METHODS *
@@ -208,6 +218,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 }
                 canCreate = false;
             }
+        }
+
+        if (canCreate) {
+            canCreate = rowLevelSecurityService.canAdd(adminRemoteSecurityService.getPersistentAdminUser(), sectionClassName, cmd);
         }
         
         return canCreate;
@@ -828,6 +842,27 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         return buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, null, null);
     }
+
+    @RequestMapping(value = "/{id}/{collectionField:.*}/add/{collectionItemId}/verify", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
+        String sectionKey = getSectionKey(pathVars);
+        String mainClassName = getClassNameForSection(sectionKey);
+        List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        FieldMetadata md = collectionProperty.getMetadata();
+        Map<String, Object> responseMap = new HashMap<String, Object>();
+        if (md instanceof AdornedTargetCollectionMetadata) {
+            adornedTargetAutoPopulateExtensionManager.getProxy().autoSetAdornedTargetManagedFields(md, mainClassName, id,
+                    collectionField,
+                    collectionItemId, responseMap);
+        }
+        return responseMap;
+    }
     
     /**
      * Adds the requested collection item
@@ -1179,8 +1214,16 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 populateTypeAndId = false;
             }
 
+            Map<String, Object> responseMap = new HashMap<String, Object>();
+            adornedTargetAutoPopulateExtensionManager.getProxy().autoSetAdornedTargetManagedFields(md, mainClassName, id,
+                    collectionField,
+                    collectionItemId, responseMap);
+
             ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
             for (String field : fmd.getMaintainedAdornedTargetFields()) {
+                if (responseMap.containsKey(field) && responseMap.containsKey("autoSubmit")) {
+                    continue;
+                }
                 Property p = cmd.getPMap().get(field);
                 if (p != null && p.getMetadata() instanceof AdornedTargetCollectionMetadata) {
                     // Because we're dealing with a nested adorned target collection, this particular request must act
@@ -1216,7 +1259,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             
             boolean atLeastOneBasicField = false;
             for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
-                if (entry.getValue().getIsVisible()) {
+                if (entry.getValue().getIsVisible() && !responseMap.containsKey(entry.getValue().getName()) && !responseMap.containsKey("autoSubmit")) {
                     atLeastOneBasicField = true;
                     break;
                 }

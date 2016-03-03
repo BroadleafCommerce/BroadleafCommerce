@@ -45,6 +45,7 @@ public class Property implements Serializable {
     protected String rawValue;
     protected String originalValue;
     protected Date deployDate;
+    protected boolean enabled = true;
 
     public Property() {
         // Default public constructor
@@ -156,6 +157,14 @@ public class Property implements Serializable {
         this.deployDate = deployDate;
     }
 
+    public boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Property{");
@@ -166,6 +175,7 @@ public class Property implements Serializable {
         }
         sb.append(", value='").append(temp).append('\'');
         sb.append(", isDirty=").append(isDirty);
+        sb.append(", enabled=").append(enabled);
         sb.append('}');
         return sb.toString();
     }
