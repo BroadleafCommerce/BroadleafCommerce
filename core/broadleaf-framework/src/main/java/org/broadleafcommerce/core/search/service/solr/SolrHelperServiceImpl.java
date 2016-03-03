@@ -32,6 +32,7 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -167,9 +168,22 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             } else {
                 LOG.debug("Swapping active cores");
 
+                String primaryCoreName = SolrContext.PRIMARY;
+                String reindexCoreName = SolrContext.REINDEX;
+                
+                // If using standalone solr the core name is the last part of the URL
+                if (HttpSolrClient.class.isAssignableFrom(SolrContext.getServer().getClass())) {
+                    String primaryUrl = ((HttpSolrClient) SolrContext.getServer()).getBaseURL();
+                    primaryCoreName = primaryUrl.substring(primaryUrl.lastIndexOf('/') + 1);
+                }
+                if (HttpSolrClient.class.isAssignableFrom(SolrContext.getReindexServer().getClass())) {
+                    String reindexUrl = ((HttpSolrClient) SolrContext.getReindexServer()).getBaseURL();
+                    reindexCoreName = reindexUrl.substring(reindexUrl.lastIndexOf('/') + 1);
+                }
+                
                 CoreAdminRequest car = new CoreAdminRequest();
-                car.setCoreName(SolrContext.PRIMARY);
-                car.setOtherCoreName(SolrContext.REINDEX);
+                car.setCoreName(primaryCoreName);
+                car.setOtherCoreName(reindexCoreName);
                 car.setAction(CoreAdminAction.SWAP);
 
                 try {

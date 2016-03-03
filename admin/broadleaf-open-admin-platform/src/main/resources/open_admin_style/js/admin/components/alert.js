@@ -51,4 +51,10 @@
         }
     };
 
+    // Fade out any header flashes that are shown after a redirect (i.e. "Successfully deleted" notification)
+    setTimeout(function() {
+        $('#headerFlashAlertBoxContainer').find('.alert-box').fadeOut();
+        BLCAdmin.history.replaceUrlParameter('headerFlash');
+    }, 3000);
+
 })(jQuery, BLCAdmin);

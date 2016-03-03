@@ -374,6 +374,9 @@ $(document).ready(function() {
             oldParams = {};
         }
 
+        // Remove startIndex from the request
+        delete oldParams["startIndex"];
+
         if (search.length > 0) {
             oldParams[$firstInput.data('name')] = search;
         } else {
@@ -394,7 +397,11 @@ $(document).ready(function() {
             if ($(data).find('table').length > 1) {
                 $relatedListGrid = $(data).find("div.listgrid-container:has(table#" + tableId +")");
             } else {
-                $relatedListGrid = $(data);
+                if ($(data).hasClass('listgrid-container')) {
+                    $relatedListGrid = $(data);
+                } else {
+                    $relatedListGrid = $(data).find("div.listgrid-container");
+                }
             }
             BLCAdmin.listGrid.replaceRelatedCollection($relatedListGrid, null, { isRefresh : false});
             $firstInput.trigger('input');

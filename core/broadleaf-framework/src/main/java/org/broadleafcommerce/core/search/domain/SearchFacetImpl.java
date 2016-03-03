@@ -51,7 +51,9 @@ import java.util.List;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
 })
 public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEntity, SearchFacetAdminPresentation {
 
@@ -81,7 +83,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
             prominent = true, translatable = true, gridOrder = 1000)
     protected String label;
 
-    @ManyToOne(optional=false, targetEntity = IndexFieldTypeImpl.class)
+    @ManyToOne(targetEntity = IndexFieldTypeImpl.class)
     @JoinColumn(name = "INDEX_FIELD_TYPE_ID")
     @AdminPresentation(friendlyName = "SearchFacetImpl_field", order = 2000, group = GroupName.General,
             prominent = true, gridOrder = 2000, requiredOverride = RequiredOverride.REQUIRED)

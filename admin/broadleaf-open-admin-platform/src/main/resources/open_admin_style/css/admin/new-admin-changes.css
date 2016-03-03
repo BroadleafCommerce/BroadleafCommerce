@@ -590,6 +590,7 @@ button.disabled {
 }
 
 .listgrid-search input {
+    -webkit-appearance: none; /* for safari */
     height: 36px !important;
     vertical-align: bottom;
     width: 300px;
@@ -986,7 +987,6 @@ input.color-picker-value {
     font-size: 12px;
     color: #B3B3B3;
     font-family: 'Open Sans', sans-serif;
-    line-height: 1.5em;
 }
 
 :-ms-input-placeholder {
@@ -1038,11 +1038,14 @@ div.action-popup span.deploy-error button {
 
 span.workflow-action {
     font-size: 16px;
-    margin-right: -6px;
     visibility: hidden;
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     display: inline-block;
+}
+
+span.workflow-action:nth-child(2) {
+    margin-left: -6px;
 }
 
 .listgrid-row-actions span.workflow-action a {
@@ -1305,7 +1308,6 @@ blockquote::before{
 
 .media-image-container {
     position: relative;
-    display: inline-block;
 }
 
 .fieldset-card-content .media-image-container {
@@ -1569,4 +1571,11 @@ div.uploadMessage {
 
 .input-group {
     width: 100%;
+}
+
+.selectize-control.single .selectize-input.remove-caret:after {
+    content: none;
+}
+.selectize-control.single .selectize-input.remove-caret:hover {
+    cursor: auto;
 }
