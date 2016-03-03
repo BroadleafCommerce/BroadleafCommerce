@@ -22,6 +22,7 @@ package org.broadleafcommerce.openadmin.web.controller;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
@@ -118,4 +119,16 @@ public interface AdminAbstractControllerExtensionHandler extends ExtensionHandle
      * @return
      */
     public ExtensionResultStatusType isAddRequest(Entity entity, ExtensionResultHolder<Boolean> resultHolder);
+
+    /**
+     * Extension point to determine if the current save transaction is the first valid save.
+     *
+     *
+     * @param response
+     * @param hasValidationErrors
+     * @param sectionKey
+     * @param id
+     * @return
+     */
+    public ExtensionResultStatusType overrideSaveEntityJsonResponse(HttpServletResponse response, boolean hasValidationErrors, String sectionKey, String id, ExtensionResultHolder<String> resultHolder);
 }

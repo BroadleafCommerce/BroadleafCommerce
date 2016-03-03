@@ -382,6 +382,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
             modifyEntityForm(entityForm, pathVars);
         }
 
+        if (request.getParameter("headerFlash") != null) {
+            model.addAttribute("headerFlash", request.getParameter("headerFlash"));
+        }
+
         model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -503,6 +507,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
         List<String> dirtyList = buildDirtyList(pathVars, request, id);
         if (CollectionUtils.isNotEmpty(dirtyList)) {
             json.with("dirty", dirtyList);
+        }
+
+        ExtensionResultHolder<String> resultHolder = new ExtensionResultHolder<>();
+        ExtensionResultStatusType resultStatusType = extensionManager.getProxy().overrideSaveEntityJsonResponse(response, result.hasErrors(), getSectionKey(pathVars), id, resultHolder);
+        if (resultStatusType.equals(ExtensionResultStatusType.HANDLED)) {
+            return resultHolder.getResult();
         }
 
         return json.done();
