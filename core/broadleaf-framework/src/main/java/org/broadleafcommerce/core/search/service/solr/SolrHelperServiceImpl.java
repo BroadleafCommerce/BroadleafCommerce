@@ -763,6 +763,13 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             return null;
         }
 
+        boolean isPropertyReadable = PropertyUtils.isReadable(object, components[currentPosition]);
+        if (!isPropertyReadable) {
+            LOG.debug(String.format("Could not find %s on %s, assuming this exists elsewhere in the class hierarchy",
+                components[currentPosition], object.getClass().getName()));
+            return null;
+        }
+        
         Object propertyObject = PropertyUtils.getProperty(object, components[currentPosition]);
 
         if (propertyObject != null) {
