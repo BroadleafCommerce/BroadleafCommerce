@@ -39,7 +39,7 @@ var BLCAdmin = (function($) {
     var originalStickyBarOffset = $('.sticky-container').offset().top;
     
     var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container, .redactor_box, ' +
-                         '.asset-selector-container img, >div>select, div.custom-checkbox, div.small-enum-container, ' +
+                         '.asset-selector-container img, >div>select, div.custom-checkbox, div.small-enum-container, .ace-editor, ' +
                          'textarea, div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
                          '.rule-builder-simple-time, .rule-builder-simple, .rule-builder-with-quantity, >div>div>input:not([type=hidden]), .selectize-wrapper';
     
@@ -87,7 +87,15 @@ var BLCAdmin = (function($) {
             }
         });
 
-        BLCAdmin.initializeModalTabs($data);
+
+        // Only initialize all fields if NOT a normal EntityForm in modal
+        // Should initialize for lookups
+        if (BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0) {
+            BLCAdmin.initializeFields(BLCAdmin.currentModal());
+        } else {
+            BLCAdmin.initializeModalTabs($data);
+        }
+
         BLCAdmin.initializeModalButtons($data);
         BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
     }
@@ -257,6 +265,8 @@ var BLCAdmin = (function($) {
         
         initializeModalTabs : function($data) {
             $.fn.broadleafTabs();
+
+            BLCAdmin.currentModal().find('.nav-tabs li.active > a').click();
         },
         
         initializeModalButtons : function($data) {
@@ -349,7 +359,15 @@ var BLCAdmin = (function($) {
                         var content = $('<div>', { 'class': 'content-yield'});
                         BLCAdmin.currentModal().find('.modal-body').wrapInner(content);
                     }
-                    BLCAdmin.initializeModalTabs(BLCAdmin.currentModal());
+
+                    // Only initialize all fields if NOT a normal EntityForm in modal
+                    // Should initialize for lookups
+                    if (BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0) {
+                        BLCAdmin.initializeFields(BLCAdmin.currentModal());
+                    } else {
+                        BLCAdmin.initializeModalTabs($data);
+                    }
+
                     BLCAdmin.initializeModalButtons(BLCAdmin.currentModal());
                     BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
 
@@ -1076,6 +1094,12 @@ $.fn.blSelectize = function (settings_user) {
         settings_user['plugins'] = ['clear_on_type'];
         settings_user['placeholder'] = 'Click here to select ...';
         settings_user['positionDropdown'] = 'auto';
+        settings_user['onInitialize'] = function() {
+            if (Object.keys(this.options).length <= 1) {
+                // Remove the dropdown css
+                this.$control.addClass('remove-caret');
+            }
+        };
 
         var $select = $(el).selectize(settings_user);
         var selectize = $select[0].selectize;

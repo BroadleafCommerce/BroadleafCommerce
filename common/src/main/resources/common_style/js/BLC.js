@@ -62,10 +62,17 @@ var BLC = (function($) {
     }
     
     function redirectIfNecessary($data) {
+        // If $data is JSON & ajaxredirect value is valid
+        if ($data.constructor === {}.constructor && typeof $data.ajaxredirect !== 'undefined'
+            && $data.ajaxredirect != null && $data.ajaxredirect !== "") {
+            window.location = $data.ajaxredirect;
+            return false;
+        }
+
         if (!($data instanceof jQuery)) {
             return true;
         }
-        
+
         if ($data.attr('id') == redirectUrlDiv) {
             var redirectUrl = $data.text();
             if (redirectUrl != null && redirectUrl !== "") {
@@ -73,6 +80,7 @@ var BLC = (function($) {
                 return false;
             }
         }
+
         return true;
     }
     
