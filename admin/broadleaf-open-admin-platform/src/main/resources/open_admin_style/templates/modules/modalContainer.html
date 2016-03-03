@@ -15,7 +15,7 @@
             
             <span th:case="'addCollectionItem'" th:remove="tag">
                 [[#{modal.title.add}]] 
-                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" />
+                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.name}}" />
                 <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" />
             </span>
             
