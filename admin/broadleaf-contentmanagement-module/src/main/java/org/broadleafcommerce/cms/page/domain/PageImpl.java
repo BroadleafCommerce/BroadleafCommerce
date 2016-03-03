@@ -151,7 +151,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
 
     @Column(name = "OFFLINE_FLAG")
     @AdminPresentation(friendlyName = "PageImpl_Offline", order = 3500,
-        group = PageAdminPresentation.GroupName.Misc, groupOrder = PageAdminPresentation.GroupOrder.Misc, defaultValue = "false")
+        group = GroupName.Misc, defaultValue = "false")
     protected Boolean offlineFlag = false;
 
     /*
@@ -178,8 +178,8 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
 
     @Column(name = "EXCLUDE_FROM_SITE_MAP")
     @AdminPresentation(friendlyName = "PageImpl_Exclude_From_Site_Map", order = 1800,
-        group = PageAdminPresentation.GroupName.Basic, groupOrder = PageAdminPresentation.GroupOrder.Basic)
-    protected Boolean excludeFromSiteMap;
+        tab = TabName.Seo, group = GroupName.Sitemap, defaultValue = "false")
+    protected Boolean excludeFromSiteMap = false;
 
     @OneToMany(mappedBy = "page", targetEntity = PageAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @MapKey(name = "name")
@@ -203,12 +203,12 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
 
     @Column (name = "META_TITLE")
     @AdminPresentation(friendlyName = "PageImpl_metaTitle", order = 2000,
-        group = PageAdminPresentation.GroupName.Misc, groupOrder = PageAdminPresentation.GroupOrder.Misc, largeEntry = true)
+        tab = TabName.Seo, group = GroupName.Tags, largeEntry = true)
     protected String metaTitle;
 
     @Column (name = "META_DESCRIPTION")
     @AdminPresentation(friendlyName = "PageImpl_metaDescription", order = 3000,
-        group = PageAdminPresentation.GroupName.Misc, groupOrder = PageAdminPresentation.GroupOrder.Misc, largeEntry = true)
+        tab = TabName.Seo, group = GroupName.Tags, largeEntry = true)
     protected String metaDescription;
 
     @Override

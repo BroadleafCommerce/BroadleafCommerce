@@ -106,6 +106,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
     protected static final Log LOG = LogFactory.getLog(AdminBasicEntityController.class);
 
     public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
+    public static final String CUSTOM_CRITERIA = "criteria";
 
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
@@ -191,12 +192,29 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams, crumbs, pathVars)
                 .withFilterAndSortCriteria(getCriteria(requestParams))
                 .withStartIndex(getStartIndex(requestParams))
-                .withMaxIndex(getMaxIndex(requestParams));
+                .withMaxIndex(getMaxIndex(requestParams))
+                .withCustomCriteria(getCustomCriteria(requestParams));
 
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
 
         return formService.constructSelectizeOptionMap(drs, cmd);
+    }
+
+    /**
+     * Obtains the requested criteria parameter
+     *
+     * @param requestParams
+     * @return
+     */
+    protected String[] getCustomCriteria(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> criteria = requestParams.get(CUSTOM_CRITERIA);
+        String response = CollectionUtils.isEmpty(criteria) ? null : criteria.get(0);
+        return new String[] {response};
     }
 
     /**
@@ -382,6 +400,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
             modifyEntityForm(entityForm, pathVars);
         }
 
+        if (request.getParameter("headerFlash") != null) {
+            model.addAttribute("headerFlash", request.getParameter("headerFlash"));
+        }
+
         model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -503,6 +525,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
         List<String> dirtyList = buildDirtyList(pathVars, request, id);
         if (CollectionUtils.isNotEmpty(dirtyList)) {
             json.with("dirty", dirtyList);
+        }
+
+        ExtensionResultHolder<String> resultHolder = new ExtensionResultHolder<>();
+        ExtensionResultStatusType resultStatusType = extensionManager.getProxy().overrideSaveEntityJsonResponse(response, result.hasErrors(), getSectionKey(pathVars), id, resultHolder);
+        if (resultStatusType.equals(ExtensionResultStatusType.HANDLED)) {
+            return resultHolder.getResult();
         }
 
         return json.done();
