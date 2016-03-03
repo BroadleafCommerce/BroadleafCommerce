@@ -502,6 +502,7 @@
                         var $selectize = this;
                         var queryData = {};
                         queryData["name"] = query;
+                        queryData["criteria"] = "RULE";
 
                         if ("blcOperators_Selectize_Enumeration" === $selectize.opRef) {
                             var data = {options: []};

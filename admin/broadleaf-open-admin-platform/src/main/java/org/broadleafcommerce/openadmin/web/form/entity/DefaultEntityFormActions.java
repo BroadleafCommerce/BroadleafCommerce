@@ -29,7 +29,7 @@ public class DefaultEntityFormActions {
         .withDisplayText("Save");
 
     public static final EntityFormAction DELETE = new EntityFormAction(EntityFormAction.DELETE)
-        .withButtonClass("delete-button alert")
+        .withButtonClass("delete-button")
         .withDisplayText("Delete");
     
     public static final EntityFormAction PREVIEW = new EntityFormAction(EntityFormAction.PREVIEW)

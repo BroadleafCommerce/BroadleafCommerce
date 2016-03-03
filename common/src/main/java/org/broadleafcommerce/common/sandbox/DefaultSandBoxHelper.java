@@ -100,6 +100,11 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     }
 
     @Override
+    public <T> T getTopMostOriginalRecord(T record) {
+        return null;
+    }
+
+    @Override
     public void ignoreCloneCache(boolean ignoreCache) {
         //do nothing
     }

@@ -132,9 +132,10 @@
                     url: $form.attr('action'),
                     dataType: "json",
                     type: "POST",
-                    data: $form.serializeArray(),
-                    complete: BLCAdmin.entityForm.hideActionSpinner
+                    data: $form.serializeArray()
                 }, function (data) {
+                    BLCAdmin.entityForm.hideActionSpinner();
+
                     $(".errors, .error, .tab-error-indicator, .tabError").remove();
                     $('.has-error').removeClass('has-error');
 
@@ -279,12 +280,17 @@ $(document).ready(function() {
             $('.has-error').removeClass('has-error');
 
             if (!data.errors) {
-                $(".alert-box").removeClass("alert").addClass("success");
-                $(".alert-box-message").text("Successfully deleted");
+                var $titleBar = $form.closest('.main-content').find('.content-area-title-bar');
+                BLCAdmin.alert.showAlert($titleBar, 'Successfully ' + BLCAdmin.messages.deleted + '!', {
+                    alertType: 'save-alert',
+                    autoClose: 2000,
+                    clearOtherAlerts: true
+                });
             } else {
                 BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemDeleting);
             }
-            
+
+            BLCAdmin.runPostFormSubmitHandlers($form, data);
         });
         
         event.preventDefault();
@@ -357,9 +363,7 @@ $(document).ready(function() {
     $('body').on('click', 'a.media-link', function(event) {
         event.preventDefault();
 
-        var asset = $(this).closest('.asset-item').find('img');
-        var link = $(asset).attr('data-link');
-        //link += $(this).attr('data-urlpostfix');
+        var link = $(this).attr('data-link');
         link += $(this).attr('data-queryparams');
 
         BLCAdmin.showLinkAsModal(link);

@@ -81,23 +81,6 @@ public interface SandBoxHelper {
     Long getCascadedProductionStateId(Class<?> linkedObjectType, Long requestedParent);
 
     /**
-     * Return the sandbox version id for the requested original id. Will return null
-     * if no sandbox version is available.
-     *
-     * @param linkedObjectType the type of the entity in question
-     * @param requestedParent the id to check
-     * @return the sandbox version, or null
-     */
-    //Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
-
-    //Long getCascadedProductionStateId(EntityManager em, Class<?> linkedObjectType, Long requestedParent,
-                                      //Boolean includeSandBoxInheritance);
-
-    //Long getCombinedSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent);
-
-    //Long getCombinedSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
-
-    /**
      * Return the original id for the requested id. Will return the passed in id if
      * the type is not sandboxable. Will return null if the passed in id
      * is not a sandbox record, or if it's a sandbox add.
@@ -122,30 +105,6 @@ public interface SandBoxHelper {
     OriginalIdResponse getProductionOriginalId(Class<?> type, Long id);
 
     Long getOriginalId(Object test);
-
-//    /**
-//     * Setup basic required fields for sandbox support
-//     *
-//     * @param clone the entity instance to setup
-//     * @param em the Entity Manager
-//     */
-//    void setupSandBoxState(Object clone, EntityManager em);
-
-//    /**
-//     * Archive an object so that it is no longer recognized
-//     * by the sandbox support
-//     *
-//     * @param start the object to archive
-//     * @param em the Entity Manager
-//     */
-//    void archiveObject(Object start, EntityManager em);
-
-//    /**
-//     * Retrieve the field names related to sandbox support
-//     *
-//     * @return the sandbox support fields
-//     */
-//    String[] getSandBoxDiscriminatorFieldList();
 
     /**
      * Whether or not the class is sandboxable
@@ -186,6 +145,16 @@ public interface SandBoxHelper {
      * @return
      */
     Long getProductionRecordIdIfApplicable(EntityManager em, Object startFieldValue);
+
+    /**
+     * If record is sandboxable, check to see if an original version of the passed in record exists. If so,
+     * return that original version. Otherwise, return null. The original record is the highest in the hierarchy,
+     * if applicable.
+     *
+     * @param record the entity instance to check
+     * @return the original record, or null if not exists
+     */
+    <T> T getTopMostOriginalRecord(T record);
 
     public class OriginalIdResponse {
 

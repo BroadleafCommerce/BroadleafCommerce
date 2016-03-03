@@ -111,7 +111,7 @@
             var modals = BLCAdmin.getModals();
             if (modals.length > 1) {
                 for (var i = modals.length - 1; i > 0; i--) {
-                    $oldWrapper = $(modals[i]).find('#' + collectionId);
+                    $oldWrapper = $(modals[i]).find('.selectize-wrapper#' + collectionId);
                     if ($oldWrapper != null && $oldWrapper.length > 0) {
                         break;
                     }

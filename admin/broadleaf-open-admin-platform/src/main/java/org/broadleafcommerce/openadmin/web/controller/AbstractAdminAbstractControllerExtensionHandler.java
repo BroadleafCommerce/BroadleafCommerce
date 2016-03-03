@@ -31,9 +31,10 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 
 /**
@@ -84,6 +85,11 @@ public class AbstractAdminAbstractControllerExtensionHandler extends AbstractExt
 
     @Override
     public ExtensionResultStatusType isAddRequest(Entity entity, ExtensionResultHolder<Boolean> resultHolder) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType overrideSaveEntityJsonResponse(HttpServletResponse response, boolean hasValidationErrors, String sectionKey, String id, ExtensionResultHolder<String> resultHolder) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 }

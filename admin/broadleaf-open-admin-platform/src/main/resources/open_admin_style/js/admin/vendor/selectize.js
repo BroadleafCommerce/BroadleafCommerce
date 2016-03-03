@@ -1195,7 +1195,7 @@
 	
 			$wrapper          = $('<div>').addClass(settings.wrapperClass).addClass(classes).addClass(inputMode);
 			$control          = $('<div>').addClass(settings.inputClass).addClass('items').appendTo($wrapper);
-			$control_input    = $('<input type="text" autocomplete="off" />').appendTo($control).attr('tabindex', $input.is(':disabled') ? '-1' : self.tabIndex);
+			$control_input    = $('<input type="text" autocomplete="off" />').appendTo($control).attr('tabindex', self.tabIndex);
 			$dropdown_parent  = $(settings.dropdownParent || $wrapper);
 			$dropdown         = $('<div>').addClass(settings.dropdownClass).addClass(inputMode).hide().appendTo($dropdown_parent);
 			$dropdown_content = $('<div>').addClass(settings.dropdownContentClass).appendTo($dropdown);
@@ -1304,7 +1304,7 @@
 				tabindex  : $input.attr('tabindex')
 			};
 	
-			$input.attr('tabindex', -1).hide().after(self.$wrapper);
+			$input.hide().after(self.$wrapper);
 	
 			if ($.isArray(settings.items)) {
 				self.setValue(settings.items);
@@ -1450,7 +1450,7 @@
 				}
 			} else {
 				// give control focus
-				if (!defaultPrevented) {
+				if (!defaultPrevented && self.items.count > 1) {
 					window.setTimeout(function() {
 						self.focus();
 					}, 0);
@@ -1615,6 +1615,7 @@
 				self.refreshOptions();
 				self.trigger('type', value);
 			}
+			self.positionDropdown();
 		},
 	
 		/**
@@ -1645,8 +1646,8 @@
 		onFocus: function(e) {
 			var self = this;
 			var wasFocused = self.isFocused;
-	
-			if (self.isDisabled) {
+
+			if (self.isDisabled || Object.keys(this.options).length <= 1) {
 				self.blur();
 				e && e.preventDefault();
 				return false;
@@ -3136,7 +3137,7 @@
 			if (cache) {
 				self.renderCache[templateName][value] = html;
 			}
-	
+
 			return html;
 		},
 	
