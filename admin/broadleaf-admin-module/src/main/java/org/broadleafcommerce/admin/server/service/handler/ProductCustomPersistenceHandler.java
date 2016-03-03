@@ -62,7 +62,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
-import org.hibernate.ejb.QueryHints;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -80,7 +79,6 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
 
 /**
  * @author Jeff Fischer
@@ -176,7 +174,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 criteria.select(root.get("product").get("id").as(Long.class));
                 List<Predicate> restrictions = new ArrayList<Predicate>();
                 restrictions.add(builder.equal(root.get("defaultReference"), Boolean.TRUE));
-                if (!transformedValues.isEmpty()) {
+                if (CollectionUtils.isNotEmpty(transformedValues)) {
                     restrictions.add(root.get("category").get("id").in(transformedValues));
                 }
                 //archived?
@@ -218,6 +216,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 .withDirectFilterValues(new EmptyFilterValues())
                 .withRestriction(new Restriction()
                                 .withPredicateProvider(new PredicateProvider() {
+                                    @Override
                                     public Predicate buildPredicate(CriteriaBuilder builder,
                                                                     FieldPathBuilder fieldPathBuilder, From root,
                                                                     String ceilingEntity,
