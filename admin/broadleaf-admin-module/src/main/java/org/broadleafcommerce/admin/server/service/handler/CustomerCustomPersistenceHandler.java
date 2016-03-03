@@ -153,17 +153,27 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
     	Entity entity = persistencePackage.getEntity();
     	try {
-            Long entityId = Long.parseLong(entity.findProperty("id").getValue());
-            if (entityId != null) {
-                Customer adminInstance = customerService.readCustomerById(entityId);
-                if (Status.class.isAssignableFrom(adminInstance.getClass())) {
-                    ((Status) adminInstance).setArchived('Y');
-                    customerService.saveCustomer(adminInstance);
-                    return;
+    	    
+            Long customerId = Long.parseLong(entity.findProperty("id").getValue());
+            
+            Customer customer = customerService.readCustomerById(customerId);
+            if (Status.class.isAssignableFrom(customer.getClass())) {
+                ((Status) customer).setArchived('Y');
+                
+                // If the customer has a conditional weave on ArchiveStatus, nothing triggers the delete so other
+                // normally-cascaded deletes don't happen (like CustomerAddress)
+                List<CustomerAddress> addressList = customer.getCustomerAddresses();
+                for (CustomerAddress address : addressList) {
+                    address.setArchived('Y');
                 }
+                
+                customer = customerService.saveCustomer(customer);
+                return;
             }
-
-
+            
+            // Remove the customer roles for the customer since it's not cascaded
+            roleDao.removeCustomerRolesByCustomerId(customerId);
+            
 			helper.getCompatibleModule(OperationType.BASIC).remove(persistencePackage);
 		} catch (Exception e) {
 			LOG.error("Unable to execute persistence activity", e);
