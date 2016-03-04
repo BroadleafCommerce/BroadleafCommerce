@@ -41,8 +41,6 @@ import java.util.Map;
 @Component("blMaxGreaterThanMinValidator")
 public class MaxGreaterThanMinValidator extends ValidationConfigurationBasedPropertyValidator {
 
-    private static final String MIN_GREATER_THAN_MAX = "Max value must be greater than or equal to Min";
-
     @Override
     public PropertyValidationResult validate(Entity entity,
                                              Serializable instance,
@@ -72,7 +70,7 @@ public class MaxGreaterThanMinValidator extends ValidationConfigurationBasedProp
 
         if (valid && max != null && min != null && max.compareTo(min) < 0 ) {
             valid = false;
-            message = BLCSystemProperty.resolveSystemProperty("minGreaterThanMax", MIN_GREATER_THAN_MAX);
+            message = "minGreaterThanMax";
         }
 
         return new PropertyValidationResult(valid, message);
