@@ -109,11 +109,6 @@
     <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
-                <bean class="org.broadleafcommerce.common.web.expression.AssetURLVariableExpression" />
-                <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
-                <bean class="org.broadleafcommerce.common.web.expression.BRCVariableExpression" />                
-                <bean class="org.broadleafcommerce.common.web.expression.PropertiesVariableExpression" />
-                <bean class="org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression"/>
                 <bean class="org.broadleafcommerce.core.web.expression.BLCVariableExpression" />
                 <bean class="org.broadleafcommerce.profile.web.core.expression.CustomerVariableExpression"/>
             </list>
