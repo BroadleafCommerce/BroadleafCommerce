@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.rule;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -30,12 +31,14 @@ import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -62,7 +65,7 @@ public class MvelHelper {
 
     // The following attribute is set in BroadleafProcessURLFilter
     public static final String REQUEST_DTO = "blRequestDTO";    
-
+    
     /**
      * Converts a field to the specified type.    Useful when 
      * @param type
@@ -122,16 +125,38 @@ public class MvelHelper {
      */
     public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
             Map<String, Serializable> expressionCache) {
+        return evaluateRule(rule, ruleParameters, expressionCache, null);
+    }
+    
+    /**
+     * @param rule
+     * @param ruleParameters
+     * @param expressionCache
+     * @param additionalContextImports additional imports to give to the {@link ParserContext} besides "MVEL" ({@link MVEL} and
+     * "MvelHelper" ({@link MvelHelper}) since they are automatically added 
+     * @return
+     */
+    public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
+        Map<String, Serializable> expressionCache, Map<String, Class<?>> additionalContextImports) {
+        
         // Null or empty is a match
         if (rule == null || "".equals(rule)) {
             return true;
         } else {
             // MVEL expression compiling can be expensive so let's cache the expression
-            Serializable exp = (Serializable) expressionCache.get(rule);
+            Serializable exp = expressionCache.get(rule);
             if (exp == null) {
                 ParserContext context = new ParserContext();
                 context.addImport("MVEL", MVEL.class);
                 context.addImport("MvelHelper", MvelHelper.class);
+                if (MapUtils.isNotEmpty(additionalContextImports)) {
+                    for (Entry<String, Class<?>> entry : additionalContextImports.entrySet()) {
+                        context.addImport(entry.getKey(), entry.getValue());
+                    }
+                }
+                
+                rule = modifyExpression(rule, ruleParameters, context);
+                
                 exp = MVEL.compileExpression(rule, context);
                 expressionCache.put(rule, exp);
             }
@@ -161,6 +186,39 @@ public class MvelHelper {
             }
         }
     }
+    
+    /**
+     * <p>
+     * Provides a hook point to modify the final expression before it's built. By default, this looks for attribute
+     * maps and replaces them such that it does string comparison.
+     * 
+     * <p>
+     * For example, given an expression like getProductAttributes()['somekey'] == 'someval', getProductAttributes()['somekey']
+     * actually returns a ProductAttribute object, not a String, so the comparison is wrong. Instead, we actually want
+     * to do this: getProductAttributes()['somekey'].?value == 'someval'. This function performs that replacement
+     * 
+     * @param rule the rule to replace
+     * @return a modified version of <b>rule</b>
+     * @see {@link #getRuleAttributeMaps()}
+     */
+    protected static String modifyExpression(String rule, Map<String, Object> ruleParameters, ParserContext context) {
+        String modifiedExpression = rule;
+        for (String attributeMap : getRuleAttributeMaps()) {
+            rule.replaceAll(attributeMap + "\\(\\)\\[(.*)\\](?!\\.\\?value)", attributeMap + "()[$1].?value");
+        }
+        return modifiedExpression;
+    }
+
+    protected static String[] getRuleAttributeMaps() {
+        return new String[]{ "getProductAttributes",
+            "getCategoryAttributesMap",
+            "getSkuAttributes",
+            "getOrderItemAttributes",
+            "getCustomerAttributes",
+            "getPricingContextAttributes",
+            "getAdditionalAttributes",
+            "getAdditionalFields"}; 
+    }
 
     /**
      * When true, LOG.info statement will be suppressed.   Should only be set from within MvelHelperTest.
@@ -185,7 +243,7 @@ public class MvelHelper {
         if (brc != null && brc.getRequest() != null) {
            TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar());
             HttpServletRequest request = brc.getRequest();
-            RequestDTO requestDto = (RequestDTO) brc.getRequestDTO();
+            RequestDTO requestDto = brc.getRequestDTO();
             mvelParameters.put("time", timeDto);
             mvelParameters.put("request", requestDto);
 
