@@ -48,7 +48,6 @@
 
     <bean id="blAddSortLinkProcessor" class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
     <bean id="blCategoriesProcessor" class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
-    <bean id="blFormProcessor" class="org.broadleafcommerce.core.web.processor.FormProcessor" />
     <bean id="blGoogleAnalyticsProcessor" class="org.broadleafcommerce.core.web.processor.GoogleAnalyticsProcessor" />
     <bean id="blHeadProcessor" class="org.broadleafcommerce.core.web.processor.HeadProcessor" />
     <bean id="blNamedOrderProcessor" class="org.broadleafcommerce.core.web.processor.NamedOrderProcessor" />
@@ -75,7 +74,6 @@
             <set>
                 <ref bean="blAddSortLinkProcessor" />
                 <ref bean="blCategoriesProcessor" />
-                <ref bean="blFormProcessor" />
                 <ref bean="blGoogleAnalyticsProcessor" />
                 <ref bean="blHeadProcessor" />
                 <ref bean="blNamedOrderProcessor" />
@@ -105,9 +103,6 @@
         <property name="collectionRef" value="blDialectFrameworkProcessors" />
         <property name="targetRef" value="blDialectProcessors" />
     </bean>
-    <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
-        <property name="processors" ref="blDialectProcessors" />
-    </bean> 
     
     <!-- This list factory bean will accept classes that implment the BroadleafVariableExpression interface. -->
     <!-- This provides the ability to inject custom expression evaluators into Thymeleaf. -->
@@ -168,9 +163,7 @@
         <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
         <property name="characterEncoding" value="UTF-8" />
     </bean>  
-    
-    <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring4.dialect.SpringStandardDialect" />
-    
+
     <bean id="blMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
 
     <bean id="blWebTemplateResolvers" class="org.springframework.beans.factory.config.SetFactoryBean">
