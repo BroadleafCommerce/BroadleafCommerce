@@ -31,7 +31,6 @@ import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -204,7 +203,7 @@ public class MvelHelper {
     protected static String modifyExpression(String rule, Map<String, Object> ruleParameters, ParserContext context) {
         String modifiedExpression = rule;
         for (String attributeMap : getRuleAttributeMaps()) {
-            rule.replaceAll(attributeMap + "\\(\\)\\[(.*)\\](?!\\.\\?value)", attributeMap + "()[$1].?value");
+            modifiedExpression = modifiedExpression.replaceAll(attributeMap + "\\(\\)\\[(.*)\\](?!\\.\\?value)", attributeMap + "()[$1].?value");
         }
         return modifiedExpression;
     }
