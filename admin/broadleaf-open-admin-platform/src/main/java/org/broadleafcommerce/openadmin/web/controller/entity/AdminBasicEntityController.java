@@ -1185,6 +1185,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 }
             }
 
+            // This is part of an add, so we want to be able to filter/sort the listgrid
+            listGrid.setIsSortable(false);
+            listGrid.setCanFilterAndSort(true);
+            listGrid.removeAllRowActions();
+
             model.addAttribute("listGrid", listGrid);
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/adornedSelectEntity");

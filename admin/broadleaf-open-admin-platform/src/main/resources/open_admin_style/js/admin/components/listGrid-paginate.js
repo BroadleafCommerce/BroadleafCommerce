@@ -647,20 +647,30 @@
 
                 $wrapper.mCustomScrollbar('update');
             } else if ($modalBody.length > 0) {
-                // If this is inside of a modal, the max height should be the size of the modal
-                var maxHeight = $modalBody.height() - $wrapper.prev().outerHeight(true) - $wrapper.next().outerHeight(true) - 32;
+                var maxHeight;
+                if ($wrapper.outerHeight(true) > $modalBody.height()) {
+                    var $window = $(window);
+                    var newModalHeight = Math.min($window.height() - 300, $wrapper.outerHeight(true));
+                    $modalBody.css('height', newModalHeight);
+                    maxHeight = newModalHeight - $wrapper.prev().outerHeight(true) - $wrapper.next().outerHeight(true) - 140;
+                } else {
+                    maxHeight = $modalBody.height() - $wrapper.prev().outerHeight(true) - $wrapper.next().outerHeight(true) - 140;
+                }
 
-                $wrapper.closest('.adorned-select-wrapper').find('fieldset').each(function(index, fieldset) {
-                    maxHeight -= $(fieldset).height();
+                // If this is inside of a modal, the max height should be the size of the modal
+                $wrapper.closest('.adorned-select-wrapper').find('.fieldset-card').each(function(index, fieldset) {
+                    if (!$wrapper.closest(fieldset).length) {
+                        maxHeight -= $(fieldset).height();
+                    }
                 });
                 
                 if ($wrapper.parent().find('label').length > 0) {
-                    maxHeight -= $wrapper.parent().find('label').outerHeight();
+                    maxHeight -= $wrapper.parent().find('label').outerHeight(true);
                     maxHeight -= 5;
                 }
                 
-                if ($wrapper.parent().find('.listgrid-toolbar').length > 0) {
-                    maxHeight -= $wrapper.parent().find('.listgrid-toolbar').outerHeight();
+                if ($wrapper.closest('.listgrid-container').find('.listgrid-toolbar').length > 0) {
+                    maxHeight -= $wrapper.parent().find('.listgrid-toolbar').outerHeight(true);
                 }
                 
                 var minHeight = $wrapper.find('table tr:not(.width-control-header)').outerHeight() + 1;
@@ -672,7 +682,6 @@
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
                 $modalBody.css('overflow-y', 'auto');
-
             } else {
                 // not in a modal, not the only grid on the screen, my size should be equal to max size of a grid
                 // There is a possibility, if pagination is limited on the packed, that

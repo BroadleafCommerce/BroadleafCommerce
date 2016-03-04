@@ -532,8 +532,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         listGrid.setCanFilterAndSort(canFilterAndSort);
 
         // Set up the filter builder params
+        Date c = new Date();
         String friendlyName = field.getMetadata().getFriendlyName();
-        listGrid.setJsonFieldName(friendlyName + "Json");
+        listGrid.setJsonFieldName(friendlyName + c.getTime() + "Json");
         listGrid.setFriendlyName(friendlyName);
         listGrid.setFieldBuilder("RULE_SIMPLE");
         listGrid.setFieldWrapper(wrapper);

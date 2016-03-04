@@ -60,18 +60,15 @@ public class AdminAuditableListener {
             Field field = getSingleField(entity.getClass(), getAuditableFieldName());
             field.setAccessible(true);
             if (field.isAnnotationPresent(Embedded.class)) {
-                AdminAuditable auditable = (AdminAuditable) field.get(entity);
+                Object auditable = field.get(entity);
                 if (auditable == null) {
                     field.set(entity, new AdminAuditable());
-                    auditable = (AdminAuditable) field.get(entity);
+                    auditable = field.get(entity);
                 }
-
-                if (auditable.getDateCreated() != null && auditable.getDateUpdated() != null) {
-                    Field temporalUpdatedField = auditable.getClass().getDeclaredField("dateUpdated");
-                    Field agentField = auditable.getClass().getDeclaredField("updatedBy");
-                    setAuditValueTemporal(temporalUpdatedField, auditable);
-                    setAuditValueAgent(agentField, auditable);
-                }
+                Field temporalField = auditable.getClass().getDeclaredField("dateUpdated");
+                Field agentField = auditable.getClass().getDeclaredField("updatedBy");
+                setAuditValueTemporal(temporalField, auditable);
+                setAuditValueAgent(agentField, auditable);
             }
         }
     }
