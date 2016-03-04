@@ -279,10 +279,10 @@ public class DataDTOToMVELTranslator {
                 if (value != null && value.length==2) {
                     sb.append("(");
                     buildExpression(sb, entityKey, field, new Object[]{value[0]}, type, secondaryType, ">",
-                            false, false, false, false, false);
+                            false, false, false, false, true);
                     sb.append("&&");
                     buildExpression(sb, entityKey, field, new Object[]{value[1]}, type, secondaryType, "<",
-                            false, false, false, false, false);
+                            false, false, false, false, true);
                     sb.append(")");
                 }
                 break;
@@ -291,10 +291,10 @@ public class DataDTOToMVELTranslator {
                 if (value != null && value.length==2) {
                     sb.append("(");
                     buildExpression(sb, entityKey, field, new Object[]{value[0]}, type, secondaryType, ">=",
-                            false, false, false, false, false);
+                            false, false, false, false, true);
                     sb.append("&&");
                     buildExpression(sb, entityKey, field, new Object[]{value[1]}, type, secondaryType, "<=",
-                            false, false, false, false, false);
+                            false, false, false, false, true);
                     sb.append(")");
                 }
                 break;
@@ -529,19 +529,23 @@ public class DataDTOToMVELTranslator {
                 if (StringUtils.isBlank(value[j].toString())) {
                     break;
                 }
+
+                String parsableVal = value[j].toString();
+                parsableVal = parsableVal.replaceAll("^\"|\"$", "");
+
                 switch(type) {
                     case BOOLEAN:
                         response.append(value[j]);
                         break;
                     case DECIMAL:
                         try {
-                            Double.parseDouble(value[j].toString());
+                            Double.parseDouble(parsableVal);
                         } catch (Exception e) {
                             throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DECIMAL_VALUE, "Cannot format value for the field ("
                                     + fieldName + ") based on field type. The type of field is Decimal, " +
-                                    "and you entered: (" + value[j] +")");
+                                    "and you entered: (" + parsableVal +")");
                         }
-                        response.append(value[j]);
+                        response.append(parsableVal);
                         break;
                     case ID:
                         if (secondaryType != null && secondaryType.toString().equals(
@@ -572,33 +576,33 @@ public class DataDTOToMVELTranslator {
                         break;
                     case INTEGER:
                         try {
-                            Integer.parseInt(value[j].toString());
+                            Integer.parseInt(parsableVal);
                         } catch (Exception e) {
                             throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_INTEGER_VALUE, "Cannot format value for the field (" +
                                     fieldName + ") based on field type. The type of field is Integer, " +
-                                    "and you entered: (" + value[j] +")");
+                                    "and you entered: (" + parsableVal +")");
                         }
-                        response.append(value[j]);
+                        response.append(parsableVal);
                         break;
                     case MONEY:
                         try {
-                            Double.parseDouble(value[j].toString());
+                            Double.parseDouble(parsableVal);
                         } catch (Exception e) {
                             throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DECIMAL_VALUE, "Cannot format value for the field (" +
                                     fieldName + ") based on field type. The type of field is Money, " +
-                                    "and you entered: (" + value[j] +")");
+                                    "and you entered: (" + parsableVal +")");
                         }
-                        response.append(value[j]);
+                        response.append(parsableVal);
                         break;
                     case DATE:
                         //convert the date to our standard date/time format
                         Date temp = null;
                         try {
-                            temp = RuleBuilderFormatUtil.parseDate(String.valueOf(value[j]));
+                            temp = RuleBuilderFormatUtil.parseDate(parsableVal);
                         } catch (ParseException e) {
                             throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DATE_VALUE, "Cannot format value for the field (" +
                                     fieldName + ") based on field type. The type of field is Date, " +
-                                    "and you entered: (" + value[j] +"). Dates must be in the format MM/dd/yyyy HH:mm.");
+                                    "and you entered: (" + parsableVal +"). Dates must be in the format MM/dd/yyyy HH:mm.");
                         }
                         String convertedDate = FormatUtil.getTimeZoneFormat().format(temp);
                         response.append("MvelHelper.convertField(\"DATE\",\"");

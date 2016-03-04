@@ -449,6 +449,40 @@
 
         /**
          * A custom pre-init query builder field handler to modify the filters object
+         * in order to support a Boolean Radio button widget in the Query Builder.
+         * @param field
+         */
+        initBooleanRadioPreInitFieldHandler : function(field) {
+            var opRef = field.operators;
+
+            if (opRef && typeof opRef === 'string' && ("blcOperators_Boolean" === opRef)) {
+                field.input = 'radio';
+                field.values = {
+                    true: 'true',
+                    false: 'false'
+                }
+            }
+        },
+
+        /**
+         * A custom pre-init query builder field handler to modify the filters object
+         * in order to support a Date Picker widget in the Query Builder.
+         * @param field
+         */
+        initDatePickerPreInitFieldHandler : function(field) {
+            var opRef = field.operators;
+
+            if (opRef && typeof opRef === 'string' && ("blcOperators_Date" === opRef)) {
+                field.type = 'date';
+                field.plugin = 'datetimepicker';
+                field.plugin_config = {
+                    format: "m/d/Y H:i"
+                };
+            }
+        },
+
+        /**
+         * A custom pre-init query builder field handler to modify the filters object
          * in order to support the Selectize widget in the Query Builder.
          * @param field
          */
@@ -542,7 +576,7 @@
                 };
                 field.valueGetter = function(rule) {
                     var value = rule.$el.find('.rule-value-container input.query-builder-selectize-input').val();
-                    value = value.replace(',','\",\"');
+                    value = value.replace(/,/g,'\",\"');
                     return "[\"" + value + "\"]";
                 }
             }
@@ -599,14 +633,20 @@
                         fields[i].values = window[valRef];
                     }
 
-                    if (opRef && opRef.indexOf('Date') >= 0) {
-                        fields[i].type = 'date';
-                        fields[i].plugin = 'datetimepicker';
-                        fields[i].plugin_config = {
-                            format: "Y.m.d G:i:s"
-                        };
-                    }
                 })();
+            }
+
+            //Parse the rule data if applicable
+            for (var k = 0; k < ruleData.rules.length; k++) {
+                var ruleValue =  ruleData.rules[k].value;
+                var ruleOperator = ruleData.rules[k].operator;
+                if (ruleOperator === 'BETWEEN' || ruleOperator === 'BETWEEN_INCLUSIVE') {
+                    try {
+                        ruleData.rules[k].value = $.parseJSON(ruleValue);
+                    } catch(err) {
+                        ruleData.rules[k].value = [ruleValue];
+                    }
+                }
             }
 
             var removeBtn = addRemoveConditionsLink? this.getRemoveConditionLink() : null;
@@ -811,6 +851,8 @@
      */
     BLCAdmin.addInitializationHandler(function($container) {
         //Add default pre-init and post-construct handlers (e.g. selectize)
+        BLCAdmin.ruleBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.ruleBuilders.initBooleanRadioPreInitFieldHandler);
+        BLCAdmin.ruleBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.ruleBuilders.initDatePickerPreInitFieldHandler);
         BLCAdmin.ruleBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.ruleBuilders.initSelectizePreInitFieldHandler);
         BLCAdmin.ruleBuilders.addPostConstructQueryBuilderFieldHandler(BLCAdmin.ruleBuilders.initSelectizePostConstructFieldHandler);
 

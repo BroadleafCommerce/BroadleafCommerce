@@ -302,6 +302,12 @@
 .rule-modal-zone.can-edit:hover > .clear-rule-builder {
     display: block;
 }
+
+.rule-radio-label {
+    display: inline-block;
+    padding: 5px;
+}
+
 /* filter builder styles */
 .query-builder-filters-container .group-conditions, .query-builder-rules-container .group-conditions {
     height: 40px;
