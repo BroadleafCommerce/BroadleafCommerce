@@ -208,14 +208,20 @@ public class MvelHelper {
         return modifiedExpression;
     }
 
+    /**
+     * Returns an array of attribute map field names that we need to do replacements for in
+     * {@link #modifyExpression(String, Map, ParserContext)}
+     */
     protected static String[] getRuleAttributeMaps() {
+        // intentionally left out pricing context getPricingContextAttributes because that's a Map<String, String>
         return new String[]{ "getProductAttributes",
             "getCategoryAttributesMap",
             "getSkuAttributes",
             "getOrderItemAttributes",
             "getCustomerAttributes",
-            "getPricingContextAttributes",
+            // Map<String, PageAttribute>
             "getAdditionalAttributes",
+            // Map<String, AdminUserAttribute>
             "getAdditionalFields"}; 
     }
 
