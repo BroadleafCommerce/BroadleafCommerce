@@ -277,21 +277,10 @@ public class FieldGroup {
         return null;
     }
 
-    public boolean isMasterFieldGroup() {
-        if ((getKey() != null && getKey().toLowerCase().contains("master"))
-                || (getTitle() != null && getTitle().toLowerCase().contains("master")) ) {
-            return true;
-        }
-        return false;
-    }
-
     public boolean containsFieldData() {
-        for (FieldGroupItem groupItem : groupItems) {
-            if (groupItem.isField() && groupItem.getField() != null) {
-                Field field = groupItem.getField();
-                if (field.getValue() != null) {
-                    return true;
-                }
+        for (Field field : getFields()) {
+            if (field.getValue() != null) {
+                return true;
             }
         }
         return false;

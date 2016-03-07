@@ -57,6 +57,14 @@ public interface SandBoxService {
     
     public Map<Long, String> retrieveAuthorNamesForSandBoxes(Set<Long> sandBoxIds);
 
+    /**
+     * Returns a map of SanboxId and Sandbox name
+     *
+     * @param sandBoxIds
+     * @return
+     */
+    public Map<Long, String> retrieveSandboxNamesForSandBoxes(Set<Long> sandBoxIds);
+
     public SandBox createSandBox(String sandBoxName, SandBoxType sandBoxType) throws Exception;
 
     public SandBox createUserSandBox(Long authorId, SandBox approvalSandBox);
