@@ -194,7 +194,7 @@ public class MvelHelper {
      * <p>
      * For example, given an expression like getProductAttributes()['somekey'] == 'someval', getProductAttributes()['somekey']
      * actually returns a ProductAttribute object, not a String, so the comparison is wrong. Instead, we actually want
-     * to do this: getProductAttributes()['somekey'].?value == 'someval'. This function performs that replacement
+     * to do this: getProductAttributes().?get('somekey').?value == 'someval'. This function performs that replacement
      * 
      * @param rule the rule to replace
      * @return a modified version of <b>rule</b>
@@ -203,7 +203,7 @@ public class MvelHelper {
     protected static String modifyExpression(String rule, Map<String, Object> ruleParameters, ParserContext context) {
         String modifiedExpression = rule;
         for (String attributeMap : getRuleAttributeMaps()) {
-            modifiedExpression = modifiedExpression.replaceAll(attributeMap + "\\(\\)\\[(.*)\\](?!\\.\\?value)", attributeMap + "()[$1].?value");
+            modifiedExpression = modifiedExpression.replaceAll(attributeMap + "\\(\\)\\[(.*)\\](?!\\.\\?value)", attributeMap + "().?get($1).?value");
         }
         return modifiedExpression;
     }
