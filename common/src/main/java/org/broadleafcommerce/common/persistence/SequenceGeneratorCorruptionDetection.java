@@ -23,6 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.SessionFactory;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -153,7 +154,16 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                     sb.append(") from ");
                     sb.append(mappedClass.getName());
                     sb.append(" entity");
-                    List results = em.createQuery(sb.toString()).getResultList();
+                    
+                    List results;
+                    BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+                    try {
+                        context.setInternalIgnoreFilters(true);
+                        results = em.createQuery(sb.toString()).getResultList();
+                    } finally {
+                        context.setInternalIgnoreFilters(false);
+                    }
+                    
                     if (CollectionUtils.isNotEmpty(results) && results.get(0) != null) {
                         Long maxEntityId = (Long) results.get(0);
                         if (maxEntityId > maxSequenceId) {

@@ -103,14 +103,11 @@ class OrderOfferProcessorSpec extends Specification {
         ruleVars.put("orderItem", discreteOrderItem);
         ruleVars.put("discreteOrderItem", discreteOrderItem);
 
-        Map<String, Class> mvelImports = new HashMap<>()
-        mvelImports.put("CollectionUtils", CollectionUtils.class);
-
         when: "I run AbstractBaseProcessor.executeExpression with mvel imports"
-        boolean inExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"100\",\"300\"]).size()>0", ruleVars, mvelImports);
-        boolean inALLExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"100\",\"300\"]).size()==2", ruleVars, mvelImports);
-        boolean notInExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"-100\",\"-300\"]).size()==0", ruleVars, mvelImports);
-        boolean containsUsingIntersectionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection([discreteOrderItem.?product.?id.toString()], [\"-100\", \"100\", \"500\"]).size()>0 ", ruleVars, mvelImports);
+        boolean inExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"100\",\"300\"]).size()>0", ruleVars);
+        boolean inALLExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"100\",\"300\"]).size()==2", ruleVars);
+        boolean notInExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"-100\",\"-300\"]).size()==0", ruleVars);
+        boolean containsUsingIntersectionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection([discreteOrderItem.?product.?id.toString()], [\"-100\", \"100\", \"500\"]).size()>0 ", ruleVars);
 
         then: "The result of executing the expression should be as expected"
         inExpressionCorrect
