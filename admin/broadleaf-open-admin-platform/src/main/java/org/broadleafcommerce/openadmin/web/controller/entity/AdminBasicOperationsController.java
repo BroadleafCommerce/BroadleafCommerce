@@ -137,6 +137,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
                 collectionProperty.setMetadata(md);
             } else if (md instanceof BasicFieldMetadata) {
                 listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass, sectionCrumbs);
+                listGrid.removeAllRowActions();
             }
             model.addAttribute("listGrid", listGrid);
         }

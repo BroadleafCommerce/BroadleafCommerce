@@ -230,6 +230,29 @@ public class SandBoxDaoImpl implements SandBoxDao {
     }
 
     @Override
+    public Map<Long, String> retrieveSandboxNamesForSandBoxes(Set<Long> sandBoxIds) {
+
+        CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
+        CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
+        Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
+        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        criteria.where(
+                builder.and(builder.in(sandbox.get("sandBox").get("id")).value(sandBoxIds),
+                builder.or(builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
+                        builder.notEqual(sandbox.get("sandBox").get("archiveStatus").get("archived").as(Character.class), 'Y')))
+        );
+        TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
+        List<SandBox> results = query.getResultList();
+
+        Map<Long, String> map = new HashMap<Long, String>();
+        for (SandBox result : results) {
+            map.put(result.getId(), result.getName());
+        }
+
+        return map;
+    }
+
+    @Override
     public List<SandBox> retrieveSandBoxesForAuthor(Long authorId) {
         return retrieveSandBoxesForAuthor(authorId, null);
     }
