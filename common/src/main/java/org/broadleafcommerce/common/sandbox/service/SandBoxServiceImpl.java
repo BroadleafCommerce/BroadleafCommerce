@@ -118,6 +118,11 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    public Map<Long, String> retrieveSandboxNamesForSandBoxes(Set<Long> sandBoxIds) {
+        return sandBoxDao.retrieveSandboxNamesForSandBoxes(sandBoxIds);
+    }
+
+    @Override
     public synchronized SandBox createSandBox(String sandBoxName, SandBoxType sandBoxType) {
         return sandBoxDao.createSandBox(sandBoxName, sandBoxType);
     }
