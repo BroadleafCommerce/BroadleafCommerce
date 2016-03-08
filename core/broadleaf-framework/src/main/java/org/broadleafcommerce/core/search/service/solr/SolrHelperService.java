@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
@@ -44,6 +45,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.IllegalStateException;
+
 /**
  * @author Andre Azzolini (apazzolini)
  */
@@ -55,19 +58,7 @@ public interface SolrHelperService {
      * 
      * @throws ServiceException 
      */
-    public void swapActiveCores() throws ServiceException;
-
-    /**
-     * Determines the current namespace we are operating on. For example, if you have multiple sites set up, 
-     * you may want to filter that here. 
-     * 
-     * <ul>
-     *     <li>Note: This method should ALWAYS return a non-empty string.</li>
-     * </ul>
-     * 
-     * @return the global namespace 
-     */
-    public String getCurrentNamespace();
+    public void swapActiveCores(SolrConfiguration solrConfiguration) throws ServiceException;
 
     /**
      * This property is needed to be non-null to allow filtering by multiple facets at one time and have the results
