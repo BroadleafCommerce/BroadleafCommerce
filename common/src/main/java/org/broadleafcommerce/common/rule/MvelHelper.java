@@ -197,7 +197,11 @@ public class MvelHelper {
      * For example, given an expression like getProductAttributes()['somekey'] == 'someval', getProductAttributes()['somekey']
      * actually returns a ProductAttribute object, not a String, so the comparison is wrong. Instead, we actually want
      * to do this: getProductAttributes().?get('somekey').?value == 'someval'. This function performs that replacement
-     * 
+     *
+     * <p>
+     * The modification regex will support both simple and complex expressions like:
+     * "(MvelHelper.convertField("INTEGER",orderItem.?product.?getProductAttributes()["myinteger"])>0&&MvelHelper.convertField("INTEGER",orderItem.?product.?getProductAttributes()["myinteger"])<10)"
+     *
      * @param rule the rule to replace
      * @return a modified version of <b>rule</b>
      * @see {@link #getRuleAttributeMaps()}
@@ -205,7 +209,7 @@ public class MvelHelper {
     protected static String modifyExpression(String rule, Map<String, Object> ruleParameters, ParserContext context) {
         String modifiedExpression = rule;
         for (String attributeMap : getRuleAttributeMaps()) {
-            modifiedExpression = modifiedExpression.replaceAll(attributeMap + "\\(\\)\\[(.*)\\](?!\\.\\?value)", attributeMap + "().?get($1).?value");
+            modifiedExpression = modifiedExpression.replaceAll(attributeMap + "\\(\\)\\[(.*?)\\](?!\\.\\?value)", attributeMap + "().?get($1).?value");
         }
         return modifiedExpression;
     }
