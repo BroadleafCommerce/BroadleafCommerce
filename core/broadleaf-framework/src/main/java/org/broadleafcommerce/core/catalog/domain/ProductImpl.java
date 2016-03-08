@@ -277,13 +277,11 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             gridVisibleFields = { "name" })
     protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
 
-    @OneToMany(mappedBy = "product", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blProducts")
+    @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
-    @AdminPresentationAdornedTargetCollection(friendlyName = "productAttributesTitle",
-            tab = TabName.Advanced, order = 1000,
-            targetObjectProperty = "product",
-            gridVisibleFields = { "name", "value" })
+    @AdminPresentationCollection(friendlyName = "productAttributesTitle",
+            tab = TabName.Advanced, order = 1000)
     protected List<ProductAttribute> productAttributes = new ArrayList<ProductAttribute>();
 
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "product",
