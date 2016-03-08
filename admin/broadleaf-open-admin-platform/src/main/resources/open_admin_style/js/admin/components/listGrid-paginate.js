@@ -383,7 +383,6 @@
                     }
                 }
             }
-            
             if (startIndex != null && maxIndex != null) {
                 var delta;
                 if (startIndex <= topIndex && maxIndex <= botIndex) {
@@ -488,7 +487,10 @@
         getBottomVisibleIndex : function($tbody) {
             var scrollOffset = $tbody.closest('.mCSB_container').position().top;
             var trHeight = this.getRowHeight($tbody);
-            var bottomVisibleIndex = Math.floor((scrollOffset * -1 + $tbody.closest('.listgrid-body-wrapper').height() - 4) / trHeight);
+            // Updated the code here to use the exact value (possibly float value) of
+            // the listgrid body wrapper. Previously it would round this value which
+            // led to inaccurate math.
+            var bottomVisibleIndex = Math.floor((scrollOffset * -1 + $tbody.closest('.listgrid-body-wrapper')[0].getBoundingClientRect().height - trHeight) / trHeight);
             return bottomVisibleIndex;
         },
         
