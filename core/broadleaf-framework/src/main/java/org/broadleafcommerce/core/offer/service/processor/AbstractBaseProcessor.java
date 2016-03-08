@@ -43,10 +43,7 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.joda.time.LocalDateTime;
-import org.mvel2.MVEL;
-import org.mvel2.ParserContext;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -235,35 +232,12 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @return a Boolean object containing the result of executing the MVEL expression
      */
     public Boolean executeExpression(String expression, Map<String, Object> vars) {
-        try {
-            Serializable exp;
-            synchronized (EXPRESSION_CACHE) {
-                exp = (Serializable) EXPRESSION_CACHE.get(expression);
-                if (exp == null) {
-                    ParserContext context = new ParserContext();
-                    context.addImport("OfferType", OfferType.class);
-                    context.addImport("FulfillmentType", FulfillmentType.class);
-                    context.addImport("MVEL", MVEL.class);
-                    context.addImport("MvelHelper", MvelHelper.class);
-                    //            StringBuffer completeExpression = new StringBuffer(functions.toString());
-                    //            completeExpression.append(" ").append(expression);
-                    exp = MVEL.compileExpression(expression, context);
-
-                    EXPRESSION_CACHE.put(expression, exp);
-                }
-            }
-
-            Object test = MVEL.executeExpression(exp, vars);
-            
-            return (Boolean) test;
-        } catch (Exception e) {
-            //Unable to execute the MVEL expression for some reason
-            //Return false, but notify about the bad expression through logs
-            LOG.warn("Unable to parse and/or execute an mvel expression. Reporting to the logs and returning false " +
-                    "for the match expression:" + expression, e);
-            return false;
+        synchronized (EXPRESSION_CACHE) {
+            Map<String, Class<?>> contextImports = new HashMap<>();
+            contextImports.put("OfferType", OfferType.class);
+            contextImports.put("FulfillmentType", FulfillmentType.class);
+            return MvelHelper.evaluateRule(expression, vars, EXPRESSION_CACHE, contextImports);
         }
-
     }
     
     /**

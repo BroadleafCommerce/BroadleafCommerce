@@ -71,6 +71,7 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
         return annot != null;
     }
 
+    @Override
     protected boolean canHandleFieldForTypeMetadata(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
         AdminPresentationAdornedTargetCollection annot = addMetadataFromFieldTypeRequest.getRequestedField().getAnnotation(AdminPresentationAdornedTargetCollection.class);
         return annot != null;
@@ -504,8 +505,12 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
                 try {
                     ParameterizedType pt = (ParameterizedType) field.getGenericType();
                     java.lang.reflect.Type collectionType = pt.getActualTypeArguments()[0];
-                    String ceilingEntityName = ((Class<?>) collectionType).getName();
-                    collectionTarget = entityConfiguration.lookupEntityClass(ceilingEntityName);
+                    collectionTarget = (Class<?>) collectionType;
+                    // Only check entityConfiguration if it's an interface since I can't determine what the
+                    // Hibernate class is from that
+                    if (collectionTarget.isInterface()) {
+                        collectionTarget = entityConfiguration.lookupEntityClass(collectionTarget.getName());
+                    }
                     break checkCeiling;
                 } catch (NoSuchBeanDefinitionException e) {
                     // We weren't successful at looking at entity configuration to find the type of this collection.

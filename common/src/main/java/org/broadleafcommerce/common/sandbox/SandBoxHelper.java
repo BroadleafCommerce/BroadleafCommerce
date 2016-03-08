@@ -48,6 +48,16 @@ public interface SandBoxHelper {
     List<Long> mergeCloneIds(Class<?> type, Long... originalIds);
 
     /**
+     * Set when you want to override caching behavior related to finding sandbox versions. Generally, this
+     * only impacts retrieval of site level overrides in the multitenant edition. Setting this to true will
+     * cause sandbox version detection to go to the database rather than use the cache. This can be useful
+     * in situations where you may not trust the cache. This is an advanced option and is not normally used.
+     *
+     * @param ignoreCache
+     */
+    void ignoreCloneCache(boolean ignoreCache);
+
+    /**
      * Retrieve a map keyed by sandbox id, with the value being the matching original
      * item id for that sandbox item. Only members from the ids list passed
      * in that have a sandbox counterpart are included.
