@@ -283,7 +283,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         
         hf.withName(p.getName())
-          .withFriendlyName(fmd.getFriendlyName())
+          .withFriendlyName(StringUtils.isNotEmpty(fmd.getFriendlyName()) ? fmd.getFriendlyName() : p.getName())
           .withOrder(fmd.getGridOrder())
           .withColumnWidth(fmd.getColumnWidth())
           .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())

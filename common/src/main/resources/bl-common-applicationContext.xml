@@ -341,10 +341,14 @@
         </property>
     </bean>
     
+    <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring4.dialect.SpringStandardDialect" />
+    
     <bean id="blVariableExpressionEvaluator" class="org.broadleafcommerce.common.web.expression.BroadleafVariableExpressionEvaluator" />
     <bean id="blDataDrivenEnumerationProcessor" class="org.broadleafcommerce.common.web.processor.DataDrivenEnumerationProcessor" />
     <bean id="blResourceBundleProcessor" class="org.broadleafcommerce.common.web.processor.ResourceBundleProcessor" />
     <bean id="blConfigVariableProcessor" class="org.broadleafcommerce.common.web.processor.ConfigVariableProcessor" />
+    <bean id="blBreadcrumbProcessor" class="org.broadleafcommerce.common.breadcrumbs.processor.BreadcrumbProcessor" />
+    <bean id="blFormProcessor" class="org.broadleafcommerce.common.web.processor.FormProcessor" />
     
     <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
     <!-- own dialect and add your processors there. -->
@@ -355,7 +359,26 @@
                 <ref bean="blResourceBundleProcessor" />
                 <ref bean="blConfigVariableProcessor" />
                 <ref bean="blBreadcrumbProcessor" />
+                <ref bean="blFormProcessor" />
             </set>
+        </property>
+    </bean>
+    
+    <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
+        <property name="processors" ref="blDialectProcessors" />
+    </bean>
+    
+    <!-- This list factory bean will accept classes that implment the BroadleafVariableExpression interface. -->
+    <!-- This provides the ability to inject custom expression evaluators into Thymeleaf. -->
+    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <bean class="org.broadleafcommerce.common.web.expression.AssetURLVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.expression.BRCVariableExpression" />                
+                <bean class="org.broadleafcommerce.common.web.expression.PropertiesVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression"/>
+            </list>
         </property>
     </bean>
     
@@ -453,6 +476,13 @@
         <property name="conditionalProperty" value="enable.admin.user.archive"/>
     </bean>
 
+    <bean id="blCustomerConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
+        <property name="templateTokens">
+            <util:constant static-field="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes.ARCHIVE_ONLY"/>
+        </property>
+        <property name="conditionalProperty" value="enable.customer.archive"/>
+    </bean>
+
 
     <!-- This is to conditionally add workflow annotation to FulfillmentPriceBandImpl -->
     <bean id="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
@@ -492,7 +522,7 @@
                 <entry key="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl" value-ref="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember"/>
                 <entry key="org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl" value-ref="blAdminUserConditionalDirectCopyTransformerMember" />
                 <entry key="org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl" value-ref="blAdminSectionConditionalDirectCopyTransformerMember" />
-
+                <entry key="org.broadleafcommerce.profile.core.domain.CustomerImpl" value-ref="blCustomerConditionalDirectCopyTransformerMember" />
             </map>
         </property>
     </bean>
