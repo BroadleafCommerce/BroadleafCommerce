@@ -282,7 +282,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
         boolean updated = false;
         //use the sku prices - the retail and sale prices could be null
-        if (!skuRetailPrice.getAmount().equals(retailPrice)) {
+        if (skuRetailPrice != null && !skuRetailPrice.getAmount().equals(retailPrice)) {
             baseRetailPrice = skuRetailPrice.getAmount();
             retailPrice = skuRetailPrice.getAmount();
             updated = true;
@@ -329,7 +329,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public void setBaseRetailPrice(Money baseRetailPrice) {
-        this.baseRetailPrice = baseRetailPrice.getAmount();
+        this.baseRetailPrice = baseRetailPrice==null?null:baseRetailPrice.getAmount();
     }
 
     @Override
