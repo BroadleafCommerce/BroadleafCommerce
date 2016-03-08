@@ -150,7 +150,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey, crumbs);
         listGrid.setSelectType(ListGrid.SelectType.NONE);
-        
+
         Field firstField = listGrid.getHeaderFields().iterator().next();
         if (requestParams.containsKey(firstField.getName())) {
             model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
@@ -272,7 +272,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         if (canCreate) {
             canCreate = rowLevelSecurityService.canAdd(adminRemoteSecurityService.getPersistentAdminUser(), sectionClassName, cmd);
         }
-        
+
         return canCreate;
     }
 
@@ -405,7 +405,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         TabMetadata firstTab = cmd.getFirstTab();
         Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, firstTab == null ? "General" : firstTab.getTabName());
-     
+
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
 
         if (isAddRequest(entity)) {
@@ -450,7 +450,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
     /**
      * Attempts to get the List Grid for the selected tab.
-     * 
+     *
      * @param request
      * @param response
      * @param model
@@ -568,7 +568,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
         return dirtyList;
     }
-    
+
     /**
      * Attempts to save the given entity. If validation is unsuccessful, it will re-render the entity form with
      * error fields highlighted. On a successful save, it will refresh the entity page.
@@ -923,7 +923,28 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         return buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, null, null);
     }
-    
+
+    @RequestMapping(value = "/{id}/{collectionField:.*}/add/{collectionItemId}/verify", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
+        String sectionKey = getSectionKey(pathVars);
+        String mainClassName = getClassNameForSection(sectionKey);
+        List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        FieldMetadata md = collectionProperty.getMetadata();
+        Map<String, Object> responseMap = new HashMap<String, Object>();
+        if (md instanceof AdornedTargetCollectionMetadata) {
+            adornedTargetAutoPopulateExtensionManager.getProxy().autoSetAdornedTargetManagedFields(md, mainClassName, id,
+                    collectionField,
+                    collectionItemId, responseMap);
+        }
+        return responseMap;
+    }
+
     /**
      *
      * @param request
@@ -1017,7 +1038,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
         return returnVal;
     }
-    
+
     /**
      * Adds the requested collection item
      * 
