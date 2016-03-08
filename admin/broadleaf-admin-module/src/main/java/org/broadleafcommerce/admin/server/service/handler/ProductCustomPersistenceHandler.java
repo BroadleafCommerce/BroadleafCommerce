@@ -65,6 +65,11 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -74,10 +79,6 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -173,7 +174,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 criteria.select(root.get("product").get("id").as(Long.class));
                 List<Predicate> restrictions = new ArrayList<Predicate>();
                 restrictions.add(builder.equal(root.get("defaultReference"), Boolean.TRUE));
-                restrictions.add(root.get("category").get("id").in(transformedValues));
+                if (CollectionUtils.isNotEmpty(transformedValues)) {
+                    restrictions.add(root.get("category").get("id").in(transformedValues));
+                }
                 //archived?
                 QueryUtils.notArchived(builder, restrictions, root, "archiveStatus");
                 criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
