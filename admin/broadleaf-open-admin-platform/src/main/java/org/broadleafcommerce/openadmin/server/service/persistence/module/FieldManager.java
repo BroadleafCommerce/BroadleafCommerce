@@ -93,7 +93,7 @@ public class FieldManager {
             if (field != null) {
                 field.setAccessible(true);
                 value = field.get(value);
-                if (value != null && mapKey != null) {
+                if (value != null && mapKey != null && value instanceof Map) {
                     value = ((Map) value).get(mapKey);
                 }
                 if (value != null) {

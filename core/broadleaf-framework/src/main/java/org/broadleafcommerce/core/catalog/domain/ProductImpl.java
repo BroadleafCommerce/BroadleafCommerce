@@ -21,6 +21,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -276,14 +277,14 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             gridVisibleFields = { "name" })
     protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
 
-    @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
-    @MapKey(name = "name")
+    @OneToMany(mappedBy = "product", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
-    @AdminPresentationMap(friendlyName = "productAttributesTitle",
-            tab = TabName.General,
-            deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name")
-    protected Map<String, ProductAttribute> productAttributes = new HashMap<String, ProductAttribute>();
+    @AdminPresentationAdornedTargetCollection(friendlyName = "productAttributesTitle",
+            tab = TabName.Advanced, order = 1000,
+            targetObjectProperty = "product",
+            gridVisibleFields = { "name", "value" })
+    protected List<ProductAttribute> productAttributes = new ArrayList<ProductAttribute>();
 
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "product",
             cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
@@ -770,13 +771,37 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     }
 
     @Override
+    @Deprecated
     public Map<String, ProductAttribute> getProductAttributes() {
-        return productAttributes;
+        Map<String, ProductAttribute> attributeMap = new HashMap<String, ProductAttribute>();
+
+        for (ProductAttribute productAttribute : productAttributes) {
+            attributeMap.put(productAttribute.getName(), productAttribute);
+        }
+
+        return attributeMap;
+    }
+
+    @Override
+    public Map<String, ProductAttribute> getMultiValueProductAttributes() {
+        Map<String, ProductAttribute> multiValueMap = new MultiValueMap();
+
+        for (ProductAttribute productAttribute : productAttributes) {
+            multiValueMap.put(productAttribute.getName(), productAttribute);
+        }
+
+        return multiValueMap;
     }
 
     @Override
     public void setProductAttributes(Map<String, ProductAttribute> productAttributes) {
-        this.productAttributes = productAttributes;
+        List<ProductAttribute> productAttributeList = new ArrayList<ProductAttribute>();
+
+        for(Map.Entry<String, ProductAttribute> entry : productAttributes.entrySet()){
+            productAttributeList.add(entry.getValue());
+        }
+
+        this.productAttributes = productAttributeList;
     }
 
     @Override
@@ -991,7 +1016,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             cloned.getProductOptionXrefs().add(clonedEntry);
 
         }
-        for (Map.Entry<String, ProductAttribute> entry : productAttributes.entrySet()) {
+        for (Map.Entry<String, ProductAttribute> entry : getProductAttributes().entrySet()) {
             ProductAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
             cloned.getProductAttributes().put(entry.getKey(), clonedEntry);
         }
