@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.core.spec.offer.service.processor
 
-import org.apache.commons.collections4.CollectionUtils
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl
 import org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl
 import org.broadleafcommerce.core.catalog.domain.ProductImpl
@@ -28,7 +27,6 @@ import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessorImpl
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl
 import spock.lang.Specification
-
 
 /**
  * Intended to test the validity of various MVEL expressions using
@@ -80,6 +78,8 @@ class OrderOfferProcessorSpec extends Specification {
         boolean containsCorrect = orderOfferProcessor.executeExpression("[\"-100\", \"100\", \"500\"].contains(discreteOrderItem.?product.?id.toString()) && orderItem.?category.?name == \"Test Category\"", ruleVars);
         boolean mapCorrect = orderOfferProcessor.executeExpression("orderItem.?product.?getProductAttributes().?get(\"myProductAttribute\").?getValue()==\"myProductAttributeValue\"", ruleVars);
         boolean mapIncorrect = orderOfferProcessor.executeExpression("orderItem.?product.?getProductAttributes().?get(\"myProductAttribute2\").?getValue()==\"myProductAttributeValue\"", ruleVars);
+        boolean legacyMapCorrect = orderOfferProcessor.executeExpression("orderItem.?product.?getProductAttributes()[\"myProductAttribute\"]==\"myProductAttributeValue\"", ruleVars);
+        boolean legacyMapIncorrect = orderOfferProcessor.executeExpression("orderItem.?product.?getProductAttributes()[\"myProductAttribute3\"]==\"myProductAttributeValue\"", ruleVars);
 
         then: "The result of executing the expression should be as expected"
         catNameCorrect
@@ -87,6 +87,8 @@ class OrderOfferProcessorSpec extends Specification {
         containsCorrect
         mapCorrect
         !mapIncorrect
+        legacyMapCorrect
+        !legacyMapIncorrect
     }
 
     def "Test AbstractBaseProcessor MVEL executeExpression with different variables and custom MVEL imports"() {
@@ -103,14 +105,11 @@ class OrderOfferProcessorSpec extends Specification {
         ruleVars.put("orderItem", discreteOrderItem);
         ruleVars.put("discreteOrderItem", discreteOrderItem);
 
-        Map<String, Class> mvelImports = new HashMap<>()
-        mvelImports.put("CollectionUtils", CollectionUtils.class);
-
         when: "I run AbstractBaseProcessor.executeExpression with mvel imports"
-        boolean inExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"100\",\"300\"]).size()>0", ruleVars, mvelImports);
-        boolean inALLExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"100\",\"300\"]).size()==2", ruleVars, mvelImports);
-        boolean notInExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"-100\",\"-300\"]).size()==0", ruleVars, mvelImports);
-        boolean containsUsingIntersectionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection([discreteOrderItem.?product.?id.toString()], [\"-100\", \"100\", \"500\"]).size()>0 ", ruleVars, mvelImports);
+        boolean inExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"100\",\"300\"]).size()>0", ruleVars);
+        boolean inALLExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"100\",\"300\"]).size()==2", ruleVars);
+        boolean notInExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"-100\",\"-300\"]).size()==0", ruleVars);
+        boolean containsUsingIntersectionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection([discreteOrderItem.?product.?id.toString()], [\"-100\", \"100\", \"500\"]).size()>0 ", ruleVars);
 
         then: "The result of executing the expression should be as expected"
         inExpressionCorrect
