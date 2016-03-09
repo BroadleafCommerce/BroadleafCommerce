@@ -491,6 +491,16 @@
             var opRef = field.operators;
 
             if (opRef && typeof opRef === 'string' && ("blcOperators_Selectize" === opRef || "blcOperators_Selectize_Enumeration" === opRef)) {
+
+                //if the options are "pre-defined" as in the case of an enumeration, we'll need to convert
+                //this into an actual array since the system may pass that information back as a single string
+                var valRef = field.values;
+                if (valRef && typeof valRef === 'string' &&
+                    valRef.startsWith('[') && valRef.endsWith("]")) {
+                    console.log(valRef);
+                    field.values = $.parseJSON(valRef);
+                }
+
                 var sectionKey = field.selectizeSectionKey;
 
                 field.multiple = true;
@@ -529,6 +539,8 @@
                         for (var k=0; k<dataHydrate.length; k++) {
                             if (!isNaN(dataHydrate[k])) {
                                 $selectize.addItem(Number(dataHydrate[k]), false);
+                            } else {
+                                $selectize.addItem(dataHydrate[k], false);
                             }
                         }
                     },

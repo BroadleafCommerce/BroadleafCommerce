@@ -88,7 +88,7 @@
         
         <!--/* For: All display types */-->
         <h4 th:id="${field.name + '-header'}" class="field-label" th:text="#{${field.friendlyName}}"
-            th:classappend="${!field.required ? 'query-builder-rules-header' : 'required'}"
+            th:classappend="${!field.required ? 'query-builder-rules-header' : 'query-builder-rules-header required'}"
             th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.displayType == 'MODAL') ? 'display: none;' : ''}"></h4>
 
         <div class="query-builder-rules-container"

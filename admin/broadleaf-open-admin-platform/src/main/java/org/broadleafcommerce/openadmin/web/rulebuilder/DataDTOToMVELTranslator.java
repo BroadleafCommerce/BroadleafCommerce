@@ -433,6 +433,7 @@ public class DataDTOToMVELTranslator {
                     response.append(buildFieldName(entityKey, convertedField));
                     response.append(")");
                     break;
+                case DATA_DRIVEN_ENUMERATION:
                 case STRING:
                     if (ignoreCase) {
                         response.append("MvelHelper.toUpperCase(");

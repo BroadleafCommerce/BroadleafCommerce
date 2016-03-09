@@ -149,7 +149,7 @@ public class MvelHelper {
                 ParserContext context = new ParserContext();
                 context.addImport("MVEL", MVEL.class);
                 context.addImport("MvelHelper", MvelHelper.class);
-                context.addImport("CollectionUtils", CollectionUtils.class);
+                context.addImport("CollectionUtils", SelectizeCollectionUtils.class);
                 if (MapUtils.isNotEmpty(additionalContextImports)) {
                     for (Entry<String, Class<?>> entry : additionalContextImports.entrySet()) {
                         context.addImport(entry.getKey(), entry.getValue());
