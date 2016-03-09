@@ -21,6 +21,8 @@ package org.broadleafcommerce.common.copy;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.site.domain.Catalog;
@@ -123,43 +125,6 @@ public class MultiTenantCopyContext {
     }
 
     /**
-     * Detects whether or not the current cloned entity is an extension of an entity in Broadleaf, and if so, if the
-     * extension itself does not implement clone.
-     *
-     * @param cloned the cloned entity instance
-     * @throws CloneNotSupportedException thrown if the entity is an extension and is does not implement clone
-     */
-    public void checkCloneable(Object cloned) throws CloneNotSupportedException {
-        Method cloneMethod;
-        try {
-            cloneMethod = cloned.getClass().getMethod("createOrRetrieveCopyInstance", new Class[]{MultiTenantCopyContext.class});
-        } catch (NoSuchMethodException e) {
-            throw ExceptionHelper.refineException(e);
-        }
-        boolean cloneMethodLocal = false;
-        for (String prefix : BROADLEAF_PACKAGE_PREFIXES) {
-            if (cloneMethod.getDeclaringClass().getName().startsWith(prefix)) {
-                cloneMethodLocal = true;
-                break;
-            }
-        }
-        boolean cloneClassLocal = false;
-        for (String prefix : BROADLEAF_PACKAGE_PREFIXES) {
-            if (cloned.getClass().getName().startsWith(prefix)) {
-                cloneClassLocal = true;
-                break;
-            }
-        }
-        if (cloneMethodLocal && !cloneClassLocal) {
-            //subclass is not implementing the clone method
-            throw new CloneNotSupportedException("The system is attempting to clone " + cloned.getClass().getName() +
-                    " and has determined the custom extension does not implement clone. This class should implement " +
-                    "clone, and inside first call super.clone() to get back an instance of your class (" + cloned.getClass().getName() +
-                    "), and then finish populating this instance with your custom fields before passing back the finished object.");
-        }
-    }
-
-    /**
      * Create a new instance of the polymorphic entity type - could be an extended type outside of Broadleaf.
      *
      * @param instance the object instance for the actual entity type (could be extended)
@@ -168,67 +133,16 @@ public class MultiTenantCopyContext {
      * @throws java.lang.CloneNotSupportedException
      */
     public <G> CreateResponse<G> createOrRetrieveCopyInstance(Object instance) throws CloneNotSupportedException {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        context.setCurrentCatalog(getToCatalog());
-        context.setCurrentProfile(getToSite());
-        context.setSite(getToSite());
-        if (instance instanceof Status && 'Y' == ((Status) instance).getArchived()) {
-            throw new CloneNotSupportedException("Attempting to clone an archived instance");
-        }
+        CreateResponse<G> createResponse;
+        BroadleafRequestContext context = setupContext();
+        validateOriginal(instance);
         Class<?> instanceClass = instance.getClass();
-        if (instanceClass.getAnnotation(Embeddable.class) != null) {
-            G response;
-            try {
-                response = (G) instanceClass.newInstance();
-            } catch (InstantiationException e) {
-                throw ExceptionHelper.refineException(e);
-            } catch (IllegalAccessException e) {
-                throw ExceptionHelper.refineException(e);
-            }
-            return new CreateResponse<G>(response, false);
+        createResponse = handleEmbedded(instanceClass);
+        if (createResponse == null) {
+            createResponse = handleStandardEntity(instance, context, instanceClass);
         }
-        Long originalId = getIdentifier(instance);
-        Object previousClone;
-        if (currentEquivalentMap.inverse().containsKey(instanceClass.getName() + "_" + originalId)) {
-            previousClone = currentCloneMap.get(currentEquivalentMap.inverse().get(instanceClass.getName() + "_" + originalId));
-        } else {
-            previousClone = getClonedVersion(instanceClass, originalId);
-        }
-        G response;
-        boolean alreadyPopulate;
-        if (previousClone != null) {
-            response = (G) previousClone;
-            alreadyPopulate = true;
-        } else {
-            try {
-                response = (G) instanceClass.newInstance();
-            } catch (InstantiationException e) {
-                throw ExceptionHelper.refineException(e);
-            } catch (IllegalAccessException e) {
-                throw ExceptionHelper.refineException(e);
-            }
-            checkCloneable(response);
-            alreadyPopulate = false;
-            currentEquivalentMap.put(System.identityHashCode(response), instanceClass.getName() + "_" + originalId);
-            currentCloneMap.put(System.identityHashCode(response), response);
-            try {
-                for (Field field : getAllFields(instanceClass)) {
-                    if (field.getType().getAnnotation(Embeddable.class) != null && MultiTenantCloneable.class.isAssignableFrom(field.getType())) {
-                        field.setAccessible(true);
-                        Object embeddable = field.get(instance);
-                        if (embeddable != null) {
-                            field.set(response, ((MultiTenantCloneable) embeddable).createOrRetrieveCopyInstance(this).getClone());
-                        }
-                    }
-                }
-            } catch (IllegalAccessException e) {
-                throw ExceptionHelper.refineException(e);
-            }
-        }
-        context.setCurrentCatalog(getFromCatalog());
-        context.setCurrentProfile(getFromSite());
-        context.setSite(getFromSite());
-        return new CreateResponse<G>(response, alreadyPopulate);
+        tearDownContext(context);
+        return createResponse;
     }
 
     public void clearOriginalIdentifiers() {
@@ -260,5 +174,150 @@ public class MultiTenantCopyContext {
         }
 
         return allFields;
+    }
+
+    public Object getPreviousClone(Class<?> instanceClass, Long originalId) {
+        Object previousClone;
+        if (currentEquivalentMap.inverse().containsKey(instanceClass.getName() + "_" + originalId)) {
+            previousClone = currentCloneMap.get(currentEquivalentMap.inverse().get(instanceClass.getName() + "_" + originalId));
+        } else {
+            previousClone = getClonedVersion(instanceClass, originalId);
+        }
+        return previousClone;
+    }
+
+    protected boolean checkCloneStatus(Object instance) {
+        boolean shouldClone = true;
+        ExtensionResultHolder<Boolean> shouldCloneHolder = new ExtensionResultHolder<Boolean>();
+        if (extensionManager != null) {
+            ExtensionResultStatusType status = extensionManager.getProxy().shouldClone(this, instance,
+                    shouldCloneHolder);
+            if (ExtensionResultStatusType.NOT_HANDLED != status) {
+                shouldClone = shouldCloneHolder.getResult();
+            }
+        }
+        return shouldClone;
+    }
+
+    protected void validateOriginal(Object instance) throws CloneNotSupportedException {
+        if (instance instanceof Status && 'Y' == ((Status) instance).getArchived()) {
+            throw new CloneNotSupportedException("Attempting to clone an archived instance");
+        }
+    }
+
+    protected void tearDownContext(BroadleafRequestContext context) {
+        context.setCurrentCatalog(getFromCatalog());
+        context.setCurrentProfile(getFromSite());
+        context.setSite(getFromSite());
+    }
+
+    protected BroadleafRequestContext setupContext() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        context.setCurrentCatalog(getToCatalog());
+        context.setCurrentProfile(getToSite());
+        context.setSite(getToSite());
+        return context;
+    }
+
+    protected <G> G createNewInstance(Class<?> instanceClass) {
+        G response;
+        try {
+            response = (G) instanceClass.newInstance();
+        } catch (InstantiationException e) {
+            throw ExceptionHelper.refineException(e);
+        } catch (IllegalAccessException e) {
+            throw ExceptionHelper.refineException(e);
+        }
+        return response;
+    }
+
+    protected <G> CreateResponse<G> handleStandardEntity(Object instance, BroadleafRequestContext context, Class<?> instanceClass) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse;
+        Long originalId = getIdentifier(instance);
+        Object previousClone = getPreviousClone(instanceClass, originalId);
+        G response;
+        boolean alreadyPopulate;
+        if (previousClone != null) {
+            response = (G) previousClone;
+            alreadyPopulate = true;
+        } else {
+            boolean shouldClone = checkCloneStatus(instance);
+            if (!shouldClone) {
+                response = (G) instance;
+                alreadyPopulate = true;
+            } else {
+                alreadyPopulate = false;
+                response = performCopy(instance, instanceClass, originalId);
+            }
+        }
+        createResponse = new CreateResponse<G>(response, alreadyPopulate);
+        return createResponse;
+    }
+
+    protected <G> CreateResponse<G> handleEmbedded(Class<?> instanceClass) {
+        CreateResponse<G> createResponse = null;
+        if (instanceClass.getAnnotation(Embeddable.class) != null) {
+            G response = createNewInstance(instanceClass);
+            createResponse = new CreateResponse<G>(response, false);
+        }
+        return createResponse;
+    }
+
+    protected <G> G performCopy(Object instance, Class<?> instanceClass, Long originalId) throws CloneNotSupportedException {
+        G response = createNewInstance(instanceClass);
+        validateClone(response);
+        currentEquivalentMap.put(System.identityHashCode(response), instanceClass.getName() + "_" + originalId);
+        currentCloneMap.put(System.identityHashCode(response), response);
+        try {
+            for (Field field : getAllFields(instanceClass)) {
+                field.setAccessible(true);
+                if (field.getType().getAnnotation(Embeddable.class) != null && MultiTenantCloneable.class.isAssignableFrom(field.getType())) {
+                    Object embeddable = field.get(instance);
+                    if (embeddable != null) {
+                        field.set(response, ((MultiTenantCloneable) embeddable).createOrRetrieveCopyInstance(this).getClone());
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            throw ExceptionHelper.refineException(e);
+        }
+        return response;
+    }
+
+    /**
+     * Detects whether or not the current cloned entity is an extension of an entity in Broadleaf, and if so, if the
+     * extension itself does not implement clone.
+     *
+     * @param cloned the cloned entity instance
+     * @throws CloneNotSupportedException thrown if the entity is an extension and is does not implement clone
+     */
+    protected void validateClone(Object cloned) throws CloneNotSupportedException {
+        Method cloneMethod;
+        try {
+            cloneMethod = cloned.getClass().getMethod("createOrRetrieveCopyInstance", new Class[]{MultiTenantCopyContext.class});
+        } catch (NoSuchMethodException e) {
+            throw ExceptionHelper.refineException(e);
+        }
+        boolean cloneMethodLocal = false;
+        for (String prefix : BROADLEAF_PACKAGE_PREFIXES) {
+            if (cloneMethod.getDeclaringClass().getName().startsWith(prefix)) {
+                cloneMethodLocal = true;
+                break;
+            }
+        }
+        boolean cloneClassLocal = false;
+        for (String prefix : BROADLEAF_PACKAGE_PREFIXES) {
+            if (cloned.getClass().getName().startsWith(prefix)) {
+                cloneClassLocal = true;
+                break;
+            }
+        }
+        if (cloneMethodLocal && !cloneClassLocal) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("The system is attempting to clone " + cloned.getClass().getName() +
+                    " and has determined the custom extension does not implement clone. This class should implement " +
+                    "clone, and inside first call super.clone() to get back an instance of your class (" + cloned.getClass().getName() +
+                    "), and then finish populating this instance with your custom fields before passing back the finished object.");
+        }
     }
 }

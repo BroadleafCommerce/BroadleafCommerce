@@ -173,6 +173,11 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
         
         return SupportedFieldType.valueOf(fieldType);
     }
+
+    @Override
+    public String getFieldTypeVal() {
+        return fieldType;
+    }
     
     @Override
     public String getAdditionalForeignKeyClass() {
@@ -191,11 +196,15 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
         
         this.fieldType = SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|' + className;
     }
-    
 
     @Override
     public void setFieldType(SupportedFieldType fieldType) {
         this.fieldType = fieldType!=null?fieldType.toString():null;
+    }
+
+    @Override
+    public void setFieldType(String fieldType) {
+        this.fieldType = fieldType;
     }
 
     @Override
@@ -371,7 +380,7 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
         FieldDefinition cloned = createResponse.getClone();
         cloned.setName(name);
         cloned.setFriendlyName(friendlyName);
-        cloned.setFieldType(getFieldType());
+        cloned.setFieldType(fieldType);
         cloned.setSecurityLevel(securityLevel);
         cloned.setHiddenFlag(hiddenFlag);
         cloned.setValidationRegEx(validationRegEx);

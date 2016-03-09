@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -38,6 +39,7 @@ import javax.persistence.criteria.Root;
  * Dummy implementation of a {@link RowLevelSecurityProvider}. Implementors should extend this class
  * 
  * @author Phillip Verheyden (phillipuniverse)
+ * @author Jeff Fischer
  */
 public class AbstractRowLevelSecurityProvider implements RowLevelSecurityProvider {
 
@@ -59,6 +61,16 @@ public class AbstractRowLevelSecurityProvider implements RowLevelSecurityProvide
     @Override
     public boolean canRemove(AdminUser currentUser, Entity entity) {
         return true;
+    }
+
+    @Override
+    public boolean canAdd(AdminUser currentUser, String sectionClassName, ClassMetadata cmd) {
+        return true;
+    }
+
+    @Override
+    public GlobalValidationResult validateAddRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage) {
+        return new GlobalValidationResult(true);
     }
 
     @Override
