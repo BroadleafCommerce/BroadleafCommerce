@@ -50,7 +50,9 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
+import org.broadleafcommerce.openadmin.server.security.dao.AdminUserDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
 import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
@@ -114,6 +116,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
+
+    @Resource(name = "blAdminUserDao")
+    protected AdminUserDao adminUserDao;
 
     @Resource(name = "blAdornedTargetAutoPopulateExtensionManager")
     protected AdornedTargetAutoPopulateExtensionManager adornedTargetAutoPopulateExtensionManager;
@@ -424,6 +429,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         setModelAttributes(model, sectionKey);
 
+        // We want to replace author ids with their names
+        updateAuditableFields(entityForm);
+
         if (isAjaxRequest(request)) {
             entityForm.setReadOnly();
             model.addAttribute("viewType", "modal/entityView");
@@ -489,15 +497,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("currentUrl", request.getRequestURL().toString());
 
         setModelAttributes(model, sectionKey);
-
-        // todo: Determine if this is still necessary
-//        if (sandBoxHelper.isSandBoxable(entityForm.getEntityType())) {
-//            Tab auditTab = new Tab();
-//            auditTab.setTitle("Audit");
-//            auditTab.setOrder(Integer.MAX_VALUE);
-//            auditTab.setTabClass("audit-tab");
-//            entityForm.getTabs().add(auditTab);
-//        }
 
         model.addAttribute("useAjaxUpdate", true);
         model.addAttribute("viewType", "entityEdit");
@@ -1799,6 +1798,19 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
+    }
+
+    public void updateAuditableFields(EntityForm entityForm) {
+        Field createdBy = entityForm.findField("auditable.createdBy");
+        if (createdBy != null && createdBy.getValue() != null) {
+            AdminUser createdUser = adminUserDao.readAdminUserById(Long.parseLong(createdBy.getValue()));
+            createdBy.setValue(createdUser.getName());
+        }
+        Field updatedBy = entityForm.findField("auditable.updatedBy");
+        if (updatedBy != null && updatedBy.getValue() != null) {
+            AdminUser updatedUser = adminUserDao.readAdminUserById(Long.parseLong(updatedBy.getValue()));
+            updatedBy.setValue(updatedUser.getName());
+        }
     }
     
     // *********************************
