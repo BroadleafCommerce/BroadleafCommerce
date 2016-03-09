@@ -208,6 +208,10 @@
     background: rgba(0,0,0,0.03);
 }
 
+.query-builder-rules .toggle-container input {
+    display:none;
+}
+
 .query-builder-rules input[type="radio"].toggle {
     position: absolute;
     left: -99em;
