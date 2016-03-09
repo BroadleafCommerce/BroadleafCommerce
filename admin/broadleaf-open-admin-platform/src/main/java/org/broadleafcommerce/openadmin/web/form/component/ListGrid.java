@@ -363,6 +363,19 @@ public class ListGrid {
         this.headerFields = headerFields;
     }
 
+    public Field findHeaderField(String name) {
+        if (name == null) {
+            return null;
+        }
+
+        for (Field headerField : getHeaderFields()) {
+            if (name.equals(headerField.getName())) {
+                return headerField;
+            }
+        }
+        return null;
+    }
+
     public List<ListGridRecord> getRecords() {
         return records;
     }
