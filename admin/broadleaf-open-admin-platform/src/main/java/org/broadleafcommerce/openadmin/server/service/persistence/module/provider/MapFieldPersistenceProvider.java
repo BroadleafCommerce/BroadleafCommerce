@@ -93,8 +93,9 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                 } catch (FieldNotAvailableException e) {
                     throw new IllegalArgumentException(e);
                 }
-                dirty = persistValue || (assignableValue != null && !assignableValue.getValue().equals(
-                        populateValueRequest.getProperty().getValue()));
+                dirty = persistValue
+                        || (assignableValue != null && assignableValue.getValue() == null && populateValueRequest.getProperty().getValue() != null)
+                        || (assignableValue != null && !assignableValue.getValue().equals(populateValueRequest.getProperty().getValue()));
                 if (dirty) {
                     updateAssignableValue(populateValueRequest, instance, parent, valueType, persistValue, assignableValue);
                 }
