@@ -430,16 +430,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         setModelAttributes(model, sectionKey);
 
         // We want to replace author ids with their names
-        Field createdBy = entityForm.findField("auditable.createdBy");
-        if (createdBy != null && createdBy.getValue() != null) {
-            AdminUser createdUser = adminUserDao.readAdminUserById(Long.parseLong(createdBy.getValue()));
-            createdBy.setValue(createdUser.getName());
-        }
-        Field updatedBy = entityForm.findField("auditable.updatedBy");
-        if (updatedBy != null && updatedBy.getValue() != null) {
-            AdminUser updatedUser = adminUserDao.readAdminUserById(Long.parseLong(updatedBy.getValue()));
-            updatedBy.setValue(updatedUser.getName());
-        }
+        updateAuditableFields(entityForm);
 
         if (isAjaxRequest(request)) {
             entityForm.setReadOnly();
@@ -1807,6 +1798,19 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
+    }
+
+    public void updateAuditableFields(EntityForm entityForm) {
+        Field createdBy = entityForm.findField("auditable.createdBy");
+        if (createdBy != null && createdBy.getValue() != null) {
+            AdminUser createdUser = adminUserDao.readAdminUserById(Long.parseLong(createdBy.getValue()));
+            createdBy.setValue(createdUser.getName());
+        }
+        Field updatedBy = entityForm.findField("auditable.updatedBy");
+        if (updatedBy != null && updatedBy.getValue() != null) {
+            AdminUser updatedUser = adminUserDao.readAdminUserById(Long.parseLong(updatedBy.getValue()));
+            updatedBy.setValue(updatedUser.getName());
+        }
     }
     
     // *********************************
