@@ -95,5 +95,30 @@
             return jQuery('<div />').append(this.eq(0).clone()).html();
         };
     }
+
+    $(document).ready(function() {
+        // Synchronize URL hash to tabs
+        if($(document).find('.nav-tabs').length > 0) {
+            // initial page visit
+            if (window.location.hash === '') {
+                window.location.hash = $('.nav-tabs li.active > a').attr('href');
+            } else {
+                $('.nav-tabs li > a[href="' + getCurrentHash() + '"]').click();
+            }
+
+            window.onhashchange = function() {
+                $('.nav-tabs li').removeClass('active');
+                $('.nav-tabs li > a[href="' + window.location.hash + '"]').closest('li').addClass('active');
+                $('.tabs-content .entityFormTab').removeClass('active');
+                $('.tabs-content .entityFormTab.' + getCurrentHashVal() + 'Tab').addClass('active');
+                $('.nav-tabs li > a[href="' + getCurrentHash() + '"]').click();
+            };
+            $(document).on('click', '.nav-tabs li > a', function () {
+                if (BLCAdmin.getModals().length == 0) {
+                    window.location.hash = $(this).attr('href');
+                }
+            });
+        }
+    });
   
 })(jQuery, this);

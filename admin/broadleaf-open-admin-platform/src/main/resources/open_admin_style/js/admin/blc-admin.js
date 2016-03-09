@@ -1234,6 +1234,19 @@ BLC.addPreAjaxCallbackHandler(function($data) {
     return true;
 });
 
+var getCurrentHash = function() {
+    var baseHash = window.location.hash;
+    if(baseHash.indexOf('?') > -1) {
+        return baseHash.substr(0, baseHash.indexOf('?'));
+    } else {
+        return baseHash;
+    }
+};
+var getCurrentHashVal = function() {
+    var hash = getCurrentHash();
+    return hash.substr(1);
+};
+
 $(document).ready(function() {
     $(window).resize(function() {
         $.doTimeout('resize', 150, function() {
@@ -1242,17 +1255,6 @@ $(document).ready(function() {
             }
         });
     });
-    
-    if (window.location.hash) {
-        var $listGrid = $('div.listgrid-container' + window.location.hash);
-        if ($listGrid.length) {
-            var $tab = $listGrid.closest('li.entityFormTab');
-            var idx = $tab.index() + 1;
-            var $tabLink = $('div.tabs-container dl dd:nth-child(' + idx + ')');
-            $.fn.foundationTabs('set_tab', $tabLink);
-            $(window).scrollTop($(window.location.hash).offset().top);
-        }
-    }
 
     // Ensure that the breadcrumb will render behind the entity form actions
     var $bcc = $('.sticky-container');
