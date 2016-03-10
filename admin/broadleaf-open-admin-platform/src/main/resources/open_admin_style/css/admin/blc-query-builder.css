@@ -208,6 +208,10 @@
     background: rgba(0,0,0,0.03);
 }
 
+.query-builder-rules .toggle-container input {
+    display:none;
+}
+
 .query-builder-rules input[type="radio"].toggle {
     position: absolute;
     left: -99em;
@@ -302,6 +306,12 @@
 .rule-modal-zone.can-edit:hover > .clear-rule-builder {
     display: block;
 }
+
+.rule-radio-label {
+    display: inline-block;
+    padding: 5px;
+}
+
 /* filter builder styles */
 .query-builder-filters-container .group-conditions, .query-builder-rules-container .group-conditions {
     height: 40px;

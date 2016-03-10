@@ -66,6 +66,7 @@ import org.hibernate.annotations.SQLDelete;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -137,7 +138,15 @@ import javax.persistence.Transient;
                         configurationItems = {
                                 @ConfigurationItem(itemName = "otherField", itemValue = "defaultSku.activeStartDate")
                         })
-                }))
+                })),
+        @AdminPresentationMergeOverride(name = "defaultSku.auditable.createdBy", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
+        @AdminPresentationMergeOverride(name = "defaultSku.auditable.dateCreated", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
+        @AdminPresentationMergeOverride(name = "defaultSku.auditable.dateUpdated", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
+        @AdminPresentationMergeOverride(name = "defaultSku.auditable.updatedBy", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true))
 })
 @SQLDelete(sql = "UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
 @DirectCopyTransform({
@@ -795,8 +804,17 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     public void setProductAttributes(Map<String, ProductAttribute> productAttributes) {
         List<ProductAttribute> productAttributeList = new ArrayList<ProductAttribute>();
 
-        for(Map.Entry<String, ProductAttribute> entry : productAttributes.entrySet()){
-            productAttributeList.add(entry.getValue());
+        if (productAttributes instanceof MultiValueMap) {
+            Iterator<String> it = productAttributes.keySet().iterator();
+
+            while(it.hasNext()){
+                String theKey = it.next();
+                productAttributeList.addAll((List)productAttributes.get(theKey));
+            }
+        } else {
+            for (Map.Entry<String, ProductAttribute> entry : productAttributes.entrySet()) {
+                productAttributeList.add(entry.getValue());
+            }
         }
 
         this.productAttributes = productAttributeList;

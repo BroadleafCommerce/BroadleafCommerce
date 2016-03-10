@@ -77,6 +77,9 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                 try {
                     parent = populateValueRequest.getFieldManager().getFieldValue(instance,
                             populateValueRequest.getProperty().getName());
+                    if (parent instanceof List) {
+                        parent = ((List)parent).get(0);
+                    }
                     if (parent == null) {
                         parent = startingValueType.newInstance();
                         if (!startingValueType.equals(valueType)) {

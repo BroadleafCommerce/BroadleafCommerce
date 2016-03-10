@@ -160,6 +160,11 @@ $.fn.queryBuilder.define('blc-admin-query-builder', function(options) {
         //el.find('div.rule-operator-container > div > div.selectize-input').width("100px");
         //el.find('div.rule-value-container > div > div.selectize-input').width("223px");
         //el.find('div.rule-value-container').css("display", "inline-block");
+
+        //modify the built in radio styles
+        el.find('label > input[type="radio"]').each(function(){
+            $(this).parent().addClass('rule-radio-label');
+        });
     }
 
 }, {

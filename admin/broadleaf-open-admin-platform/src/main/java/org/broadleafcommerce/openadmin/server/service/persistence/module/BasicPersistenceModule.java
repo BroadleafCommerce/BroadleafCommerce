@@ -1400,7 +1400,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         java.lang.reflect.Type type = field.getGenericType();
         if (type instanceof ParameterizedType) {
             ParameterizedType pType = (ParameterizedType) type;
-            Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
+            Class<?> clazz;
+            if (pType.getActualTypeArguments().length < 2) {
+                clazz = (Class<?>) pType.getActualTypeArguments()[0];
+            } else {
+                clazz = (Class<?>) pType.getActualTypeArguments()[1];
+            }
             Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
             if (!ArrayUtils.isEmpty(entities)) {
                 returnType = entities[entities.length - 1];

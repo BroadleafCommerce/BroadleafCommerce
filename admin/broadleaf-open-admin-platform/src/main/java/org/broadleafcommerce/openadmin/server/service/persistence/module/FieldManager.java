@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +35,7 @@ import org.hibernate.ejb.HibernateEntityManager;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -93,8 +96,22 @@ public class FieldManager {
             if (field != null) {
                 field.setAccessible(true);
                 value = field.get(value);
-                if (value != null && mapKey != null && value instanceof Map) {
+                if (value instanceof List) {
+                    try {
+                        String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
+                        String fullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+
+                        value = PropertyUtils.getProperty(bean, fullFieldName);
+                    } catch (InvocationTargetException|NoSuchMethodException e) {
+                        throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class (" + componentClass + ")");
+                    }
+                }
+
+                if (value != null && mapKey != null) {
                     value = ((Map) value).get(mapKey);
+                }
+                if (value instanceof List) {
+                    value = ((List) value).get(0);
                 }
                 if (value != null) {
                     componentClass = value.getClass();
@@ -133,7 +150,20 @@ public class FieldManager {
             field.setAccessible(true);
             if (j == count - 1) {
                 if (mapKey != null) {
-                    Map map = (Map) field.get(value);
+                    Map map = new HashMap();
+                    if (field.get(value) instanceof List) {
+                        try {
+                            String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
+                            String fullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1) + fieldNamePart.substring(1);
+
+                            map = (Map)PropertyUtils.getProperty(bean, fullFieldName);
+                        } catch (InvocationTargetException|NoSuchMethodException e) {
+                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                                    "Using the type of this class.");
+                        }
+                    } else {
+                        map = (Map) field.get(value);
+                    }
                     if (newValue == null) {
                         map.remove(mapKey);
                     } else {
