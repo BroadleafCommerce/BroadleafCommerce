@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.processor;
+package org.broadleafcommerce.common.web.processor;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.handler.CsrfFilter;

@@ -53,7 +53,6 @@ import javax.persistence.Table;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_ADDRESS")
-@SQLDelete(sql="UPDATE BLC_CUSTOMER_ADDRESS SET ARCHIVED = 'Y' WHERE CUSTOMER_ADDRESS_ID = ?")
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "address.firstName", mergeEntries =
@@ -65,6 +64,7 @@ import javax.persistence.Table;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@SQLDelete(sql = "UPDATE BLC_CUSTOMER_ADDRESS SET ARCHIVED = 'Y' WHERE CUSTOMER_ADDRESS_ID = ?")
 public class CustomerAddressImpl implements CustomerAddress {
 
     private static final long serialVersionUID = 1L;

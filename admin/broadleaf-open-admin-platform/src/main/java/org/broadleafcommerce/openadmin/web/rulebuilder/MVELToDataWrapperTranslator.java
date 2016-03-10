@@ -170,8 +170,8 @@ public class MVELToDataWrapperTranslator {
             String start;
             String end;
             if (type.toString().equals(SupportedFieldType.DATE.toString())) {
-                start = myCriteriaList.get(count-1).getValue();
-                end = temp.getValue();
+                start = "\"" + myCriteriaList.get(count-1).getValue() + "\"" ;
+                end = "\"" + temp.getValue() + "\"";
             } else {
                 start = myCriteriaList.get(count-1).getValue();
                 end = temp.getValue();
@@ -190,8 +190,8 @@ public class MVELToDataWrapperTranslator {
             String start;
             String end;
             if (type.toString().equals(SupportedFieldType.DATE.toString())) {
-                start = myCriteriaList.get(count-1).getValue();
-                end = temp.getValue();
+                start = "\"" + myCriteriaList.get(count-1).getValue() + "\"";
+                end = "\"" + temp.getValue() + "\"";
             } else {
                 start = myCriteriaList.get(count-1).getValue();
                 end = temp.getValue();

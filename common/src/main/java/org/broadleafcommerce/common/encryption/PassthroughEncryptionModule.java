@@ -57,4 +57,8 @@ public class PassthroughEncryptionModule implements EncryptionModule {
         return plainText;
     }
 
+    @Override
+    public Boolean matches(String raw, String encrypted) {
+        return encrypted.equals(encrypt(raw));
+    }
 }

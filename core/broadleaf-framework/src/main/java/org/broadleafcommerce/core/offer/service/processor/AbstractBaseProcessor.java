@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.core.offer.service.processor;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -44,10 +43,6 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.joda.time.LocalDateTime;
-import org.mvel2.MVEL;
-import org.mvel2.ParserContext;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -58,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-
 import javax.annotation.Resource;
 
 /**
@@ -241,53 +235,20 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @return a Boolean object containing the result of executing the MVEL expression
      */
     public Boolean executeExpression(String expression, Map<String, Object> vars) {
-        return executeExpression(expression, vars, null);
-    }
-
-    public Boolean executeExpression(String expression, Map<String, Object> vars, Map<String, Class> mvelImports) {
-        try {
-            Serializable exp;
-            synchronized (EXPRESSION_CACHE) {
-                exp = (Serializable) EXPRESSION_CACHE.get(expression);
-                if (exp == null) {
-                    ParserContext context = new ParserContext();
-                    context.addImport("OfferType", OfferType.class);
-                    context.addImport("FulfillmentType", FulfillmentType.class);
-                    context.addImport("MVEL", MVEL.class);
-                    context.addImport("MvelHelper", MvelHelper.class);
-                    context.addImport("CollectionUtils", CollectionUtils.class);
-                    if (mvelImports != null) {
-                        for (String key : mvelImports.keySet()) {
-                            context.addImport(key, mvelImports.get(key));
-                        }
-                    }
-
-                    //            StringBuffer completeExpression = new StringBuffer(functions.toString());
-                    //            completeExpression.append(" ").append(expression);
-                    exp = MVEL.compileExpression(expression, context);
-
-                    EXPRESSION_CACHE.put(expression, exp);
-                }
-            }
-
-            Object test = MVEL.executeExpression(exp, vars);
-
-            return (Boolean) test;
-        } catch (Exception e) {
-            //Unable to execute the MVEL expression for some reason
-            //Return false, but notify about the bad expression through logs
-            LOG.warn("Unable to parse and/or execute an mvel expression. Reporting to the logs and returning false " +
-                    "for the match expression:" + expression, e);
-            return false;
+        synchronized (EXPRESSION_CACHE) {
+            Map<String, Class<?>> contextImports = new HashMap<>();
+            contextImports.put("OfferType", OfferType.class);
+            contextImports.put("FulfillmentType", FulfillmentType.class);
+            return MvelHelper.evaluateRule(expression, vars, EXPRESSION_CACHE, contextImports);
         }
     }
-
-        /**
-         * We were not able to meet all of the ItemCriteria for a promotion, but some of the items were
-         * marked as qualifiers or targets.  This method removes those items from being used as targets or
-         * qualifiers so they are eligible for other promotions.
-         * @param priceDetails
-         */
+    
+    /**
+     * We were not able to meet all of the ItemCriteria for a promotion, but some of the items were
+     * marked as qualifiers or targets.  This method removes those items from being used as targets or
+     * qualifiers so they are eligible for other promotions.
+     * @param priceDetails
+     */
     protected void clearAllNonFinalizedQuantities(List<PromotableOrderItemPriceDetail> priceDetails) {
         for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
             priceDetail.clearAllNonFinalizedQuantities();
