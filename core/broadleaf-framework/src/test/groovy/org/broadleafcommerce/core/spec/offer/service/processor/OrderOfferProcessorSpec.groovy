@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.spec.offer.service.processor
 
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute
 import org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl
 import org.broadleafcommerce.core.catalog.domain.ProductImpl
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
@@ -61,9 +62,12 @@ class OrderOfferProcessorSpec extends Specification {
         otherProductAttribute.product = product;
         otherProductAttribute.name="myOtherProductAttribute"
         otherProductAttribute.value="myOtherProductAttributeValue"
+        Map<String, ProductAttribute> attributeMap = new HashMap<>();
 
-        product.productAttributes << ["myProductAttribute":productAttribute]
-        product.productAttributes << ["myOtherProductAttribute":otherProductAttribute]
+        attributeMap.put("myProductAttribute", productAttribute)
+        attributeMap.put("myOtherProductAttribute", otherProductAttribute)
+
+        product.setProductAttributes(attributeMap)
 
         discreteOrderItem.category = category
         discreteOrderItem.product = product
