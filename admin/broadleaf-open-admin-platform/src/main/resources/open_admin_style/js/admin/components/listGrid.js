@@ -623,16 +623,16 @@ $(document).ready(function () {
         var fkValueFound = fkValue != undefined && fkValue.val().length > 0;
         var confirm = $toOneLookup.data('confirm') && fkValueFound;
         if (confirm) {
-            var $cancel = false;
+            var cancel = false;
             $.confirm({
                 confirm: function() {
                     processToOneLookupCall.call($toOneLookup);
                 },
                 cancel: function() {
-                    $cancel = true;
+                    cancel = true;
                 }
             });
-            if ($cancel) {
+            if (cancel) {
                 event.preventDefault();
                 return false;
             }
