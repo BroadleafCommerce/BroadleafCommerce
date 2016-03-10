@@ -619,10 +619,10 @@ $(document).ready(function () {
      */
     $('body').on('click', '.to-one-lookup', function (event) {
         var $toOneLookup = $(this);
-        var $fkValue = $toOneLookup.closest('div.additional-foreign-key-container').find('.value');
-        var $fkValueFound = $fkValue != undefined && $fkValue.val().length > 0;
-        var $confirm = $toOneLookup.data('confirm') && $fkValueFound;
-        if ($confirm) {
+        var fkValue = $toOneLookup.closest('div.additional-foreign-key-container').find('.value');
+        var fkValueFound = fkValue != undefined && fkValue.val().length > 0;
+        var confirm = $toOneLookup.data('confirm') && fkValueFound;
+        if (confirm) {
             var $cancel = false;
             $.confirm({
                 confirm: function() {
@@ -705,7 +705,6 @@ $(document).ready(function () {
             });
             return false;
         }
-//        return processToOneLookupCall.call(this);
     });
 
     $('body').on('click', 'button.sub-list-grid-add, a.sub-list-grid-add', function () {
