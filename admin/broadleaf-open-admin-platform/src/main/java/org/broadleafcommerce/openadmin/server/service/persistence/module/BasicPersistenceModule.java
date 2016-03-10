@@ -35,7 +35,6 @@ import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -1002,12 +1001,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 Serializable instance = (Serializable) Class.forName(entity.getType()[0]).newInstance();
 
                 instance = createPopulatedInstance(instance, entity, mergedProperties, false);
-
-                if (entity.isPreAdd()) {
-                    if (Status.class.isAssignableFrom(instance.getClass())) {
-                        ((Status) instance).setArchived('Y');
-                    }
-                }
 
                 if (foreignKey != null && foreignKey.getSortField() != null) {
                     ExtensionResultHolder<Serializable> result = new ExtensionResultHolder<Serializable>();
