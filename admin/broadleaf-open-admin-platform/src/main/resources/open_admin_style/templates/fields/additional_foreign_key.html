@@ -49,7 +49,7 @@
                             th:disabled="${field.readOnly}"
                             type="button" th:inline="text"
                             th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})},
-                                 data-dynamic-field=${field.attributes['dynamicField']}">
+                                 data-dynamic-field=${field.attributes['dynamicField']}, data-confirm=${field.isConfirmEnabled}">
                         <i class="blc-icon-search"></i>
                     </button>
                 </span>

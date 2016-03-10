@@ -618,83 +618,92 @@ $(document).ready(function () {
      * to-one fields on an entity form.
      */
     $('body').on('click', '.to-one-lookup', function (event) {
-        var $container = $(this).closest('div.additional-foreign-key-container');
-
-        $container.on('valueSelected', function (event, $target, fields, link, currentUrl) {
-            var $this = $(this);
-            var displayValueProp = $this.find('input.display-value-property').val();
-
-            var displayValue = fields[displayValueProp];
-            var $selectedRow = BLCAdmin.currentModal().find('tr[data-link="' + link + '"]');
-            var $displayField = $selectedRow.find('td[data-fieldname=' + displayValueProp.split(".").join("\\.") + ']');
-            if ($displayField.hasClass('derived')) {
-                displayValue = $.trim($displayField.text());
-            }
-
-            if (typeof BLCAdmin.treeListGrid !== 'undefined' && $this.closest('.modal-add-entity-form.enterprise-tree-add').length) {
-                BLCAdmin.treeListGrid.buildParentPathJson($this.closest('.modal-add-entity-form.enterprise-tree-add'), $selectedRow);
-            }
-
-            var $valueField = $this.find('input.value');
-            $valueField.val(fields['id']);
-            $this.find('span.display-value').html(displayValue);
-            $this.find('input.display-value').val(displayValue);
-            $this.find('input.hidden-display-value').val(displayValue);
-
-            // Ensure that the clear button shows up after selecting a value
-            $this.find('button.clear-foreign-key').show();
-
-            // Ensure that the external link button points to the correct URL
-            var $externalLink = $this.find('span.external-link-container a');
-            $externalLink.attr('href', $externalLink.data('foreign-key-link') + '/' + fields['id']);
-            $externalLink.parent().show();
-
-            // To-one fields potentially trigger a dynamicform. We test to see if this field should
-            // trigger a form, and bind the necessary event if it should.
-            var onChangeTrigger = $valueField.data('onchangetrigger');
-            if (onChangeTrigger) {
-                var trigger = onChangeTrigger.split("-");
-                if (trigger[0] == 'dynamicForm') {
-                    var $dynamicContainer = $("div.dynamic-form-container[data-dynamicpropertyname='" + trigger[1] + "']");
-                    var url = $dynamicContainer.data('currenturl') + '?propertyTypeId=' + fields['id'];
-
-                    BLC.ajax({
-                        url: url,
-                        type: "GET"
-                    }, function (data) {
-                        var dynamicPropertyName = data.find('div.dynamic-form-container').data('dynamicpropertyname');
-                        var $oldDynamicContainer = $('div.dynamic-form-container[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
-                        var $newDynamicContainer = data.find('div.dynamic-form-container');
-
-                        BLCAdmin.initializeFields($newDynamicContainer);
-
-                        $oldDynamicContainer.replaceWith($newDynamicContainer);
-                    });
+        var $toOneLookup = $(this);
+        var $confirm = $toOneLookup.data('confirm');
+        if ($confirm) {
+            var $cancel = false;
+            $.confirm({
+                confirm: function() {
+                    processToOneLookupCall.call($toOneLookup);
+                },
+                cancel: function() {
+                    $cancel = true;
                 }
+            });
+            if ($cancel) {
+                event.preventDefault();
+                return false;
             }
-
-            $valueField.trigger('change', fields);
-            $valueField.closest('.field-group').trigger('change');
-            BLCAdmin.hideCurrentModal();
-        });
-
-        var url = $(this).data('select-url');
-        var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
-        var thisField = $(this).closest('.field-group').attr('id');
-        var handler = BLCAdmin.getDependentFieldFilterHandler(thisClass, thisField);
-        if (handler != null) {
-            var $parentField = $container.closest('form').find(handler['parentFieldSelector']);
-            url = url + '&' + handler['childFieldPropertyName'] + '=' + BLCAdmin.extractFieldValue($parentField);
-        }
-        if ($(this).data('dynamic-field')) {
-            url = url + '&dynamicField=true';
+        } else {
+            processToOneLookupCall.call($toOneLookup);
         }
 
-        BLCAdmin.showLinkAsModal(url, function () {
-            $('div.additional-foreign-key-container').unbind('valueSelected');
-        });
-
-        return false;
+        function processToOneLookupCall() {
+            var $container = $(this).closest('div.additional-foreign-key-container');
+            $container.on('valueSelected', function (event, $target, fields, link, currentUrl) {
+                var $this = $(this);
+                var displayValueProp = $this.find('input.display-value-property').val();
+                var displayValue = fields[displayValueProp];
+                var $selectedRow = BLCAdmin.currentModal().find('tr[data-link="' + link + '"]');
+                var $displayField = $selectedRow.find('td[data-fieldname=' + displayValueProp.split(".").join("\\.") + ']');
+                if ($displayField.hasClass('derived')) {
+                    displayValue = $.trim($displayField.text());
+                }
+                if (typeof BLCAdmin.treeListGrid !== 'undefined' && $this.closest('.modal-add-entity-form.enterprise-tree-add').length) {
+                    BLCAdmin.treeListGrid.buildParentPathJson($this.closest('.modal-add-entity-form.enterprise-tree-add'), $selectedRow);
+                }
+                var $valueField = $this.find('input.value');
+                $valueField.val(fields['id']);
+                $this.find('span.display-value').html(displayValue);
+                $this.find('input.display-value').val(displayValue);
+                $this.find('input.hidden-display-value').val(displayValue);
+                // Ensure that the clear button shows up after selecting a value
+                $this.find('button.clear-foreign-key').show();
+                // Ensure that the external link button points to the correct URL
+                var $externalLink = $this.find('span.external-link-container a');
+                $externalLink.attr('href', $externalLink.data('foreign-key-link') + '/' + fields['id']);
+                $externalLink.parent().show();
+                // To-one fields potentially trigger a dynamicform. We test to see if this field should
+                // trigger a form, and bind the necessary event if it should.
+                var onChangeTrigger = $valueField.data('onchangetrigger');
+                if (onChangeTrigger) {
+                    var trigger = onChangeTrigger.split("-");
+                    if (trigger[0] == 'dynamicForm') {
+                        var $dynamicContainer = $("div.dynamic-form-container[data-dynamicpropertyname='" + trigger[1] + "']");
+                        var url = $dynamicContainer.data('currenturl') + '?propertyTypeId=' + fields['id'];
+                        BLC.ajax({
+                            url: url,
+                            type: "GET"
+                        }, function (data) {
+                            var dynamicPropertyName = data.find('div.dynamic-form-container').data('dynamicpropertyname');
+                            var $oldDynamicContainer = $('div.dynamic-form-container[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
+                            var $newDynamicContainer = data.find('div.dynamic-form-container');
+                            BLCAdmin.initializeFields($newDynamicContainer);
+                            $oldDynamicContainer.replaceWith($newDynamicContainer);
+                        });
+                    }
+                }
+                $valueField.trigger('change', fields);
+                $valueField.closest('.field-group').trigger('change');
+                BLCAdmin.hideCurrentModal();
+            });
+            var url = $(this).data('select-url');
+            var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
+            var thisField = $(this).closest('.field-group').attr('id');
+            var handler = BLCAdmin.getDependentFieldFilterHandler(thisClass, thisField);
+            if (handler != null) {
+                var $parentField = $container.closest('form').find(handler['parentFieldSelector']);
+                url = url + '&' + handler['childFieldPropertyName'] + '=' + BLCAdmin.extractFieldValue($parentField);
+            }
+            if ($(this).data('dynamic-field')) {
+                url = url + '&dynamicField=true';
+            }
+            BLCAdmin.showLinkAsModal(url, function () {
+                $('div.additional-foreign-key-container').unbind('valueSelected');
+            });
+            return false;
+        }
+//        return processToOneLookupCall.call(this);
     });
 
     $('body').on('click', 'button.sub-list-grid-add, a.sub-list-grid-add', function () {

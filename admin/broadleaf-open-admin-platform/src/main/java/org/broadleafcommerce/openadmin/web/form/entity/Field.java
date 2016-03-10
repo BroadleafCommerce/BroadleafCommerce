@@ -62,6 +62,7 @@ public class Field {
     protected Boolean isLargeEntry;
     protected Boolean isDirty;
     protected Boolean isTypeaheadEnabled;
+    protected Boolean isConfirmEnabled;
     protected String hint;
     protected String tooltip;
     protected String help;
@@ -298,6 +299,15 @@ public class Field {
     public String getTranslationFieldName() {
         return translationFieldName == null ? name : translationFieldName;
     }
+
+    public Boolean getIsConfirmEnabled() {
+        return isConfirmEnabled == null ? false : isConfirmEnabled;
+    }
+
+    public void setIsConfirmEnabled(Boolean isConfirmEnabled) {
+        this.isConfirmEnabled = isConfirmEnabled;
+    }
+
     
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
