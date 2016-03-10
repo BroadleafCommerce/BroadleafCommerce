@@ -59,8 +59,10 @@ import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
-import org.broadleafcommerce.core.search.service.solr.SolrContext;
+import org.broadleafcommerce.core.search.service.solr.SolrConfiguration;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -92,6 +94,10 @@ import javax.annotation.Resource;
 public class SolrIndexServiceImpl implements SolrIndexService {
 
     private static final Log LOG = LogFactory.getLog(SolrIndexServiceImpl.class);
+
+    @Qualifier("blCatalogSolrConfiguration")
+    @Autowired(required = false)
+    protected SolrConfiguration solrConfiguration;
 
     @Value("${solr.index.errorOnConcurrentReIndex}")
     protected boolean errorOnConcurrentReIndex = false;
@@ -198,7 +204,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public void preBuildIndex() throws ServiceException {
-        deleteAllNamespaceDocuments(SolrContext.getReindexServer());
+        deleteAllNamespaceDocuments(solrConfiguration.getReindexServer());
     }
 
     @Override
@@ -209,14 +215,16 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Override
     public void postBuildIndex() throws IOException, ServiceException {
         // this is required to be at the very very very end after rebuilding the whole index
-        optimizeIndex(SolrContext.getReindexServer());
+        optimizeIndex(solrConfiguration.getReindexServer());
         // Swap the active and the reindex cores
-        shs.swapActiveCores();
+        if (!solrConfiguration.isSingleCoreMode()) {
+            shs.swapActiveCores(solrConfiguration);
+        }
     }
 
     @Override
     public SolrIndexOperation getReindexOperation() {
-        return new GlobalSolrFullReIndexOperation(this, shs, errorOnConcurrentReIndex) {
+        return new GlobalSolrFullReIndexOperation(this, solrConfiguration, shs, errorOnConcurrentReIndex) {
 
             @Override
             public List<? extends Indexable> readIndexables(int page, int pageSize) {
@@ -310,13 +318,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @throws ServiceException if there was a problem removing the documents
      */
     protected void deleteAllReindexCoreDocuments() throws ServiceException {
-        deleteAllNamespaceDocuments(SolrContext.getReindexServer());
+        deleteAllNamespaceDocuments(solrConfiguration.getReindexServer());
     }
     
     @Override
     public void deleteAllNamespaceDocuments(SolrClient server) throws ServiceException {
         try {
-            String deleteQuery = shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")";
+            String deleteQuery = shs.getNamespaceFieldName() + ":(\"" + solrConfiguration.getNamespace() + "\")";
             LOG.debug("Deleting by query: " + deleteQuery);
             server.deleteByQuery(deleteQuery);
 
@@ -571,7 +579,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
         
         // Add the namespace and ID fields for this product
-        document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
+        document.addField(shs.getNamespaceFieldName(), solrConfiguration.getNamespace());
         document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, indexable));
         document.addField(shs.getTypeFieldName(), shs.getDocumentType(indexable));
         document.addField(shs.getIndexableIdFieldName(), shs.getIndexableId(indexable));
