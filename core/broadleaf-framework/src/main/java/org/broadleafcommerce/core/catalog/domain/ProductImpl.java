@@ -66,6 +66,7 @@ import org.hibernate.annotations.SQLDelete;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -803,8 +804,17 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     public void setProductAttributes(Map<String, ProductAttribute> productAttributes) {
         List<ProductAttribute> productAttributeList = new ArrayList<ProductAttribute>();
 
-        for(Map.Entry<String, ProductAttribute> entry : productAttributes.entrySet()){
-            productAttributeList.add(entry.getValue());
+        if (productAttributes instanceof MultiValueMap) {
+            Iterator<String> it = productAttributes.keySet().iterator();
+
+            while(it.hasNext()){
+                String theKey = it.next();
+                productAttributeList.addAll((List)productAttributes.get(theKey));
+            }
+        } else {
+            for (Map.Entry<String, ProductAttribute> entry : productAttributes.entrySet()) {
+                productAttributeList.add(entry.getValue());
+            }
         }
 
         this.productAttributes = productAttributeList;

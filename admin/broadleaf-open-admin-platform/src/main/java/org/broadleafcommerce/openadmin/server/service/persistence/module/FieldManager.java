@@ -109,6 +109,9 @@ public class FieldManager {
                 if (value != null && mapKey != null) {
                     value = ((Map) value).get(mapKey);
                 }
+                if (value instanceof List) {
+                    value = ((List) value).get(0);
+                }
                 if (value != null) {
                     componentClass = value.getClass();
                 } else {
