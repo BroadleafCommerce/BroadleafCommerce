@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -33,22 +32,58 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.presentation.*;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.RuleIdentifier;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.core.offer.service.type.*;
-import org.hibernate.annotations.*;
+import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
+import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
+import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.offer.service.type.StackabilityType;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Type;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.*;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -255,9 +290,10 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     protected Integer maxUsesPerOrder;
 
     @Column(name = "MAX_USES_PER_CUSTOMER")
-    @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Per_Customer", order = 3000,
+    @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Per_Customer",
+        group = GroupName.Restrictions, order = 3000,
         tooltip = "OfferImplMaxUsesPerCustomer_tooltip",
-        group = OfferAdminPresentation.GroupName.Restrictions)
+        defaultValue = "0")
     protected Long maxUsesPerCustomer;
 
     @Column(name = "USES")
