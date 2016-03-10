@@ -37,7 +37,6 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
@@ -142,12 +141,11 @@ import javax.persistence.Transient;
     )
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
-@AdminPresentationClass(friendlyName = "baseSku")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class SkuImpl implements Sku, ProductAdminPresentation {
+public class SkuImpl implements Sku, SkuAdminPresentation {
     
     private static final Log LOG = LogFactory.getLog(SkuImpl.class);
     
