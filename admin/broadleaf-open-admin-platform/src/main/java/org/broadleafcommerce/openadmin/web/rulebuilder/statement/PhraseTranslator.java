@@ -198,6 +198,9 @@ public class PhraseTranslator {
             components[2] = phrase.substring(((COLLECTIONCASE+"(")+components[0]+",").length(), phrase.indexOf(").size"));
             //operator
             components[1] = phrase.substring(phrase.indexOf(".size"));
+
+            components[0] = convertMapAccessSyntax(components[0]);
+
             return components;
         }
 
@@ -249,23 +252,34 @@ public class PhraseTranslator {
             }
         }
 
-        if (components[0].matches(".*\\[\".*?\"\\].*")) {
-            //this is using map access syntax - must be a map field
-            components[0] = components[0].substring(0, components[0].lastIndexOf("[")) + FieldManager.MAPFIELDSEPARATOR +
-                    components[0].substring(components[0].lastIndexOf("[") + 2, components[0].lastIndexOf("]") - 1) +
-                    components[0].substring(components[0].lastIndexOf("]") + 1, components[0].length());
-            //strip any convertField usage
-            if (components[0].startsWith("MvelHelper.convertField(")) {
-                components[0] = components[0].substring(components[0].indexOf("(") + 1, components[0].length()-1);
-            }
-        } else if (components[0].matches(".*\\?get\\(\".*?\"\\)\\.\\?getValue\\(\\).*")) {
-            //this is using null-safe map access syntax - must be a map field
-            components[0] = components[0].substring(0, components[0].lastIndexOf(".?get(")) + FieldManager.MAPFIELDSEPARATOR +
-                    components[0].substring(components[0].lastIndexOf(".?get(") + 7, components[0].lastIndexOf(").?getValue()") - 1) +
-                    components[0].substring(components[0].lastIndexOf(").?getValue()") + 13, components[0].length());
-        }
+        components[0] = convertMapAccessSyntax(components[0]);
 
         return components;
+    }
+
+    protected String convertMapAccessSyntax(String field) {
+        if (field.matches(".*\\[\".*?\"\\].*")) {
+            //this is using map access syntax - must be a map field
+            field = field.substring(0, field.lastIndexOf("[")) + FieldManager.MAPFIELDSEPARATOR +
+                    field.substring(field.lastIndexOf("[") + 2, field.lastIndexOf("]") - 1) +
+                    field.substring(field.lastIndexOf("]") + 1, field.length());
+            //strip any convertField usage
+            if (field.startsWith("MvelHelper.convertField(")) {
+                field = field.substring(field.indexOf("(") + 1, field.length() - 1);
+            }
+        } else if (field.matches(".*\\?get\\(\".*?\"\\)\\.\\?getValue\\(\\).*")) {
+            //this is using null-safe map access syntax - must be a map field
+            field = field.substring(0, field.lastIndexOf(".?get(")) + FieldManager.MAPFIELDSEPARATOR +
+                    field.substring(field.lastIndexOf(".?get(") + 7, field.lastIndexOf(").?getValue()") - 1) +
+                    field.substring(field.lastIndexOf(").?getValue()") + 13, field.length());
+        } else if (field.matches(".*\\?get\\(\".*?\"\\)\\.\\?value.*")) {
+            //this is using MVELHelper null-safe map access syntax - must be a map field
+            field = field.substring(0, field.lastIndexOf(".?get(")) + FieldManager.MAPFIELDSEPARATOR +
+                    field.substring(field.lastIndexOf(".?get(") + 7, field.lastIndexOf(").?value") - 1) +
+                    field.substring(field.lastIndexOf(").?value") + 8, field.length());
+        }
+
+        return field;
     }
 
     protected String[] extractProjection(String[] components) {

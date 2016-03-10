@@ -56,7 +56,14 @@ class OrderOfferProcessorSpec extends Specification {
         productAttribute.name="myProductAttribute"
         productAttribute.value="myProductAttributeValue"
 
+        def otherProductAttribute = new ProductAttributeImpl()
+        otherProductAttribute.id = 200
+        otherProductAttribute.product = product;
+        otherProductAttribute.name="myOtherProductAttribute"
+        otherProductAttribute.value="myOtherProductAttributeValue"
+
         product.productAttributes << ["myProductAttribute":productAttribute]
+        product.productAttributes << ["myOtherProductAttribute":otherProductAttribute]
 
         discreteOrderItem.category = category
         discreteOrderItem.product = product
@@ -110,12 +117,16 @@ class OrderOfferProcessorSpec extends Specification {
         boolean inALLExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"100\",\"300\"]).size()==2", ruleVars);
         boolean notInExpressionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(groupIds,[\"-100\",\"-300\"]).size()==0", ruleVars);
         boolean containsUsingIntersectionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection([discreteOrderItem.?product.?id.toString()], [\"-100\", \"100\", \"500\"]).size()>0 ", ruleVars);
+        boolean legacyMapIntersectionCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(orderItem.?product.?getProductAttributes()[\"myProductAttribute\"], [\"myProductAttributeValue\", \"myOtherProductAttributeValue\"]).size()>0 ", ruleVars);
+        boolean legacyMapIntersectionIncorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(orderItem.?product.?getProductAttributes()[\"myProductAttribute\"], [\"yourProductAttributeValue\", \"yourOtherProductAttributeValue\"]).size()>0 ", ruleVars);
 
         then: "The result of executing the expression should be as expected"
         inExpressionCorrect
         inALLExpressionCorrect
         notInExpressionCorrect
         containsUsingIntersectionCorrect
+        legacyMapIntersectionCorrect
+        !legacyMapIntersectionIncorrect
 
 
     }

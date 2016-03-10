@@ -1066,7 +1066,6 @@ $(document).ready(function() {
         //$modal.find('.modal-header').append(addFilterBtn);
         $modal.find('.modal-body').append(hiddenInput);
         $modal.find('.modal-body').append($modalContainer);
-        $modal.find('.modal-body').css('overflow', 'visible');
         $modal.find('.modal-footer').append(BLCAdmin.filterBuilders.getCloseModalFilterLink(hiddenId));
 
         $modal.find('.modal-body').find('select').each(function(i, el) {
