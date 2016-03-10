@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.search.service.solr.index.IndexStatusInfo;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexStatusProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -56,6 +58,10 @@ import javax.xml.xpath.XPathFactory;
  * @author Jeff Fischer
  */
 public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusProvider {
+
+    @Qualifier("blCatalogSolrConfiguration")
+    @Autowired(required = false)
+    protected SolrConfiguration solrConfiguration;
 
     @Resource(name="blSearchService")
     protected SearchService searchService;
@@ -190,7 +196,7 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
     }
 
     protected String getStatusDirectory(SolrSearchServiceImpl searchService) {
-        String solrHome = searchService.getSolrHomePath();
+        String solrHome = solrConfiguration.getSolrHomePath();
         if (solrHome == null) {
             return System.getProperty("java.io.tmpdir");
         }

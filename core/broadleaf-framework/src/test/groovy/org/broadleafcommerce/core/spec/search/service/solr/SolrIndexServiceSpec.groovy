@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.spec.search.service.solr
 
+import org.apache.solr.client.solrj.SolrClient
 import org.broadleafcommerce.common.locale.service.LocaleService
 import org.broadleafcommerce.common.sandbox.SandBoxHelper
 import org.broadleafcommerce.core.catalog.dao.ProductDao
@@ -30,7 +31,6 @@ import org.broadleafcommerce.core.search.dao.IndexFieldDao
 import org.broadleafcommerce.core.search.dao.SolrIndexDao
 import org.broadleafcommerce.core.search.domain.Field
 import org.broadleafcommerce.core.search.domain.FieldEntity
-import org.broadleafcommerce.core.search.service.solr.SolrContext
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService
 import org.broadleafcommerce.core.search.service.solr.SolrHelperServiceImpl
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionHandler
@@ -50,10 +50,10 @@ class SolrIndexServiceSpec extends Specification {
     ProductDao mockProductDao = Mock()
     SkuDao mockSkuDao = Mock()
     LocaleService mockLocaleService = Mock()
+    SolrClient mockSolrClient = Mock()
     SolrHelperService mockShs = Spy(SolrHelperServiceImpl)
     SolrIndexServiceExtensionManager mockExtensionManager = Mock()
     SandBoxHelper mockSandBoxHelper = Mock()
-    
     
     def setup() {
         service = Spy(SolrIndexServiceImpl)
@@ -92,7 +92,7 @@ class SolrIndexServiceSpec extends Specification {
         List<Long> productIds = [1, 2]
      
         when:
-        service.buildIncrementalIndex(skus, SolrContext.getReindexServer())
+        service.buildIncrementalIndex(skus, mockSolrClient)
         
         then:
         1 * mockSolrIndexDao.populateProductCatalogStructure(productIds, _)
@@ -127,7 +127,7 @@ class SolrIndexServiceSpec extends Specification {
         List<Long> productIds = [3, 1, 2]
      
         when:
-        service.buildIncrementalIndex(skus, SolrContext.getReindexServer())
+        service.buildIncrementalIndex(skus, mockSolrClient)
         
         then:
         1 * mockSolrIndexDao.populateProductCatalogStructure(productIds, _)
