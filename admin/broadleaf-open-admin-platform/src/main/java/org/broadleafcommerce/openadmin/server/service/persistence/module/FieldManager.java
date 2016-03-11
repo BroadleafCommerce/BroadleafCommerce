@@ -20,7 +20,6 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -98,13 +97,19 @@ public class FieldManager {
                 field.setAccessible(true);
                 value = field.get(value);
                 if (value instanceof List) {
-                    try {
+
                         String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
                         String fullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
-
+                    try {
                         value = PropertyUtils.getProperty(bean, fullFieldName);
                     } catch (InvocationTargetException|NoSuchMethodException e) {
-                        throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class (" + componentClass + ")");
+                        fullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+
+                        try {
+                            value = PropertyUtils.getProperty(bean, fullFieldName);
+                        } catch (InvocationTargetException|NoSuchMethodException n) {
+                            throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class (" + componentClass + ")");
+                        }
                     }
                 }
 
@@ -151,16 +156,22 @@ public class FieldManager {
             field.setAccessible(true);
             if (j == count - 1) {
                 if (mapKey != null) {
-                    Map map = new HashMap();
+                    Map map;
                     if (field.get(value) instanceof List) {
-                        try {
-                            String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
-                            String fullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1) + fieldNamePart.substring(1);
 
+                        String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
+                        String fullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1) + fieldNamePart.substring(1);
+                        try {
                             map = (Map)PropertyUtils.getProperty(bean, fullFieldName);
                         } catch (InvocationTargetException|NoSuchMethodException e) {
-                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
-                                    "Using the type of this class.");
+                            fullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1) + fieldNamePart.substring(1);
+                            try {
+                                map = (Map) PropertyUtils.getProperty(bean, fullFieldName);
+                            } catch (InvocationTargetException|NoSuchMethodException n) {
+                                LOG.info("Unable to find a reference to (" + field.getType().getName() + ") in the EntityConfigurationManager. " +
+                                        "Using the type of this class.");
+                                throw new IllegalAccessException("Unable to save field (" + fieldNamePart + ") on the class (" + componentClass + ")");
+                            }
                         }
                     } else {
                         map = (Map) field.get(value);
