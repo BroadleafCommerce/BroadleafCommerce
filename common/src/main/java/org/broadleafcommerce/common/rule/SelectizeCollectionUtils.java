@@ -20,6 +20,7 @@
 package org.broadleafcommerce.common.rule;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 import org.broadleafcommerce.common.value.ValueAssignable;
 
 import java.util.ArrayList;
@@ -34,22 +35,34 @@ import java.util.List;
  */
 public class SelectizeCollectionUtils {
 
-    public static <O> Collection<O> intersection(final Iterable<? extends O> a, final Iterable<? extends O> b) {
-        List<O> temp = new ArrayList<>();
-
-        if (a instanceof ArrayList && !((ArrayList) a).isEmpty() && ((ArrayList) a).get(0) instanceof ValueAssignable) {
-
-            for (O alist : a) {
-                if (alist instanceof ValueAssignable) {
-                    temp.add((O) alist.toString());
-                }
+    public static Collection intersection(final Iterable a, final Iterable b) {
+        Collection response;
+        if (!IterableUtils.isEmpty(a) && (a instanceof ArrayList) && !IterableUtils.isEmpty(b) && (b instanceof ArrayList)) {
+            Object aVal = ((ArrayList) a).get(0);
+            Object bVal = ((ArrayList) b).get(0);
+            if (aVal instanceof ValueAssignable && bVal instanceof String) {
+                response = valueAssignableIntersection(a, b);
+            } else {
+                response = CollectionUtils.intersection(a, b);
             }
-            return CollectionUtils.intersection(temp, b);
+        } else {
+            response = CollectionUtils.intersection(a, b);
         }
-        return CollectionUtils.intersection(a, b);
+        return response;
     }
 
-    public static Collection intersection(final String a, final Iterable b) {
+    public static Collection<String> valueAssignableIntersection(final Iterable<ValueAssignable> a, final Iterable<String> b) {
+        List<String> temp = new ArrayList<>();
+
+        if (!IterableUtils.isEmpty(a)) {
+            for (ValueAssignable alist : a) {
+                temp.add((String) alist.getValue());
+            }
+        }
+        return CollectionUtils.intersection(temp, b);
+    }
+
+    public static Collection<String> intersection(final String a, final Iterable<String> b) {
         List<String> temp = new ArrayList<>();
         temp.add(a);
         return CollectionUtils.intersection(temp, b);
