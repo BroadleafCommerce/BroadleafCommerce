@@ -1804,12 +1804,16 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Field createdBy = entityForm.findField("auditable.createdBy");
         if (createdBy != null && createdBy.getValue() != null) {
             AdminUser createdUser = adminUserDao.readAdminUserById(Long.parseLong(createdBy.getValue()));
-            createdBy.setValue(createdUser.getName());
+            if (createdUser != null) {
+                createdBy.setValue(createdUser.getName());
+            }
         }
         Field updatedBy = entityForm.findField("auditable.updatedBy");
         if (updatedBy != null && updatedBy.getValue() != null) {
             AdminUser updatedUser = adminUserDao.readAdminUserById(Long.parseLong(updatedBy.getValue()));
-            updatedBy.setValue(updatedUser.getName());
+            if (updatedUser != null) {
+                updatedBy.setValue(updatedUser.getName());
+            }
         }
     }
     
