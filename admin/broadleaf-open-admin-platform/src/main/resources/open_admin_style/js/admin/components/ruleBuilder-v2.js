@@ -695,13 +695,25 @@
             var hiddenId = ruleBuilder.hiddenId;
             var $container = $('#'+ruleBuilder.containerId);
             var builders = ruleBuilder.builders;
+            var buildersLen = builders.length;
 
             if (builders != null && ruleBuilder) {
                 var collectedData = {};
                 collectedData.data = [];
-                for (var j = 0; j < builders.length; j++) {
+                for (var j = 0; j < buildersLen; j++) {
                     var builder = builders[j];
-                    var dataDTO = $(builder).queryBuilder('getRules');
+                    // check for filters
+                    try {
+                        var dataDTO = $(builder).queryBuilder('getRules');
+                    }
+                    catch (err) {
+                        if (err.message == "Missing filters list") {
+                            return;
+                        } else {
+                            throw err;
+                        }
+                    }
+
                     if (dataDTO.rules) {
                         dataDTO.pk = $container.find(".rules-group-header-item-pk").val();
                         dataDTO.quantity = $container.find(".rules-group-header-item-qty").val();
