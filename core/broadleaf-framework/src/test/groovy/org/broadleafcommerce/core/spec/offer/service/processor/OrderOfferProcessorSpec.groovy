@@ -19,7 +19,9 @@
  */
 package org.broadleafcommerce.core.spec.offer.service.processor
 
+import org.apache.commons.collections.map.MultiValueMap
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute
 import org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl
 import org.broadleafcommerce.core.catalog.domain.ProductImpl
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
@@ -36,6 +38,7 @@ import spock.lang.Specification
 class OrderOfferProcessorSpec extends Specification {
 
     def discreteOrderItem = new DiscreteOrderItemImpl();
+    def mvDiscreteOrderItem = new DiscreteOrderItemImpl();
 
     def setup() {
         def category = new CategoryImpl()
@@ -61,14 +64,52 @@ class OrderOfferProcessorSpec extends Specification {
         otherProductAttribute.product = product;
         otherProductAttribute.name="myOtherProductAttribute"
         otherProductAttribute.value="myOtherProductAttributeValue"
+        Map<String, ProductAttribute> attributeMap = new HashMap<>();
 
-        product.productAttributes << ["myProductAttribute":productAttribute]
-        product.productAttributes << ["myOtherProductAttribute":otherProductAttribute]
+        attributeMap.put("myProductAttribute", productAttribute)
+        attributeMap.put("myOtherProductAttribute", otherProductAttribute)
+
+        product.setProductAttributes(attributeMap)
+
+        def mvCategory = new CategoryImpl()
+        mvCategory.id = 1
+        mvCategory.name = "Test Category"
+
+        def mvSku = new SkuImpl()
+        mvSku.id = 101
+        mvSku.name = "Test SKU"
+
+        def mvProduct = new ProductImpl()
+        mvProduct.id = 100
+        mvProduct.defaultSku = mvSku
+
+        def mvProductAttribute = new ProductAttributeImpl()
+        mvProductAttribute.id = 100
+        mvProductAttribute.product = mvProduct;
+        mvProductAttribute.name="myProductAttribute"
+        mvProductAttribute.value="myProductAttributeValue"
+
+        def mvOtherProductAttribute = new ProductAttributeImpl()
+        mvOtherProductAttribute.id = 200
+        mvOtherProductAttribute.product = mvProduct;
+        mvOtherProductAttribute.name="myProductAttribute"
+        mvOtherProductAttribute.value="myOtherProductAttributeValue"
+        Map<String, ProductAttribute> mvAttributeMap = new MultiValueMap();
+
+        mvAttributeMap.put("myProductAttribute", mvProductAttribute)
+        mvAttributeMap.put("myProductAttribute", mvOtherProductAttribute)
+
+        mvProduct.setProductAttributes(mvAttributeMap)
 
         discreteOrderItem.category = category
         discreteOrderItem.product = product
         discreteOrderItem.sku = sku
         discreteOrderItem.quantity = 5
+
+        mvDiscreteOrderItem.category = mvCategory
+        mvDiscreteOrderItem.product = mvProduct
+        mvDiscreteOrderItem.sku = mvSku
+        mvDiscreteOrderItem.quantity = 5
     }
 
     def "Test AbstractBaseProcessor MVEL executeExpression with different variables"() {
@@ -79,6 +120,10 @@ class OrderOfferProcessorSpec extends Specification {
         ruleVars.put("orderItem", discreteOrderItem);
         ruleVars.put("discreteOrderItem", discreteOrderItem);
 
+        Map<String, Object> mvRuleVars = new HashMap<>();
+        mvRuleVars.put("orderItem", mvDiscreteOrderItem);
+        mvRuleVars.put("discreteOrderItem", mvDiscreteOrderItem);
+
         when: "I run AbstractBaseProcessor.executeExpression"
         boolean catNameCorrect = orderOfferProcessor.executeExpression("MvelHelper.toUpperCase(orderItem.?category.?name)==MvelHelper.toUpperCase(\"test category\")", ruleVars);
         boolean catNameIncorrect = orderOfferProcessor.executeExpression("MvelHelper.toUpperCase(orderItem.?category.?name)==MvelHelper.toUpperCase(\"wrong\")", ruleVars);
@@ -87,6 +132,8 @@ class OrderOfferProcessorSpec extends Specification {
         boolean mapIncorrect = orderOfferProcessor.executeExpression("orderItem.?product.?getProductAttributes().?get(\"myProductAttribute2\").?getValue()==\"myProductAttributeValue\"", ruleVars);
         boolean legacyMapCorrect = orderOfferProcessor.executeExpression("orderItem.?product.?getProductAttributes()[\"myProductAttribute\"]==\"myProductAttributeValue\"", ruleVars);
         boolean legacyMapIncorrect = orderOfferProcessor.executeExpression("orderItem.?product.?getProductAttributes()[\"myProductAttribute3\"]==\"myProductAttributeValue\"", ruleVars);
+        boolean mvMapCorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(orderItem.?product.?getMultiValueProductAttributes()[\"myProductAttribute\"],[\"myProductAttributeValue\",\"myOtherProductAttributeValue\"]).size()>0", mvRuleVars);
+        boolean mvMapIncorrect = orderOfferProcessor.executeExpression("CollectionUtils.intersection(orderItem.?product.?getMultiValueProductAttributes()[\"myProductAttribute4\"],[\"myProductAttributeValue\",\"myOtherProductAttributeValue\"]).size()>0", mvRuleVars);
 
         then: "The result of executing the expression should be as expected"
         catNameCorrect
@@ -96,6 +143,8 @@ class OrderOfferProcessorSpec extends Specification {
         !mapIncorrect
         legacyMapCorrect
         !legacyMapIncorrect
+        mvMapCorrect
+        !mvMapIncorrect
     }
 
     def "Test AbstractBaseProcessor MVEL executeExpression with different variables and custom MVEL imports"() {

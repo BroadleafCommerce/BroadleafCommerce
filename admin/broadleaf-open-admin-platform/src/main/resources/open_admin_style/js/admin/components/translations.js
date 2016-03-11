@@ -47,7 +47,7 @@ $(document).ready(function() {
 		BLC.ajax({
 			url: $form.attr('action'),
 			type: "POST",
-			data: BLCAdmin.serializeForm($form)
+			data: BLCAdmin.serialize($form)
 		}, function(data) {
 			//prevenSubmit is a hidden field whose value is sent from the translations controller, when there are errors
 			//"data" contains the new copy of the form, validated 
