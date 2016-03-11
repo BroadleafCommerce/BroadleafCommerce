@@ -100,7 +100,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             String value = discountValue.getValue();
             if (discountType.getValue().equals("PERCENT_OFF")) {
                 value = value.indexOf(".") < 0 ? value : value.replaceAll("0*$", "").replaceAll("\\.$", "");
-                discountValue.setValue(value + "%");
+                discountValue.setValue(value);
             } else {
                 NumberFormat nf = NumberFormat.getCurrencyInstance();
                 discountValue.setValue(nf.format(new BigDecimal(value)));
