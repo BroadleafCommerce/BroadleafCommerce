@@ -424,13 +424,13 @@ $(document).ready(function () {
      * After assembling information, this will delegate to the specialized rowSelected
      * handler for this particular kind of list grid.
      */
-    $('body').on('click', '.list-grid-table tbody tr', function () {
+    $('body').on('click', '.list-grid-table tbody tr', function (event) {
         var $tr = $(this);
         var $table = $tr.closest('table');
         var listGridType = $table.data('listgridtype');
         var listGridSelectType = $table.data('listgridselecttype');
 
-        if (listGridType != 'main' && !$tr.hasClass('clickable')) {
+        if (listGridType != 'main' && !$tr.hasClass('clickable') && !isExternalLink(event)) {
             return false;
         }
 
@@ -470,6 +470,10 @@ $(document).ready(function () {
             }
         }
     });
+
+    function isExternalLink(event) {
+        return $(event.target).is('a.external-link');
+    }
 
     $('body').on({
         mouseenter: function () {
