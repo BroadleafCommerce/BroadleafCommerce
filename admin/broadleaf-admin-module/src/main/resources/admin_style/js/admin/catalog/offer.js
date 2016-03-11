@@ -175,24 +175,6 @@
             '#field-applyToSalePrice',
             'ORDER_ITEM'
         );
-
-        BLCAdmin.addDependentFieldHandler(
-            clazz,
-            '#field-offerMatchRules---CUSTOMER',
-            '#field-maxUsesPerCustomer',
-            function(value) {
-                return value !== undefined && value.length != 0;
-            }
-        );
-
-        BLCAdmin.addDependentFieldHandler(
-            clazz,
-            '#listGrid-adorned-embeddableCustomerSegmentCollection-customerSegmentXrefs',
-            '#field-maxUsesPerCustomer',
-            function(value) {
-                return value !== undefined && value.length != 0;
-            }
-        );
     });
 
     function hideOrderFields(compareValue) {
