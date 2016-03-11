@@ -20,6 +20,8 @@
 package org.broadleafcommerce.common.rule;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.broadleafcommerce.common.value.ValueAssignable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +35,17 @@ import java.util.List;
 public class SelectizeCollectionUtils {
 
     public static <O> Collection<O> intersection(final Iterable<? extends O> a, final Iterable<? extends O> b) {
+        List<O> temp = new ArrayList<>();
+
+        if (a instanceof ArrayList && !((ArrayList) a).isEmpty() && ((ArrayList) a).get(0) instanceof ValueAssignable) {
+
+            for (O alist : a) {
+                if (alist instanceof ValueAssignable) {
+                    temp.add((O) alist.toString());
+                }
+            }
+            return CollectionUtils.intersection(temp, b);
+        }
         return CollectionUtils.intersection(a, b);
     }
 
