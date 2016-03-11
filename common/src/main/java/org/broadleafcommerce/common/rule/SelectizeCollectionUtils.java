@@ -38,6 +38,9 @@ public class SelectizeCollectionUtils {
     public static Collection intersection(final Iterable a, final Iterable b) {
         Collection response;
         if (!IterableUtils.isEmpty(a) && (a instanceof ArrayList) && !IterableUtils.isEmpty(b) && (b instanceof ArrayList)) {
+            //TODO this is a bit of a hack to allow the intersection of two collections of different types. This is primarily
+            //used to facilitate some MVEL execution. We really should be fixing the MVEL to call a method that retrieves
+            //a list of Strings, rather than a list of ValueAssignables.
             Object aVal = ((ArrayList) a).get(0);
             Object bVal = ((ArrayList) b).get(0);
             if (aVal instanceof ValueAssignable && bVal instanceof String) {
