@@ -30,10 +30,8 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
-import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -130,7 +128,10 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
-    
+
+    @Value(value = "${using.solr.server}")
+    protected boolean isSolrConfigured = true;
+
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericEntityDao;
 
@@ -143,6 +144,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
      */
     @Override
     public synchronized void swapActiveCores(SolrConfiguration solrConfiguration) throws ServiceException {
+        if (!isSolrConfigured) {
+            return;
+        }
         if (CloudSolrClient.class.isAssignableFrom(solrConfiguration.getServer().getClass()) && CloudSolrClient.class.isAssignableFrom(solrConfiguration.getReindexServer().getClass())) {
             CloudSolrClient primaryCloudClient = (CloudSolrClient) solrConfiguration.getServer();
             CloudSolrClient reindexCloudClient = (CloudSolrClient) solrConfiguration.getReindexServer();
@@ -411,7 +415,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Optimizing the index...");
             }
-            server.optimize();
+            if (isSolrConfigured) {
+                server.optimize();
+            }
         } catch (SolrServerException e) {
             throw new ServiceException("Could not optimize index", e);
         }
