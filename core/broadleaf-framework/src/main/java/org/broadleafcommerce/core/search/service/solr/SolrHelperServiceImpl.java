@@ -129,8 +129,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
 
-    @Value(value = "${using.solr.server}")
-    protected boolean isSolrConfigured = true;
+    @Value(value = "${using.solr.server:true}")
+    protected boolean isSolrConfigured;
 
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericEntityDao;
