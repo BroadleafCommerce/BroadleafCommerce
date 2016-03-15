@@ -106,7 +106,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
-    
+
     @Value("${cache.entity.dao.metadata.ttl}")
     protected int cacheEntityMetaDataTtl;
 
@@ -131,7 +131,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
-    
+
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
@@ -312,7 +312,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         metadata.setMutable(false);
         metadata.setInheritedFromType(inheritedFromType.getName());
         
-        metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class));
+        metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class, em, useCache()));
         metadata.setForeignKeyCollection(false);
         metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
 
@@ -328,19 +328,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         metadata.setGridOrder(Integer.MAX_VALUE);
 
         return metadata;
-    }
-
-    protected String[] getPolymorphicClasses(Class<?> clazz) {
-        DynamicDaoHelperImpl helper = new DynamicDaoHelperImpl();
-        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(clazz,
-                helper.getSessionFactory((HibernateEntityManager) em), 
-                true,
-                useCache());
-        String[] result = new String[classes.length];
-        for (int i = 0; i < classes.length; i++) {
-            result[i] = classes[i].getName();
-        }
-        return result;
     }
     
     /**
@@ -407,7 +394,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             metadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
             metadata.setMutable(true);
             metadata.setInheritedFromType(SkuImpl.class.getName());
-            metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class));
+            metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class, em, useCache()));
             metadata.setForeignKeyCollection(false);
             metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
     

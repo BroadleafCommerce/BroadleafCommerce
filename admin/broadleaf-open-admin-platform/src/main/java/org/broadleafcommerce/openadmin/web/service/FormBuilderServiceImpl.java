@@ -359,11 +359,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             BasicCollectionMetadata bcm = (BasicCollectionMetadata) fmd;
             readOnly = !bcm.isMutable();
 
-            if(bcm.getAddMethodType().equals(AddMethodType.LOOKUP)) {
+            if(AddMethodType.LOOKUP.equals(bcm.getAddMethodType())) {
                 isLookup = true;
             }
 
-            if (bcm.getAddMethodType().equals(AddMethodType.SELECTIZE_LOOKUP)) {
+            if (AddMethodType.SELECTIZE_LOOKUP.equals(bcm.getAddMethodType())) {
                 Property p = cmd.getPMap().get(bcm.getSelectizeVisibleField());
                 if (p != null) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
@@ -388,9 +388,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             type = ListGrid.Type.BASIC;
             
-            if (bcm.getAddMethodType().equals(AddMethodType.PERSIST) || bcm.getAddMethodType().equals(AddMethodType.PERSIST_EMPTY)) {
+            if (AddMethodType.PERSIST.equals(bcm.getAddMethodType()) || AddMethodType.PERSIST_EMPTY.equals(bcm.getAddMethodType())) {
                 editable = true;
-            } else if (bcm.getAddMethodType().equals(AddMethodType.SELECTIZE_LOOKUP)) {
+            } else if (AddMethodType.SELECTIZE_LOOKUP.equals(bcm.getAddMethodType())) {
                 selectize = true;
                 modalSingleSelectable = true;
             } else {
@@ -403,11 +403,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             readOnly = !((AdornedTargetCollectionMetadata) fmd).isMutable();
             AdornedTargetCollectionMetadata atcmd = (AdornedTargetCollectionMetadata) fmd;
 
-            if(atcmd.getAdornedTargetAddMethodType().equals(AdornedTargetAddMethodType.LOOKUP)) {
+            if(AdornedTargetAddMethodType.LOOKUP.equals(atcmd.getAdornedTargetAddMethodType())) {
                 isLookup = true;
             }
 
-            if (atcmd.getAdornedTargetAddMethodType().equals(AdornedTargetAddMethodType.SELECTIZE_LOOKUP)) {
+            if (AdornedTargetAddMethodType.SELECTIZE_LOOKUP.equals(atcmd.getAdornedTargetAddMethodType())) {
                 selectize = true;
 
                 Property p = cmd.getPMap().get(atcmd.getSelectizeVisibleField());

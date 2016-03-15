@@ -419,7 +419,6 @@ public class EntityForm {
     }
 
     public void addListGrid(ClassMetadata cmd, ListGrid listGrid, String tabName, Integer tabOrder, String groupName, boolean isTabPresent) {
-        groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
         tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
         tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
 
