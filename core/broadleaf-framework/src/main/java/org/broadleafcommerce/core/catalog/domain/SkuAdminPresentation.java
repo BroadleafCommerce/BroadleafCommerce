@@ -22,92 +22,83 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.broadleafcommerce.common.presentation.AdminGroupPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminTabPresentation;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 
 /**
- * @author Jon Fleschler (jfleschler)
+ * @author Chris Kittrell (ckittrell)
  */
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct",
+@AdminPresentationClass(friendlyName = "baseSku",
     tabs = {
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.General,
-            order = ProductAdminPresentation.TabOrder.General,
+        @AdminTabPresentation(name = SkuAdminPresentation.TabName.General,
+            order = SkuAdminPresentation.TabOrder.General,
             groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.General,
-                    order = ProductAdminPresentation.GroupOrder.General,
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.General,
+                    order = SkuAdminPresentation.GroupOrder.General,
                     untitled = true),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Image,
-                    order = ProductAdminPresentation.GroupOrder.Image,
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.Image,
+                    order = SkuAdminPresentation.GroupOrder.Image,
                     column = 1),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ActiveDateRange,
-                    order = ProductAdminPresentation.GroupOrder.ActiveDateRange,
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.ActiveDateRange,
+                    order = SkuAdminPresentation.GroupOrder.ActiveDateRange,
                     column = 1),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Financial,
-                    order = ProductAdminPresentation.GroupOrder.Financial,
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.Financial,
+                    order = SkuAdminPresentation.GroupOrder.Financial,
                     column = 1),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Miscellaneous,
-                    order = ProductAdminPresentation.GroupOrder.Miscellaneous,
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.Miscellaneous,
+                    order = SkuAdminPresentation.GroupOrder.Miscellaneous,
                     column = 1, collapsed = true)
             }
         ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Pricing,
-            order = ProductAdminPresentation.TabOrder.Pricing,
+        @AdminTabPresentation(name = SkuAdminPresentation.TabName.Pricing,
+            order = SkuAdminPresentation.TabOrder.Pricing,
             groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Price,
-                    order = ProductAdminPresentation.GroupOrder.Price),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Discountable,
-                    order = ProductAdminPresentation.GroupOrder.Discountable,
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.Price,
+                    order = SkuAdminPresentation.GroupOrder.Price),
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.Discountable,
+                    order = SkuAdminPresentation.GroupOrder.Discountable,
                     untitled = true, column = 1)
             }
         ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Marketing,
-            order = ProductAdminPresentation.TabOrder.Marketing
+        @AdminTabPresentation(name = SkuAdminPresentation.TabName.Marketing,
+            order = SkuAdminPresentation.TabOrder.Marketing
         ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Media,
-            order = ProductAdminPresentation.TabOrder.Media
+        @AdminTabPresentation(name = SkuAdminPresentation.TabName.Media,
+            order = SkuAdminPresentation.TabOrder.Media
         ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.ProductOptions,
-            order = ProductAdminPresentation.TabOrder.ProductOptions,
+        @AdminTabPresentation(name = SkuAdminPresentation.TabName.Inventory,
+            order = SkuAdminPresentation.TabOrder.Inventory,
             groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ProductOptionsAdvanced,
-                    order = ProductAdminPresentation.GroupOrder.ProductOptionsAdvanced,
-                    untitled = true, column = 1)
-            }
-        ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Inventory,
-            order = ProductAdminPresentation.TabOrder.Inventory,
-            groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Inventory,
-                    order = ProductAdminPresentation.GroupOrder.Inventory,
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.Inventory,
+                    order = SkuAdminPresentation.GroupOrder.Inventory,
                     untitled = true)
             }
         ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Shipping,
-            order = ProductAdminPresentation.TabOrder.Shipping,
+        @AdminTabPresentation(name = SkuAdminPresentation.TabName.Shipping,
+            order = SkuAdminPresentation.TabOrder.Shipping,
             groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingDimensions,
-                    order = ProductAdminPresentation.GroupOrder.ShippingDimensions),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingOther,
-                    order = ProductAdminPresentation.GroupOrder.ShippingOther,
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.ShippingDimensions,
+                    order = SkuAdminPresentation.GroupOrder.ShippingDimensions),
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.ShippingOther,
+                    order = SkuAdminPresentation.GroupOrder.ShippingOther,
                     untitled = true),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingFulfillment,
-                    order = ProductAdminPresentation.GroupOrder.ShippingFulfillment,
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.ShippingFulfillment,
+                    order = SkuAdminPresentation.GroupOrder.ShippingFulfillment,
                     untitled = true, column = 1),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingContainer,
-                    order = ProductAdminPresentation.GroupOrder.ShippingContainer,
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.ShippingContainer,
+                    order = SkuAdminPresentation.GroupOrder.ShippingContainer,
                     untitled = true, column = 1)
             }
         ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Advanced,
-            order = ProductAdminPresentation.TabOrder.Advanced,
+        @AdminTabPresentation(name = SkuAdminPresentation.TabName.Advanced,
+            order = SkuAdminPresentation.TabOrder.Advanced,
             groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Advanced,
-                    order = ProductAdminPresentation.GroupOrder.Advanced)
+                @AdminGroupPresentation(name = SkuAdminPresentation.GroupName.Advanced,
+                    order = SkuAdminPresentation.GroupOrder.Advanced)
             }
         )
     }
 )
 
-public interface ProductAdminPresentation {
+public interface SkuAdminPresentation {
 
     public static class TabName {
 
@@ -142,8 +133,6 @@ public interface ProductAdminPresentation {
         public static final String Financial = "ProductImpl_Financial";
         public static final String Miscellaneous = "ProductImpl_General_Misc";
 
-        public static final String ProductOptionsAdvanced = "ProductImpl_Options_Advanced";
-
         public static final String Price = "SkuImpl_Price";
         public static final String Discountable = "SkuImpl_Sku_Discountable";
 
@@ -165,8 +154,6 @@ public interface ProductAdminPresentation {
         public static final int Financial = 4000;
         public static final int Miscellaneous = 5000;
 
-        public static final int ProductOptionsAdvanced = 1000;
-
         public static final int Price = 1000;
         public static final int Discountable = 2000;
 
@@ -183,17 +170,37 @@ public interface ProductAdminPresentation {
     public static class FieldOrder {
 
         public static final int NAME = 1000;
+        public static final int SHORT_DESCRIPTION = 2000;
         public static final int LONG_DESCRIPTION = 3000;
-        public static final int DEFAULT_CATEGORY = 4000;
-        public static final int MANUFACTURER = 5000;
         public static final int URL = 6000;
+
+        public static final int PRIMARY_MEDIA = 1000;
 
         public static final int ACTIVE_START_DATE = 1000;
         public static final int ACTIVE_END_DATE = 2000;
 
+        public static final int TAXABLE = 1000;
+
+        public static final int UPC = 1000;
+        public static final int EXTERNAL_ID = 2000;
+
         public static final int RETAIL_PRICE = 1000;
         public static final int SALE_PRICE = 2000;
+        public static final int COST = 3000;
+
+        public static final int WIDTH = 1000;
+        public static final int HEIGHT = 2000;
+        public static final int DEPTH = 3000;
+        public static final int GIRTH = 4000;
+        public static final int DIMENSION_UNIT_OF_MEASURE = 5000;
+
+        public static final int IS_MACHINE_SORTABLE = 1000;
 
         public static final int FULFILLMENT_TYPE = 1000;
+        public static final int WEIGHT = 2000;
+        public static final int WEIGHT_UNIT_OF_MEASURE = 3000;
+
+        public static final int CONTAINER_SHAPE = 1000;
+        public static final int CONTAINER_SIZE = 2000;
     }
 }
