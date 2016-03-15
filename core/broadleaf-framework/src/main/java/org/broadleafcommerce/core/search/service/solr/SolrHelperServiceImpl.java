@@ -32,7 +32,6 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -86,6 +85,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -104,7 +105,6 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     // The value of these two fields has no special significance, but they must be non-blank
     protected static final String GLOBAL_FACET_TAG_FIELD = "a";
-    protected static final String DEFAULT_NAMESPACE = "d";
     protected static final String[] specialCharacters = new String[] { "\\\\", "\\+", "-", "&&", "\\|\\|", "\\!", "\\(", "\\)", "\\{", "\\}", "\\[", "\\]", "\\^", "\"", "~", "\\*", "\\?", ":" };
 
     protected static final String PREFIX_SEPARATOR = "_";
@@ -128,82 +128,82 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
-    
+
+    @Value(value = "${using.solr.server:true}")
+    protected boolean isSolrConfigured;
+
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericEntityDao;
 
     /**
      * This should only ever be called when using the Solr reindex service to do a full reindex. 
+     * @throws SecurityException 
+     * @throws NoSuchFieldException 
+     * @throws IllegalAccessException 
+     * @throws IllegalArgumentException 
      */
     @Override
-    public synchronized void swapActiveCores() throws ServiceException {
-        if (SolrContext.isSolrCloudMode()) {
-            CloudSolrClient primary = (CloudSolrClient) SolrContext.getServer();
-            CloudSolrClient reindex = (CloudSolrClient) SolrContext.getReindexServer();
+    public synchronized void swapActiveCores(SolrConfiguration solrConfiguration) throws ServiceException {
+        if (!isSolrConfigured) {
+            return;
+        }
+        if (CloudSolrClient.class.isAssignableFrom(solrConfiguration.getServer().getClass()) && CloudSolrClient.class.isAssignableFrom(solrConfiguration.getReindexServer().getClass())) {
+            CloudSolrClient primaryCloudClient = (CloudSolrClient) solrConfiguration.getServer();
+            CloudSolrClient reindexCloudClient = (CloudSolrClient) solrConfiguration.getReindexServer();
             try {
-                primary.connect();
-                Aliases aliases = primary.getZkStateReader().getAliases();
+                primaryCloudClient.connect();
+                Aliases aliases = primaryCloudClient.getZkStateReader().getAliases();
                 Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
-                if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(primary.getDefaultCollection())
-                        || !aliasCollectionMap.containsKey(reindex.getDefaultCollection())) {
+                if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(primaryCloudClient.getDefaultCollection())
+                        || !aliasCollectionMap.containsKey(reindexCloudClient.getDefaultCollection())) {
                     throw new IllegalStateException("Could not determine the PRIMARY or REINDEX "
                             + "collection or collections from the Solr aliases.");
                 }
 
-                String primaryCollectionName = aliasCollectionMap.get(primary.getDefaultCollection());
+                String primaryCollectionName = aliasCollectionMap.get(primaryCloudClient.getDefaultCollection());
                 //Do this just in case primary is aliased to more than one collection
                 primaryCollectionName = primaryCollectionName.split(",")[0];
 
-                String reindexCollectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
+                String reindexCollectionName = aliasCollectionMap.get(reindexCloudClient.getDefaultCollection());
                 //Do this just in case primary is aliased to more than one collection
                 reindexCollectionName = reindexCollectionName.split(",")[0];
 
                 //Essentially "swap cores" here by reassigning the aliases
-                new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
-                        .setAliasedCollections(reindexCollectionName).process(primary);
-                new CollectionAdminRequest.CreateAlias().setAliasName(reindex.getDefaultCollection())
-                        .setAliasedCollections(primaryCollectionName).process(reindex);
+                new CollectionAdminRequest.CreateAlias().setAliasName(primaryCloudClient.getDefaultCollection())
+                        .setAliasedCollections(reindexCollectionName).process(primaryCloudClient);
+                new CollectionAdminRequest.CreateAlias().setAliasName(reindexCloudClient.getDefaultCollection())
+                        .setAliasedCollections(primaryCollectionName).process(reindexCloudClient);
             } catch (Exception e) {
                 LOG.error("An exception occured swapping cores.", e);
                 throw new ServiceException("Unable to swap SolrCloud collections after a full reindex.", e);
             }
         } else {
-            if (SolrContext.isSingleCoreMode()) {
+            if (solrConfiguration.getReindexServer() == null || solrConfiguration.getServer() == solrConfiguration.getReindexServer()) {
                 LOG.debug("In single core mode. There are no cores to swap.");
             } else {
                 LOG.debug("Swapping active cores");
 
-                String primaryCoreName = SolrContext.PRIMARY;
-                String reindexCoreName = SolrContext.REINDEX;
-                
-                // If using standalone solr the core name is the last part of the URL
-                if (HttpSolrClient.class.isAssignableFrom(SolrContext.getServer().getClass())) {
-                    String primaryUrl = ((HttpSolrClient) SolrContext.getServer()).getBaseURL();
-                    primaryCoreName = primaryUrl.substring(primaryUrl.lastIndexOf('/') + 1);
-                }
-                if (HttpSolrClient.class.isAssignableFrom(SolrContext.getReindexServer().getClass())) {
-                    String reindexUrl = ((HttpSolrClient) SolrContext.getReindexServer()).getBaseURL();
-                    reindexCoreName = reindexUrl.substring(reindexUrl.lastIndexOf('/') + 1);
-                }
-                
-                CoreAdminRequest car = new CoreAdminRequest();
-                car.setCoreName(primaryCoreName);
-                car.setOtherCoreName(reindexCoreName);
-                car.setAction(CoreAdminAction.SWAP);
+                String primaryCoreName = solrConfiguration.getPrimaryName();
+                String reindexCoreName = solrConfiguration.getReindexName();
 
-                try {
-                    SolrContext.getAdminServer().request(car);
-                } catch (Exception e) {
-                    LOG.error(e);
-                    throw new ServiceException("Unable to swap cores", e);
+                if (!StringUtils.isEmpty(primaryCoreName) && !StringUtils.isEmpty(reindexCoreName)) {
+                    CoreAdminRequest car = new CoreAdminRequest();
+                    car.setCoreName(primaryCoreName);
+                    car.setOtherCoreName(reindexCoreName);
+                    car.setAction(CoreAdminAction.SWAP);
+
+                    try {
+                        solrConfiguration.getAdminServer().request(car);
+                    } catch (Exception e) {
+                        LOG.error(e);
+                        throw new ServiceException("Unable to swap cores", e);
+                    }
+                } else {
+                    LOG.error("Could not determine core names for the Solr Clients provided");
+                    throw new ServiceException("Unable to swap cores");
                 }
             }
         }
-    }
-
-    @Override
-    public String getCurrentNamespace() {
-        return DEFAULT_NAMESPACE;
     }
 
     @Override
@@ -415,7 +415,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Optimizing the index...");
             }
-            server.optimize();
+            if (isSolrConfigured) {
+                server.optimize();
+            }
         } catch (SolrServerException e) {
             throw new ServiceException("Could not optimize index", e);
         }
@@ -891,4 +893,5 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
         return categoryIds;
     }
+
 }

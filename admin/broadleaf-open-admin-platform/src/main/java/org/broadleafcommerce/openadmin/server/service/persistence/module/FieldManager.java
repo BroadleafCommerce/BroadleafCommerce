@@ -19,12 +19,14 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.util.HibernateUtils;
+import org.broadleafcommerce.common.value.ValueAssignable;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
@@ -33,6 +35,7 @@ import org.hibernate.ejb.HibernateEntityManager;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -93,8 +96,28 @@ public class FieldManager {
             if (field != null) {
                 field.setAccessible(true);
                 value = field.get(value);
+                if (value instanceof List) {
+
+                        String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
+                        String fullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+                    try {
+                        value = PropertyUtils.getProperty(bean, fullFieldName);
+                    } catch (InvocationTargetException|NoSuchMethodException e) {
+                        fullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+
+                        try {
+                            value = PropertyUtils.getProperty(bean, fullFieldName);
+                        } catch (InvocationTargetException|NoSuchMethodException n) {
+                            throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class (" + componentClass + ")");
+                        }
+                    }
+                }
+
                 if (value != null && mapKey != null) {
                     value = ((Map) value).get(mapKey);
+                }
+                if (value instanceof List) {
+                    value = ((List) value).get(0);
                 }
                 if (value != null) {
                     componentClass = value.getClass();
@@ -133,9 +156,33 @@ public class FieldManager {
             field.setAccessible(true);
             if (j == count - 1) {
                 if (mapKey != null) {
-                    Map map = (Map) field.get(value);
+                    Map map;
+                    if (field.get(value) instanceof List) {
+
+                        String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
+                        String fullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1) + fieldNamePart.substring(1);
+                        try {
+                            map = (Map)PropertyUtils.getProperty(bean, fullFieldName);
+                        } catch (InvocationTargetException|NoSuchMethodException e) {
+                            fullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1) + fieldNamePart.substring(1);
+                            try {
+                                map = (Map) PropertyUtils.getProperty(bean, fullFieldName);
+                            } catch (InvocationTargetException|NoSuchMethodException n) {
+                                LOG.info("Unable to find a reference to (" + field.getType().getName() + ") in the EntityConfigurationManager. " +
+                                        "Using the type of this class.");
+                                throw new IllegalAccessException("Unable to save field (" + fieldNamePart + ") on the class (" + componentClass + ")");
+                            }
+                        }
+                    } else {
+                        map = (Map) field.get(value);
+                    }
                     if (newValue == null) {
-                        map.remove(mapKey);
+                        Object currentValue = map.get(mapKey);
+                        if (currentValue != null && currentValue instanceof ValueAssignable) {
+                            ((ValueAssignable) currentValue).setValue(null);
+                        } else {
+                            map.remove(mapKey);
+                        }
                     } else {
                         map.put(mapKey, newValue);
                     }

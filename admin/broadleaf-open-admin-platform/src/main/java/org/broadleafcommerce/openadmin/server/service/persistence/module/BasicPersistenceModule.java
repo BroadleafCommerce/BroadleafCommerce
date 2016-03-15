@@ -35,7 +35,6 @@ import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -1003,12 +1002,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
                 instance = createPopulatedInstance(instance, entity, mergedProperties, false);
 
-                if (entity.isPreAdd()) {
-                    if (Status.class.isAssignableFrom(instance.getClass())) {
-                        ((Status) instance).setArchived('Y');
-                    }
-                }
-
                 if (foreignKey != null && foreignKey.getSortField() != null) {
                     ExtensionResultHolder<Serializable> result = new ExtensionResultHolder<Serializable>();
                     extensionManager.getProxy().rebalanceForAdd(this, persistencePackage, instance, mergedProperties, result);
@@ -1400,7 +1393,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         java.lang.reflect.Type type = field.getGenericType();
         if (type instanceof ParameterizedType) {
             ParameterizedType pType = (ParameterizedType) type;
-            Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
+            Class<?> clazz;
+            if (pType.getActualTypeArguments().length < 2) {
+                clazz = (Class<?>) pType.getActualTypeArguments()[0];
+            } else {
+                clazz = (Class<?>) pType.getActualTypeArguments()[1];
+            }
             Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
             if (!ArrayUtils.isEmpty(entities)) {
                 returnType = entities[entities.length - 1];
