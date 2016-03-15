@@ -566,8 +566,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         } else if (sortable){
             listGrid.setCanFilterAndSort(false);
             listGrid.setIsSortable(true);
-
-            listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
         }
 
         if (modalSingleSelectable) {
@@ -589,6 +587,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             listGrid.addModalRowAction(DefaultListGridActions.MULTI_SELECT);
             listGrid.setSelectType(ListGrid.SelectType.MULTI_SELECT);
         }
+        listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
 
         if (isMedia) {
             listGrid.setListGridType(ListGrid.Type.ASSET_GRID);
