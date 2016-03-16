@@ -93,6 +93,9 @@
             </resource>
             <resource>
                 <directory>src/main/java</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
             </resource>
         </resources>
     </build>
@@ -113,7 +116,6 @@
                                 </goals>
                             </execution>
                         </executions>
-
                     </plugin>
                 </plugins>
             </build>
