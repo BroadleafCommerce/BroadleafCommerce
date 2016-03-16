@@ -107,6 +107,10 @@
             }
 
             window.onhashchange = function() {
+                // if this was a session timeout, don't click a new tab
+                if (window.location.hash.indexOf('sessionTimeout') !== -1) {
+                    return false;
+                }
                 $('.nav-tabs li').removeClass('active');
                 $('.nav-tabs li > a[href="' + window.location.hash + '"]').closest('li').addClass('active');
                 $('.tabs-content .entityFormTab').removeClass('active');
