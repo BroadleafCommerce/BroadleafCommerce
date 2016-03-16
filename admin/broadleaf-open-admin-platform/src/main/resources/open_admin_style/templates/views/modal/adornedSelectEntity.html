@@ -7,7 +7,7 @@
                  th:object="${treeListGrid}"
                  th:with="inModal=${inModal != null and inModal}, isLookup=${isLookup != null and isLookup}"/>
         </div>
-        <div class="fieldset-card field-group listgrid-container" th:unless="${treeListGrid}"
+        <div class="fieldset-card field-group listgrid-container inModal" th:unless="${treeListGrid}"
             th:classappend="${additionalClasses != null} ? ${additionalClasses}"
             th:id="${listGrid.subCollectionFieldName}">
             <div class="fieldgroup-listgrid-wrapper-header titlebar" style="display: block;">
