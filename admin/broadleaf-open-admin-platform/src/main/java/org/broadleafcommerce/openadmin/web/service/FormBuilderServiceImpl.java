@@ -283,7 +283,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         
         hf.withName(p.getName())
-          .withFriendlyName(fmd.getFriendlyName())
+          .withFriendlyName(StringUtils.isNotEmpty(fmd.getFriendlyName()) ? fmd.getFriendlyName() : p.getName())
           .withOrder(fmd.getGridOrder())
           .withColumnWidth(fmd.getColumnWidth())
           .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
@@ -318,6 +318,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         boolean modalMultiSelectable = false;
         boolean selectize = false;
         boolean isMedia = false;
+        boolean isLookup = false;
         FieldWrapper wrapper = new FieldWrapper();
 
 
@@ -358,7 +359,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             BasicCollectionMetadata bcm = (BasicCollectionMetadata) fmd;
             readOnly = !bcm.isMutable();
 
-            if (bcm.getAddMethodType().equals(AddMethodType.SELECTIZE_LOOKUP)) {
+            if(AddMethodType.LOOKUP.equals(bcm.getAddMethodType())) {
+                isLookup = true;
+            }
+
+            if (AddMethodType.SELECTIZE_LOOKUP.equals(bcm.getAddMethodType())) {
                 Property p = cmd.getPMap().get(bcm.getSelectizeVisibleField());
                 if (p != null) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
@@ -383,9 +388,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             type = ListGrid.Type.BASIC;
             
-            if (bcm.getAddMethodType().equals(AddMethodType.PERSIST) || bcm.getAddMethodType().equals(AddMethodType.PERSIST_EMPTY)) {
+            if (AddMethodType.PERSIST.equals(bcm.getAddMethodType()) || AddMethodType.PERSIST_EMPTY.equals(bcm.getAddMethodType())) {
                 editable = true;
-            } else if (bcm.getAddMethodType().equals(AddMethodType.SELECTIZE_LOOKUP)) {
+            } else if (AddMethodType.SELECTIZE_LOOKUP.equals(bcm.getAddMethodType())) {
                 selectize = true;
                 modalSingleSelectable = true;
             } else {
@@ -398,7 +403,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             readOnly = !((AdornedTargetCollectionMetadata) fmd).isMutable();
             AdornedTargetCollectionMetadata atcmd = (AdornedTargetCollectionMetadata) fmd;
 
-            if (atcmd.getAdornedTargetAddMethodType().equals(AdornedTargetAddMethodType.SELECTIZE_LOOKUP)) {
+            if(AdornedTargetAddMethodType.LOOKUP.equals(atcmd.getAdornedTargetAddMethodType())) {
+                isLookup = true;
+            }
+
+            if (AdornedTargetAddMethodType.SELECTIZE_LOOKUP.equals(atcmd.getAdornedTargetAddMethodType())) {
                 selectize = true;
 
                 Property p = cmd.getPMap().get(atcmd.getSelectizeVisibleField());
@@ -552,7 +561,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (readOnly) {
             listGrid.getRowActions().add(DefaultListGridActions.VIEW);
         }
-        if (sortable) {
+        if (isLookup) {
+            listGrid.setIsSortable(false);
+        } else if (sortable){
             listGrid.setCanFilterAndSort(false);
             listGrid.setIsSortable(true);
         }

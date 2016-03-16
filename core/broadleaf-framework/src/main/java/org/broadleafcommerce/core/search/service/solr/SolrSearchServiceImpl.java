@@ -19,22 +19,15 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
-import org.apache.solr.client.solrj.impl.CloudSolrClient;
-import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.cloud.Aliases;
-import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
@@ -61,32 +54,21 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexService;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.xml.sax.SAXException;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * An implementation of SearchService that uses Solr.
@@ -96,19 +78,15 @@ import javax.xml.parsers.ParserConfigurationException;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class SolrSearchServiceImpl implements SearchService, InitializingBean, DisposableBean {
+public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     private static final Log LOG = LogFactory.getLog(SolrSearchServiceImpl.class);
+
+    @Qualifier("blCatalogSolrConfiguration")
+    @Autowired(required = false)
+    protected SolrConfiguration solrConfiguration;
 
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
-
-    //This is the name of the config that Zookeeper has associated with Solr configs
-    @Value("${solr.cloud.configName}")
-    protected String solrCloudConfigName = "blc";
-
-    //This is the default number of shards that should be created if a SolrCloud collection is created via API
-    @Value("${solr.cloud.defaultNumShards}")
-    protected int solrCloudNumShards = 2;
 
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
@@ -134,364 +112,12 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
 
-    protected String solrHomePath;
-
     @Value("${solr.global.facets.category.search:false}")
     protected boolean globalFacetsForCategorySearch;
-
-    public SolrSearchServiceImpl(String solrServer) throws IOException, ParserConfigurationException, SAXException {
-        if (Objects.equals("solrhome", solrServer)) {
-
-            final String baseTempPath = System.getProperty("java.io.tmpdir");
-
-            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome-5.3.1");
-            if (System.getProperty("tmpdir.solrhome") != null) {
-                //allow for an override of tmpdir
-                tempDir = new File(System.getProperty("tmpdir.solrhome"));
-            }
-            if (!tempDir.exists()) {
-                tempDir.mkdirs();
-            }
-
-            solrServer = tempDir.getAbsolutePath();
-        }
-        solrHomePath = solrServer;
-
-        File solrXml = new File(new File(solrServer), "solr.xml");
-        if (!solrXml.exists()) {
-            copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrXml);
-        }
-
-        buildSolrCoreDirectories(solrServer);
-
-        LOG.debug(String.format("Using [%s] as solrhome", solrServer));
-        LOG.debug(String.format("Using [%s] as solr.xml", solrXml.getAbsoluteFile()));
-        
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Contents of solr.xml:");
-            BufferedReader br = null;
-            try {
-                br = new BufferedReader(new FileReader(solrXml));
-                String line;
-                while ((line = br.readLine()) != null) {
-                    LOG.trace(line);
-                }
-            } finally {
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (Throwable e) {
-                        //do nothing
-                    }
-                }
-            }
-            LOG.trace("Done printing solr.xml");
-        }
-
-        CoreContainer coreContainer = CoreContainer.createAndLoad(solrServer, solrXml);
-        EmbeddedSolrServer primaryServer = new EmbeddedSolrServer(coreContainer, SolrContext.PRIMARY);
-        EmbeddedSolrServer reindexServer = new EmbeddedSolrServer(coreContainer, SolrContext.REINDEX);
-
-        SolrContext.setPrimaryServer(primaryServer);
-        SolrContext.setReindexServer(reindexServer);
-        //NOTE: There is no reason to set the admin server here as the SolrContext will return the primary server
-        //if the admin server is not set...
-    }
-
-    public String getSolrHomePath() {
-        return solrHomePath;
-    }
-
-    public void copyConfigToSolrHome(InputStream configIs, File destFile) throws IOException {
-        BufferedInputStream bis = null;
-        BufferedOutputStream bos = null;
-        try {
-            bis = new BufferedInputStream(configIs);
-            bos = new BufferedOutputStream(new FileOutputStream(destFile, false));
-            boolean eof = false;
-            while (!eof) {
-                int temp = bis.read();
-                if (temp == -1) {
-                    eof = true;
-                } else {
-                    bos.write(temp);
-                }
-            }
-            bos.flush();
-        } finally {
-            if (bis != null) {
-                try {
-                    bis.close();
-                } catch (Throwable e) {
-                    //do nothing
-                }
-            }
-            if (bos != null) {
-                try {
-                    bos.close();
-                } catch (Throwable e) {
-                    //do nothing
-                }
-            }
-        }
-    }
-
-    /**
-     * This creates the proper directories and writes the correct properties files for Solr to run in embedded mode.
-     * @param solrServer
-     * @throws IOException
-     */
-    protected void buildSolrCoreDirectories(String solrServer) throws IOException {
-        //Create a "cores" directory if it does not exist
-        File cores = new File(new File(solrServer), "cores");
-        if (!cores.exists() || !cores.isDirectory()) {
-            cores.mkdirs();
-        }
-
-        //Create a "cores/primary" if it does not exist
-        File primaryCoreDir = new File(cores, "primary");
-        if (!primaryCoreDir.exists() || !primaryCoreDir.isDirectory()) {
-            primaryCoreDir.mkdirs();
-        }
-
-        //Create a cores/primary/core.properties file, populated with "name=primary"
-        File primaryCoreFile = new File(primaryCoreDir, "core.properties");
-        if (!primaryCoreFile.exists()) {
-            FileOutputStream os = new FileOutputStream(primaryCoreFile);
-            Properties prop = new Properties();
-            prop.put("name", SolrContext.PRIMARY);
-            prop.store(os, "Generated Solr core properties file");
-            IOUtils.closeQuietly(os);
-        }
-
-        //Create a "cores/primary/conf" directory if it does not exist
-        File primaryConfDir = new File(primaryCoreDir, "conf");
-        if (!primaryConfDir.exists() || !primaryConfDir.isDirectory()) {
-            primaryConfDir.mkdirs();
-        }
-
-        //Create a "cores/reindex" if it does not exist
-        File reindexCoreDir = new File(cores, "reindex");
-        if (!reindexCoreDir.exists() || !reindexCoreDir.isDirectory()) {
-            reindexCoreDir.mkdirs();
-        }
-
-        //Create a cores/reindex/core.properties file, populated with "name=reindex"
-        File reindexCoreFile = new File(reindexCoreDir, "core.properties");
-        if (!reindexCoreFile.exists()) {
-            FileOutputStream os = new FileOutputStream(reindexCoreFile);
-            Properties prop = new Properties();
-            prop.put("name", SolrContext.REINDEX);
-            prop.store(os, "Generated Solr core properties file");
-            IOUtils.closeQuietly(os);
-        }
-
-        //Create a "cores/reindex/conf" directory if it does not exist
-        File reindexConfDir = new File(reindexCoreDir, "conf");
-        if (!reindexConfDir.exists() || !reindexConfDir.isDirectory()) {
-            reindexConfDir.mkdirs();
-        }
-    }
-
-    public SolrSearchServiceImpl(SolrClient solrServer) {
-        SolrContext.setPrimaryServer(solrServer);
-    }
-
-    /**
-     * This constructor serves to mimic the one which takes in one {@link SolrClient} argument.
-     * By having this and then simply disregarding the second parameter, we can more easily support 2-core
-     * Solr configurations that use embedded/standalone per environment.
-     * 
-     * @param solrServer
-     * @param reindexServer
-     * @throws SAXException 
-     * @throws ParserConfigurationException 
-     * @throws IOException 
-     */
-    public SolrSearchServiceImpl(String solrServer, String reindexServer)
-            throws IOException, ParserConfigurationException, SAXException {
-        this(solrServer);
-    }
-
-    /**
-     * This constructor serves to mimic the one which takes in one {@link SolrClient} argument.
-     * By having this and then simply disregarding the second and third parameters, we can more easily support 2-core
-     * Solr configurations that use embedded/standalone per environment, along with an admin server.
-     * 
-     * @param solrServer
-     * @param reindexServer
-     * @throws SAXException 
-     * @throws ParserConfigurationException 
-     * @throws IOException 
-     */
-    public SolrSearchServiceImpl(String solrServer, String reindexServer, String adminServer)
-            throws IOException, ParserConfigurationException, SAXException {
-        this(solrServer);
-    }
-
-    public SolrSearchServiceImpl(SolrClient solrServer, SolrClient reindexServer) {
-        SolrContext.setPrimaryServer(solrServer);
-        SolrContext.setReindexServer(reindexServer);
-    }
-
-    public SolrSearchServiceImpl(SolrClient solrServer, SolrClient reindexServer, SolrClient adminServer) {
-        SolrContext.setPrimaryServer(solrServer);
-        SolrContext.setReindexServer(reindexServer);
-        SolrContext.setAdminServer(adminServer);
-    }
 
     @Override
     public void rebuildIndex() throws ServiceException, IOException {
         solrIndexService.rebuildIndex();
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        if (SolrContext.isSolrCloudMode()) {
-            //We want to use the Solr APIs to make sure the correct collections are set up.
-
-            CloudSolrClient primary = (CloudSolrClient) SolrContext.getServer();
-            CloudSolrClient reindex = (CloudSolrClient) SolrContext.getReindexServer();
-            if (primary == null || reindex == null) {
-                throw new IllegalStateException("The primary and reindex CloudSolrServers must not be null. Check "
-                        + "your configuration and ensure that you are passing a different instance for each to the "
-                        + "constructor of "
-                        + this.getClass().getName()
-                        + " and ensure that each has a null (empty)"
-                        + " defaultCollection property, or ensure that defaultCollection is unique between"
-                        + " the two instances. All other things, like Zookeeper addresses should be the same.");
-            }
-
-            if (primary == reindex) {
-                //These are the same object instances.  They should be separate instances, with generally 
-                //the same configuration, except for the defaultCollection name.
-                throw new IllegalStateException("The primary and reindex CloudSolrServers must be different instances "
-                        + "and their defaultCollection property must be unique or null.  All other things like the "
-                        + "Zookeeper addresses should be the same.");
-            }
-            
-            //Set the default collection if it's null
-            if (StringUtils.isEmpty(primary.getDefaultCollection())) {
-                primary.setDefaultCollection(SolrContext.PRIMARY);
-            }
-
-            //Set the default collection if it's null
-            if (StringUtils.isEmpty(reindex.getDefaultCollection())) {
-                reindex.setDefaultCollection(SolrContext.REINDEX);
-            }
-
-            if (Objects.equals(primary.getDefaultCollection(), reindex.getDefaultCollection())) {
-                throw new IllegalStateException("The primary and reindex CloudSolrServers must have a null (empty) or "
-                        + "unique defaultCollection property.  All other things like the "
-                        + "Zookeeper addresses should be the same.");
-            }
-
-            primary.connect(); //This is required to ensure no NPE!
-
-            //Get a list of existing collections so we don't overwrite one
-            Set<String> collectionNames = primary.getZkStateReader().getClusterState().getCollections();
-            if (collectionNames == null) {
-                collectionNames = new HashSet<String>();
-            }
-
-            Aliases aliases = primary.getZkStateReader().getAliases();
-            Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
-
-            if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(primary.getDefaultCollection())) {
-                //Create a completely new collection
-                String collectionName = null;
-                for (int i = 0; i < 1000; i++) {
-                    collectionName = "blcCollection" + i;
-                    if (collectionNames.contains(collectionName)) {
-                        collectionName = null;
-                    } else {
-                        break;
-                    }
-                }
-
-                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                        .setConfigName(solrCloudConfigName).process(primary);
-
-                new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
-                        .setAliasedCollections(collectionName).process(primary);
-            } else {
-                //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
-                String collectionName = aliasCollectionMap.get(primary.getDefaultCollection());
-                collectionName = collectionName.split(",")[0];
-                if (!collectionNames.contains(collectionName)) {
-                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                            .setConfigName(solrCloudConfigName).process(primary);
-                }
-            }
-
-            //Reload the collection names
-            collectionNames = primary.getZkStateReader().getClusterState().getCollections();
-            if (collectionNames == null) {
-                collectionNames = new HashSet<String>();
-            }
-
-            //Reload these maps for the next collection.
-            aliases = primary.getZkStateReader().getAliases();
-            aliasCollectionMap = aliases.getCollectionAliasMap();
-
-            if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(reindex.getDefaultCollection())) {
-                //Create a completely new collection
-                String collectionName = null;
-                for (int i = 0; i < 1000; i++) {
-                    collectionName = "blcCollection" + i;
-                    if (collectionNames.contains(collectionName)) {
-                        collectionName = null;
-                    } else {
-                        break;
-                    }
-                }
-
-                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                        .setConfigName(solrCloudConfigName).process(primary);
-
-                new CollectionAdminRequest.CreateAlias().setAliasName(reindex.getDefaultCollection())
-                        .setAliasedCollections(collectionName).process(primary);
-            } else {
-                //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
-                String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
-                collectionName = collectionName.split(",")[0];
-                if (!collectionNames.contains(collectionName)) {
-                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                            .setConfigName(solrCloudConfigName).process(primary);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        //Make sure we shut down each of the SolrClient references (these is really the Solr clients despite the name)
-        try {
-            if (SolrContext.getServer() != null) {
-                SolrContext.getServer().shutdown();
-            }
-        } catch (Exception e) {
-            LOG.error("Error shutting down primary SolrClient (client).", e);
-        }
-
-        try {
-            if (SolrContext.getReindexServer() != null
-                    && SolrContext.getReindexServer() != SolrContext.getServer()) {
-                SolrContext.getReindexServer().shutdown();
-            }
-        } catch (Exception e) {
-            LOG.error("Error shutting down reindex SolrClient (client).", e);
-        }
-
-        try {
-            if (SolrContext.getAdminServer() != null
-                    && SolrContext.getAdminServer() != SolrContext.getServer()
-                    && SolrContext.getAdminServer() != SolrContext.getReindexServer()) {
-                SolrContext.getAdminServer().shutdown();
-            }
-        } catch (Exception e) {
-            LOG.error("Error shutting down admin SolrClient (client).", e);
-        }
     }
 
     @Override
@@ -570,8 +196,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 .setRows(searchCriteria.getPageSize())
                 .setStart((start) * searchCriteria.getPageSize());
 
-        //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "PRIMARY"
-        solrQuery.setParam("collection", SolrContext.PRIMARY); //This should be ignored if not using SolrCloud
+        //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "primaryName"
+        solrQuery.setParam("collection", solrConfiguration.getPrimaryName()); //This should be ignored if not using SolrCloud
 
         solrQuery.setFields(shs.getIndexableIdFieldName());
         if (filterQueries != null) {
@@ -583,7 +209,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             solrQuery.addFilterQuery(getCategoryFilter(searchCriteria));
         }
 
-        solrQuery.addFilterQuery(shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")");
+        solrQuery.addFilterQuery(shs.getNamespaceFieldName() + ":(\"" + solrConfiguration.getNamespace() + "\")");
         solrQuery.set("defType", "edismax");
         solrQuery.set("qf", buildQueryFieldsString(solrQuery, searchCriteria));
 
@@ -609,7 +235,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         List<SolrDocument> responseDocuments;
         int numResults = 0;
         try {
-            response = SolrContext.getServer().query(solrQuery, getSolrQueryMethod());
+            response = solrConfiguration.getServer().query(solrQuery, getSolrQueryMethod());
             responseDocuments = getResponseDocuments(response);
             numResults = (int) response.getResults().getNumFound();
 
@@ -1012,5 +638,10 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      */
     protected METHOD getSolrQueryMethod() {
         return METHOD.POST;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        solrConfiguration.destroy();
     }
 }

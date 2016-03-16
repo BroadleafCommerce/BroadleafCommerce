@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.beanutils.MethodUtils;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +38,9 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
@@ -142,12 +145,11 @@ import javax.persistence.Transient;
     )
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
-@AdminPresentationClass(friendlyName = "baseSku")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class SkuImpl implements Sku, ProductAdminPresentation {
+public class SkuImpl implements Sku, SkuAdminPresentation {
     
     private static final Log LOG = LogFactory.getLog(SkuImpl.class);
     
@@ -350,12 +352,10 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
 
     @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blProducts")
-    @MapKey(name="name")
     @BatchSize(size = 50)
-    @AdminPresentationMap(friendlyName = "skuAttributesTitle", 
-        tab = TabName.Advanced,
-        deleteEntityUponRemove = true, forceFreeFormKeys = true)
-    protected Map<String, SkuAttribute> skuAttributes = new HashMap<String, SkuAttribute>();
+    @AdminPresentationCollection(friendlyName = "skuAttributesTitle",
+            tab = TabName.Advanced, order = 1000)
+    protected List<SkuAttribute> skuAttributes = new ArrayList<SkuAttribute>();
 
     @OneToMany(targetEntity = SkuProductOptionValueXrefImpl.class, cascade = CascadeType.ALL, mappedBy = "sku")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
@@ -1118,15 +1118,39 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
     }
 
     @Override
+    @Deprecated
     public Map<String, SkuAttribute> getSkuAttributes() {
-        return skuAttributes;
+        Map<String, SkuAttribute> attributeMap = new HashMap<String, SkuAttribute>();
+
+        for (SkuAttribute skuAttribute : skuAttributes) {
+            attributeMap.put(skuAttribute.getName(), skuAttribute);
+        }
+
+        return attributeMap;
+    }
+
+    @Override
+    public Map<String, SkuAttribute> getMultiValueSkuAttributes() {
+        Map<String, SkuAttribute> multiValueMap = new MultiValueMap();
+
+        for (SkuAttribute skuAttribute : skuAttributes) {
+            multiValueMap.put(skuAttribute.getName(), skuAttribute);
+        }
+
+        return multiValueMap;
     }
 
     @Override
     public void setSkuAttributes(Map<String, SkuAttribute> skuAttributes) {
-        this.skuAttributes = skuAttributes;
+        List<SkuAttribute> skuAttributeList = new ArrayList<SkuAttribute>();
+
+        for(Map.Entry<String, SkuAttribute> entry : skuAttributes.entrySet()){
+            skuAttributeList.add(entry.getValue());
+        }
+
+        this.skuAttributes = skuAttributeList;
     }
-    
+
     @Override
     public BroadleafCurrency getCurrency() {
         if (currency == null && hasDefaultSku()) {
@@ -1256,7 +1280,7 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
         if (product != null) {
             cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
         }
-        for(Map.Entry<String, SkuAttribute> entry : skuAttributes.entrySet()){
+        for(Map.Entry<String, SkuAttribute> entry : getSkuAttributes().entrySet()){
             SkuAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
             cloned.getSkuAttributes().put(entry.getKey(),clonedEntry);
         }

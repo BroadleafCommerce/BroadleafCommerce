@@ -204,9 +204,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                         }
                     }
                 }
-                if (profiles.size() == 1) {
+                //if (profiles.size() == 1) {
                     profile = profiles.get(0);
-                }
+                //}
             }
 
             if (profile != null) {
@@ -258,9 +258,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                         }
                     }
                 }
-                if (catalogs.size() == 1) {
+                //if (catalogs.size() == 1) {
                     catalog = catalogs.get(0);
-                }
+                //}
             }
 
             if (catalog != null) {

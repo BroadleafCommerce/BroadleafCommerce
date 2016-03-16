@@ -33,10 +33,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.mvel2.MVEL;
-import org.mvel2.ParserContext;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,19 +103,12 @@ public class ConsolidateFulfillmentFeesActivity extends BaseActivity<ProcessCont
         boolean appliesToFulfillmentGroup = true;
         String feeExpression = fee.getExpression();
         
-        if (!StringUtils.isEmpty(feeExpression)) {
-            Serializable exp = (Serializable) EXPRESSION_CACHE.get(feeExpression);
-            if (exp == null) {
-                ParserContext mvelContext = new ParserContext();
-                mvelContext.addImport("MVEL", MVEL.class);
-                mvelContext.addImport("MvelHelper", MvelHelper.class);
-                exp = MVEL.compileExpression(feeExpression, mvelContext);
-            
-                EXPRESSION_CACHE.put(feeExpression, exp);
+        if (StringUtils.isNotEmpty(feeExpression)) {
+            synchronized (EXPRESSION_CACHE) {
+                HashMap<String, Object> vars = new HashMap<String, Object>();
+                vars.put("fulfillmentGroup", fulfillmentGroup);
+                MvelHelper.evaluateRule(feeExpression, vars, EXPRESSION_CACHE);
             }
-            HashMap<String, Object> vars = new HashMap<String, Object>();
-            vars.put("fulfillmentGroup", fulfillmentGroup);
-            return (Boolean)MVEL.executeExpression(feeExpression, vars);
         }
         
         return appliesToFulfillmentGroup;

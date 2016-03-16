@@ -183,39 +183,17 @@ public interface ProductAdminPresentation {
     public static class FieldOrder {
 
         public static final int NAME = 1000;
-        public static final int SHORT_DESCRIPTION = 2000;
         public static final int LONG_DESCRIPTION = 3000;
         public static final int DEFAULT_CATEGORY = 4000;
         public static final int MANUFACTURER = 5000;
         public static final int URL = 6000;
 
-        public static final int PRIMARY_MEDIA = 1000;
-
         public static final int ACTIVE_START_DATE = 1000;
         public static final int ACTIVE_END_DATE = 2000;
 
-        public static final int TAXABLE = 1000;
-
-        public static final int UPC = 1000;
-        public static final int EXTERNAL_ID = 2000;
-
         public static final int RETAIL_PRICE = 1000;
         public static final int SALE_PRICE = 2000;
-        public static final int COST = 3000;
-
-        public static final int WIDTH = 1000;
-        public static final int HEIGHT = 2000;
-        public static final int DEPTH = 3000;
-        public static final int GIRTH = 4000;
-        public static final int DIMENSION_UNIT_OF_MEASURE = 5000;
-
-        public static final int IS_MACHINE_SORTABLE = 1000;
 
         public static final int FULFILLMENT_TYPE = 1000;
-        public static final int WEIGHT = 2000;
-        public static final int WEIGHT_UNIT_OF_MEASURE = 3000;
-
-        public static final int CONTAINER_SHAPE = 1000;
-        public static final int CONTAINER_SIZE = 2000;
     }
 }

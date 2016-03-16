@@ -20,6 +20,7 @@
 package org.broadleafcommerce.common.copy;
 
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
 public class AbstractMultiTenantCopierExtensionHandler extends AbstractExtensionHandler 
@@ -35,4 +36,13 @@ public class AbstractMultiTenantCopierExtensionHandler extends AbstractExtension
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
+    @Override
+    public ExtensionResultStatusType postSave(MultiTenantCopyContext context, Object from, Object to) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType shouldClone(MultiTenantCopyContext context, Object from, ExtensionResultHolder<Boolean> result) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }

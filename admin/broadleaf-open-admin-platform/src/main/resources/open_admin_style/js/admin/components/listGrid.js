@@ -424,13 +424,13 @@ $(document).ready(function () {
      * After assembling information, this will delegate to the specialized rowSelected
      * handler for this particular kind of list grid.
      */
-    $('body').on('click', '.list-grid-table tbody tr', function () {
+    $('body').on('click', '.list-grid-table tbody tr', function (event) {
         var $tr = $(this);
         var $table = $tr.closest('table');
         var listGridType = $table.data('listgridtype');
         var listGridSelectType = $table.data('listgridselecttype');
 
-        if (listGridType != 'main' && !$tr.hasClass('clickable')) {
+        if (listGridType != 'main' && !$tr.hasClass('clickable') && !isExternalLink(event)) {
             return false;
         }
 
@@ -470,6 +470,10 @@ $(document).ready(function () {
             }
         }
     });
+
+    function isExternalLink(event) {
+        return $(event.target).is('a.external-link');
+    }
 
     $('body').on({
         mouseenter: function () {
@@ -578,6 +582,31 @@ $(document).ready(function () {
         // if selecting a row -> enable submit button, else deselecting -> disable submit button
         if ($target.hasClass('selected')) {
             $('button[type="submit"]').prop('disabled', false);
+            var $a = $('a#adornedModalTab2Link');
+            BLC.ajax({
+                url: link + '/verify',
+                type: "POST"
+            }, function (data) {
+                var autoSubmit = false;
+                for (prop in data) {
+                    if (data.hasOwnProperty(prop)) {
+                        var fixedKey = prop.replace(".", "__");
+                        var value = data[prop];
+                        if (prop == 'autoSubmit' && value == 'true') {
+                            autoSubmit = true;
+                        } else {
+                            var inputField = $('input[name="fields[\'' + fixedKey + '\'].value"]');
+                            inputField.val(value);
+                        }
+                    }
+                }
+                $a.removeClass('disabled');
+                $a.click();
+                $a.addClass('disabled');
+                if (autoSubmit) {
+                    BLCAdmin.currentModal().find('.submit-button').click();
+                }
+            });
         } else {
             $('button[type="submit"]').prop('disabled', true);
         }
@@ -593,83 +622,93 @@ $(document).ready(function () {
      * to-one fields on an entity form.
      */
     $('body').on('click', '.to-one-lookup', function (event) {
-        var $container = $(this).closest('div.additional-foreign-key-container');
-
-        $container.on('valueSelected', function (event, $target, fields, link, currentUrl) {
-            var $this = $(this);
-            var displayValueProp = $this.find('input.display-value-property').val();
-
-            var displayValue = fields[displayValueProp];
-            var $selectedRow = BLCAdmin.currentModal().find('tr[data-link="' + link + '"]');
-            var $displayField = $selectedRow.find('td[data-fieldname=' + displayValueProp.split(".").join("\\.") + ']');
-            if ($displayField.hasClass('derived')) {
-                displayValue = $.trim($displayField.text());
-            }
-
-            if (typeof BLCAdmin.treeListGrid !== 'undefined' && $this.closest('.modal-add-entity-form.enterprise-tree-add').length) {
-                BLCAdmin.treeListGrid.buildParentPathJson($this.closest('.modal-add-entity-form.enterprise-tree-add'), $selectedRow);
-            }
-
-            var $valueField = $this.find('input.value');
-            $valueField.val(fields['id']);
-            $this.find('span.display-value').html(displayValue);
-            $this.find('input.display-value').val(displayValue);
-            $this.find('input.hidden-display-value').val(displayValue);
-
-            // Ensure that the clear button shows up after selecting a value
-            $this.find('button.clear-foreign-key').show();
-
-            // Ensure that the external link button points to the correct URL
-            var $externalLink = $this.find('span.external-link-container a');
-            $externalLink.attr('href', $externalLink.data('foreign-key-link') + '/' + fields['id']);
-            $externalLink.parent().show();
-
-            // To-one fields potentially trigger a dynamicform. We test to see if this field should
-            // trigger a form, and bind the necessary event if it should.
-            var onChangeTrigger = $valueField.data('onchangetrigger');
-            if (onChangeTrigger) {
-                var trigger = onChangeTrigger.split("-");
-                if (trigger[0] == 'dynamicForm') {
-                    var $dynamicContainer = $("div.dynamic-form-container[data-dynamicpropertyname='" + trigger[1] + "']");
-                    var url = $dynamicContainer.data('currenturl') + '?propertyTypeId=' + fields['id'];
-
-                    BLC.ajax({
-                        url: url,
-                        type: "GET"
-                    }, function (data) {
-                        var dynamicPropertyName = data.find('div.dynamic-form-container').data('dynamicpropertyname');
-                        var $oldDynamicContainer = $('div.dynamic-form-container[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
-                        var $newDynamicContainer = data.find('div.dynamic-form-container');
-
-                        BLCAdmin.initializeFields($newDynamicContainer);
-
-                        $oldDynamicContainer.replaceWith($newDynamicContainer);
-                    });
+        var $toOneLookup = $(this);
+        var fkValue = $toOneLookup.closest('div.additional-foreign-key-container').find('.value');
+        var fkValueFound = fkValue != undefined && fkValue.val().length > 0;
+        var confirm = $toOneLookup.data('confirm') && fkValueFound;
+        if (confirm) {
+            var cancel = false;
+            $.confirm({
+                confirm: function() {
+                    processToOneLookupCall.call($toOneLookup);
+                },
+                cancel: function() {
+                    cancel = true;
                 }
+            });
+            if (cancel) {
+                event.preventDefault();
+                return false;
             }
-
-            $valueField.trigger('change', fields);
-            $valueField.closest('.field-group').trigger('change');
-            BLCAdmin.hideCurrentModal();
-        });
-
-        var url = $(this).data('select-url');
-        var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
-        var thisField = $(this).closest('.field-group').attr('id');
-        var handler = BLCAdmin.getDependentFieldFilterHandler(thisClass, thisField);
-        if (handler != null) {
-            var $parentField = $container.closest('form').find(handler['parentFieldSelector']);
-            url = url + '&' + handler['childFieldPropertyName'] + '=' + BLCAdmin.extractFieldValue($parentField);
-        }
-        if ($(this).data('dynamic-field')) {
-            url = url + '&dynamicField=true';
+        } else {
+            processToOneLookupCall.call($toOneLookup);
         }
 
-        BLCAdmin.showLinkAsModal(url, function () {
-            $('div.additional-foreign-key-container').unbind('valueSelected');
-        });
-
-        return false;
+        function processToOneLookupCall() {
+            var $container = $(this).closest('div.additional-foreign-key-container');
+            $container.on('valueSelected', function (event, $target, fields, link, currentUrl) {
+                var $this = $(this);
+                var displayValueProp = $this.find('input.display-value-property').val();
+                var displayValue = fields[displayValueProp];
+                var $selectedRow = BLCAdmin.currentModal().find('tr[data-link="' + link + '"]');
+                var $displayField = $selectedRow.find('td[data-fieldname=' + displayValueProp.split(".").join("\\.") + ']');
+                if ($displayField.hasClass('derived')) {
+                    displayValue = $.trim($displayField.text());
+                }
+                if (typeof BLCAdmin.treeListGrid !== 'undefined' && $this.closest('.modal-add-entity-form.enterprise-tree-add').length) {
+                    BLCAdmin.treeListGrid.buildParentPathJson($this.closest('.modal-add-entity-form.enterprise-tree-add'), $selectedRow);
+                }
+                var $valueField = $this.find('input.value');
+                $valueField.val(fields['id']);
+                $this.find('span.display-value').html(displayValue);
+                $this.find('input.display-value').val(displayValue);
+                $this.find('input.hidden-display-value').val(displayValue);
+                // Ensure that the clear button shows up after selecting a value
+                $this.find('button.clear-foreign-key').show();
+                // Ensure that the external link button points to the correct URL
+                var $externalLink = $this.find('span.external-link-container a');
+                $externalLink.attr('href', $externalLink.data('foreign-key-link') + '/' + fields['id']);
+                $externalLink.parent().show();
+                // To-one fields potentially trigger a dynamicform. We test to see if this field should
+                // trigger a form, and bind the necessary event if it should.
+                var onChangeTrigger = $valueField.data('onchangetrigger');
+                if (onChangeTrigger) {
+                    var trigger = onChangeTrigger.split("-");
+                    if (trigger[0] == 'dynamicForm') {
+                        var $dynamicContainer = $("div.dynamic-form-container[data-dynamicpropertyname='" + trigger[1] + "']");
+                        var url = $dynamicContainer.data('currenturl') + '?propertyTypeId=' + fields['id'];
+                        BLC.ajax({
+                            url: url,
+                            type: "GET"
+                        }, function (data) {
+                            var dynamicPropertyName = data.find('div.dynamic-form-container').data('dynamicpropertyname');
+                            var $oldDynamicContainer = $('div.dynamic-form-container[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
+                            var $newDynamicContainer = data.find('div.dynamic-form-container');
+                            BLCAdmin.initializeFields($newDynamicContainer);
+                            $oldDynamicContainer.replaceWith($newDynamicContainer);
+                        });
+                    }
+                }
+                $valueField.trigger('change', fields);
+                $valueField.closest('.field-group').trigger('change');
+                BLCAdmin.hideCurrentModal();
+            });
+            var url = $(this).data('select-url');
+            var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
+            var thisField = $(this).closest('.field-group').attr('id');
+            var handler = BLCAdmin.getDependentFieldFilterHandler(thisClass, thisField);
+            if (handler != null) {
+                var $parentField = $container.closest('form').find(handler['parentFieldSelector']);
+                url = url + '&' + handler['childFieldPropertyName'] + '=' + BLCAdmin.extractFieldValue($parentField);
+            }
+            if ($(this).data('dynamic-field')) {
+                url = url + '&dynamicField=true';
+            }
+            BLCAdmin.showLinkAsModal(url, function () {
+                $('div.additional-foreign-key-container').unbind('valueSelected');
+            });
+            return false;
+        }
     });
 
     $('body').on('click', 'button.sub-list-grid-add, a.sub-list-grid-add', function () {
@@ -885,7 +924,7 @@ $(document).ready(function () {
             BLC.ajax({
                 url: this.action,
                 type: "POST",
-                data: BLCAdmin.serializeForm($form)
+                data: BLCAdmin.serialize($form)
             }, function (data) {
                 BLCAdmin.entityForm.hideActionSpinner($form.closest('.modal').find('.entity-form-actions'));
 

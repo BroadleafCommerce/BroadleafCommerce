@@ -25,7 +25,7 @@ package org.broadleafcommerce.core.search.service.solr.index;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrClient;
-import org.broadleafcommerce.core.search.service.solr.SolrContext;
+import org.broadleafcommerce.core.search.service.solr.SolrConfiguration;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 
 /**
@@ -45,10 +45,12 @@ public abstract class GlobalSolrFullReIndexOperation implements SolrIndexOperati
     protected static boolean IS_LOCKED;
     protected boolean errorOnConcurrentReIndex;
     
+    protected SolrConfiguration solrConfiguration;
     protected SolrIndexService indexService;
     protected SolrHelperService shs;
     
-    public GlobalSolrFullReIndexOperation(SolrIndexService indexService, SolrHelperService shs, boolean errorOnConcurrentReindex) {
+    public GlobalSolrFullReIndexOperation(SolrIndexService indexService, SolrConfiguration solrConfiguration, SolrHelperService shs, boolean errorOnConcurrentReindex) {
+        this.solrConfiguration = solrConfiguration;
         this.indexService = indexService;
         this.shs = shs;
         this.errorOnConcurrentReIndex = errorOnConcurrentReindex;
@@ -81,7 +83,7 @@ public abstract class GlobalSolrFullReIndexOperation implements SolrIndexOperati
 
     @Override
     public SolrClient getSolrServerForIndexing() {
-        return SolrContext.getReindexServer();
+        return solrConfiguration.getReindexServer();
     }
 
     @Override

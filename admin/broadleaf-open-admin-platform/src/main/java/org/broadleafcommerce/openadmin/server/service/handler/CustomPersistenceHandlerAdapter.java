@@ -20,6 +20,7 @@
 package org.broadleafcommerce.openadmin.server.service.handler;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -32,9 +33,12 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.hibernate.ejb.HibernateEntityManager;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
 
 /**
  * Convenience class for those {@link org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler} implementations
@@ -135,5 +139,16 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
             throw new ServiceException(e);
         }
         return new DynamicResultSet();
+    }
+
+    protected String[] getPolymorphicClasses(Class<?> clazz, EntityManager em, boolean useCache) {
+        DynamicDaoHelperImpl helper = new DynamicDaoHelperImpl();
+        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(clazz,
+                helper.getSessionFactory((HibernateEntityManager) em), true, useCache);
+        String[] result = new String[classes.length];
+        for (int i = 0; i < classes.length; i++) {
+            result[i] = classes[i].getName();
+        }
+        return result;
     }
 }
