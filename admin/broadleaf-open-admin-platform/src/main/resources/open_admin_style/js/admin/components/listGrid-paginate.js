@@ -547,7 +547,20 @@
             }
 
             if ($table.data('listgridtype') == 'asset_grid' && $table.closest('.select-group').find('.select-column:visible').length > 0) {
-                var fullWidth = $table.closest('.select-group').width() - 320;
+                var fullWidth = $table.closest('.select-group').width() - 335;
+
+                $headerTable.css('width', '');
+                $table.css('width', '');
+                $table.css('table-layout', 'fixed');
+
+                // Figure out what the new table width will be
+                var newWidth = (fullWidth) + 'px';
+                $headerTable.css('width', newWidth);
+                $table.css('width', newWidth);
+            } else if ($table.data('listgridtype') == 'tree' &&
+                $table.closest('.select-group').find('.select-column:visible').length === 0 &&
+                $modalBody.length > 0) {
+                var fullWidth = $table.closest('.select-group').width() - 15;
 
                 $headerTable.css('width', '');
                 $table.css('width', '');
@@ -694,7 +707,7 @@
 
                 $wrapper.mCustomScrollbar('update');
             }
-            
+
             // after all the heights have been calculated, update the table footer with the correct record shown count
             BLCAdmin.listGrid.paginate.updateTableFooter($wrapper.find('tbody'));
         },
