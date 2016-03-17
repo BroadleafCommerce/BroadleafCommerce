@@ -57,7 +57,10 @@
             
             BLC.get({
                 url : BLC.servletContext + "/sessionTimerReset",
-                trackAnalytics : false
+                trackAnalytics : false,
+                error: function(err) {
+                    BLCAdmin.sessionTimer.invalidateSession();
+                }
             }, function(data) {
                 /*
                  * We deduct one minute from the actual session timeout interval to ensure that the server-side session
@@ -68,8 +71,6 @@
                 $.cookie("sessionResetTime", resetTime - (resetTime % pingInterval) , { path : resetTimeCookiePath });
                 
                 BLCAdmin.sessionTimer.updateTimeLeft();
-            }).fail(function(err){
-                BLCAdmin.sessionTimer.invalidateSession();
             });
         },
 
@@ -116,17 +117,18 @@
             $.doTimeout('update-admin-session');
             $.removeCookie('sessionResetTime', { path: resetTimeCookiePath });
             BLC.get({
-                url : BLC.servletContext + "/adminLogout.htm"
+                url : BLC.servletContext + "/adminLogout.htm",
+                error: function(err) {
+                    window.location.replace(BLC.servletContext + "/login?sessionTimeout=true");
+                }
             }, function(data) {
-                
                 /*
                  * After the logout occurs, we redirect to the login page with the sessionTimeout parameter being true.
                  * This yield a red banner on the login screen that indicates the session expired to the user.
                  */
                 window.location.replace(BLC.servletContext + "/login?sessionTimeout=true");
-            }).fail(function(err){
-                window.location.replace(BLC.servletContext + "/login?sessionTimeout=true");
             });
+            return false;
         },
         
         updateTimer : function() {
