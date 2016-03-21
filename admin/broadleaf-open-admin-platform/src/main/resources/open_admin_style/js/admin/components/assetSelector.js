@@ -141,11 +141,14 @@ $(document).ready(function() {
     		
     		var mediaItem = $this.find('input.mediaItem');
     		if (mediaItem.length > 0) {
-    		    var mediaJson = mediaItem.val() == "" || mediaItem.val() == "null" ? {} : jQuery.parseJSON(mediaItem.val());
-        		mediaJson.url = fields['assetUrl'];
-        		mediaItem.val(JSON.stringify(mediaJson));
-    		} else {
-    		    $this.find('input.mediaUrl').val(fields['assetUrl']);
+                var mediaUrl = $this.find('input.mediaUrl');
+                if (mediaUrl.length > 0) {
+                    mediaUrl.val(fields['assetUrl']);
+                } else {
+                    var mediaJson = mediaItem.val() == "" || mediaItem.val() == "null" ? {} : jQuery.parseJSON(mediaItem.val());
+                    mediaJson.url = fields['assetUrl'];
+                    mediaItem.val(JSON.stringify(mediaJson));
+                }
     		}
     		$container.find('button.clear-asset-selector').show();
             $container.find('.media-image-container .media-actions').css('display', '');
@@ -168,7 +171,14 @@ $(document).ready(function() {
         var $this = $(this);
 
         //Set media value to null so that when the request is sent the entry in the map for primary is deleted
-        $container.find('input.mediaItem').val('null').trigger('change');
+        var mediaUrl = $container.find('input.mediaUrl');
+        if (mediaUrl.length > 0) {
+            // Fields using mediaUrl require a blank value
+            mediaUrl.val('').trigger('change');
+        } else {
+            // Other entities require a null value
+            $container.find('input.mediaItem').val('null').trigger('change');
+        }
 
         //Set placeholder image and hide clear button since there's nothing to clear
         var src = $container.find('img.placeholder').attr('src');
