@@ -310,6 +310,7 @@
 
         initialize: function ($container) {
             BLCAdmin.listGrid.updateActionButtons($container);
+            BLCAdmin.adornedEntityForm.updateActionButtons($container);
             BLCAdmin.listGrid.updateGridTitleBarSize($container.find('.fieldgroup-listgrid-wrapper-header'));
 
             if (BLCAdmin.listGrid.paginate) {
@@ -383,6 +384,7 @@
             updateMultiSelectCheckbox($tbody, $listgridHeader);
 
             BLCAdmin.listGrid.updateActionButtons($listGridContainer);
+            BLCAdmin.adornedEntityForm.updateActionButtons($listGridContainer);
         }
     };
 
