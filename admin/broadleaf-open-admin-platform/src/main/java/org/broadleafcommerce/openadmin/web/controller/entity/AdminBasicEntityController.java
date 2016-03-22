@@ -1184,6 +1184,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 ListGrid listGrid = formService.buildCollectionListGrid(id, drs, collectionProperty, sectionKey, sectionCrumbs);
                 listGrid.setPathOverride(request.getRequestURL().toString());
 
+                if (AddMethodType.LOOKUP.equals(fmd.getAddMethodType()) || AddMethodType.SELECTIZE_LOOKUP.equals(fmd.getAddMethodType())) {
+                    listGrid.removeAllRowActions();
+                }
+
                 model.addAttribute("listGrid", listGrid);
                 model.addAttribute("viewType", "modal/simpleSelectEntity");
             }
