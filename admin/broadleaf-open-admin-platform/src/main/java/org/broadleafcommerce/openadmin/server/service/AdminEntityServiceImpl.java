@@ -651,9 +651,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         Property p;
         String parentId = getContextSpecificRelationshipId(mainMetadata, parentEntity, field.getName());
 
-        Entity entity = new Entity();
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(field.getMetadata(), sectionCrumbs)
-                .withEntity(entity);
+                .withEntity(new Entity());
 
         if (field.getMetadata() instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) field.getMetadata();
@@ -668,7 +667,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             p.setValue(parentId);
             properties.add(p);
 
-            entity.setType(new String[] { fmd.getCollectionCeilingEntity() });
+            ppr.getEntity().setType(new String[]{fmd.getCollectionCeilingEntity()});
         } else if (field.getMetadata() instanceof AdornedTargetCollectionMetadata) {
             AdornedTargetList adornedList = ppr.getAdornedList();
 
@@ -689,7 +688,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 properties.add(p);
             }
 
-            entity.setType(new String[] { adornedList.getAdornedTargetEntityClassname() });
+            ppr.getEntity().setType(new String[]{adornedList.getAdornedTargetEntityClassname()});
         } else if (field.getMetadata() instanceof MapMetadata) {
             MapMetadata fmd = (MapMetadata) field.getMetadata();
 
@@ -715,9 +714,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             p.setValue(itemId);
             properties.add(p);
 
-            entity.setType(new String[] { fmd.getTargetClass() });
+            ppr.getEntity().setType(new String[] { fmd.getTargetClass() });
         }
 
+        ppr.setCeilingEntityClassname(ppr.getEntity().getType()[0]);
         String sectionField = field.getName();
         if (sectionField.contains(".")) {
             sectionField = sectionField.substring(0, sectionField.lastIndexOf("."));
