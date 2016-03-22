@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -64,7 +63,8 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blConfigurationModuleElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD)
 })
 public abstract class AbstractModuleConfiguration implements ModuleConfiguration, Status, AbstractModuleConfigurationAdminPresentation {
 

@@ -164,7 +164,6 @@ fieldset:not(.untitledGroup) {
 
 .fieldgroup-listgrid-wrapper-header {
     height: 43px;
-    overflow: hidden;
 }
 
 .fieldset-card-content .fieldgroup-listgrid-wrapper-header {

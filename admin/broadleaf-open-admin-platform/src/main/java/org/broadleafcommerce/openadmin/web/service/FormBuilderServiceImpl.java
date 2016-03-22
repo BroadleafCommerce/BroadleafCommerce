@@ -73,6 +73,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldMa
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
+import org.broadleafcommerce.openadmin.web.form.component.ListGridActionGroup;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.component.MediaField;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilderField;
@@ -1228,6 +1229,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     ClassMetadata collectionCmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
                     if (collectionCmd.getPolymorphicEntities().getChildren().length != 0) {
                         List<ClassTree> entityTypes = collectionCmd.getPolymorphicEntities().getCollapsedClassTrees();
+                        ListGridActionGroup actionGroup = new ListGridActionGroup().withName("Add");
                         for (ClassTree entityType : entityTypes) {
                             ListGridAction ADD = new ListGridAction(ListGridAction.ADD)
                                     .withButtonClass(AddMethodType.PERSIST_EMPTY==
@@ -1235,9 +1237,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                     .withActionTargetEntity(entityType.getFullyQualifiedClassname())
                                     .withUrlPostfix("/add")
                                     .withIconClass("fa fa-plus")
-                                    .withDisplayText("Add " + BLCMessageUtils.getMessage(entityType.getFriendlyName()));
-                            listGrid.getToolbarActions().add(0, ADD);
+                                    .withDisplayText(BLCMessageUtils.getMessage(entityType.getFriendlyName()));
+                            actionGroup.getListGridActions().add(0, ADD);
                         }
+                        listGrid.addToolbarActionGroup(actionGroup);
                     } else {
                         listGrid.getToolbarActions().add(0, AddMethodType.PERSIST_EMPTY==
                                 ((BasicCollectionMetadata) md).getAddMethodType()?DefaultListGridActions.ADD_EMPTY:DefaultListGridActions.ADD);
