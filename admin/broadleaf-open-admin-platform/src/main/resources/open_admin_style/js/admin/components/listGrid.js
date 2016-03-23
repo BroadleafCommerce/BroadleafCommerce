@@ -664,7 +664,7 @@ $(document).ready(function () {
                 $valueField.val(fields['id']);
                 $this.find('span.display-value').html(displayValue);
                 $this.find('input.display-value').val(displayValue);
-                $this.find('input.hidden-display-value').val(displayValue);
+                $this.find('input.hidden-display-value').val(displayValue).trigger('input');
                 // Ensure that the clear button shows up after selecting a value
                 $this.find('button.clear-foreign-key').show();
                 // Ensure that the external link button points to the correct URL
@@ -691,7 +691,7 @@ $(document).ready(function () {
                         });
                     }
                 }
-                $valueField.trigger('change', fields);
+                $valueField.trigger('change', fields).trigger('input');
                 $valueField.closest('.field-group').trigger('change');
                 BLCAdmin.hideCurrentModal();
             });
@@ -1014,7 +1014,7 @@ $(document).ready(function () {
         }
 
         // Remove the criteria input val
-        $container.find('.value').val('').trigger('change');
+        $container.find('.value').val('').trigger('change').trigger('input');
         $this.toggle();
 
         $container.find('.external-link-container').hide();

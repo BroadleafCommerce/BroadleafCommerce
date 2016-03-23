@@ -899,14 +899,24 @@
             var ruleType = $(this).data('ruletype');
             var launchModal = $(this).data('modal');
             var rulesContainer = $($(this)).siblings('.query-builder-rules-container');
+            var rulesContainerID = rulesContainer.attr('id');
+            var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilder(rulesContainerID);
+            var data = ruleBuilder.data;
+
             if (launchModal) {
-                var rulesContainerID = rulesContainer.attr('id');
-                var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilder(rulesContainerID);
-                var data = ruleBuilder.data;
                 BLCAdmin.ruleBuilders.setReadableJSONValueOnField(ruleBuilder, data);
                 ruleBuilder.removeAllQueryBuilders();
             } else {
                 BLCAdmin.ruleBuilders.showOrCreateMainRuleBuilder(rulesContainer, ruleType);
+            }
+
+            if (BLCAdmin.entityForm.status) {
+                // Set the original value on the rule builder once its been completely initialized
+                if (ruleBuilder.builders.length) {
+                    var origVal = ruleBuilder.builders[0].queryBuilder('getRules');
+                    $(rulesContainer).attr('data-orig-val', JSON.stringify(origVal));
+                    BLCAdmin.entityForm.status.removeChangesForId($(rulesContainer).attr('id'));
+                }
             }
         });
     });

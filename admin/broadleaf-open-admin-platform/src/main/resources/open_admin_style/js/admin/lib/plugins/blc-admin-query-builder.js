@@ -154,6 +154,32 @@ $.fn.queryBuilder.define('blc-admin-query-builder', function(options) {
         h.value = $h.prop('outerHTML');
     });
 
+    this.on('beforeDeleteRule.filter', function(h, rule) {
+        var $ruleBuilderContainer = $(this).closest('.query-builder-rules-container');
+
+        if ($ruleBuilderContainer.attr('data-orig-val') === undefined) {
+            // In order to get the new rules on this `RuleBuilder` we need to grab the actual `RuleBuilder`
+            var hiddenId = $ruleBuilderContainer.next('.rule-builder-data').data('hiddenid');
+            var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
+
+            var origVal = ruleBuilder.builders[0].queryBuilder('getRules');
+            $ruleBuilderContainer.attr('data-orig-val', origVal);
+        }
+    });
+
+    this.on('afterDeleteRule.filter', function(h, rule) {
+        var $h = $(h.target);
+        var $ruleBuilderContainer = $h.closest('.query-builder-rules-container');
+        var id = $ruleBuilderContainer.attr('id');
+
+        var newVal = h.builder.getRules();
+        var origVal = $ruleBuilderContainer.attr('data-orig-val');
+
+        if (BLCAdmin.entityForm.status) {
+            BLCAdmin.entityForm.status.updateEntityFormChangeMap(id, origVal, newVal);
+        }
+    });
+
     function styleInputs(rule) {
         var el = rule.$el;
         //el.find('div.rule-filter-container > div > div.selectize-input').width("222px");
