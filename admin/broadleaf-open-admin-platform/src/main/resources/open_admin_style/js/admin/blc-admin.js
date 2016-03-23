@@ -36,8 +36,7 @@ var BLCAdmin = (function($) {
         left: 20,
         top: 20
     };
-    var originalStickyBarOffset = $('.sticky-container').offset().top;
-    
+
     var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container, .redactor_box, ' +
                          '.asset-selector-container img, >div>select, div.custom-checkbox, div.small-enum-container, .ace-editor, ' +
                          'textarea, div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
@@ -828,11 +827,7 @@ var BLCAdmin = (function($) {
             
             return $form;
         },
-        
-        getOriginalStickyBarOffset : function() {
-            return originalStickyBarOffset;
-        },
-        
+
         getFieldSelectors : function getFieldSelectors() {
             return fieldSelectors.concat();
         },
@@ -1303,25 +1298,6 @@ $('body').on('click', '.boolean-link', function(e) {
         BLCAdmin.updateContentHeight($(this));
     } else {
         $(this).addClass('view-options').removeClass('hide-options');
-    }
-});
-
-/**
- * Make the sticky bar (breadcrumb) lock at the top of the window when it's scrolled off the page
- */
-$(window).on('scroll', function() {
-    var $sc = $('.sticky-container');
-    var $scp = $('.sticky-container-padding');
-       
-    if ($(window).scrollTop() < BLCAdmin.getOriginalStickyBarOffset()) {
-        $sc.removeClass('sticky-fixed');
-        $sc.width('');
-        $scp.hide();
-    } else {
-        $scp.show();
-        $sc.addClass('sticky-fixed');
-        $sc.outerWidth($('section.main').outerWidth());
-        $('.sticky-container-padding').outerHeight($sc.outerHeight());
     }
 });
 
