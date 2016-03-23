@@ -70,10 +70,18 @@ $.fn.queryBuilder.define('blc-admin-query-builder', function(options) {
     });
 
     this.on('afterUpdateRuleFilter.filter', function(h, rule) {
+        var filter = $(rule.$el).find('.rule-filter-container select')[0].selectize;
+        if (filter !== undefined) {
+            filter.addItem(rule.filter.id);
+        }
         styleInputs(rule);
     });
 
     this.on('afterUpdateRuleOperator.filter', function(h, rule) {
+        var operator = $(rule.$el).find('.rule-operator-container select')[0].selectize;
+        if (operator !== undefined) {
+            operator.addItem(rule.operator.type);
+        }
         styleInputs(rule);
     });
 

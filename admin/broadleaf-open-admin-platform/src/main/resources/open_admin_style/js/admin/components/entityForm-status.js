@@ -92,10 +92,14 @@
                     if (el.is(':radio')) {
                         // Iterate through all radio options and check the correct one.
                         el.each(function (i, radio) {
-                            if ($(radio).val() == $(radio).attr('data-orig-val')) {
-                                $(radio).prop('checked', true);
+                            var origVal = $(radio).attr('data-orig-val');
+                            if (origVal === undefined && $(radio).hasClass('toggle')) {
+                                origVal = 'AND';
+                            }
+                            if ($(radio).val() == origVal) {
+                                $(radio).prop('checked', true).addClass('checked').trigger('change');
                             } else {
-                                $(radio).prop('checked', false);
+                                $(radio).prop('checked', false).removeClass('checked');
                             }
                         });
                         continue;
@@ -133,12 +137,16 @@
                 }
                 // If this is a select field we need to set the original item back through selectize.
                 else if (el.is('select')) {
-                    el[0].selectize.addItem(origVal);
+                    if (origVal === '') {
+                        el[0].selectize.clear();
+                    } else {
+                        el[0].selectize.addItem(origVal);
+                    }
                     continue;
                 }
                 // If this is a query builder, find the associated `RuleBuilder` and set the rules back to their
                 // original values.
-                else if ($(el).closest('.query-builder-rules-container').length) {
+                else if ($(el).closest('.query-builder-rules-container').length && !$(el).hasClass('rules-group-container')) {
                     var $ruleBuilderContainer = $(el).closest('.query-builder-rules-container');
 
                     // In order to get the new rules on this `RuleBuilder` we need to grab the actual `RuleBuilder`
@@ -146,6 +154,12 @@
                     var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
 
                     ruleBuilder.builders[0].queryBuilder('setRules', JSON.parse(origVal));
+                    continue;
+                }
+                // This is a special case for rule builder's quantity match rule
+                else if ($(el).hasClass('rules-group-container')) {
+                    var $matchValue = $(el).find('input.rules-group-header-item-qty');
+                    $matchValue.val(origVal);
                     continue;
                 }
 
@@ -228,9 +242,9 @@
                 $promoteBtn.prop('disabled', true).addClass('confirm');
                 $approveBtn.prop('disabled', true).addClass('confirm');
 
-                $("#headerFlashAlertBoxContainer").removeClass("hidden");
-                $(".alert-box-message").html(BLCAdmin.messages.unsavedChangesRevert);
-                $('#headerFlashAlertBox').show();
+                $("#headerChangeBoxContainer").removeClass("hidden");
+                $(".change-box-message").html(BLCAdmin.messages.unsavedChangesRevert);
+                $('#headerChangeBox').show();
             }
             // Otherwise, we don't have any unsaved changes.  So disable the 'Save' button and make sure the
             // workflow buttons are enabled
@@ -239,8 +253,8 @@
                 $promoteBtn.prop('disabled', false).removeClass('confirm');
                 $approveBtn.prop('disabled', false).removeClass('confirm');
 
-                $("#headerFlashAlertBoxContainer").addClass("hidden");
-                $('#headerFlashAlertBox').hide();
+                $("#headerChangeBoxContainer").addClass("hidden");
+                $('#headerChangeBox').hide();
             }
         },
 
@@ -274,7 +288,11 @@
             }
             // If this is a field within a query builder, grab the id from the builder and set the new value to the id
             // we will treat any click into a `RuleBuilder` as a change
-            else if ($(el).closest('.query-builder-rules-container').length) {
+            else if ($(el).closest('.query-builder-rules-container').length && !$(el).hasClass('rules-group-header-item-qty')) {
+                if (!$(el).hasClass('query-builder-selectize-input') && $(el).closest('.rule-value-container').length) {
+                    $(el).trigger('change');
+                }
+
                 var $ruleBuilderContainer = $(el).closest('.query-builder-rules-container');
                 id = $ruleBuilderContainer.attr('id');
 
@@ -295,6 +313,12 @@
                 // Convert the new value to a JSON object
                 newVal = JSON.stringify(newVal);
             }
+            // This is a special case for rule builders, we need to capture the match quantity value
+            else if ($(el).hasClass('rules-group-header-item-qty')) {
+                var $ruleGroupContainer = $(el).closest('.rules-group-container');
+                id = $ruleGroupContainer.attr('id');
+                origVal = $ruleGroupContainer.attr('orig-val');
+            }
 
             this.updateEntityFormChangeMap(id, origVal, newVal);
         },
@@ -312,6 +336,9 @@
                 var $thisRadio = $('[name="' + id + '"]');
                 var $checkedRadio = $('[name="' + id + '"]:checked');
 
+                if (!$checkedRadio.length) {
+                    $checkedRadio = $('[name="' + id + '"].checked');
+                }
                 if ($thisRadio.attr('data-orig-val') === undefined) {
                     $thisRadio.attr('data-orig-val', $checkedRadio.val());
                 }
@@ -345,7 +372,7 @@
              * main container.
              */
             $('.rule-builder-required-field').each(function(i, el) {
-                var rulesContainer = $($(el)).siblings('.query-builder-rules-container');
+                var rulesContainer = $($(this)).siblings('.query-builder-rules-container');
                 var rulesContainerID = rulesContainer.attr('id');
                 var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilder(rulesContainerID);
 
@@ -452,7 +479,7 @@ $(document).ready(function() {
             }
             // Check if this is part of a `RuleBuilder`, if it is we want to get the rules off
             // of the actual `RuleBuilder`
-            else if ($(this).closest('.query-builder-rules-container').length) {
+            else if ($(this).closest('.query-builder-rules-container').length && !$(this).hasClass('rules-group-header-item-qty')) {
                 var $ruleBuilderContainer = $(this).closest('.query-builder-rules-container');
 
                 if ($ruleBuilderContainer.attr('data-orig-val') === undefined) {
@@ -463,6 +490,12 @@ $(document).ready(function() {
                     origVal = ruleBuilder.builders[0].queryBuilder('getRules');
                     $ruleBuilderContainer.attr('data-orig-val', JSON.stringify(origVal));
                 }
+                return;
+            }
+            // This is a special case for rule builders, we need to capture the match quantity value
+            else if ($(this).hasClass('rules-group-header-item-qty')) {
+                var $ruleGroupContainer = $(this).closest('.rules-group-container');
+                $ruleGroupContainer.attr('orig-val', $(this).val());
                 return;
             }
             $(this).attr('data-orig-val', origVal);
@@ -481,7 +514,7 @@ $(document).ready(function() {
      * This event handler is fired for `change` type events.
      * It gets the field's id, original value, and new value to be used in the entity form's change map.
      */
-    $body.on('change', 'select, input:radio', function() {
+    $body.on('change', 'select, input:radio, input.query-builder-selectize-input', function() {
         BLCAdmin.entityForm.status.handleEntityFormChanges(this);
     });
 
@@ -508,7 +541,7 @@ $(document).ready(function() {
     $(window).on('beforeunload', function() {
         if (BLCAdmin.entityForm.status.getEntityFormChangesCount() &&
             !BLCAdmin.entityForm.status.getDidConfirmLeave()) {
-            return BLCAdmin.messages.unsavedChanges;
+            return BLCAdmin.messages.unsavedChangesBrowser;
         }
     });
 

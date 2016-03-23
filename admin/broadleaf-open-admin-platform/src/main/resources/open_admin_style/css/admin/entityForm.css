@@ -38,7 +38,7 @@
 }
 
 .app-content .content .section-content .main-content .content-area-title-bar>.button-group .button {
-    margin-top: 0;
+    margin-top: -5px;
     margin-left: -3px;
 }
 
@@ -53,6 +53,12 @@
 #revert-changes {
     color: #D20A33;
     text-decoration: underline;
+}
+
+#headerChangeBoxContainer {
+    float: right;
+    padding-right: 10px;
+    font-size: 12px;
 }
 /*************************** ENTITY FORM TITLE BAR (end of section) ***************************/
 
