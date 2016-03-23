@@ -85,7 +85,7 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
             prominent = true, gridOrder = 1,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.search.domain.FieldEntity",
-            defaultValue = "org.broadleafcommerce.core.catalog.domain.Product",
+            defaultValue = "org.broadleafcommerce.core.catalog.domain.ProductImpl",
             requiredOverride = RequiredOverride.REQUIRED)
     protected String entityType;
     
