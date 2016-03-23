@@ -89,7 +89,12 @@ public class AdminPageController extends AdminBasicEntityController {
         EntityForm ef = (EntityForm) model.asMap().get("entityForm");
         
         DynamicEntityFormInfo info = getDynamicForm(ef, id);
-        EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, null);
+        EntityForm dynamicForm;
+        if (info.getPropertyValue() != null) {
+            dynamicForm = getDynamicFieldTemplateForm(info, id, null);
+        } else {
+            dynamicForm = getEntityForm(info, null);
+        }
         ef.putDynamicFormInfo("pageTemplate", info);
         ef.putDynamicForm("pageTemplate", dynamicForm);
 
@@ -139,8 +144,12 @@ public class AdminPageController extends AdminBasicEntityController {
                     inputDynamicForm.getFields().put(f.getName(), f);
                 }
             }
-            
-            EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, inputDynamicForm);
+            EntityForm dynamicForm;
+            if (info.getPropertyValue() != null) {
+                dynamicForm = getDynamicFieldTemplateForm(info, id, inputDynamicForm);
+            } else {
+                dynamicForm = getEntityForm(info, inputDynamicForm);
+            }
             entityForm.putDynamicForm("pageTemplate", dynamicForm);
 
             entityForm.removeListGrid("additionalAttributes");
