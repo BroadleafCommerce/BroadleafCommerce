@@ -434,6 +434,11 @@ $(document).ready(function() {
                             autoClose: 3000
                         });
                     }
+                    // Remove form rule builders
+                    var numRuleBuilders = BLCAdmin.ruleBuilders.ruleBuilderCount();
+                    var numFormRuleBuilders = $form.find('.rule-builder-simple, .rule-builder-simple-time, .rule-builder-with-quantity').length;
+                    var startIndex = numRuleBuilders - numFormRuleBuilders; // index from which to start removing rule builders
+                    BLCAdmin.ruleBuilders.getAllRuleBuilders().splice(startIndex, numFormRuleBuilders);
                 }
             });
         }
