@@ -702,18 +702,7 @@
                 collectedData.data = [];
                 for (var j = 0; j < buildersLen; j++) {
                     var builder = builders[j];
-                    // check for filters
-                    try {
-                        var dataDTO = $(builder).queryBuilder('getRules');
-                    }
-                    catch (err) {
-                        if (err.message == "Missing filters list") {
-                            return;
-                        } else {
-                            throw err;
-                        }
-                    }
-
+                    var dataDTO = $(builder).queryBuilder('getRules');
                     if (dataDTO.rules) {
                         dataDTO.pk = $container.find(".rules-group-header-item-pk").val();
                         dataDTO.quantity = $container.find(".rules-group-header-item-qty").val();
