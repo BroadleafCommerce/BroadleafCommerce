@@ -547,6 +547,8 @@
             }
 
             if ($table.data('listgridtype') == 'asset_grid' && $table.closest('.select-group').find('.select-column:visible').length > 0) {
+                // For Asset Grids, the folder select is 320px wide and the scrollbar on the listgrid being resized is
+                // 15px wide.  Therefore, the new size of the listgrid is: TOTAL_WIDTH - (320px + 15px)
                 var fullWidth = $table.closest('.select-group').width() - 335;
 
                 $headerTable.css('width', '');
@@ -560,6 +562,7 @@
             } else if ($table.data('listgridtype') == 'tree' &&
                 $table.closest('.select-group').find('.select-column:visible').length === 0 &&
                 $modalBody.length > 0) {
+                // The 15px in the following line refers to the width of the scrollbar on list grids.
                 var fullWidth = $table.closest('.select-group').width() - 15;
 
                 $headerTable.css('width', '');
