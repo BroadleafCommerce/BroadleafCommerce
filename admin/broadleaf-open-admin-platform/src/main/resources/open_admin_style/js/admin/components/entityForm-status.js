@@ -267,8 +267,8 @@
             // If there are, we want to make sure the 'Save' button is active and any workflow buttons are not.
             if (this.getEntityFormChangesCount()) {
                 $saveBtn.prop('disabled', false);
-                $promoteBtn.prop('disabled', true).addClass('confirm');
-                $approveBtn.prop('disabled', true).addClass('confirm');
+                $promoteBtn.addClass('confirm');
+                $approveBtn.addClass('confirm');
 
                 $("#headerChangeBoxContainer").removeClass("hidden");
                 $(".change-box-message").html(BLCAdmin.messages.unsavedChangesRevert);
@@ -278,8 +278,8 @@
             // workflow buttons are enabled
             else {
                 $saveBtn.prop('disabled', true);
-                $promoteBtn.prop('disabled', false).removeClass('confirm');
-                $approveBtn.prop('disabled', false).removeClass('confirm');
+                $promoteBtn.removeClass('confirm');
+                $approveBtn.removeClass('confirm');
 
                 $("#headerChangeBoxContainer").addClass("hidden");
                 $('#headerChangeBox').hide();
