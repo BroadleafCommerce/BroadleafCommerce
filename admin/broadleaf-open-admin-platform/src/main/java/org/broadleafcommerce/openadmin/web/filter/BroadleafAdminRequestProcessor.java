@@ -204,7 +204,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                         }
                     }
                 }
-                if (profiles.size() == 1) {
+                if (profiles.size() > 0) {
                     profile = profiles.get(0);
                 }
             }
@@ -258,7 +258,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                         }
                     }
                 }
-                if (catalogs.size() == 1) {
+                if (catalogs.size() > 0) {
                     catalog = catalogs.get(0);
                 }
             }
