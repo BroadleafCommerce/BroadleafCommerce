@@ -192,7 +192,7 @@
                 }
 
                 // If we made it this far, set the fields value.
-                $(el).val(origVal);
+                $(el).val(origVal).trigger('blur');
             }
 
             // Finally, we want to clear out all changes in the `entityFormChangeMap` and any data attributes on the fields.
