@@ -160,6 +160,9 @@
 
                     } else {
                         BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemSaving);
+                        if (BLCAdmin.entityForm.status) {
+                            BLCAdmin.entityForm.status.setDidConfirmLeave(false);
+                        }
                     }
 
                     BLCAdmin.runPostFormSubmitHandlers($form, data);
@@ -341,6 +344,11 @@ $(document).ready(function() {
         var $form = BLCAdmin.getForm($(this));
 
         BLCAdmin.entityForm.showActionSpinner($(this).closest('.content-area-title-bar.entity-form-actions'));
+
+        // This is a save, we need to enable the page to be reloaded (in the case of an initial save)
+        if (BLCAdmin.entityForm.status) {
+            BLCAdmin.entityForm.status.setDidConfirmLeave(true);
+        }
 
         if ($(".blc-admin-ajax-update").length && $form.parents(".modal-body").length == 0) {
             BLCAdmin.entityForm.submitFormViaAjax($form);

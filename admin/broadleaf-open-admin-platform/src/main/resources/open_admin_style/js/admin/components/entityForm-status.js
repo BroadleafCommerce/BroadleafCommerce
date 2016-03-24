@@ -109,9 +109,9 @@
                 // to it's original values
                 else if ($(el).hasClass('mediaItem')) {
                     var $mediaImageContainer = $(el).next('.media-image-container');
-                    $mediaImageContainer.find('img.thumbnail').attr("src", origVal);
-                    $mediaImageContainer.find('img.thumbnail').data("fullurl", origVal);
-                    $mediaImageContainer.find('img.thumbnail').parent().attr("href", origVal);
+                    $mediaImageContainer.find('img.thumbnail').attr("src", BLC.servletContext + origVal);
+                    $mediaImageContainer.find('img.thumbnail').data("fullurl", BLC.servletContext + origVal);
+                    $mediaImageContainer.find('img.thumbnail').parent().attr("href", BLC.servletContext + origVal);
                     $mediaImageContainer.find('img.thumbnail').removeClass('placeholder-image');
                     $mediaImageContainer.find('button.clear-asset-selector').show();
 
@@ -125,6 +125,7 @@
                             $container.find('.display-value').val(origVal);
                         } else {
                             $container.find('.display-value').hide();
+                            $container.find('.clear-foreign-key').hide();
                             $container.find('.display-value-none-selected').show();
                         }
                     }
@@ -152,8 +153,35 @@
                     // In order to get the new rules on this `RuleBuilder` we need to grab the actual `RuleBuilder`
                     var hiddenId = $ruleBuilderContainer.next('.rule-builder-data').data('hiddenid');
                     var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
+                    var ruleType = $ruleBuilderContainer.parent().find('.rule-builder-required-field').data('ruletype');
 
-                    ruleBuilder.builders[0].queryBuilder('setRules', JSON.parse(origVal));
+                    // Change the original value to JSON
+                    var origBuilders = JSON.parse(JSON.parse(origVal));
+
+                    // Clear out the rule builder container
+                    ruleBuilder.removeAllQueryBuilders();
+                    $ruleBuilderContainer.empty();
+
+                    // Recreate the original rule builder
+                    var jsonVal = origBuilders;
+                    if (jsonVal.data.length > 0) {
+                        for (var i=0; i<jsonVal.data.length; i++) {
+                            if (ruleType !== BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY) {
+                                jsonVal.data[i].quantity = null;
+                            }
+                            BLCAdmin.ruleBuilders.constructQueryBuilder($ruleBuilderContainer, jsonVal.data[i],
+                                ruleBuilder.fields, ruleBuilder);
+                        }
+                    } else {
+                        var qty = null;
+                        if (ruleType === BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY) {
+                            qty = 1;
+                        }
+
+                        BLCAdmin.ruleBuilders.constructQueryBuilder($ruleBuilderContainer, BLCAdmin.ruleBuilders.getEmptyRuleData(qty),
+                            ruleBuilder.fields, ruleBuilder);
+                    }
+
                     continue;
                 }
                 // This is a special case for rule builder's quantity match rule
@@ -221,7 +249,7 @@
                     this.removeChangesForId(id);
                 }
             }
-            console.log(entityFormChangeMap);
+            
             this.updateEntityFormActions();
         },
 
@@ -300,7 +328,9 @@
                 var hiddenId = $ruleBuilderContainer.next('.rule-builder-data').data('hiddenid');
                 var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
 
-                newVal = ruleBuilder.builders[0].queryBuilder('getRules');
+                var rules = BLCAdmin.ruleBuilders.getAllRuleBuilderRules(ruleBuilder);
+                newVal = JSON.stringify(rules);
+
                 origVal = $ruleBuilderContainer.attr('data-orig-val');
 
                 // If the original value is not set, this is likely being populated for the first time.
@@ -378,7 +408,9 @@
 
                 // Set the original value on the rule builder once its been completely initialized
                 if (ruleBuilder && ruleBuilder.builders.length) {
-                    var origVal = ruleBuilder.builders[0].queryBuilder('getRules');
+                    var rules = BLCAdmin.ruleBuilders.getAllRuleBuilderRules(ruleBuilder);
+                    var origVal = JSON.stringify(rules);
+
                     $(rulesContainer).attr('data-orig-val', JSON.stringify(origVal));
                     BLCAdmin.entityForm.status.removeChangesForId($(rulesContainer).attr('id'));
                 }
@@ -487,7 +519,8 @@ $(document).ready(function() {
                     var hiddenId = $ruleBuilderContainer.next('.rule-builder-data').data('hiddenid');
                     var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
 
-                    origVal = ruleBuilder.builders[0].queryBuilder('getRules');
+                    var rules = BLCAdmin.ruleBuilders.getAllRuleBuilderRules(ruleBuilder);
+                    var origVal = JSON.stringify(rules);
                     $ruleBuilderContainer.attr('data-orig-val', JSON.stringify(origVal));
                 }
                 return;
@@ -497,6 +530,10 @@ $(document).ready(function() {
                 var $ruleGroupContainer = $(this).closest('.rules-group-container');
                 $ruleGroupContainer.attr('orig-val', $(this).val());
                 return;
+            }
+            // If this is a redactor field, we have to set its text attribute, not its value
+            else if ($(this).hasClass('redactor-editor')) {
+                origVal = $(this).text();
             }
             $(this).attr('data-orig-val', origVal);
         }

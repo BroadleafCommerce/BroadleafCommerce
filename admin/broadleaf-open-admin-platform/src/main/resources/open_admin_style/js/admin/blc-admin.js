@@ -514,7 +514,8 @@ var BLCAdmin = (function($) {
                                 dateString = dateString.replace("23:59:00", "23:59:59");
                             }
                             // need to escape ids for entity form
-                            clone.attr('value',dateString);
+                            clone.attr('value',dateString).trigger('input');
+                            $input.trigger('input');
                         }
                     }
                 });
