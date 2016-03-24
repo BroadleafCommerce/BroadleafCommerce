@@ -73,6 +73,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldMa
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
+import org.broadleafcommerce.openadmin.web.form.component.ListGridActionGroup;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.component.MediaField;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilderField;
@@ -205,7 +206,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         String friendlyName = "listGrid" + c.getTime();
         // Set up the filter builder params
         listGrid.setJsonFieldName(friendlyName + "Json");
-        listGrid.setFriendlyName(friendlyName);
         listGrid.setFieldBuilder("RULE_SIMPLE");
         listGrid.setFieldWrapper(wrapper);
 
@@ -359,11 +359,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             BasicCollectionMetadata bcm = (BasicCollectionMetadata) fmd;
             readOnly = !bcm.isMutable();
 
-            if(bcm.getAddMethodType().equals(AddMethodType.LOOKUP)) {
+            if(AddMethodType.LOOKUP.equals(bcm.getAddMethodType())) {
                 isLookup = true;
             }
 
-            if (bcm.getAddMethodType().equals(AddMethodType.SELECTIZE_LOOKUP)) {
+            if (AddMethodType.SELECTIZE_LOOKUP.equals(bcm.getAddMethodType())) {
                 Property p = cmd.getPMap().get(bcm.getSelectizeVisibleField());
                 if (p != null) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
@@ -388,9 +388,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             type = ListGrid.Type.BASIC;
             
-            if (bcm.getAddMethodType().equals(AddMethodType.PERSIST) || bcm.getAddMethodType().equals(AddMethodType.PERSIST_EMPTY)) {
+            if (AddMethodType.PERSIST.equals(bcm.getAddMethodType()) || AddMethodType.PERSIST_EMPTY.equals(bcm.getAddMethodType())) {
                 editable = true;
-            } else if (bcm.getAddMethodType().equals(AddMethodType.SELECTIZE_LOOKUP)) {
+            } else if (AddMethodType.SELECTIZE_LOOKUP.equals(bcm.getAddMethodType())) {
                 selectize = true;
                 modalSingleSelectable = true;
             } else {
@@ -403,11 +403,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             readOnly = !((AdornedTargetCollectionMetadata) fmd).isMutable();
             AdornedTargetCollectionMetadata atcmd = (AdornedTargetCollectionMetadata) fmd;
 
-            if(atcmd.getAdornedTargetAddMethodType().equals(AdornedTargetAddMethodType.LOOKUP)) {
+            if(AdornedTargetAddMethodType.LOOKUP.equals(atcmd.getAdornedTargetAddMethodType())) {
                 isLookup = true;
             }
 
-            if (atcmd.getAdornedTargetAddMethodType().equals(AdornedTargetAddMethodType.SELECTIZE_LOOKUP)) {
+            if (AdornedTargetAddMethodType.SELECTIZE_LOOKUP.equals(atcmd.getAdornedTargetAddMethodType())) {
                 selectize = true;
 
                 Property p = cmd.getPMap().get(atcmd.getSelectizeVisibleField());
@@ -1229,6 +1229,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     ClassMetadata collectionCmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
                     if (collectionCmd.getPolymorphicEntities().getChildren().length != 0) {
                         List<ClassTree> entityTypes = collectionCmd.getPolymorphicEntities().getCollapsedClassTrees();
+                        ListGridActionGroup actionGroup = new ListGridActionGroup().withName("Add");
                         for (ClassTree entityType : entityTypes) {
                             ListGridAction ADD = new ListGridAction(ListGridAction.ADD)
                                     .withButtonClass(AddMethodType.PERSIST_EMPTY==
@@ -1236,9 +1237,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                     .withActionTargetEntity(entityType.getFullyQualifiedClassname())
                                     .withUrlPostfix("/add")
                                     .withIconClass("fa fa-plus")
-                                    .withDisplayText("Add " + BLCMessageUtils.getMessage(entityType.getFriendlyName()));
-                            listGrid.getToolbarActions().add(0, ADD);
+                                    .withDisplayText(BLCMessageUtils.getMessage(entityType.getFriendlyName()));
+                            actionGroup.getListGridActions().add(0, ADD);
                         }
+                        listGrid.addToolbarActionGroup(actionGroup);
                     } else {
                         listGrid.getToolbarActions().add(0, AddMethodType.PERSIST_EMPTY==
                                 ((BasicCollectionMetadata) md).getAddMethodType()?DefaultListGridActions.ADD_EMPTY:DefaultListGridActions.ADD);

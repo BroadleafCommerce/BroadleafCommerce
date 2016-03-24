@@ -385,11 +385,21 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
     /**
      * Denormalized set of key-value pairs to attach to a Sku. If you are looking for setting up
      * a {@link ProductOption} scenario (like colors, sizes, etc) see {@link getProductOptionValues()}
-     * and {@link setProductOptionValues()}
+     * and {@link setProductOptionValues()}.
      *
      * @return the attributes for this Sku
+     * @deprecated use {@link #getMultiValueSkuAttributes()} instead.
      */
+    @Deprecated
     public Map<String, SkuAttribute> getSkuAttributes();
+
+    /**
+     * Returns multivalued SkuAttributes associated with this sku using {@link org.apache.commons.collections.map.MultiValueMap}.
+     * For example, the key of Color could have SkuAttributes of Red and Blue values.
+     *
+     * @return the multivalued attributes for this Sku
+     */
+    public Map<String, SkuAttribute> getMultiValueSkuAttributes();
 
     /**
      * Sets the denormalized set of key-value pairs on a Sku

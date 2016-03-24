@@ -26,6 +26,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,7 +50,8 @@ import javax.servlet.http.HttpServletResponse;
 public class AdminOfferController extends AdminBasicEntityController {
     
     public static final String SECTION_KEY = "offer";
-    
+    public static String[] customCriteria = {};
+
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
         //allow external links to work for ToOne items
@@ -60,10 +62,26 @@ public class AdminOfferController extends AdminBasicEntityController {
     }
     
     @Override
+    public String[] getSectionCustomCriteria() {
+        return customCriteria;
+    }
+
+    @Override
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
+                                 @PathVariable Map<String, String> pathVars,
+                                 @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+        customCriteria = new String[]{"listGridView"};
+        String view = super.viewEntityList(request, response, model, pathVars, requestParams);
+        return view;
+    }
+
+    @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id) throws Exception {
+        customCriteria = new String[]{};
         String view = super.viewEntityForm(request, response, model, pathVars, id);
         modifyModelAttributes(model);
         return view;

@@ -27,7 +27,7 @@
     
     <!-- Element processors -->
     <element-processor name="categories" class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
-    <element-processor name="form" class="org.broadleafcommerce.core.web.processor.FormProcessor" />
+    <element-processor name="form" class="org.broadleafcommerce.common.web.processor.FormProcessor" />
     <element-processor name="googleanalytics" class="org.broadleafcommerce.core.web.processor.GoogleAnalyticsProcessor" />
     <element-processor name="google_universal_analytics" class="org.broadleafcommerce.core.web.processor.GoogleUniversalAnalyticsProcessor" />
     <element-processor name="head" class="org.broadleafcommerce.core.web.processor.HeadProcessor" />

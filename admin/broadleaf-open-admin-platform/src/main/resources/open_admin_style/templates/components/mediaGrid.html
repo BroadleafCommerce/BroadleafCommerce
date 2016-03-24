@@ -2,7 +2,7 @@
 
     <div class="asset-ribbon">
         <div class="asset-title-container">
-            <span class="asset-title" th:utext="#{${listGrid.friendlyName}}"></span>
+            <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" class="asset-title" th:utext="#{${listGrid.friendlyName}}"></span>
 
             <!-- Asset Ribbon Actions -->
             <div class="asset-title-actions">

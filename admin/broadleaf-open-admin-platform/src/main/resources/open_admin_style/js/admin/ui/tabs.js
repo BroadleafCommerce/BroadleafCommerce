@@ -60,6 +60,8 @@
                 BLCAdmin.initializeFields(BLCAdmin.getActiveTab());
                 BLCAdmin.updateFields(BLCAdmin.getActiveTab());
             }
+
+            $(tab).trigger('activated');
         });
     };
 

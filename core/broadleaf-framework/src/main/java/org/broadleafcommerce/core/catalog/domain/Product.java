@@ -605,6 +605,8 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      */
     public Map<String, ProductAttribute> getProductAttributes();
 
+    Map<String, ProductAttribute> getMultiValueProductAttributes();
+
     /**
      * Sets a generic list of key-value pairs for Product
      * @param productAttributes

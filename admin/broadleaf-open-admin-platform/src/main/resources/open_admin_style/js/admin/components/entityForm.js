@@ -132,7 +132,7 @@
                     url: $form.attr('action'),
                     dataType: "json",
                     type: "POST",
-                    data: $form.serializeArray()
+                    data: BLCAdmin.serializeArray($form)
                 }, function (data) {
                     BLCAdmin.entityForm.hideActionSpinner();
 
@@ -347,7 +347,7 @@ $(document).ready(function() {
             BLC.ajax({
                 url: this.action,
                 type: "POST",
-                data: BLCAdmin.serializeForm($(this))
+                data: BLCAdmin.serialize($(this))
             }, function(data) {
                 var $modal = BLCAdmin.currentModal();
                 BLCAdmin.entityForm.swapModalEntityForm($modal, data);

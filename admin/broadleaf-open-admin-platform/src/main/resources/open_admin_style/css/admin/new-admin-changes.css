@@ -425,9 +425,14 @@ div.action-popup img.ajax-loader {
     display: none;
 }
 
-.listgrid-toolbar .button {
+.listgrid-toolbar .button, .listgrid-toolbar .button-group li {
     height: 30px;
     line-height: 30px;
+}
+
+.listgrid-toolbar .button-group li {
+    font-size: 11px;
+    text-transform: none;
 }
 
 .listgrid-toolbar .listgrid-toolbar-actions, .listgrid-toolbar .listgrid-row-actions {

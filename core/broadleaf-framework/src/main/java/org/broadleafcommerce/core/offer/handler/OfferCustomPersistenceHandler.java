@@ -93,6 +93,11 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         DynamicResultSet resultSet = helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+        String customCriteria = "";
+        if (persistencePackage.getCustomCriteria().length > 0) {
+            customCriteria = persistencePackage.getCustomCriteria()[0];
+        }
+
         for (Entity entity : resultSet.getRecords()) {
             Property discountType = entity.findProperty("discountType");
             Property discountValue = entity.findProperty("value");
@@ -101,9 +106,11 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             if (discountType.getValue().equals("PERCENT_OFF")) {
                 value = value.indexOf(".") < 0 ? value : value.replaceAll("0*$", "").replaceAll("\\.$", "");
                 discountValue.setValue(value + "%");
-            } else {
+            } else if (discountType.getValue().equals("AMOUNT_OFF")) {
                 NumberFormat nf = NumberFormat.getCurrencyInstance();
                 discountValue.setValue(nf.format(new BigDecimal(value)));
+            } else if (discountType.getValue().equals("")) {
+                discountValue.setValue("");
             }
 
             Property timeRule = entity.findProperty("offerMatchRules---TIME");
@@ -112,6 +119,12 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             advancedLabel.setName("showAdvancedVisibilityOptions");
             advancedLabel.setValue((timeRule.getValue() == null) ? "true" : "false");
             entity.addProperty(advancedLabel);
+
+            if (!customCriteria.equals("listGridView")) {
+                String setValue = discountValue.getValue();
+                setValue = setValue.replaceAll("\\%", "").replaceAll("\\$", "");
+                discountValue.setValue(setValue);
+            }
         }
         return resultSet;
     }

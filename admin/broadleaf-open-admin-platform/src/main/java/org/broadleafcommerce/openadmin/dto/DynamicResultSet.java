@@ -19,10 +19,11 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.broadleafcommerce.openadmin.web.form.entity.Tab;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -87,7 +88,7 @@ public class DynamicResultSet implements Serializable {
     }
 
     public Integer getTotalRecords() {
-        return totalRecords;
+        return totalRecords == null ? 0 : totalRecords;
     }
 
     public void setTotalRecords(Integer totalRecords) {
@@ -95,7 +96,7 @@ public class DynamicResultSet implements Serializable {
     }
 
     public Entity[] getRecords() {
-        return records;
+        return records == null ? new Entity[0] : records;
     }
 
     public void setRecords(Entity[] records) {
@@ -111,7 +112,7 @@ public class DynamicResultSet implements Serializable {
     }
 
     public Integer getStartIndex() {
-        return startIndex;
+        return startIndex == null ? 0 : startIndex;
     }
 
     public void setStartIndex(Integer startIndex) {
@@ -119,7 +120,7 @@ public class DynamicResultSet implements Serializable {
     }
 
     public Integer getPageSize() {
-        return pageSize;
+        return pageSize == null ? 0 : pageSize;
     }
 
     public void setPageSize(Integer pageSize) {

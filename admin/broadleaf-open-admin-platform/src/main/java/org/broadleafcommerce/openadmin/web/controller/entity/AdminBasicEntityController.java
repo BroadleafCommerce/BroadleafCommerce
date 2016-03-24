@@ -1184,6 +1184,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 ListGrid listGrid = formService.buildCollectionListGrid(id, drs, collectionProperty, sectionKey, sectionCrumbs);
                 listGrid.setPathOverride(request.getRequestURL().toString());
 
+                if (AddMethodType.LOOKUP.equals(fmd.getAddMethodType()) || AddMethodType.SELECTIZE_LOOKUP.equals(fmd.getAddMethodType())) {
+                    listGrid.removeAllRowActions();
+                }
+
                 model.addAttribute("listGrid", listGrid);
                 model.addAttribute("viewType", "modal/simpleSelectEntity");
             }
@@ -1804,12 +1808,16 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Field createdBy = entityForm.findField("auditable.createdBy");
         if (createdBy != null && createdBy.getValue() != null) {
             AdminUser createdUser = adminUserDao.readAdminUserById(Long.parseLong(createdBy.getValue()));
-            createdBy.setValue(createdUser.getName());
+            if (createdUser != null) {
+                createdBy.setValue(createdUser.getName());
+            }
         }
         Field updatedBy = entityForm.findField("auditable.updatedBy");
         if (updatedBy != null && updatedBy.getValue() != null) {
             AdminUser updatedUser = adminUserDao.readAdminUserById(Long.parseLong(updatedBy.getValue()));
-            updatedBy.setValue(updatedUser.getName());
+            if (updatedUser != null) {
+                updatedBy.setValue(updatedUser.getName());
+            }
         }
     }
     
