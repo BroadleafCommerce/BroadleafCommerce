@@ -539,6 +539,7 @@
         updateGridSize : function($tbody) {
             var $table = $tbody.closest('table.list-grid-table');
             var $headerTable = $table.closest('.listgrid-container').find('.listgrid-header-wrapper table');
+            var rowHeight = BLCAdmin.listGrid.paginate.getRowHeight($tbody);
             var thWidths = [];
             var $modalBody = $tbody.closest('.modal-body');
 
@@ -619,6 +620,11 @@
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
                 wrapperHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, wrapperHeight);
 
+                // Add an extra 2px to the maxHeight to avoid exposing the scroll bar if there is only one record
+                if (wrapperHeight <= rowHeight) {
+                    wrapperHeight = rowHeight + 2;
+                }
+
                 $wrapper.css('max-height', wrapperHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
                 
@@ -639,6 +645,7 @@
                 }
 
                 wrapperHeight -= $wrapper.next('.listgrid-table-footer:visible').outerHeight();
+                wrapperHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, wrapperHeight);
 
                 $wrapper.css('max-height', wrapperHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
@@ -705,7 +712,7 @@
             var loadedRecordRange = BLCAdmin.listGrid.paginate.getLoadedRecordRanges($tbody)[0]
             // This gives me back a 0-indexed range, I need the row count so add 1
             var numLoadedRows = loadedRecordRange.hi - loadedRecordRange.lo + 1;
-            var numPaddedRows = BLCAdmin.listGrid.paginate.getTotalRecords($tbody) - numLoadedRows;
+            var numPaddedRows = Math.max(0, BLCAdmin.listGrid.paginate.getTotalRecords($tbody) - numLoadedRows);
 
             // How much of the visible viewport is actual loaded rows and how much is padding? 
             var visibleRowsHeight = rowHeight * numLoadedRows;
