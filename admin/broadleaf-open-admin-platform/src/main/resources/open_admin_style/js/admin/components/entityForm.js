@@ -478,15 +478,25 @@ $(document).ready(function() {
                             autoClose: 3000
                         });
                     }
-                    // Remove form rule builders
-                    var numRuleBuilders = BLCAdmin.ruleBuilders.ruleBuilderCount();
-                    var numFormRuleBuilders = $form.find('.rule-builder-simple, .rule-builder-simple-time, .rule-builder-with-quantity').length;
-                    var startIndex = numRuleBuilders - numFormRuleBuilders; // index from which to start removing rule builders
-                    BLCAdmin.ruleBuilders.getAllRuleBuilders().splice(startIndex, numFormRuleBuilders);
                 }
             });
         }
         return false;
+    });
+
+    /*
+     * On hiding the modal, remove any rule-builders added inside of the modal. This needs to happen on using the 'close'
+     * and 'submit' buttons.
+     *
+     * A click listener cannot be used on the 'close' button because other listeners are fired
+     * earlier and a listener added here never gets fired. Therefore, because the on-hide listener does get fired, the
+     * rule builders will be removed after that event.
+     */
+    $('body').on('hide', '.modal', function () {
+        var numRuleBuilders = BLCAdmin.ruleBuilders.ruleBuilderCount();
+        var numFormRuleBuilders = $(this).find('.rule-builder-simple, .rule-builder-simple-time, .rule-builder-with-quantity').length;
+        var startIndex = numRuleBuilders - numFormRuleBuilders; // index from which to start removing rule builders
+        BLCAdmin.ruleBuilders.getAllRuleBuilders().splice(startIndex, numFormRuleBuilders);
     });
 
     $('body').on('click', 'a.media-link', function(event) {
