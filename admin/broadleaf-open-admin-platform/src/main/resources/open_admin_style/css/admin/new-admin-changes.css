@@ -488,18 +488,17 @@ div.alert-box.list-grid-alert.save-alert a.close {
     display: none;
 }
 
-button:disabled {
-    background-color: #EEEEEE !important;
+button:disabled, button.disabled {
+    /*background-color: #EEEEEE !important;*/
+    opacity: 0.4;
     box-shadow: none;
-    color: #B3B3B3 !important;
+    color: black !important;
     cursor: default;
 }
 
-button.disabled {
-    background-color: #EEEEEE !important;
-    box-shadow: none;
-    color: #B3B3B3 !important;
-    cursor: default;
+button:disabled:hover, button.disabled:hover {
+    clear: both;
+    /*background-color: inherit !important;*/
 }
 
 .listgrid-header-wrapper {

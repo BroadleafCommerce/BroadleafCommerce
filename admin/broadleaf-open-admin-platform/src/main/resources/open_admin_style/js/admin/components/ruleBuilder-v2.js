@@ -686,61 +686,73 @@
          * Performs the appropriate data transformations in order to properly bind with the backing
          * org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper
          *
-         * NOTE: this will not collect and set every rule builder passed in. It determines whether or not
-         * to collect the data based on its state (i.e. if there is a RADIO and it is off, it will not collect data)
-         *
          * @param ruleBuilder
          */
         setJSONValueOnField : function (ruleBuilder) {
             var hiddenId = ruleBuilder.hiddenId;
-            var $container = $('#'+ruleBuilder.containerId);
             var builders = ruleBuilder.builders;
 
             if (builders != null && ruleBuilder) {
-                var collectedData = {};
-                collectedData.data = [];
-                for (var j = 0; j < builders.length; j++) {
-                    var builder = builders[j];
-                    var dataDTO = $(builder).queryBuilder('getRules');
-                    if (dataDTO.rules) {
-                        dataDTO.pk = $container.find(".rules-group-header-item-pk").val();
-                        dataDTO.quantity = $container.find(".rules-group-header-item-qty").val();
-                        for (var k = 0; k < dataDTO.rules.length; k++) {
-                            if (Array.isArray(dataDTO.rules[k].value)) {
-                                dataDTO.rules[k].value =  JSON.stringify(dataDTO.rules[k].value);
-                            }
-                        }
-
-                        collectedData.data.push(dataDTO);
-                    }
-                }
-
-                // There are two scenarios that we should clear out rule data:
-                //   1. The containing field-group has a hidden class, which means this field was explicitly hidden as it
-                //      likely depends on the value of some other field and is not currently applicable
-                //   2. This field is optional and currently set to off
-
-                var explicitlyHidden = $container.closest('.field-group').hasClass('hidden');
-                var $onOffRadios = $container.closest('.field-group').find('input[type="radio"].radio');
-                var setToOff = $onOffRadios.length < 1 ? false : $onOffRadios.filter(function() {
-                    return this.id.endsWith('false');
-                }).is(':checked');
-
-                if (explicitlyHidden || setToOff) {
-                    collectedData.data = [];
-                }
-
-                //only send over the error if it hasn't been explicitly turned off
-                if (ruleBuilder.data.error != null && !setToOff) {
-                    collectedData.error = ruleBuilder.data.error;
-                }
+                var collectedData = this.getAllRuleBuilderRules(ruleBuilder);
 
                 $("#"+hiddenId).val(JSON.stringify(collectedData));
                 this.setReadableJSONValueOnField(ruleBuilder, collectedData.data);
-
             }
         },
 
+        /**
+         * Returns the JSON value of the current rule builder.
+         *
+         * NOTE: this will not collect and set every rule builder passed in. It determines whether or not
+         * to collect the data based on its state (i.e. if there is a RADIO and it is off, it will not collect data)
+         * 
+         * @param ruleBuilder
+         * @returns {{}}
+         */
+        getAllRuleBuilderRules : function (ruleBuilder) {
+            var $container = $('#'+ruleBuilder.containerId);
+
+            var collectedData = {};
+            collectedData.data = [];
+            for (var j = 0; j < ruleBuilder.builders.length; j++) {
+                var builder = ruleBuilder.builders[j];
+                var dataDTO = $(builder).queryBuilder('getRules');
+                if (dataDTO.rules) {
+                    dataDTO.pk = $(builder).find(".rules-group-header-item-pk").val();
+                    dataDTO.quantity = $(builder).find(".rules-group-header-item-qty").val();
+                    for (var k = 0; k < dataDTO.rules.length; k++) {
+                        if (Array.isArray(dataDTO.rules[k].value)) {
+                            dataDTO.rules[k].value =  JSON.stringify(dataDTO.rules[k].value);
+                        }
+                    }
+
+                    collectedData.data.push(dataDTO);
+                }
+            }
+
+            // There are two scenarios that we should clear out rule data:
+            //   1. The containing field-group has a hidden class, which means this field was explicitly hidden as it
+            //      likely depends on the value of some other field and is not currently applicable
+            //   2. This field is optional and currently set to off
+
+            var explicitlyHidden = $container.closest('.field-group').hasClass('hidden');
+            var $onOffRadios = $container.closest('.field-group').find('input[type="radio"].radio');
+            var setToOff = $onOffRadios.length < 1 ? false : $onOffRadios.filter(function() {
+                return this.id.endsWith('false');
+            }).is(':checked');
+
+            if (explicitlyHidden || setToOff) {
+                collectedData.data = [];
+            }
+
+            //only send over the error if it hasn't been explicitly turned off
+            if (ruleBuilder.data.error != null && !setToOff) {
+                collectedData.error = ruleBuilder.data.error;
+            }
+
+            return collectedData;
+        },
+        
         /** Clears hidden field data **/
         clearField : function (ruleBuilder) {
             var hiddenId = ruleBuilder.hiddenId;
@@ -899,14 +911,25 @@
             var ruleType = $(this).data('ruletype');
             var launchModal = $(this).data('modal');
             var rulesContainer = $($(this)).siblings('.query-builder-rules-container');
+            var rulesContainerID = rulesContainer.attr('id');
+            var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilder(rulesContainerID);
+            var data = ruleBuilder.data;
+
             if (launchModal) {
-                var rulesContainerID = rulesContainer.attr('id');
-                var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilder(rulesContainerID);
-                var data = ruleBuilder.data;
                 BLCAdmin.ruleBuilders.setReadableJSONValueOnField(ruleBuilder, data);
                 ruleBuilder.removeAllQueryBuilders();
             } else {
                 BLCAdmin.ruleBuilders.showOrCreateMainRuleBuilder(rulesContainer, ruleType);
+            }
+
+            if (BLCAdmin.entityForm.status) {
+                // Set the original value on the rule builder once its been completely initialized
+                if (ruleBuilder.builders.length) {
+                    var rules = BLCAdmin.ruleBuilders.getAllRuleBuilderRules(ruleBuilder);
+                    var origVal = JSON.stringify(rules);
+                    $(rulesContainer).attr('data-orig-val', JSON.stringify(origVal));
+                    BLCAdmin.entityForm.status.removeChangesForId($(rulesContainer).attr('id'));
+                }
             }
         });
     });

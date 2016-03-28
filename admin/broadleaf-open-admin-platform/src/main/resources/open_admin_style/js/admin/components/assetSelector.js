@@ -143,7 +143,7 @@ $(document).ready(function() {
     		if (mediaItem.length > 0) {
     		    var mediaJson = mediaItem.val() == "" || mediaItem.val() == "null" ? {} : jQuery.parseJSON(mediaItem.val());
         		mediaJson.url = fields['assetUrl'];
-        		mediaItem.val(JSON.stringify(mediaJson));
+        		mediaItem.val(JSON.stringify(mediaJson)).trigger('input');
     		} else {
     		    $this.find('input.mediaUrl').val(fields['assetUrl']);
     		}
@@ -168,7 +168,7 @@ $(document).ready(function() {
         var $this = $(this);
 
         //Set media value to null so that when the request is sent the entry in the map for primary is deleted
-        $container.find('input.mediaItem').val('null').trigger('change');
+        $container.find('input.mediaItem').val('null').trigger('change').trigger('input');
 
         //Set placeholder image and hide clear button since there's nothing to clear
         var src = $container.find('img.placeholder').attr('src');

@@ -22,8 +22,23 @@
 
 
 /*************************** ENTITY FORM TITLE BAR (beginning of section) ***************************/
+.sticky-fixed {
+    position: fixed;
+    top: 80px;
+    width: 100%;
+    z-index: 1050;
+}
+
+.modal-backdrop {
+    z-index: 1051;
+}
+
+.modal {
+    z-index: 1052;
+}
+
 .app-content .content .section-content .main-content .content-area-title-bar>.button-group .button {
-    margin-top: 0;
+    margin-top: -5px;
     margin-left: -3px;
 }
 
@@ -33,6 +48,17 @@
 
 .app-content .content .section-content .main-content .content-area-title-bar>.button-group ul {
     margin-top: -22px;
+}
+
+#revert-changes {
+    color: #D20A33;
+    text-decoration: underline;
+}
+
+#headerChangeBoxContainer {
+    float: right;
+    padding-right: 10px;
+    font-size: 12px;
 }
 /*************************** ENTITY FORM TITLE BAR (end of section) ***************************/
 
