@@ -65,7 +65,13 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             String requestedValue = populateValueRequest.getRequestedValue();
             String fixedValue = fixAssetPathsForStorage(requestedValue);
 
-            boolean dirty = checkDirtyState(populateValueRequest, instance, fixedValue);
+            boolean dirty;
+            if (populateValueRequest.getProperty().getIsDirty()) {
+                dirty = true;
+            } else {
+                dirty = checkDirtyState(populateValueRequest, instance, fixedValue);
+            }
+
             populateValueRequest.getProperty().setIsDirty(dirty);
 
             populateValueRequest.getFieldManager().setFieldValue(instance,
