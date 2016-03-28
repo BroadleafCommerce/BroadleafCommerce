@@ -22,6 +22,9 @@
 
     var excludedEFSectionTabSelectors = [];
 
+    var originalStickyBarOffset = $('.sticky-container').offset().top;
+    var originalStickyBarHeight = $('.sticky-container').height();
+    
     BLCAdmin.entityForm = {
         showActionSpinner : function ($actions) {
             $("#headerFlashAlertBoxContainer").addClass("hidden");
@@ -148,8 +151,18 @@
                             clearOtherAlerts: true
                         });
 
+                        if (!$('.modal:not(#expire-message)').length && $('.entity-form').length) {
+                            if (BLCAdmin.entityForm.status) {
+                                BLCAdmin.entityForm.status.clearEntityFormChanges();
+                                BLCAdmin.entityForm.status.updateEntityFormActions();
+                            }
+                        }
+
                     } else {
                         BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemSaving);
+                        if (BLCAdmin.entityForm.status) {
+                            BLCAdmin.entityForm.status.setDidConfirmLeave(false);
+                        }
                     }
 
                     BLCAdmin.runPostFormSubmitHandlers($form, data);
@@ -180,25 +193,52 @@
             $ruleBuilders.find('.rules-group-body button').prop('disabled', true).addClass('disabled');
             $ruleBuilders.find('.button.and-button').prop('disabled', true).addClass('disabled');
             $ruleBuilders.find('.toggle-container label').addClass('disabled');
+        },
+
+        getOriginalStickyBarOffset : function() {
+            return originalStickyBarOffset;
+        },
+
+        getOriginalStickyBarHeight : function() {
+            return originalStickyBarHeight;
         }
     };
 })(jQuery, BLCAdmin);
 
 $(document).ready(function() {
-    
-    var $tabs = $('dl.tabs.entity-form');
-    var tabs_action=null;
-    if ($tabs.length > 0) {
-        var $lastTab = $tabs.find('dd:last');
-        if ($lastTab.length && $lastTab.width() + $lastTab.position().left + 15 > $tabs.width()) {
-            $tabs.mCustomScrollbar({
-                theme: 'dark',
-                autoHideScrollbar: true,
-                horizontalScroll: true
-            });
-        }
-    }
 
+    /**
+     * Make the sticky bar (breadcrumb) lock at the top of the window when it's scrolled off the page
+     */
+    $('.main-content').on('scroll', function() {
+        if (!$('form.entity-form').length || $('.oms').length)  {
+            return;
+        }
+        var $sc = $('.sticky-container');
+        var $scp = $('.sticky-container-padding');
+        var height = BLCAdmin.entityForm.getOriginalStickyBarHeight();
+        var minHeight = height - 30;
+
+        $scp.show();
+        $sc.addClass('sticky-fixed').css('top', BLCAdmin.entityForm.getOriginalStickyBarOffset());
+        $sc.outerWidth($('.main-content').outerWidth());
+        $('.sticky-container-padding').outerHeight(height);
+
+        if ($('.main-content').scrollTop() <= 30) {
+            var scroll = $('.main-content').scrollTop();
+            $sc.find('.content-area-title-bar').css('height', height - scroll);
+            $sc.find('.content-area-title-bar').css('line-height', height - scroll + 'px');
+            $sc.find('.content-area-title-bar h3').css('line-height', height - scroll + 'px');
+            $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', (-22 + scroll / 2) + 'px');
+        } else {
+            $sc.find('.content-area-title-bar').css('height', minHeight + 'px');
+            $sc.find('.content-area-title-bar').css('line-height', minHeight + 'px');
+            $sc.find('.content-area-title-bar h3').css('line-height', minHeight + 'px');
+            $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-7px');
+        }
+    });
+    
+    var tabs_action=null;
     $('body div.section-tabs li').find('a:not(".workflow-tab, .system-property-tab' +
             BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + '")').click(function(event) {
         var $tab = $(this);
@@ -223,8 +263,7 @@ $(document).ready(function() {
      		BLC.ajax({
      			url: tabUrl,
      			type: "POST",
-     			data: $form.serializeArray(),
-     			complete: BLCAdmin.entityForm.hideActionSpinner
+     			data: $form.serializeArray()
      		}, function(data) {
      			$('div.' + href + 'Tab .listgrid-container').find('.listgrid-header-wrapper table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
@@ -273,7 +312,7 @@ $(document).ready(function() {
             url: deleteUrl,
             type: "POST",
             data: $form.serializeArray(),
-            complete: BLCAdmin.entityForm.hideActionSpinner
+            complete: BLCAdmin.entityForm.hideActionSpinner()
         }, function (data) {
             $("#headerFlashAlertBoxContainer").removeClass("hidden");
             $(".errors, .error, .tab-error-indicator, .tabError").remove();
@@ -305,6 +344,11 @@ $(document).ready(function() {
         var $form = BLCAdmin.getForm($(this));
 
         BLCAdmin.entityForm.showActionSpinner($(this).closest('.content-area-title-bar.entity-form-actions'));
+
+        // This is a save, we need to enable the page to be reloaded (in the case of an initial save)
+        if (BLCAdmin.entityForm.status) {
+            BLCAdmin.entityForm.status.setDidConfirmLeave(true);
+        }
 
         if ($(".blc-admin-ajax-update").length && $form.parents(".modal-body").length == 0) {
             BLCAdmin.entityForm.submitFormViaAjax($form);
