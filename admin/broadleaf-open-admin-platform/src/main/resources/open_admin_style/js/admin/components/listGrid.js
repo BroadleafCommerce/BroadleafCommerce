@@ -664,7 +664,7 @@ $(document).ready(function () {
                 $valueField.val(fields['id']);
                 $this.find('span.display-value').html(displayValue);
                 $this.find('input.display-value').val(displayValue);
-                $this.find('input.hidden-display-value').val(displayValue);
+                $this.find('input.hidden-display-value').val(displayValue).trigger('input');
                 // Ensure that the clear button shows up after selecting a value
                 $this.find('button.clear-foreign-key').show();
                 // Ensure that the external link button points to the correct URL
@@ -691,7 +691,7 @@ $(document).ready(function () {
                         });
                     }
                 }
-                $valueField.trigger('change', fields);
+                $valueField.trigger('change', fields).trigger('input');
                 $valueField.closest('.field-group').trigger('change');
                 BLCAdmin.hideCurrentModal();
             });
@@ -736,6 +736,9 @@ $(document).ready(function () {
         return false;
     });
 
+    /**
+     * Handle the Re-ordering of ListGrid items
+     */
     $('body').on({
         mouseenter: function () {
             var $this = $(this);
@@ -799,14 +802,14 @@ $(document).ready(function () {
                         }
                     }, function (data) {
                         var $container = $('div.listgrid-container#' + data.field);
+
                         BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', {
                             alertType: 'save-alert',
                             autoClose: 3000
                         });
-
                         $container = $this.closest('.listgrid-container');
                         if ($container.prev().length) {
-                            var $parent = $container.prev().find('tr.selected');
+                            var $parent =  ui.item;
                             if (!$parent.hasClass('dirty')) {
                                 $parent.addClass('dirty');
                                 var changeIcon = '<a class="blc-icon-triangle-right has-tip hover-cursor workflow-icon" data-width="200" ' +
@@ -843,6 +846,9 @@ $(document).ready(function () {
         }
     }, 'a.sub-list-grid-reorder');
 
+    /**
+     * Handle the removing of ListGridItems from the ListGrid
+     */
     $('body').on('click', 'a.sub-list-grid-remove, button.sub-list-grid-remove', function () {
         var link = BLCAdmin.listGrid.getActionLink($(this));
 
@@ -1014,7 +1020,7 @@ $(document).ready(function () {
         }
 
         // Remove the criteria input val
-        $container.find('.value').val('').trigger('change');
+        $container.find('.value').val('').trigger('change').trigger('input');
         $this.toggle();
 
         $container.find('.external-link-container').hide();

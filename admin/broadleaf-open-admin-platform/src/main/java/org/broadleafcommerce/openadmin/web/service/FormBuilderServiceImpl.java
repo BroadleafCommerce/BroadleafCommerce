@@ -319,6 +319,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         boolean selectize = false;
         boolean isMedia = false;
         boolean isLookup = false;
+        String sortProperty = null;
         FieldWrapper wrapper = new FieldWrapper();
 
 
@@ -396,8 +397,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             } else {
                 modalSingleSelectable = true;
             }
-
             sortable = StringUtils.isNotBlank(bcm.getSortProperty());
+            if (sortable) {
+                sortProperty = bcm.getSortProperty();
+            }
         } else if (fmd instanceof AdornedTargetCollectionMetadata) {
             modalSingleSelectable = true;
             readOnly = !((AdornedTargetCollectionMetadata) fmd).isMutable();
@@ -528,8 +531,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
             LOG.error(message);
         }
-        
-        ListGrid listGrid = createListGrid(ceilingType, headerFields, type, drs, sectionKey, fmd.getOrder(), idProperty, sectionCrumbs);
+
+        ListGrid listGrid = createListGrid(ceilingType, headerFields, type, drs, sectionKey, fmd.getOrder(), idProperty, sectionCrumbs,sortProperty);
         listGrid.setSubCollectionFieldName(field.getName());
         listGrid.setFriendlyName(field.getMetadata().getFriendlyName());
         if (StringUtils.isEmpty(listGrid.getFriendlyName())) {
@@ -671,8 +674,39 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return url;
     }
 
+    /**
+     * @deprecated use {@link #createListGrid(String, List, ListGrid.Type, DynamicResultSet, String, Integer, String, List, boolean)}
+     * @param className
+     * @param headerFields
+     * @param type
+     * @param drs
+     * @param sectionKey
+     * @param order
+     * @param idProperty
+     * @param sectionCrumbs
+     * @return
+     */
+    @Deprecated
     protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, DynamicResultSet drs, 
             String sectionKey, int order, String idProperty, List<SectionCrumb> sectionCrumbs) {
+       return createListGrid(className,headerFields,type,drs,sectionKey,order,idProperty,sectionCrumbs,null);
+    }
+
+    /**
+     * Populate a ListGrid with ListGridRecords.
+     *
+     * @param className
+     * @param headerFields
+     * @param type
+     * @param drs
+     * @param sectionKey
+     * @param order
+     * @param idProperty
+     * @param sectionCrumbs
+     * @param sortPropery
+     * @return
+     */
+    protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, DynamicResultSet drs, String sectionKey, Integer order, String idProperty, List<SectionCrumb> sectionCrumbs, String sortPropery) {
         // Create the list grid and set some basic attributes
         ListGrid listGrid = new ListGrid();
         listGrid.setClassName(className);
@@ -685,7 +719,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         listGrid.setStartIndex(drs.getStartIndex());
         listGrid.setTotalRecords(drs.getTotalRecords());
         listGrid.setPageSize(drs.getPageSize());
-        
+
         String sectionIdentifier = extractSectionIdentifierFromCrumb(sectionCrumbs);
         AdminSection section = navigationService.findAdminSectionByClassAndSectionId(className, sectionIdentifier);
         if (section != null) {
@@ -705,7 +739,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ListGridRecord record = new ListGridRecord();
             record.setListGrid(listGrid);
             record.setDirty(e.isDirty());
-
+            if (StringUtils.isNotBlank(sortPropery)) {
+                Property sort = e.findProperty(sortPropery);
+                record.setDisplayOrder(sort.getValue());
+            }
             if (e.findProperty("hasError") != null) {
                 Boolean hasError = Boolean.parseBoolean(e.findProperty("hasError").getValue());
                 record.setIsError(hasError);
@@ -727,9 +764,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 Property p = e.findProperty(headerField.getName());
                 if (p != null) {
                     Field recordField = new Field().withName(headerField.getName())
-                                                   .withFriendlyName(headerField.getFriendlyName())
-                                                   .withOrder(p.getMetadata().getOrder());
-                    
+                            .withFriendlyName(headerField.getFriendlyName())
+                            .withOrder(p.getMetadata().getOrder());
+
                     if (headerField instanceof ComboField) {
                         recordField.setValue(((ComboField) headerField).getOption(p.getValue()));
                         recordField.setDisplayValue(p.getDisplayValue());
@@ -747,9 +784,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         }
                         recordField.setDisplayValue(p.getDisplayValue());
                     }
-                    
+
                     recordField.setDerived(isDerivedField(headerField, recordField, p));
-                    
+
                     record.getFields().add(recordField);
                 }
             }
@@ -763,7 +800,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (e.findProperty(BasicPersistenceModule.ALTERNATE_ID_PROPERTY) != null) {
                 record.setAltId(e.findProperty(BasicPersistenceModule.ALTERNATE_ID_PROPERTY).getValue());
             }
-            
+
             extensionManager.getProxy().modifyListGridRecord(className, record, e);
 
             listGrid.getRecords().add(record);
