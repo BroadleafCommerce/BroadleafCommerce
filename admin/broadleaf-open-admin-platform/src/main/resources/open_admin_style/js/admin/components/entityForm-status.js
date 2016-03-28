@@ -251,6 +251,7 @@
             }
             
             this.updateEntityFormActions();
+            console.log(entityFormChangeMap);
         },
 
         /**
@@ -306,8 +307,10 @@
             }
             // If this is a media item input we only care about the url attribute
             else if ($(el).hasClass('mediaItem')) {
-                var mediaJson = JSON.parse(newVal);
-                newVal = mediaJson === null || mediaJson.url === null ? '' : mediaJson.url;
+                if (!$(el).hasClass('mediaUrl')) {
+                    var mediaJson = JSON.parse(newVal);
+                    newVal = mediaJson === null || mediaJson.url === null ? '' : mediaJson.url;
+                }
             }
             // If this is a redactor field, we have to get the id from its textarea and it's value from its text.
             else if ($(el).hasClass('redactor-editor')) {
@@ -380,8 +383,12 @@
              */
             $('input.mediaItem').each(function(i, el) {
                 var origVal = $(el).val() || '';
-                var mediaJson = JSON.parse(origVal);
-                $(this).attr('data-orig-val', mediaJson === null || mediaJson.url === null ? '' : mediaJson.url);
+                if ($(el).hasClass('mediaUrl')) {
+                    $(this).attr('data-orig-val', origVal);
+                } else {
+                    var mediaJson = JSON.parse(origVal);
+                    $(this).attr('data-orig-val', mediaJson === null || mediaJson.url === null ? '' : mediaJson.url);
+                }
             });
 
             /**
