@@ -41,13 +41,13 @@ public class Weight implements Serializable {
 
     @Column(name = "WEIGHT")
     @AdminPresentation(friendlyName = "ProductWeight_Product_Weight",
-        group = ProductAdminPresentation.GroupName.ShippingFulfillment, order = ProductAdminPresentation.FieldOrder.WEIGHT)
+        group = SkuAdminPresentation.GroupName.ShippingFulfillment, order = SkuAdminPresentation.FieldOrder.WEIGHT)
     protected BigDecimal weight;
 
         
     @Column(name = "WEIGHT_UNIT_OF_MEASURE")
     @AdminPresentation(friendlyName = "ProductWeight_Product_Weight_Units",
-        group = ProductAdminPresentation.GroupName.ShippingFulfillment, order = ProductAdminPresentation.FieldOrder.WEIGHT_UNIT_OF_MEASURE,
+        group = SkuAdminPresentation.GroupName.ShippingFulfillment, order = SkuAdminPresentation.FieldOrder.WEIGHT_UNIT_OF_MEASURE,
         fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType",
         defaultValue = "KILOGRAMS")

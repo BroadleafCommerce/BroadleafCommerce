@@ -1239,7 +1239,7 @@ BLC.addPreAjaxCallbackHandler(function($data) {
         currentPath += 'sessionTimeout=true';
         
         window.location = currentPath;
-        
+        window.location.reload();
         return false;
     }
     

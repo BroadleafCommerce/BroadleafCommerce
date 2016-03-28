@@ -38,27 +38,27 @@ public class Dimension implements Serializable {
 
     @Column(name = "WIDTH")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Width",
-            group = ProductAdminPresentation.GroupName.ShippingDimensions, order = ProductAdminPresentation.FieldOrder.WIDTH)
+            group = SkuAdminPresentation.GroupName.ShippingDimensions, order = SkuAdminPresentation.FieldOrder.WIDTH)
     protected BigDecimal width;
 
     @Column(name = "HEIGHT")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Height",
-            group = ProductAdminPresentation.GroupName.ShippingDimensions, order = ProductAdminPresentation.FieldOrder.HEIGHT)
+            group = SkuAdminPresentation.GroupName.ShippingDimensions, order = SkuAdminPresentation.FieldOrder.HEIGHT)
     protected BigDecimal height;
 
     @Column(name = "DEPTH")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Depth",
-        group = ProductAdminPresentation.GroupName.ShippingDimensions, order = ProductAdminPresentation.FieldOrder.DEPTH)
+        group = SkuAdminPresentation.GroupName.ShippingDimensions, order = SkuAdminPresentation.FieldOrder.DEPTH)
     protected BigDecimal depth;
 
     @Column(name = "GIRTH")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Girth",
-        group = ProductAdminPresentation.GroupName.ShippingDimensions, order = ProductAdminPresentation.FieldOrder.GIRTH)
+        group = SkuAdminPresentation.GroupName.ShippingDimensions, order = SkuAdminPresentation.FieldOrder.GIRTH)
     protected BigDecimal girth;
 
     @Column(name = "CONTAINER_SIZE")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Size",
-        group = ProductAdminPresentation.GroupName.ShippingContainer, order = ProductAdminPresentation.FieldOrder.CONTAINER_SIZE,
+        group = SkuAdminPresentation.GroupName.ShippingContainer, order = SkuAdminPresentation.FieldOrder.CONTAINER_SIZE,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerSizeType",
         hideEnumerationIfEmpty = true)
@@ -66,7 +66,7 @@ public class Dimension implements Serializable {
 
     @Column(name = "CONTAINER_SHAPE")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Shape",
-        group = ProductAdminPresentation.GroupName.ShippingContainer, order = ProductAdminPresentation.FieldOrder.CONTAINER_SHAPE,
+        group = SkuAdminPresentation.GroupName.ShippingContainer, order = SkuAdminPresentation.FieldOrder.CONTAINER_SHAPE,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerShapeType",
         hideEnumerationIfEmpty = true)
@@ -74,7 +74,7 @@ public class Dimension implements Serializable {
 
     @Column(name = "DIMENSION_UNIT_OF_MEASURE")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Dimension_Units",
-        group = ProductAdminPresentation.GroupName.ShippingDimensions, order = ProductAdminPresentation.FieldOrder.DIMENSION_UNIT_OF_MEASURE,
+        group = SkuAdminPresentation.GroupName.ShippingDimensions, order = SkuAdminPresentation.FieldOrder.DIMENSION_UNIT_OF_MEASURE,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.common.util.DimensionUnitOfMeasureType",
         defaultValue = "CENTIMETERS")

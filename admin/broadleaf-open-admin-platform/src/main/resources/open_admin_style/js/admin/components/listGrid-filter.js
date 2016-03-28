@@ -298,6 +298,8 @@ $(document).ready(function() {
         if (oldParams == null) {
             oldParams = {};
         }
+        oldParams['isLookup'] = $(this).closest('.modal').length > 0;
+
         var $url = BLCAdmin.buildUrlWithParams($(this).closest('.filter-fields').data('action'), oldParams);
         BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
         BLC.ajax({
@@ -314,6 +316,8 @@ $(document).ready(function() {
 
             if ($tbody.data('listgridtype') == 'asset_grid') {
                 BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.asset-listgrid div.listgrid-header-wrapper'), null, {isRefresh: false});
+            } else if ($tbody.data('listgridtype') == 'tree') {
+                BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.tree-search-wrapper div.listgrid-header-wrapper'), null, {isRefresh: false});
             } else {
                 BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, {isRefresh: false});
             }

@@ -61,6 +61,9 @@ public class ListGrid {
     // These actions will start greyed out and unable to be clicked until a specific row has been selected
     protected List<ListGridAction> rowActions = new ArrayList<ListGridAction>();
 
+    protected List<ListGridActionGroup> toolbarActionGroups = new ArrayList<ListGridActionGroup>();
+    protected List<ListGridActionGroup> rowActionGroups = new ArrayList<ListGridActionGroup>();
+
     // These actions will start greyed out and unable to be clicked until a specific row has been selected
     protected List<ListGridAction> modalRowActions = new ArrayList<ListGridAction>();
     protected int totalRecords;
@@ -201,6 +204,48 @@ public class ListGrid {
     }
 
     /**
+     * Grabs a filtered list of toolbar action groupss filtered by whether or not they match the same readonly state as the listgrid
+     * and are thus shown on the screen
+     */
+    @SuppressWarnings("unchecked")
+    public List<ListGridAction> getActiveToolbarActionGroups() {
+        return (List<ListGridAction>) CollectionUtils.select(getToolbarActionGroups(), new TypedPredicate<ListGridActionGroup>() {
+
+            @Override
+            public boolean eval(ListGridActionGroup actionGroup) {
+                boolean result = false;
+                for (ListGridAction action : actionGroup.getListGridActions()) {
+                    if (action.getForListGridReadOnly().equals(getIsReadOnly())) {
+                        result = true;
+                    }
+                }
+                return result;
+            }
+        });
+    }
+
+    /**
+     * Grabs a filtered list of row action groupss filtered by whether or not they match the same readonly state as the listgrid
+     * and are thus shown on the screen
+     */
+    @SuppressWarnings("unchecked")
+    public List<ListGridAction> getActiveRowActionGroups() {
+        return (List<ListGridAction>) CollectionUtils.select(getRowActionGroups(), new TypedPredicate<ListGridActionGroup>() {
+
+            @Override
+            public boolean eval(ListGridActionGroup actionGroup) {
+                boolean result = false;
+                for (ListGridAction action : actionGroup.getListGridActions()) {
+                    if (action.getForListGridReadOnly().equals(getIsReadOnly())) {
+                        result = true;
+                    }
+                }
+                return result;
+            }
+        });
+    }
+
+    /**
      * Grabs a filtered list of row actions filtered by whether or not they match the same readonly state as the listgrid
      * and are thus shown on the screen
      */
@@ -235,6 +280,22 @@ public class ListGrid {
         getRowActions().clear();
     }
 
+    public void addToolbarActionGroup(ListGridActionGroup actionGroup) {
+        getToolbarActionGroups().add(actionGroup);
+    }
+
+    public void removeAllToolbarActionGroups() {
+        getToolbarActionGroups().clear();
+    }
+
+    public void addRowActionGroup(ListGridActionGroup actionGroup) {
+        getRowActionGroups().add(actionGroup);
+    }
+
+    public void removeAllRowActionGroups() {
+        getRowActionGroups().clear();
+    }
+
     public void removeAllModalRowActions() {
         getModalRowActions().clear();
     }
@@ -245,6 +306,13 @@ public class ListGrid {
                 return action;
             }
         }
+        for (ListGridActionGroup actionGroup : getToolbarActionGroups()) {
+            for (ListGridAction action : actionGroup.getListGridActions()) {
+                if (action.getActionId().equals(actionId)) {
+                    return action;
+                }
+            }
+        }
         return null;
     }
     
@@ -252,6 +320,13 @@ public class ListGrid {
         for (ListGridAction action : getRowActions()) {
             if (action.getActionId().equals(actionId)) {
                 return action;
+            }
+        }
+        for (ListGridActionGroup actionGroup : getRowActionGroups()) {
+            for (ListGridAction action : actionGroup.getListGridActions()) {
+                if (action.getActionId().equals(actionId)) {
+                    return action;
+                }
             }
         }
         return null;
@@ -398,6 +473,22 @@ public class ListGrid {
     
     public void setRowActions(List<ListGridAction> rowActions) {
         this.rowActions = rowActions;
+    }
+
+    public List<ListGridActionGroup> getToolbarActionGroups() {
+        return toolbarActionGroups;
+    }
+
+    public void setToolbarActionGroups(List<ListGridActionGroup> toolbarActionGroups) {
+        this.toolbarActionGroups = toolbarActionGroups;
+    }
+
+    public List<ListGridActionGroup> getRowActionGroups() {
+        return rowActionGroups;
+    }
+
+    public void setRowActionGroups(List<ListGridActionGroup> rowActionGroups) {
+        this.rowActionGroups = rowActionGroups;
     }
 
     public List<ListGridAction> getModalRowActions() {
