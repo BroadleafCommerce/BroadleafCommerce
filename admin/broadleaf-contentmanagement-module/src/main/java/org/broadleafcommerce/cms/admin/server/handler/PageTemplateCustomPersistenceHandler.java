@@ -144,6 +144,10 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         String pageId = pp.getCustomCriteria()[1];
         String pageTemplateId = pp.getCustomCriteria().length > 3 ? pp.getCustomCriteria()[3] : null;
 
+        if (pageId == null) {
+            return new ArrayList<FieldGroup>(0);
+        }
+
         Page page = pageService.findPageById(Long.valueOf(pageId));
         PageTemplate template = null;
         if (pageTemplateId != null) {
