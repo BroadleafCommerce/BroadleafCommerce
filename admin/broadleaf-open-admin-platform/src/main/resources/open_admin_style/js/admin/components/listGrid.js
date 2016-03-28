@@ -736,6 +736,9 @@ $(document).ready(function () {
         return false;
     });
 
+    /**
+     * Handle the Re-ordering of ListGrid items
+     */
     $('body').on({
         mouseenter: function () {
             var $this = $(this);
@@ -799,14 +802,14 @@ $(document).ready(function () {
                         }
                     }, function (data) {
                         var $container = $('div.listgrid-container#' + data.field);
+
                         BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', {
                             alertType: 'save-alert',
                             autoClose: 3000
                         });
-
                         $container = $this.closest('.listgrid-container');
                         if ($container.prev().length) {
-                            var $parent = $container.prev().find('tr.selected');
+                            var $parent =  ui.item;
                             if (!$parent.hasClass('dirty')) {
                                 $parent.addClass('dirty');
                                 var changeIcon = '<a class="blc-icon-triangle-right has-tip hover-cursor workflow-icon" data-width="200" ' +
@@ -843,6 +846,9 @@ $(document).ready(function () {
         }
     }, 'a.sub-list-grid-reorder');
 
+    /**
+     * Handle the removing of ListGridItems from the ListGrid
+     */
     $('body').on('click', 'a.sub-list-grid-remove, button.sub-list-grid-remove', function () {
         var link = BLCAdmin.listGrid.getActionLink($(this));
 
