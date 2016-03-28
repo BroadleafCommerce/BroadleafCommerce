@@ -147,7 +147,7 @@ $(document).ready(function() {
                 } else {
                     var mediaJson = mediaItem.val() == "" || mediaItem.val() == "null" ? {} : jQuery.parseJSON(mediaItem.val());
                     mediaJson.url = fields['assetUrl'];
-                    mediaItem.val(JSON.stringify(mediaJson));
+                    mediaItem.val(JSON.stringify(mediaJson)).trigger('input');;
                 }
     		}
     		$container.find('button.clear-asset-selector').show();
@@ -177,7 +177,7 @@ $(document).ready(function() {
             mediaUrl.val('').trigger('change');
         } else {
             // Other entities require a null value
-            $container.find('input.mediaItem').val('null').trigger('change');
+            $container.find('input.mediaItem').val('null').trigger('change').trigger('input');
         }
 
         //Set placeholder image and hide clear button since there's nothing to clear

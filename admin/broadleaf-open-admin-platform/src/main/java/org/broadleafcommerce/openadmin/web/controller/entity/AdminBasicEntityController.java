@@ -1184,6 +1184,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 ListGrid listGrid = formService.buildCollectionListGrid(id, drs, collectionProperty, sectionKey, sectionCrumbs);
                 listGrid.setPathOverride(request.getRequestURL().toString());
 
+                if (AddMethodType.LOOKUP.equals(fmd.getAddMethodType()) || AddMethodType.SELECTIZE_LOOKUP.equals(fmd.getAddMethodType())) {
+                    listGrid.removeAllRowActions();
+                }
+
                 model.addAttribute("listGrid", listGrid);
                 model.addAttribute("viewType", "modal/simpleSelectEntity");
             }
@@ -1676,7 +1680,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             
             Map<String, Object> responseMap = new HashMap<String, Object>();
             PersistenceResponse persistenceResponse = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, alternateId, sectionCrumbs);
-            Property displayOrder = persistenceResponse.getEntity().findProperty("displayOrder");
+            Property displayOrder = persistenceResponse.getEntity().findProperty(atl.getSortField());
 
             responseMap.put("status", "ok");
             responseMap.put("field", collectionField);
@@ -1704,7 +1708,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             }
 
             PersistenceResponse persistenceResponse = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, sectionCrumbs);
-            Property displayOrder = persistenceResponse.getEntity().findProperty("displayOrder");
+            Property displayOrder = persistenceResponse.getEntity().findProperty(cd.getSortProperty());
 
             responseMap.put("status", "ok");
             responseMap.put("field", collectionField);

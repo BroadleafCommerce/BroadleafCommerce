@@ -106,6 +106,11 @@ public class AdminBasicOperationsController extends AdminAbstractController {
             collectionProperty = mainMetadata.getPMap().get(collectionField);
             md = collectionProperty.getMetadata();
             ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
+        } else {
+            md = new BasicFieldMetadata();
+            md.setFriendlyName(mainMetadata.getPolymorphicEntities().getFriendlyName());
+            collectionProperty = new Property();
+            collectionProperty.setMetadata(md);
         }
 
         ppr.addFilterAndSortCriteria(getCriteria(requestParams));
@@ -131,10 +136,6 @@ public class AdminBasicOperationsController extends AdminAbstractController {
                 listGrid.setListGridType(ListGrid.Type.TO_ONE);
                 listGrid.setSubCollectionFieldName(collectionField);
                 listGrid.setPathOverride("/" + owningClass + "/" + collectionField + "/select");
-                md = new BasicFieldMetadata();
-                md.setFriendlyName(mainMetadata.getPolymorphicEntities().getFriendlyName());
-                collectionProperty = new Property();
-                collectionProperty.setMetadata(md);
             } else if (md instanceof BasicFieldMetadata) {
                 listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass, sectionCrumbs);
                 listGrid.removeAllRowActions();

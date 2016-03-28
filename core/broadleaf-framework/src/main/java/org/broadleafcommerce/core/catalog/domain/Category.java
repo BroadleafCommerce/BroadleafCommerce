@@ -481,7 +481,7 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * category tree.  Adds the option of only adding the first parent found.
      *
      * @param currentHierarchy
-     * @param firstParent
+     * @param firstParent determines if ONLY the first parent category should be returned per hierarchy tier
      * @return the full hierarchy
      */
     public List<Category> buildParentCategoryPath(List<Category> currentHierarchy, Boolean firstParent);
