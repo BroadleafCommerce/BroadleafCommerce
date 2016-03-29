@@ -312,8 +312,8 @@
          * @param el
          */
         handleEntityFormChanges: function(el) {
-            // We only care about main entity froms.  If we are in a modal, just return
-            if ($(el).closest('.modal').length) { return }
+            // Check if we should handle the changes
+            if (!this.checkIfShouldTrackChanges()) { return }
 
             var id = $(el).attr('id');
             var newVal = $(el).val() || '';
@@ -508,6 +508,21 @@
             }
 
             return true;
+        },
+
+        /**
+         * This function returns true or false depending on if we want to track changes on the current page.
+         *
+         * @returns {boolean}
+         */
+        checkIfShouldTrackChanges : function() {
+            // Don't track if we are in a modal, on an OMS page, or not on a page with an entity form
+            if ($(this).closest('.modal').length ||
+                $('.oms').length ||
+                !$('.entity-form').length) {
+                return false;
+            }
+            return true;
         }
     };
 })(jQuery, BLCAdmin);
@@ -522,7 +537,7 @@ $(document).ready(function() {
      */
     $body.on('focus', 'input, select, input:radio, textarea, .redactor-editor', function() {
         // We only care about main entity froms.  If we are in a modal, just return
-        if ($(this).closest('.modal').length) { return }
+        if (!BLCAdmin.entityForm.status.checkIfShouldTrackChanges()) { return }
 
         if ($(this).attr('data-orig-val') === undefined) {
             var origVal = $(this).val() || '';
@@ -602,7 +617,8 @@ $(document).ready(function() {
      */
     $(window).on('beforeunload', function() {
         if (BLCAdmin.entityForm.status.getEntityFormChangesCount() &&
-            !BLCAdmin.entityForm.status.getDidConfirmLeave()) {
+            !BLCAdmin.entityForm.status.getDidConfirmLeave() &&
+            BLCAdmin.entityForm.status.checkIfShouldTrackChanges()) {
             return BLCAdmin.messages.unsavedChangesBrowser;
         }
     });
@@ -611,7 +627,7 @@ $(document).ready(function() {
      * We want to update the entity form's actions on window load.
      * But only if we are on an actual entity form and not in a modal.
      */
-    if (!$('.modal:not(#expire-message)').length && $('.entity-form').length) {
+    if (BLCAdmin.entityForm.status.checkIfShouldTrackChanges()) {
         BLCAdmin.entityForm.status.initializeOriginalValues();
         BLCAdmin.entityForm.status.updateEntityFormActions();
     }
