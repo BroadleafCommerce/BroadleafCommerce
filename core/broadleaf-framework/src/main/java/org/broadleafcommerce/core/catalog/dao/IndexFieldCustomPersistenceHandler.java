@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -27,13 +29,21 @@ import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.util.BLCCollectionUtils;
+import org.broadleafcommerce.common.util.TypedTransformer;
+import org.broadleafcommerce.common.util.dao.QueryUtils;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -43,6 +53,11 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.ListUtils;
 
@@ -52,6 +67,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  * @author Chad Harchar (charchar)
@@ -84,6 +107,11 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
             return true;
         }
         return super.canHandleRemove(persistencePackage);
+    }
+
+    @Override
+    public Boolean canHandleFetch(PersistencePackage persistencePackage) {
+        return canHandleAdd(persistencePackage);
     }
 
     @Override
@@ -160,6 +188,103 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
         }
     }
 
+    @Override
+    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao
+            dynamicEntityDao, RecordHelper helper) throws ServiceException {
+
+        FilterAndSortCriteria fieldFsc = cto.getCriteriaMap().get("field");
+        FilterAndSortCriteria searchableFsc = cto.getCriteriaMap().get("searchable");
+        if (fieldFsc != null) {
+            List<String> filterValues = fieldFsc.getFilterValues();
+            boolean didFilter = false;
+            cto.getCriteriaMap().remove("field");
+
+            CriteriaBuilder builder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
+            CriteriaQuery<IndexField> criteria = builder.createQuery(IndexField.class);
+            Root<IndexFieldImpl> root = criteria.from(IndexFieldImpl.class);
+            criteria.select(root);
+
+            // Check if we are searching for specific field names
+            List<Predicate> restrictions = new ArrayList<Predicate>();
+            if (CollectionUtils.isNotEmpty(filterValues)) {
+                restrictions.add(builder.like(root.get("field").<String>get("friendlyName"), "%" + filterValues.get(0) + "%"));
+                didFilter = true;
+            }
+
+            // We only want unarchived records
+            QueryUtils.notArchived(builder, restrictions, root, "archiveStatus");
+
+            // Check if this filter value has a sort direction associated with it
+            Order order = null;
+            if (fieldFsc.getSortDirection() != null) {
+                if (fieldFsc.getSortAscending()) {
+                    order = builder.asc(root.get("field").get("friendlyName"));
+                } else {
+                    order = builder.desc(root.get("field").get("friendlyName"));
+                }
+                criteria.orderBy(order);
+            }
+            // Make sure the user isn't sorting on searchable
+            else if (searchableFsc != null && searchableFsc.getSortDirection() != null) {
+                if (searchableFsc.getSortAscending()) {
+                    order = builder.asc(root.get("searchable"));
+                } else {
+                    order = builder.desc(root.get("searchable"));
+                }
+                criteria.orderBy(order);
+            }
+
+            criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+            TypedQuery<IndexField> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
+            List<IndexField> indexFields = query.getResultList();
+
+            List<Entity> entityList = new ArrayList<Entity>();
+            for (IndexField indexField : indexFields) {
+                // Create the new Entity DTO
+                Entity entity = new Entity();
+                Property[] properties = new Property[3];
+
+                // Set the entities id
+                Property idProperty = new Property();
+                idProperty.setName("id");
+                idProperty.setValue(indexField.getId().toString());
+
+                // Set the field id
+                Property fieldProperty = new Property();
+                fieldProperty.setName("field");
+                fieldProperty.setValue(indexField.getField().getId().toString());
+                fieldProperty.setDisplayValue(indexField.getField().getFriendlyName());
+
+                // Set the searchable property
+                Property searchableProperty = new Property();
+                searchableProperty.setName("searchable");
+                searchableProperty.setValue(indexField.getSearchable().toString());
+
+                // Add the properties to the Entity
+                properties[0] = idProperty;
+                properties[1] = fieldProperty;
+                properties[2] = searchableProperty;
+                entity.setProperties(properties);
+
+                // Store the fully created entity
+                entityList.add(entity);
+            }
+
+            // We need to get the total number of records available because the entityList returned may not be the full set.
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(IndexField.class.getName(), persistencePerspective);
+            List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, IndexField.class.getName(), originalProps);
+            int totalRecords = helper.getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
+
+            // Create a Dynamic Result Set from the entity list created above.
+            DynamicResultSet resultSet = new DynamicResultSet(entityList.toArray(new Entity[entityList.size()]), (didFilter ? entityList.size() : totalRecords));
+            return resultSet;
+        }
+
+        DynamicResultSet resultSet = helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+        return resultSet;
+    }
 
     protected PersistencePackage createPersistencePackage(IndexField searchField, FieldType fieldType) {
         PersistencePackage pp = new PersistencePackage();
