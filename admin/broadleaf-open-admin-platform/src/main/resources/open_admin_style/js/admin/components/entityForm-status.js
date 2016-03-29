@@ -75,10 +75,28 @@
         },
 
         /**
+         * Calling this method will add a property to the `entityFormChangeMap` that during the revert process will trigger
+         * a page reload.
+         */
+        triggerReloadOnRevert : function() {
+            entityFormChangeMap['status--reloadOnRevert'] = true;
+
+            this.updateEntityFormActions();
+        },
+
+        /**
          * This function, using the `entityFormChangeMap` will revert all changed fields back to their original values.
          */
-        revertEntityFormChanges : function() {
+        revertEntityFormChanges : function(allowReload) {
             for (var key in entityFormChangeMap) {
+                // Check if this is a request for page reload
+                if (key === 'status--reloadOnRevert' && allowReload) {
+                    // Set the property to allow reload
+                    BLCAdmin.entityForm.status.setDidConfirmLeave(true);
+                    window.location.reload();
+                    return;
+                }
+
                 var origVal = entityFormChangeMap[key].originalValue;
 
                 // We need to find the actual DOM element from the key in the `entityFormChangeMap`
@@ -482,7 +500,7 @@
                     content: message,
                     backgroundDismiss: true,
                     confirm: function () {
-                        BLCAdmin.entityForm.status.revertEntityFormChanges();
+                        BLCAdmin.entityForm.status.revertEntityFormChanges(false);
                         BLCAdmin.workflow.showApproveActionPrompt($(el), false);
                     }
                 });
@@ -575,7 +593,7 @@ $(document).ready(function() {
      */
     $body.on('click', 'a#revert-changes', function(event) {
         event.preventDefault();
-        BLCAdmin.entityForm.status.revertEntityFormChanges();
+        BLCAdmin.entityForm.status.revertEntityFormChanges(true);
     });
 
     /**

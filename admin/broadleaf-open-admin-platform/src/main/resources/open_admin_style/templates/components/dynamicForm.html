@@ -17,8 +17,8 @@
                 </div>
 
                 <div class="collapser">
-                    <span class="collapsed" href="#" th:if="${group.collapsed}"><i class="fa fa-angle-down"></i></span>
-                    <span class="expanded" href="#" th:unless="${group.collapsed}"><i class="fa fa-angle-up"></i></span>
+                    <span class="collapsed" href="#" th:if="${group.collapsed}">(show)</span>
+                    <span class="expanded" href="#" th:unless="${group.collapsed}">(hide)</span>
                 </div>
             </a>
             <div class="fieldset-card-content" th:classappend="${(group.collapsed ? 'content-collapsed' : '')}">

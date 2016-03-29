@@ -628,9 +628,14 @@ $(document).ready(function () {
         var fkValue = $toOneLookup.closest('div.additional-foreign-key-container').find('.value');
         var fkValueFound = fkValue != undefined && fkValue.val().length > 0;
         var confirm = $toOneLookup.data('confirm') && fkValueFound;
+        var confirmMsg = $toOneLookup.data('confirm-text');
+        if (confirmMsg == undefined || !confirmMsg.length) {
+            confirmMsg = BLCAdmin.messages.defaultConfirmMessage;
+        }
         if (confirm) {
             var cancel = false;
             $.confirm({
+                content: confirmMsg,
                 confirm: function() {
                     processToOneLookupCall.call($toOneLookup);
                 },
