@@ -269,7 +269,6 @@
             }
             
             this.updateEntityFormActions();
-            console.log(entityFormChangeMap);
         },
 
         /**
