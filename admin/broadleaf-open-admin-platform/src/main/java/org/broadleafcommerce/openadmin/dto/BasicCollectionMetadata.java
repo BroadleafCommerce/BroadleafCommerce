@@ -86,7 +86,7 @@ public class BasicCollectionMetadata extends CollectionMetadata {
         BasicCollectionMetadata that = (BasicCollectionMetadata) o;
 
         if (!addMethodType.equals(that.addMethodType)) return false;
-        if (selectizeVisibleField != that.selectizeVisibleField) return false;
+        if (!selectizeVisibleField.equals(that.selectizeVisibleField)) return false;
 
         return true;
     }
