@@ -132,8 +132,8 @@
                 }
                 // If this is a redactor field, we have to set its text attribute, not its value
                 else if ($(el).prev('.redactor-editor').length) {
-                    $(el).text(origVal);
-                    $(el).prev('.redactor-editor').text(origVal);
+                    $(el).redactor('code.set', origVal);
+                    $(el).val(origVal);
                     continue;
                 }
                 // If this is a select field we need to set the original item back through selectize.
@@ -540,7 +540,7 @@ $(document).ready(function() {
             }
             // If this is a redactor field, we have to set its text attribute, not its value
             else if ($(this).hasClass('redactor-editor')) {
-                origVal = $(this).text();
+                origVal = $(this).html();
             }
             $(this).attr('data-orig-val', origVal);
         }
