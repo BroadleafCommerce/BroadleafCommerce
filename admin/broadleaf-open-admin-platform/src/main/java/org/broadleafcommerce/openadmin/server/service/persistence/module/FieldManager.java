@@ -103,7 +103,7 @@ public class FieldManager {
                     try {
                         value = PropertyUtils.getProperty(bean, fullFieldName);
                     } catch (InvocationTargetException|NoSuchMethodException e) {
-                        fullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+                        fullFieldName = fieldNamePrefix.isEmpty() ? fieldNamePart : fieldNamePrefix + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
 
                         try {
                             value = PropertyUtils.getProperty(bean, fullFieldName);
@@ -115,9 +115,12 @@ public class FieldManager {
 
                 if (value != null && mapKey != null) {
                     value = ((Map) value).get(mapKey);
-                }
-                if (value instanceof List) {
-                    value = ((List) value).get(0);
+
+                    // This handles gathering the first element of a list that came from a MultiValue Map
+                    // used for single-value CustomFields
+                    if (value instanceof List && !((List) value).isEmpty()) {
+                        value = ((List) value).get(0);
+                    }
                 }
                 if (value != null) {
                     componentClass = value.getClass();
