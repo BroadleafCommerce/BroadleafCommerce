@@ -47,7 +47,7 @@
     <a class="show-asset-freeform-url" href="#" th:text="'(' + #{Freeform_URL} + ')'" />
     <br/>
 
-    <input type="hidden" class="mediaUrl twelve" th:field="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" />
+    <input type="hidden" class="mediaUrl mediaItem twelve" th:field="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" />
 
     <div class="media-image-container" th:classappend="${field.readOnly}? 'disabled'">
         <div class="media-image">
