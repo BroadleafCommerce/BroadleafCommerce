@@ -114,7 +114,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 metadata.getFieldType() == SupportedFieldType.ASSET_URL ||
                 metadata.getFieldType() == SupportedFieldType.ID) &&
                 (property == null ||
-                !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
+                        !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
     }
 
     protected boolean detectAdditionalSearchTypes(FieldMetadata md, Property property) {
@@ -135,7 +135,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     }
 
     protected boolean canHandleSearchMapping(AddSearchMappingRequest addSearchMappingRequest,
-            List<FilterMapping> filterMappings) {
+                                             List<FilterMapping> filterMappings) {
         FieldMetadata metadata = addSearchMappingRequest.getMergedProperties().get
                 (addSearchMappingRequest.getPropertyName());
         Property property = null;
@@ -166,11 +166,11 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     } catch (IllegalArgumentException e) {
                         boolean isChar = populateValueRequest.getRequestedValue().toCharArray().length > 1 ? false : true;
                         char c;
-                         if (isChar) {
-                            c =   populateValueRequest.getRequestedValue().toCharArray()[0];
-                         } else {
-                             c = Boolean.valueOf(populateValueRequest.getRequestedValue()) ? 'Y' : 'N';
-                         }
+                        if (isChar) {
+                            c = populateValueRequest.getRequestedValue().toCharArray()[0];
+                        } else {
+                            c = Boolean.valueOf(populateValueRequest.getRequestedValue()) ? 'Y' : 'N';
+                        }
                         dirty = checkDirtyState(populateValueRequest, instance, c);
                         populateValueRequest.getFieldManager().setFieldValue(instance,
                                 populateValueRequest.getProperty().getName(), c);
@@ -409,7 +409,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
 
     @Override
     public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest,
-                                              Property property) throws PersistenceException {
+                                                 Property property) throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
@@ -524,7 +524,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
 
     @Override
     public MetadataProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest,
-                                                  List<FilterMapping> filterMappings) {
+                                                     List<FilterMapping> filterMappings) {
         if (!canHandleSearchMapping(addSearchMappingRequest, filterMappings)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
@@ -607,7 +607,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                                 .getFilterValues().isEmpty()) {
                             ForeignKey foreignKey = (ForeignKey) addSearchMappingRequest.getPersistencePerspective()
                                     .getPersistencePerspectiveItems().get
-                                    (PersistencePerspectiveItemType.FOREIGNKEY);
+                                            (PersistencePerspectiveItemType.FOREIGNKEY);
                             if (metadata.getForeignKeyCollection()) {
                                 if (ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey
                                         .getRestrictionType().toString())) {
@@ -626,7 +626,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                             } else if (addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName())
                                     .getFilterValues().get(0) == null || "null".equals(addSearchMappingRequest
                                     .getRequestedCto().get
-                                    (addSearchMappingRequest.getPropertyName()).getFilterValues().get(0))) {
+                                            (addSearchMappingRequest.getPropertyName()).getFilterValues().get(0))) {
                                 filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction
                                         (RestrictionType.IS_NULL_LONG.getType(), addSearchMappingRequest.getPropertyName()));
                             } else if (metadata.getSecondaryType() == SupportedFieldType.STRING) {
@@ -644,10 +644,10 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         break;
                     case ADDITIONAL_FOREIGN_KEY:
                         int additionalForeignKeyIndexPosition = Arrays.binarySearch(addSearchMappingRequest
-                                .getPersistencePerspective()
-                                .getAdditionalForeignKeys(), new ForeignKey(addSearchMappingRequest
-                                .getPropertyName(),
-                                null, null),
+                                        .getPersistencePerspective()
+                                        .getAdditionalForeignKeys(), new ForeignKey(addSearchMappingRequest
+                                        .getPropertyName(),
+                                        null, null),
                                 new Comparator<ForeignKey>() {
 
                                     @Override
@@ -675,7 +675,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         } else if (CollectionUtils.isEmpty(addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName()).getFilterValues()) ||
                                 addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName
                                         ()).getFilterValues().get(0) == null || "null".equals(addSearchMappingRequest.getRequestedCto().get
-                                        (addSearchMappingRequest.getPropertyName()).getFilterValues().get(0))) {
+                                (addSearchMappingRequest.getPropertyName()).getFilterValues().get(0))) {
                             filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.IS_NULL_LONG.getType(), addSearchMappingRequest.getPropertyName()));
                         } else if (metadata.getSecondaryType() == SupportedFieldType.STRING) {
                             filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.STRING_EQUAL.getType(), addSearchMappingRequest.getPropertyName()));
@@ -691,7 +691,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                             case INTEGER:
                                 filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory()
                                         .getRestriction
-                                        (RestrictionType.LONG_EQUAL.getType(), addSearchMappingRequest.getPropertyName()));
+                                                (RestrictionType.LONG_EQUAL.getType(), addSearchMappingRequest.getPropertyName()));
                                 break;
                             case STRING:
                                 filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().
