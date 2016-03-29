@@ -211,27 +211,31 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
                 didFilter = true;
             }
 
-            // We only want unarchived records
-            QueryUtils.notArchived(builder, restrictions, root, "archiveStatus");
-
             // Check if this filter value has a sort direction associated with it
             Order order = null;
-            if (fieldFsc.getSortDirection() != null) {
-                if (fieldFsc.getSortAscending()) {
-                    order = builder.asc(root.get("field").get("friendlyName"));
-                } else {
-                    order = builder.desc(root.get("field").get("friendlyName"));
+            for (FilterAndSortCriteria sortCriteria : cto.getCriteriaMap().values()) {
+                if (sortCriteria.getSortDirection() != null) {
+                    Path path = root;
+                    try {
+                        // Try to find the path to the property in IndexFieldImpl
+                        String[] pathParts = sortCriteria.getPropertyId().split("\\.");
+                        for (String part : pathParts) {
+                            path = path.get(part);
+                        }
+
+                        // If we made it here, we have the path, set the sorting (asc/desc)
+                        if (sortCriteria.getSortAscending()) {
+                            order = builder.asc(path);
+                        } else {
+                            order = builder.desc(path);
+                        }
+                        criteria.orderBy(order);
+                        break;
+                    } catch (IllegalArgumentException e) {
+                        // This isn't an actual entity property
+                        continue;
+                    }
                 }
-                criteria.orderBy(order);
-            }
-            // Make sure the user isn't sorting on searchable
-            else if (searchableFsc != null && searchableFsc.getSortDirection() != null) {
-                if (searchableFsc.getSortAscending()) {
-                    order = builder.asc(root.get("searchable"));
-                } else {
-                    order = builder.desc(root.get("searchable"));
-                }
-                criteria.orderBy(order);
             }
 
             criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
@@ -239,46 +243,18 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
             TypedQuery<IndexField> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
             List<IndexField> indexFields = query.getResultList();
 
-            List<Entity> entityList = new ArrayList<Entity>();
-            for (IndexField indexField : indexFields) {
-                // Create the new Entity DTO
-                Entity entity = new Entity();
-                Property[] properties = new Property[3];
-
-                // Set the entities id
-                Property idProperty = new Property();
-                idProperty.setName("id");
-                idProperty.setValue(indexField.getId().toString());
-
-                // Set the field id
-                Property fieldProperty = new Property();
-                fieldProperty.setName("field");
-                fieldProperty.setValue(indexField.getField().getId().toString());
-                fieldProperty.setDisplayValue(indexField.getField().getFriendlyName());
-
-                // Set the searchable property
-                Property searchableProperty = new Property();
-                searchableProperty.setName("searchable");
-                searchableProperty.setValue(indexField.getSearchable().toString());
-
-                // Add the properties to the Entity
-                properties[0] = idProperty;
-                properties[1] = fieldProperty;
-                properties[2] = searchableProperty;
-                entity.setProperties(properties);
-
-                // Store the fully created entity
-                entityList.add(entity);
-            }
+            // Convert the result list into a list of entities
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> indexFieldMetadata = helper.getSimpleMergedProperties(IndexField.class.getName(), persistencePerspective);
+            Entity[] entities = helper.getRecords(indexFieldMetadata, indexFields);
 
             // We need to get the total number of records available because the entityList returned may not be the full set.
-            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(IndexField.class.getName(), persistencePerspective);
             List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, IndexField.class.getName(), originalProps);
             int totalRecords = helper.getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
 
             // Create a Dynamic Result Set from the entity list created above.
-            DynamicResultSet resultSet = new DynamicResultSet(entityList.toArray(new Entity[entityList.size()]), (didFilter ? entityList.size() : totalRecords));
+            DynamicResultSet resultSet = new DynamicResultSet(entities, (didFilter ? entities.length : totalRecords));
             return resultSet;
         }
 
