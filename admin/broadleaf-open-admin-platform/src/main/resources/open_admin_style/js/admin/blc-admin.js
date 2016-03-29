@@ -77,7 +77,11 @@ var BLCAdmin = (function($) {
             
             // If this wasn't the only modal, take the last modal and put it above the backdrop
             if (modals.length > 0) {
-                modals.last().css('z-index', '1050');
+                var $backdrop = $('.modal-backdrop');
+                $backdrop.css('z-index', '1051'); // 1051 was the original z-index for the backdrop
+
+                // Move the last modal to one above the backdrop
+                modals.last().css('z-index', parseInt($backdrop.css('z-index')) + 1);
             }
             
             if (BLCAdmin.currentModal()) {
