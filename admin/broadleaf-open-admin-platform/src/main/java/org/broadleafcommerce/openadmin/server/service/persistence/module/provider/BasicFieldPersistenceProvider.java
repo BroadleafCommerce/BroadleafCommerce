@@ -167,7 +167,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         boolean isChar = populateValueRequest.getRequestedValue().toCharArray().length > 1 ? false : true;
                         char c;
                         if (isChar) {
-                            c =  populateValueRequest.getRequestedValue().toCharArray()[0];
+                            c = populateValueRequest.getRequestedValue().toCharArray()[0];
                         } else {
                             c = Boolean.valueOf(populateValueRequest.getRequestedValue()) ? 'Y' : 'N';
                         }
