@@ -123,6 +123,13 @@
         
         isIndexLoaded : function($tbody, index) {
             var loadedRanges = this.getLoadedRecordRanges($tbody);
+            var totalRecords = this.getTotalRecords($tbody);
+
+            // If the index is larger than the total number of records, then technically the record is loaded
+            // Add 1 since index is 0-indexed & total records is 1-indexed
+            if ((index + 1) >= totalRecords) {
+                return true;
+            }
             
             for (var i = 0; i < loadedRanges.length; i++) {
                 if (loadedRanges[i].lo <= index && loadedRanges[i].hi >= index) {
