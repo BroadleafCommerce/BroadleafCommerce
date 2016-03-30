@@ -51,7 +51,6 @@ public class BandedWeightFulfillmentOptionImpl extends FulfillmentOptionImpl imp
 
     @OneToMany(mappedBy="option", targetEntity=FulfillmentWeightBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @IgnoreEnterpriseBehavior
     protected List<FulfillmentWeightBand> bands = new ArrayList<FulfillmentWeightBand>();
 
     @Override
