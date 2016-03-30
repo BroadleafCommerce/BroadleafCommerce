@@ -1099,7 +1099,7 @@ $.fn.blSelectize = function (settings_user) {
         settings_user['dropdownParent'] = 'body';
         settings_user['hideSelected'] = true;
         settings_user['selectOnTab'] = true;
-        settings_user['plugins'] = ['clear_on_type'];
+        settings_user['plugins'] = ['clear_on_type', 'enter_key_blur'];
         settings_user['placeholder'] = 'Click here to select ...';
         settings_user['positionDropdown'] = 'auto';
         settings_user['onInitialize'] = function() {
@@ -1192,6 +1192,31 @@ Selectize.define('clear_on_type', function(options) {
         };
     })();
 });
+
+Selectize.define('enter_key_blur', function (options) {
+    var self = this;
+
+    this.onKeyDown = (function (e) {
+        var original = self.onKeyDown;
+        return function (e) {
+
+            if (e.keyCode === 13) {
+                if (self.settings.selectOnTab && self.isOpen && self.$activeOption) {
+                    self.onOptionSelect({currentTarget: self.$activeOption});
+
+                    // Default behaviour is to jump to the next field, we only want this
+                    // if the current field doesn't accept any more entries
+                    if (!self.isFull()) {
+                        e.preventDefault();
+                    }
+                }
+                $(this).blur();
+                return;
+            }
+            return original.apply(this, arguments)
+        }
+    })()
+})
 
 // Replace the default AJAX error handler with this custom admin one that relies on the exception
 // being set on the model instead of a stack trace page when an error occurs on an AJAX request.
