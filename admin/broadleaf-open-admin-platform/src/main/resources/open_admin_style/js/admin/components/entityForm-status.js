@@ -400,12 +400,14 @@
              */
             $('input.mediaItem').each(function(i, el) {
                 var origVal = $(el).val() || '';
+                var mediaUrl;
                 if ($(el).hasClass('mediaUrl')) {
-                    $(this).attr('data-orig-val', origVal);
+                    mediaUrl = origVal;
                 } else {
                     var mediaJson = JSON.parse(origVal);
-                    $(this).attr('data-orig-val', mediaJson === null || mediaJson.url === null ? '' : mediaJson.url);
+                    mediaUrl = mediaJson === null || mediaJson.url === null ? '' : mediaJson.url
                 }
+                $(this).attr('data-orig-val', mediaUrl);
             });
 
             /**
