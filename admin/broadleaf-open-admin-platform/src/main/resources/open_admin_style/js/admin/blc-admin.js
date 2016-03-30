@@ -39,7 +39,7 @@ var BLCAdmin = (function($) {
 
     var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container, .redactor_box, ' +
                          '.asset-selector-container img, >div>select, div.custom-checkbox, div.small-enum-container, .ace-editor, ' +
-                         'textarea, div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
+                         'textarea:not(.redactor-box textarea), div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
                          '.rule-builder-simple-time, .rule-builder-simple, .rule-builder-with-quantity, >div>div>input:not([type=hidden]), .selectize-wrapper';
     
     function showModal($data, onModalHide, onModalHideArgs) {
