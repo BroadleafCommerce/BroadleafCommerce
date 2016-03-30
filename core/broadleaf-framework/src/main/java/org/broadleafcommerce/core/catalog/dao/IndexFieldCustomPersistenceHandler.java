@@ -20,20 +20,13 @@
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
-import org.broadleafcommerce.common.util.BLCCollectionUtils;
-import org.broadleafcommerce.common.util.TypedTransformer;
-import org.broadleafcommerce.common.util.dao.QueryUtils;
-import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
@@ -53,11 +46,7 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.ListUtils;
 
@@ -70,7 +59,6 @@ import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.From;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -193,7 +181,6 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
             dynamicEntityDao, RecordHelper helper) throws ServiceException {
 
         FilterAndSortCriteria fieldFsc = cto.getCriteriaMap().get("field");
-        FilterAndSortCriteria searchableFsc = cto.getCriteriaMap().get("searchable");
         if (fieldFsc != null) {
             List<String> filterValues = fieldFsc.getFilterValues();
             boolean didFilter = false;
