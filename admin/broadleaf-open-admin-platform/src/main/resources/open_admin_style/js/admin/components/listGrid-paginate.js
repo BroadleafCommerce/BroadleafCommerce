@@ -28,6 +28,9 @@
     var maxSubCollectionListGridHeight = 360;
     var treeListGridHeight = 400;
 
+    var SCROLLBAR_WIDTH = 15;
+    var TREE_COLUMN_WIDTH = 320;
+
     var tableResizing = {
         active : false,
         headerTable : undefined,
@@ -549,7 +552,7 @@
             if ($table.data('listgridtype') == 'asset_grid' && $table.closest('.select-group').find('.select-column:visible').length > 0) {
                 // For Asset Grids, the folder select is 320px wide and the scrollbar on the listgrid being resized is
                 // 15px wide.  Therefore, the new size of the listgrid is: TOTAL_WIDTH - (320px + 15px)
-                var fullWidth = $table.closest('.select-group').width() - 335;
+                var fullWidth = $table.closest('.select-group').width() - (TREE_COLUMN_WIDTH + SCROLLBAR_WIDTH);
 
                 $headerTable.css('width', '');
                 $table.css('width', '');
@@ -560,10 +563,10 @@
                 $headerTable.css('width', newWidth);
                 $table.css('width', newWidth);
             } else if ($table.data('listgridtype') == 'tree' &&
-                $table.closest('.select-group').find('.select-column:visible').length === 0 &&
-                $modalBody.length > 0) {
+                        $table.closest('.select-group').find('.select-column:visible').length === 0 &&
+                        $modalBody.length > 0) {
                 // The 15px in the following line refers to the width of the scrollbar on list grids.
-                var fullWidth = $table.closest('.select-group').width() - 15;
+                var fullWidth = $table.closest('.select-group').width() - SCROLLBAR_WIDTH;
 
                 $headerTable.css('width', '');
                 $table.css('width', '');
@@ -580,8 +583,9 @@
                 $table.css('table-layout', 'fixed');
                 //$headerTable.closest('.listgrid-container').find('th').css('width', '');
 
-                // Figure out what the new table width will be
-                var newWidth = $headerTable.width() + 'px';
+                // Figure out what the new table width will be, 15px is subtracted to account for the width of the
+                // scrollbar.
+                var newWidth = $headerTable.width() - SCROLLBAR_WIDTH + 'px';
                 $headerTable.css('width', newWidth);
                 $table.css('width', newWidth);
             }
