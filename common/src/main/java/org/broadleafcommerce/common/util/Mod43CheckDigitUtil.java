@@ -49,12 +49,4 @@ public class Mod43CheckDigitUtil {
         return CHARSET.charAt(remainder);
     }
 
-    public static void main(String[] args) {
-        try {
-            System.out.println(generateCheckDigit("TEACH000012345"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(isValidCheckedValue("TEACH000012345B"));
-    }
 }
