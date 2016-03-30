@@ -143,11 +143,11 @@ $(document).ready(function() {
     		if (mediaItem.length > 0) {
                 var mediaUrl = $this.find('input.mediaUrl');
                 if (mediaUrl.length > 0) {
-                    mediaUrl.val(fields['assetUrl']);
+                    mediaUrl.val(fields['assetUrl']).trigger('input');
                 } else {
                     var mediaJson = mediaItem.val() == "" || mediaItem.val() == "null" ? {} : jQuery.parseJSON(mediaItem.val());
                     mediaJson.url = fields['assetUrl'];
-                    mediaItem.val(JSON.stringify(mediaJson)).trigger('input');;
+                    mediaItem.val(JSON.stringify(mediaJson)).trigger('input');
                 }
     		}
     		$container.find('button.clear-asset-selector').show();
@@ -174,7 +174,7 @@ $(document).ready(function() {
         var mediaUrl = $container.find('input.mediaUrl');
         if (mediaUrl.length > 0) {
             // Fields using mediaUrl require a blank value
-            mediaUrl.val('').trigger('change');
+            mediaUrl.val('').trigger('change').trigger('input');
         } else {
             // Other entities require a null value
             $container.find('input.mediaItem').val('null').trigger('change').trigger('input');

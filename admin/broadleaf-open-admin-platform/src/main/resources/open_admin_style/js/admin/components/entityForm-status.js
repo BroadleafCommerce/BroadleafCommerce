@@ -75,10 +75,28 @@
         },
 
         /**
+         * Calling this method will add a property to the `entityFormChangeMap` that during the revert process will trigger
+         * a page reload.
+         */
+        triggerReloadOnRevert : function() {
+            entityFormChangeMap['status--reloadOnRevert'] = true;
+
+            this.updateEntityFormActions();
+        },
+
+        /**
          * This function, using the `entityFormChangeMap` will revert all changed fields back to their original values.
          */
-        revertEntityFormChanges : function() {
+        revertEntityFormChanges : function(allowReload) {
             for (var key in entityFormChangeMap) {
+                // Check if this is a request for page reload
+                if (key === 'status--reloadOnRevert' && allowReload) {
+                    // Set the property to allow reload
+                    BLCAdmin.entityForm.status.setDidConfirmLeave(true);
+                    window.location.reload();
+                    return;
+                }
+
                 var origVal = entityFormChangeMap[key].originalValue;
 
                 // We need to find the actual DOM element from the key in the `entityFormChangeMap`
@@ -132,8 +150,8 @@
                 }
                 // If this is a redactor field, we have to set its text attribute, not its value
                 else if ($(el).prev('.redactor-editor').length) {
-                    $(el).text(origVal);
-                    $(el).prev('.redactor-editor').text(origVal);
+                    $(el).redactor('code.set', origVal);
+                    $(el).val(origVal);
                     continue;
                 }
                 // If this is a select field we need to set the original item back through selectize.
@@ -293,8 +311,8 @@
          * @param el
          */
         handleEntityFormChanges: function(el) {
-            // We only care about main entity froms.  If we are in a modal, just return
-            if ($(el).closest('.modal').length) { return }
+            // Check if we should handle the changes
+            if (!this.checkIfShouldTrackChanges()) { return }
 
             var id = $(el).attr('id');
             var newVal = $(el).val() || '';
@@ -306,8 +324,10 @@
             }
             // If this is a media item input we only care about the url attribute
             else if ($(el).hasClass('mediaItem')) {
-                var mediaJson = JSON.parse(newVal);
-                newVal = mediaJson === null || mediaJson.url === null ? '' : mediaJson.url;
+                if (!$(el).hasClass('mediaUrl')) {
+                    var mediaJson = JSON.parse(newVal);
+                    newVal = mediaJson === null || mediaJson.url === null ? '' : mediaJson.url;
+                }
             }
             // If this is a redactor field, we have to get the id from its textarea and it's value from its text.
             else if ($(el).hasClass('redactor-editor')) {
@@ -380,8 +400,12 @@
              */
             $('input.mediaItem').each(function(i, el) {
                 var origVal = $(el).val() || '';
-                var mediaJson = JSON.parse(origVal);
-                $(this).attr('data-orig-val', mediaJson === null || mediaJson.url === null ? '' : mediaJson.url);
+                if ($(el).hasClass('mediaUrl')) {
+                    $(this).attr('data-orig-val', origVal);
+                } else {
+                    var mediaJson = JSON.parse(origVal);
+                    $(this).attr('data-orig-val', mediaJson === null || mediaJson.url === null ? '' : mediaJson.url);
+                }
             });
 
             /**
@@ -475,13 +499,28 @@
                     content: message,
                     backgroundDismiss: true,
                     confirm: function () {
-                        BLCAdmin.entityForm.status.revertEntityFormChanges();
+                        BLCAdmin.entityForm.status.revertEntityFormChanges(false);
                         BLCAdmin.workflow.showApproveActionPrompt($(el), false);
                     }
                 });
                 return false;
             }
 
+            return true;
+        },
+
+        /**
+         * This function returns true or false depending on if we want to track changes on the current page.
+         *
+         * @returns {boolean}
+         */
+        checkIfShouldTrackChanges : function() {
+            // Don't track if we are in a modal, on an OMS page, or not on a page with an entity form
+            if ($(this).closest('.modal').length ||
+                $('.oms').length ||
+                !$('.entity-form').length) {
+                return false;
+            }
             return true;
         }
     };
@@ -497,7 +536,7 @@ $(document).ready(function() {
      */
     $body.on('focus', 'input, select, input:radio, textarea, .redactor-editor', function() {
         // We only care about main entity froms.  If we are in a modal, just return
-        if ($(this).closest('.modal').length) { return }
+        if (!BLCAdmin.entityForm.status.checkIfShouldTrackChanges()) { return }
 
         if ($(this).attr('data-orig-val') === undefined) {
             var origVal = $(this).val() || '';
@@ -533,7 +572,7 @@ $(document).ready(function() {
             }
             // If this is a redactor field, we have to set its text attribute, not its value
             else if ($(this).hasClass('redactor-editor')) {
-                origVal = $(this).text();
+                origVal = $(this).html();
             }
             $(this).attr('data-orig-val', origVal);
         }
@@ -543,7 +582,7 @@ $(document).ready(function() {
      * This event handler is fired for `input` type events.
      * It gets the field's id, original value, and new value to be used in the entity form's change map.
      */
-    $body.on('input', 'input, textarea, .redactor-editor', function() {
+    $body.on('input', 'input[id!="listgrid-search"], textarea, .redactor-editor', function() {
         BLCAdmin.entityForm.status.handleEntityFormChanges(this);
     });
 
@@ -568,7 +607,7 @@ $(document).ready(function() {
      */
     $body.on('click', 'a#revert-changes', function(event) {
         event.preventDefault();
-        BLCAdmin.entityForm.status.revertEntityFormChanges();
+        BLCAdmin.entityForm.status.revertEntityFormChanges(true);
     });
 
     /**
@@ -577,7 +616,8 @@ $(document).ready(function() {
      */
     $(window).on('beforeunload', function() {
         if (BLCAdmin.entityForm.status.getEntityFormChangesCount() &&
-            !BLCAdmin.entityForm.status.getDidConfirmLeave()) {
+            !BLCAdmin.entityForm.status.getDidConfirmLeave() &&
+            BLCAdmin.entityForm.status.checkIfShouldTrackChanges()) {
             return BLCAdmin.messages.unsavedChangesBrowser;
         }
     });
@@ -586,7 +626,7 @@ $(document).ready(function() {
      * We want to update the entity form's actions on window load.
      * But only if we are on an actual entity form and not in a modal.
      */
-    if (!$('.modal:not(#expire-message)').length && $('.entity-form').length) {
+    if (BLCAdmin.entityForm.status.checkIfShouldTrackChanges()) {
         BLCAdmin.entityForm.status.initializeOriginalValues();
         BLCAdmin.entityForm.status.updateEntityFormActions();
     }
