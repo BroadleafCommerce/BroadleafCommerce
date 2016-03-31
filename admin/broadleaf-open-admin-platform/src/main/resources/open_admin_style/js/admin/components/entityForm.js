@@ -426,6 +426,11 @@ $(document).ready(function() {
                 //if there is a validation error, replace the current form that's there with this new one
                 var $newForm = $(data).find('.modal-body form');
                 if ($newForm[0]) {
+                    // Remove form rule builders
+                    var numRuleBuilders = BLCAdmin.ruleBuilders.ruleBuilderCount();
+                    var numFormRuleBuilders = $form.find('.rule-builder-simple, .rule-builder-simple-time, .rule-builder-with-quantity').length;
+                    var startIndex = numRuleBuilders - numFormRuleBuilders; // index from which to start removing rule builders
+                    BLCAdmin.ruleBuilders.getAllRuleBuilders().splice(startIndex, numFormRuleBuilders);
                     //with adorned forms, we have just overwritten the related id property that was selected previously. Ensure
                     //to replace that in the new form
                     var $adornedTargetIdProperty = $(data).find('input#adornedTargetIdProperty');
