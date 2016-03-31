@@ -149,22 +149,16 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
             List<? extends Resource> locations, ResourceResolverChain chain) {
         if (resourceCachingEnabled) {
             String response = null;
-            String key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX_NULL + resourceUrlPath;
-            Object nullResource = getCache().get(key, Object.class);
+
+            String notFoundKey = RESOLVED_URL_PATH_CACHE_KEY_PREFIX_NULL + resourceUrlPath + getThemePathFromBRC();
+            Object nullResource = getCache().get(notFoundKey, Object.class);
             if (nullResource != null) {
                 logNullReferenceUrlPatchMatch(resourceUrlPath);
                 return null;
             }
 
-            key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX_NULL + resourceUrlPath + getThemePathFromBRC();
-            nullResource = getCache().get(key, Object.class);
-            if (nullResource != null) {
-                logNullReferenceUrlPatchMatch(resourceUrlPath);
-                return null;
-            }
-
-            key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX + resourceUrlPath + getThemePathFromBRC();
-            String resolvedUrlPath = this.cache.get(key, String.class);
+            String foundKey = RESOLVED_URL_PATH_CACHE_KEY_PREFIX + resourceUrlPath + getThemePathFromBRC();
+            String resolvedUrlPath = this.cache.get(foundKey, String.class);
             if (resolvedUrlPath != null) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("Found match");
@@ -177,7 +171,7 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
                 if (logger.isTraceEnabled()) {
                     logger.trace("Putting resolved resource URL path in cache");
                 }
-                this.cache.put(key, resolvedUrlPath);
+                this.cache.put(foundKey, resolvedUrlPath);
                 response = resolvedUrlPath;
             }
 
@@ -186,7 +180,7 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
                     logger.trace(String.format("Putting resolved null reference url " +
                             "path in cache for '%s'", resourceUrlPath));
                 }
-                getCache().put(key, NULL_REFERENCE);
+                getCache().put(notFoundKey, NULL_REFERENCE);
             }
             return response;
         } else {
@@ -201,7 +195,8 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
     }
 
     /**
-     * Gets the theme path from the {@link org.broadleafcommerce.common.web.BroadleafRequestContext}
+     * Returns the theme path from the {@link org.broadleafcommerce.common.web.BroadleafRequestContext} or an empty
+     * string if no theme was resolved
      *
      * @return
      */
