@@ -392,14 +392,17 @@ $(document).ready(function() {
     });
     
     $('body').on('submit', 'form.modal-add-entity-form', function(event) {
-        var submit = BLCAdmin.runSubmitHandlers($(this));
+        var $form = $(this);
+        var submit = BLCAdmin.runSubmitHandlers($form);
         
         if (submit) {
             BLC.ajax({
                 url: this.action,
                 type: "POST",
-                data: BLCAdmin.serialize($(this))
+                data: BLCAdmin.serialize($form)
             }, function(data) {
+                BLCAdmin.runPostFormSubmitHandlers($form, data);
+
                 var $modal = BLCAdmin.currentModal();
                 BLCAdmin.entityForm.swapModalEntityForm($modal, data);
 
@@ -421,6 +424,8 @@ $(document).ready(function() {
                 type: "POST",
                 data: BLCAdmin.serialize($form)
             }, function (data) {
+                BLCAdmin.runPostFormSubmitHandlers($form, data);
+
                 BLCAdmin.entityForm.hideActionSpinner($form.closest('.modal').find('.entity-form-actions'));
 
                 //if there is a validation error, replace the current form that's there with this new one
