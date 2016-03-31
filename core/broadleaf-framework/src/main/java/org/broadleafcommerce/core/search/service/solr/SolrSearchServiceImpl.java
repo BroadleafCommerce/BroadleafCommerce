@@ -632,6 +632,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
         SearchResult result = new SearchResult();
         result.setFacets(facets);
+        result.setQueryResponse(response);
         setPagingAttributes(result, numResults, searchCriteria);
 
         if (useSku) {
