@@ -173,7 +173,7 @@ public class OfferServiceImpl implements OfferService {
         }
         
         if (extensionManager != null) {
-            extensionManager.getProxy().applyAdditionalFilters(offers, order);
+            extensionManager.applyAdditionalFilters(offers, order);
         }
         
         return offers;
@@ -183,7 +183,7 @@ public class OfferServiceImpl implements OfferService {
     public List<OfferCode> buildOfferCodeListForCustomer(Customer customer) {
         ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
         if (extensionManager != null) {
-            extensionManager.getProxy().buildOfferCodeListForCustomer(customer, offerCodes);
+            extensionManager.buildOfferCodeListForCustomer(customer, offerCodes);
         }
         if (!offerCodes.isEmpty()) {
             Iterator<OfferCode> itr = offerCodes.iterator();
