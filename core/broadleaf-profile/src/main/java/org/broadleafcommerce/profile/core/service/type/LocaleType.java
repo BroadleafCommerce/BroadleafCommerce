@@ -33,10 +33,6 @@ import java.util.Map;
  * @author jfischer
  */
 public class LocaleType implements Serializable, BroadleafEnumerationType {
-
-    public static void main(String[] items) {
-        System.out.println(Locale.TAIWAN.toString());
-    }
     
     private static final long serialVersionUID = 1L;
 

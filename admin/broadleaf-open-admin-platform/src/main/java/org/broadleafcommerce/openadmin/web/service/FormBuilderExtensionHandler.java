@@ -128,4 +128,12 @@ public interface FormBuilderExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType addAdditionalFormActions(EntityForm entityForm);
 
+    /**
+     * Provides a hook to modify the ListGrid for the given className when building an entityForm.
+     *
+     * @param className
+     * @param listGrid
+     * @return whether or not it was handled
+     */
+    public ExtensionResultStatusType modifyListGrid(String className, ListGrid listGrid);
 }

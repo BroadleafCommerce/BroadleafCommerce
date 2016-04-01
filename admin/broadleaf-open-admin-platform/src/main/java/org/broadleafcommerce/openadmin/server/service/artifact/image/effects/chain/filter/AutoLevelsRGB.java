@@ -21,14 +21,11 @@ package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.ch
 
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
@@ -46,17 +43,6 @@ public class AutoLevelsRGB extends BaseFilter {
     
     private static final double TOPCLIP = 0.01D;
     private static final double BOTTOMCLIP = 0.01D;
-    
-    public static void main(String[] args) {
-        try {
-            BufferedImage image = ImageIO.read(new File("C:/temp/test.jpg"));
-            AutoLevelsRGB levels = new AutoLevelsRGB(null);
-            BufferedImage newImage = levels.filter(image, null);
-            ImageIO.write(newImage, "jpg", new File("C:/temp/test2.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     private RenderingHints hints;
 

@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.common.payment;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,12 +51,4 @@ public class AccountNumberMask {
         return new String(newCharacters);
     }
 
-    public static void main( String[] args ) {
-        ArrayList<UnmaskRange> ranges = new ArrayList<UnmaskRange>();
-        ranges.add(new UnmaskRange(UnmaskRange.BEGINNINGTYPE, 4));
-        ranges.add(new UnmaskRange(UnmaskRange.ENDTYPE, 4));
-        AccountNumberMask mask = new AccountNumberMask(ranges, 'X');
-        System.out.println("Card: " + mask.mask( "1111111111111111" ) );
-        System.out.println("Card: " + mask.mask( "111111111111111" ) );
-    }
 }
