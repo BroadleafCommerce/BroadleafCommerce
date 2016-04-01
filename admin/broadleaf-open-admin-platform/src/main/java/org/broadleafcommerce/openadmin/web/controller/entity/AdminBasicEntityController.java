@@ -1311,6 +1311,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         
         // Since this is a read-only view, actions don't make sense in this context
         EntityForm ef = (EntityForm) model.asMap().get("entityForm");
+        updateAuditableFields(ef);
         ef.removeAllActions();
         ef.setReadOnly();
         
@@ -1408,7 +1409,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 entityForm.removeAllActions();
             }
             entityForm.removeAction(DefaultEntityFormActions.DELETE);
-
+            updateAuditableFields(entityForm);
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/simpleEditEntity");
         } else if (md instanceof AdornedTargetCollectionMetadata) {
@@ -1494,7 +1495,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             if (!atLeastOneBasicField) {
                 entityForm.removeAction(DefaultEntityFormActions.SAVE);
             }
-
+            updateAuditableFields(entityForm);
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/adornedEditEntity");
         } else if (md instanceof MapMetadata) {
@@ -1521,7 +1522,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
             formService.populateEntityFormFields(entityForm, entity, populateTypeAndId, populateTypeAndId);
             formService.populateMapEntityFormFields(entityForm, entity);
-
+            updateAuditableFields(entityForm);
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/mapEditEntity");
         }

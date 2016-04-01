@@ -72,6 +72,11 @@
                     });
                 } else {
                     paramObj[param] = value;
+
+                    if (String(value).indexOf('#tab') !== -1) {
+                        // Ensure that the parameter doesn't include the tab hash
+                        paramObj[param] = String(value).substring(0, String(value).indexOf('#tab'));
+                    }
                 }
             }
             
