@@ -164,15 +164,15 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
                     logger.trace("Found match");
                 }
                 response = resolvedUrlPath;
-            }
-
-            resolvedUrlPath = chain.resolveUrlPath(resourceUrlPath, locations);
-            if (resolvedUrlPath != null) {
-                if (logger.isTraceEnabled()) {
-                    logger.trace("Putting resolved resource URL path in cache");
+            } else {
+                resolvedUrlPath = chain.resolveUrlPath(resourceUrlPath, locations);
+                if (resolvedUrlPath != null) {
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("Putting resolved resource URL path in cache");
+                    }
+                    this.cache.put(foundKey, resolvedUrlPath);
+                    response = resolvedUrlPath;
                 }
-                this.cache.put(foundKey, resolvedUrlPath);
-                response = resolvedUrlPath;
             }
 
             if (response == null) {
