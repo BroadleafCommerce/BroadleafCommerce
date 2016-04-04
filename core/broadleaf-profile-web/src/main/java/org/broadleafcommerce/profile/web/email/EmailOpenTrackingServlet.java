@@ -25,16 +25,16 @@ import org.broadleafcommerce.common.email.service.EmailTrackingManager;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -56,18 +56,11 @@ public class EmailOpenTrackingServlet extends HttpServlet {
 
         String url = request.getPathInfo();
         Long emailId = null;
-        String imageUrl = "";
 
         // Parse the URL for the Email ID and Image URL
         if (url != null) {
             String[] items = url.split("/");
             emailId = Long.valueOf(items[1]);
-            StringBuffer sb = new StringBuffer();
-            for (int j = 2; j < items.length; j++) {
-                sb.append("/");
-                sb.append(items[j]);
-            }
-            imageUrl = sb.toString();
         }
 
         // Record the open
@@ -83,33 +76,28 @@ public class EmailOpenTrackingServlet extends HttpServlet {
             emailTrackingManager.recordOpen(emailId, extraValues);
         }
 
-        if ("".equals(imageUrl)) {
-            response.setContentType("image/gif");
-            BufferedInputStream bis = null;
-            OutputStream out = response.getOutputStream();
-            try {
-                bis = new BufferedInputStream(EmailOpenTrackingServlet.class.getResourceAsStream("clear_dot.gif"));
-                boolean eof = false;
-                while (!eof) {
-                    int temp = bis.read();
-                    if (temp == -1) {
-                        eof = true;
-                    } else {
-                        out.write(temp);
-                    }
+        response.setContentType("image/gif");
+        BufferedInputStream bis = null;
+        OutputStream out = response.getOutputStream();
+        try {
+            bis = new BufferedInputStream(EmailOpenTrackingServlet.class.getResourceAsStream("clear_dot.gif"));
+            boolean eof = false;
+            while (!eof) {
+                int temp = bis.read();
+                if (temp == -1) {
+                    eof = true;
+                } else {
+                    out.write(temp);
                 }
-            } finally {
-                if (bis != null) {
-                    try{ bis.close(); } catch (Throwable e) {
-                        LOG.error("Unable to close output stream in EmailOpenTrackingServlet", e);
-                    }
-                }
-                //Don't close the output stream controlled by the container. The container will
-                //handle this.
             }
-        } else {
-            RequestDispatcher dispatcher = request.getRequestDispatcher(imageUrl);
-            dispatcher.forward(request, response);
+        } finally {
+            if (bis != null) {
+                try{ bis.close(); } catch (Throwable e) {
+                    LOG.error("Unable to close output stream in EmailOpenTrackingServlet", e);
+                }
+            }
+            //Don't close the output stream controlled by the container. The container will
+            //handle this.
         }
     }
 }
