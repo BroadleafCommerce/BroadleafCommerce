@@ -558,17 +558,17 @@
             }
 
             if ($table.data('listgridtype') == 'asset_grid' && $table.closest('.select-group').find('.select-column:visible').length > 0) {
-                // For Asset Grids, the folder select column's width is equal to TREE_COLUMN_WIDTH and the scrollbar on the listgrid being
-                // resized has with equal to SCROLLBAR_WIDTH.
-                // Therefore, the new size of the listgrid is: TOTAL_WIDTH - (TREE_COLUMN_WIDTH + SCROLLBAR_WIDTH)
-                var fullWidth = $table.closest('.select-group').width() - (TREE_COLUMN_WIDTH + SCROLLBAR_WIDTH);
+                // For Asset Grids, the folder selector collection has a width of TREE_COLUMN_WIDTH.
+                // To get the remaining width available for displaying assets, we must subtract TREE_COLUMN_WIDTH from the total width.
+                var totalWidth = $table.closest('.select-group').width();
+                var remainingWidth = totalWidth - TREE_COLUMN_WIDTH;
 
                 $headerTable.css('width', '');
                 $table.css('width', '');
                 $table.css('table-layout', 'fixed');
 
-                // Figure out what the new table width will be
-                var newWidth = (fullWidth) + 'px';
+                // Ensure that the new width accounts for the width of the scrollbar
+                var newWidth = remainingWidth - SCROLLBAR_WIDTH + 'px';
                 $headerTable.css('width', newWidth);
                 $table.css('width', newWidth);
             } else if ($table.data('listgridtype') == 'tree' &&
