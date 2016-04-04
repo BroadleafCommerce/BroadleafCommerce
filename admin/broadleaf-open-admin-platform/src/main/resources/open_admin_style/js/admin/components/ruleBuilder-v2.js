@@ -865,6 +865,14 @@
                 }
             }
 
+        },
+
+        /** Remove rule builders added by a modal form */
+        removeModalRuleBuilders : function ($form) {
+            var numRuleBuilders = BLCAdmin.ruleBuilders.ruleBuilderCount();
+            var numFormRuleBuilders = $form.find('.rule-builder-simple, .rule-builder-simple-time, .rule-builder-with-quantity').length;
+            var startIndex = numRuleBuilders - numFormRuleBuilders; // index from which to start removing rule builders
+            BLCAdmin.ruleBuilders.getAllRuleBuilders().splice(startIndex, numFormRuleBuilders);
         }
 
     };
