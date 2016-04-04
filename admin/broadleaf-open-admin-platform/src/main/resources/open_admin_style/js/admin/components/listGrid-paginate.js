@@ -567,7 +567,7 @@
                 $table.css('width', '');
                 $table.css('table-layout', 'fixed');
 
-                // Ensure that the new width accounts for the width of the scrollbar
+                // Ensure that the new width accounts for the width of the scrollbar (i.e. SCROLLBAR_WIDTH)
                 var newWidth = remainingWidth - SCROLLBAR_WIDTH + 'px';
                 $headerTable.css('width', newWidth);
                 $table.css('width', newWidth);
@@ -578,7 +578,7 @@
                 $table.css('width', '');
                 $table.css('table-layout', 'fixed');
 
-                // Ensure that the new width accounts for the width of the scrollbar
+                // Ensure that the new width accounts for the width of the scrollbar (i.e. SCROLLBAR_WIDTH)
                 var newWidth = $table.closest('.select-group').width() - SCROLLBAR_WIDTH + 'px';
                 $headerTable.css('width', newWidth);
                 $table.css('width', newWidth);
@@ -589,7 +589,7 @@
                 $table.css('table-layout', 'fixed');
                 //$headerTable.closest('.listgrid-container').find('th').css('width', '');
 
-                // Ensure that the new width accounts for the width of the scrollbar
+                // Ensure that the new width accounts for the width of the scrollbar (i.e. SCROLLBAR_WIDTH)
                 var newWidth = $headerTable.width() - SCROLLBAR_WIDTH + 'px';
                 $headerTable.css('width', newWidth);
                 $table.css('width', newWidth);
