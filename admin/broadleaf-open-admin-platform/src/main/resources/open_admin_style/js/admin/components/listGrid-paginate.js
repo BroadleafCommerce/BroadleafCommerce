@@ -558,8 +558,8 @@
             }
 
             if ($table.data('listgridtype') == 'asset_grid' && $table.closest('.select-group').find('.select-column:visible').length > 0) {
-                // For Asset Grids, the folder select is 320px wide and the scrollbar on the listgrid being resized is
-                // 15px wide.  Therefore, the new size of the listgrid is: TOTAL_WIDTH - (320px + 15px)
+                // For Asset Grids, the folder select is equal to TREE_COLUMN_WIDTH and the scrollbar on the listgrid being
+                // resized is equal to SCROLLBAR_WIDTH.  Therefore, the new size of the listgrid is: TOTAL_WIDTH - (TREE_COLUMN_WIDTH + SCROLLBAR_WIDTH)
                 var fullWidth = $table.closest('.select-group').width() - (TREE_COLUMN_WIDTH + SCROLLBAR_WIDTH);
 
                 $headerTable.css('width', '');
@@ -573,7 +573,6 @@
             } else if ($table.data('listgridtype') == 'tree' &&
                         $table.closest('.select-group').find('.select-column:visible').length === 0 &&
                         $modalBody.length > 0) {
-                // The 15px in the following line refers to the width of the scrollbar on list grids.
                 var fullWidth = $table.closest('.select-group').width() - SCROLLBAR_WIDTH;
 
                 $headerTable.css('width', '');
@@ -591,8 +590,7 @@
                 $table.css('table-layout', 'fixed');
                 //$headerTable.closest('.listgrid-container').find('th').css('width', '');
 
-                // Figure out what the new table width will be, 15px is subtracted to account for the width of the
-                // scrollbar.
+                // Ensure that the new width accounts for the width of the scrollbar
                 var newWidth = $headerTable.width() - SCROLLBAR_WIDTH + 'px';
                 $headerTable.css('width', newWidth);
                 $table.css('width', newWidth);
