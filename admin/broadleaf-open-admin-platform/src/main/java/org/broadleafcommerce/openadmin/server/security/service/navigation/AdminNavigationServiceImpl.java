@@ -42,7 +42,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -159,33 +161,38 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
 
     @Override
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section) {
-        boolean response = false;
         List<AdminPermission> authorizedPermissions = section.getPermissions();
-        checkAuth: {
-            if (!CollectionUtils.isEmpty(adminUser.getAllRoles())) {
-                for (AdminRole role : adminUser.getAllRoles()) {
-                    for (AdminPermission permission : role.getAllPermissions()){
-                        if (checkPermissions(authorizedPermissions, permission)) {
-                            response = true;
-                            break checkAuth;
-                        }
-                    }
-                }
+
+        Set<String> authorizedPermissionNames = null;
+        if (authorizedPermissions != null) {
+            authorizedPermissionNames = new HashSet<>((authorizedPermissions.size() * 2));
+            for (AdminPermission authorizedPermission : authorizedPermissions) {
+                authorizedPermissionNames.add(authorizedPermission.getName());
+                authorizedPermissionNames.add(parseForAllPermission(authorizedPermission.getName()));
             }
-            if (!CollectionUtils.isEmpty(adminUser.getAllPermissions())) {
-                for (AdminPermission permission : adminUser.getAllPermissions()){
-                    if (checkPermissions(authorizedPermissions, permission)) {
+        }
+
+        boolean response = false;
+        if (!CollectionUtils.isEmpty(adminUser.getAllRoles())) {
+            for (AdminRole role : adminUser.getAllRoles()) {
+                for (AdminPermission permission : role.getAllPermissions()){
+                    if (checkPermissions(authorizedPermissionNames, permission.getName())) {
                         response = true;
-                        break checkAuth;
                     }
                 }
             }
+        }
+        if (!response && !CollectionUtils.isEmpty(adminUser.getAllPermissions())) {
+            for (AdminPermission permission : adminUser.getAllPermissions()){
+                if (checkPermissions(authorizedPermissionNames, permission.getName())) {
+                    response = true;
+                }
+            }
+        }
+        if (!response) {
             for (String defaultPermission : AdminSecurityService.DEFAULT_PERMISSIONS) {
-                for (AdminPermission authorizedPermission : authorizedPermissions) {
-                    if (authorizedPermission.getName().equals(defaultPermission)) {
-                        response = true;
-                        break checkAuth;
-                    }
+                if (checkPermissions(authorizedPermissionNames, defaultPermission)) {
+                    response = true;
                 }
             }
         }
@@ -210,16 +217,10 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     }
 
     @Override
-    public boolean checkPermissions(List<AdminPermission> authorizedPermissions, AdminPermission permission) {
-        if (authorizedPermissions != null) {
-            if (authorizedPermissions.contains(permission)){
+    public boolean checkPermissions(Set<String> authorizedPermissionNames, String permissionName) {
+        if (authorizedPermissionNames != null) {
+            if (authorizedPermissionNames.contains(permissionName)){
                 return true;
-            }
-
-            for (AdminPermission authorizedPermission : authorizedPermissions) {
-                if (permission.getName().equals(parseForAllPermission(authorizedPermission.getName()))) {
-                    return true;
-                }
             }
         }
         return false;
