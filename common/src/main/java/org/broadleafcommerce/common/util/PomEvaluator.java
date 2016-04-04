@@ -20,15 +20,12 @@
 package org.broadleafcommerce.common.util;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 public class PomEvaluator {
@@ -182,68 +179,71 @@ public class PomEvaluator {
 
     }
 
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        initializeKnownLibraries();
-        BufferedReader br = null;
-        
-        try {
-            String fileName = "/Users/brianpolster/blc-workspace/BroadleafCommerce/pom.xml";
-            if (args.length > 0) {
-                fileName = args[0];
-            }
-
-            br = new BufferedReader(new FileReader(fileName));
-
-            forwardToTag("<dependencies>", br);
-
-            List<Dependency> dependencies = populateDependencies(br);
-
-            for (Dependency dependency : dependencies) {
-                Category category = knownLibraries.get(dependency.groupId);
-                if (category != null) {
-                    category.dependencyList.add(dependency);
-                    List<Dependency> licenseDependencyList = licenseDependencyMap.get(category.licenseType);
-                    if (licenseDependencyList == null) {
-                        licenseDependencyList = new ArrayList<Dependency>();
-                        licenseDependencyList.add(dependency);
-                        licenseDependencyMap.put(category.licenseType, licenseDependencyList);
-                    }
-
-                } else {
-
-                    if (dependency.scope != null && (dependency.scope.equals("test") ||
-                            dependency.scope.equals("provided"))) {
-                        continue;
-                    }
-                    OTHER.dependencyList.add(dependency);
-                }
-            }
-
-            Set<Category> categoryList = new HashSet<Category>(knownLibraries.values());
-
-            System.out.println("Related Software Report\r");
-
-            for (Category category : categoryList) {
-                printOutDependencies(category, category.dependencyList);
-            }
-
-            if (OTHER.dependencyList.size() > 0) {
-                printOutDependencies(OTHER, OTHER.dependencyList);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (br != null) br.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
+/*
+    TODO commenting out the main method implementation to reduce the attack surface of application deployments. This class
+    should either be moved to a non-deployed library, or rewritten as something like a maven plugin.
+ */
+//    /**
+//     * @param args
+//     */
+//    public static void main(String[] args) {
+//        initializeKnownLibraries();
+//        BufferedReader br = null;
+//
+//        try {
+//            String fileName = "/Users/brianpolster/blc-workspace/BroadleafCommerce/pom.xml";
+//            if (args.length > 0) {
+//                fileName = args[0];
+//            }
+//
+//            br = new BufferedReader(new FileReader(fileName));
+//
+//            forwardToTag("<dependencies>", br);
+//
+//            List<Dependency> dependencies = populateDependencies(br);
+//
+//            for (Dependency dependency : dependencies) {
+//                Category category = knownLibraries.get(dependency.groupId);
+//                if (category != null) {
+//                    category.dependencyList.add(dependency);
+//                    List<Dependency> licenseDependencyList = licenseDependencyMap.get(category.licenseType);
+//                    if (licenseDependencyList == null) {
+//                        licenseDependencyList = new ArrayList<Dependency>();
+//                        licenseDependencyList.add(dependency);
+//                        licenseDependencyMap.put(category.licenseType, licenseDependencyList);
+//                    }
+//
+//                } else {
+//
+//                    if (dependency.scope != null && (dependency.scope.equals("test") ||
+//                            dependency.scope.equals("provided"))) {
+//                        continue;
+//                    }
+//                    OTHER.dependencyList.add(dependency);
+//                }
+//            }
+//
+//            Set<Category> categoryList = new HashSet<Category>(knownLibraries.values());
+//
+//            System.out.println("Related Software Report\r");
+//
+//            for (Category category : categoryList) {
+//                printOutDependencies(category, category.dependencyList);
+//            }
+//
+//            if (OTHER.dependencyList.size() > 0) {
+//                printOutDependencies(OTHER, OTHER.dependencyList);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                if (br != null) br.close();
+//            } catch (IOException ex) {
+//                ex.printStackTrace();
+//            }
+//        }
+//    }
 
     public static void printOutDependencies(Category category, List<Dependency> dependencies) {
         List<String> dependencyNames = new ArrayList<String>();

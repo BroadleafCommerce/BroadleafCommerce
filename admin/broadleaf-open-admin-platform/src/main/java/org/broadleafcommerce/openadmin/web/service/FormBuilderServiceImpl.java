@@ -206,6 +206,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         String friendlyName = "listGrid" + c.getTime();
         // Set up the filter builder params
         listGrid.setJsonFieldName(friendlyName + "Json");
+        listGrid.setFriendlyName(friendlyName);
         listGrid.setFieldBuilder("RULE_SIMPLE");
         listGrid.setFieldWrapper(wrapper);
 
@@ -1285,6 +1286,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 } else {
                     listGrid.getToolbarActions().add(0, DefaultListGridActions.ADD);
                 }
+
+                extensionManager.getProxy().modifyListGrid(listGrid.getClassName(), listGrid);
+
                 if (subCollectionEntities.getUnselectedTabMetadata().get(md.getTab())!=null) {
                     ef.addListGrid(cmd, listGrid, md.getTab(), md.getTabOrder(), md.getGroup(), true);
                 } else {

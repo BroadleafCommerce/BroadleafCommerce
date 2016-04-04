@@ -63,6 +63,7 @@ public class Field {
     protected Boolean isDirty;
     protected Boolean isTypeaheadEnabled;
     protected Boolean isConfirmEnabled;
+    protected String confirmEnabledText;
     protected String hint;
     protected String tooltip;
     protected String help;
@@ -308,7 +309,14 @@ public class Field {
         this.isConfirmEnabled = isConfirmEnabled;
     }
 
-    
+    public String getConfirmEnabledText() {
+        return confirmEnabledText;
+    }
+
+    public void setConfirmEnabledText(String confirmEnabledText) {
+        this.confirmEnabledText = confirmEnabledText;
+    }
+
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
     /* ************************** */

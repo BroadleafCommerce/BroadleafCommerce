@@ -39,7 +39,7 @@ var BLCAdmin = (function($) {
 
     var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container, .redactor_box, ' +
                          '.asset-selector-container img, >div>select, div.custom-checkbox, div.small-enum-container, .ace-editor, ' +
-                         'textarea, div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
+                         'textarea:not(.redactor-box textarea), div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
                          '.rule-builder-simple-time, .rule-builder-simple, .rule-builder-with-quantity, >div>div>input:not([type=hidden]), .selectize-wrapper';
     
     function showModal($data, onModalHide, onModalHideArgs) {
@@ -77,7 +77,11 @@ var BLCAdmin = (function($) {
             
             // If this wasn't the only modal, take the last modal and put it above the backdrop
             if (modals.length > 0) {
-                modals.last().css('z-index', '1050');
+                var $backdrop = $('.modal-backdrop');
+                $backdrop.css('z-index', '1051'); // 1051 was the original z-index for the backdrop
+
+                // Move the last modal to one above the backdrop
+                modals.last().css('z-index', parseInt($backdrop.css('z-index')) + 1);
             }
             
             if (BLCAdmin.currentModal()) {
@@ -1099,7 +1103,7 @@ $.fn.blSelectize = function (settings_user) {
         settings_user['dropdownParent'] = 'body';
         settings_user['hideSelected'] = true;
         settings_user['selectOnTab'] = true;
-        settings_user['plugins'] = ['clear_on_type'];
+        settings_user['plugins'] = ['clear_on_type', 'enter_key_blur'];
         settings_user['placeholder'] = 'Click here to select ...';
         settings_user['positionDropdown'] = 'auto';
         settings_user['onInitialize'] = function() {
@@ -1192,6 +1196,31 @@ Selectize.define('clear_on_type', function(options) {
         };
     })();
 });
+
+Selectize.define('enter_key_blur', function (options) {
+    var self = this;
+
+    this.onKeyDown = (function (e) {
+        var original = self.onKeyDown;
+        return function (e) {
+
+            if (e.keyCode === 13) {
+                if (self.settings.selectOnTab && self.isOpen && self.$activeOption) {
+                    self.onOptionSelect({currentTarget: self.$activeOption});
+
+                    // Default behaviour is to jump to the next field, we only want this
+                    // if the current field doesn't accept any more entries
+                    if (!self.isFull()) {
+                        e.preventDefault();
+                    }
+                }
+                $(this).blur();
+                return;
+            }
+            return original.apply(this, arguments)
+        }
+    })()
+})
 
 // Replace the default AJAX error handler with this custom admin one that relies on the exception
 // being set on the model instead of a stack trace page when an error occurs on an AJAX request.

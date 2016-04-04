@@ -260,11 +260,18 @@ public class MergeManager {
             xmlTransformer.setOutputProperty(OutputKeys.METHOD, "xml");
             xmlTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
-            DOMSource source = new DOMSource(doc1);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(baos, "UTF-8"));
-            StreamResult result = new StreamResult(writer);
-            xmlTransformer.transform(source, result);
+            BufferedWriter writer = null;
+            try {
+                DOMSource source = new DOMSource(doc1);
+                writer = new BufferedWriter(new OutputStreamWriter(baos, "UTF-8"));
+                StreamResult result = new StreamResult(writer);
+                xmlTransformer.transform(source, result);
+            } finally {
+                if (writer != null) {
+                    IOUtils.closeQuietly(writer);
+                }
+            }
 
             byte[] itemArray = baos.toByteArray();
 
