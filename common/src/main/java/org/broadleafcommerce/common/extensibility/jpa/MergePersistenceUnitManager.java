@@ -80,6 +80,12 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
     @Resource(name="blEntityMarkerClassTransformer")
     protected EntityMarkerClassTransformer entityMarkerClassTransformer;
+
+    @Resource(name="blAutoDDLStatusExporter")
+    protected MBeanExporter mBeanExporter;
+
+    @Resource(name="blConfiguration")
+    RuntimeEnvironmentPropertiesConfigurer configurer;
     
     @Resource(name="blAutoDDLStatusExporter")
     protected MBeanExporter mBeanExporter;

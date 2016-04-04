@@ -53,8 +53,8 @@ import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
@@ -676,26 +676,54 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             String[] sortFields = sortQuery.split(",");
 
             for (String sortField : sortFields) {
-                List<IndexFieldType> fieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviation(sortField.split(" ")[0]);
-
+                String[] sortFieldsSegments = sortField.split(" ");
+                String requestedSortFieldName = sortFieldsSegments[0];
+                
+                List<IndexFieldType> fieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviation(requestedSortFieldName);
+                
+                // Used to determine if, by looping through the index field types managed in the database, we actually
+                // attach the sort field that is being requested. If we do, then we shouldn't manually add the requested
+                // sort field ourselves but if not, we should
+                boolean requestedSortFieldAdded = false;
+                
+                // Loop through all of the field types for the given sort field and add each generated field name
+                // as a sort. Generated field names are comprised of both the field abbreviation and their type, and each
+                // field could have indexed multiple field types. Rather than try to guess which field type to sort by
+                // this sorts by them all
                 for (IndexFieldType fieldType : fieldTypes) {
                     String field = getPropertyNameForIndexField(fieldType.getIndexField(), fieldType.getFieldType());
-
-                    ORDER order = ORDER.asc;
-                    String[] sortFieldsSegments = sortField.split(" ");
-                    if (sortFieldsSegments.length < 2) {
-                        StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
-                        msg.append("\nDefaulting to ASCending");
-                        LOG.warn(msg.toString());
-                    } else if ("desc".equals(sortFieldsSegments[1])) {
-                        order = ORDER.desc;
+                    
+                    // Verify that the field that is being added as a sort is a match for the field that is requesting
+                    // to be sorted by. Since field abbreviations are what are added to the index, this is what should
+                    // be checked
+                    if (fieldType.getIndexField().getField().getAbbreviation().equals(requestedSortFieldName)) {
+                        requestedSortFieldAdded = true;
                     }
-                    if (field != null) {
-                        query.addSort(new SortClause(field, order));
-                    }
+                    
+                    ORDER order = getSortOrder(sortFieldsSegments, sortQuery);
+                    query.addSort(new SortClause(field, order));
+                }
+                
+                // At the end here, it's possible that the field that was passed in to sort by was not managed in the
+                // database in the list of index fields and their types. If that's the case, go ahead and add it as a sort
+                // field anyway since we're trusting that the field was actually added to the index by some programmatic means
+                if (!requestedSortFieldAdded) {
+                    query.addSort(new SortClause(requestedSortFieldName, getSortOrder(sortFieldsSegments, sortQuery)));
                 }
             }
         }
+    }
+    
+    protected ORDER getSortOrder(String[] sortFieldsSegments, String sortQuery) {
+        ORDER order = ORDER.asc;
+        if (sortFieldsSegments.length < 2) {
+            StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
+            msg.append("\nDefaulting to ASCending");
+            LOG.warn(msg.toString());
+        } else if ("desc".equals(sortFieldsSegments[1])) {
+            order = ORDER.desc;
+        }
+        return order;
     }
 
     @Override
