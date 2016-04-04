@@ -258,6 +258,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         SearchResult result = new SearchResult();
         result.setFacets(facets);
+        result.setQueryResponse(response);
         setPagingAttributes(result, numResults, searchCriteria);
 
         if (useSku) {
