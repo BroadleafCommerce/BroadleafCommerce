@@ -91,12 +91,12 @@
     border-top: none;
 }
 
-.listgrid-body-wrapper tbody tr td:first-child a:not(.workflow-icon),  tbody tr td:first-child a:not(.workflow-icon) {
+.listgrid-body-wrapper tbody tr td a:not(.workflow-icon),  tbody tr td a:not(.workflow-icon) {
     color: #809831;
     text-decoration: underline;
 }
 
-.listgrid-body-wrapper tbody tr.dirty td:first-child a:not(.workflow-icon), tbody tr.dirty td:first-child a:not(.workflow-icon) {
+.listgrid-body-wrapper tbody tr.dirty td a:not(.workflow-icon), tbody tr.dirty td a:not(.workflow-icon) {
     color: #efbc62;
     text-decoration: underline;
 }
