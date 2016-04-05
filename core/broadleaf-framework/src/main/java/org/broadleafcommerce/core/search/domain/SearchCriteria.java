@@ -39,6 +39,7 @@ public class SearchCriteria {
     
     protected Integer page = 1;
     protected Integer pageSize;
+    protected Integer startIndex;
     protected String sortQuery;
     protected Map<String, String[]> filterCriteria;
     /**
@@ -71,6 +72,14 @@ public class SearchCriteria {
 
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public Integer getStartIndex() {
+        return startIndex;
+    }
+
+    public void setStartIndex(Integer startIndex) {
+        this.startIndex = startIndex;
     }
 
     public String getSortQuery() {
