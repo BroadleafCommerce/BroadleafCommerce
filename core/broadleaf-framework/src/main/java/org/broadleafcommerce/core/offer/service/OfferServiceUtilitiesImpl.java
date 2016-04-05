@@ -384,7 +384,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
                 ExtensionResultHolder resultHolder = new ExtensionResultHolder();
 
                 if (extensionManager != null) {
-                    extensionManager.getProxy().createOrderItemPriceDetailAdjustment(resultHolder, itemDetail);
+                    extensionManager.createOrderItemPriceDetailAdjustment(resultHolder, itemDetail);
                 }
                 if (resultHolder != null && resultHolder.getContextMap().containsKey("OrderItemPriceDetailAdjustment")) {
                     newItemAdjustment = (OrderItemPriceDetailAdjustment) resultHolder.getContextMap().get("OrderItemPriceDetailAdjustment");

@@ -245,7 +245,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         Map<String, Object> contextMap = new HashMap<String, Object>();
 
         if (extensionManager != null) {
-            extensionManager.getProxy().applyItemOffer(order, itemOffer, contextMap);
+            extensionManager.applyItemOffer(order, itemOffer, contextMap);
             if (contextMap.get(OfferServiceExtensionManager.STOP_PROCESSING) != null) {
                 // Returning false               
                 return !Boolean.TRUE.equals(contextMap.get(OfferServiceExtensionManager.STOP_PROCESSING));
@@ -439,7 +439,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             PromotableOrderItem item, int quantity) {
         if (extensionManager != null) {
             Map<String,Object> contextMap = new HashMap<String,Object>();
-            extensionManager.getProxy().calculatePotentialSavings(itemOffer, item, quantity, contextMap);
+            extensionManager.calculatePotentialSavings(itemOffer, item, quantity, contextMap);
 
             // If the extensionHandler added a savings element to the map, then return it 
             Object o = contextMap.get("savings");
@@ -587,7 +587,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         item.resetPriceDetails();
 
         if (extensionManager != null) {
-            extensionManager.getProxy().resetPriceDetails(item);
+            extensionManager.resetPriceDetails(item);
         }
 
     }
@@ -653,7 +653,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         }
         chooseSaleOrRetailAdjustments(order);
         if (extensionManager != null) {
-            extensionManager.getProxy().chooseSaleOrRetailAdjustments(order);
+            extensionManager.chooseSaleOrRetailAdjustments(order);
         }
         order.setOrderSubTotalToPriceWithAdjustments();
 
