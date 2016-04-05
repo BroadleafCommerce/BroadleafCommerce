@@ -212,7 +212,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             orderItem.updateRuleVariables(vars);
 
             if (extensionManager != null) {
-                extensionManager.getProxy().applyAdditionalRuleVariablesForItemOfferEvaluation(orderItem, vars);
+                extensionManager.applyAdditionalRuleVariablesForItemOfferEvaluation(orderItem, vars);
             }
 
             Boolean expressionOutcome = executeExpression(criteria.getMatchRule(), vars);

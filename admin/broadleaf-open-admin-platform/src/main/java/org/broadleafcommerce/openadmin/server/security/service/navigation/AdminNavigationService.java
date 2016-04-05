@@ -21,11 +21,11 @@ package org.broadleafcommerce.openadmin.server.security.service.navigation;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 
 import java.util.List;
+import java.util.Set;
 
 public interface AdminNavigationService {
 
@@ -67,6 +67,6 @@ public interface AdminNavigationService {
 
     public void remove(AdminSection adminSection);
 
-    boolean checkPermissions(List<AdminPermission> authorizedPermissions, AdminPermission permission);
+    boolean checkPermissions(Set<String> authorizedPermissionNames, String permissionName);
 
 }

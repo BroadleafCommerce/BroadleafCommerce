@@ -28,6 +28,9 @@
     var maxSubCollectionListGridHeight = 360;
     var treeListGridHeight = 400;
 
+    var SCROLLBAR_WIDTH = 15;
+    var TREE_COLUMN_WIDTH = 320;
+
     var tableResizing = {
         active : false,
         headerTable : undefined,
@@ -555,30 +558,28 @@
             }
 
             if ($table.data('listgridtype') == 'asset_grid' && $table.closest('.select-group').find('.select-column:visible').length > 0) {
-                // For Asset Grids, the folder select is 320px wide and the scrollbar on the listgrid being resized is
-                // 15px wide.  Therefore, the new size of the listgrid is: TOTAL_WIDTH - (320px + 15px)
-                var fullWidth = $table.closest('.select-group').width() - 335;
+                // For Asset Grids, the folder selector collection has a width of TREE_COLUMN_WIDTH.
+                // To get the remaining width available for displaying assets, we must subtract TREE_COLUMN_WIDTH from the total width.
+                var totalWidth = $table.closest('.select-group').width();
+                var remainingWidth = totalWidth - TREE_COLUMN_WIDTH;
 
                 $headerTable.css('width', '');
                 $table.css('width', '');
                 $table.css('table-layout', 'fixed');
 
-                // Figure out what the new table width will be
-                var newWidth = (fullWidth) + 'px';
+                // Ensure that the new width accounts for the width of the scrollbar (i.e. SCROLLBAR_WIDTH)
+                var newWidth = remainingWidth - SCROLLBAR_WIDTH + 'px';
                 $headerTable.css('width', newWidth);
                 $table.css('width', newWidth);
             } else if ($table.data('listgridtype') == 'tree' &&
-                $table.closest('.select-group').find('.select-column:visible').length === 0 &&
-                $modalBody.length > 0) {
-                // The 15px in the following line refers to the width of the scrollbar on list grids.
-                var fullWidth = $table.closest('.select-group').width() - 15;
-
+                        $table.closest('.select-group').find('.select-column:visible').length === 0 &&
+                        $modalBody.length > 0) {
                 $headerTable.css('width', '');
                 $table.css('width', '');
                 $table.css('table-layout', 'fixed');
 
-                // Figure out what the new table width will be
-                var newWidth = (fullWidth) + 'px';
+                // Ensure that the new width accounts for the width of the scrollbar (i.e. SCROLLBAR_WIDTH)
+                var newWidth = $table.closest('.select-group').width() - SCROLLBAR_WIDTH + 'px';
                 $headerTable.css('width', newWidth);
                 $table.css('width', newWidth);
             } else {
@@ -588,8 +589,8 @@
                 $table.css('table-layout', 'fixed');
                 //$headerTable.closest('.listgrid-container').find('th').css('width', '');
 
-                // Figure out what the new table width will be
-                var newWidth = $headerTable.width() + 'px';
+                // Ensure that the new width accounts for the width of the scrollbar (i.e. SCROLLBAR_WIDTH)
+                var newWidth = $headerTable.width() - SCROLLBAR_WIDTH + 'px';
                 $headerTable.css('width', newWidth);
                 $table.css('width', newWidth);
             }

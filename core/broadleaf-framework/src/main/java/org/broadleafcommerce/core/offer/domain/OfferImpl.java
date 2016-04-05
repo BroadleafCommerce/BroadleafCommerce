@@ -252,13 +252,13 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             defaultValue = "true", order = 2000)
     protected Boolean combinableWithItemOffers = true;
 
-    @Column(name = "COMBINABLE_WITH_ITEM_OFFERS_IMPACTING_ITEMS")
+    @Column(name = "COMBINABLE_ITM_OFR_IMPACT_ITMS")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Offer_Impacting_Items_Combinable",
             group = GroupName.CombineStack,
             defaultValue = "true", order = 3000)
     protected Boolean combinableWithItemOffersImpactingOtherItems = true;
 
-    @Column(name = "COMBINABLE_WITH_SHIPPING_OFFERS")
+    @Column(name = "COMBINABLE_WITH_SHIP_OFFERS")
     @AdminPresentation(friendlyName = "OfferImpl_Shipping_Offer_Combinable",
             group = GroupName.CombineStack,
             defaultValue = "true", order = 4000)

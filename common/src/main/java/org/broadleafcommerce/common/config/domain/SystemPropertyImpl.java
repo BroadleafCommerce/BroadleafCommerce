@@ -80,7 +80,7 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity, Syst
             requiredOverride = RequiredOverride.REQUIRED)
     protected String name;
 
-    @Column(name = "OVERRIDE_GENERATED_PROPERTY_NAME")
+    @Column(name = "OVERRIDE_GENERATED_PROP_NAME")
     @AdminPresentation(friendlyName = "FieldImpl_overrideGeneratedPropertyName",
             group = GroupName.General)
     protected Boolean overrideGeneratedPropertyName = false;
