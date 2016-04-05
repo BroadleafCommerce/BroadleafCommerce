@@ -610,7 +610,7 @@ var BLCAdmin = (function($) {
                 excludedSelectors += ', ' + excludedSelectizeSelectors[i];
             }
 
-            $('select:not(".selectize-collection, .selectize-adder' + excludedSelectors + '")')
+            $container.find('select:not(".selectize-collection, .selectize-adder' + excludedSelectors + '")')
                 .blSelectize({
                     sortField: 'text',
                     closeAfterSelect: true,
