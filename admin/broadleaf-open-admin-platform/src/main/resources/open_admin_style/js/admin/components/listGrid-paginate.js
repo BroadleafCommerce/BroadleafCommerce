@@ -130,7 +130,7 @@
 
             // If the index is larger than the total number of records, then technically the record is loaded
             // Add 1 since index is 0-indexed & total records is 1-indexed
-            if ((index + 1) >= totalRecords) {
+            if ((index + 1) > totalRecords) {
                 return true;
             }
             
