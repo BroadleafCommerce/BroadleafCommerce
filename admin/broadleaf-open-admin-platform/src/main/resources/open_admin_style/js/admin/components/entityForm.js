@@ -577,6 +577,9 @@ $(document).ready(function() {
         $tableBodies.each(function( index, tbody ) {
             BLCAdmin.listGrid.paginate.updateGridSize($(tbody));
         });
+        $fieldSetCard.find('.fieldgroup-listgrid-wrapper-header').each(function (index, element) {
+            BLCAdmin.listGrid.updateGridTitleBarSize($(element));
+        });
     });
 
     $('body').on('click', 'a.description-link', function(event) {
