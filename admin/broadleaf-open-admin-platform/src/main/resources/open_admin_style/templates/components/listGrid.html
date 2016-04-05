@@ -159,7 +159,7 @@
                                 or headerField.canLinkToExternalEntity 
                                 or field.fieldType == 'IMAGE'
                                 or field.fieldType == 'COLOR'}"
-                              th:text="${field.displayValue}" th:remove="tag"></span>
+                              th:utext="${field.displayValue}" th:remove="tag"></span>
                     </span>
 
                     <span th:case="'asset_grid'" th:remove="tag">
