@@ -103,7 +103,7 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
             requiredOverride = RequiredOverride.REQUIRED)
     protected String propertyName;
 
-    @Column(name = "OVERRIDE_GENERATED_PROPERTY_NAME")
+    @Column(name = "OVERRIDE_GENERATED_PROP_NAME")
     @AdminPresentation(friendlyName = "FieldImpl_overrideGeneratedPropertyName",
             group = GroupName.General, order = FieldOrder.OVERRIDE_GENERATED_PROPERTY_NAME)
     protected Boolean overrideGeneratedPropertyName = false;
