@@ -293,7 +293,7 @@ public class FieldGroup {
     public Set<Field> getFields() {
         Set<Field> fields = new HashSet<>();
         for (FieldGroupItem groupItem : getGroupItems()) {
-            if (groupItem.isField()) {
+            if (groupItem.isField() || groupItem.isCustomField()) {
                 fields.add(groupItem.getField());
             }
         }

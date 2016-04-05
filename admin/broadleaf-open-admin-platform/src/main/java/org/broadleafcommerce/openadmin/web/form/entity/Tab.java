@@ -38,6 +38,8 @@ public class Tab {
     protected Integer order;
     protected String tabClass;
     protected Boolean isMultiColumn;
+    protected Boolean wantsFullScreen = false;
+    protected String customTemplate;
     private boolean isTabsPresent = false;
 
     TreeSet<FieldGroup> fieldGroups = new TreeSet<FieldGroup>(new Comparator<FieldGroup>() {
@@ -85,6 +87,11 @@ public class Tab {
         setIsMultiColumn(isMultiColumn);
         return this;
     }
+
+    public Tab withCustomTemplate(String customTemplate) {
+        setCustomTemplate(customTemplate);
+        return this;
+    }
     
     public Boolean getIsVisible() {
         if (listGrids.size() > 0 || isTabsPresent) {
@@ -109,6 +116,10 @@ public class Tab {
             if (fg.hasFieldOrListGrid()) {
                 return true;
             }
+        }
+
+        if (customTemplate != null) {
+            return true;
         }
 
         return false;
@@ -211,6 +222,14 @@ public class Tab {
         this.isMultiColumn = isMultiColumn;
     }
 
+    public Boolean getWantsFullScreen() {
+        return wantsFullScreen;
+    }
+
+    public void setWantsFullScreen(Boolean wantsFullScreen) {
+        this.wantsFullScreen = wantsFullScreen;
+    }
+
     public boolean isTabsPresent() {
         return isTabsPresent;
     }
@@ -219,6 +238,13 @@ public class Tab {
         this.isTabsPresent = isTabsPresent;
     }
 
+    public String getCustomTemplate() {
+        return customTemplate;
+    }
+
+    public void setCustomTemplate(String customTemplate) {
+        this.customTemplate = customTemplate;
+    }
 }
 
 
