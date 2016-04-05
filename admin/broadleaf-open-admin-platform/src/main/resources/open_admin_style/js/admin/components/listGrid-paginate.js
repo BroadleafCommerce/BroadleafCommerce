@@ -927,7 +927,11 @@ $(document).ready(function() {
     $(window).resize(function() {
         $.doTimeout('resizeListGrid', 0, function() {
             if ($('.oms').length == 0) {
-                BLCAdmin.getActiveTab().find('tbody').each(function (index, element) {
+                BLCAdmin.getActiveTab().find('tbody:not(.no-update)').each(function (index, element) {
+                    if ($(element).closest('.oms-tab').length) {
+                        return;
+                    }
+
                     if ($(element).is(':visible')) {
                         BLCAdmin.listGrid.paginate.updateGridSize($(element));
                     } else {
