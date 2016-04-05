@@ -90,7 +90,8 @@ import javax.persistence.Transient;
 )
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps = true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD)
 })
 public class CustomerImpl implements Customer, AdminMainEntity, Previewable, CustomerAdminPresentation {
 
@@ -179,7 +180,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     @MapKey(name = "name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "CustomerAttributeImpl_Attribute_Name",
-            tab = CustomerAdminPresentation.TabName.Advanced,
+            tab = CustomerAdminPresentation.TabName.General,
             deleteEntityUponRemove = true, forceFreeFormKeys = true,
             keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name")
     protected Map<String, CustomerAttribute> customerAttributes = new HashMap<>();

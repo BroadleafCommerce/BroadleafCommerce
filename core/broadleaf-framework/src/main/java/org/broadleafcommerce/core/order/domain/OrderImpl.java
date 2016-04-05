@@ -159,7 +159,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = GroupName.General,
             order=FieldOrder.STATUS, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus",
-            gridOrder = 3000)
+            gridOrder = 1000)
     protected String status;
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
@@ -179,21 +179,25 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Column(name = "ORDER_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = GroupName.General,
-            order=FieldOrder.TOTAL, fieldType= SupportedFieldType.MONEY, prominent=true,
+            order=FieldOrder.TOTAL,
+            fieldType = SupportedFieldType.MONEY,
+            prominent=true,
             gridOrder = 4000)
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
     @AdminPresentation(friendlyName = "OrderImpl_Order_Submit_Date", group = GroupName.General,
             order=FieldOrder.SUBMITDATE,
+            prominent = true,
             gridOrder = 5000)
     protected Date submitDate;
 
     @Column(name = "ORDER_NUMBER")
     @Index(name="ORDER_NUMBER_INDEX", columnNames={"ORDER_NUMBER"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Number", group = GroupName.General,
-            order=FieldOrder.ORDERNUMBER, prominent=true,
-            gridOrder = 1000)
+            order = FieldOrder.ORDERNUMBER,
+            prominent = true,
+            gridOrder = 3000)
     private String orderNumber;
 
     @Column(name = "EMAIL_ADDRESS")

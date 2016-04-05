@@ -36,11 +36,13 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                     order = CustomerAdminPresentation.GroupOrder.Customer,
                     untitled = true),
                 @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.ContactInfo,
-                    order = CustomerAdminPresentation.GroupOrder.ContactInfo,
-                    collapsed = true),
+                    order = CustomerAdminPresentation.GroupOrder.ContactInfo),
                 @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.QualificationOptions,
                     order = CustomerAdminPresentation.GroupOrder.QualificationOptions,
-                    column = 1, untitled = true)
+                    column = 1, untitled = true),
+                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Audit,
+                    order = CustomerAdminPresentation.GroupOrder.Audit,
+                    column = 1, collapsed = true)
             }
         ),
         @AdminTabPresentation(name = CustomerAdminPresentation.TabName.PaymentMethods,
@@ -52,14 +54,6 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Pricing,
                     order = CustomerAdminPresentation.GroupOrder.Pricing,
                     untitled = true)
-            }
-        ),
-        @AdminTabPresentation(name = CustomerAdminPresentation.TabName.Advanced,
-            order = CustomerAdminPresentation.TabOrder.Advanced,
-            groups = {
-                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Audit,
-                    order = CustomerAdminPresentation.GroupOrder.Audit,
-                    column = 1)
             }
         )
     }
@@ -74,8 +68,8 @@ public interface CustomerAdminPresentation {
 
     public static class TabOrder {
         public static final int General = 1000;
-        public static final int PaymentMethods = 3000;
-        public static final int Pricing = 4000;
+        public static final int PaymentMethods = 2000;
+        public static final int Pricing = 3000;
         public static final int Advanced = 5000;
     }
 
@@ -92,7 +86,7 @@ public interface CustomerAdminPresentation {
         public static final int ContactInfo = 2000;
         public static final int QualificationOptions = 1000;
         public static final int Pricing = 1000;
-        public static final int Audit = 1000;
+        public static final int Audit = 2000;
     }
 
     public static class FieldOrder {
