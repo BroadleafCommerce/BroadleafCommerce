@@ -542,9 +542,9 @@
             if (el !== undefined && $(el).closest('.oms-tab').length) {
                 return false;
             }
-
+            
             // Don't track if we are in a modal, on an OMS page, or not on a page with an entity form
-            if ($(this).closest('.modal').length ||
+            if ($(el).closest('.modal').length ||
                 $('.oms').length ||
                 !$('.entity-form').length) {
                 return false;
