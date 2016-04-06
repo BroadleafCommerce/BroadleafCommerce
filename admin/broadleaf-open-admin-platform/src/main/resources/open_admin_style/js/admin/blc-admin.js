@@ -54,7 +54,6 @@ var BLCAdmin = (function($) {
         if (modals.length > 0) {
             modals.last().css('z-index', '1040');
             var $backdrop = $('.modal-backdrop');
-            $backdrop.css('z-index', parseInt($backdrop.css('z-index')) + 1);
             
             // We will also offset modals by the given option values
             $data.css('left', $data.position().left + (stackedModalOptions.left * modals.length) + 'px');
