@@ -107,6 +107,9 @@
             }
 
             window.onhashchange = function() {
+                // If any modals are open when this event is triggered, the modals should be closed.
+                BLCAdmin.hideAllModals();
+
                 // if this was a session timeout, don't click a new tab
                 if (window.location.hash.indexOf('sessionTimeout') !== -1) {
                     return false;
