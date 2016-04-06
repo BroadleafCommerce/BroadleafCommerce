@@ -448,9 +448,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<Boolean>();
         ExtensionResultStatusType result = extensionManager.getProxy().isAddRequest(entity, resultHolder);
         if (result.equals(ExtensionResultStatusType.NOT_HANDLED)) {
-            Map<String, Property> pMap = entity.getPMap();
-            Property dateUpdated = pMap == null ? null : entity.getPMap().get("auditable.dateUpdated");
-            return dateUpdated == null || dateUpdated.getValue() == null;
+            return false;
         }
 
         return resultHolder.getResult();
