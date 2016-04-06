@@ -556,20 +556,18 @@ $(document).ready(function() {
         event.preventDefault();
 
         var $collapser = $(this).find('.collapser span');
-        var $content = $(this).closest('.fieldset-card').find('.fieldset-card-content');
+        var content = $(this).closest('.fieldset-card').find('.fieldset-card-content')[0];
         if ($collapser.hasClass('collapsed')) {
             $collapser.removeClass('collapsed').addClass('expanded');
             $collapser.text("(hide)");
-            //$collapser.find('i').removeClass('fa-angle-down').addClass('fa-angle-up');
-            $content.removeClass('content-collapsed');
+            $(content).removeClass('content-collapsed');
 
             // update content height
             BLCAdmin.updateContentHeight($(this));
         } else {
             $collapser.removeClass('expanded').addClass('collapsed');
             $collapser.text("(show)");
-            //$collapser.find('i').removeClass('fa-angle-up').addClass('fa-angle-down');
-            $content.addClass('content-collapsed');
+            $(content).addClass('content-collapsed');
         }
 
         var $fieldSetCard = $(this).closest('.fieldset-card');
