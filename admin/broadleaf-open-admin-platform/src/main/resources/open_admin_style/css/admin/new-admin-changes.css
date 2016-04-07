@@ -361,7 +361,7 @@ input[type="radio"].radio+label.radio-label.clr,
     vertical-align: middle;
     padding: 5px 5px 5px 15px;
     position: relative;
-    height: 39px;
+    height: 40px;
 }
 
 .table tbody > tr.list-grid-no-results > td {
