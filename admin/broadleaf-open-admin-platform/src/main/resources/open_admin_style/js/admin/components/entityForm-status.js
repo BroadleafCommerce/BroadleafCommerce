@@ -345,7 +345,7 @@
                 id = $ruleBuilderContainer.attr('id');
 
                 // In order to get the new rules on this `RuleBuilder` we need to grab the actual `RuleBuilder`
-                var hiddenId = $ruleBuilderContainer.next('.rule-builder-data').data('hiddenid');
+                var hiddenId = $ruleBuilderContainer.siblings('.rule-builder-data').first().data('hiddenid');
                 var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
 
                 var rules = BLCAdmin.ruleBuilders.getAllRuleBuilderRules(ruleBuilder);
