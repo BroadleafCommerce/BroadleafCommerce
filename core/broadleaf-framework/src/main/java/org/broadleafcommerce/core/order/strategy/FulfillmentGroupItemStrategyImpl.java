@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -68,7 +69,10 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     protected FulfillmentGroupItemDao fgItemDao;
     
     protected boolean removeEmptyFulfillmentGroups = true;
-    
+
+    @Value("${sync.fulfillmentGroupItem.qty:false}")
+    private boolean syncFGItemQty;
+
     @Override
     public CartOperationRequest onItemAdded(CartOperationRequest request) throws PricingException {
         Order order = request.getOrder();
@@ -369,19 +373,23 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         
         for (Entry<Long, Integer> entry : oiQuantityMap.entrySet()) {
             if (!entry.getValue().equals(0)) {
-                LOG.warn("Not enough fulfillment group items found for DiscreteOrderItem id:" + entry.getKey());
-                // There are edge cases where the OrderItem and FulfillmentGroupItem quantities can fall out of sync. If this happens
-                // we set the FGItem to the correct quantity from the OrderItem and save/reprice the order to synchronize them.
-                FulfillmentGroupItem fgItem = fgItemMap.get(entry.getKey());
-                for (OrderItem oi : expandedOrderItems) {
-                    if (oi.getId().equals(fgItem.getOrderItem().getId())) {
-                        LOG.warn("Synchronizing FulfillmentGroupItem to match OrderItem ["
-                                + entry.getKey() + "] quantity of : " + oi.getQuantity());
-                        fgItem.setQuantity(oi.getQuantity());
-                        // We price the order in order to get the right amount after the qty change
-                        order = orderService.save(order, true);
-                        request.setOrder(order);
+                if (syncFGItemQty) {
+                    LOG.warn("Not enough fulfillment group items found for DiscreteOrderItem id:" + entry.getKey());
+                    // There are edge cases where the OrderItem and FulfillmentGroupItem quantities can fall out of sync. If this happens
+                    // we set the FGItem to the correct quantity from the OrderItem and save/reprice the order to synchronize them.
+                    FulfillmentGroupItem fgItem = fgItemMap.get(entry.getKey());
+                    for (OrderItem oi : expandedOrderItems) {
+                        if (oi.getId().equals(fgItem.getOrderItem().getId())) {
+                            LOG.warn("Synchronizing FulfillmentGroupItem to match OrderItem ["
+                                    + entry.getKey() + "] quantity of : " + oi.getQuantity());
+                            fgItem.setQuantity(oi.getQuantity());
+                            // We price the order in order to get the right amount after the qty change
+                            order = orderService.save(order, true);
+                            request.setOrder(order);
+                        }
                     }
+                } else {
+                    throw new IllegalStateException("Not enough fulfillment group items found for DiscreteOrderItem id: " + entry.getKey());
                 }
             }
         }
