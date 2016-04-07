@@ -89,6 +89,7 @@
 
 .listgrid-body-wrapper .table tbody>tr:first-child>td {
     border-top: none;
+    height: 40px;
 }
 
 .listgrid-body-wrapper tbody tr td:first-child a:not(.workflow-icon),  tbody tr td:first-child a:not(.workflow-icon) {
@@ -1043,8 +1044,8 @@ div.action-popup span.deploy-error button {
 span.workflow-action {
     font-size: 16px;
     visibility: hidden;
-    width: 28px;
-    height: 28px;
+    width: 27px;
+    height: 27px;
     display: inline-block;
 }
 
