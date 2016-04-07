@@ -312,7 +312,7 @@
          */
         handleEntityFormChanges: function(el) {
             // Check if we should handle the changes
-            if (!this.checkIfShouldTrackChanges()) { return }
+            if (!this.checkIfShouldTrackChanges(el)) { return }
 
             var id = $(el).attr('id');
             var newVal = $(el).val() || '';
@@ -518,7 +518,7 @@
          */
         checkIfShouldTrackChanges : function(el) {
             // Don't track if we are in a modal, on an OMS page, or not on a page with an entity form
-            if ($(el).closest('.modal').length ||
+            if ((el !== undefined && $(el).closest('.modal').length) ||
                 $('.oms').length ||
                 !$('.entity-form').length) {
                 return false;
