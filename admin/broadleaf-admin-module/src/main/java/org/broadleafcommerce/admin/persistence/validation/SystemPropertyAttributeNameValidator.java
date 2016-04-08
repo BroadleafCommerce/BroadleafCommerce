@@ -30,8 +30,12 @@ import org.broadleafcommerce.openadmin.server.service.persistence.validation.Val
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -48,7 +52,7 @@ public class SystemPropertyAttributeNameValidator extends ValidationConfiguratio
 
     protected static final Log LOG = LogFactory.getLog(SystemPropertyAttributeNameValidator.class);
 
-    private static final String[] reservedKeyWords = { "not", "and", "or", "gt", "lt", "ge", "le", "eq", "ne" };
+    private static final List<String> reservedKeywords = new ArrayList(Arrays.asList("not", "and", "or", "gt", "lt", "ge", "le", "eq", "ne"));
     private static final String RESERVED_WORD_ERROR_MESSAGE = "SystemPropertyImpl_name_reservedWordError";
     private static final String DISALLOWED_CHARACTERS_ERROR_MESSAGE = "SystemPropertyImpl_name_disallowedCharactersError";
 
@@ -59,28 +63,71 @@ public class SystemPropertyAttributeNameValidator extends ValidationConfiguratio
         String attributeName = entity.findProperty("name") == null ? null : entity.findProperty("name").getValue();
 
         if (attributeName != null) {
-            Matcher matcher = Pattern.compile("\\s").matcher(attributeName);
-            boolean containsWhiteSpace = matcher.find();
-
-            if (containsWhiteSpace || !attributeName.replaceAll("\\.", "").matches("([a-zA-Z0-9])\\w+")) {
-                return new PropertyValidationResult(false, getDisallowedCharactersErrorMesssage());
+            if (containsWhiteSpace(attributeName) || !containsOnlyLettersNumbersAndPeriods(attributeName)) {
+                return createDisallowedCharactersValidationResult();
             }
 
-            for (String reservedKeyWord: reservedKeyWords) {
-                if (attributeName.contains("." + reservedKeyWord + ".")) {
-                    return new PropertyValidationResult(false, getReservedWordErrorMessage() + " '" + reservedKeyWord + "'.");
-                }
+            Set<String> containedReservedKeywords = retrieveContainedReservedKeywords(attributeName);
+
+            if (!containedReservedKeywords.isEmpty()) {
+                return createContainsReservedKeywordsValidationResult(containedReservedKeywords);
             }
         }
 
         return new PropertyValidationResult(true);
     }
 
-    private String getReservedWordErrorMessage() {
-        return BLCMessageUtils.getMessage(RESERVED_WORD_ERROR_MESSAGE);
+    private boolean containsWhiteSpace(String attributeName) {
+        return Pattern.compile("\\s").matcher(attributeName).find();
+    }
+
+    private boolean containsOnlyLettersNumbersAndPeriods(String attributeName) {
+        return attributeName.replaceAll("\\.", "").matches("([a-zA-Z0-9])\\w+");
+    }
+
+    private Set<String> retrieveContainedReservedKeywords(String attributeName) {
+        Set<String> containedReservedKeywords = new LinkedHashSet<>();
+
+        List<String> attributeNamePieces = new ArrayList<>(Arrays.asList(attributeName.split("\\.")));
+
+        // Remove the first & last elements since we know they cannot be surrounded by "."
+        removeFirstAndLastPieces(attributeNamePieces);
+
+        for (String attributeNamePiece: attributeNamePieces) {
+            if (reservedKeywords.contains(attributeNamePiece)) {
+                containedReservedKeywords.add(attributeNamePiece);
+            }
+        }
+        return containedReservedKeywords;
+    }
+
+    /**
+     * Remove the first & last elements since we know they cannot be surrounded by "."
+     */
+    private void removeFirstAndLastPieces(List<String> attributeNamePieces) {
+        attributeNamePieces.remove(0);
+
+        // The last element should only be removed if there are more than two elements
+        // Ex: "first" vs "first.last" vs "first.second.last"
+        //  In these three cases, the only item that can potentially fail validation is ".second."
+        if (attributeNamePieces.size() >= 2) {
+            attributeNamePieces.remove(attributeNamePieces.size() - 1);
+        }
+    }
+
+    private PropertyValidationResult createDisallowedCharactersValidationResult() {
+        return new PropertyValidationResult(false, getDisallowedCharactersErrorMesssage());
     }
 
     private String getDisallowedCharactersErrorMesssage() {
         return BLCMessageUtils.getMessage(DISALLOWED_CHARACTERS_ERROR_MESSAGE);
+    }
+
+    private PropertyValidationResult createContainsReservedKeywordsValidationResult(Set<String> containedReservedKeywords) {
+        return new PropertyValidationResult(false, getReservedWordErrorMessage() + " " + containedReservedKeywords.toString());
+    }
+
+    private String getReservedWordErrorMessage() {
+        return BLCMessageUtils.getMessage(RESERVED_WORD_ERROR_MESSAGE);
     }
 }
