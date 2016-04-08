@@ -130,7 +130,7 @@
 
             // If the index is larger than the total number of records, then technically the record is loaded
             // Add 1 since index is 0-indexed & total records is 1-indexed
-            if ((index + 1) >= totalRecords) {
+            if ((index + 1) > totalRecords) {
                 return true;
             }
             
@@ -480,6 +480,7 @@
         getActualRowIndex : function($tr) {
             var trPlacementTop = $tr.position().top;
             var rowHeight = this.getRowHeight($tr.closest('tbody'));
+            // The division should produce an integer, assuming the row heights are consistent.
             return trPlacementTop / rowHeight;
         },
         
