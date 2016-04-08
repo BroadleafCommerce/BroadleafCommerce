@@ -90,8 +90,7 @@ public class SystemPropertyAttributeNameValidator extends ValidationConfiguratio
 
         List<String> attributeNamePieces = new ArrayList<>(Arrays.asList(attributeName.split("\\.")));
 
-        // Remove the first & last elements since we know they cannot be surrounded by "."
-        removeFirstAndLastPieces(attributeNamePieces);
+        attributeNamePieces = removeFirstAndLastPieces(attributeNamePieces);
 
         for (String attributeNamePiece: attributeNamePieces) {
             if (reservedKeywords.contains(attributeNamePiece)) {
@@ -104,7 +103,7 @@ public class SystemPropertyAttributeNameValidator extends ValidationConfiguratio
     /**
      * Remove the first & last elements since we know they cannot be surrounded by "."
      */
-    private void removeFirstAndLastPieces(List<String> attributeNamePieces) {
+    private List<String> removeFirstAndLastPieces(List<String> attributeNamePieces) {
         attributeNamePieces.remove(0);
 
         // The last element should only be removed if there are more than two elements
@@ -113,6 +112,8 @@ public class SystemPropertyAttributeNameValidator extends ValidationConfiguratio
         if (attributeNamePieces.size() >= 2) {
             attributeNamePieces.remove(attributeNamePieces.size() - 1);
         }
+
+        return attributeNamePieces;
     }
 
     private PropertyValidationResult createDisallowedCharactersValidationResult() {
