@@ -325,7 +325,7 @@
             // If this is a media item input we only care about the url attribute
             else if ($(el).hasClass('mediaItem')) {
                 if (!$(el).hasClass('mediaUrl')) {
-                    var mediaJson = JSON.parse(newVal);
+                    var mediaJson = JSON.parse(newVal || '{}');
                     newVal = mediaJson === null || mediaJson.url === null ? '' : mediaJson.url;
                 }
             }
@@ -404,7 +404,7 @@
                 if ($(el).hasClass('mediaUrl')) {
                     mediaUrl = origVal;
                 } else {
-                    var mediaJson = JSON.parse(origVal);
+                    var mediaJson = JSON.parse(origVal || '{}');
                     mediaUrl = mediaJson === null || mediaJson.url === null ? '' : mediaJson.url
                 }
                 $(this).attr('data-orig-val', mediaUrl);
