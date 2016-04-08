@@ -44,6 +44,8 @@ public class ListGrid {
     protected int order;
     protected boolean isSortable;
 
+    protected boolean hideFriendlyName;
+
     protected Set<Field> headerFields = new TreeSet<Field>(new Comparator<Field>() {
 
         @Override
@@ -121,6 +123,8 @@ public class ListGrid {
     protected String json;
     protected String jsonFieldName;
     protected FieldWrapper fieldWrapper;
+
+
 
     /* ************** */
     /* CUSTOM METHODS */
@@ -429,6 +433,10 @@ public class ListGrid {
     public void setIsSortable(boolean isSortable) {
         this.isSortable = isSortable;
     }
+
+    public boolean getHideFriendlyName() { return hideFriendlyName; }
+
+    public void setHideFriendlyName(boolean hideFriendlyName) { this.hideFriendlyName = hideFriendlyName; }
 
     public Set<Field> getHeaderFields() {
         return headerFields;

@@ -209,6 +209,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         listGrid.setFriendlyName(friendlyName);
         listGrid.setFieldBuilder("RULE_SIMPLE");
         listGrid.setFieldWrapper(wrapper);
+        listGrid.setHideFriendlyName(true);
 
         String blankJsonString =  "{\"data\":[]}";
         listGrid.setJson(blankJsonString);
