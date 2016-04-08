@@ -89,6 +89,7 @@
 
 .listgrid-body-wrapper .table tbody>tr:first-child>td {
     border-top: none;
+    height: 40px;
 }
 
 .listgrid-body-wrapper tbody tr td a:not(.workflow-icon),  tbody tr td a:not(.workflow-icon) {
@@ -360,7 +361,7 @@ input[type="radio"].radio+label.radio-label.clr,
     vertical-align: middle;
     padding: 5px 5px 5px 15px;
     position: relative;
-    height: 39px;
+    height: 40px;
 }
 
 .table tbody > tr.list-grid-no-results > td {
@@ -1043,8 +1044,8 @@ div.action-popup span.deploy-error button {
 span.workflow-action {
     font-size: 16px;
     visibility: hidden;
-    width: 28px;
-    height: 28px;
+    width: 27px;
+    height: 27px;
     display: inline-block;
 }
 
