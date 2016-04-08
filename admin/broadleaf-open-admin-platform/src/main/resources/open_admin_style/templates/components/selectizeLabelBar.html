@@ -6,7 +6,7 @@
 
 <label>
 
-    <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" class="label" th:utext="#{${listGrid.friendlyName}}"/>
+    <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" th:classappend="${listGrid.hideFriendlyName} ? hidden : ''" class="label" th:utext="#{${listGrid.friendlyName}}"/>
 
     <span class="alert-wrapper" />
 
