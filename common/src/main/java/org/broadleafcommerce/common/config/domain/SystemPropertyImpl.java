@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -77,7 +78,8 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity, Syst
     @AdminPresentation(friendlyName = "SystemPropertyImpl_name",
             group = GroupName.General, order = FieldOrder.ATTRIBUTE_NAME,
             prominent = true, gridOrder = 1000,
-            requiredOverride = RequiredOverride.REQUIRED)
+            requiredOverride = RequiredOverride.REQUIRED,
+            validationConfigurations=@ValidationConfiguration(validationImplementation="blSystemPropertyAttributeNameValidator"))
     protected String name;
 
     @Column(name = "OVERRIDE_GENERATED_PROP_NAME")
