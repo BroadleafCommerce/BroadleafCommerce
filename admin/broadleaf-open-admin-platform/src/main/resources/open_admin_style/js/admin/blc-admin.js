@@ -53,8 +53,6 @@ var BLCAdmin = (function($) {
         // hidden by the current backdrop
         if (modals.length > 0) {
             modals.last().css('z-index', '1040');
-            var $backdrop = $('.modal-backdrop');
-            $backdrop.css('z-index', parseInt($backdrop.css('z-index')) + 1);
             
             // We will also offset modals by the given option values
             $data.css('left', $data.position().left + (stackedModalOptions.left * modals.length) + 'px');
@@ -70,6 +68,11 @@ var BLCAdmin = (function($) {
             if (onModalHide != null) {
                 onModalHide(onModalHideArgs);
             }
+
+            // Remove all filterBuilders that were created for this modal that is being removed
+            $(this).find('.filter-info .filter-button').each(function() {
+                BLCAdmin.filterBuilders.removeFilterBuilderByHiddenId($(this).data('hiddenid'));
+            });
             
             // Remove the modal from the DOM and from our stack
             $(this).remove();
