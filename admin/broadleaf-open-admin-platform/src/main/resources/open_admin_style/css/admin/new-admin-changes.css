@@ -511,7 +511,7 @@ button:disabled:hover, button.disabled:hover {
 .listgrid-table-footer {
     padding: 2px 10px;
     /* display: inline-block; */
-    border-top: 1px solid #E4E2DF;
+    /*border-top: 1px solid #E4E2DF;*/
     font-size: 12px;
 }
 
