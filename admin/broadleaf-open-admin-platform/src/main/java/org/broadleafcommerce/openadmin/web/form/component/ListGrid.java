@@ -92,6 +92,7 @@ public class ListGrid {
     protected String containingEntityId;
     protected String subCollectionFieldName;
     protected String pathOverride;
+    protected String searchFieldsTemplateOverride;
 
     public enum Type {
         MAIN,
@@ -597,6 +598,14 @@ public class ListGrid {
     
     public void setPathOverride(String pathOverride) {
         this.pathOverride = pathOverride;
+    }
+    
+    public String getSearchFieldsTemplateOverride() {
+        return searchFieldsTemplateOverride;
+    }
+    
+    public void setSearchFieldsTemplateOverride(String searchFieldsTemplateOverride) {
+        this.searchFieldsTemplateOverride = searchFieldsTemplateOverride;
     }
     
     public void setIsReadOnly(Boolean readOnly) {

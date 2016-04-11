@@ -8,7 +8,7 @@
     </h4>
 </div>
 <div th:unless="${#lists.isEmpty(listGrid.records) and !isFilter}" class="content-yield listgrid-container" id="main">
-    <div th:include="components/searchFields" th:object="${listGrid}" th:remove="tag" />
+    <div th:include="${listGrid.searchFieldsTemplateOverride == null ? 'components/searchFields' : listGrid.searchFieldsTemplateOverride}" th:object="${listGrid}" th:remove="tag" />
     <!--<div th:include="components/listGridToolbar" th:object="${listGrid}" th:remove="tag" />-->
     <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
 </div>

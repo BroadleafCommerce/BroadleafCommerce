@@ -172,6 +172,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         String idProperty = "id";
 
         FieldWrapper wrapper = new FieldWrapper();
+        ArrayList<FieldDTO> defaultWrapperFields = new ArrayList<FieldDTO>();
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
@@ -184,9 +185,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         && !ArrayUtils.contains(getGridHiddenVisibilities(), fmd.getVisibility())) {
                     Field hf = createHeaderField(p, fmd);
                     headerFields.add(hf);
+                    defaultWrapperFields.add(constructFieldDTOFromFieldData(hf, fmd));
+                }
 
-                    wrapper.getFields().add(constructFieldDTOFromFieldData(hf, fmd));
-
+                if (fmd.getIsFilter() != null && fmd.getIsFilter()) {
+                    wrapper.getFields().add(constructFieldDTOFromFieldData(createHeaderField(p, fmd), fmd));
                 }
             }
         }
@@ -208,6 +211,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         listGrid.setJsonFieldName(friendlyName + "Json");
         listGrid.setFriendlyName(friendlyName);
         listGrid.setFieldBuilder("RULE_SIMPLE");
+        if (CollectionUtils.isEmpty(wrapper.getFields())) {
+            wrapper.setFields(defaultWrapperFields);
+        }
         listGrid.setFieldWrapper(wrapper);
 
         String blankJsonString =  "{\"data\":[]}";
@@ -219,6 +225,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         listGrid.addModalRowAction(DefaultListGridActions.SINGLE_SELECT);
         listGrid.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
+
+        extensionManager.getProxy().modifyListGrid(listGrid.getClassName(), listGrid);
 
         return listGrid;
     }
@@ -322,6 +330,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         boolean isLookup = false;
         String sortProperty = null;
         FieldWrapper wrapper = new FieldWrapper();
+        ArrayList<FieldDTO> defaultWrapperFields = new ArrayList<FieldDTO>();
 
 
         String idProperty = "id";
@@ -351,7 +360,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                         Field hf = createHeaderField(p, md);
                         headerFields.add(hf);
-                        wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
+                        defaultWrapperFields.add(constructFieldDTOFromFieldData(hf, md));
+                    }
+
+                    if (md.getIsFilter() != null && md.getIsFilter()) {
+                        Field f = createHeaderField(p, md);
+                        wrapper.getFields().add(constructFieldDTOFromFieldData(f, md));
                     }
                 }
             }
@@ -382,7 +396,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                 && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                             Field hf = createHeaderField(p, md);
                             headerFields.add(hf);
-                            wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
+                            defaultWrapperFields.add(constructFieldDTOFromFieldData(hf, md));
+                        }
+
+                        if (md.getIsFilter() != null && md.getIsFilter()) {
+                            Field f = createHeaderField(p, md);
+                            wrapper.getFields().add(constructFieldDTOFromFieldData(f, md));
                         }
                     }
                 }
@@ -494,12 +513,16 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                     && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                                 hf = createHeaderField(p, md);
                                 headerFields.add(hf);
-                                wrapper.getFields().add(constructFieldDTOFromFieldData(hf, md));
+                                defaultWrapperFields.add(constructFieldDTOFromFieldData(hf, md));
 
                                 // Is this a media listgrid
                                 if (hf.getFieldType().equals("ASSET_LOOKUP")) {
                                     isMedia = true;
                                 }
+                            }
+
+                            if (md.getIsFilter() != null && md.getIsFilter()) {
+                                wrapper.getFields().add(constructFieldDTOFromFieldData(hf,md));
                             }
                         }
                     }
@@ -550,6 +573,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         listGrid.setJsonFieldName(friendlyName + c.getTime() + "Json");
         listGrid.setFriendlyName(friendlyName);
         listGrid.setFieldBuilder("RULE_SIMPLE");
+        if (CollectionUtils.isEmpty(wrapper.getFields())) {
+            wrapper.setFields(defaultWrapperFields);
+        }
         listGrid.setFieldWrapper(wrapper);
 
         String blankJsonString =  "{\"data\":[]}";
