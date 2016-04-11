@@ -409,7 +409,7 @@ var BLCAdmin = (function($) {
 
         hideAllModals : function() {
             var currentModal = BLCAdmin.currentModal()
-            while (currentModal.length) {
+            while (currentModal) {
                 currentModal.modal('hide');
                 currentModal = BLCAdmin.currentModal();
             }
