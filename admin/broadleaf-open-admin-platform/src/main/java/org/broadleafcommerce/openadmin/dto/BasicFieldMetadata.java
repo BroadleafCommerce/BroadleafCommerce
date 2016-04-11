@@ -91,6 +91,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected LookupType lookupType;
     protected Boolean translatable;
     protected String defaultValue;
+    protected Boolean isFilter;
 
     //for MapFields
     protected String mapFieldValueClass;
@@ -555,6 +556,14 @@ public class BasicFieldMetadata extends FieldMetadata {
 
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    public Boolean getIsFilter() {
+        return isFilter;
+    }
+
+    public void setIsFilter(Boolean isFilter) {
+        this.isFilter = isFilter;
     }
 
     @Override
