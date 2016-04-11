@@ -46,6 +46,7 @@ public class FieldGroup {
     protected Boolean isUntitled;
     protected Boolean collapsed;
     protected String toolTip;
+    protected String customTemplate;
     protected Map<String, Object> groupAttributes = new HashMap<String, Object>();
 
     public void removeListGrid(ListGrid listGrid) {
@@ -145,6 +146,13 @@ public class FieldGroup {
         this.groupAttributes = groupAttributes;
     }
 
+    public String getCustomTemplate() {
+        return customTemplate;
+    }
+
+    public void setCustomTemplate(String customTemplate) {
+        this.customTemplate = customTemplate;
+    }
 
     public FieldGroup withKey(String key) {
         setKey(key);
@@ -158,6 +166,11 @@ public class FieldGroup {
     
     public FieldGroup withOrder(Integer order) {
         setOrder(order);
+        return this;
+    }
+
+    public FieldGroup withCustomTemplate(String customTemplate) {
+        setCustomTemplate(customTemplate);
         return this;
     }
 
