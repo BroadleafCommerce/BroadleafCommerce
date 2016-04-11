@@ -406,6 +406,14 @@ var BLCAdmin = (function($) {
                 BLCAdmin.currentModal().modal('hide');
             }
         },
+
+        hideAllModals : function() {
+            var currentModal = BLCAdmin.currentModal()
+            while (currentModal) {
+                currentModal.modal('hide');
+                currentModal = BLCAdmin.currentModal();
+            }
+        },
         
         focusOnTopModal : function() {
             if (BLCAdmin.currentModal()) {
