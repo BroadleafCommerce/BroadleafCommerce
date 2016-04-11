@@ -22,6 +22,8 @@
             <input type="password" id="password" name="j_password" class="twelve" />
         </div>
 
+        <div th:substituteby="login/termsAndConditions" />
+
         <div class="account-actions">
             <input type="submit" class="button primary large" th:value="#{password.signIn}"/>
 
@@ -31,14 +33,9 @@
             </ul>
         </div>
 
+   		<div th:substituteby="login/loginDialogFooter" />
+  
     </blc:form>
 
-    <div th:fragment="options">
-        <ul class="inline-list">
-            <li><a href="#" th:href="@{/forgotUsername}" th:text="#{password.forgotUsername}" /></li>
-            <li class="divider">&nbsp;</li>
-            <li><a href="#" th:href="@{/forgotPassword}" th:text="#{password.forgotPassword}" /></li>
-        </ul>
-        <div th:substituteby="login/editSiteTemplate" />
-    </div>
+
 </div>
