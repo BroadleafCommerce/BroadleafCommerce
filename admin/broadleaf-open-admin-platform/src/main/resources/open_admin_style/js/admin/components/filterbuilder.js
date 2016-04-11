@@ -147,6 +147,24 @@
         },
 
         /**
+         * Remove FilterBuilder from the filterBuildersArray using the containerId
+         *
+         * @param containerId - the ID of the container <div> element where the query builders are rendered
+         */
+        removeFilterBuilderByContainerId : function(containerId) {
+            filterBuildersArray.splice(filterBuildersArray.indexOf(this.getFilterBuilder(containerId)), 1);
+        },
+
+        /**
+         * Remove FilterBuilder from the filterBuildersArray using the hiddenId
+         *
+         * @param hiddenId - the ID of the hidden JSON input element where the constructed value is stored
+         */
+        removeFilterBuilderByHiddenId : function(hiddenId) {
+            filterBuildersArray.splice(filterBuildersArray.indexOf(this.getFilterBuilderByHiddenId(hiddenId)), 1);
+        },
+
+        /**
          * Called in order to create a new empty Query Builder
          * @param $container
          */
