@@ -244,6 +244,25 @@ $(document).ready(function() {
             $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-7px');
         }
     });
+
+    /**
+     * Initialize the sticky bar
+     */
+    if ($('form.entity-form').length && !$('.oms').length) {
+        var $sc = $('.sticky-container');
+        var $scp = $('.sticky-container-padding');
+        var height = BLCAdmin.entityForm.getOriginalStickyBarHeight();
+
+        $scp.show();
+        $sc.addClass('sticky-fixed').css('top', BLCAdmin.entityForm.getOriginalStickyBarOffset());
+        $sc.outerWidth($('.main-content').outerWidth());
+        $scp.outerHeight(height);
+
+        $sc.find('.content-area-title-bar').css('height', height);
+        $sc.find('.content-area-title-bar').css('line-height', height + 'px');
+        $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', height + 'px');
+        $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-22px');
+    }
     
     var tabs_action=null;
     $('body div.section-tabs li').find('a:not(".workflow-tab, .system-property-tab' +
