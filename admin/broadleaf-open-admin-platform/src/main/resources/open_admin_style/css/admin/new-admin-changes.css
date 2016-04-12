@@ -1584,3 +1584,7 @@ div.uploadMessage {
 .selectize-control.single .selectize-input.remove-caret:hover {
     cursor: auto;
 }
+
+.table tbody > tr > td > a {
+    display : inline;
+}
