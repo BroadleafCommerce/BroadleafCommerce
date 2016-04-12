@@ -263,7 +263,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="name")
     @AdminPresentationMap(friendlyName = "OrderImpl_Attributes",
-        forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderImpl_Attributes_Key_Name"
+        forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderImpl_Attributes_Key_Name", tab = TabName.Advanced
     )
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
     
