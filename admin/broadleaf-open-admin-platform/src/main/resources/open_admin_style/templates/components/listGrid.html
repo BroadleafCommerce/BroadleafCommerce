@@ -140,9 +140,9 @@
                            th:text="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}"></a>
 
                             
-                        <span th:if="${!headerField.mainEntityLink and headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}" th:remove="tag">
-                            <a class="external-link" th:href="@{${headerField.foreignKeyClass + '/' + field.value}}" th:utext="${field.displayValue}"></a>
-                        </span>
+                        <th:block th:if="${!headerField.mainEntityLink and headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}" th:remove="tag">
+                            <th:block th:utext="${field.displayValue}"></th:block>
+                        </th:block>
                         
                         <span th:if="${field.fieldType == 'IMAGE'}">
                             <img class="thumbnail" th:style="${'width: 100%;'}"
