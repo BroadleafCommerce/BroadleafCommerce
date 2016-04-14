@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.IdGeneration;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -55,7 +56,7 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
     }
 
     @Override
-    @Transactional("blTransactionManager")
+    @Transactional(value = "blTransactionManager", propagation = Propagation.REQUIRES_NEW)
     public IdGeneration findNextId(String idType, Long batchSize) throws OptimisticLockException, Exception {
         IdGeneration response;
         Query query = em.createNamedQuery("BC_FIND_NEXT_ID");
