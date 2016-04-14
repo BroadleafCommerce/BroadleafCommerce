@@ -670,6 +670,40 @@
             $('.error-container').hide();
         },
 
+        clearFilters : function(hiddenId) {
+            var $filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
+            // clear the filters from the filterbuilder
+            var jsonVal = JSON.stringify({ 'data' : [] });
+            $('#' + hiddenId).val(jsonVal);
+
+            var $tbody = $('.list-grid-table[data-hiddenid=' + hiddenId + ']:not([id$=-header])');
+            if ($tbody.data('listgridtype') == 'main') {
+                // remove query string from URL
+                $(BLCAdmin.history.getUrlParameters()).each(function (index, input) {
+                    for (var key in input) {
+                        BLCAdmin.history.replaceUrlParameter(key, null);
+                    }
+                });
+            }
+
+            // clear the search field
+            $filterButton.closest('.listgrid-search').find('.custom-entity-search input').val('');
+
+            // for asset grid filters
+            $filterButton.closest('.listgrid-search').find('.custom-asset-search input').val('');
+            $filterButton.closest('.listgrid-search').find('.custom-asset-search button.asset-search-button').click();
+
+            // apply the empty filters
+            BLCAdmin.filterBuilders.applyFilters(hiddenId);
+
+            // change "edit filter" button back to "filter"
+            $filterButton.text("Filter");
+            $filterButton.insertBefore($filterButton.parent());
+            $filterButton.siblings('.button-group').remove();
+
+            $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
+        },
+
         /**
          * Formats the input from the filter builder for saving
          * @param input
@@ -1001,36 +1035,7 @@ $(document).ready(function() {
         var $filterButton = $($(this)).siblings('.filter-button');
         var hiddenId = $filterButton.data('hiddenid');
 
-        // clear the filters from the filterbuilder
-        var jsonVal = JSON.stringify({ 'data' : [] });
-        $('#' + hiddenId).val(jsonVal);
-
-        var $tbody = $('.list-grid-table[data-hiddenid=' + hiddenId + ']:not([id$=-header])');
-        if ($tbody.data('listgridtype') == 'main') {
-            // remove query string from URL
-            $(BLCAdmin.history.getUrlParameters()).each(function (index, input) {
-                for (var key in input) {
-                    BLCAdmin.history.replaceUrlParameter(key, null);
-                }
-            });
-        }
-
-        // clear the search field
-        $filterButton.closest('.listgrid-search').find('.custom-entity-search input').val('');
-
-        // for asset grid filters
-        $filterButton.closest('.listgrid-search').find('.custom-asset-search input').val('');
-        $filterButton.closest('.listgrid-search').find('.custom-asset-search button.asset-search-button').click();
-
-        // apply the empty filters
-        BLCAdmin.filterBuilders.applyFilters(hiddenId);
-
-        // change "edit filter" button back to "filter"
-        $filterButton.text("Filter");
-        $filterButton.insertBefore($filterButton.parent());
-        $filterButton.siblings('.button-group').remove();
-
-        $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
+        BLCAdmin.filterBuilders.clearFilters(hiddenId);
     });
 
     /**
