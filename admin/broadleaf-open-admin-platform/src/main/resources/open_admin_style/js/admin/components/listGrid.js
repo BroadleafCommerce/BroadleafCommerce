@@ -462,12 +462,7 @@ $(document).ready(function () {
             if (listGridType === 'adorned_with_form' ||
                 listGridType === 'adorned' ||
                 listGridType === 'asset' ||
-                listGridType === 'productionInventorySkuSelection') {
-                $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$tr, link, fields, currentUrl]);
-            }
-
-            // Always trigger row selection for asset grid types
-            if (listGridType === 'asset_grid') {
+                listGridType === 'asset_grid') {
                 $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$tr, link, fields, currentUrl]);
             }
         }
