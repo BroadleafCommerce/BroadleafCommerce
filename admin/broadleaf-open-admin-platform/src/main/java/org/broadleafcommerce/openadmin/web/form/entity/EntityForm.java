@@ -564,6 +564,17 @@ public class EntityForm {
         return newFg;
     }
 
+    public boolean hasMultipleTabsToRender() {
+        int renderableTabsCount = 0;
+        for (Tab tab : getTabs()) {
+            if (tab.hasFieldOrListGrid()) {
+                renderableTabsCount++;
+            }
+        }
+
+        return renderableTabsCount > 1;
+    }
+
     public String getTranslationCeilingEntity() {
         return translationCeilingEntity == null ? ceilingEntityClassname : translationCeilingEntity;
     }

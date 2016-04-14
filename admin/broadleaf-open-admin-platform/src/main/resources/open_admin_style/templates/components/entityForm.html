@@ -3,14 +3,13 @@
     <!-- Additional parameters that can be specified include: -->
     <!--    additionalClasses - any additional CSS classes to apply to the form -->
     <!--    additionalTabClasses - any additional CSS classes to apply to the tabs -->
-    <!--    showSingleTab - boolean value determining whether or not to show tabs if there is only one -->
     <!--    hideTranslations - boolean value determining whether or not to hide the translation icon -->
     <!--    hideActions - boolean value determining whether or not to hide the entity form actions -->
 </comment>
 
-<div th:object="${entityForm}" th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
+<div th:object="${entityForm}">
 
-    <div class="section-tabs" th:if="${renderTabs}">
+    <div class="section-tabs" th:if="${entityForm.hasMultipleTabsToRender()}">
 
         <div class="errors" blc_admin:errors="*{*}" >
             <div th:if="${tabErrors}" th:remove="tag">
