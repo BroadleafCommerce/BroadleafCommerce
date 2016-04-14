@@ -21,6 +21,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -28,6 +30,7 @@ import org.broadleafcommerce.core.offer.domain.Adjustment;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
@@ -54,6 +57,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -97,6 +101,12 @@ public class OfferServiceImpl implements OfferService {
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
+
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
+
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericEntityDao;
 
     @Override
     public List<Offer> findAllOffers() {
@@ -156,7 +166,7 @@ public class OfferServiceImpl implements OfferService {
                 offers.add(customerOffer.getOffer());
             }
         }
-        List<OfferCode> orderOfferCodes = order.getAddedOfferCodes();
+        List<OfferCode> orderOfferCodes = refreshOfferCodesIfApplicable(order);
         orderOfferCodes = removeOutOfDateOfferCodes(orderOfferCodes);
         for (OfferCode orderOfferCode : orderOfferCodes) {
             if (!offers.contains(orderOfferCode.getOffer())) {
@@ -240,6 +250,26 @@ public class OfferServiceImpl implements OfferService {
             offerCodes.remove(offerCode);
         }
         return offerCodes;
+    }
+
+    /**
+     * For enterprise installations, this will refresh any OfferCodes found to be out-of-date with
+     * current sandbox status.
+     *
+     * @param order the order to check
+     * @return the refreshed list of OfferCodes
+     */
+    protected List<OfferCode> refreshOfferCodesIfApplicable(Order order) {
+        List<OfferCode> orderOfferCodes = order.getAddedOfferCodes();
+        for (OfferCode offerCode : orderOfferCodes) {
+            if (offerCode.getOffer() != null) {
+                Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(OfferImpl.class, offerCode.getOffer().getId());
+                if (sandBoxVersionId != null && !Objects.equals(sandBoxVersionId, offerCode.getOffer().getId())) {
+                    genericEntityDao.getEntityManager().refresh(offerCode);
+                }
+            }
+        }
+        return orderOfferCodes;
     }
 
     /*
