@@ -101,6 +101,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Value("${product.query.limit:500}")
     protected long queryLimit;
 
+    @Value("${product.eager.fetch.associations.admin:true}")
+    protected boolean eagerFetchAssociations = true;
+
     private static final Log LOG = LogFactory.getLog(ProductCustomPersistenceHandler.class);
 
     @Override
@@ -212,23 +215,47 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
         }
 
-        cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
-                .withDirectFilterValues(new EmptyFilterValues())
-                .withRestriction(new Restriction()
-                                .withPredicateProvider(new PredicateProvider() {
-                                    @Override
-                                    public Predicate buildPredicate(CriteriaBuilder builder,
-                                                                    FieldPathBuilder fieldPathBuilder, From root,
-                                                                    String ceilingEntity,
-                                                                    String fullPropertyName, Path explicitPath,
-                                                                    List directValues) {
-                                        root.fetch("defaultSku", JoinType.LEFT);
-                                        root.fetch("defaultCategory", JoinType.LEFT);
-                                        return null;
-                                    }
-                                })
-                ));
-        return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+        if (eagerFetchAssociations) {
+            cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
+                    .withDirectFilterValues(new EmptyFilterValues())
+                    .withRestriction(new Restriction()
+                            .withPredicateProvider(new PredicateProvider() {
+                                @Override
+                                public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                FieldPathBuilder fieldPathBuilder, From root,
+                                                                String ceilingEntity,
+                                                                String fullPropertyName, Path explicitPath,
+                                                                List directValues) {
+                                    root.fetch("defaultSku", JoinType.LEFT);
+                                    root.fetch("defaultCategory", JoinType.LEFT);
+                                    return null;
+                                }
+                            })
+                    ));
+        }
+        if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
+                (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
+            boolean hasExplicitSort = false;
+            for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
+                hasExplicitSort = filter.getSortDirection() != null;
+                if (hasExplicitSort) {
+                    break;
+                }
+            }
+            if (!hasExplicitSort) {
+                FilterAndSortCriteria filter = cto.get("id");
+                filter.setNullsLast(false);
+                filter.setSortAscending(true);
+            }
+            try {
+                extensionManager.getProxy().initiateFetchState();
+                return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+            } finally {
+                extensionManager.getProxy().endFetchState();
+            }
+        } else {
+            return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+        }
     }
 
     @Override
