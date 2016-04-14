@@ -154,6 +154,10 @@
     left: 17px;
 }
 
+.app-content .side-nav ul li a.fa-cubes:before {
+    left: 9px;
+}
+
 .content .section-content #secondary-nav .secondary-nav .nav-links li a {
     padding: 10px 30px !important;
 }
