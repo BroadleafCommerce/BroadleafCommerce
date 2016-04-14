@@ -47,6 +47,8 @@ public class RestrictionType implements Serializable, BroadleafEnumerationType {
     public static final RestrictionType IS_NULL_LONG  = new RestrictionType("IS_NULL_LONG", "IS_NULL_LONG");
     public static final RestrictionType STRING_EQUAL  = new RestrictionType("STRING_EQUAL", "STRING_EQUAL");
     public static final RestrictionType LONG_EQUAL  = new RestrictionType("LONG_EQUAL", "LONG_EQUAL");
+    public static final RestrictionType STRING_NOT_EQUAL = new RestrictionType("STRING_NOT_EQUAL", "STRING_NOT_EQUAL");
+    public static final RestrictionType LONG_NOT_EQUAL  = new RestrictionType("LONG_NOT_EQUAL", "LONG_NOT_EQUAL");
 
     public static RestrictionType getInstance(final String type) {
         return TYPES.get(type);
