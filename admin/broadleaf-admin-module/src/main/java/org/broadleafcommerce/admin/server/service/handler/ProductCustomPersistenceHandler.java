@@ -235,6 +235,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
         }
         if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
                 (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
+            //Add special handling for product list grid fetches
             boolean hasExplicitSort = false;
             for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
                 hasExplicitSort = filter.getSortDirection() != null;
