@@ -38,8 +38,6 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -400,7 +398,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         group = GroupName.Inventory, order = 1000,
         helpText = "skuInventoryTypeHelpText",
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")
+        broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType",
+        defaultValue = "ALWAYS_AVAILABLE")
     protected String inventoryType;
     
     @Column(name = "QUANTITY_AVAILABLE")
