@@ -407,11 +407,11 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                             LOG.warn("Synchronizing FulfillmentGroupItem to match OrderItem ["
                                     + entry.getKey() + "] quantity of : " + oi.getQuantity());
                             fgItem.setQuantity(oi.getQuantity());
-                            // We price the order in order to get the right amount after the qty change
-                            order = orderService.save(order, true);
-                            request.setOrder(order);
                         }
                     }
+                    // We price the order in order to get the right amount after the qty change
+                    order = orderService.save(order, true);
+                    request.setOrder(order);
                 } else {
                     throw new IllegalStateException("Not enough fulfillment group items found for DiscreteOrderItem id: " + entry.getKey());
                 }
