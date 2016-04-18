@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.order.strategy;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -71,8 +72,8 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     
     protected boolean removeEmptyFulfillmentGroups = true;
 
-    @Value("${sync.fulfillmentGroupItem.qty:false}")
-    private boolean syncFGItemQty;
+    @Value("${singleFulfillmentGroup.fgItem.sync.qty:false}")
+    private boolean singleFulfillmentGroupSyncFGItemQty;
 
     @Override
     public CartOperationRequest onItemAdded(CartOperationRequest request) throws PricingException {
@@ -397,7 +398,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 
         for (Entry<Long, Integer> entry : oiQuantityMap.entrySet()) {
             if (!entry.getValue().equals(0)) {
-                if (syncFGItemQty) {
+                if (useSingleFulfillmentGroupQtySync(order.getFulfillmentGroups())) {
                     LOG.warn("Not enough fulfillment group items found for DiscreteOrderItem id:" + entry.getKey());
                     // There are edge cases where the OrderItem and FulfillmentGroupItem quantities can fall out of sync. If this happens
                     // we set the FGItem to the correct quantity from the OrderItem and save/reprice the order to synchronize them.
@@ -420,7 +421,12 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         
         return request;
     }
-   
+
+    private boolean useSingleFulfillmentGroupQtySync(List<FulfillmentGroup> fulfillmentGroups) {
+        return singleFulfillmentGroupSyncFGItemQty
+                && CollectionUtils.isNotEmpty(fulfillmentGroups) && fulfillmentGroups.size() == 1;
+    }
+
     @Override
     public boolean isRemoveEmptyFulfillmentGroups() {
         return removeEmptyFulfillmentGroups;
