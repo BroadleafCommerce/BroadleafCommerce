@@ -1584,3 +1584,7 @@ div.uploadMessage {
 .selectize-control.single .selectize-input.remove-caret:hover {
     cursor: auto;
 }
+
+.modal-body .message.title {
+    font-size: 1em;
+}
