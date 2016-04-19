@@ -137,7 +137,7 @@
 
                         <a th:if="${headerField.mainEntityLink}"
                            th:href="@{${record.path}}"
-                           th:text="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}"></a>
+                           th:utext="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}"></a>
 
                             
                         <span th:if="${!headerField.mainEntityLink and headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}" th:remove="tag">
@@ -167,7 +167,7 @@
 
                         <a th:if="${headerField.mainEntityLink}"
                            th:href="@{${'/assets/' + record.id}}"
-                           th:text="${field.displayValue}"></a>
+                           th:utext="${field.displayValue}"></a>
 
                         <span th:if="${field.fieldType == 'IMAGE'}">
                             <img class="thumbnail" th:style="${'width: 100%;'}"
@@ -177,7 +177,7 @@
 
                         <span th:unless="${headerField.mainEntityLink
                                 or field.fieldType == 'IMAGE'}"
-                              th:text="${field.displayValue}" th:remove="tag"></span>
+                              th:utext="${field.displayValue}" th:remove="tag"></span>
                     </span>
                     
                     <span th:case="*" th:remove="tag">
