@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.core.order.strategy;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -34,6 +37,7 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -50,6 +54,8 @@ import javax.annotation.Resource;
  */
 @Service("blFulfillmentGroupItemStrategy")
 public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStrategy {
+
+    private static final Log LOG = LogFactory.getLog(FulfillmentGroupItemStrategyImpl.class);
     
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
@@ -64,7 +70,10 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     protected FulfillmentGroupItemDao fgItemDao;
     
     protected boolean removeEmptyFulfillmentGroups = true;
-    
+
+    @Value("${singleFulfillmentGroup.fgItem.sync.qty:false}")
+    private boolean singleFulfillmentGroupSyncFGItemQty;
+
     @Override
     public CartOperationRequest onItemAdded(CartOperationRequest request) throws PricingException {
         Order order = request.getOrder();
@@ -320,7 +329,8 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         
         Map<Long, Integer> oiQuantityMap = new HashMap<Long, Integer>();
         List<OrderItem> expandedOrderItems = new ArrayList<OrderItem>();
-        
+        Map<Long, FulfillmentGroupItem> fgItemMap = new HashMap<Long, FulfillmentGroupItem>();
+
         for (OrderItem oi : order.getOrderItems()) {
             if (oi instanceof BundleOrderItem) {
                 for (DiscreteOrderItem doi : ((BundleOrderItem) oi).getDiscreteOrderItems()) {
@@ -347,7 +357,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             
             oiQuantityMap.put(oi.getId(), oiQuantity);
         }
-        
+
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
                 Long oiId = fgi.getOrderItem().getId();
@@ -356,19 +366,41 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                 if (oiQuantity == null) {
                     throw new IllegalStateException("Fulfillment group items and discrete order items are not in sync. DiscreteOrderItem id: " + oiId);
                 }
-                
                 oiQuantity -= fgi.getQuantity();
                 oiQuantityMap.put(oiId, oiQuantity);
+                fgItemMap.put(fgi.getId(), fgi);
             }
         }
         
         for (Entry<Long, Integer> entry : oiQuantityMap.entrySet()) {
             if (!entry.getValue().equals(0)) {
-                throw new IllegalStateException("Not enough fulfillment group items found for DiscreteOrderItem id: " + entry.getKey());
+                if (useSingleFulfillmentGroupQtySync(order.getFulfillmentGroups())) {
+                    LOG.warn("Not enough fulfillment group items found for DiscreteOrderItem id:" + entry.getKey());
+                    // There are edge cases where the OrderItem and FulfillmentGroupItem quantities can fall out of sync. If this happens
+                    // we set the FGItem to the correct quantity from the OrderItem and save/reprice the order to synchronize them.
+                    FulfillmentGroupItem fgItem = fgItemMap.get(entry.getKey());
+                    for (OrderItem oi : expandedOrderItems) {
+                        if (oi.getId().equals(fgItem.getOrderItem().getId())) {
+                            LOG.warn("Synchronizing FulfillmentGroupItem to match OrderItem ["
+                                    + entry.getKey() + "] quantity of : " + oi.getQuantity());
+                            fgItem.setQuantity(oi.getQuantity());
+                        }
+                    }
+                    // We price the order in order to get the right amount after the qty change
+                    order = orderService.save(order, true);
+                    request.setOrder(order);
+                } else {
+                    throw new IllegalStateException("Not enough fulfillment group items found for DiscreteOrderItem id: " + entry.getKey());
+                }
             }
         }
         
         return request;
+    }
+
+    private boolean useSingleFulfillmentGroupQtySync(List<FulfillmentGroup> fulfillmentGroups) {
+        return singleFulfillmentGroupSyncFGItemQty
+                && CollectionUtils.isNotEmpty(fulfillmentGroups) && fulfillmentGroups.size() == 1;
     }
 
     @Override
