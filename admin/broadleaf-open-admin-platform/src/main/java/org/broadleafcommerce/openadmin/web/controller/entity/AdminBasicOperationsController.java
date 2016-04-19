@@ -21,6 +21,8 @@
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -62,6 +64,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("blAdminBasicOperationsController")
 public class AdminBasicOperationsController extends AdminAbstractController {
+
+    private static final Log LOG = LogFactory.getLog(AdminBasicOperationsController.class);
 
     @Resource(name = "blAdminBasicOperationsControllerExtensionManager")
     protected AdminBasicOperationsControllerExtensionManager extensionManager;
@@ -211,6 +215,24 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         long serverSessionTimeoutInterval = request.getSession().getMaxInactiveInterval() * 1000;
         return (new JsonResponse(response))
                 .with("serverSessionTimeoutInterval", serverSessionTimeoutInterval)
+                .done();
+    }
+
+    @RequestMapping(value = "/logJavaScriptError", method = RequestMethod.POST)
+    public @ResponseBody String logJavaScriptError(HttpServletRequest request,
+                                                   HttpServletResponse response,
+                                                   @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+        // Grab the error information from the request params
+        String url = requestParams.getFirst("url");
+        String lineNumber = requestParams.getFirst("lineNumber");
+        String message = requestParams.getFirst("message");
+
+        // Log the error
+        LOG.error("[JS] - (" + url + ":" + lineNumber + ") - " + message);
+
+        // Return an errorLogged message to the client
+        return (new JsonResponse(response))
+                .with("errorLogged", true)
                 .done();
     }
     
