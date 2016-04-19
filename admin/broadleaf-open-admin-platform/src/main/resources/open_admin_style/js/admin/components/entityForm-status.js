@@ -312,7 +312,7 @@
          */
         handleEntityFormChanges: function(el) {
             // Check if we should handle the changes
-            if (!this.checkIfShouldTrackChanges()) { return }
+            if (!this.checkIfShouldTrackChanges(el)) { return }
 
             var id = $(el).attr('id');
             var newVal = $(el).val() || '';
@@ -325,7 +325,7 @@
             // If this is a media item input we only care about the url attribute
             else if ($(el).hasClass('mediaItem')) {
                 if (!$(el).hasClass('mediaUrl')) {
-                    var mediaJson = JSON.parse(newVal);
+                    var mediaJson = JSON.parse(newVal || '{}');
                     newVal = mediaJson === null || mediaJson.url === null ? '' : mediaJson.url;
                 }
             }
@@ -345,7 +345,7 @@
                 id = $ruleBuilderContainer.attr('id');
 
                 // In order to get the new rules on this `RuleBuilder` we need to grab the actual `RuleBuilder`
-                var hiddenId = $ruleBuilderContainer.next('.rule-builder-data').data('hiddenid');
+                var hiddenId = $ruleBuilderContainer.siblings('.rule-builder-data').first().data('hiddenid');
                 var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
 
                 var rules = BLCAdmin.ruleBuilders.getAllRuleBuilderRules(ruleBuilder);
@@ -404,7 +404,7 @@
                 if ($(el).hasClass('mediaUrl')) {
                     mediaUrl = origVal;
                 } else {
-                    var mediaJson = JSON.parse(origVal);
+                    var mediaJson = JSON.parse(origVal || '{}');
                     mediaUrl = mediaJson === null || mediaJson.url === null ? '' : mediaJson.url
                 }
                 $(this).attr('data-orig-val', mediaUrl);
@@ -516,9 +516,9 @@
          *
          * @returns {boolean}
          */
-        checkIfShouldTrackChanges : function() {
+        checkIfShouldTrackChanges : function(el) {
             // Don't track if we are in a modal, on an OMS page, or not on a page with an entity form
-            if ($(this).closest('.modal').length ||
+            if ((el !== undefined && $(el).closest('.modal').length) ||
                 $('.oms').length ||
                 !$('.entity-form').length) {
                 return false;
@@ -538,7 +538,7 @@ $(document).ready(function() {
      */
     $body.on('focus', 'input, select, input:radio, textarea, .redactor-editor', function() {
         // We only care about main entity froms.  If we are in a modal, just return
-        if (!BLCAdmin.entityForm.status.checkIfShouldTrackChanges()) { return }
+        if (!BLCAdmin.entityForm.status.checkIfShouldTrackChanges(this)) { return }
 
         if ($(this).attr('data-orig-val') === undefined) {
             var origVal = $(this).val() || '';
