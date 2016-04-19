@@ -1,30 +1,36 @@
-<div th:if="${treeListGrid}" th:remove="tag">
-    <div th:include="components/treeListGrid" th:object="${treeListGrid}" th:remove="tag" />
-    <div th:include="components/listGridModalActions"
-         th:each="column, iterStat : ${treeListGrid.treeListGridColumns}"
-         th:if="${iterStat.index == 0}"
-         th:with="listGrid=${column.listGrid}" th:remove="tag"></div>
-</div>
-<div th:unless="${treeListGrid}" th:remove="tag">
-    <div th:if="${isAssetGrid != null and isAssetGrid}" th:remove="tag">
-        <div th:include="views/assetGridWithUploadForm" th:remove="tag"></div>
-    </div>
-    <div th:unless="${isAssetGrid != null and isAssetGrid}" th:remove="tag">
-        <div class="fieldset-card field-group listgrid-container single-listgrid"
-             th:classappend="${additionalClasses != null} ? ${additionalClasses}"
-             th:id="${listGrid.subCollectionFieldName}">
-            <div class="fieldgroup-listgrid-wrapper-header titlebar" style="display: block;">
-                <div class="titlebar-title">
-                    <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" class="listgrid-friendly-name" th:text="#{${listGrid.friendlyName}}"></span>
-                    <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Record)'"></span>
-                    <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Records)'"></span>
+<th:block th:if="${listGridOverrideTemplate}">
+    <th:block th:include="${listGridOverrideTemplate}" th:object="${listGrid}"></th:block>
+    <th:block th:include="components/listGridModalActions" th:object="${listGrid}"></th:block>
+</th:block>
+<th:block th:unless="${listGridOverrideTemplate}">
+    <th:block th:if="${treeListGrid}">
+        <th:block th:include="components/treeListGrid" th:object="${treeListGrid}"/>
+        <th:block th:include="components/listGridModalActions"
+             th:each="column, iterStat : ${treeListGrid.treeListGridColumns}"
+             th:if="${iterStat.index == 0}"
+             th:with="listGrid=${column.listGrid}"></th:block>
+    </th:block>
+    <th:block th:unless="${treeListGrid}">
+        <th:block th:if="${isAssetGrid != null and isAssetGrid}">
+            <th:block th:include="views/assetGridWithUploadForm"></th:block>
+        </th:block>
+        <th:block th:unless="${isAssetGrid != null and isAssetGrid}">
+            <div class="fieldset-card field-group listgrid-container single-listgrid"
+                 th:classappend="${additionalClasses != null} ? ${additionalClasses}"
+                 th:id="${listGrid.subCollectionFieldName}">
+                <div class="fieldgroup-listgrid-wrapper-header titlebar" style="display: block;">
+                    <div class="titlebar-title">
+                        <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" class="listgrid-friendly-name" th:text="#{${listGrid.friendlyName}}"></span>
+                        <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Record)'"></span>
+                        <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Records)'"></span>
+                    </div>
+                    <th:block th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"/>
                 </div>
-                <div th:include="components/listGridToolbar" th:with="listGrid=${listGrid}" th:remove="tag"/>
+                <div class="fieldgroup-listgrid-wrapper fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
+                    <th:block th:include="components/listGrid" th:object="${listGrid}"></th:block>
+                </div>
             </div>
-            <div class="fieldgroup-listgrid-wrapper fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
-                <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag"></div>
-            </div>
-        </div>
-        <div th:include="components/listGridModalActions" th:object="${listGrid}" th:remove="tag"></div>
-    </div>
-</div>
+            <th:block th:include="components/listGridModalActions" th:object="${listGrid}"></th:block>
+        </th:block>
+    </th:block>
+</th:block>
