@@ -414,6 +414,9 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                     order = orderService.save(order, true);
                     request.setOrder(order);
                 } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Qty Mismatch - Order Dump\n" + OrderUtil.convertOrderToJSON(order).toString());
+                    }
                     throw new IllegalStateException("Not enough fulfillment group items found for DiscreteOrderItem id: " + entry.getKey());
                 }
             }
