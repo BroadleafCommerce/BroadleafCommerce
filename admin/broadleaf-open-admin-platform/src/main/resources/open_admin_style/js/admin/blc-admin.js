@@ -1485,6 +1485,15 @@ $('body').on('click', 'button.change-password-confirm', function(event) {
     event.preventDefault();
 });
 
+$('body').on('click', '.add-main-entity', function (e) {
+    if (BLCAdmin.workflow == undefined) {
+        e.preventDefault();
+        var action = $(this).data('url');
+
+        BLCAdmin.showLinkAsModal(action);
+    }
+});
+
 // add scroll handler for the body
 $('.main-content').scroll(function () {
     var contentWrapper = $(this).find('.content-yield').height();

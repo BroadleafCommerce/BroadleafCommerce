@@ -541,13 +541,14 @@ $(document).ready(function () {
             type: "POST",
             data: postData
         }, function (data) {
+            BLCAdmin.hideCurrentModal();
+
             BLCAdmin.listGrid.replaceRelatedCollection($(data), {
                 message: BLCAdmin.messages.saved + '!',
                 alertType: 'save-alert',
                 autoClose: 3000,
                 clearOtherAlerts: true
             });
-            BLCAdmin.hideCurrentModal();
         });
     });
 
