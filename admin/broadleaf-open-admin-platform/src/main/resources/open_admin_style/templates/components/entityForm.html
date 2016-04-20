@@ -26,13 +26,14 @@
         </div>
 
         <ul class="nav nav-tabs">
-            <li th:each="tab : ${entityForm.tabs}"
+            <li th:each="tab, tabStat : ${entityForm.tabs}"
                 th:class="${#ef.isTabActive(entityForm, tab)}? 'active'"
-                th:if="${tab.isVisible}"
+                th:if="${tab.hasFieldOrListGrid()}"
                 role="presentation">
-                <a th:href="'#tab' + ${tabStat.count}"
-                   th:class="${tab.tabClass}"
-                   th:text="#{${tab.title}}"></a>
+                <a th:href="'#tab' + ${tabStat.count}" th:class="${tabStat.first} ? 'first-tab'" th:classappend="${tab.tabClass}">
+                    <span th:attr="data-tabkey=${tab.key}" th:utext="#{${tab.title}}"></span>
+                    <i class="fa-pulse fa fa-spinner" style="display: none;"></i>
+                </a>
             </li>
         </ul>
     </div>
@@ -44,9 +45,6 @@
                       th:classappend="${(additionalClasses == null ? '' : additionalClasses + ' ')
                          + (additionalControllerClasses == null ? '' : additionalControllerClasses)}"
                       th:action="@{${currentUrl}}">
-
-                <span style="display: none;" id="previewurl"
-                      th:attr="data-href=@{/sandbox/preview(ceilingEntity=*{ceilingEntityClassname}, id=*{id}, directPreview=true)}"></span>
 
                 <input type="hidden" th:field="*{ceilingEntityClassname}" />
                 <input type="hidden" th:field="*{entityType}" />
@@ -65,25 +63,86 @@
 
                         <div class="col11">
                             <div class="row">
-                                <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
-                                    <div th:include="components/partials/entityFormGroups" th:remove="tag"></div>
+                                <fieldset th:each="group, groupStat : ${tab.fieldGroups}" th:remove="tag">
+
+                                    <div class="fieldset-card field-group"
+                                         th:if="${group.hasFieldOrListGrid()}"
+                                         th:classappend="${(!group.isVisible ? 'hidden' : '') + (group.groupAttributes['additionalGroupClasses'] == null ? '' : ' ' + group.groupAttributes['additionalGroupClasses']) + (inModal != null and inModal ? ' inModal' : '')}">
+                                        <div class="titlebar">
+                                            <div class="titlebar-title">
+                                                <span th:utext="#{${group.title}}"></span>
+                                                <i class="fa fa-question-circle help-tip" th:unless="${#strings.isEmpty(group.toolTip)}" th:attr="data-tip=#{${group.toolTip}}"></i>
+                                            </div>
+                                        </div>
+                                        <div class="fieldset-card-content">
+                                            <comment th:remove="all">
+                                                <!-- *** IMPORTANT *** -->
+                                                <!-- When changing this block of code, make sure standaloneField.html is also updated -->
+                                                <!-- *** IMPORTANT *** -->
+                                            </comment>
+                                            <th:block th:each="groupItem, groupItemStat : ${group.groupItems}">
+                                                <th:block th:if="${groupItem.isField()}" th:with="field=${groupItem.field}">
+                                                    <div th:if="${field.name}"
+                                                         th:class="'field-group' + ${(field.isDirty ? ' dirty' : '')} + ${(field.disabled ? ' disabled' : '')} + ${(#fields.hasErrors('fields[__${field.name}__].value') ? ' has-error' : '')}"
+                                                         blc_admin:component_id="${field}"
+                                                         th:classappend="${!field.isVisible}? 'hidden'">
+
+                                                        <div th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
+                                                            <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"/>
+                                                        </div>
+                                                        <div th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
+                                                            <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"/>
+                                                        </div>
+
+                                                        <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}"></span>
+
+                                                    </div>
+                                                </th:block>
+                                                <th:block th:if="${groupItem.isListGrid()}" th:with="listGrid=${groupItem.listGrid}">
+                                                    <div th:id="${listGrid.subCollectionFieldName}"
+                                                         class="listgrid-container fieldgroup-listgrid">
+                                                        <div class="fieldgroup-listgrid-wrapper-header" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden-body'">
+                                                            <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" class="listgrid-friendly-name" th:utext="#{${listGrid.friendlyName}}"></span>
+                                                            <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Record)'"></span>
+                                                            <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Records)'"></span>
+                                                            <div th:include="components/listGridToolbar" th:with="listGrid=${listGrid}" th:remove="tag"/>
+                                                        </div>
+                                                        <div class="fieldgroup-listgrid-wrapper" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
+                                                            <div th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}" th:remove="tag"></div>
+                                                        </div>
+                                                    </div>
+                                                </th:block>
+                                            </th:block>
+                                        </div>
+                                    </div>
                                 </fieldset>
 
-                                <div th:remove="tag" th:if="${dynamicFormTemplateOverride == null}">
-                                    <div th:if="${tabStat.first}" th:each="dynamicForm : *{dynamicForms}">
-                                        <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
+                                <div th:if="${dynamicFormTemplateOverride == null}" th:remove="tag">
+                                    <div th:if="${tabStat.first}" th:each="dynamicForm : *{dynamicForms}" th:remove="tag">
+                                        <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}"></div>
                                     </div>
                                 </div>
 
                                 <div th:remove="tag" th:unless="${dynamicFormTemplateOverride == null}">
-                                    <div th:include="${dynamicFormTemplateOverride}" />
+                                    <div th:replace="${dynamicFormTemplateOverride}"></div>
                                 </div>
 
-                                <div th:each="collectionListGrid : ${tab.listGrids}" class="listgrid-container" th:id="${collectionListGrid.subCollectionFieldName}">
-                                    <label th:text="#{${collectionListGrid.friendlyName}}" />
-                                    <div th:include="components/listGridToolbar" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
-                                    <div th:include="components/listGrid" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
-                                </div>
+                                <fieldset th:each="listGrid : ${tab.listGrids}" th:remove="tag">
+                                    <div class="fieldset-card field-group listgrid-container entityform-listgrid"
+                                         th:id="${listGrid.subCollectionFieldName}">
+                                        <div class="fieldgroup-listgrid-wrapper-header titlebar" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden-body'">
+                                            <div class="titlebar-title">
+                                                <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" class="listgrid-friendly-name" th:utext="#{${listGrid.friendlyName}}"></span>
+                                                <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Record)'"></span>
+                                                <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Records)'"></span>
+                                            </div>
+                                            <div th:include="components/listGridToolbar" th:with="listGrid=${listGrid}" th:remove="tag"></div>
+                                        </div>
+                                        <div class="fieldgroup-listgrid-wrapper fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
+                                            <div th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}" th:remove="tag"></div>
+                                        </div>
+                                    </div>
+                                </fieldset>
                             </div>
                         </div>
                     </div>
@@ -95,13 +154,11 @@
                             th:type="${action.buttonType}"
                             th:attr="data-action=${action.urlPostfix}"
                             th:classappend="${action.buttonClass}" th:unless="${hideActions}">
-                        <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+                        <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag"></span>
                     </button>
                     <img th:src="@{/img/admin/ajax-loader.gif}" class="ajax-loader" />
                 </div>
-
             </blc:form>
-
         </div>
     </div>
 </div>
