@@ -541,6 +541,12 @@ public class ProductDaoImpl implements ProductDao {
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
         return readAllActiveProductsInternal(page, pageSize, currentDate);
     }
+
+    @Override
+    public List<Product> readAllActiveProducts(Integer pageSize, Long lastId) {
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        return readAllActiveProductsInternal(pageSize, currentDate, lastId);
+    }
     
     @Override
     @Deprecated
@@ -556,6 +562,15 @@ public class ProductDaoImpl implements ProductDao {
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
         return query.setFirstResult(firstResult).setMaxResults(pageSize).getResultList();
+    }
+
+    protected List<Product> readAllActiveProductsInternal(Integer pageSize, Date currentDate, Long lastId) {
+        CriteriaQuery<Product> criteria = getCriteriaForActiveProducts(currentDate, lastId);
+        TypedQuery<Product> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.setMaxResults(pageSize).getResultList();
     }
     
     @Override
@@ -620,24 +635,31 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     protected CriteriaQuery<Product> getCriteriaForActiveProducts(Date currentDate) {
+        return getCriteriaForActiveProducts(currentDate, null);
+    }
+
+    protected CriteriaQuery<Product> getCriteriaForActiveProducts(Date currentDate, Long lastId) {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
-        
+
         // The root of our search is Product
         Root<ProductImpl> product = criteria.from(ProductImpl.class);
-        
+
         // We need to filter on active date on the sku
         Join<Product, Sku> sku = product.join("defaultSku");
         product.fetch("defaultSku");
-        
+
         // Product objects are what we want back
         criteria.select(product);
-        
+
         // Ensure the product is currently active
         List<Predicate> restrictions = new ArrayList<Predicate>();
         attachActiveRestriction(currentDate, product, sku, restrictions);
-        
+        if (lastId != null) {
+            restrictions.add(builder.gt(product.get("id").as(Long.class), lastId));
+        }
+
         // Add the restrictions to the criteria query
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
