@@ -270,6 +270,10 @@ circle {
     float: none;
 }
 
+.app-content .content .site-bar {
+    z-index: 1050;
+}
+
 .app-content .content .site-bar .button {
     line-height: inherit;
 }
@@ -1583,4 +1587,9 @@ div.uploadMessage {
 }
 .selectize-control.single .selectize-input.remove-caret:hover {
     cursor: auto;
+}
+
+.modal-body .action-popup .fieldset-card.message {
+    margin-top: 0 !important;
+    margin-bottom: 0;
 }
