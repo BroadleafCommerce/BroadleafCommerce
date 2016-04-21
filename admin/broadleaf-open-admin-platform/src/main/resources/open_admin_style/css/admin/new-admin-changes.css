@@ -1585,6 +1585,10 @@ div.uploadMessage {
     cursor: auto;
 }
 
-.table tbody > tr > td > a {
+.table tbody > tr > td > a.list-grid-primary-field {
     display : inline;
+}
+
+.button.button-action.sub-list-grid-edit {
+    display: inline;
 }
