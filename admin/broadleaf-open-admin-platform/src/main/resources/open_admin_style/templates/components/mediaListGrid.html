@@ -2,160 +2,166 @@
 <!-- This component represents a list grid toolbar -->
 </comment>
 
-<div class="listgrid-header-wrapper">
-    <table class="list-grid-table table table-striped"
-           th:classappend="${listGrid.className}"
-           th:attr="data-listgridtype=${listGrid.listGridType},
-                    data-listgridselecttype=${listGrid.selectType},
-                    data-currenturl=${currentUrl},
-                    data-path=@{${listGrid.path}},
-                    data-hiddenid=${listGrid.jsonFieldName},
-                    data-currentparams=${currentParams},
-                    data-sectioncrumbs=${sectionCrumbs}"
-           blc_admin:component_id="${listGrid}">
-        <thead>
-            <tr>
-                <th th:each="headerField : ${listGrid.headerFields}"
-                    th:if="${headerField.isVisible}"
-                    th:inline="text"
-                    th:classappend="${#strings.isEmpty(headerField.columnWidth) ? '' : 'explicit-size'}"
-                    th:attr="data-columnwidth=${#strings.isEmpty(headerField.columnWidth) ? '' : headerField.columnWidth}"
-                    th:style="${(#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';')}"
-                    scope="col">
+<th:block th:if="${!#strings.isEmpty(listGrid.templateOverride)}">
+    <th:block th:include="${listGrid.templateOverride}" th:with="listGrid=${listGrid}"></th:block>
+</th:block>
 
-                    <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
-                        <div class="listgrid-title">
-                            <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
-                            <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
-                        </div>
-                    </div>
+<th:block th:unless="${!#strings.isEmpty(listGrid.templateOverride)}">
+    <div class="listgrid-header-wrapper">
+        <table class="list-grid-table table table-striped"
+               th:classappend="${listGrid.className}"
+               th:attr="data-listgridtype=${listGrid.listGridType},
+                        data-listgridselecttype=${listGrid.selectType},
+                        data-currenturl=${currentUrl},
+                        data-path=@{${listGrid.path}},
+                        data-hiddenid=${listGrid.jsonFieldName},
+                        data-currentparams=${currentParams},
+                        data-sectioncrumbs=${sectionCrumbs}"
+               blc_admin:component_id="${listGrid}">
+            <thead>
+                <tr>
+                    <th th:each="headerField : ${listGrid.headerFields}"
+                        th:if="${headerField.isVisible}"
+                        th:inline="text"
+                        th:classappend="${#strings.isEmpty(headerField.columnWidth) ? '' : 'explicit-size'}"
+                        th:attr="data-columnwidth=${#strings.isEmpty(headerField.columnWidth) ? '' : headerField.columnWidth}"
+                        th:style="${(#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';')}"
+                        scope="col">
 
-                    <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
-                        <div class="listgrid-title">
-                            <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
-                            <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
-                            <div class="listgrid-filter-sort-container">
-                                <!--<i class="filter-icon fa fa-filter"></i>-->
-                                <i class="sort-icon fa-sort fa"></i>
+                        <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
+                            <div class="listgrid-title">
+                                <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
+                                <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
                             </div>
                         </div>
 
-                        <input type="hidden" class="listgrid-criteria" th:attr="data-name=${headerField.name}" />
+                        <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
+                            <div class="listgrid-title">
+                                <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
+                                <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
+                                <div class="listgrid-filter-sort-container">
+                                    <!--<i class="filter-icon fa fa-filter"></i>-->
+                                    <i class="sort-icon fa-sort fa"></i>
+                                </div>
+                            </div>
 
-                        <ul th:include="components/partials/listGridHeaderFilter"
-                            class="no-hover"
-                            th:classappend="${headerField.mainEntityLink ? 'first' : ''}"
-                            th:with="fieldType=${headerField.fieldType},
-                                     fieldComponentRenderer=${headerField.fieldComponentRenderer},
-                                     fieldName=${headerField.name},
-                                     fieldFriendlyName=${headerField.friendlyName},
-                                     index=${headerFieldStat.index}">
-                        </ul>
-                    </div>
-                </th>
-                <th class="listgrid-row-actions"
-                    th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
-                    <th:comment th:remove="all">
-                        This entry is acting as placeholder for Workflow Action links
-                    </th:comment>
-                    Actions
-                </th>
-                
-                <th width="75" th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}">
-                    <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort}">
-                        <div class="listgrid-title">
-                        Id
+                            <input type="hidden" class="listgrid-criteria" th:attr="data-name=${headerField.name}" />
+
+                            <ul th:include="components/partials/listGridHeaderFilter"
+                                class="no-hover"
+                                th:classappend="${headerField.mainEntityLink ? 'first' : ''}"
+                                th:with="fieldType=${headerField.fieldType},
+                                         fieldComponentRenderer=${headerField.fieldComponentRenderer},
+                                         fieldName=${headerField.name},
+                                         fieldFriendlyName=${headerField.friendlyName},
+                                         index=${headerFieldStat.index}">
+                            </ul>
                         </div>
-                    </div>
+                    </th>
+                    <th class="listgrid-row-actions"
+                        th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
+                        <th:comment th:remove="all">
+                            This entry is acting as placeholder for Workflow Action links
+                        </th:comment>
+                        Actions
+                    </th>
 
-                    <div class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort}">
-                        <div class="listgrid-title">
+                    <th width="75" th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}">
+                        <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort}">
+                            <div class="listgrid-title">
                             Id
-                            <div class="listgrid-filter-sort-container">
-                                <i class="sort-icon fa-sort fa"></i>
                             </div>
                         </div>
 
-                        <ul th:include="${'components/partials/listGridHeaderFilter'}"
-                            class="no-hover end"
-                            th:with="fieldType=${'id'},
-                                     fieldName=${listGrid.idProperty},
-                                     fieldFriendlyName=${listGrid.idProperty},
-                                     index=${#lists.size(listGrid.headerFields) - 1}">
-                        </ul>
-                   </div>
-                </th>
-            </tr>
-        </thead>
-        <tbody th:attr="data-recordranges=${listGrid.startIndex + '-' + (listGrid.startIndex + #lists.size(listGrid.records) - 1)},
-                        data-totalrecords=${listGrid.totalRecords},
-                        data-pagesize=${listGrid.pageSize}">
-                        
-            <tr th:if="${#lists.isEmpty(listGrid.records)}" class="list-grid-no-results">
-                <td class="multiselect-checkbox" th:if="${listGrid.selectType} == 'multi_select'"/>
-                <div th:remove="tag" th:each="headerField,index : ${listGrid.headerFields}" th:if="${headerField.isVisible}">
-                    <td colspan="2" th:if="${index.count == 1}">
-                        (No records found)
+                        <div class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort}">
+                            <div class="listgrid-title">
+                                Id
+                                <div class="listgrid-filter-sort-container">
+                                    <i class="sort-icon fa-sort fa"></i>
+                                </div>
+                            </div>
+
+                            <ul th:include="${'components/partials/listGridHeaderFilter'}"
+                                class="no-hover end"
+                                th:with="fieldType=${'id'},
+                                         fieldName=${listGrid.idProperty},
+                                         fieldFriendlyName=${listGrid.idProperty},
+                                         index=${#lists.size(listGrid.headerFields) - 1}">
+                            </ul>
+                       </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody th:attr="data-recordranges=${listGrid.startIndex + '-' + (listGrid.startIndex + #lists.size(listGrid.records) - 1)},
+                            data-totalrecords=${listGrid.totalRecords},
+                            data-pagesize=${listGrid.pageSize}">
+
+                <tr th:if="${#lists.isEmpty(listGrid.records)}" class="list-grid-no-results">
+                    <td class="multiselect-checkbox" th:if="${listGrid.selectType} == 'multi_select'"/>
+                    <div th:remove="tag" th:each="headerField,index : ${listGrid.headerFields}" th:if="${headerField.isVisible}">
+                        <td colspan="2" th:if="${index.count == 1}">
+                            (No records found)
+                        </td>
+
+                        <td th:unless="${index.count == 1}"></td>
+                    </div>
+                    <td th:if="${listGrid.listGridType} == 'main'"></td>
+                    <td th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
+                    </td>
+                </tr>
+
+                <tr th:each="record : ${listGrid.records}"
+                    th:unless="${#lists.isEmpty(listGrid.records)}"
+                    th:class="${record.isDirty? 'dirty' : record.isError? 'error' : ''}"
+                    th:classappend="${listGrid.clickable}? 'clickable'"
+                    th:attr="data-link=@{${record.path}},
+                             data-index=${record.index},
+                             data-rowid=${record.id},
+                             data-displayorder=${record.displayOrder},
+                             data-hiddenfields=${record.getHiddenFieldsJson()}">
+
+                    <td th:each="headerField : ${record.listGrid.headerFields}"
+                        th:if="${headerField.isVisible}"
+                        th:with="field=${record.getField(headerField.name)},action=${listGrid.activeRowActions[0]}"
+                        th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}"
+                        th:class="${field.isDerived ? 'derived' : ''}">
+
+                        <span th:substituteby="components/partials/listGridIcon"></span>
+
+                        <a href="#" th:if="${headerField.name == 'media.title'}"
+                           class="media-link"
+                           th:attr="data-urlpostfix=${action.urlPostfix},
+                                 data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                                 data-queryparams=${listGrid.sectionCrumbRepresentation},
+                                 data-link=@{${record.path}}"
+                           th:title="#{${action.displayText}}" th:text="${field.displayValue}">
+                        </a>
+
+                        <span th:unless="${headerField.name == 'media.title'
+                                or field.fieldType == 'IMAGE'}"
+                              th:text="${field.displayValue}" th:remove="tag"></span>
                     </td>
 
-                    <td th:unless="${index.count == 1}"></td>
-                </div>
-                <td th:if="${listGrid.listGridType} == 'main'"></td>
-                <td th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
-                </td>
-            </tr>
-            
-            <tr th:each="record : ${listGrid.records}"
-                th:unless="${#lists.isEmpty(listGrid.records)}"
-                th:class="${record.isDirty? 'dirty' : record.isError? 'error' : ''}"
-                th:classappend="${listGrid.clickable}? 'clickable'"
-                th:attr="data-link=@{${record.path}},
-                         data-index=${record.index},
-                         data-rowid=${record.id},
-                         data-displayorder=${record.displayOrder},
-                         data-hiddenfields=${record.getHiddenFieldsJson()}">
-                
-                <td th:each="headerField : ${record.listGrid.headerFields}"
-                    th:if="${headerField.isVisible}"
-                    th:with="field=${record.getField(headerField.name)},action=${listGrid.activeRowActions[0]}"
-                    th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}"
-                    th:class="${field.isDerived ? 'derived' : ''}">
+                    <td th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}" data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}"></td>
+                </tr>
 
-                    <span th:substituteby="components/partials/listGridIcon"></span>
+            </tbody>
+        </table>
+    </div>
 
-                    <a href="#" th:if="${headerField.name == 'media.title'}"
-                       class="media-link"
-                       th:attr="data-urlpostfix=${action.urlPostfix},
-                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
-                             data-queryparams=${listGrid.sectionCrumbRepresentation},
-                             data-link=@{${record.path}}"
-                       th:title="#{${action.displayText}}" th:text="${field.displayValue}">
-                    </a>
+    <div class="listgrid-table-footer" th:inline="text">
+        <span class="listgrid-table-footer-message" th:inline="text">
+            <span class="low-index" th:if="${records}" th:text="${listGrid.startIndex + 1}"></span>
+            <span class="low-index" th:unless="${records}">0</span>
+            -
+            <span class="high-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}"></span>
+            <span th:text="${'of'}"></span>
+            <span class="total-records" th:text="${#lists.size(listGrid.records)}"></span>
+            <span th:text="${'records'}"></span>
+        </span>
+    </div>
 
-                    <span th:unless="${headerField.name == 'media.title'
-                            or field.fieldType == 'IMAGE'}"
-                          th:text="${field.displayValue}" th:remove="tag"></span>
-                </td>
-                
-                <td th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}" data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}"></td>
-            </tr>
-            
-        </tbody>
-    </table>
-</div>
-
-<div class="listgrid-table-footer" th:inline="text">
-    <span class="listgrid-table-footer-message" th:inline="text">
-        <span class="low-index" th:if="${records}" th:text="${listGrid.startIndex + 1}"></span>
-        <span class="low-index" th:unless="${records}">0</span>
-        -
-        <span class="high-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}"></span>
-        <span th:text="${'of'}"></span>
-        <span class="total-records" th:text="${#lists.size(listGrid.records)}"></span>
-        <span th:text="${'records'}"></span>
+    <span class="listgrid-table-spinner-container" style="display:none;" th:inline="text">
+        <i class="listgrid-table-spinner fa-pulse fa fa-spinner"></i>
     </span>
-</div>
-
-<span class="listgrid-table-spinner-container" style="display:none;" th:inline="text">
-    <i class="listgrid-table-spinner fa-pulse fa fa-spinner"></i>
-</span>
+</th:block>
