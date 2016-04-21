@@ -691,17 +691,6 @@
 
             // for asset grid filters
             $filterButton.closest('.listgrid-search').find('.custom-asset-search input').val('');
-            $filterButton.closest('.listgrid-search').find('.custom-asset-search button.asset-search-button').click();
-
-            // apply the empty filters
-            BLCAdmin.filterBuilders.applyFilters(hiddenId);
-
-            // change "edit filter" button back to "filter"
-            $filterButton.text("Filter");
-            $filterButton.insertBefore($filterButton.parent());
-            $filterButton.siblings('.button-group').remove();
-
-            $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
         },
 
         /**
@@ -1036,6 +1025,19 @@ $(document).ready(function() {
         var hiddenId = $filterButton.data('hiddenid');
 
         BLCAdmin.filterBuilders.clearFilters(hiddenId);
+
+        //for asset grid filters, execute search
+        $filterButton.closest('.listgrid-search').find('.custom-asset-search button.asset-search-button').click();
+
+        // apply the empty filters
+        BLCAdmin.filterBuilders.applyFilters(hiddenId);
+
+        // change "edit filter" button back to "filter"
+        $filterButton.text("Filter");
+        $filterButton.insertBefore($filterButton.parent());
+        $filterButton.siblings('.button-group').remove();
+
+        $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
     });
 
     /**
