@@ -51,7 +51,7 @@ public class OrderPersistedEntityListener {
      */
     @PostPersist
     @PostUpdate
-    public void customerUpdated(final Object entity) {
+    public void orderUpdated(final Object entity) {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
