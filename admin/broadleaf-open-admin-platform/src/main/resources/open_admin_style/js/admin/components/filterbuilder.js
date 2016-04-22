@@ -685,12 +685,6 @@
                     }
                 });
             }
-
-            // clear the search field
-            $filterButton.closest('.listgrid-search').find('.custom-entity-search input').val('');
-
-            // for asset grid filters
-            $filterButton.closest('.listgrid-search').find('.custom-asset-search input').val('');
         },
 
         /**
@@ -1026,7 +1020,11 @@ $(document).ready(function() {
 
         BLCAdmin.filterBuilders.clearFilters(hiddenId);
 
-        //for asset grid filters, execute search
+        // clear the search field
+        $filterButton.closest('.listgrid-search').find('.custom-entity-search input').val('');
+
+        // for asset grid filters
+        $filterButton.closest('.listgrid-search').find('.custom-asset-search input').val('');
         $filterButton.closest('.listgrid-search').find('.custom-asset-search button.asset-search-button').click();
 
         // apply the empty filters
