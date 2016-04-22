@@ -20,11 +20,9 @@
 package org.broadleafcommerce.openadmin.web.controller;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.JsonResponse;
@@ -39,6 +37,7 @@ import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
+import org.broadleafcommerce.openadmin.security.ClassNameRequestParamValidationService;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
@@ -116,6 +115,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
     @Resource(name = "blAdminAbstractControllerExtensionManager")
     protected AdminAbstractControllerExtensionManager extensionManager;
+
+    @Resource(name="blClassNameRequestParamValidationService")
+    protected ClassNameRequestParamValidationService validationService;
     
     // *********************************************************
     // UNBOUND CONTROLLER METHODS (USED BY DIFFERENT SECTIONS) *
@@ -495,20 +497,12 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * the database, will return the value passed into this function. For example, if there is a mapping from "/myentity" to
      * "com.mycompany.myentity", both "http://localhost/myentity" and "http://localhost/com.mycompany.myentity" are valid
      * request paths.
-     * 
+     *
      * @param sectionKey
      * @return the className for this sectionKey if found in the database or the sectionKey if not
      */
     protected String getClassNameForSection(String sectionKey) {
-        AdminSection section = adminNavigationService.findAdminSectionByURI("/" + sectionKey);
-        
-        ExtensionResultHolder erh = new ExtensionResultHolder();
-        extensionManager.getProxy().overrideClassNameForSection(erh, sectionKey, section);
-        if (erh.getContextMap().get(AbstractAdminAbstractControllerExtensionHandler.NEW_CLASS_NAME) != null) {
-            return (String) erh.getContextMap().get(AbstractAdminAbstractControllerExtensionHandler.NEW_CLASS_NAME); 
-        }
-        
-        return (section == null) ? sectionKey : section.getCeilingEntity();
+        return validationService.getClassNameForSection(sectionKey, "blPU");
     }
 
     /**
@@ -718,19 +712,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
     protected List<SectionCrumb> getSectionCrumbs(HttpServletRequest request, String currentSection, String currentSectionId) {
         String crumbs = request.getParameter("sectionCrumbs");
-        List<SectionCrumb> myCrumbs = new ArrayList<SectionCrumb>();
-        if (!StringUtils.isEmpty(crumbs)) {
-            String[] crumbParts = crumbs.split(",");
-            for (String part : crumbParts) {
-                SectionCrumb crumb = new SectionCrumb();
-                String[] crumbPieces = part.split("--");
-                crumb.setSectionIdentifier(crumbPieces[0]);
-                crumb.setSectionId(crumbPieces[1]);
-                if (!myCrumbs.contains(crumb)) {
-                    myCrumbs.add(crumb);
-                }
-            }
-        }
+        List<SectionCrumb> myCrumbs = validationService.getSectionCrumbs(crumbs, "blPU");
         if (currentSection != null && currentSectionId != null) {
             SectionCrumb crumb = new SectionCrumb();
             if (currentSection.startsWith("/")) {
