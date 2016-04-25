@@ -60,7 +60,7 @@ public class ClassCustomPersistenceHandlerAdapter extends CustomPersistenceHandl
         return pkg.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.MAP);
     }
 
-    protected boolean isAdornedListperation(PersistencePackage pkg) {
+    protected boolean isAdornedListOperation(PersistencePackage pkg) {
         return pkg.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.ADORNEDTARGETLIST);
     }
 

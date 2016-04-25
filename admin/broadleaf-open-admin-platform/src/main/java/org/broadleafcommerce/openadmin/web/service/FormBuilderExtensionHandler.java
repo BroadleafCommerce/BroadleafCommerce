@@ -136,4 +136,18 @@ public interface FormBuilderExtensionHandler extends ExtensionHandler {
      * @return whether or not it was handled
      */
     public ExtensionResultStatusType modifyListGrid(String className, ListGrid listGrid);
+    
+    /**
+     * <p>
+     * Provides a hook to add additional actions to adorned entity forms.
+     *
+     * <p>
+     * For order of operation purposes, this is the last thing that is run when building an entity form, which means
+     * that it occurs after {@link #modifyDetailEntityForm(EntityForm)}.
+     *
+     * @param entityForm
+     * @return whether or not it was handled
+     */
+    public ExtensionResultStatusType addAdditionalAdornedFormActions(EntityForm entityForm);
+
 }

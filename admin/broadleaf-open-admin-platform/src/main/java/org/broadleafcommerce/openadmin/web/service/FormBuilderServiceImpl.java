@@ -1573,6 +1573,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         ef.setParentId(parentId);
 
+        extensionManager.getProxy().addAdditionalAdornedFormActions(ef);
+
         return ef;
     }
 
