@@ -69,6 +69,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -1824,7 +1825,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String userName = user == null ? null : user.getName();
         displayField.setValue(userName);
 
-        entityForm.findGroup("AdminAuditable_Audit").addField(displayField);
+        FieldGroup auditGroup = entityForm.findGroup("AdminAuditable_Audit");
+        if (auditGroup != null) {
+            auditGroup.addField(displayField);
+        }
     }
 
     private Field buildAuditableDisplayField(Field auditableField) {

@@ -78,7 +78,7 @@ public interface CustomerAdminPresentation {
         public static final String ContactInfo = "CustomerImpl_ContactInfo";
         public static final String QualificationOptions = "CustomerImpl_Qualification_Options";
         public static final String Pricing = "Pricing";
-        public static final String Audit = "CustomerImpl_Audit";
+        public static final String Audit = "AdminAuditable_Audit";
     }
 
     public static class GroupOrder {
