@@ -393,6 +393,8 @@ var BLCAdmin = (function($) {
                         var $submitButton = BLCAdmin.currentModal().find("button[type='submit']");
                         $submitButton.prop('disabled', true);
                     }
+                    
+                    BLCAdmin.currentModal().trigger('content-loaded');
                 });
             } else {
                 showLinkAsModal(link);
