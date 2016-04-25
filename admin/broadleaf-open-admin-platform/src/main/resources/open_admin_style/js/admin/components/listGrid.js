@@ -262,25 +262,22 @@
             var alertType = options.alertType || '';
             var autoClose = options.autoClose || 3000;
 
-            var $alert = $('<span>').addClass('alert-box').addClass(alertType);
-
-            $alert.append('&nbsp;&nbsp;' + message);
-
             if (options.clearOtherAlerts) {
                 $container.find('.alert-box').remove();
             }
+
+            var $alert = $('<span>').addClass('alert-box').addClass(alertType);
+            $alert.append('&nbsp;&nbsp;' + message);
 
             var alertTarget = $container.find('.titlebar:first-child .titlebar-title');
             if (!alertTarget.length) {
                 alertTarget = $container.find('label span');
             }
+            alertTarget.append($alert);
 
             setTimeout(function () {
-                alertTarget.append($alert);
-                setTimeout(function () {
-                    $alert.fadeOut();
-                }, autoClose);
-            });
+                $alert.fadeOut();
+            }, autoClose);
         },
 
         fixHelper: function (e, ui) {
