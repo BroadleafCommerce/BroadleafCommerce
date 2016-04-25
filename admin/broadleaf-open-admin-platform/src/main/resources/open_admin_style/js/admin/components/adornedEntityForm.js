@@ -23,7 +23,7 @@
     BLCAdmin.adornedEntityForm = {
         updateActionButtons : function ($listGridContainer) {
             if ($listGridContainer.closest('.adorned-select-wrapper').length) {
-                var $entityFormActionButtons = $listGridContainer.closest('.modal').find('.modal-footer').find('.entity-form-actions button');
+                var $entityFormActionButtons = $listGridContainer.closest('.modal').find('.modal-footer').find('.entity-form-actions button.submit-button');
                 if ($listGridContainer.find('tr.selected').length) {
                     $entityFormActionButtons.prop('disabled', false);
                 } else {

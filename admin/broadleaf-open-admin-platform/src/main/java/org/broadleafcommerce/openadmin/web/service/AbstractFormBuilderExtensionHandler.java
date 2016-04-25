@@ -64,5 +64,10 @@ public abstract class AbstractFormBuilderExtensionHandler extends AbstractExtens
     public ExtensionResultStatusType modifyListGrid(String className, ListGrid listGrid) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-    
+
+    @Override
+    public ExtensionResultStatusType addAdditionalAdornedFormActions(EntityForm entityForm) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
 }

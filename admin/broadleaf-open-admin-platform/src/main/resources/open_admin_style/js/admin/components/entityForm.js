@@ -401,6 +401,8 @@ $(document).ready(function() {
                 type: "POST",
                 data: BLCAdmin.serialize($form)
             }, function(data) {
+                BLCAdmin.runPostFormSubmitHandlers($form, data);
+
                 BLCAdmin.ruleBuilders.removeModalRuleBuilders($form);
                 var $modal = BLCAdmin.currentModal();
                 BLCAdmin.entityForm.swapModalEntityForm($modal, data);
@@ -423,6 +425,8 @@ $(document).ready(function() {
                 type: "POST",
                 data: BLCAdmin.serialize($form)
             }, function (data) {
+                BLCAdmin.runPostFormSubmitHandlers($form, data);
+
                 BLCAdmin.entityForm.hideActionSpinner($form.closest('.modal').find('.entity-form-actions'));
 
                 //if there is a validation error, replace the current form that's there with this new one
