@@ -97,10 +97,12 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
 
     protected boolean validateClassNameParams(HttpServletRequest request) {
         String ceilingEntityClassname = request.getParameter("ceilingEntityClassname");
+        String ceilingEntity = request.getParameter("ceilingEntity");
         String entityType = request.getParameter("entityType");
         Map<String, String> params = new HashMap<String, String>(2);
         params.put("ceilingEntityClassname", ceilingEntityClassname);
         params.put("entityType", entityType);
+        params.put("ceilingEntity", ceilingEntity);
         return validationService.validateClassNameParams(params, "blPU");
     }
 }
