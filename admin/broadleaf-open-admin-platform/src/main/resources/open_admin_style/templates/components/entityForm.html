@@ -32,7 +32,7 @@
                 role="presentation">
                 <a th:href="'#tab' + ${tabStat.count}"
                    th:class="${tab.tabClass}"
-                   th:text="#{${tab.title}}" />
+                   th:text="#{${tab.title}}"></a>
             </li>
         </ul>
     </div>
@@ -46,7 +46,7 @@
                       th:action="@{${currentUrl}}">
 
                 <span style="display: none;" id="previewurl"
-                      th:attr="data-href=@{/sandbox/preview(ceilingEntity=*{ceilingEntityClassname}, id=*{id}, directPreview=true)}" />
+                      th:attr="data-href=@{/sandbox/preview(ceilingEntity=*{ceilingEntityClassname}, id=*{id}, directPreview=true)}"></span>
 
                 <input type="hidden" th:field="*{ceilingEntityClassname}" />
                 <input type="hidden" th:field="*{entityType}" />
@@ -66,29 +66,7 @@
                         <div class="col11">
                             <div class="row">
                                 <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
-                                    <legend th:text="${group.title}" />
-
-                                    <comment th:remove="all">
-                                        <!-- *** IMPORTANT *** -->
-                                        <!-- When changing this block of code, make sure standaloneField.html is also updated -->
-                                        <!-- *** IMPORTANT *** -->
-                                    </comment>
-                                    <div th:each="field : ${group.fields}"
-                                         th:if="${field.name}"
-                                         th:class="${'field-group' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}"
-                                         blc_admin:component_id="${field}"
-                                         th:classappend="${!field.isVisible}? 'hidden'">
-
-                    <div th:if="${field.readOnly}" th:remove="tag">
-                        <div th:substituteby="fields/readonly" />
-                    </div>
-                    <div th:unless="${field.readOnly}" th:remove="tag">
-                        <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}" />
-                    </div>
-
-                                        <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
-
-                                    </div>
+                                    <div th:include="components/partials/entityFormGroups" th:remove="tag"></div>
                                 </fieldset>
 
                                 <div th:remove="tag" th:if="${dynamicFormTemplateOverride == null}">
