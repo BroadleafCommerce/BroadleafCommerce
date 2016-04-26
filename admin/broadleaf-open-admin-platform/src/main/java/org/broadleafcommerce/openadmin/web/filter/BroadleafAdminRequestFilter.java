@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
+import org.broadleafcommerce.openadmin.security.ClassNameRequestParamValidationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.Persistable;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
@@ -30,6 +31,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
@@ -53,8 +56,16 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
     @Resource(name="blPersistenceThreadManager")
     protected PersistenceThreadManager persistenceThreadManager;
 
+    @Resource(name="blClassNameRequestParamValidationService")
+    protected ClassNameRequestParamValidationService validationService;
+
     @Override
     public void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
+
+        if (!validateClassNameParams(request)) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
         if (!shouldProcessURL(request, request.getRequestURI())) {
             if (LOG.isTraceEnabled()) {
@@ -78,9 +89,24 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
                 }
             });
         } catch (SiteNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } finally {
             requestProcessor.postProcess(new ServletWebRequest(request, response));
         }
+    }
+
+    protected boolean validateClassNameParams(HttpServletRequest request) {
+        String ceilingEntityClassname = request.getParameter("ceilingEntityClassname");
+        String ceilingEntity = request.getParameter("ceilingEntity");
+        String ceilingEntityFullyQualifiedClassname = request.getParameter("fields['ceilingEntityFullyQualifiedClassname'].value");
+        String originalType = request.getParameter("fields['__originalType'].value");
+        String entityType = request.getParameter("entityType");
+        Map<String, String> params = new HashMap<String, String>(2);
+        params.put("ceilingEntityClassname", ceilingEntityClassname);
+        params.put("entityType", entityType);
+        params.put("ceilingEntity", ceilingEntity);
+        params.put("ceilingEntityFullyQualifiedClassname", ceilingEntityFullyQualifiedClassname);
+        params.put("__originalType", originalType);
+        return validationService.validateClassNameParams(params, "blPU");
     }
 }
