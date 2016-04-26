@@ -33,7 +33,7 @@
         RULE_SIMPLE : "rule-builder-simple",
         RULE_SIMPLE_TIME : "rule-builder-simple-time",
         RULE_WITH_QUANTITY : "rule-builder-with-quantity"
-    }
+    };
 
     /**
      * An Admin page may contain multiple rule builders of various different types.
@@ -143,7 +143,7 @@
 
             };
 
-            ruleBuildersArray.push(ruleBuilder)
+            ruleBuildersArray.push(ruleBuilder);
             return ruleBuilder;
         },
 
@@ -458,8 +458,8 @@
             if (opRef && typeof opRef === 'string' && ("blcOperators_Boolean" === opRef)) {
                 field.input = 'radio';
                 field.values = {
-                    true: 'true',
-                    false: 'false'
+                    'true': 'true',
+                    'false': 'false'
                 }
             }
         },
@@ -1118,7 +1118,7 @@ $(document).ready(function() {
 
         //clear out the original faulty input
         var $fieldContainer = $($builderContainer.parent());
-        var $ruleData = $fieldContainer.find('.rule-builder-data')
+        var $ruleData = $fieldContainer.find('.rule-builder-data');
         var hiddenInput = $fieldContainer.find('input#' + $ruleData.data('hiddenid'));
         hiddenInput.val('');
         //reset the error as now there isn't one

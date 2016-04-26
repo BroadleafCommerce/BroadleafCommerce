@@ -125,7 +125,6 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 BufferedWriter out =
                         new BufferedWriter(new OutputStreamWriter(baos, "utf-8"));) {
-
             minify(in, out, filename, type);
             
             out.flush();
@@ -179,7 +178,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
                 if (line < 0) {
                     LOG.error(message);
                 } else {
-                    LOG.error(line + ':' + lineOffset + ':' + message);
+                    LOG.error(lineSource + ":" + line + ':' + lineOffset + ':' + message);
                 }
             }
 

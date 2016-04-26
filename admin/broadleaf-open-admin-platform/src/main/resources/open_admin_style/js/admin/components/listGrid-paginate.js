@@ -734,7 +734,7 @@
         computeActualMaxHeight : function($tbody, desiredMaxHeight) {
             // what is the height of the visible rows?
             var rowHeight = BLCAdmin.listGrid.paginate.getRowHeight($tbody);
-            var loadedRecordRange = BLCAdmin.listGrid.paginate.getLoadedRecordRanges($tbody)[0]
+            var loadedRecordRange = BLCAdmin.listGrid.paginate.getLoadedRecordRanges($tbody)[0];
             // This gives me back a 0-indexed range, I need the row count so add 1
             var numLoadedRows = loadedRecordRange.hi - loadedRecordRange.lo + 1;
             var numPaddedRows = Math.max(0, BLCAdmin.listGrid.paginate.getTotalRecords($tbody) - numLoadedRows);

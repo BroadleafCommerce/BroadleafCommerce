@@ -67,7 +67,7 @@
 
 		// Dynamically create overlay
 		$fbOverlay = $('<div />', {
-			class: 'fluidbox-overlay',
+			'class': 'fluidbox-overlay',
 			css: {
 				'background-color': settings.overlayColor,
 				'z-index': settings.stackIndex
@@ -291,7 +291,7 @@
 
 				// Define wrap
 				var $fbInnerWrap = $('<div />', {
-					class: 'fluidbox-wrap',
+					'class': 'fluidbox-wrap',
 					css: {
 						'z-index': settings.stackIndex - settings.stackIndexDelta
 					}

@@ -414,11 +414,11 @@
              * For lookups we need to store the original id value as well as the original display value
              */
             $('.additional-foreign-key-container').each(function(i, el) {
-                var $valueContainer = $(el).find('.value')
+                var $valueContainer = $(el).find('.value');
                 var origVal = $valueContainer.val() || '';
                 $valueContainer.attr('data-orig-val', origVal);
 
-                var $displayContainer = $(el).find('.hidden-display-value')
+                var $displayContainer = $(el).find('.hidden-display-value');
                 var origVal = $displayContainer.val() || '';
                 $displayContainer.attr('data-orig-val', origVal);
             });

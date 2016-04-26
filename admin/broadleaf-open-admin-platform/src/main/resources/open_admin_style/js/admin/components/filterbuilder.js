@@ -142,7 +142,7 @@
 
             };
 
-            filterBuildersArray.push(filterBuilder)
+            filterBuildersArray.push(filterBuilder);
             return filterBuilder;
         },
 
@@ -243,7 +243,7 @@
                 pk: null,
                 condition:'AND',
                 rules: []
-            }
+            };
             return emptyData;
         },
 
@@ -342,7 +342,7 @@
         getNoFilterText: function() {
             var noFiltersText = $("<li>", {
                 html: "No filters applied yet.  Click Add New Filter",
-                class: "rule-container no-filters"
+                'class': "rule-container no-filters"
             });
             return noFiltersText;
         },
@@ -917,7 +917,7 @@ $(document).ready(function() {
         el.find('.filter-text').remove();
         var readonlySpan = $("<span>", {
             html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
-            class: "read-only"
+            'class': "read-only"
         });
         el.append($(readonlySpan));
 
@@ -960,7 +960,7 @@ $(document).ready(function() {
         var filterText = el.find('div.rule-filter-container > div > div.selectize-input .item').text();
         var readonlyFilter = $("<span>", {
             html: "<strong>" + filterText + "</strong>",
-            class: "filter-text"
+            'class': "filter-text"
         });
         el.find('div.rule-filter-container').append($(readonlyFilter));
 
@@ -978,7 +978,7 @@ $(document).ready(function() {
         // add "Apply" button
         var applyButton = $("<button>", {
             html: "Apply",
-            class: "button primary filter-apply-button"
+            'class': "button primary filter-apply-button"
         });
         el.find('.rule-header .rule-actions').append(applyButton);
         el.find('.rule-header .remove-row').css('right', '').css('left', '16px');
@@ -1128,7 +1128,7 @@ $(document).ready(function() {
             el.find('.read-only').remove();
             var readonlySpan = $("<span>", {
                 html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
-                class: "read-only"
+                'class': "read-only"
             });
             el.append($(readonlySpan));
 

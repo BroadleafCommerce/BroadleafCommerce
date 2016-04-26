@@ -100,4 +100,4 @@ $(document).ready(function() {
 	    $.doTimeout('hover');
 	});
 
-})
+});
