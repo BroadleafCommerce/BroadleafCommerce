@@ -1328,6 +1328,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         // Since this is a read-only view, actions don't make sense in this context
         EntityForm ef = (EntityForm) model.asMap().get("entityForm");
         ef.removeAllActions();
+        ef.setReadOnly();
 
         return returnPath;
     }
