@@ -271,7 +271,9 @@ public interface ProductDao {
      * 
      * It will fetch results in pages. For example, if page = 3 and pageSize = 25, this method would
      * return rows 75-99 from the database.
-     * 
+     *
+     * When possible, it is suggested to use {@link #readAllActiveProducts(Integer, Long)} instead for performance.
+     *
      * @param page - the number of the page to get (0 indexed)
      * @param pageSize - the number of results per page
      * @return a list of active products for the given page
@@ -279,7 +281,20 @@ public interface ProductDao {
     public List<Product> readAllActiveProducts(int page, int pageSize);
 
     /**
-     * @deprecated Use {@link #readAllActiveProducts(page, pageSize)}
+     * Reads all products from the database that are currently active. This method utilizes efficient
+     * paging to retrieve a subset of records. This approach does not use an offset technique (like {@link #readAllActiveProducts(int, int)},
+     * but rather limits the retrieved records to those greater than the given id and returns a max results of pageSize. This
+     * is more efficient that using an offset, since the database will not have to retrieve all the records from the beginning
+     * of the table and trim the offset.
+     *
+     * @param pageSize the number of results per page
+     * @param lastId the last id from the previous page - can be null if this is the first page request
+     * @return a list of active products for the given page
+     */
+    List<Product> readAllActiveProducts(Integer pageSize, Long lastId);
+
+    /**
+     * @deprecated Use {@link #readAllActiveProducts(int, int)}
      * 
      * @param page - the number of the page to get (0 indexed)
      * @param pageSize - the number of results per page
@@ -297,7 +312,7 @@ public interface ProductDao {
     public Long readCountAllActiveProducts();
 
     /**
-     * @deprecated {@link #readActiveProductCount()}
+     * @deprecated {@link #readCountAllActiveProducts()}
      * 
      * @param currentDate
      * @return the number of currently active products

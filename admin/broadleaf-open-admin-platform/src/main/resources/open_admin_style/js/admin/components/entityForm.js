@@ -235,15 +235,34 @@ $(document).ready(function() {
             var scroll = $('.main-content').scrollTop();
             $sc.find('.content-area-title-bar').css('height', height - scroll);
             $sc.find('.content-area-title-bar').css('line-height', height - scroll + 'px');
-            $sc.find('.content-area-title-bar h3').css('line-height', height - scroll + 'px');
+            $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', height - scroll + 'px');
             $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', (-22 + scroll / 2) + 'px');
         } else {
             $sc.find('.content-area-title-bar').css('height', minHeight + 'px');
             $sc.find('.content-area-title-bar').css('line-height', minHeight + 'px');
-            $sc.find('.content-area-title-bar h3').css('line-height', minHeight + 'px');
+            $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', minHeight + 'px');
             $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-7px');
         }
     });
+
+    /**
+     * Initialize the sticky bar
+     */
+    if ($('form.entity-form').length && !$('.oms').length) {
+        var $sc = $('.sticky-container');
+        var $scp = $('.sticky-container-padding');
+        var height = BLCAdmin.entityForm.getOriginalStickyBarHeight();
+
+        $scp.show();
+        $sc.addClass('sticky-fixed').css('top', BLCAdmin.entityForm.getOriginalStickyBarOffset());
+        $sc.outerWidth($('.main-content').outerWidth());
+        $scp.outerHeight(height);
+
+        $sc.find('.content-area-title-bar').css('height', height);
+        $sc.find('.content-area-title-bar').css('line-height', height + 'px');
+        $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', height + 'px');
+        $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-22px');
+    }
     
     var tabs_action=null;
     $('body div.section-tabs li').find('a:not(".workflow-tab, .system-property-tab' +
@@ -560,26 +579,27 @@ $(document).ready(function() {
         event.preventDefault();
 
         var $collapser = $(this).find('.collapser span');
-        var $content = $(this).closest('.fieldset-card').find('.fieldset-card-content');
+        var content = $(this).closest('.fieldset-card').find('.fieldset-card-content')[0];
         if ($collapser.hasClass('collapsed')) {
             $collapser.removeClass('collapsed').addClass('expanded');
             $collapser.text("(hide)");
-            //$collapser.find('i').removeClass('fa-angle-down').addClass('fa-angle-up');
-            $content.removeClass('content-collapsed');
+            $(content).removeClass('content-collapsed');
 
             // update content height
             BLCAdmin.updateContentHeight($(this));
         } else {
             $collapser.removeClass('expanded').addClass('collapsed');
             $collapser.text("(show)");
-            //$collapser.find('i').removeClass('fa-angle-up').addClass('fa-angle-down');
-            $content.addClass('content-collapsed');
+            $(content).addClass('content-collapsed');
         }
 
         var $fieldSetCard = $(this).closest('.fieldset-card');
         var $tableBodies = $fieldSetCard.find('.listgrid-body-wrapper tbody');
         $tableBodies.each(function( index, tbody ) {
             BLCAdmin.listGrid.paginate.updateGridSize($(tbody));
+        });
+        $fieldSetCard.find('.fieldgroup-listgrid-wrapper-header').each(function (index, element) {
+            BLCAdmin.listGrid.updateGridTitleBarSize($(element));
         });
     });
 
