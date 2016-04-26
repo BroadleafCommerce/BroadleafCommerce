@@ -99,12 +99,14 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
         String ceilingEntityClassname = request.getParameter("ceilingEntityClassname");
         String ceilingEntity = request.getParameter("ceilingEntity");
         String ceilingEntityFullyQualifiedClassname = request.getParameter("fields['ceilingEntityFullyQualifiedClassname'].value");
+        String originalType = request.getParameter("fields['__originalType'].value");
         String entityType = request.getParameter("entityType");
         Map<String, String> params = new HashMap<String, String>(2);
         params.put("ceilingEntityClassname", ceilingEntityClassname);
         params.put("entityType", entityType);
         params.put("ceilingEntity", ceilingEntity);
         params.put("ceilingEntityFullyQualifiedClassname", ceilingEntityFullyQualifiedClassname);
+        params.put("__originalType", originalType);
         return validationService.validateClassNameParams(params, "blPU");
     }
 }
