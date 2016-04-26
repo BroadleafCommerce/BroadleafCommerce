@@ -258,6 +258,8 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
             return showMultishipAddAddress(request, response, model);
         }
 
+        removeUnusedPhones(addressForm);
+        
         CustomerAddress customerAddress = customerAddressService.create();
         customerAddress.setAddressName(addressForm.getAddressName());
         customerAddress.setAddress(addressForm.getAddress());
@@ -284,6 +286,21 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
 
         //append current time to redirect to fix a problem with ajax caching in IE
         return getCheckoutPageRedirect()+ "?_=" + System.currentTimeMillis();
+    }
+
+    public void removeUnusedPhones(ShippingInfoForm form) {
+        if ((form.getAddress().getPhonePrimary() != null) &&
+                    (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
+            form.getAddress().setPhonePrimary(null);
+        }
+        if ((form.getAddress().getPhoneSecondary() != null) &&
+                    (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+            form.getAddress().setPhoneSecondary(null);
+        }
+        if ((form.getAddress().getPhoneFax() != null) &&
+                    (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
+            form.getAddress().setPhoneFax(null);
+        }
     }
 
 }
