@@ -140,9 +140,10 @@
                         <span th:case="'main'" th:remove="tag">
                             <span th:substituteby="components/partials/listGridIcon"></span>
 
-                            <a th:if="${headerField.mainEntityLink}"
-                               th:href="@{${record.path}}"
-                               th:utext="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}"></a>
+                        <a class="list-grid-primary-field"
+                           th:if="${headerField.mainEntityLink}"
+                           th:href="@{${record.path}}"
+                           th:utext="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}"></a>
 
 
                             <span th:if="${!headerField.mainEntityLink and headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}" th:remove="tag">

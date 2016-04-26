@@ -95,7 +95,8 @@ public class AdminBasicOperationsController extends AdminAbstractController {
             @RequestParam(defaultValue = "false") boolean dynamicField,
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, null, null);
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams, sectionCrumbs, pathVars);
+        String validatedClass = getClassNameForSection(owningClass);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(validatedClass, requestParams, sectionCrumbs, pathVars);
 
         // We might need these fields in the initial inspect.
         ppr.addCustomCriteria("requestingEntityId=" + requestingEntityId);
@@ -167,7 +168,8 @@ public class AdminBasicOperationsController extends AdminAbstractController {
             @RequestParam(required = false) String requestingEntityId,
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, null, null);
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams, sectionCrumbs, pathVars);
+        String validatedClass = getClassNameForSection(owningClass);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(validatedClass, requestParams, sectionCrumbs, pathVars);
         ClassMetadata mainMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();

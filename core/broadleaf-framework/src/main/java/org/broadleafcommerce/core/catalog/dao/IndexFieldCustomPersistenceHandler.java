@@ -26,7 +26,6 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
@@ -37,12 +36,8 @@ import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
@@ -247,50 +242,6 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
 
         DynamicResultSet resultSet = helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
         return resultSet;
-    }
-
-    protected PersistencePackage createPersistencePackage(IndexField searchField, FieldType fieldType) {
-        PersistencePackage pp = new PersistencePackage();
-        pp.setCeilingEntityFullyQualifiedClassname(IndexFieldTypeImpl.class.getName());
-        pp.setSecurityCeilingEntityFullyQualifiedClassname(IndexFieldTypeImpl.class.getName());
-        pp.setSectionEntityField("fieldTypes");
-
-        PersistencePerspective perspective = new PersistencePerspective(new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC,
-                OperationType.BASIC, OperationType.BASIC), new String[]{}, new ForeignKey[]{});
-        ForeignKey foreignKey = new ForeignKey("indexField", IndexFieldImpl.class.getName());
-        foreignKey.setOriginatingField(pp.getSectionEntityField());
-        foreignKey.setDisplayValueProperty("name");
-        perspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
-        pp.setPersistencePerspective(perspective);
-
-        Entity entity = new Entity();
-        entity.setType(new String[] { IndexFieldTypeImpl.class.getName() });
-        List<Property> properties = new ArrayList<Property>();
-        {
-            Property prop = new Property();
-            prop.setName("indexField");
-            prop.setValue(String.valueOf(searchField.getId()));
-            prop.setIsDirty(true);
-            properties.add(prop);
-        }
-        {
-            Property prop = new Property();
-            prop.setName("fieldType");
-            prop.setValue(fieldType.getType());
-            prop.setIsDirty(true);
-            properties.add(prop);
-        }
-
-
-        entity.setProperties(properties.toArray(new Property[properties.size()]));
-        pp.setEntity(entity);
-        pp.setRequestingEntityName(searchField.getField().getFriendlyName());
-        SectionCrumb section = new SectionCrumb();
-        section.setSectionIdentifier(IndexFieldImpl.class.getName());
-        section.setSectionId(String.valueOf(searchField.getId()));
-        pp.setSectionCrumbs(new SectionCrumb[] { section });
-
-        return pp;
     }
 
 }

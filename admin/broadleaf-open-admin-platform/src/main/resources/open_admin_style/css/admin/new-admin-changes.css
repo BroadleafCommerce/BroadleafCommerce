@@ -1584,3 +1584,11 @@ div.uploadMessage {
 .selectize-control.single .selectize-input.remove-caret:hover {
     cursor: auto;
 }
+
+.table tbody > tr > td > a.list-grid-primary-field {
+    display : inline;
+}
+
+.button.button-action.sub-list-grid-edit {
+    display: inline;
+}

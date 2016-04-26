@@ -22,11 +22,9 @@ package org.broadleafcommerce.openadmin.web.controller;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
@@ -75,18 +73,6 @@ public interface AdminAbstractControllerExtensionHandler extends ExtensionHandle
      * @return the extension result status
      */
     public ExtensionResultStatusType setAdditionalModelAttributes(Model model, String sectionKey);
-
-    /**
-     * Invoked whenever {@link AdminAbstractController#getClassNameForSection(String)} is invoked. If an extension
-     * handler sets the {@link #NEW_CLASS_NAME} variable in the ExtensionResultHolder, the overriden value will be used.
-     * 
-     * @param erh
-     * @param sectionKey
-     * @param section
-     * @return
-     */
-    public ExtensionResultStatusType overrideClassNameForSection(ExtensionResultHolder erh, String sectionKey, 
-            AdminSection section);
 
     /**
      * Invoked whenever {@link AdminAbstractController#getBlankDynamicFieldTemplateForm} or 

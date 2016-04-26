@@ -42,6 +42,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 import javax.annotation.Resource;
 import javax.persistence.Embeddable;
@@ -72,6 +73,8 @@ public abstract class MultiTenantCopier implements Ordered {
     protected StreamingTransactionCapableUtil transUtil;
     
     protected int order = 0;
+    
+    protected List<Matcher> classExcludeRegexList = new ArrayList<Matcher>();
 
     /**
      * Main method that should be implemented by each {@link MultiTenantCopier} to drive the logic of
@@ -118,7 +121,8 @@ public abstract class MultiTenantCopier implements Ordered {
     }
 
     protected void persistCopyObjectTreeInternal(Object copy, Set<Integer> library, MultiTenantCopyContext context) {
-        if (library.contains(System.identityHashCode(copy))) {
+        if (library.contains(System.identityHashCode(copy)) || !(copy instanceof MultiTenantCloneable)
+                || excludeFromCopyRegex(copy)) {
             return;
         }
         library.add(System.identityHashCode(copy));
@@ -171,6 +175,15 @@ public abstract class MultiTenantCopier implements Ordered {
                         "recognizes Collection and Map. (%s.%s)", copy.getClass().getName(), ((Field) collectionItem[0]).getName()));
             }
         }
+    }
+
+    protected Boolean excludeFromCopyRegex(Object copy) {
+        for (Matcher regex : classExcludeRegexList) {
+            if (regex.reset(copy.getClass().toString()).matches()) {
+               return true; 
+            }
+        }
+        return false;
     }
 
     protected void persistNode(final Object copy, final MultiTenantCopyContext context) {
