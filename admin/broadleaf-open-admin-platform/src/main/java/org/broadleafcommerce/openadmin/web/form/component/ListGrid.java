@@ -92,6 +92,8 @@ public class ListGrid {
     protected String containingEntityId;
     protected String subCollectionFieldName;
     protected String pathOverride;
+    protected String searchFieldsTemplateOverride;
+    protected String templateOverride;
 
     public enum Type {
         MAIN,
@@ -590,15 +592,31 @@ public class ListGrid {
     public void setExternalEntitySectionKey(String externalEntitySectionKey) {
         this.externalEntitySectionKey = externalEntitySectionKey;
     }
-    
+
     public String getPathOverride() {
         return pathOverride;
     }
-    
+
     public void setPathOverride(String pathOverride) {
         this.pathOverride = pathOverride;
     }
-    
+
+    public String getSearchFieldsTemplateOverride() {
+        return searchFieldsTemplateOverride;
+    }
+
+    public void setSearchFieldsTemplateOverride(String searchFieldsTemplateOverride) {
+        this.searchFieldsTemplateOverride = searchFieldsTemplateOverride;
+    }
+
+    public String getTemplateOverride() {
+        return templateOverride;
+    }
+
+    public void setTemplateOverride(String templateOverride) {
+        this.templateOverride = templateOverride;
+    }
+
     public void setIsReadOnly(Boolean readOnly) {
         this.isReadOnly = readOnly;
     }
