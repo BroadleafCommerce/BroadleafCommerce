@@ -85,6 +85,11 @@ public class FilterMapping {
         return this;
     }
 
+    public FilterMapping withNullsLast(boolean nullsLast) {
+        setNullsLast(nullsLast);
+        return this;
+    }
+
     public String getFullPropertyName() {
         return fullPropertyName;
     }
