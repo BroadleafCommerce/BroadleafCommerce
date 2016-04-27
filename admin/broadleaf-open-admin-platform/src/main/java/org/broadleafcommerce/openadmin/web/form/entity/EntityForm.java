@@ -570,9 +570,13 @@ public class EntityForm {
             if (tab.hasFieldOrListGrid()) {
                 renderableTabsCount++;
             }
+
+            if (renderableTabsCount > 1) {
+                return true;
+            }
         }
 
-        return renderableTabsCount > 1;
+        return false;
     }
 
     public String getTranslationCeilingEntity() {
