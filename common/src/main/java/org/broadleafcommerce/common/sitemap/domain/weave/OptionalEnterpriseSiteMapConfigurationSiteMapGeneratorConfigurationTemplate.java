@@ -41,7 +41,6 @@ import javax.persistence.OneToMany;
  * @author Jeff Fischer
  *
  */
-@Deprecated
 public abstract class OptionalEnterpriseSiteMapConfigurationSiteMapGeneratorConfigurationTemplate {
 
     @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)

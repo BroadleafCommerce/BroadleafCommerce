@@ -52,7 +52,6 @@ public class FilterAndSortCriteria {
     protected Integer order;
 
     protected SortDirection sortDirection;
-    protected boolean nullsLast = true;
 
     public FilterAndSortCriteria(String propertyId, int order) {
         this.propertyId = propertyId;
@@ -204,11 +203,4 @@ public class FilterAndSortCriteria {
         this.order = order;
     }
 
-    public boolean isNullsLast() {
-        return nullsLast;
-    }
-
-    public void setNullsLast(boolean nullsLast) {
-        this.nullsLast = nullsLast;
-    }
 }
