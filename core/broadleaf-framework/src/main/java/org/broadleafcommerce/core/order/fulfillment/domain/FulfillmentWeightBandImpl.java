@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
@@ -46,6 +49,10 @@ import java.math.BigDecimal;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_WEIGHT_BAND")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX)
+})
 public class FulfillmentWeightBandImpl extends FulfillmentBandImpl implements FulfillmentWeightBand {
 
     private static final long serialVersionUID = 1L;
