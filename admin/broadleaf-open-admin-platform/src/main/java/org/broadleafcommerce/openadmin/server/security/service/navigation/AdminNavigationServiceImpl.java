@@ -21,11 +21,14 @@ package org.broadleafcommerce.openadmin.server.security.service.navigation;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminNavigationDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
@@ -36,6 +39,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
+import org.broadleafcommerce.openadmin.web.controller.AbstractAdminAbstractControllerExtensionHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,11 +62,35 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     private static final Log LOG = LogFactory.getLog(AdminNavigationServiceImpl.class);
     private static final String PATTERN = "_";
 
+    private static SectionComparator SECTION_COMPARATOR = new SectionComparator();
+
+    private static class SectionComparator implements Comparator<AdminSection> {
+
+        @Override
+        public int compare(AdminSection section, AdminSection section2) {
+            if (section.getDisplayOrder() != null) {
+                if (section2.getDisplayOrder() != null) {
+                    return section.getDisplayOrder().compareTo(section2.getDisplayOrder());
+                }
+                else
+                    return -1;
+            } else if (section2.getDisplayOrder() != null) {
+                return 1;
+            }
+
+            return section.getId().compareTo(section2.getId());
+        }
+
+    }
+
     @Resource(name = "blAdminNavigationDao")
     protected AdminNavigationDao adminNavigationDao;
 
     @Resource(name="blAdditionalSectionAuthorizations")
     protected List<SectionAuthorization> additionalSectionAuthorizations = new ArrayList<SectionAuthorization>();
+
+    @Resource(name = "blAdminNavigationServiceExtensionManager")
+    protected AdminNavigationServiceExtensionManager extensionManager;
 
     @Override
     @Transactional("blTransactionManager")
@@ -81,43 +109,6 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         List<AdminModule> modules = adminNavigationDao.readAllAdminModules();
         populateAdminMenu(adminUser, adminMenu, modules);
         return adminMenu;
-    }
-
-    protected void populateAdminMenu(AdminUser adminUser, AdminMenu adminMenu, List<AdminModule> modules) {
-        for (AdminModule module : modules) {
-            List<AdminSection> authorizedSections = buildAuthorizedSectionsList(adminUser, module);
-            if (authorizedSections != null && authorizedSections.size() > 0) {
-                AdminModuleDTO adminModuleDto = ((AdminModuleImpl) module).getAdminModuleDTO();
-                adminMenu.getAdminModules().add(adminModuleDto);
-                adminModuleDto.setSections(authorizedSections);
-            }
-        }
-
-        // Sort the authorized modules
-        BeanComparator displayComparator = new BeanComparator("displayOrder");
-        Collections.sort(adminMenu.getAdminModules(), displayComparator);
-    }
-
-    protected List<AdminSection> buildAuthorizedSectionsList(AdminUser adminUser, AdminModule module) {
-        List<AdminSection> authorizedSections = new ArrayList<AdminSection>();
-        BroadleafRequestContext broadleafRequestContext = BroadleafRequestContext.getBroadleafRequestContext();
-        Site site = broadleafRequestContext.getNonPersistentSite();
-        Long siteId = site == null ? null : site.getId();
-        for (AdminSection section : module.getSections()) {
-            if (isUserAuthorizedToViewSection(adminUser, section)) {
-                if(section instanceof SiteDiscriminator){
-                    Long sectionSiteId = ((SiteDiscriminator)section).getSiteDiscriminator();
-                    if(sectionSiteId == null || sectionSiteId.equals(siteId)){
-                        authorizedSections.add(section);
-                    }
-                } else{
-                    authorizedSections.add(section);
-                }
-            }
-        }
-
-        Collections.sort(authorizedSections, SECTION_COMPARATOR);
-        return authorizedSections;
     }
 
     @Override
@@ -226,6 +217,45 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         return false;
     }
 
+    public List<SectionAuthorization> getAdditionalSectionAuthorizations() {
+            return additionalSectionAuthorizations;
+        }
+
+    public void setAdditionalSectionAuthorizations(List<SectionAuthorization> additionalSectionAuthorizations) {
+        this.additionalSectionAuthorizations = additionalSectionAuthorizations;
+    }
+
+    @Override
+    public String getClassNameForSection(String sectionKey) {
+        AdminSection section = findAdminSectionByURI("/" + sectionKey);
+
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().overrideClassNameForSection(erh, sectionKey, section);
+        if (erh.getContextMap().get(AbstractAdminAbstractControllerExtensionHandler.NEW_CLASS_NAME) != null) {
+            return (String) erh.getContextMap().get(AbstractAdminAbstractControllerExtensionHandler.NEW_CLASS_NAME);
+        }
+
+        return (section == null) ? sectionKey : section.getCeilingEntity();
+    }
+
+    @Override
+    public List<SectionCrumb> getSectionCrumbs(String crumbList) {
+        List<SectionCrumb> myCrumbs = new ArrayList<SectionCrumb>();
+        if (!StringUtils.isEmpty(crumbList)) {
+            String[] crumbParts = crumbList.split(",");
+            for (String part : crumbParts) {
+                SectionCrumb crumb = new SectionCrumb();
+                String[] crumbPieces = part.split("--");
+                crumb.setSectionIdentifier(crumbPieces[0]);
+                crumb.setSectionId(crumbPieces[1]);
+                if (!myCrumbs.contains(crumb)) {
+                    myCrumbs.add(crumb);
+                }
+            }
+        }
+        return myCrumbs;
+    }
+
     protected String parseForAllPermission(String currentPermission) {
         String[] pieces = currentPermission.split(PATTERN);
         StringBuilder builder = new StringBuilder(50);
@@ -240,32 +270,40 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         return builder.toString();
     }
 
-    private static SectionComparator SECTION_COMPARATOR = new SectionComparator();
-
-    private static class SectionComparator implements Comparator<AdminSection> {
-
-        @Override
-        public int compare(AdminSection section, AdminSection section2) {
-            if (section.getDisplayOrder() != null) {
-                if (section2.getDisplayOrder() != null) {
-                    return section.getDisplayOrder().compareTo(section2.getDisplayOrder());
-                }
-                else
-                    return -1;
-            } else if (section2.getDisplayOrder() != null) {
-                return 1;
+    protected void populateAdminMenu(AdminUser adminUser, AdminMenu adminMenu, List<AdminModule> modules) {
+        for (AdminModule module : modules) {
+            List<AdminSection> authorizedSections = buildAuthorizedSectionsList(adminUser, module);
+            if (authorizedSections != null && authorizedSections.size() > 0) {
+                AdminModuleDTO adminModuleDto = ((AdminModuleImpl) module).getAdminModuleDTO();
+                adminMenu.getAdminModules().add(adminModuleDto);
+                adminModuleDto.setSections(authorizedSections);
             }
-
-            return section.getId().compareTo(section2.getId());
         }
 
+        // Sort the authorized modules
+        BeanComparator displayComparator = new BeanComparator("displayOrder");
+        Collections.sort(adminMenu.getAdminModules(), displayComparator);
     }
 
-    public List<SectionAuthorization> getAdditionalSectionAuthorizations() {
-        return additionalSectionAuthorizations;
-    }
+    protected List<AdminSection> buildAuthorizedSectionsList(AdminUser adminUser, AdminModule module) {
+        List<AdminSection> authorizedSections = new ArrayList<AdminSection>();
+        BroadleafRequestContext broadleafRequestContext = BroadleafRequestContext.getBroadleafRequestContext();
+        Site site = broadleafRequestContext.getNonPersistentSite();
+        Long siteId = site == null ? null : site.getId();
+        for (AdminSection section : module.getSections()) {
+            if (isUserAuthorizedToViewSection(adminUser, section)) {
+                if(section instanceof SiteDiscriminator){
+                    Long sectionSiteId = ((SiteDiscriminator)section).getSiteDiscriminator();
+                    if(sectionSiteId == null || sectionSiteId.equals(siteId)){
+                        authorizedSections.add(section);
+                    }
+                } else{
+                    authorizedSections.add(section);
+                }
+            }
+        }
 
-    public void setAdditionalSectionAuthorizations(List<SectionAuthorization> additionalSectionAuthorizations) {
-        this.additionalSectionAuthorizations = additionalSectionAuthorizations;
+        Collections.sort(authorizedSections, SECTION_COMPARATOR);
+        return authorizedSections;
     }
 }

@@ -716,7 +716,7 @@
             collectedData.data = [];
             for (var j = 0; j < ruleBuilder.builders.length; j++) {
                 var builder = ruleBuilder.builders[j];
-                var dataDTO = $(builder).queryBuilder('getRules');
+                var dataDTO = $(builder).queryBuilder('getRules', { displayErrors : ruleBuilder.displayErrors });
                 if (dataDTO.rules) {
                     dataDTO.pk = $(builder).find(".rules-group-header-item-pk").val();
                     dataDTO.quantity = $(builder).find(".rules-group-header-item-qty").val();
@@ -933,7 +933,9 @@
             if (BLCAdmin.entityForm.status) {
                 // Set the original value on the rule builder once its been completely initialized
                 if (ruleBuilder.builders.length) {
+                    ruleBuilder.displayErrors = false;
                     var rules = BLCAdmin.ruleBuilders.getAllRuleBuilderRules(ruleBuilder);
+                    delete ruleBuilder.displayErrors;
                     var origVal = JSON.stringify(rules);
                     $(rulesContainer).attr('data-orig-val', JSON.stringify(origVal));
                     BLCAdmin.entityForm.status.removeChangesForId($(rulesContainer).attr('id'));

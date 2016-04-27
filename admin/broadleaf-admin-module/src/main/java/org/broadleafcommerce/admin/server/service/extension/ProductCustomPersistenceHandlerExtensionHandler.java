@@ -66,4 +66,20 @@ public interface ProductCustomPersistenceHandlerExtensionHandler extends Extensi
      */
     ExtensionResultStatusType manageFields(PersistencePackage persistencePackage, Product product) throws ServiceException;
 
+
+    /**
+     * Setup any special state to influence the fetch results
+     *
+     * @return
+     * @throws ServiceException
+     */
+    ExtensionResultStatusType initiateFetchState() throws ServiceException;
+
+    /**
+     * Cleanup any special state started by {@link #initiateFetchState()}
+     *
+     * @return
+     * @throws ServiceException
+     */
+    ExtensionResultStatusType endFetchState() throws ServiceException;
 }

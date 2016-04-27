@@ -160,6 +160,16 @@
         <property name="predicateProvider" ref="blEqPredicateProvider"/>
     </bean>
 
+    <bean id="blStringNotEqualRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blStringFilterValueConverter"/>
+        <property name="predicateProvider" ref="blNotEqPredicateProvider"/>
+    </bean>
+
+    <bean id="blLongNotEqualRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blLongFilterValueConverter"/>
+        <property name="predicateProvider" ref="blNotEqPredicateProvider"/>
+    </bean>
+
     <bean id="blRestrictionFactoryMap" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
@@ -173,6 +183,8 @@
                 <entry key="IS_NULL_LONG" value-ref="blIsNullLongRestriction"/>
                 <entry key="STRING_EQUAL" value-ref="blStringEqualRestriction"/>
                 <entry key="LONG_EQUAL" value-ref="blLongEqualRestriction"/>
+                <entry key="STRING_NOT_EQUAL" value-ref="blStringNotEqualRestriction"/>
+                <entry key="LONG_NOT_EQUAL" value-ref="blLongNotEqualRestriction"/>
             </map>
         </property>
     </bean>

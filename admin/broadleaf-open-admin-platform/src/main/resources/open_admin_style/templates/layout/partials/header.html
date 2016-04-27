@@ -31,7 +31,12 @@
     </div>
 
 
-    <div th:substituteby="layout/partials/sandboxRibbon" />
+    <div th:if="${customRibbon == null or #strings.equals(customRibbon, '')}" th:remove="tag">
+        <div th:substituteBy="layout/partials/sandboxRibbon"></div>
+    </div>
+    <div th:unless="${customRibbon == null or #strings.equals(customRibbon, '')}" th:remove="tag">
+        <div th:substituteBy="${customRibbon}"></div>
+    </div>
 </header>
 <div id="lightbox" style="display: none;">
 
