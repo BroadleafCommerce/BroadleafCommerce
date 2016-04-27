@@ -551,8 +551,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 .withFullPropertyName(addSearchMappingRequest.getPropertyName())
                 .withFilterValues(fasc.getFilterValues())
                 .withSortDirection(fasc.getSortDirection())
-                .withOrder(fasc.getOrder())
-                .withNullsLast(fasc.isNullsLast());
+                .withOrder(fasc.getOrder());
         filterMappings.add(filterMapping);
 
         if (fasc.hasSpecialFilterValue()) {

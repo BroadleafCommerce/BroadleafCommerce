@@ -54,7 +54,6 @@ import javax.persistence.Transient;
 @Table(name = "BLC_SEARCH_INTERCEPT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
 public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable, AdminMainEntity, SearchRedirectAdminPresentation {
