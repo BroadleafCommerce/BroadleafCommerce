@@ -97,6 +97,20 @@
     }
 
     $(document).ready(function() {
+        // Send JavaScript errors to the server for logging.
+        window.onerror = function(message, url, lineNumber) {
+            BLC.ajax({
+                url: BLC.servletContext + "/logJavaScriptError",
+                type: "POST",
+                data: {message: message, url: url, lineNumber: lineNumber},
+                cache: false
+            }, function(data) {
+                // Nothing to do here.
+            });
+
+            return true;
+        };
+
         // Synchronize URL hash to tabs
         if($(document).find('.nav-tabs').length > 0) {
             // initial page visit

@@ -61,6 +61,11 @@
                 $header = context.find('.listgrid-header-wrapper table');
             }
 
+            var listGridType = $header.data('listgridtype');
+            if (listGridType != 'main') {
+                return;
+            }
+
             var params = BLCAdmin.history.getUrlParameters();
             if (!params) {
                 params = context.find('.listgrid-header-wrapper table').data('currentparams');

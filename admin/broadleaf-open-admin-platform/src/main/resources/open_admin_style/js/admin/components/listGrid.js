@@ -396,6 +396,10 @@
         $('body').on('click', '.side-nav ul li a', function () {
             $container.find('.listgrid-container').each(function (index, element) {
                 $(element).find('tbody').each(function (index, element) {
+                    if ($(element).closest('.oms-tab').length) {
+                        return;
+                    }
+
                     if ($(element).is(':visible')) {
                         BLCAdmin.listGrid.paginate.updateGridSize($(element));
                     } else {

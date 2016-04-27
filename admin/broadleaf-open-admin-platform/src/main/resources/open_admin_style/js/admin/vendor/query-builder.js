@@ -2660,6 +2660,89 @@ QueryBuilder.extend({
         });
 
         this.setFilters(delete_orphans, filters);
+    },
+
+    /**
+     * Overrides the default getRules method to provide us with greater controll over whether or not
+     * to display validation errors.
+     *
+     */
+    getRules: function() {
+        var isValid = true;
+
+        if (arguments[0] && arguments[0].displayErrors === false) {
+            // Gather the original value of `display-errors` so that we can later reestablish the value
+            var origVal = this.settings.display_errors;
+
+            // Temporarily disable the display of errors
+            this.settings.display_errors = false;
+            isValid = this.validate();
+
+            // Reestablish the original value of `display_errors`
+            this.settings.display_errors = origVal;
+        } else {
+            isValid = this.validate();
+        }
+
+        // If validation failed, then attempting to retrieve the rules will result in JS errors. Therefore,
+        // we'll simply return an empty object.
+        // Note, we must call `getRulesWithoutValidation` since a call to `getRules` or `QueryBuilder.prototype.getRules`
+        // will result in an infinite loop.
+        return !isValid ? {} : this.getRulesWithoutValidation();
+    },
+
+    /**
+     * Gathers all of the relevant rules without running validation. The main purpose of
+     *  this method is to split the gathering of rules from the validation so that additional logic can be
+     *  introduced around the validation.
+     *
+     * WARNING: Simply running this method without first running & processing validation in some way, could
+     *  easily run into JS errors if the data is not valid.
+     *
+     * Note: This is essentially a duplication of the default getRules method, with the validation step removed.
+     *
+     */
+    getRulesWithoutValidation: function() {
+        var out = (function parse(group) {
+            var data = {
+                condition: group.condition,
+                rules: []
+            };
+
+            if (group.data) {
+                data.data = $.extendext(true, 'replace', {}, group.data);
+            }
+
+            group.each(function(model) {
+                var value = null;
+                if (model.operator.nb_inputs !== 0) {
+                    value = model.value;
+                }
+
+                var rule = {
+                    id: model.filter.id,
+                    field: model.filter.field,
+                    type: model.filter.type,
+                    input: model.filter.input,
+                    operator: model.operator.type,
+                    value: value
+                };
+
+                if (model.filter.data || model.data) {
+                    rule.data = $.extendext(true, 'replace', {}, model.filter.data, model.data);
+                }
+
+                data.rules.push(rule);
+
+            }, function(model) {
+                data.rules.push(parse(model));
+            });
+
+            return data;
+
+        }(this.model.root));
+
+        return this.change('getRules', out);
     }
 });
 

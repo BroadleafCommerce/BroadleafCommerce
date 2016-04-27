@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service.navigation;
 
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
@@ -69,4 +70,23 @@ public interface AdminNavigationService {
 
     boolean checkPermissions(Set<String> authorizedPermissionNames, String permissionName);
 
+    /**
+     * Gets the fully qualified ceiling entity classname for this section. If this section is not explicitly defined in
+     * the database, will return the value passed into this function. For example, if there is a mapping from "/myentity" to
+     * "com.mycompany.myentity", both "http://localhost/myentity" and "http://localhost/com.mycompany.myentity" are valid
+     * request paths.
+     *
+     * @param sectionKey
+     * @return the className for this sectionKey if found in the database or the sectionKey if not
+     */
+    String getClassNameForSection(String sectionKey);
+
+    /**
+     * Utility method for parsing a delimitted section crumb list (usually the "sectionCrumbs" parameter on the HttpServletRequest). Should
+     * return a list of {@link SectionCrumb} instances used to identify the different, currently active admin sections.
+     *
+     * @param crumbList delimitted string of section identifiers
+     * @return currently active admin sections in the order specified in the crumbList param
+     */
+    List<SectionCrumb> getSectionCrumbs(String crumbList);
 }

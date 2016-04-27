@@ -382,6 +382,11 @@
              * original value as a data field.  This is used for comparison when the field value changes.
              */
             $('input:radio').each(function(i, el) {
+                // if this element is in an OMS tab, we don't want to track
+                if ($(el).closest('.oms-tab').length) {
+                    return false;
+                }
+
                 var id = $(el).attr('name');
                 var $thisRadio = $('[name="' + id + '"]');
                 var $checkedRadio = $('[name="' + id + '"]:checked');
@@ -399,6 +404,11 @@
              * their original url as a data field.  This is used for comparison when the field value changes.
              */
             $('input.mediaItem').each(function(i, el) {
+                // if this element is in an OMS tab, we don't want to track
+                if ($(el).closest('.oms-tab').length) {
+                    return false;
+                }
+
                 var origVal = $(el).val() || '';
                 var mediaUrl;
                 if ($(el).hasClass('mediaUrl')) {
@@ -414,6 +424,11 @@
              * For lookups we need to store the original id value as well as the original display value
              */
             $('.additional-foreign-key-container').each(function(i, el) {
+                // if this element is in an OMS tab, we don't want to track
+                if ($(el).closest('.oms-tab').length) {
+                    return false;
+                }
+
                 var $valueContainer = $(el).find('.value')
                 var origVal = $valueContainer.val() || '';
                 $valueContainer.attr('data-orig-val', origVal);
@@ -428,6 +443,11 @@
              * main container.
              */
             $('.rule-builder-required-field').each(function(i, el) {
+                // if this element is in an OMS tab, we don't want to track
+                if ($(el).closest('.oms-tab').length) {
+                    return false;
+                }
+
                 var rulesContainer = $($(this)).siblings('.query-builder-rules-container');
                 var rulesContainerID = rulesContainer.attr('id');
                 var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilder(rulesContainerID);
@@ -517,6 +537,12 @@
          * @returns {boolean}
          */
         checkIfShouldTrackChanges : function(el) {
+
+            // if this element is in an OMS tab, we don't want to track
+            if (el !== undefined && $(el).closest('.oms-tab').length) {
+                return false;
+            }
+            
             // Don't track if we are in a modal, on an OMS page, or not on a page with an entity form
             if ((el !== undefined && $(el).closest('.modal').length) ||
                 $('.oms').length ||
