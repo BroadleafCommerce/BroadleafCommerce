@@ -139,7 +139,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     
     protected void minify(BufferedReader in, BufferedWriter out, String filename, String type) throws IOException {
         if (JS_TYPE.equals(type)) {
-            JavaScriptCompressor jsc = new JavaScriptCompressor(in, getLogBasedErrorReporter());
+            JavaScriptCompressor jsc = new JavaScriptCompressor(in, getLogBasedErrorReporter(filename));
             jsc.compress(out, linebreak, munge, verbose, preserveAllSemiColons, disableOptimizations);
         } else if (CSS_TYPE.equals(type)) {
             CssCompressor cssc = new CssCompressor(in);
@@ -162,14 +162,17 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
         return null;
     }
     
-    protected ErrorReporter getLogBasedErrorReporter() {
+    protected ErrorReporter getLogBasedErrorReporter(final String filename) {
         return new ErrorReporter() {
             @Override
             public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
                 if (line < 0) {
                     LOG.warn(message);
                 } else {
-                    LOG.warn(line + ':' + lineOffset + ':' + message);
+                    if (sourceName == null) {
+                        sourceName = filename;
+                    }
+                    LOG.warn(sourceName + " - " + lineSource + " - " + line + ':' + lineOffset + " - " + message);
                 }
             }
 
@@ -178,13 +181,19 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
                 if (line < 0) {
                     LOG.error(message);
                 } else {
-                    LOG.error(lineSource + ":" + line + ':' + lineOffset + ':' + message);
+                    if (sourceName == null) {
+                        sourceName = filename;
+                    }
+                    LOG.error(sourceName + " - " + lineSource + " - " + line + ':' + lineOffset + " - " + message);
                 }
             }
 
             @Override
             public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource, 
                     int lineOffset) {
+                if (sourceName == null) {
+                    sourceName = filename;
+                }
                 error(message, sourceName, line, lineSource, lineOffset);
                 return new EvaluatorException(message);
             }
