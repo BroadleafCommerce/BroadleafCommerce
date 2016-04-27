@@ -219,8 +219,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         return new GlobalSolrFullReIndexOperation(this, shs, errorOnConcurrentReIndex) {
 
             @Override
-            public List<? extends Indexable> readIndexables(int page, int pageSize) {
-                return readAllActiveIndexables(page, pageSize);
+            public List<? extends Indexable> readIndexables(int pageSize, Long lastId) {
+                return readAllActiveIndexables(pageSize, lastId);
             }
 
             @Override
@@ -262,9 +262,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     @Override
                     public void execute() throws ServiceException {
                         int page = 0;
+                        Long lastId = null;
                         while ((page * pageSize) < numItemsToIndex) {
                             LOG.info(String.format("Building page number %s", page));
-                            buildIncrementalIndex(page, pageSize, operation);
+                            lastId = buildIncrementalIndex(pageSize, lastId, operation);
                             page++;
                         }
                     }
@@ -342,19 +343,22 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
     }
 
-    protected void buildIncrementalIndex(int page, int pageSize, SolrIndexOperation operation) throws ServiceException {
+    protected Long buildIncrementalIndex(int pageSize, Long lastId, SolrIndexOperation operation) throws ServiceException {
         TransactionStatus status = TransactionUtils.createTransaction("readItemsToIndex",
             TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (SolrIndexCachedOperation.getCache() == null) {
             LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
                     "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
         }
-        
+        Long response = null;
         try {
             List<? extends Indexable> indexables;
             try {
                 operation.beforeReadIndexables();
-                indexables = operation.readIndexables(page, pageSize);
+                indexables = operation.readIndexables(pageSize, lastId);
+                if (CollectionUtils.isNotEmpty(indexables)) {
+                    response = indexables.get(indexables.size()-1).getId();
+                }
             } finally {
                 operation.afterReadIndexables();
             }
@@ -373,7 +377,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw e;
         }
-
+        return response;
     }
     
     @Override
@@ -451,12 +455,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
     }
 
-    protected List<? extends Indexable> readAllActiveIndexables(int page, int pageSize) {
+    protected List<? extends Indexable> readAllActiveIndexables(int pageSize, Long lastId) {
         if (useSku) {
-            List<Sku> skus = skuDao.readAllActiveSkus(page, pageSize);
+            List<Sku> skus = skuDao.readAllActiveSkus(pageSize, lastId);
             return filterIndexableSkus(skus);
         } else {
-            return productDao.readAllActiveProducts(page, pageSize);
+            return productDao.readAllActiveProducts(pageSize, lastId);
         }
     }
     
