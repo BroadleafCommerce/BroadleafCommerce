@@ -35,7 +35,7 @@ import javax.persistence.Embeddable;
 public class ArchiveStatus implements Serializable, SandBoxNonProductionSkip {
 
     @Column(name = "ARCHIVED")
-    @AdminPresentation(friendlyName = "archived", visibility = VisibilityEnum.HIDDEN_ALL, group = "ArchiveStaobjus")
+    @AdminPresentation(friendlyName = "archived", visibility = VisibilityEnum.HIDDEN_ALL, group = "ArchiveStatus")
     protected Character archived = 'N';
 
     public Character getArchived() {

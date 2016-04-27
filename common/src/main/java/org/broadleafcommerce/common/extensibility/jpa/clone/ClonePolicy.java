@@ -26,6 +26,9 @@ import java.lang.annotation.Target;
 
 /**
  *
+ * @ClonePolicy will allow a *ToOne field to have sandboxable behavior. This is only required when the field in question is not already
+ * annotated with an @AdminPresentation annotation. Generally this happens when a CPH is trying to work with a field on an entity that
+ * is not exposed in the UI and that field needs to be sandbox aware.
  * @author Jeff Fischer
  */
 @Retention(RetentionPolicy.RUNTIME)

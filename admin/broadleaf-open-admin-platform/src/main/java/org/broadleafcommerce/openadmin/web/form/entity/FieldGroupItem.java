@@ -30,9 +30,9 @@ public class FieldGroupItem {
 
     public enum Type {
         FIELD,
-        LISTGRID
+        LISTGRID,
+        CUSTOM_FIELD
     }
-
 
     public FieldGroupItem(Field field) {
         this.type = Type.FIELD.toString();
@@ -44,7 +44,7 @@ public class FieldGroupItem {
         this.listGrid = listGrid;
     }
 
-    private void setType(String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -58,6 +58,11 @@ public class FieldGroupItem {
 
     public void setField(Field field) {
         setType(Type.FIELD.toString());
+        this.field = field;
+    }
+
+    public void setCustomField(Field field) {
+        setType(Type.CUSTOM_FIELD.toString());
         this.field = field;
     }
 
@@ -78,8 +83,12 @@ public class FieldGroupItem {
         return Type.LISTGRID.toString().equals(getType());
     }
 
+    public boolean isCustomField() {
+        return Type.CUSTOM_FIELD.toString().equals(getType());
+    }
+
     public Integer getOrder() {
-        if (isField()) {
+        if (isField() || isCustomField()) {
             return field.getOrder();
         } else {
             return listGrid.getOrder();
@@ -87,7 +96,7 @@ public class FieldGroupItem {
     }
 
     public String getFriendlyName() {
-        if (isField()) {
+        if (isField() || isCustomField()) {
             return field.getFriendlyName();
         } else {
             return listGrid.getFriendlyName();
@@ -95,7 +104,7 @@ public class FieldGroupItem {
     }
 
     public String getName() {
-        if (isField()) {
+        if (isField() || isCustomField()) {
             return field.getName();
         } else {
             return listGrid.getSubCollectionFieldName();
@@ -103,12 +112,10 @@ public class FieldGroupItem {
     }
 
     public boolean isVisible() {
-        if (isField()) {
+        if (isField() || isCustomField()) {
             return field.getIsVisible();
         } else {
             return listGrid != null;
         }
     }
-
-
 }

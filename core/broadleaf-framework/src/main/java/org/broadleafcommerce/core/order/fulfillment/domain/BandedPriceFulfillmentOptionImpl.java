@@ -52,7 +52,6 @@ public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl impl
     
     @OneToMany(mappedBy="option", targetEntity=FulfillmentPriceBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @IgnoreEnterpriseBehavior
     protected List<FulfillmentPriceBand> bands = new ArrayList<FulfillmentPriceBand>();
 
     @Override

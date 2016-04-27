@@ -192,6 +192,11 @@ fieldset:not(.untitledGroup) {
     height: 43px;
 }
 
+.fieldgroup-listgrid .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
 .fieldset-card-content .fieldgroup-listgrid-wrapper-header {
     margin: 0;
     background-color: #FCFBF9;

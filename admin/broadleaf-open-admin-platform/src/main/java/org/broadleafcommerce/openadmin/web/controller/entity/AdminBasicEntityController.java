@@ -69,7 +69,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
-import org.springframework.beans.factory.annotation.Value;
+import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -430,7 +430,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         setModelAttributes(model, sectionKey);
 
         // We want to replace author ids with their names
-        updateAuditableFields(entityForm);
+        addAuditableDisplayFields(entityForm);
 
         if (isAjaxRequest(request)) {
             entityForm.setReadOnly();
@@ -448,9 +448,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<Boolean>();
         ExtensionResultStatusType result = extensionManager.getProxy().isAddRequest(entity, resultHolder);
         if (result.equals(ExtensionResultStatusType.NOT_HANDLED)) {
-            Map<String, Property> pMap = entity.getPMap();
-            Property dateUpdated = pMap == null ? null : entity.getPMap().get("auditable.dateUpdated");
-            return dateUpdated == null || dateUpdated.getValue() == null;
+            return false;
         }
 
         return resultHolder.getResult();
@@ -1311,7 +1309,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         
         // Since this is a read-only view, actions don't make sense in this context
         EntityForm ef = (EntityForm) model.asMap().get("entityForm");
-        updateAuditableFields(ef);
+        addAuditableDisplayFields(ef);
         ef.removeAllActions();
         ef.setReadOnly();
         
@@ -1409,7 +1407,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 entityForm.removeAllActions();
             }
             entityForm.removeAction(DefaultEntityFormActions.DELETE);
-            updateAuditableFields(entityForm);
+            addAuditableDisplayFields(entityForm);
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/simpleEditEntity");
         } else if (md instanceof AdornedTargetCollectionMetadata) {
@@ -1495,7 +1493,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             if (!atLeastOneBasicField) {
                 entityForm.removeAction(DefaultEntityFormActions.SAVE);
             }
-            updateAuditableFields(entityForm);
+            addAuditableDisplayFields(entityForm);
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/adornedEditEntity");
         } else if (md instanceof MapMetadata) {
@@ -1522,7 +1520,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
             formService.populateEntityFormFields(entityForm, entity, populateTypeAndId, populateTypeAndId);
             formService.populateMapEntityFormFields(entityForm, entity);
-            updateAuditableFields(entityForm);
+            addAuditableDisplayFields(entityForm);
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/mapEditEntity");
         }
@@ -1805,23 +1803,43 @@ public class AdminBasicEntityController extends AdminAbstractController {
         return "views/standaloneListGrid";
     }
 
-    public void updateAuditableFields(EntityForm entityForm) {
+    public void addAuditableDisplayFields(EntityForm entityForm) {
         Field createdBy = entityForm.findField("auditable.createdBy");
         if (createdBy != null && createdBy.getValue() != null) {
-            AdminUser createdUser = adminUserDao.readAdminUserById(Long.parseLong(createdBy.getValue()));
-            if (createdUser != null) {
-                createdBy.setValue(createdUser.getName());
-            }
+            addAuditableDisplayField(entityForm, createdBy);
+
+            createdBy.setIsVisible(false);
         }
         Field updatedBy = entityForm.findField("auditable.updatedBy");
         if (updatedBy != null && updatedBy.getValue() != null) {
-            AdminUser updatedUser = adminUserDao.readAdminUserById(Long.parseLong(updatedBy.getValue()));
-            if (updatedUser != null) {
-                updatedBy.setValue(updatedUser.getName());
-            }
+            addAuditableDisplayField(entityForm, updatedBy);
+
+            updatedBy.setIsVisible(false);
         }
     }
-    
+
+    private void addAuditableDisplayField(EntityForm entityForm, Field userField) {
+        Field displayField = buildAuditableDisplayField(userField);
+
+        AdminUser user = adminUserDao.readAdminUserById(Long.parseLong(userField.getValue()));
+        String userName = user == null ? null : user.getName();
+        displayField.setValue(userName);
+
+        FieldGroup auditGroup = entityForm.findGroup("AdminAuditable_Audit");
+        if (auditGroup != null) {
+            auditGroup.addField(displayField);
+        }
+    }
+
+    private Field buildAuditableDisplayField(Field auditableField) {
+        return new Field().withFieldType(SupportedFieldType.STRING.toString())
+                .withName(auditableField.getName() + "Display")
+                .withFriendlyName(auditableField.getFriendlyName())
+                .withOrder(auditableField.getOrder())
+                .withOwningEntityClass(auditableField.getOwningEntityClass())
+                .withReadOnly(true);
+    }
+
     // *********************************
     // ADDITIONAL SPRING-BOUND METHODS *
     // *********************************

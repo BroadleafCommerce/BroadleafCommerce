@@ -115,36 +115,36 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @OneToMany(mappedBy = "offer", targetEntity = OfferCodeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "offerCodeTitle", order = 1000,
-        group = GroupName.Codes,
+    @AdminPresentationCollection(friendlyName = "offerCodeTitle",
+        group = GroupName.Codes, order = FieldOrder.OfferCodes,
         addType = AddMethodType.PERSIST)
     protected List<OfferCode> offerCodes = new ArrayList<OfferCode>(100);
 
     @Column(name = "OFFER_NAME", nullable=false)
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order = FieldOrder.Name,
-        group = GroupName.Description,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Name",
+        group = GroupName.Description, order = FieldOrder.Name,
         prominent = true, gridOrder = 1,
         defaultValue = "New Offer")
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = FieldOrder.Description,
-        group = GroupName.Description,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Description",
+        group = GroupName.Description, order = FieldOrder.Description,
         largeEntry = true, fieldType = SupportedFieldType.DESCRIPTION, defaultValue = "")
     protected String description;
 
     @Column(name = "MARKETING_MESSASGE")
     @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnNames = { "MARKETING_MESSASGE" })
-    @AdminPresentation(friendlyName = "OfferImpl_marketingMessage", order = FieldOrder.Message,
-        group = GroupName.Marketing,
+    @AdminPresentation(friendlyName = "OfferImpl_marketingMessage",
+        group = GroupName.Marketing, order = FieldOrder.Message,
         translatable = true, defaultValue = "")
     protected String marketingMessage;
 
     @Column(name = "OFFER_TYPE", nullable=false)
     @Index(name="OFFER_TYPE_INDEX", columnNames={"OFFER_TYPE"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order = FieldOrder.OfferType,
-        group = GroupName.Description,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type",
+        group = GroupName.Description, order = FieldOrder.OfferType,
         fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType",
         defaultValue = "ORDER")
@@ -152,35 +152,35 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
     @Index(name="OFFER_DISCOUNT_INDEX", columnNames={"OFFER_DISCOUNT_TYPE"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type", order = FieldOrder.DiscountType,
-        group = GroupName.Description,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type",
+        group = GroupName.Description, order = FieldOrder.DiscountType,
         requiredOverride = RequiredOverride.REQUIRED,
         fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDiscountType")
     protected String discountType;
 
     @Column(name = "OFFER_VALUE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order = FieldOrder.Amount,
-        group = GroupName.Description,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Value",
+        group = GroupName.Description, order = FieldOrder.Amount,
         prominent = true, gridOrder = 4,
         defaultValue = "0.00000")
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Priority", order = 1000,
-        group = GroupName.Advanced)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Priority",
+        group = GroupName.Advanced, order = FieldOrder.Priority)
     protected Integer priority;
 
     @Column(name = "START_DATE")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Start_Date", order = 1000,
-        group = GroupName.ActivityRange,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Start_Date",
+        group = GroupName.ActivityRange, order = FieldOrder.StartDate,
         prominent = true, gridOrder = 2,
         defaultValue = "today")
     protected Date startDate;
 
     @Column(name = "END_DATE")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_End_Date", order = 2000,
-        group = GroupName.ActivityRange,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_End_Date",
+        group = GroupName.ActivityRange, order = FieldOrder.EndDate,
         validationConfigurations = { 
             @ValidationConfiguration(
                 validationImplementation = "blAfterStartDateValidator",
@@ -242,35 +242,35 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "COMBINABLE_WITH_ORDER_OFFERS")
     @AdminPresentation(friendlyName = "OfferImpl_Order_Offer_Combinable",
-            group = GroupName.CombineStack,
-            defaultValue = "true", order = 1000)
+            group = GroupName.CombineStack, order = FieldOrder.CombinableWithOrderOffers,
+            defaultValue = "true")
     protected Boolean combinableWithOrderOffers = true;
 
     @Column(name = "COMBINABLE_WITH_ITEM_OFFERS")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Offer_Combinable",
-            group = GroupName.CombineStack,
-            defaultValue = "true", order = 2000)
+            group = GroupName.CombineStack, order = FieldOrder.CombinableWithItemOffers,
+            defaultValue = "true")
     protected Boolean combinableWithItemOffers = true;
 
     @Column(name = "COMBINABLE_ITM_OFR_IMPACT_ITMS")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Offer_Impacting_Items_Combinable",
-            group = GroupName.CombineStack,
-            defaultValue = "true", order = 3000)
+            group = GroupName.CombineStack, order = FieldOrder.CombinableWithItemOffersImpactingOtherItems,
+            defaultValue = "true")
     protected Boolean combinableWithItemOffersImpactingOtherItems = true;
 
     @Column(name = "COMBINABLE_WITH_SHIP_OFFERS")
     @AdminPresentation(friendlyName = "OfferImpl_Shipping_Offer_Combinable",
-            group = GroupName.CombineStack,
-            defaultValue = "true", order = 4000)
+            group = GroupName.CombineStack, order = FieldOrder.CombinableWithShippingOffers,
+            defaultValue = "true")
     protected Boolean combinableWithShippingOffers = true;
 
     @Column(name = "STACKABLE_WITH_OTHER_OFFERS")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable",
             tooltip = "OfferImplStackableWithOffers_tooltip",
-            group = GroupName.CombineStack,
+            group = GroupName.CombineStack, order = FieldOrder.StackableWithOtherOffers,
             fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.StackabilityType",
-            defaultValue = "NO", order = 5000)
+            defaultValue = "NO")
     protected String stackableWithOtherOffers;
 
     @Column(name = "OFFER_DELIVERY_TYPE")
@@ -278,20 +278,20 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     protected String deliveryType;
 
     @Column(name = "AUTOMATICALLY_ADDED")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added", order = 2000,
-            group = GroupName.Customer,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added",
+            group = GroupName.Customer, order = FieldOrder.RequiresCode,
             fieldType = SupportedFieldType.BOOLEAN, defaultValue = "false")
     protected Boolean requiresCode = false;
 
     @Column(name = "MAX_USES")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order", order = 2000,
-        tooltip = "OfferImplMaxUsesPerOrder_tooltip",
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order",
+        tooltip = "OfferImplMaxUsesPerOrder_tooltip", order = FieldOrder.MaxUsesPerOrder,
         group = GroupName.Restrictions)
     protected Integer maxUsesPerOrder;
 
     @Column(name = "MAX_USES_PER_CUSTOMER")
     @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Per_Customer",
-        group = GroupName.Restrictions, order = 3000,
+        group = GroupName.Restrictions, order = FieldOrder.MaxUsesPerCustomer,
         tooltip = "OfferImplMaxUsesPerCustomer_tooltip",
         defaultValue = "0")
     protected Long maxUsesPerCustomer;
@@ -304,8 +304,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     
     @Column(name = "OFFER_ITEM_QUALIFIER_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule",
-        group = GroupName.QualifierRuleRestriction,
-        order = 1000,
+        group = GroupName.QualifierRuleRestriction, order = FieldOrder.OfferItemQualifierRuleType,
         tooltip = "OfferItemRestrictionRuleType_tooltip",
         visibility = VisibilityEnum.HIDDEN_ALL,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
@@ -327,15 +326,15 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Qualifying_Item_Subtotal",
-        group = GroupName.QualifierRuleRestriction,
-        order = 2000, defaultValue = "0.00000")
+        group = GroupName.QualifierRuleRestriction, order = FieldOrder.QualifyingItemSubTotal,
+        defaultValue = "0.00000")
     protected BigDecimal qualifyingItemSubTotal;
 
     @Column(name = "ORDER_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Order_Subtotal",
         tooltip = "OfferImplMinOrderSubtotal_tooltip",
-        group = GroupName.Restrictions,
-        order = 2000, defaultValue = "0.00000")
+        group = GroupName.Restrictions, order = FieldOrder.OrderMinSubTotal,
+        defaultValue = "0.00000")
     protected BigDecimal orderMinSubTotal;
 
     @Column(name = "OFFER_ITEM_TARGET_RULE")
@@ -393,13 +392,13 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             @AdminPresentationMapField(
                 fieldName = RuleIdentifier.CUSTOMER_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE,
-                    group = GroupName.Restrictions,
+                    group = GroupName.Customer, order = FieldOrder.CustomerRule,
                     ruleIdentifier = RuleIdentifier.CUSTOMER, friendlyName = "OfferImpl_Customer_Rule")
             ),
             @AdminPresentationMapField(
             fieldName = RuleIdentifier.TIME_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE_TIME,
-                    group = GroupName.ActivityRange, order = 3000,
+                    group = GroupName.ActivityRange, order = FieldOrder.TimeRule,
                     ruleIdentifier = RuleIdentifier.TIME, friendlyName = "OfferImpl_Time_Rule")
             ),
             @AdminPresentationMapField(

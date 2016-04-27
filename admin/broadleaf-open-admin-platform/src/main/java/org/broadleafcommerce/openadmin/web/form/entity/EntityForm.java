@@ -681,23 +681,6 @@ public class EntityForm {
         this.sectionCrumbs = sectionCrumbs;
     }
 
-    public void setSectionCrumbs(String crumbs) {
-        List<SectionCrumb> myCrumbs = new ArrayList<SectionCrumb>();
-        if (!StringUtils.isEmpty(crumbs)) {
-            String[] crumbParts = crumbs.split(",");
-            for (String part : crumbParts) {
-                SectionCrumb crumb = new SectionCrumb();
-                String[] crumbPieces = part.split("--");
-                crumb.setSectionIdentifier(crumbPieces[0]);
-                crumb.setSectionId(crumbPieces[1]);
-                if (!myCrumbs.contains(crumb)) {
-                    myCrumbs.add(crumb);
-                }
-            }
-        }
-        sectionCrumbs = myCrumbs;
-    }
-
     public String getSectionCrumbs() {
         StringBuilder sb = new StringBuilder();
         int index = 0;
