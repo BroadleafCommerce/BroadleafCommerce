@@ -71,6 +71,7 @@
         <property name="sourceMap">
             <map>
                 <entry key="archiveOnly" value="org.broadleafcommerce.common.weave.WeaveArchiveStatus"/>
+                <entry key="auditableOnly" value="org.broadleafcommerce.openadmin.weave.WeaveAdminAuditable"/>
             </map>
         </property>
     </bean>
