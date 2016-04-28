@@ -154,7 +154,6 @@
                         if (!$('.modal:not(#expire-message)').length && $('.entity-form').length) {
                             if (BLCAdmin.entityForm.status) {
                                 BLCAdmin.entityForm.status.clearEntityFormChanges();
-                                BLCAdmin.entityForm.status.updateEntityFormActions();
                             }
                         }
 
