@@ -1,0 +1,350 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+/*
+*
+*  This file holds stylesheet for ListGrids and Tables
+*
+*/
+
+
+/*-------------  START SEARCH,FILTER,SORT ----------------- */
+.listgrid-search input {
+    -webkit-appearance: none; /* for safari */
+    height: 36px !important;
+    vertical-align: bottom;
+    width: 300px;
+    display: inline-block;
+}
+
+.listgrid-search {
+    margin-bottom: 6px;
+}
+
+.listgrid-search .col6 {
+    height: 45px;
+    white-space: nowrap;
+}
+
+.modal .listgrid-search .col6 {
+    padding: 0;
+    white-space: nowrap;
+}
+
+.listgrid-search-actions {
+    display: inline-block;
+}
+
+.listgrid-search-actions .button{
+    top: -1px;
+    position: relative;
+}
+
+.listgrid-filter-sort-container {
+    position: absolute;
+    right: 0;
+    display: inline-block;
+    background: #E1E0DD;
+    padding: 0 5px;
+    float: right;
+}
+
+.listgrid-filter-sort-container i {
+    color: #B9B9B9;
+    margin: 0px 0px 0px 4px;
+    cursor: pointer;
+}
+
+.listgrid-filter-sort-container i.active {
+    color: #2c2c2c;
+}
+/*-------------  END SEARCH,FILTER,SORT ------------------- */
+/*-------------  START COMMON STYLES ---------------------- */
+.listgrid-title {
+    padding: 0;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+.listgrid-container .listgrid-icon {
+    color: #CAC8C4;
+}
+
+.listgrid-container a.sub-list-grid-reorder {
+    padding-right: 5px;
+}
+
+.listgrid-header-wrapper {
+    background-color: #E1E0DD;
+    margin-bottom: -1px;
+    border: 1px solid #B4B3B0;
+}
+
+.content-yield h4.empty-main-list-grid {
+    text-align: center;
+}
+
+div.alert-box.list-grid-alert.save-alert {
+    display: inline-block;
+    margin-bottom: 0;
+    margin-left: 0px;
+    padding-right: 7px;
+    background: none;
+    border: none;
+    color: #98B30A;
+    text-shadow: none;
+}
+
+div.alert-box.list-grid-alert.save-alert a.close {
+    display: none;
+}
+
+.listgrid-row-actions {
+    text-align: right;
+}
+
+.listgrid-row-actions span.workflow-action a {
+    color: #B3B3B3;
+    vertical-align: middle;
+    font-size: 16px;
+}
+
+.button.button-action.sub-list-grid-edit {
+    display: inline;
+}
+/*-------------  END COMMON STYLES  ----------------------- */
+/*-------------  START TOOLBAR ---------------------------- */
+.listgrid-toolbar .button, .listgrid-toolbar .button-group li {
+    height: 30px;
+    line-height: 30px;
+}
+
+.listgrid-toolbar .button-group li {
+    font-size: 11px;
+    text-transform: none;
+}
+
+.listgrid-toolbar .listgrid-toolbar-actions, .listgrid-toolbar .listgrid-row-actions {
+    display: inline-block;
+}
+
+.listgrid-toolbar .listgrid-row-actions {
+    border-left: 1px solid #D8D5D0;
+    margin-left: 7px;
+    padding-left: 10px;
+}
+
+.listgrid-toolbar .button:not(.dropdown-toggle) {
+    min-width: 55px;
+}
+
+.listgrid-toolbar .button.dropdown-toggle {
+    margin-left: -3px;
+}
+
+.listgrid-toolbar li {
+    float: left;
+    padding: 0 2px;
+    width: 100%;
+}
+
+.listgrid-toolbar .dropdown-menu-right {
+    margin: 0;
+}
+
+.listgrid-toolbar li.alert-box {
+    padding-top: 8px;
+    padding-left: 10px;
+    color: #94AF39;
+}
+
+.listgrid-toolbar .filter-info {
+    border-left: 1px solid #D8D5D0;
+    margin-left: 10px;
+    padding-left: 10px;
+    float: right;
+    text-align: right;
+}
+
+.listgrid-toolbar .filter-info > .filter-button {
+    margin: 0;
+}
+
+.listgrid-toolbar .filter-info .button-group {
+    margin: 0;
+}
+
+.listgrid-toolbar .filter-info .clear-filters i {
+    padding-top: 0;
+}
+
+/*-------------  END TOOLBAR ------------------------------ */
+/*-------------  START TABLES ----------------------------- */
+.table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {
+    padding: 6px 15px;
+}
+
+/* added to stop listgrid flicker */
+.table-striped>tbody>tr:nth-of-type(odd) {
+    background-color: #F9F7F3;
+    border-left: 1px solid #E4E3E2;
+}
+
+.table-striped>tbody>tr:nth-of-type(even) {
+    background-color: #F1EFEB;
+    border-left: 1px solid #E4E3E2;
+}
+
+.list-grid-table tbody tr:not(.list-grid-no-results):hover {
+    background-color: #E1E0DD;
+}
+
+.listgrid-container tr.dirty {
+    background-color: #F7EFDC;
+}
+
+.table-striped>tbody>tr.dirty:nth-of-type(even):not(.selected) {
+    background-color: #F7EFDC;
+}
+
+.table-striped>tbody>tr.dirty:nth-of-type(odd):not(.selected) {
+    background-color: #F7EFDC;
+}
+
+.table {
+    margin-bottom: 0 !important;
+    font-size: .85em;
+    border-collapse: separate;
+    border: none;
+    max-width: 100%;
+    background-color: transparent;
+}
+
+.table thead {
+    background-color: #E1E0DD;
+    border-bottom: 1px solid #E4E2DF;
+    color: #2c2c2c;
+    font-weight: 600;
+}
+
+tr {
+    position: relative;
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
+}
+
+.table thead > tr > th {
+    padding-right: 0;
+    border-bottom: none;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.table tbody > tr > td {
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 5px 5px 5px 15px;
+    position: relative;
+    height: 40px;
+}
+
+.table tbody > tr.list-grid-no-results > td {
+    line-height: 28px;
+}
+
+.table tbody > tr > td > a.list-grid-primary-field {
+    display : inline;
+}
+
+.list-grid-table {
+    padding-right: 15px;
+}
+
+.listgrid-table-footer {
+    padding: 2px 10px;
+    /* display: inline-block; */
+    /*border-top: 1px solid #E4E2DF;*/
+    font-size: 12px;
+}
+
+.listgrid-container .listgrid-table-spinner-container {
+    margin: auto;
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+}
+
+.listgrid-table-spinner-container {
+    margin: auto;
+    text-align: center;
+    position: relative;
+    transform: translateY(-50%);
+    background-color: #E0E0E0;
+}
+
+.listgrid-body-wrapper .table tbody>tr:first-child>td {
+    border-top: none;
+    height: 40px;
+}
+
+.listgrid-body-wrapper tbody tr td a:not(.workflow-icon),  tbody tr td a:not(.workflow-icon) {
+    color: #809831;
+    text-decoration: underline;
+}
+
+.listgrid-body-wrapper tbody tr.dirty td a:not(.workflow-icon), tbody tr.dirty td a:not(.workflow-icon) {
+    color: #efbc62;
+    text-decoration: underline;
+}
+
+.table-holder.warning a.entity {
+    text-decoration: underline;
+    color: #EEBB69;
+}
+
+.table-holder.success a.entity {
+    text-decoration: underline;
+    color: #94AF39;
+}
+
+.table-holder.danger a.entity {
+    text-decoration: underline;
+    color: #D20A33;
+}
+
+.table-holder.warning .listgrid-row-actions a:hover {
+    color: #EEBB69;
+}
+
+.table-holder.success .listgrid-row-actions a:hover {
+    color: #94AF39;
+}
+
+.table-holder.danger .listgrid-row-actions a:hover {
+    color: #D20A33;
+}
+
+/*-------------  END TABLES ------------------------------- */

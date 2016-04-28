@@ -72,34 +72,8 @@
     max-width: 2000px;
 }
 
-.content-yield h4.empty-main-list-grid {
-    text-align: center;
-}
-
 .app-content .content .sandbox-bar #sandboxes {
     padding: 0 68px 2px;
-}
-
-.entityFormTab {
-    display:none;
-}
-.entityFormTab.active {
-    display:block;
-}
-
-.listgrid-body-wrapper .table tbody>tr:first-child>td {
-    border-top: none;
-    height: 40px;
-}
-
-.listgrid-body-wrapper tbody tr td a:not(.workflow-icon),  tbody tr td a:not(.workflow-icon) {
-    color: #809831;
-    text-decoration: underline;
-}
-
-.listgrid-body-wrapper tbody tr.dirty td a:not(.workflow-icon), tbody tr.dirty td a:not(.workflow-icon) {
-    color: #efbc62;
-    text-decoration: underline;
 }
 
 .nav-tabs {
@@ -287,7 +261,8 @@ tr {
 }
 
 .app-content .side-nav ul li a.active.logo { background-position-y: -90px }
-.content .header .button { line-height:14px; }
+
+.content .button { line-height:14px; }
 
 .card {
     background-color: white;
@@ -356,22 +331,6 @@ input[type="radio"].radio+label.radio-label.clr,
     border-collapse: separate;
 }
 
-/* add nowrap to listgrids */
-.table tbody > tr > td {
-    max-width: 260px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    vertical-align: middle;
-    padding: 5px 5px 5px 15px;
-    position: relative;
-    height: 40px;
-}
-
-.table tbody > tr.list-grid-no-results > td {
-    line-height: 28px;
-}
-
 .untitledGroup {
     border: 0;
     padding: 0;
@@ -392,8 +351,7 @@ input[type="radio"].radio+label.radio-label.clr,
     display: none;
 }
 
-.content-area-title-bar .ajax-loader,
-.entity-form-actions .ajax-loader {
+.content-area-title-bar .ajax-loader{
     float: left;
     margin: 30px 10px;
 }
@@ -406,14 +364,6 @@ input[type="radio"].radio+label.radio-label.clr,
     color: #8EAA2B !important;
 }
 
-.modal .modal-footer .entity-form-actions {
-    text-align: right;
-}
-
-.modal .modal-footer .entity-form-actions .ajax-loader {
-    float: left;
-    margin: 10px 10px;
-}
 
 div.action-popup img.ajax-loader {
     float: right;
@@ -430,67 +380,12 @@ div.action-popup img.ajax-loader {
     display: none;
 }
 
-.listgrid-toolbar .button, .listgrid-toolbar .button-group li {
-    height: 30px;
-    line-height: 30px;
-}
-
-.listgrid-toolbar .button-group li {
-    font-size: 11px;
-    text-transform: none;
-}
-
-.listgrid-toolbar .listgrid-toolbar-actions, .listgrid-toolbar .listgrid-row-actions {
-    display: inline-block;
-}
-
-.listgrid-toolbar .listgrid-row-actions {
-    border-left: 1px solid #D8D5D0;
-    margin-left: 7px;
-    padding-left: 10px;
-}
-
-.listgrid-toolbar .button:not(.dropdown-toggle) {
-    min-width: 55px;
-}
-
-.listgrid-toolbar .button.dropdown-toggle {
-    margin-left: -3px;
-}
-
-.listgrid-toolbar li {
-    float: left;
-    padding: 0 2px;
-    width: 100%;
-}
-
-.listgrid-toolbar li.alert-box {
-    padding-top: 8px;
-    padding-left: 10px;
-    color: #94AF39;
-}
-
-div.alert-box.list-grid-alert.save-alert {
-    display: inline-block;
-    margin-bottom: 0;
-    margin-left: 0px;
-    padding-right: 7px;
-    background: none;
-    border: none;
-    color: #98B30A;
-    text-shadow: none;
-}
-
 span.alert-box.save-alert {
     color: #98B30A;
 }
 
 span.alert-box.error-alert {
     color: #A80202;
-}
-
-div.alert-box.list-grid-alert.save-alert a.close {
-    display: none;
 }
 
 button:disabled, button.disabled {
@@ -506,153 +401,12 @@ button:disabled:hover, button.disabled:hover {
     /*background-color: inherit !important;*/
 }
 
-.listgrid-header-wrapper {
-    background-color: #E1E0DD;
-    margin-bottom: -1px;
-    border: 1px solid #B4B3B0;
-}
-
-.listgrid-table-footer {
-    padding: 2px 10px;
-    /* display: inline-block; */
-    /*border-top: 1px solid #E4E2DF;*/
-    font-size: 12px;
-}
-
-.table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {
-    padding: 6px 15px;
-}
-
-.table thead>tr:not(:first-child)>th, .table tbody>tr:not(:first-child)>th, .table tfoot>tr:not(:first-child)>th,
-.table thead>tr:not(:first-child)>td, .table tbody>tr:not(:first-child)>td, .table tfoot>tr:not(:first-child)>td {
-    border-top: 1px solid #D4D2CF;
-}
-
-/* added to stop listgrid flicker */
-.table-striped>tbody>tr:nth-of-type(odd) {
-    background-color: #F9F7F3;
-    border-left: 1px solid #E4E3E2;
-}
-
-.table-striped>tbody>tr:nth-of-type(even) {
-    background-color: #F1EFEB;
-    border-left: 1px solid #E4E3E2;
-}
-
-.list-grid-table tbody tr:not(.list-grid-no-results):hover {
-    background-color: #E1E0DD;
-}
-
-.listgrid-container tr.dirty {
-    background-color: #F7EFDC;
-}
-
-.table-striped>tbody>tr.dirty:nth-of-type(even):not(.selected) {
-    background-color: #F7EFDC;
-}
-
-.table-striped>tbody>tr.dirty:nth-of-type(odd):not(.selected) {
-    background-color: #F7EFDC;
-}
-
-.list-grid-table tbody tr.selected {
-    background-color: #F7EFDC !important;
-}
-
-.list-grid-table tbody tr.progress {
-    background-color: #E3F7D8 !important;
-}
-
-.list-grid-table tbody tr.clickable {
-    cursor: pointer;
-}
-
-.list-grid-table .workflow-icon {
-    font-weight: bold;
-    color: #efbc62;
-    margin-left: -6px;
-    vertical-align: sub;
-    font-size: 16px;
-}
-
-.list-grid-table {
-    padding-right: 15px;
-}
-
-.listgrid-modal-actions div {
-    display: inline-block;
-    padding-right: 10px;
-}
-
-.listgrid-search {
-    margin-bottom: 6px;
-}
-
-.listgrid-search .col6 {
-    height: 45px;
-    white-space: nowrap;
-}
-
 .fa.fa-exclamation-triangle {
     color: #D20A33;
     cursor: pointer !important;
 }
 
-.listgrid-search input {
-    -webkit-appearance: none; /* for safari */
-    height: 36px !important;
-    vertical-align: bottom;
-    width: 300px;
-    display: inline-block;
-}
 
-.modal .listgrid-search .col6 {
-    padding: 0;
-}
-
-.listgrid-search-actions {
-    display: inline-block;
-}
-
-.listgrid-search-actions .button{
-    top: -1px;
-    position: relative;
-}
-
-.table {
-    margin-bottom: 0 !important;
-}
-
-.table thead > tr > th {
-    padding-right: 0;
-    border-bottom: none;
-    white-space: nowrap;
-    overflow: hidden;
-}
-.listgrid-title {
-    padding: 0;
-    overflow: hidden;
-    max-width: 100%;
-}
-
-.listgrid-filter-sort-container {
-    position: absolute;
-    right: 0;
-    display: inline-block;
-    background: #E1E0DD;
-    padding: 0 5px;
-    float: right;
-}
-
-.listgrid-filter-sort-container i {
-    color: #B9B9B9;
-    margin: 0px 0px 0px 4px;
-    cursor: pointer;
-}
-
-.listgrid-filter-sort-container i.active {
-    color: #2c2c2c;
-}
 
 .select-style {
     background: #fff;
@@ -673,16 +427,6 @@ button:disabled:hover, button.disabled:hover {
     margin-bottom: 0;
 }
 
-
-.table.list-grid-table, .table>tbody>tr.selected>td:first-child, .table>tbody>tr.selected>td:last-child {
-    -moz-box-shadow: none;
-     -webkit-box-shadow: none;
-     box-shadow: none;
-}
-
-.listgrid-container .listgrid-icon {
-    color: #CAC8C4;
-}
 
 .modal-header {
     border-bottom: 0;
@@ -776,10 +520,6 @@ input[type="text"], input[type="email"], input[type="password"], input[type="dat
 .dropdown-menu-right {
     margin: -20px 0 0;
     min-width: 100%;
-}
-
-.listgrid-toolbar .dropdown-menu-right {
-    margin: 0;
 }
 
 .dropdown-menu>li>a.alert {
@@ -918,10 +658,6 @@ input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
     display: block;
 }
 
-.modal .entity-errors {
-    margin-top: 0px;
-}
-
 .section-tabs {
     padding-top: 5px;
 }
@@ -1057,22 +793,12 @@ span.workflow-action:nth-child(2) {
     margin-left: -6px;
 }
 
-.listgrid-row-actions span.workflow-action a {
-    color: #B3B3B3;
-    vertical-align: middle;
-    font-size: 16px;
-}
-
 span.workflow-action a:hover {
     color: #809831;
 }
 
 .dirty span.workflow-action a:hover {
     color: #efbc62;
-}
-
-.listgrid-row-actions {
-    text-align: right;
 }
 
 legend {
@@ -1107,34 +833,6 @@ legend {
     white-space: nowrap;
     margin: -15px 0 5px;
 }
-
-.table-holder.warning a.entity {
-    text-decoration: underline;
-    color: #EEBB69;
-}
-
-.table-holder.success a.entity {
-    text-decoration: underline;
-    color: #94AF39;
-}
-
-.table-holder.danger a.entity {
-    text-decoration: underline;
-    color: #D20A33;
-}
-
-.table-holder.warning .listgrid-row-actions a:hover {
-    color: #EEBB69;
-}
-
-.table-holder.success .listgrid-row-actions a:hover {
-    color: #94AF39;
-}
-
-.table-holder.danger .listgrid-row-actions a:hover {
-    color: #D20A33;
-}
-
 
 .hidden {
     display: none !important;
@@ -1205,23 +903,6 @@ p.deployment-summary {
 
 .filter-info > .filter-button {
     margin-top: 6px;
-}
-
-.listgrid-toolbar .filter-info {
-    border-left: 1px solid #D8D5D0;
-    margin-left: 10px;
-    padding-left: 10px;
-}
-
-.listgrid-toolbar .filter-info > .filter-button {
-    margin: 0;
-}
-.listgrid-toolbar .filter-info .button-group {
-    margin: 0;
-}
-
-.listgrid-toolbar .filter-info .clear-filters i {
-    padding-top: 0;
 }
 
 .form-control {
@@ -1471,19 +1152,6 @@ div.uploadMessage {
     display: none;
 }
 
-.listgrid-container a.sub-list-grid-reorder {
-    padding-right: 5px;
-}
-
-.listgrid-container .listgrid-table-spinner-container {
-    margin: auto;
-    text-align: center;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    display: none;
-}
-
 .mCustomScrollBox > .mCSB_scrollTools {
     border-right: 1px solid #B4B3B0;
     border-left: 1px solid #B4B3B0;
@@ -1491,22 +1159,6 @@ div.uploadMessage {
 
 .session-time {
     color: #94AF39;
-}
-
-.mainEntityName {
-    max-width: 600px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    vertical-align: top;
-}
-
-.listgrid-table-spinner-container {
-    margin: auto;
-    text-align: center;
-    position: relative;
-    transform: translateY(-50%);
-    background-color: #E0E0E0;
 }
 
 .mCustomScrollBox {
@@ -1592,12 +1244,4 @@ div.uploadMessage {
 .modal-body .action-popup .fieldset-card.message {
     margin-top: 0 !important;
     margin-bottom: 0;
-}
-
-.table tbody > tr > td > a.list-grid-primary-field {
-    display : inline;
-}
-
-.button.button-action.sub-list-grid-edit {
-    display: inline;
 }
