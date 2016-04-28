@@ -308,6 +308,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteCustomer(Customer customer) {
+        roleDao.removeCustomerRolesByCustomerId(customer.getId());
         customerDao.delete(customer);
     }
 
