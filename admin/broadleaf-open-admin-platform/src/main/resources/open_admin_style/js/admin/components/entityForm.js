@@ -329,7 +329,7 @@ $(document).ready(function() {
         var $form = BLCAdmin.getForm($(this));
 
         var currentAction = $form.attr('action');
-        var deleteUrl = currentAction + '/delete'
+        var deleteUrl = currentAction + '/delete';
 
         BLCAdmin.entityForm.showActionSpinner($(this).closest('.entity-form-actions'));
         

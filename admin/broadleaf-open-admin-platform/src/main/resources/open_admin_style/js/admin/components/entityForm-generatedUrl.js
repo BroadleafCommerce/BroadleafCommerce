@@ -67,7 +67,7 @@
                 allowSlash : $targetField.data('allow-slash')
             });
 
-            var finalUrl = generatedPrefix + convertedUrl
+            var finalUrl = generatedPrefix + convertedUrl;
             $targetField.val(finalUrl);
             
             $targetField.trigger('generated-url', [finalUrl]);
@@ -86,7 +86,7 @@
             }
         }
 
-    }
+    };
 
     BLCAdmin.addInitializationHandler(function($container) {
         $container.find('div.generated-url-container').each(function(idx, el) {

@@ -413,7 +413,7 @@ var BLCAdmin = (function($) {
         },
 
         hideAllModals : function() {
-            var currentModal = BLCAdmin.currentModal()
+            var currentModal = BLCAdmin.currentModal();
             while (currentModal) {
                 currentModal.modal('hide');
                 currentModal = BLCAdmin.currentModal();
@@ -988,7 +988,7 @@ var BLCAdmin = (function($) {
             dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)] = {
                 parentFieldSelector : parentFieldSelector,
                 childFieldPropertyName : childFieldPropertyName
-            }
+            };
             
             // If the parentFieldRequired option is turned on, we need to toggle the behavior of the child field accordingly
             if (options != null && options['parentFieldRequired']) {
@@ -1233,7 +1233,7 @@ Selectize.define('enter_key_blur', function (options) {
             return original.apply(this, arguments)
         }
     })()
-})
+});
 
 // Replace the default AJAX error handler with this custom admin one that relies on the exception
 // being set on the model instead of a stack trace page when an error occurs on an AJAX request.
@@ -1256,7 +1256,7 @@ BLC.defaultErrorHandler = function(data) {
             BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.errorOccurred);
         }
     }
-}
+};
 
 BLC.addPreAjaxCallbackHandler(function($data) {
     if (!($data instanceof jQuery)) {
@@ -1449,7 +1449,7 @@ $('body').on('click', 'button.change-password-confirm', function(event) {
             $ef.append($('<input type="hidden" name="fields[\'saveAsNew\'].value" value="true" />'));
             */
             
-            $this.closest('')
+            $this.closest('');
             $this.closest('.actions').hide();
             
             //$ef.submit();

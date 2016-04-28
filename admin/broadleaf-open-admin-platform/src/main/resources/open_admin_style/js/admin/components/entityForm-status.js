@@ -429,11 +429,11 @@
                     return false;
                 }
 
-                var $valueContainer = $(el).find('.value')
+                var $valueContainer = $(el).find('.value');
                 var origVal = $valueContainer.val() || '';
                 $valueContainer.attr('data-orig-val', origVal);
 
-                var $displayContainer = $(el).find('.hidden-display-value')
+                var $displayContainer = $(el).find('.hidden-display-value');
                 var origVal = $displayContainer.val() || '';
                 $displayContainer.attr('data-orig-val', origVal);
             });
@@ -542,7 +542,7 @@
             if (el !== undefined && $(el).closest('.oms-tab').length) {
                 return false;
             }
-            
+
             // Don't track if we are in a modal, on an OMS page, or not on a page with an entity form
             if ((el !== undefined && $(el).closest('.modal').length) ||
                 $('.oms').length ||

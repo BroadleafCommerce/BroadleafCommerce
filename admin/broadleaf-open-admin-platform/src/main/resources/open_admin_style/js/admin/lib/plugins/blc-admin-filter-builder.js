@@ -48,7 +48,7 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
             // add "Apply" button
             var applyButton = $("<button>", {
                 html: "Apply",
-                class: "button primary filter-apply-button"
+                'class': "button primary filter-apply-button"
             });
             rule.$el.find('.rule-header .rule-actions').append(applyButton);
             rule.$el.find('.rule-header .remove-row').css('right', '').css('left', '16px');
@@ -73,7 +73,7 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
         var filterText = el.find('div.rule-filter-container > div > div.selectize-input .item').text();
         var readonlyFilter = $("<span>", {
             html: "<strong>" + filterText + "</strong>",
-            class: "filter-text"
+            'class': "filter-text"
         });
         el.find('div.rule-filter-container').append($(readonlyFilter));
         el.find('div.rule-filter-container > div > div.selectize-input').hide();

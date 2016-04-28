@@ -50,7 +50,7 @@
             $generatedFieldValueContainer.closest('form').find('#field-' + sourceFieldName + " input").off('keyup');
         }
 
-    }
+    };
 
     BLCAdmin.addInitializationHandler(function($container) {
         $container.find('div.generated-fieldValue-container').each(function(idx, el) {

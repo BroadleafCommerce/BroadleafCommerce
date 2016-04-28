@@ -3002,7 +3002,7 @@ QueryBuilder.defaults({
     mongoOperators: {
         equal:            function(v){ return v[0]; },
         not_equal:        function(v){ return {'$ne': v[0]}; },
-        in:               function(v){ return {'$in': v}; },
+        'in':             function(v){ return {'$in': v}; },
         not_in:           function(v){ return {'$nin': v}; },
         less:             function(v){ return {'$lt': v[0]}; },
         less_or_equal:    function(v){ return {'$lte': v[0]}; },
@@ -3409,7 +3409,7 @@ QueryBuilder.defaults({
     sqlOperators: {
         equal:            { op: '= ?' },
         not_equal:        { op: '!= ?' },
-        in:               { op: 'IN(?)',     sep: ', ' },
+        'in':             { op: 'IN(?)',     sep: ', ' },
         not_in:           { op: 'NOT IN(?)', sep: ', ' },
         less:             { op: '< ?' },
         less_or_equal:    { op: '<= ?' },

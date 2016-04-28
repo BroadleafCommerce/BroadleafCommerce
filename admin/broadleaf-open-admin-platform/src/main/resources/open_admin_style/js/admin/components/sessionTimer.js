@@ -192,7 +192,7 @@ $(document).ready(function() {
     /*
      * We must reset the timer when the page is loaded so we can update the last reset time and session timeout interval.
      */
-    BLCAdmin.sessionTimer.resetTimer()
+    BLCAdmin.sessionTimer.resetTimer();
 
     /*
      * This function provides the proper functionality for the "Stay Logged In" button on the expire message.
