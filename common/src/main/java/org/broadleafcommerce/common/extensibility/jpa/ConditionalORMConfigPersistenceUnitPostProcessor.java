@@ -67,7 +67,6 @@ import javax.annotation.Resource;
  *
  * @author Jeff Fischer
  */
-@Deprecated
 public class ConditionalORMConfigPersistenceUnitPostProcessor implements org.springframework.orm.jpa.persistenceunit.PersistenceUnitPostProcessor, BeanFactoryAware {
 
     @Resource(name="blConditionalEntities")

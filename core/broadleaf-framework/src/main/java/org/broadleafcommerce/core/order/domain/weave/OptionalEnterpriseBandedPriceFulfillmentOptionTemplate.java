@@ -39,6 +39,7 @@ import javax.persistence.OneToMany;
  * @author Kelly Tisdell
  *
  */
+@Deprecated
 public abstract class OptionalEnterpriseBandedPriceFulfillmentOptionTemplate {
 
     @OneToMany(mappedBy = "option", targetEntity = FulfillmentPriceBandImpl.class)

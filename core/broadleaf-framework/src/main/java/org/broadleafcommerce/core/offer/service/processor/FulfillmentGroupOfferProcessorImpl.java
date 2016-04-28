@@ -38,6 +38,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfil
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -113,9 +114,14 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
     public void calculateFulfillmentGroupTotal(PromotableOrder order) {
         Money totalFulfillmentCharges = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getOrderCurrency());
         for (PromotableFulfillmentGroup fulfillmentGroupMember : order.getFulfillmentGroups()) {
-            PromotableFulfillmentGroup fulfillmentGroup = fulfillmentGroupMember;
-            Money fulfillmentCharges = fulfillmentGroup.getFinalizedPriceWithAdjustments();
-            fulfillmentGroup.getFulfillmentGroup().setFulfillmentPrice(fulfillmentCharges);
+            FulfillmentGroup fulfillmentGroup = fulfillmentGroupMember.getFulfillmentGroup();
+            Money fulfillmentCharges;
+            if (fulfillmentGroup.getShippingOverride()) {
+                fulfillmentCharges = fulfillmentGroup.getFulfillmentPrice();
+            } else {
+                fulfillmentCharges = fulfillmentGroupMember.getFinalizedPriceWithAdjustments();
+                fulfillmentGroupMember.getFulfillmentGroup().setFulfillmentPrice(fulfillmentCharges);
+            }
             totalFulfillmentCharges = totalFulfillmentCharges.add(fulfillmentCharges);
         }
         order.setTotalFufillmentCharges(totalFulfillmentCharges);

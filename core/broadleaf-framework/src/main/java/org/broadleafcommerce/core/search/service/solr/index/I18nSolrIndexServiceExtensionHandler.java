@@ -33,6 +33,9 @@ import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
@@ -158,29 +161,54 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
 
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-    
+
     @Override
     public ExtensionResultStatusType startBatchEvent(List<? extends Indexable> indexables) {
-        
-        List<String> defaultSkuIds = new ArrayList<String>(indexables.size());
-        List<String> productIds = new ArrayList<String>(indexables.size());
+
+        List<String> skuIds = new ArrayList<String>(indexables.size());
+        List<String> productIds = new ArrayList<String>();
+        List<String> skuAttributeIds = new ArrayList<String>();
+        List<String> productAttributeIds = new ArrayList<String>();
         for (Indexable indexable : indexables) {
+            Sku sku = null;
             if (Product.class.isAssignableFrom(indexable.getClass())) {
                 Product product = (Product) indexable;
                 productIds.add(product.getId().toString());
-                defaultSkuIds.add(product.getDefaultSku().getId().toString());
+                for (Map.Entry productAttributeEntry :  product.getMultiValueProductAttributes().entrySet()) {
+                    List<ProductAttribute> productAttributes = (List<ProductAttribute>) productAttributeEntry.getValue();
+                    for (ProductAttribute productAttribute : productAttributes) {
+                        productAttributeIds.add(productAttribute.getId().toString());
+                    }
+                }
+                sku = product.getDefaultSku();
+            } else if (Sku.class.isAssignableFrom(indexable.getClass())) {
+                sku = (Sku) indexable;
+            }
+            
+            if (sku != null) {
+                skuIds.add(sku.getId().toString());
+                for (Map.Entry skuAttributeEntry :  sku.getMultiValueSkuAttributes().entrySet()) {
+                    List<SkuAttribute> skuAttributes = (List<SkuAttribute>) skuAttributeEntry.getValue();
+                    for (SkuAttribute skuAttribute : skuAttributes) {
+                        skuAttributeIds.add(skuAttribute.getId().toString());
+                    }
+                }
             }
         }
-        
-        List<Translation> defaultSkuTranslations = translationDao.readAllTranslationEntries(TranslatedEntity.SKU, ResultType.STANDARD, defaultSkuIds);
-        TranslationBatchReadCache.addToCache(defaultSkuTranslations);
-        
-        List<Translation> productTranslations = translationDao.readAllTranslationEntries(TranslatedEntity.PRODUCT, ResultType.STANDARD, productIds);
-        TranslationBatchReadCache.addToCache(productTranslations);
-        
+
+        addEntitiesToTranslationCache(skuIds, TranslatedEntity.SKU);
+        addEntitiesToTranslationCache(productIds, TranslatedEntity.PRODUCT);
+        addEntitiesToTranslationCache(skuAttributeIds, TranslatedEntity.SKU_ATTRIBUTE);
+        addEntitiesToTranslationCache(productAttributeIds, TranslatedEntity.PRODUCT_ATTRIBUTE);
+
         return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
-    
+
+    private void addEntitiesToTranslationCache(List<String> entityIds, TranslatedEntity translatedEntity) {
+        List<Translation> translations = translationDao.readAllTranslationEntries(translatedEntity, ResultType.STANDARD, entityIds);
+        TranslationBatchReadCache.addToCache(translations);
+    }
+
     @Override
     public ExtensionResultStatusType endBatchEvent(List<? extends Indexable> indexables) {
         TranslationBatchReadCache.clearCache();
