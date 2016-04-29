@@ -48,12 +48,17 @@
         </property>
     </bean>
     
-    <bean id="blPersistenceProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
+    <bean id="blCMSPersistenceProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <ref bean="blHTMLFieldPersistenceProvider"/>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCMSPersistenceProviders" />
+        <property name="targetRef" value="blPersistenceProviders" />
     </bean>
 
    <mo:override id="blMetadataOverrides">
