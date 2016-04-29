@@ -175,10 +175,13 @@ public class TranslationServiceImpl implements TranslationService {
             localeCountryCode += "_" + locale.getCountry();
         }
         
-        if (TranslationBatchReadCache.getCache() != null) {
+        if (TranslationBatchReadCache.getCache() != null && TranslationBatchReadCache.getCache().getSize() != 0) {
             Translation translation = TranslationBatchReadCache.getFromCache(entityType, entityId, property, localeCountryCode);
             if (translation != null) {
                 return translation.getTranslatedValue();
+            } else {
+                // There is no translation for this entity if it is not in the cache
+                return null;
             }
         }
         

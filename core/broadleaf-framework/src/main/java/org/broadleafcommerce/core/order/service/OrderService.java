@@ -102,6 +102,14 @@ public interface OrderService {
     public Order findOrderById(Long orderId);
 
     /**
+     * Looks up a list of Orders by their database ids
+     *
+     * @param orderIds
+     * @return a list of Orders
+     */
+    public List<Order> findOrdersByIds(List<Long> orderIds);
+
+    /**
      * Looks up an Order by its database id
      * and optionally calls refresh to ensure that the entity manager pulls the instance from the DB and not from cache
      *

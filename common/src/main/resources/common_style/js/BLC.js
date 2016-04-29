@@ -231,7 +231,7 @@ var BLC = (function($) {
                     if (options.additionalAnalyticsEvents) {
                         for (var i = 0; i < options.additionalAnalyticsEvents.length; i++) {
                             var event = options.additionalAnalyticsEvents[i];
-                            tracker.send(event)
+                            tracker.send(event);
                             console.log('Tracked additional GA event: ' + event + ' for tracker: ' + tracker.get('name'));
                         }
                     }
@@ -300,7 +300,7 @@ var BLC = (function($) {
         }
 
         return document.location.search = params;
-    };
+    }
     
     addPreAjaxCallbackHandler(function($data) {
         return BLC.redirectIfNecessary($data);

@@ -48,7 +48,7 @@ $(document).ready(function(){
                 rowDivs[currentDiv].height(currentTallest);
             }
         });
-    }
+    };
 
     $(window).load(function() {
         equalheight('.equals .equal');

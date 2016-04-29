@@ -197,6 +197,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<Order> findOrdersByIds(List<Long> orderIds) {
+        return orderDao.readOrdersByIds(orderIds);
+    }
+
+    @Override
     public Order findOrderById(Long orderId, boolean refresh) {
         return orderDao.readOrderById(orderId, refresh);
     }

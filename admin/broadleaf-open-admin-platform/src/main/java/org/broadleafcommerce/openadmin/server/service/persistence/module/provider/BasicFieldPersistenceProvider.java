@@ -153,11 +153,11 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         boolean dirty = false;
         try {
             Property prop = populateValueRequest.getProperty();
-            Object origValue = populateValueRequest.getFieldManager().getFieldValue(instance, prop.getName());
+            Object origInstanceValue = populateValueRequest.getFieldManager().getFieldValue(instance, prop.getName());
             switch (populateValueRequest.getMetadata().getFieldType()) {
                 case BOOLEAN:
                     boolean v = Boolean.valueOf(populateValueRequest.getRequestedValue());
-                    prop.setOriginalValue(String.valueOf(origValue));
+                    prop.setOriginalValue(String.valueOf(origInstanceValue));
                     prop.setOriginalDisplayValue(prop.getOriginalValue());
                     try {
                         dirty = checkDirtyState(populateValueRequest, instance, v);
@@ -190,8 +190,8 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                                     getSimpleDateFormatter().parse(populateValueRequest.getRequestedValue()));
                     break;
                 case DECIMAL:
-                    if (origValue != null) {
-                        prop.setOriginalValue(String.valueOf(origValue));
+                    if (origInstanceValue != null) {
+                        prop.setOriginalValue(String.valueOf(origInstanceValue));
                         prop.setOriginalDisplayValue(prop.getOriginalValue());
                     }
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
@@ -210,8 +210,8 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     }
                     break;
                 case MONEY:
-                    if (origValue != null) {
-                        prop.setOriginalValue(String.valueOf(origValue));
+                    if (origInstanceValue != null) {
+                        prop.setOriginalValue(String.valueOf(origInstanceValue));
                         prop.setOriginalDisplayValue(prop.getOriginalValue());
                     }
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
@@ -239,8 +239,8 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     }
                     break;
                 case INTEGER:
-                    if (origValue != null) {
-                        prop.setOriginalValue(String.valueOf(origValue));
+                    if (origInstanceValue != null) {
+                        prop.setOriginalValue(String.valueOf(origInstanceValue));
                         prop.setOriginalDisplayValue(prop.getOriginalValue());
                     }
                     if (int.class.isAssignableFrom(populateValueRequest.getReturnType()) || Integer.class
@@ -276,8 +276,8 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 case HTML_BASIC:
                 case HTML:
                 case EMAIL:
-                    if (origValue != null) {
-                        prop.setOriginalValue(String.valueOf(origValue));
+                    if (origInstanceValue != null) {
+                        prop.setOriginalValue(String.valueOf(origInstanceValue));
                         prop.setOriginalDisplayValue(prop.getOriginalValue());
                     }
                     dirty = checkDirtyState(populateValueRequest, instance, populateValueRequest.getRequestedValue());
@@ -285,8 +285,8 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                             .getName(), populateValueRequest.getRequestedValue());
                     break;
                 case FOREIGN_KEY: {
-                    if (origValue != null) {
-                        prop.setOriginalValue(String.valueOf(origValue));
+                    if (origInstanceValue != null) {
+                        prop.setOriginalValue(String.valueOf(origInstanceValue));
                     }
                     Serializable foreignInstance;
                     if (StringUtils.isEmpty(populateValueRequest.getRequestedValue())) {
@@ -345,13 +345,13 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     // Best guess at grabbing the original display value
                     String fkProp = populateValueRequest.getMetadata().getForeignKeyDisplayValueProperty();
                     Object origDispVal = null;
-                    if (origValue != null) {
+                    if (origInstanceValue != null) {
                         if (AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY.equals(fkProp)) {
-                            if (origValue instanceof AdminMainEntity) {
-                                origDispVal = ((AdminMainEntity) origValue).getMainEntityName();
+                            if (origInstanceValue instanceof AdminMainEntity) {
+                                origDispVal = ((AdminMainEntity) origInstanceValue).getMainEntityName();
                             }
                         } else {
-                            origDispVal = populateValueRequest.getFieldManager().getFieldValue(origValue, fkProp);
+                            origDispVal = populateValueRequest.getFieldManager().getFieldValue(origInstanceValue, fkProp);
                         }
                     }
                     if (origDispVal != null) {
