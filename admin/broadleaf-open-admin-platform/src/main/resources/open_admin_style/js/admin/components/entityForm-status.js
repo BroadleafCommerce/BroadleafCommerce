@@ -277,7 +277,7 @@
          */
         updateEntityFormActions : function() {
             // Grab all buttons we might want to enable/disable
-            var $saveBtn = $('.entity-form-actions').find('button.submit-button');
+            var $saveBtn = $('.sticky-container').find('.entity-form-actions').find('button.submit-button');
             var $promoteBtn = $('.sandbox-actions').find('.button a:contains("Promote")').parent();
             var $approveBtn = $('.sandbox-actions').find('.button a:contains("Approve")').parent();
 
