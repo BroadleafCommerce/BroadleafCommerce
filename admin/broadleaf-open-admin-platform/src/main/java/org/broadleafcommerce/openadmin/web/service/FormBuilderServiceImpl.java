@@ -464,6 +464,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             AdornedTargetList adornedList = (AdornedTargetList) atcmd.getPersistencePerspective()
                     .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
             sortable = StringUtils.isNotBlank(adornedList.getSortField());
+            if (sortable) {
+                sortProperty = adornedList.getSortField();
+            }
         } else if (fmd instanceof MapMetadata) {
             readOnly = !((MapMetadata) fmd).isMutable();
             MapMetadata mmd = (MapMetadata) fmd;
@@ -556,7 +559,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             LOG.error(message);
         }
 
-        ListGrid listGrid = createListGrid(ceilingType, headerFields, type, drs, sectionKey, fmd.getOrder(), idProperty, sectionCrumbs,sortProperty);
+        ListGrid listGrid = createListGrid(ceilingType, headerFields, type, drs, sectionKey, fmd.getOrder(), idProperty, sectionCrumbs, sortProperty);
         listGrid.setSubCollectionFieldName(field.getName());
         listGrid.setFriendlyName(field.getMetadata().getFriendlyName());
         if (StringUtils.isEmpty(listGrid.getFriendlyName())) {
@@ -591,9 +594,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (readOnly) {
             listGrid.getRowActions().add(DefaultListGridActions.VIEW);
         }
-        if (isLookup) {
-            listGrid.setIsSortable(false);
-        } else if (sortable){
+        if (sortable){
             listGrid.setCanFilterAndSort(false);
             listGrid.setIsSortable(true);
         }
@@ -767,7 +768,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ListGridRecord record = new ListGridRecord();
             record.setListGrid(listGrid);
             record.setDirty(e.isDirty());
-            if (StringUtils.isNotBlank(sortPropery)) {
+            if (StringUtils.isNotBlank(sortPropery) && e.findProperty(sortPropery) != null) {
                 Property sort = e.findProperty(sortPropery);
                 record.setDisplayOrder(sort.getValue());
             }
