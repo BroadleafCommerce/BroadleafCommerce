@@ -609,10 +609,10 @@ var BLCAdmin = (function($) {
                 showButtons: false,
                 preferredFormat: "hex6",
                 change: function(color) {
-                    $(this).closest('.field-group').find('input.color-picker-value').val(color);
+                    $(this).closest('.field-group').find('input.color-picker-value').val(color).trigger('input');
                 },
                 move: function(color) {
-                    $(this).closest('.field-group').find('input.color-picker-value').val(color);
+                    $(this).closest('.field-group').find('input.color-picker-value').val(color).trigger('input');
                 }
             });
         },

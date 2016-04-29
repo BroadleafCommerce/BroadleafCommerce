@@ -172,16 +172,18 @@ $(document).ready(function() {
 
         //Set media value to null so that when the request is sent the entry in the map for primary is deleted
         var mediaUrl = $container.find('input.mediaUrl');
+        var mediaItem = $container.find('input.mediaItem');
         if (mediaUrl.length > 0) {
             // Fields using mediaUrl require a blank value
             mediaUrl.val('').trigger('change').trigger('input');
         } else {
             // Other entities require a null value
-            $container.find('input.mediaItem').val('null').trigger('change').trigger('input');
+            mediaItem.val('null').trigger('change').trigger('input');
         }
 
         //Set placeholder image and hide clear button since there's nothing to clear
         var src = $container.find('img.placeholder').attr('src');
+        $container.find('img.thumbnail').removeAttr('data-fullurl');
         $container.find('img.thumbnail').attr('src', src);
         $container.find('img.thumbnail').addClass('placeholder-image');
         $this.hide();
