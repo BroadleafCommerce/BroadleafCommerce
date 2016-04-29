@@ -811,6 +811,7 @@ $(document).ready(function () {
 
                         BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', {
                             alertType: 'save-alert',
+                            clearOtherAlerts: true,
                             autoClose: 3000
                         });
                         $container = $this.closest('.listgrid-container');
