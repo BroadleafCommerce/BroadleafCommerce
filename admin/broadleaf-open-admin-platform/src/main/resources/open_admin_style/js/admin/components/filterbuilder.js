@@ -430,6 +430,7 @@
                         hideSelected: true,
                         unique: true,
                         placeholder: field.label + " +",
+                        dropdownParent: 'body',
                         onInitialize: function () {
                             var $selectize = this;
                             $selectize.sectionKey = sectionKey;
