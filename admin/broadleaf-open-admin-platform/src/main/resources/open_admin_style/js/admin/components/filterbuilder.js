@@ -471,6 +471,9 @@
                                         }
                                     }
                                 });
+                                if (data.options.length) {
+                                    $selectize.open();
+                                }
                                 callback(data);
                             });
                         },
