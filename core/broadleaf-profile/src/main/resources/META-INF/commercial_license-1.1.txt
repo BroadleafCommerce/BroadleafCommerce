@@ -1,0 +1,236 @@
+Broadleaf End User License Agreement (EULA) - Version 1.1
+
+NOTICE TO ALL USERS: PLEASE READ THIS CONTRACT CAREFULLY. BY USING THE SOFTWARE, YOU (EITHER AN INDIVIDUAL OR A
+SINGLE ENTITY) AGREE THAT THIS AGREEMENT IS ENFORCEABLE LIKE ANY WRITTEN CONTRACT SIGNED BY YOU. IF YOU DO NOT AGREE TO
+ALL THE TERMS OF THIS AGREEMENT, DO NOT USE THE SOFTWARE.
+
+Definitions.
+    "Appliance" means any device or appliance whether hardware, software or virtual, appliance on which the Software may
+    be or is Used pursuant to the terms herein.
+
+    "Authorized Partner(s)" means Broadleaf's distributors, resellers, strategic partners, or other business partners.
+
+    "Documentation" means the then-current product description, written user manuals, and online help and guides for Product.
+
+    "Permitted Number" means one (1) copy of Software unless otherwise indicated in a valid Quote.
+
+    "Product" means the Broadleaf Software or services provided by Broadleaf or an Authorized Partner.
+
+    "Quote" means a valid Broadleaf or Authorized Partner quote that provides pricing for the Software and support that
+    you may affirmatively acknowledge, execute or issue a purchase order against to purchase such Product, which may
+    include a detailed product description.
+
+    "Software" means (a) all of the contents of the files and/or packages, disk(s), CD-ROM(s), or other installation
+    media (including electronic media) with which this Agreement is provided; or such contents as are hosted by Broadleaf
+    or Authorized Partner(s); (b) any Updates; (c) any other software, if any, licensed to you by Broadleaf or an
+    Authorized Partner as part of a maintenance contract or service subscription; and (d) Documentation.
+
+    "Updates" means upgrades, updates, or any new version of Software that is made available without charge or without
+    a requirement for a further license pursuant to the warranty for Software; or the support for licensed Software, but
+    does not mean a new Product.
+
+    "Use", "Used" or "Using" means to access, install, download, copy or otherwise benefit from using the Software.
+
+    "Broadleaf" means Broadleaf Commerce, LLC a Texas limited liability company, with offices located at
+    15303 Dallas Parkway, Suite 300, Addison, TX 75001 USA.
+
+2.  License Grant. Subject to the payment of the applicable license fees and to the terms and conditions of this Agreement,
+    Broadleaf hereby grants to you a non-exclusive, non-transferable license to Use the Software subject to any restrictions
+    or usage terms specified on the applicable Quote or Documentation. In the event Software contains or uses third party
+    software, Broadleaf will have no responsibility and claims no right with respect to such third party software. Your
+    use of such third party software and other copyrighted material is governed by their respective terms.
+
+3.  Term. This Agreement is effective for the term set forth in the Quote which is issued to you by Broadleaf or an
+    Authorized Partner and which is accepted by you (the "Term"). If you issue a purchase order to an Authorized Partner
+    and the terms and conditions as set forth in the Quote issued by Broadleaf or Authorized Partner or Documentation
+    conflicts with the terms and conditions included in the purchase order, then the terms and conditions specified in
+    the Quote or Documentation shall control. Except for Evaluation Software, Beta Software or freeware, which is subject
+    to Section 7 below, if no Term is included in the above described materials, then the Term shall be for one (1) year
+    from the date of purchase unless earlier terminated as set forth herein. This Agreement will terminate automatically
+    if you fail to comply with any of the limitations or other requirements described herein. Upon any termination or
+    expiration of this Agreement, you must cease Use of the Software and destroy all copies of the Software and the Documentation.
+
+4.  Updates. This license is limited to the version of the Software delivered by Broadleaf and does not include Updates,
+    unless a separate support contract is purchased or, alternatively, you have purchased a service subscription that
+    entitles you to Updates as described in the Quote. After the specified support period or service subscription period
+    has expired, you have no further rights to receive any Updates without purchase of a new license to the Software.
+
+5.  Ownership Rights. The Software is protected by United States' and other copyright laws, international treaty provisions
+    and other applicable laws in the country in which it is being used. Broadleaf and its suppliers own and retain all
+    right, title and interest in and to the Software, including all copyrights, patents, trade secret rights, trademarks
+    and other intellectual property rights therein. Your possession, installation, or Use of the Software does not
+    transfer to you any title or right to the intellectual property in the Software, and you will not acquire any rights
+    to the Software except as expressly set forth in this Agreement. You are not entitled to make copies of the Software
+    without Broadleaf's prior written consent.
+
+6.  Multiple Environment Software/Multiple Language Software/Dual Media Software/Multiple Copies/Bundles/Updates. If the
+    Software supports multiple platforms or languages; if you receive the Software on multiple media; if you otherwise
+    receive multiple copies of the Software; or if you receive the Software bundled with other software; the total number
+    of your Appliances on which all versions of the Software is installed may not exceed the Permitted Number. If any
+    provided Software is an Update to a previous version of the Software, you must possess a valid license to such
+    previous version in order to Use the Update. You may continue to Use the previous version of the Software on your
+    Appliance after you receive the Update to assist you in the transition to the Update, provided that the Update and
+    the previous version are installed on the same Appliance; the previous version or copies thereof are not transferred
+    to another Appliance unless all copies of the Update are also transferred to such Appliance, and you acknowledge that
+    any obligation Broadleaf may have to support the previous version of the Software may end upon availability of the Update.
+
+7.  Evaluation Product Additional Terms. If the product you have received with this license has been identified as
+    "Evaluation" Software, "Loaned" Software, "Beta" Software or freeware, then the provisions of this section also apply.
+    To the extent that any provision in this section is in conflict with any other term or condition in this Agreement,
+    this section shall supercede such other term(s) and condition(s) with respect to the Evaluation Software, Beta Software,
+    or freeware, but only to the extent necessary to resolve the conflict. You acknowledge that the Evaluation Software,
+    Beta Software or freeware may contain bugs, errors and other problems that could cause system or other failures and
+    data loss. Without prejudice to any other limitations on Broadleaf's liability set forth in this Agreement (which
+    shall also apply to Evaluation, Loaned and Beta Software). Evaluation Software, Beta Software, or freeware is provided
+    to you "AS-IS", and Broadleaf disclaims any warranty or liability obligations to you of any kind. WHERE LEGAL
+    LIABILITY CANNOT BE EXCLUDED, BUT MAY BE LIMITED, Broadleaf'S LIABILITY AND THAT OF ITS AUTHORIZED PARTNERS SHALL
+    BE LIMITED TO THE SUM OF ONE THOUSAND DOLLARS (U.S. $1,000.00) IN TOTAL. You acknowledge that Broadleaf has not
+    promised or guaranteed to you that freeware or Beta Software will be announced or made available to anyone in the
+    future that Broadleaf has no express or implied obligation to you to announce or introduce the Beta Software, and
+    that Broadleaf may not introduce a product similar to or compatible with the Beta Software. Accordingly, you
+    acknowledge that any research or development that you perform regarding the Beta Software or any product associated
+    with the Beta Software is done entirely at your own risk. During the term of this Agreement, if requested by Broadleaf,
+    you will provide feedback to Broadleaf regarding testing and use of the Beta Software, including error or bug reports;
+    you agree to grant Broadleaf a perpetual, non-exclusive, royalty-free, worldwide license to use, copy, distribute,
+    make derivative works and incorporate the feedback into any Broadleaf product at Broadleaf's sole discretion. If
+    you have been provided the Beta Software pursuant to a separate written agreement, your Use of the Beta Software
+    is also governed by such agreement. Upon receipt of a later unreleased version of the Beta Software or release by
+    Broadleaf of a publicly released commercial version of the Beta Software, whether as a stand-alone product or as part
+    of a larger product, you agree to return or destroy all earlier Beta Software received from Broadleaf and to abide
+    by the terms of the End User License Agreement for any such later versions of the Beta Software. Your Use of the
+    Evaluation, Loaned or Beta Software is limited to 30 days and shall expire thereafter; Use of freeware is available
+    for only so long as Broadleaf makes the freeware available unless otherwise agreed to in writing by Broadleaf.
+    Broadleaf is under no obligation to continue providing freeware or to update such freeware. You shall return
+    Evaluation, Loaned and Beta Software and any Documentation at the end of the evaluation or loan period or when
+    sooner terminated by Broadleaf for convenience by giving you ten (10) days' written notice, whichever occurs first.
+    You shall bear the risk of loss and damage for return of physical media, if any, and de-installation. You may use
+    Evaluation Loaned and Beta Software and freeware free of charge, but, in the case of Evaluation Software, solely for
+    the purpose of evaluation and not in a production environment. If you are found to be using the Evaluation, Loaned,
+    or Beta Software beyond the terms contained in this Section you shall immediately pay Broadleaf a license Fee for
+    such software and all terms under this Agreement will be binding. Unless otherwise specifically agreed in writing by
+    Broadleaf, Broadleaf does not provide maintenance or support for any Evaluation Software, Loaned Software or Beta
+    Software. YOU RECOGNIZE THAT THE EVALUATION, LOANED OR BETA SOFTWARE MAY HAVE DEFECTS OR DEFICIENCIES WHICH CANNOT
+    OR MAY NOT BE CORRECTED BY BROADLEAF. Broadleaf shall have no liability to you for any action (or any prior related
+    claims) brought by or against you alleging that your sale, use or other disposition of any Evaluation Software,
+    Loaned Software or Beta Software infringes any patent, copyright, trade secret or other intellectual property right.
+    In the event of such an action, Broadleaf retains the right to terminate this Agreement and take possession of the
+    Evaluation, Loaned or Beta Software. THIS SECTION STATES Broadleaf'S ENTIRE LIABILITY WITH RESPECT TO ALLEGED
+    INFRINGEMENTS OF INTELLECTUAL PROPERTY RIGHTS BY EVALUATION SOFTWARE, LOANED SOFTWARE OR BETA SOFTWARE ANY
+    PART THEREOF OR OPERATION.
+
+8.  Restrictions. You may not sell, lease, license, rent, loan, resell or otherwise transfer, with or without consideration,
+    the Software. If you enter into a contract with a third party in which the third party manages your information
+    technology resources ("Managing Party"), you may transfer all your rights to Use the Software to such Managing Party,
+    provided that (a) the Managing Party only Uses the Software for your internal operations and not for the benefit of
+    another third party; (b) the Managing Party agrees to comply with the terms and conditions of this Agreement, and
+    (c) you provide Broadleaf with written notice that a Managing Party will be Using the Software on your behalf.
+    You may not permit third parties to benefit from the use or functionality of the Software via a timesharing,
+    service bureau or other arrangement. You may not reverse engineer, decompile, or disassemble the Software, except
+    to the extent the foregoing restriction is expressly prohibited by applicable law. You may not modify, or create
+    derivative works based upon, the Software in whole or in part. You may not copy the Software or Documentation except
+    as expressly permitted herein. You may not remove any proprietary notices or labels on the Software. All rights not
+    expressly set forth hereunder are reserved by Broadleaf.
+
+9.  Warranty and Disclaimer.
+    a.  Limited Warranty. Broadleaf warrants that for sixty (60) days from the date of original purchase the media, if any,
+        on which the Software is contained and provided to you will be free from defects in materials and workmanship.
+    b.  End User Remedies. Broadleaf's and its suppliers' entire liability and your exclusive remedy for any breach of
+        the foregoing warranty shall be, at Broadleaf's option, either (i) return of the purchase price you paid for the
+        license, or (ii) replacement of the defective media in which the Software is contained. You must return the
+        defective media to Broadleaf at your expense with a copy of your receipt. This limited warranty is void if the
+        defect has resulted from accident, abuse, or misapplication. Any replacement media will be warranted for the
+        remainder of the original warranty period. Outside the United States, this remedy is not available to the extent
+        Broadleaf is subject to restrictions under United States export control laws and regulations.
+    c.  Warranty Disclaimer. Except for the limited warranty set forth herein, THE SOFTWARE IS PROVIDED "AS IS" AND
+        Broadleaf MAKES NO WARRANTY AS TO ITS USE OR PERFORMANCE. EXCEPT FOR ANY WARRANTY, CONDITION, REPRESENTATION OR
+        TERM THE EXTENT TO WHICH CANNOT BE EXCLUDED OR LIMITED BY APPLICABLE LAW. Broadleaf, ITS SUPPLIERS AND AUTHORIZED
+        PATNERS MAKE NO WARRANTY, CONDITION, REPRESENTATION, OR TERM (EXPRESS OR IMPLIED, WHETHER BY STATUTE, COMMON LAW,
+        CUSTOM, USAGE OR OTHERWISE) AS TO ANY MATTER INCLUDING, WITHOUT LIMITATION, NONINFRINGEMENT OF THIRD PARTY RIGHTS,
+        MERCHANTABILITY, SATISFACTORY QUALITY, INTEGRATION, OR FITNESS FOR A PARTICULAR PURPOSE. YOU ASSUME RESPONSIBILITY
+        FOR SELECTING THE SOFTWARE TO ACHIEVE YOUR INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS
+        OBTAINED FROM THE SOFTWARE. WITHOUT LIMITING THE FOREGOING PROVISIONS, Broadleaf MAKES NO WARRANTY THAT THE
+        SOFTWARE WILL BE ERROR-FREE OR FREE FROM INTERRUPTIONS OR OTHER FAILURES OR THAT THE SOFTWARE WILL MEET YOUR
+        REQUIREMENTS.
+
+10. Limitation of Liability. UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, WHETHER IN TORT, CONTRACT, OR OTHERWISE,
+    SHALL Broadleaf OR ITS AUTHORIZED PARTNERS OR SUPPLIERS BE LIABLE TO YOU OR TO ANY OTHER PERSON FOR LOSS OF PROFITS,
+    LOSS OF GOODWILL, LOSS OF DATA, OR ANY INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OR DAMAGES FOR GROSS
+    NEGLIGENCE OF ANY Form INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF GOODWILL, WORK STOPPAGE, APPLIANCE FAILURE
+    OR MALFUNCTION, OR FOR ANY OTHER DAMAGE OR LOSS. IN NO EVENT SHALL Broadleaf OR ITS AUTHORIZED PARTNERS OR SUPPLIERS
+    BE LIABLE FOR ANY DAMAGE IN EXCESS OF THE PRICE PAID FOR THE SOFTWARE, IF ANY, EVEN IF Broadleaf OR ITS AUTHORIZED
+    PARTNERS OR SUPPLIERS SHALL HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. This limitation shall not apply
+    to liability for death or personal injury to the extent that applicable law prohibits such limitation. Furthermore,
+    some jurisdictions do not allow the exclusion or limitation of incidental or consequential damages, so this
+    limitation and exclusion may not apply to you. Nothing contained in this Agreement limits Broadleaf's liability to
+    you for Broadleaf's negligence or for the tort of fraud. Broadleaf is acting on behalf of its suppliers and Authorized
+    Partners for the purpose of disclaiming, excluding and/or limiting obligations, warranties and liability as provided
+    in this Agreement, but in no other respects and for no other purpose. The foregoing provisions shall be enforceable
+    to the maximum extent permitted by applicable law.
+
+11. Notice to United States Government End Users. The Software and accompanying Documentation are deemed to be
+    "commercial computer software" and "commercial computer software documentation," respectively, pursuant to
+    DFAR Section 227.7202 and FAR Section 12.212, as applicable. Any use, modification, reproduction, release, performance,
+    display or disclosure of the Software and accompanying Documentation by the United States Government shall be
+    governed solely by the terms of this Agreement and shall be prohibited except to the extent expressly permitted
+    by the terms of this Agreement.
+
+12. Export Controls. You acknowledge that the Software may be subject to the export control laws and regulations of the
+    United States of America ("US"), and any amendments thereof. You shall not export or re-export the Software,
+    directly or indirectly, to (i) any countries that are subject to US export restrictions; (ii) any end user known,
+    or having reason to be known, will utilize them in the design, development or production of nuclear, chemical or
+    biological weapons; or (iii) any end user who has been prohibited from participating in the US export transactions
+    by any federal agency of the US government. You further acknowledge that Software may include technical data subject
+    to export and re-export restrictions imposed by US law.
+
+13. High Risk Activities. The Software is not fault-tolerant and is not designed or intended for use in hazardous
+    environments requiring fail-safe performance, including without limitation, in the operation of nuclear facilities,
+    aircraft navigation or communication systems, air traffic control, weapons systems, direct life-support machines,
+    or any other application in which the failure of the Software could lead directly to death, personal injury, or
+    severe physical or property damage (collectively, "High Risk Activities"). Broadleaf EXPRESSLY DISCLAIMS ANY EXPRESS
+    OR IMPLIED WARRANTY OF FITNESS FOR HIGH RISK ACTIVITIES.
+
+14. Governing Law. This Agreement will be governed by and construed in accordance with the substantive laws in force in
+    the State of New York. This Agreement will not be governed by the conflict of laws rules of any jurisdiction or the
+    United Nations Convention on Contracts for the International Sale of Goods, the application of which is expressly
+    excluded. The United States District Court for the Southern District of New York, and the Courts of New York County,
+    New York shall each have non-exclusive jurisdiction over all disputes relating to this Agreement.
+
+15. Privacy. By entering into this Agreement, you agree that the Broadleaf privacy policy, as it exists at any relevant
+    time, shall be applicable to you. The most current privacy policy can be found on the Broadleaf web site at
+    www.broadleafcommerce.com/privacy. By entering into this Agreement, you agree to the transfer of your personal
+    information to Broadleaf's offices in the United States and other countries outside of your own.
+
+16. Collection of Certain System Information. Broadleaf may employ certain applications and tools through its website
+    and within the Broadleaf Software, to retrieve information about your Appliance to assist us in the provision and
+    support of Software that you have chosen to subscribe to or use. This information is essential to enable us to
+    provide you with quality service and monitoring; and for these reasons, there is no opt-out available for this
+    information collection.
+
+17. Audit. Broadleaf may, at its expense and upon reasonable notice to you during standard business hours, audit you
+    with respect to your compliance with the terms of this Agreement. You understand and acknowledge that Broadleaf
+    utilizes a number of methods to verify and support software Use by its customers. These methods may include technological
+    features of the Broadleaf software that prevent unauthorized use and provide software deployment verification, which
+    will be automatically reported to Broadleaf. In the event that Broadleaf requests a report for confirmation, you
+    will provide a system generated report verifying your software deployment, such request to occur no more than
+    four (4) times per year. In the event that Broadleaf requires a physical audit, such audit shall be preceded by
+    thirty (30) days written notice and shall occur no more than once per year unless otherwise required for compliance
+    with applicable law. Following an audit that shows Broadleaf is due additional license fees for Use of the Software,
+    you agree to pay such fees and reimburse Broadleaf for the cost of such audit upon request.
+
+18. Publicity. You shall not use the name of Broadleaf in publicity releases or similar activity without the express
+    written consent of Broadleaf. Broadleaf may use your name in its client list and your logo on Broadleaf's website.
+
+19. Miscellaneous. This Agreement is dated and will be archived when it is superseded by a newer version. Broadleaf
+    shall not change any EULA retroactively with regard to any Software or support services listed on a Quote issued
+    prior to the date of the applicable EULA. This Agreement sets forth all rights for the user of the Software and is
+    the entire Agreement between the parties. This Agreement supersedes any other communications, representations or
+    advertising relating to the Software and Documentation, except for a duly executed written agreement between Broadleaf
+    and you for the Software. This Agreement may not be modified except by a written addendum issued by a duly authorized
+    representative of Broadleaf. No provision hereof shall be deemed waived unless such waiver shall be in writing and
+    signed by Broadleaf. If any provision of this Agreement is held invalid, the remainder of this Agreement shall
+    continue in full force and effect.
+
+20. Broadleaf Customer Contact. If you have any questions concerning these terms and conditions, or if you would like
+    to contact Broadleaf for any other reason, please write:
+    Broadleaf, Attention: Customer Service, 15303 Dallas Parkway, Suite 300, Addison, TX 75001 USA. Alternatively,
+    you may contact your local Broadle af entity at the number listed at www.broadleafcommerce.com.

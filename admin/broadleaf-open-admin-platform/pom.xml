@@ -88,15 +88,6 @@
         </plugins>
         <resources>
             <resource>
-                <directory>../../licenses/blc_dual</directory>
-                <filtering>false</filtering>
-                <targetPath>META-INF</targetPath>
-                <includes>
-                    <include>commercial_license-1.1.txt</include>
-                    <include>fair_use_license-1.0.txt</include>
-                </includes>
-            </resource>
-            <resource>
                 <directory>src/main/resources/open_admin_style</directory>
                 <filtering>false</filtering>
                 <targetPath>open_admin_style</targetPath>
