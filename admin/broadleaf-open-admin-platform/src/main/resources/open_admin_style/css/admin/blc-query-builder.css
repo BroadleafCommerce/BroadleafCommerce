@@ -411,6 +411,10 @@
     line-height: 42px;
 }
 
+.query-builder-filters-container .query-builder-rules .query-builder-selectize-input.selectize-control {
+    height: 34px;
+}
+
 .query-builder-filters-container .selectize-input, .query-builder-filters-container .selectize-control.multi .selectize-input.has-items,
 .query-builder-rules-container .selectize-input, .query-builder-rules-container .selectize-control.multi .selectize-input.has-items {
     padding: 0;

@@ -405,6 +405,12 @@
             //initialize selectize plugin
             var opRef = field.operators;
 
+            function updateFilterHeightBasedOnSelectizeHeight($selectize) {
+                var $selectizeControl = $selectize.$input.siblings('.selectize-control');
+                var inputHeight = $selectizeControl.find('.selectize-input').outerHeight();
+                $selectize.$input.closest('.rule-value-container').height(inputHeight);
+            }
+
             if (opRef && typeof opRef === 'string' && "blcFilterOperators_Selectize" === opRef) {
                 var sectionKey = field.selectizeSectionKey;
 
@@ -467,6 +473,12 @@
                                 });
                                 callback(data);
                             });
+                        },
+                        onItemAdd: function(value, $item) {
+                            updateFilterHeightBasedOnSelectizeHeight(this);
+                        },
+                        onItemRemove: function(value) {
+                            updateFilterHeightBasedOnSelectizeHeight(this);
                         }
                     };
                 field.valueSetter = function(rule, value) {
