@@ -384,6 +384,7 @@
     margin: 0;
 }
 .query-builder-filters-container .read-only {
+    max-width: 620px;
     vertical-align: middle;
 }
 

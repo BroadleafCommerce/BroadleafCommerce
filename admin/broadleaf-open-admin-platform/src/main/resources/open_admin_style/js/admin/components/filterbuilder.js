@@ -944,7 +944,7 @@ $(document).ready(function() {
 
         el.find('.read-only').remove();
         el.find('.filter-text').remove();
-        var readonlySpan = $("<span>", {
+        var readonlySpan = $("<div>", {
             html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
             'class': "read-only"
         });
