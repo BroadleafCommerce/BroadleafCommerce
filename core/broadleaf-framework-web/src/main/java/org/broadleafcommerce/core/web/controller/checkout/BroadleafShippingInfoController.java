@@ -289,17 +289,19 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
     }
 
     public void removeUnusedPhones(ShippingInfoForm form) {
-        if ((form.getAddress().getPhonePrimary() != null) &&
-                    (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
-            form.getAddress().setPhonePrimary(null);
+        Address address = form.getAddress();
+        Phone primaryPhone = address.getPhonePrimary();
+        Phone secondaryPhone = address.getPhoneSecondary();
+        Phone faxPhone = address.getPhoneFax();
+
+        if ((primaryPhone != null) && (StringUtils.isEmpty(primaryPhone.getPhoneNumber()))) {
+            address.setPhonePrimary(null);
         }
-        if ((form.getAddress().getPhoneSecondary() != null) &&
-                    (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
-            form.getAddress().setPhoneSecondary(null);
+        if ((secondaryPhone != null) && (StringUtils.isEmpty(secondaryPhone.getPhoneNumber()))) {
+            address.setPhoneSecondary(null);
         }
-        if ((form.getAddress().getPhoneFax() != null) &&
-                    (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
-            form.getAddress().setPhoneFax(null);
+        if ((faxPhone != null) && (StringUtils.isEmpty(faxPhone.getPhoneNumber()))) {
+            address.setPhoneFax(null);
         }
     }
 
