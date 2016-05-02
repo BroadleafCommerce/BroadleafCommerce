@@ -298,9 +298,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Long findNextCustomerId() {
-        return idGenerationService.findNextId("org.broadleafcommerce.profile.core.domain.Customer");
+        return idGenerationService.findNextId(Customer.class.getCanonicalName());
     }
-    
+
     @Override
     public Customer createNewCustomer() {
         return createCustomerFromId(null);

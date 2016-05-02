@@ -24,7 +24,6 @@
 *
 */
 
-
 /*-------------  START SEARCH,FILTER,SORT ----------------- */
 .listgrid-search input {
     -webkit-appearance: none; /* for safari */
@@ -197,11 +196,60 @@ div.alert-box.list-grid-alert.save-alert a.close {
 
 /*-------------  END TOOLBAR ------------------------------ */
 /*-------------  START TABLES ----------------------------- */
+
 .table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {
     padding: 6px 15px;
 }
 
-/* added to stop listgrid flicker */
+.table {
+    margin-bottom: 0 !important;
+    border-collapse: separate;
+}
+
+.table.list-grid-table, .table>tbody>tr.selected>td:first-child, .table>tbody>tr.selected>td:last-child {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.listgrid-body-wrapper .table tbody>tr:first-child>td {
+    border-top: none;
+    height: 40px;
+}
+
+.listgrid-body-wrapper tbody tr td a:not(.workflow-icon),  tbody tr td a:not(.workflow-icon) {
+    color: #809831;
+    text-decoration: underline;
+}
+
+.listgrid-body-wrapper tbody tr.dirty td a:not(.workflow-icon), tbody tr.dirty td a:not(.workflow-icon) {
+    color: #efbc62;
+    text-decoration: underline;
+}
+
+/** START TABLE HEADER */
+
+.table thead {
+    background-color: #E1E0DD;
+    border-bottom: 1px solid #E4E2DF;
+    color: #2c2c2c;
+    font-weight: 600;
+}
+
+.table thead > tr > th {
+    padding-right: 0;
+    border-bottom: none;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/*  END OF TABLE HEADER */
+/*  START TABLE ROWS    */
+
+tr {
+    position: relative;
+}
+
 .table-striped>tbody>tr:nth-of-type(odd) {
     background-color: #F9F7F3;
     border-left: 1px solid #E4E3E2;
@@ -228,34 +276,12 @@ div.alert-box.list-grid-alert.save-alert a.close {
     background-color: #F7EFDC;
 }
 
-.table {
-    margin-bottom: 0 !important;
-    font-size: .85em;
-    border-collapse: separate;
-    border: none;
-    max-width: 100%;
-    background-color: transparent;
+.list-grid-table tbody tr.selected {
+    background-color: #F7EFDC !important;
 }
 
-.table thead {
-    background-color: #E1E0DD;
-    border-bottom: 1px solid #E4E2DF;
-    color: #2c2c2c;
-    font-weight: 600;
-}
-
-tr {
-    position: relative;
-    display: table-row;
-    vertical-align: inherit;
-    border-color: inherit;
-}
-
-.table thead > tr > th {
-    padding-right: 0;
-    border-bottom: none;
-    white-space: nowrap;
-    overflow: hidden;
+.list-grid-table tbody tr.progress {
+    background-color: #E3F7D8 !important;
 }
 
 .table tbody > tr > td {
@@ -264,7 +290,6 @@ tr {
     text-overflow: ellipsis;
     white-space: nowrap;
     vertical-align: middle;
-    padding: 5px 5px 5px 15px;
     position: relative;
     height: 40px;
 }
@@ -273,53 +298,15 @@ tr {
     line-height: 28px;
 }
 
+.list-grid-table tbody tr.clickable {
+    cursor: pointer;
+}
+
 .table tbody > tr > td > a.list-grid-primary-field {
     display : inline;
 }
-
-.list-grid-table {
-    padding-right: 15px;
-}
-
-.listgrid-table-footer {
-    padding: 2px 10px;
-    /* display: inline-block; */
-    /*border-top: 1px solid #E4E2DF;*/
-    font-size: 12px;
-}
-
-.listgrid-container .listgrid-table-spinner-container {
-    margin: auto;
-    text-align: center;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    display: none;
-}
-
-.listgrid-table-spinner-container {
-    margin: auto;
-    text-align: center;
-    position: relative;
-    transform: translateY(-50%);
-    background-color: #E0E0E0;
-}
-
-.listgrid-body-wrapper .table tbody>tr:first-child>td {
-    border-top: none;
-    height: 40px;
-}
-
-.listgrid-body-wrapper tbody tr td a:not(.workflow-icon),  tbody tr td a:not(.workflow-icon) {
-    color: #809831;
-    text-decoration: underline;
-}
-
-.listgrid-body-wrapper tbody tr.dirty td a:not(.workflow-icon), tbody tr.dirty td a:not(.workflow-icon) {
-    color: #efbc62;
-    text-decoration: underline;
-}
-
+/**   END TABLE ROWS     **/
+/**   START TABLE HOLDER **/
 .table-holder.warning a.entity {
     text-decoration: underline;
     color: #EEBB69;
@@ -346,5 +333,5 @@ tr {
 .table-holder.danger .listgrid-row-actions a:hover {
     color: #D20A33;
 }
-
+/* END TABLE HOLDER */
 /*-------------  END TABLES ------------------------------- */

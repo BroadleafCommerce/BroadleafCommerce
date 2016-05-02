@@ -262,8 +262,6 @@ tr {
 
 .app-content .side-nav ul li a.active.logo { background-position-y: -90px }
 
-.content .button { line-height:14px; }
-
 .card {
     background-color: white;
     border: 1px solid #e0e0e0;
