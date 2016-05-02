@@ -190,9 +190,6 @@
                                 			<goal>
                                 				update-file-header
                                 			</goal>
-                                			<goal>
-                                				update-project-license
-                                			</goal>
                                 		</goals>
                                 	</pluginExecutionFilter>
                                 	<action>
