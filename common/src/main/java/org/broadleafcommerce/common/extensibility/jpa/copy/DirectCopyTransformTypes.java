@@ -43,5 +43,7 @@ public class DirectCopyTransformTypes {
     public static final String MULTITENANT_ADMINROLE = "multiTenantAdminRole";
     //Class should receive fields describing site context information for the user
     public static final String MULTITENANT_ADMINUSER = "multiTenantAdminUser";
+    //Class should receive fields describing ARCHIVE STATUS
+    public static final String ARCHIVE_ONLY = "archiveOnly";
 
 }

@@ -518,16 +518,34 @@ $(document).ready(function() {
         
         var submitData = {};
         submitData[$firstInput.data('name')] =  $firstInput.val();
+        // replace search value if it exist
+        for (key in submitData) {
+            BLCAdmin.history.replaceUrlParameter(key, submitData[key]);
+        }
         
+        // Moved this outside of the ajax call so that it would remove this
+        // value from the url BEFORE making the ajax call.
+        BLCAdmin.history.replaceUrlParameter('startIndex');
+        
+        var urlParams = "";
+        var baseUrl = window.location.href;
+        var indexOfQ = baseUrl.indexOf('?');
+        if (indexOfQ >= 0) {
+            urlParams = baseUrl.substring(indexOfQ + 1);
+        }
+
         BLC.ajax({
-            url: $(this).closest('form').attr('action'),
+            url: $(this).closest('form').attr('action') +'?'+ urlParams,
             type: "GET",
             data: submitData
         }, function(data) {
-            BLCAdmin.history.replaceUrlParameter('startIndex');
             for (key in submitData) {
                 BLCAdmin.history.replaceUrlParameter(key, submitData[key]);
             }
+            
+            // Added the scroll to Index so that it does not save the previous
+            // current index from before starting the search.
+            BLCAdmin.listGrid.paginate.scrollToIndex($('body').find('tbody'), 0);
             BLCAdmin.listGrid.replaceRelatedListGrid($(data), null, { isRefresh : false});
             $firstInput.trigger('input');
         });

@@ -222,6 +222,8 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
         }
         if (!nextLevel.isEmpty()) {
             readFullCategoryHierarchy(nextLevel, builtCategories);
+            // Remove duplicates to prevent from overriding entries that have been built out.
+            nextLevel.keySet().removeAll(categoryHierarchy.keySet());
         }
         categoryHierarchy.putAll(nextLevel);
     }

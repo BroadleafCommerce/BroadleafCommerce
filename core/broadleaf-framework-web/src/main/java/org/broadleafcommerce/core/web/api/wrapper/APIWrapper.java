@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import java.io.Serializable;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -30,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
  * interface.
  * @param <T>
  */
-public interface APIWrapper<T> {
+public interface APIWrapper<T> extends Serializable {
 
     public void wrapDetails(T model, HttpServletRequest request);
 

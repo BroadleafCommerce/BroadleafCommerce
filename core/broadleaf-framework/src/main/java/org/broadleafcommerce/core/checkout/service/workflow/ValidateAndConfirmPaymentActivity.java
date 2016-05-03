@@ -63,7 +63,7 @@ import javax.annotation.Resource;
  * {@link PaymentTransactionType.AUTHORIZE_AND_CAPTURE} transactions. This will also confirm any {@link PaymentTransactionType.UNCONFIRMED} transactions
  * that exist on am {@link OrderPayment}.</p>
  * 
- * <p>If there is an exception (either in this activity or later downstream) the confirmed payments are rolled back via {@link ConfirmPaymentsRollbackHandler}
+ * <p>If there is an exception (either in this activity or later downstream) the confirmed payments are rolled back via {@link GenericConfirmPaymentsRollbackHandler}
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
@@ -73,12 +73,14 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     
     /**
      * <p>
-     * Used by the {@link ConfirmPaymentsRollbackHandler} to roll back transactions that this activity confirms.
+     * Used by the {@link GenericConfirmPaymentsRollbackHandler} to roll back transactions that this activity confirms.
      * 
      * <p>
      * This could also contain failed transactions that still need to be rolled back
      */
     public static final String ROLLBACK_TRANSACTIONS = "confirmedTransactions";
+    
+    public static final String FAILED_RESPONSES = "failedResponses";
     
     @Autowired(required = false)
     @Qualifier("blPaymentGatewayConfigurationServiceProvider")
@@ -296,6 +298,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
          */
         List<OrderPayment> invalidatedPayments = new ArrayList<OrderPayment>();
         List<PaymentTransaction> failedTransactionsToRollBack = new ArrayList<PaymentTransaction>();
+        List<PaymentResponseDTO> failedResponses = new ArrayList<PaymentResponseDTO>();
         for (ResponseTransactionPair responseTransactionPair : failedTransactions) {
             PaymentTransaction tx = orderPaymentService.readTransactionById(responseTransactionPair.getTransactionId());
             if (shouldRollbackFailedTransaction(responseTransactionPair)) {
@@ -305,6 +308,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                 OrderPayment payment = orderPaymentService.save(tx.getOrderPayment());
                 invalidatedPayments.add(payment);
             }
+            failedResponses.add(responseTransactionPair.getResponseDTO());
         }
         
         /**
@@ -315,6 +319,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
          */
         Map<String, Object> rollbackState = new HashMap<String, Object>(); 
         rollbackState.put(ROLLBACK_TRANSACTIONS, failedTransactionsToRollBack);
+        context.getSeedData().getUserDefinedFields().put(FAILED_RESPONSES, failedResponses);
         ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), rollbackState);
         
         if (LOG.isErrorEnabled()) {
@@ -326,7 +331,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                 LOG.trace(responseTransactionPair.getResponseDTO().getRawResponse());
             }
         }
-
+        
         throw new CheckoutException(msg, context.getSeedData());
     }
     

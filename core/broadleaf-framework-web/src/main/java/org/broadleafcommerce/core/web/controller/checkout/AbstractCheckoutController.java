@@ -33,20 +33,32 @@ import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
-import org.broadleafcommerce.core.web.checkout.validator.*;
+import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
+import org.broadleafcommerce.core.web.checkout.validator.GiftCardInfoFormValidator;
+import org.broadleafcommerce.core.web.checkout.validator.MultishipAddAddressFormValidator;
+import org.broadleafcommerce.core.web.checkout.validator.OrderInfoFormValidator;
+import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidator;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.service.*;
+import org.broadleafcommerce.profile.core.service.AddressService;
+import org.broadleafcommerce.profile.core.service.CountryService;
+import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
+import org.broadleafcommerce.profile.core.service.CustomerAddressService;
+import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
+import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.broadleafcommerce.profile.core.service.PhoneService;
+import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestDataBinder;
 
+import java.beans.PropertyEditorSupport;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.beans.PropertyEditorSupport;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its
@@ -91,6 +103,9 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
     
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
+
+    @Resource(name = "blCustomerPaymentService")
+    protected CustomerPaymentService customerPaymentService;
 
     @Resource(name = "blStateService")
     protected StateService stateService;

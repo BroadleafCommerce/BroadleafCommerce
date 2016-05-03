@@ -143,6 +143,18 @@ public class BroadleafRequestContext {
     }
 
     /**
+     * Provide easy access to Request Attributes without introducing a tight dependency on the HttpRequest.
+     * @return
+     */
+    public Object getRequestAttribute(String name) {
+        Object param = null;
+        if (getRequest() != null) {
+            param = getRequest().getAttribute(name);
+        }
+        return param;
+    }
+
+    /**
      * Sets the current request on the context. Note that this also invokes {@link #setWebRequest(WebRequest)} by wrapping
      * <b>request</b> in a {@link ServletWebRequest}.
      * 

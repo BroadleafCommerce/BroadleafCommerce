@@ -42,17 +42,17 @@ import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
  *
  * @author Elbert Bautista (elbertbautista)
  */
-public abstract class AbstractExternalPaymentGatewayCall<T,R> implements ServiceStatusDetectable<T> {
+public abstract class AbstractExternalPaymentGatewayCall<T, R> implements ServiceStatusDetectable<T>, FailureCountExposable {
 
     protected Integer failureCount = 0;
     protected Boolean isUp = true;
 
-    protected synchronized void clearStatus() {
+    public synchronized void clearStatus() {
         isUp = true;
         failureCount = 0;
     }
 
-    protected synchronized void incrementFailure() {
+    public synchronized void incrementFailure() {
         if (failureCount >= getFailureReportingThreshold()) {
             isUp = false;
         } else {

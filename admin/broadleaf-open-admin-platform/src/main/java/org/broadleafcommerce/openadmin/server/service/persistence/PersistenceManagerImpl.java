@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.util.ValidationUtil;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -131,27 +132,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     @Override
     public Class<?>[] getUpDownInheritance(Class<?> testClass) {
-        Class<?>[] pEntities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(testClass);
-        if (ArrayUtils.isEmpty(pEntities)) {
-            return pEntities;
-        }
-        Class<?> topConcreteClass = pEntities[pEntities.length - 1];
-        List<Class<?>> temp = new ArrayList<Class<?>>(pEntities.length);
-        temp.addAll(Arrays.asList(pEntities));
-        Collections.reverse(temp);
-        boolean eof = false;
-        while (!eof) {
-            Class<?> superClass = topConcreteClass.getSuperclass();
-            PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(superClass.getName());
-            if (persistentClass == null) {
-                eof = true;
-            } else {
-                temp.add(0, superClass);
-                topConcreteClass = superClass;
-            }
-        }
-
-        return temp.toArray(new Class<?>[temp.size()]);
+        return dynamicEntityDao.getUpDownInheritance(testClass);
     }
 
     @Override
@@ -438,7 +419,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
         if (response.isValidationFailure()) {
             PersistenceResponse validationResponse = executeValidationProcessors(persistencePackage, new PersistenceResponse().withEntity(response));
-            throw new ValidationException(validationResponse.getEntity(), "The entity has failed validation");
+            Entity entity = validationResponse.getEntity();
+            String message = ValidationUtil.buildErrorMessage(entity.getPropertyValidationErrors(), entity.getGlobalValidationErrors());
+            throw new ValidationException(entity, message);
         }
 
         return executePostAddHandlers(persistencePackage, new PersistenceResponse().withEntity(response));
@@ -577,7 +560,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
         if (response.isValidationFailure()) {
             PersistenceResponse validationResponse = executeValidationProcessors(persistencePackage, new PersistenceResponse().withEntity(response));
-            throw new ValidationException(validationResponse.getEntity(), "The entity has failed validation");
+            Entity entity = validationResponse.getEntity();
+            String message = ValidationUtil.buildErrorMessage(entity.getPropertyValidationErrors(), entity.getGlobalValidationErrors());
+            throw new ValidationException(entity, message);
         }
 
         return executePostUpdateHandlers(persistencePackage, new PersistenceResponse().withEntity(response));

@@ -20,6 +20,11 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
+import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.springframework.context.ApplicationContext;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +36,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
-import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.springframework.context.ApplicationContext;
 
 /**
  * This is a JAXB wrapper around FulfillmentGroupItem.

@@ -212,13 +212,15 @@ public class ListGridRecord {
 
             return new ListGridRecordIcon()
                 .withCssClass("icon-exclamation-sign")
-                    .withMessage(msgToUser);
+                .withMessage(msgToUser)
+                .withHasDetails(true);
         }
 
         if (getIsDirty()) {
             return new ListGridRecordIcon()
                 .withCssClass("icon-pencil")
-                .withMessage(BLCMessageUtils.getMessage("listgrid.record.edited"));
+                .withMessage(BLCMessageUtils.getMessage("listgrid.record.edited"))
+                .withHasDetails(false);
         }
         
         return null;

@@ -351,16 +351,16 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity, List<SectionCrumb> sectionCrumb)
+    public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity, Integer startIndex, Integer maxIndex, List<SectionCrumb> sectionCrumb)
             throws ServiceException {
         Map<String, DynamicResultSet> map = new HashMap<String, DynamicResultSet>();
 
         PersistenceResponse response = getClassMetadata(ppr);
         ClassMetadata cmd = response.getDynamicResultSet().getClassMetaData();
         for (Property p : cmd.getProperties()) {
-            if (ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), containingEntity.getType()[0]) 
+            if (ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), containingEntity.getType()[0])
                     && p.getMetadata() instanceof CollectionMetadata) {
-                PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
+                PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, startIndex, maxIndex, sectionCrumb);
                 map.put(p.getName(), response2.getDynamicResultSet());
             }
         }
@@ -369,17 +369,18 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
+    public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity, List<SectionCrumb> sectionCrumb)
+            throws ServiceException {
+
+        return getRecordsForAllSubCollections(ppr, containingEntity, null, null, sectionCrumb);
+    }
+
+    @Override
     public PersistenceResponse addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
             Entity parentEntity, List<SectionCrumb> sectionCrumbs)
             throws ServiceException, ClassNotFoundException {
         // Assemble the properties from the entity form
-        List<Property> properties = new ArrayList<Property>();
-        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
-            Property p = new Property();
-            p.setName(entry.getKey());
-            p.setValue(entry.getValue().getValue());
-            properties.add(p);
-        }
+        List<Property> properties = getPropertiesFromEntityForm(entityForm);
 
         FieldMetadata md = field.getMetadata();
 
@@ -848,7 +849,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         
         return null;
     }
-    
+
     protected int getDefaultMaxResults() {
         return BLCSystemProperty.resolveIntSystemProperty("admin.default.max.results", 50);
     }

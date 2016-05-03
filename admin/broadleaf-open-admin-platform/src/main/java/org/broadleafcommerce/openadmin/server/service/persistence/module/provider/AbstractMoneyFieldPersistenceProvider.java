@@ -24,7 +24,6 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
-
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Currency;
@@ -47,8 +46,13 @@ public abstract class AbstractMoneyFieldPersistenceProvider extends FieldPersist
             return FieldProviderResponse.NOT_HANDLED;
         }
         
-        property.setValue(formatValue((BigDecimal)extractValueRequest.getRequestedValue(), extractValueRequest, property));
-        property.setDisplayValue(formatDisplayValue((BigDecimal)extractValueRequest.getRequestedValue(), extractValueRequest, property));
+        if (BigDecimal.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
+            property.setValue(formatValue((BigDecimal)extractValueRequest.getRequestedValue(), extractValueRequest, property));
+            property.setDisplayValue(formatDisplayValue((BigDecimal) extractValueRequest.getRequestedValue(), extractValueRequest, property));
+        } else {
+            property.setValue(extractValueRequest.getRequestedValue().toString());
+            property.setDisplayValue(extractValueRequest.getDisplayVal());
+        }
         
         return FieldProviderResponse.HANDLED_BREAK;
     }

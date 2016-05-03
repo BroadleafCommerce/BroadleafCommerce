@@ -53,6 +53,7 @@ import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationTyp
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
+import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -142,6 +143,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
         DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey, crumbs);
+        
+        if (CollectionUtils.isEmpty(listGrid.getHeaderFields())) {
+            throw new IllegalStateException("At least 1 field must be set to prominent to display in a main grid");
+        }
+        
         List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
         addAddActionIfAllowed(sectionClassName, cmd, mainActions);
         extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
@@ -279,7 +285,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "addEntity");
+        model.addAttribute("modalHeaderType", ModalHeaderType.ADD_ENTITY.getType());
         setModelAttributes(model, sectionKey);
         return "modules/modalContainer";
     }
@@ -319,7 +325,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
             model.addAttribute("viewType", "modal/entityAdd");
             model.addAttribute("currentUrl", request.getRequestURL().toString());
-            model.addAttribute("modalHeaderType", "addEntity");
+            model.addAttribute("modalHeaderType", ModalHeaderType.ADD_ENTITY.getType());
             model.addAttribute("hideTopLevelErrors", hideTopLevelErrors);
             setModelAttributes(model, sectionKey);
             return "modules/modalContainer";
@@ -365,17 +371,17 @@ public class AdminBasicEntityController extends AdminAbstractController {
         setModelAttributes(model, sectionKey);
         
         if (sandBoxHelper.isSandBoxable(entityForm.getEntityType())) {
-            Tab auditTab = new Tab();
-            auditTab.setTitle("Audit");
-            auditTab.setOrder(Integer.MAX_VALUE);
-            auditTab.setTabClass("audit-tab");
-            entityForm.getTabs().add(auditTab);
+            Tab changeHistoryTab = new Tab();
+            changeHistoryTab.setTitle("Change History");
+            changeHistoryTab.setOrder(Integer.MAX_VALUE);
+            changeHistoryTab.setTabClass("change-history-tab");
+            entityForm.getTabs().add(changeHistoryTab);
         }
 
         if (isAjaxRequest(request)) {
             entityForm.setReadOnly();
             model.addAttribute("viewType", "modal/entityView");
-            model.addAttribute("modalHeaderType", "viewEntity");
+            model.addAttribute("modalHeaderType", ModalHeaderType.VIEW_ENTITY.getType());
             return "modules/modalContainer";
         } else {
             model.addAttribute("useAjaxUpdate", true);
@@ -536,7 +542,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             if (isAjaxRequest(request)) {
                 entityForm.setReadOnly();
                 model.addAttribute("viewType", "modal/entityView");
-                model.addAttribute("modalHeaderType", "viewEntity");
+                model.addAttribute("modalHeaderType", ModalHeaderType.VIEW_ENTITY.getType());
                 return "modules/modalContainer";
             } else {
                 model.addAttribute("useAjaxUpdate", true);
@@ -812,7 +818,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                         requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
                     }
                     model.addAttribute("currentUri", requestUri);
-                    model.addAttribute("modalHeaderType", "addEntity");
+                    model.addAttribute("modalHeaderType", ModalHeaderType.ADD_ENTITY.getType());
                     setModelAttributes(model, sectionKey);
                     return "modules/modalContainer";
                 } else {
@@ -961,9 +967,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
             listGrid.setPathOverride(request.getRequestURL().toString());
             listGrid.setFriendlyName(collectionMetadata.getPolymorphicEntities().getFriendlyName());
             if (entityForm == null) {
-                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false);
             } else {
-                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, entityForm);
+                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false, entityForm);
                 formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm);
             }
             
@@ -993,7 +999,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "addCollectionItem");
+        model.addAttribute("modalHeaderType", ModalHeaderType.ADD_COLLECTION_ITEM.getType());
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, sectionKey);
         return "modules/modalContainer";
@@ -1020,7 +1026,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="collectionItemId") String collectionItemId,
             @PathVariable(value="alternateId") String alternateId) throws Exception {
         return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, alternateId,
-                "updateCollectionItem");
+                ModalHeaderType.UPDATE_COLLECTION_ITEM.getType());
     }
 
     @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}", method = RequestMethod.GET)
@@ -1030,7 +1036,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
         return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, null,
-                "updateCollectionItem");
+                ModalHeaderType.UPDATE_COLLECTION_ITEM.getType());
     }
 
     /**
@@ -1053,12 +1059,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId,
             @PathVariable(value="alternateId") String alternateId) throws Exception {
-        String returnPath = showViewUpdateCollection(request, model, pathVars, id, collectionField, alternateId, collectionItemId,
-                "viewCollectionItem");
+        String returnPath = showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, alternateId,
+                ModalHeaderType.VIEW_COLLECTION_ITEM.getType());
         
         // Since this is a read-only view, actions don't make sense in this context
         EntityForm ef = (EntityForm) model.asMap().get("entityForm");
         ef.removeAllActions();
+        ef.setReadOnly();
         
         return returnPath;
     }
@@ -1070,7 +1077,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
         String returnPath = showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, null,
-                "viewCollectionItem");
+                ModalHeaderType.VIEW_COLLECTION_ITEM.getType());
 
         // Since this is a read-only view, actions don't make sense in this context
         EntityForm ef = (EntityForm) model.asMap().get("entityForm");
@@ -1165,12 +1172,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
             }
             
             boolean populateTypeAndId = true;
+            boolean isViewCollectionItem = ModalHeaderType.VIEW_COLLECTION_ITEM.getType().equals(modalHeaderType);
             if (entityForm == null) {
-                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, isViewCollectionItem);
             } else {
                 entityForm.clearFieldsMap();
                 String entityType = entityForm.getEntityType();
-                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, entityForm);
+                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, isViewCollectionItem, entityForm);
                 entityForm.setEntityType(entityType);
                 populateTypeAndId = false;
             }
@@ -1326,7 +1334,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         if (result.hasErrors()) {
             return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, alternateId,
-                    "updateCollectionItem", entityForm, savedEntity); 
+                    ModalHeaderType.UPDATE_COLLECTION_ITEM.getType(), entityForm, savedEntity);
         }
         
         // Next, we must get the new list grid that represents this collection
@@ -1389,7 +1397,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             AdornedTargetList atl = ppr.getAdornedList();
             
             // Get an entity form for the entity
-            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false);
             Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty, 
                     collectionItemId, sectionCrumbs, alternateId).getDynamicResultSet().getRecords()[0];
             formService.populateEntityFormFields(entityForm, entity);

@@ -60,7 +60,10 @@
                 allowSlash : $targetField.data('allow-slash')
             });
 
-            $targetField.val(generatedPrefix + convertedUrl);
+            var finalUrl = generatedPrefix + convertedUrl
+            $targetField.val(finalUrl);
+            
+            $targetField.trigger('generated-url', [finalUrl]);
         },
         
         unregisterUrlGenerator : function unregisterUrlGenrator($generatedUrlContainer) {

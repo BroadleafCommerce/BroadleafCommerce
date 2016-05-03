@@ -20,6 +20,7 @@
 package org.broadleafcommerce.profile.web.controller.validator;
 
 import org.apache.commons.validator.GenericValidator;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
@@ -90,7 +91,7 @@ public class RegisterCustomerValidator implements Validator {
 
         Customer customerFromDb = customerService.readCustomerByUsername(form.getCustomer().getUsername());
 
-        if (customerFromDb != null) {
+        if (customerFromDb != null && customerFromDb.isRegistered()) {
             if (useEmailForUsername) {
                 errors.rejectValue("customer.emailAddress", "emailAddress.used", null, null);
             } else {
@@ -125,7 +126,7 @@ public class RegisterCustomerValidator implements Validator {
     }
 
     public String getValidatePasswordExpression() {
-        return validatePasswordExpression;
+        return BLCSystemProperty.resolveSystemProperty("validate.password", validatePasswordExpression);
     }
 
     public void setValidatePasswordExpression(String validatePasswordExpression) {

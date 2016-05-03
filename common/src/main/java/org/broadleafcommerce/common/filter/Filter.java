@@ -19,9 +19,14 @@
  */
 package org.broadleafcommerce.common.filter;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Configuration bean that represents a Hibernate filter.
+ *
  * @author Jeff Fischer
  */
 public class Filter {
@@ -61,5 +66,16 @@ public class Filter {
 
     public void setIndexColumnNames(List<String> indexColumnNames) {
         this.indexColumnNames = indexColumnNames;
+    }
+
+    public Filter copy() {
+        Filter copy = new Filter();
+        copy.setName(name);
+        copy.setCondition(condition);
+        copy.setEntityImplementationClassName(entityImplementationClassName);
+        if (!CollectionUtils.isEmpty(indexColumnNames)) {
+            copy.setIndexColumnNames(new ArrayList<String>(indexColumnNames));
+        }
+        return copy;
     }
 }

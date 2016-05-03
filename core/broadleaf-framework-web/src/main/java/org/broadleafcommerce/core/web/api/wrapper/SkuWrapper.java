@@ -20,6 +20,13 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
+import org.springframework.context.ApplicationContext;
+
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,10 +36,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
-import org.broadleafcommerce.core.catalog.domain.Sku;
-
 /**
  * This is a JAXB wrapper to wrap Sku.
  * <p/>
@@ -41,7 +44,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
  */
 @XmlRootElement(name = "sku")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
+public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku>, APIUnwrapper<Sku> {
 
     @XmlElement
     protected Long id;
@@ -101,6 +104,28 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
             dimension = (DimensionWrapper) context.getBean(DimensionWrapper.class.getName());
             dimension.wrapDetails(model.getDimension(), request);
         }
+    }
+
+    /**
+     * restful method to convert the wrapper in a domain object.
+     * None of its basic type or object fields are assumed. Of those child object present, 
+     * no database presence is assumed. No "calculated" (i.e. active) fields are processed.
+     */
+    @Override
+    public Sku unwrap(HttpServletRequest request, ApplicationContext context) {
+        CatalogService catalogService = (CatalogService) context.getBean("blCatalogService");
+        Sku sku = catalogService.createSku();
+
+        sku.setId(this.id);
+        sku.setName(this.name);
+        sku.setActiveEndDate(this.activeEndDate);
+        sku.setActiveStartDate(this.activeStartDate);
+        sku.setInventoryType(InventoryType.getInstance(this.inventoryType));
+        sku.setRetailPrice(this.retailPrice);
+        sku.setSalePrice(this.salePrice);
+        sku.setDimension(this.getDimension().unwrap(request, context));
+        sku.setWeight(this.getWeight().unwrap(request, context));
+        return sku;
     }
 
     @Override

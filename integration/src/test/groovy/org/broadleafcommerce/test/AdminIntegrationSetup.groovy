@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.test
 
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.ContextHierarchy
 import org.springframework.test.context.transaction.TransactionConfiguration
@@ -48,7 +47,6 @@ import spock.lang.Specification
             "classpath:/bl-cms-contentCreator-applicationContext.xml"],
     loader = BroadleafGenericGroovyXmlWebContextLoader.class)
 ])
-@DirtiesContext
 @WebAppConfiguration
 class AdminIntegrationSetup extends Specification {
     /*

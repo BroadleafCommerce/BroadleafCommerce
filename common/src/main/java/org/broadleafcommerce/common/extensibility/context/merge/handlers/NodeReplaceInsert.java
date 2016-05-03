@@ -48,6 +48,7 @@ public class NodeReplaceInsert extends BaseHandler {
 
     private static final Comparator<Node> NODE_COMPARATOR = new Comparator<Node>() {
 
+        @Override
         public int compare(Node arg0, Node arg1) {
             int response = -1;
             if (arg0.isSameNode(arg1)) {
@@ -71,6 +72,7 @@ public class NodeReplaceInsert extends BaseHandler {
         }
     };
 
+    @Override
     public Node[] merge(List<Node> nodeList1, List<Node> nodeList2, List<Node> exhaustedNodes) {
         if (CollectionUtils.isEmpty(nodeList1) || CollectionUtils.isEmpty(nodeList2)) {
             return null;
@@ -211,7 +213,7 @@ public class NodeReplaceInsert extends BaseHandler {
 
             Node targetNode = foundNode.getOwnerDocument().importNode(foundNode.cloneNode(false), false);
             Node newTestNode = foundNode.getOwnerDocument().importNode(testNode.cloneNode(true), true);
-            NodeUtil.mergeNodeLists(targetNode, foundNode.getChildNodes(), newTestNode.getChildNodes(), "name");
+            NodeUtil.mergeNodeLists(targetNode, newTestNode.getChildNodes(), foundNode.getChildNodes(), "name");
             foundNode.getParentNode().replaceChild(targetNode, foundNode);
             usedNodes.add(testNode);
             return true;

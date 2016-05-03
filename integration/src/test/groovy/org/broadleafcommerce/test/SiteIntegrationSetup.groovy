@@ -45,7 +45,6 @@ import spock.lang.Specification
         "classpath:/bl-cms-contentClient-applicationContext.xml"],
     loader = BroadleafGenericGroovyXmlWebContextLoader.class)
 ])
-@DirtiesContext
 @WebAppConfiguration
 class SiteIntegrationSetup extends Specification {
     /*

@@ -217,6 +217,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     public void execute() throws ServiceException {
                         int page = 0;
                         while ((page * pageSize) < numItemsToIndex) {
+                            LOG.info(String.format("Building page number %s", page));
                             buildIncrementalIndex(page, pageSize);
                             page++;
                         }
@@ -929,7 +930,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @param displayOrderKey
      * @return
      */
-    private Long convertDisplayOrderToLong(CatalogStructure cache, String displayOrderKey) {
+    protected Long convertDisplayOrderToLong(CatalogStructure cache, String displayOrderKey) {
         BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
         return displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
     }

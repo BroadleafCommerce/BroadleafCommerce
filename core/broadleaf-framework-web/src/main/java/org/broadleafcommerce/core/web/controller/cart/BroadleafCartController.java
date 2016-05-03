@@ -61,6 +61,7 @@ public class BroadleafCartController extends AbstractCartController {
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
     
+
     /**
      * Renders the cart page.
      * 

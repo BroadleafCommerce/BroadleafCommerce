@@ -33,6 +33,7 @@ public class AddressDTO<T> {
 
     protected String addressFirstName;
     protected String addressLastName;
+    protected String addressFullName;
     protected String addressCompanyName;
     protected String addressLine1;
     protected String addressLine2;
@@ -68,6 +69,11 @@ public class AddressDTO<T> {
 
     public AddressDTO<T> addressLastName(String addressLastName) {
         this.addressLastName = addressLastName;
+        return this;
+    }
+
+    public AddressDTO<T> addressFullName(String addressFullName) {
+        this.addressFullName = addressFullName;
         return this;
     }
 
@@ -126,6 +132,10 @@ public class AddressDTO<T> {
 
     public String getAddressLastName() {
         return addressLastName;
+    }
+
+    public String getAddressFullName() {
+        return addressFullName;
     }
 
     public String getAddressCompanyName() {

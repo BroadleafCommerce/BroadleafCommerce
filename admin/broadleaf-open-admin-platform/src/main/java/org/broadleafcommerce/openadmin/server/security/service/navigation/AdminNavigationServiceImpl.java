@@ -23,6 +23,9 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminNavigationDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
@@ -95,9 +98,19 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
 
     protected List<AdminSection> buildAuthorizedSectionsList(AdminUser adminUser, AdminModule module) {
         List<AdminSection> authorizedSections = new ArrayList<AdminSection>();
+        BroadleafRequestContext broadleafRequestContext = BroadleafRequestContext.getBroadleafRequestContext();
+        Site site = broadleafRequestContext.getNonPersistentSite();
+        Long siteId = site == null ? null : site.getId();
         for (AdminSection section : module.getSections()) {
             if (isUserAuthorizedToViewSection(adminUser, section)) {
-                authorizedSections.add(section);
+                if(section instanceof SiteDiscriminator){
+                    Long sectionSiteId = ((SiteDiscriminator)section).getSiteDiscriminator();
+                    if(sectionSiteId == null || sectionSiteId.equals(siteId)){
+                        authorizedSections.add(section);
+                    }
+                } else{
+                    authorizedSections.add(section);
+                }
             }
         }
 

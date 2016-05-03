@@ -38,11 +38,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import eu.medsea.mimeutil.MimeType;
-import eu.medsea.mimeutil.MimeUtil;
-import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
-import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -54,6 +49,11 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Resource;
+
+import eu.medsea.mimeutil.MimeType;
+import eu.medsea.mimeutil.MimeUtil;
+import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
+import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 
 /**
  * Created by bpolster.
@@ -145,14 +145,10 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         
         if (entityType != null && !"null".equals(entityType)) {
             path = path.append(entityType).append("/");
-        } else {
-            LOG.warn("The given entityType to build the asset URL was null for file " + originalFilename + " and entityId " + entityId + ", investigate probably cause");
         }
 
         if (entityId != null && !"null".equals(entityId)) {
             path = path.append(entityId).append("/");
-        } else {
-            LOG.warn("The given entityId to build the asset URL was null for file " + originalFilename + " and entityType " + entityType + ", investigate probably cause");
         }
 
         if (fileName != null) {
@@ -166,11 +162,6 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         } else {
             fileName = originalFilename;
         }
-
-        String[] splitBits = fileName.replace(".", "/").split("/");
-        String imageName = splitBits[splitBits.length - 2];
-        String imageTypeExt = splitBits[splitBits.length - 1];
-        fileName = imageName + '-' + 1 + '.' + imageTypeExt;
 
         return path.append(fileName).toString();
     }
@@ -204,11 +195,6 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             int count = 0;
             while (newAsset != null) {
                 count++;
-                //removing the default count 1, from fullUrl for count logic
-                if (fullUrl.contains("-1")) {
-                    fullUrl = fullUrl.replace("-1", "");
-                    count++;
-                }
                 //try the new format first, then the old
                 newAsset = staticAssetDao.readStaticAssetByFullUrl(getCountUrl(fullUrl, count, false));
                 if (newAsset == null) {
@@ -252,7 +238,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
      *  /path/to/image.jpg-1
      *  /path/to/image.jpg-2
      *  
-     * Whereas if this is in non-lagacy format (<b>legacy</b> == false):
+     * Whereas if this is in non-legacy format (<b>legacy</b> == false):
      * 
      *  /path/to/image-1.jpg
      *  /path/to/image-2.jpg

@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -127,6 +128,24 @@ public class OrderItemServiceImpl implements OrderItemService {
         if (itemRequest.getRetailPriceOverride() != null) {
             item.setRetailPriceOverride(Boolean.TRUE);
             item.setRetailPrice(itemRequest.getRetailPriceOverride());
+        }
+
+        if (MapUtils.isNotEmpty(itemRequest.getItemAttributes())) {
+            Map<String, OrderItemAttribute> attributeMap = item.getOrderItemAttributes();
+            if (attributeMap == null) {
+                attributeMap = new HashMap<String, OrderItemAttribute>();
+                item.setOrderItemAttributes(attributeMap);
+            }
+            
+            for (Entry<String, String> entry : itemRequest.getItemAttributes().entrySet()) {
+                OrderItemAttribute orderItemAttribute = new OrderItemAttributeImpl();
+                
+                orderItemAttribute.setName(entry.getKey());
+                orderItemAttribute.setValue(entry.getValue());
+                orderItemAttribute.setOrderItem(item);
+                
+                attributeMap.put(entry.getKey(), orderItemAttribute);
+            }
         }
         
         return item;

@@ -113,8 +113,11 @@ public class SiteMapServiceImpl implements SiteMapService {
         }
 
         siteMapBuilder.persistSiteMap();
+
+
+        // Check for GZip
         if (getGzipSiteMapFiles()) {
-            gzipAndDeleteFiles(fileWorkArea, siteMapBuilder.getIndexedFileNames());
+            gzipAndDeleteFiles(fileWorkArea, siteMapBuilder.getIndexedFileNames(), false);
             List<String> indexFileNames = new ArrayList<String>();
             for (String fileName: siteMapBuilder.getIndexedFileNames()) {
                 indexFileNames.add(fileName + ENCODING_EXTENSION);
@@ -139,10 +142,21 @@ public class SiteMapServiceImpl implements SiteMapService {
         }
         File siteMapFile = broadleafFileService.getResource(fileName, getSiteMapTimeoutInMillis());
         if (siteMapFile.exists()) {
+
+            if (getAutoGenerateSiteMapAfterTimeout()) {
+                long lastModified = siteMapFile.lastModified();
+                long now = System.currentTimeMillis();
+                // Create new SiteMap if timeout expired.
+                if ((now - lastModified) > getSiteMapTimeoutInMillis().longValue()) {
+                    generateSiteMap();
+                    siteMapFile = broadleafFileService.getResource(fileName, getSiteMapTimeoutInMillis());
+                }
+            }
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Returning existing SiteMap");
             }
             return siteMapFile;
+
         } else {
             if (getCreateSiteMapIfNotFound()) {
                 if (LOG.isTraceEnabled()) {
@@ -203,11 +217,11 @@ public class SiteMapServiceImpl implements SiteMapService {
     }
 
     /**
-     * Gzip a file and then delete the file
-     * 
-     * @param fileName
+     *
+     * @param fileWorkArea
+     * @param fileNames
      */
-    protected void gzipAndDeleteFiles(FileWorkArea fileWorkArea, List<String> fileNames) {
+    protected void gzipAndDeleteFiles(FileWorkArea fileWorkArea, List<String> fileNames,boolean shouldDeleteOriginal){
         for (String fileName : fileNames) {
             try {
                 String fileNameWithPath = FilenameUtils.normalize(fileWorkArea.getFilePathLocation() + File.separator + fileName);
@@ -225,14 +239,27 @@ public class SiteMapServiceImpl implements SiteMapService {
                 fos.close();
                 fis.close();
 
-                File originalFile = new File(fileNameWithPath);
-                originalFile.delete();
+                if(shouldDeleteOriginal){
+                    File originalFile = new File(fileNameWithPath);
+                    originalFile.delete();
+                }
+
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
+
+    /**
+     * GZip a file, Then delete it
+     * @param fileWorkArea
+     * @param fileNames
+     */
+    protected void gzipAndDeleteFiles(FileWorkArea fileWorkArea, List<String> fileNames) {
+        gzipAndDeleteFiles(fileWorkArea,fileNames,true);
+    }
+
 
     public List<SiteMapGenerator> getSiteMapGenerators() {
         return siteMapGenerators;
@@ -256,6 +283,10 @@ public class SiteMapServiceImpl implements SiteMapService {
 
     public boolean getCreateSiteMapIfNotFound() {
         return BLCSystemProperty.resolveBooleanSystemProperty("sitemap.createIfNotFound");
+    }
+
+    public boolean getAutoGenerateSiteMapAfterTimeout() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("sitemap.createIfTimeoutExpired",false);
     }
 
     public Long getSiteMapTimeoutInMillis() {

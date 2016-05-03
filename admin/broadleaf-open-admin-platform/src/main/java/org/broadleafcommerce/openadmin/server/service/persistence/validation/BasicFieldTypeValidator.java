@@ -19,13 +19,11 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -82,14 +80,18 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
                 break;
             case MONEY:
                 pp = new ParsePosition(0);
-                if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType()) || Money.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                    format.setParseBigDecimal(true);
-                    format.parse(populateValueRequest.getRequestedValue(), pp);
-                    format.setParseBigDecimal(false);
-                } else if (Double.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                    format.parse(populateValueRequest.getRequestedValue(), pp);
-                }
-                if (pp.getIndex() != populateValueRequest.getRequestedValue().length()) {
+                try {
+                    if (Double.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                        format.parse(populateValueRequest.getRequestedValue(), pp);
+                    } else {
+                        format.setParseBigDecimal(true);
+                        format.parse(populateValueRequest.getRequestedValue(), pp);
+                        format.setParseBigDecimal(false);
+                    }
+                    if (pp.getIndex() != populateValueRequest.getRequestedValue().length()) {
+                        return new PropertyValidationResult(false, "Field must be a valid number");
+                    }
+                } catch (NumberFormatException e) {
                     return new PropertyValidationResult(false, "Field must be a valid number");
                 }
                 break;

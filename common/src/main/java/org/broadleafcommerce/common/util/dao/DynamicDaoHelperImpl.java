@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
+import org.hibernate.mapping.PersistentClass;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.Type;
 import org.springframework.util.ReflectionUtils;
@@ -37,6 +38,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -128,6 +130,32 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         }
 
         return cache;
+    }
+
+    @Override
+    public Class<?>[] getUpDownInheritance(Class<?> testClass, SessionFactory sessionFactory,
+                boolean includeUnqualifiedPolymorphicEntities, boolean useCache, EJB3ConfigurationDao ejb3ConfigurationDao) {
+        Class<?>[] pEntities = getAllPolymorphicEntitiesFromCeiling(testClass, sessionFactory, includeUnqualifiedPolymorphicEntities, useCache);
+        if (ArrayUtils.isEmpty(pEntities)) {
+            return pEntities;
+        }
+        Class<?> topConcreteClass = pEntities[pEntities.length - 1];
+        List<Class<?>> temp = new ArrayList<Class<?>>(pEntities.length);
+        temp.addAll(Arrays.asList(pEntities));
+        Collections.reverse(temp);
+        boolean eof = false;
+        while (!eof) {
+            Class<?> superClass = topConcreteClass.getSuperclass();
+            PersistentClass persistentClass = ejb3ConfigurationDao.getConfiguration().getClassMapping(superClass.getName());
+            if (persistentClass == null) {
+                eof = true;
+            } else {
+                temp.add(0, superClass);
+                topConcreteClass = superClass;
+            }
+        }
+
+        return temp.toArray(new Class<?>[temp.size()]);
     }
     
     @Override

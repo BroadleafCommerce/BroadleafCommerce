@@ -22,12 +22,14 @@ package org.broadleafcommerce.common.extensibility.jpa;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.copy.NullClassTransformer;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
+import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 
@@ -45,6 +47,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.management.ObjectName;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
 
@@ -77,6 +80,19 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
     @Resource(name="blEntityMarkerClassTransformer")
     protected EntityMarkerClassTransformer entityMarkerClassTransformer;
+
+    @Resource(name="blAutoDDLStatusExporter")
+    protected MBeanExporter mBeanExporter;
+
+    @Resource(name="blConfiguration")
+    RuntimeEnvironmentPropertiesConfigurer configurer;
+    
+    /**
+     * This should only be used in a test context to deal with the Spring ApplicationContext refreshing between different
+     * test classes but not needing to do a new transformation of classes every time. This bean will get
+     * re-initialized but all the classes have already been transformed
+     */
+    protected static boolean transformed = false;
 
     @Override
     protected boolean isPersistenceUnitOverrideAllowed() {
@@ -225,7 +241,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             }
             
             // Only validate transformation results if there was a LoadTimeWeaver registered in the first place
-            if (weaverRegistered) {
+            if (weaverRegistered && !transformed) {
                 for (PersistenceUnitInfo pui : mergedPus.values()) {
                     for (String managedClassName : pui.getManagedClassNames()) {
                         if (!managedClassNames.contains(managedClassName)) {
@@ -280,6 +296,11 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                     LOG.error(message);
                     throw new IllegalStateException(message);
                 }
+                
+                transformed = true;
+            }
+            if (transformed) {
+                LOG.info("Did not recycle through class transformation since this has already occurred");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -330,6 +351,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 }
             }
         }
+        disableSchemaCreateIfApplicable(persistenceUnitName, pui);
         if (state == null || !state.isConfigurationOnly()) {
             if (newPU.getJtaDataSource() != null) {
                 pui.setJtaDataSource(newPU.getJtaDataSource());
@@ -374,4 +396,28 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         this.classTransformers = classTransformers;
     }
 
+    protected void disableSchemaCreateIfApplicable(String persistenceUnitName, MutablePersistenceUnitInfo pui) {
+        String autoDDLStatus = pui.getProperties().getProperty("hibernate.hbm2ddl.auto");
+        boolean isCreate = autoDDLStatus != null && (autoDDLStatus.equals("create") || autoDDLStatus.equals("create-drop"));
+        boolean detectedCreate = false;
+        if (isCreate && configurer.determineEnvironment().equals(configurer.getDefaultEnvironment())) {
+            try {
+                if (mBeanExporter.getServer().isRegistered(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"))) {
+                    Boolean response = (Boolean) mBeanExporter.getServer().invoke(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"), "getStartedWithCreate",
+                            new Object[]{persistenceUnitName}, new String[]{String.class.getName()});
+                    if (response == null) {
+                        mBeanExporter.getServer().invoke(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"), "setStartedWithCreate",
+                            new Object[]{persistenceUnitName, true}, new String[]{String.class.getName(), Boolean.class.getName()});
+                    } else {
+                        detectedCreate = true;
+                    }
+                }
+            } catch (Exception e) {
+                LOG.warn("Unable to query the mbean server for previous auto.ddl status", e);
+            }
+        }
+        if (detectedCreate) {
+            pui.getProperties().setProperty("hibernate.hbm2ddl.auto", "none");
+        }
+    }
 }

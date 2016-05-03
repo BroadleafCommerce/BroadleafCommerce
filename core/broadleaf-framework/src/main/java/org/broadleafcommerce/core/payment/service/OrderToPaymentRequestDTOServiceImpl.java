@@ -71,9 +71,12 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
         return null;
     }
+    
+    //Logger LOG = Logger.getLogger(this.getClass().getName()); 
 
     @Override
     public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction) {
+    	
         //Will set the full amount to be charged on the transaction total/subtotal and not worry about shipping/tax breakdown
         PaymentRequestDTO requestDTO = new PaymentRequestDTO()
             .transactionTotal(transactionAmount.getAmount().toPlainString())
@@ -93,10 +96,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
             populateTotals(order, requestDTO);
             populateDefaultLineItemsAndSubtotal(order, requestDTO);
         }
-        
         //Copy Additional Fields from PaymentTransaction into the Request DTO.
         //This will contain any gateway specific information needed to perform actions on this transaction
         Map<String, String> additionalFields = paymentTransaction.getAdditionalFields();
+        
         for (String key : additionalFields.keySet()) {
             requestDTO.additionalField(key, additionalFields.get(key));
         }

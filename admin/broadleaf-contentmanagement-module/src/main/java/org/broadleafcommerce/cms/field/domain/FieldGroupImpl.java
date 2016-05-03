@@ -21,6 +21,8 @@ package org.broadleafcommerce.cms.field.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -74,6 +76,8 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderBy("fieldOrder")
     @BatchSize(size = 20)
+    @ClonePolicyCollectionOverride
+    @ClonePolicyArchive
     protected List<FieldDefinition> fieldDefinitions = new ArrayList<FieldDefinition>();
 
     @Override

@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,18 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.dao;
-
-import org.hibernate.ejb.Ejb3Configuration;
+package org.broadleafcommerce.common.extensibility.jpa;
 
 /**
- * 
- * @author jfischer
+ * MBean registered in JMX to keep track of which persistence units are marked with auto.ddl 'create'. The scope of this MBean
+ * covers the current JVM, which may span more than a single application in the same container.
  *
+ * @author Jeff Fischer
  */
-public interface EJB3ConfigurationDao {
+public interface AutoDDLCreateStatusTestBean {
 
-    public abstract Ejb3Configuration getConfiguration();
+    Boolean getStartedWithCreate(String pu);
+
+    void setStartedWithCreate(String pu, Boolean val);
 
 }

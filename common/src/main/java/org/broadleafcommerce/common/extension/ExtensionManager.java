@@ -75,15 +75,21 @@ public abstract class ExtensionManager<T extends ExtensionHandler> implements In
      * @return a list of handlers sorted by their priority
      * @see {@link #registerHandler(ExtensionHandler)}
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<T> getHandlers() {
-        synchronized (LOCK_OBJECT) {
-            if (!handlersSorted) {
-                Comparator fieldCompare = new BeanComparator("priority");
-                Collections.sort(handlers, fieldCompare);
-                handlersSorted = true;
+        if (!handlersSorted) {
+            synchronized (LOCK_OBJECT) {
+                sortHandlers();
             }
-            return handlers;
+        }
+        return handlers;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    protected void sortHandlers() {
+        if (!handlersSorted) {
+            Comparator fieldCompare = new BeanComparator("priority");
+            Collections.sort(handlers, fieldCompare);
+            handlersSorted = true;
         }
     }
     
