@@ -582,10 +582,6 @@ button:disabled:hover, button.disabled:hover {
     padding-right: 10px;
 }
 
-.listgrid-search {
-    margin-bottom: 6px;
-}
-
 .listgrid-search .col6 {
     height: 45px;
     white-space: nowrap;
@@ -1202,7 +1198,7 @@ p.deployment-summary {
 }
 
 .filter-info > .filter-button {
-    margin-top: 6px;
+    margin-top: 2px;
 }
 
 .listgrid-toolbar .filter-info {
