@@ -46,9 +46,9 @@ public class StaticAssetView implements View {
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String cacheFilePath = (String) model.get("cacheFilePath");
+        String mimeType = (String) model.get("mimeType");
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(cacheFilePath));
         try {
-            String mimeType = (String) model.get("mimeType");
             response.setContentType(mimeType);
             if (!browserAssetCachingEnabled) {
                 response.setHeader("Cache-Control","no-cache");
@@ -69,11 +69,10 @@ public class StaticAssetView implements View {
         } catch (Exception e) {
             if (e.getCause() instanceof SocketException) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Unable to stream asset", e);
+                    LOG.debug("Unable to stream asset with path:"+cacheFilePath+" mimeType:"+mimeType, e);
                 }
             } else {
-                LOG.error("Unable to stream asset", e);
-                throw e;
+                LOG.error("Unable to stream asset with path:"+cacheFilePath+" mimeType:"+mimeType, e);
             }
         } finally {
             try {
