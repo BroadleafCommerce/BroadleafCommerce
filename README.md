@@ -1,5 +1,4 @@
-# BroadleafCommercePrivate
-Private or Commercial work done to the Broadleaf Commerce core codebase (derives from the community repo)
+# BroadleafCommerce
 
 ## Introduction
 
@@ -149,6 +148,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 
-Broadleaf Commerce core is released under the terms of the Apache Software License 2 (see license.txt). However, various commercial modules that are also available (for instance, price list management) are released under a different commercial license. These are not included with the core Broadleaf framework.
+Broadleaf Commerce core is released under a dual license format. It may be used under the terms of the Fair Use License 1.0 (http://license.broadleafcommerce.org/fair_use_license-1.0.txt) unless the restrictions on use therein are violated and require payment to Broadleaf, in which case the Broadleaf End User License Agreement (EULA), Version 1.1 (http://license.broadleafcommerce.org/commercial_license-1.1.txt) shall apply. Alternatively, the Commercial License may be replaced with a mutually agreed upon license between you and Broadleaf Commerce.
+
+Various commercial modules that are also available (for instance, price list management) are released under the applicable commercial license. These are not included with the core Broadleaf framework.
 
 We also offer various levels of [enterprise support licenses](http://broadleafcommerce.com/support). Please [contact us](http://broadleafcommerce.com/contact) for information.
