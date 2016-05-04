@@ -75,11 +75,11 @@
 /*************************** ENTITY FORM TITLE BAR (end of section) ***************************/
 
 .entityFormTab {
-    display:none;
+    display: none;
 }
 
 .entityFormTab.active {
-    display:block;
+    display: block;
 }
 
 label .fa {
@@ -99,7 +99,7 @@ select:not(#sandboxes) {
     box-shadow: none;
     -webkit-appearance: none;
     font-family: 'Open Sans', sans-serif;
-    margin: 0 0 ;
+    margin: 0 0;
     border-radius: 0;
     box-sizing: border-box;
     color: #303030;
@@ -136,7 +136,8 @@ fieldset:not(.untitledGroup) {
     margin-bottom: 15px;
 }
 
-.app-content .fieldset-card.untitledGroup .titlebar, .modal-body .fieldset-card.untitledGroup .titlebar {
+.app-content .fieldset-card.untitledGroup .titlebar,
+.modal-body .fieldset-card.untitledGroup .titlebar {
     display: none;
 }
 
@@ -152,7 +153,8 @@ fieldset:not(.untitledGroup) {
     margin: 6px 0;
 }
 
-.fieldset-card .titlebar .titlebar-title, .fieldset-card .titlebar .collapser {
+.fieldset-card .titlebar .titlebar-title,
+.fieldset-card .titlebar .collapser {
     display: inline-block;
     margin: 10px 0;
     position: relative;
@@ -274,7 +276,6 @@ fieldset:not(.untitledGroup) {
 .field-group label span {
     font-size:11px;
     text-transform:uppercase;
-    /*color:#B3B3B3;*/
     font-weight: 600;
 }
 
@@ -339,7 +340,8 @@ a.description-link {
     box-shadow: #94AF39 0 1px 3px 0 inset !important;
 }
 
-.xdsoft_datetimepicker .xdsoft_calendar td:hover, .xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box>div>div:hover {
+.xdsoft_datetimepicker .xdsoft_calendar td:hover, 
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box>div>div:hover {
     color: #fff !important;
     background: #F2B95A !important;
     box-shadow: none !important;
@@ -395,10 +397,8 @@ a.description-link {
 .modal-body .fieldset-card .fieldset-card-content .checkbox{padding:0}
 .modal-body .fieldset-card .fieldset-card-content .checkbox .checkbox-label{font-size:12px;margin-right:10px}
 .modal-body .field-group label span {
-    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: .05em;
-    /*color: #B3B3B3;*/
 }
 
 .modal .entity-errors {
