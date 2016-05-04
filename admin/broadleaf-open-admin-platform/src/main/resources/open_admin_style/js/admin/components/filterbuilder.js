@@ -470,7 +470,7 @@
                                         }
                                     }
                                 });
-                                if (data.options.length) {
+                                if ($selectize.$wrapper.is(':visible') && data.options.length) {
                                     $selectize.open();
                                 }
                                 callback(data);
