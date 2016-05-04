@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 .app-content .side-nav {
@@ -245,7 +243,7 @@ circle {
 }
 
 .app-content .content .site-bar {
-    z-index: 1050;
+    z-index: 1020;
 }
 
 .app-content .content .site-bar .button {
@@ -338,7 +336,7 @@ input[type="radio"].radio+label.radio-label.clr,
 .header{background-color:#2a2a2a;color:white;height:50px;left:0;padding:0 20px;position:absolute;top:0;width:100%;z-index:100}.content .header .button{background-color:#404040;padding:7px 15px;font-size:10px;text-transform:uppercase;color:#B3B3B3;letter-spacing:0.2em;display:inline-block;cursor:pointer;margin:10px 20px}.content .header h1{font-size:14px;font-weight:300;line-height:50px;margin:0;padding:0;display:inline-block;float:left;width:auto}.content .header .account-info{display:inline-block;float:right;font-size:14px}.content .header .account-info ul{margin:0;padding:0;list-style:none;color:white;display:inline}.content .header .account-info ul li{margin:0;height:50px;line-height:50px;display:inline-block;font-weight:300;float:left}.content .header .account-info ul li a{width:100%;height:50px;line-height:50px;color:white;font-size:1.25em;font-weight:300;padding:0 30px;float:left}.content .header .account-info ul li a:hover{background-color:#F1EFEB}.content .header .account-info .logout{float:left;display:inline-block;margin-right:0}
 
 .redactor-toolbar {
-    z-index: 1039 !important;
+    z-index: 1000 !important;
 }
 
 .redactor-box {
@@ -900,7 +898,7 @@ p.deployment-summary {
 }
 
 .filter-info > .filter-button {
-    margin-top: 6px;
+    margin-top: 2px;
 }
 
 .form-control {
