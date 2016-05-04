@@ -444,9 +444,9 @@ a.description-link {
 .pick-sctype-popup {
     background-color: white;
     border: 1px solid #e0e0e0;
-    -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
-    -webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
-    box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+    -moz-box-shadow: rgba(0,0,0,0.1) 0 2px 5px;
+    -webkit-box-shadow: rgba(0,0,0,0.1) 0 2px 5px;
+    box-shadow: rgba(0,0,0,0.1) 0 2px 5px;
     padding: 10px 15px 15px;
     margin: 10px auto;
     text-align: left;
