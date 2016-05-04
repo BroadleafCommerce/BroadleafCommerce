@@ -66,7 +66,9 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
         CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) smgc;
 
         // Recursively construct the category SiteMap URLs
-        addCategorySiteMapEntries(categorySMGC.getRootCategory(), 0, categorySMGC, siteMapBuilder);
+        Long rootCategoryId = categorySMGC.getRootCategory().getId();
+        Category rootCategory = categoryDao.readCategoryById(rootCategoryId);
+        addCategorySiteMapEntries(rootCategory, 0, categorySMGC, siteMapBuilder);
         
     }
 

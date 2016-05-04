@@ -115,7 +115,6 @@
     <bean id="blPersistenceProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
-                <ref bean="blHTMLFieldPersistenceProvider"/>
                 <ref bean="blBasicFieldPersistenceProvider"/>
                 <ref bean="blRuleFieldPersistenceProvider"/>                
                 <ref bean="blMapFieldPersistenceProvider"/>

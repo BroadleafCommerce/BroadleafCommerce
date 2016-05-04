@@ -217,6 +217,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     public void execute() throws ServiceException {
                         int page = 0;
                         while ((page * pageSize) < numItemsToIndex) {
+                            LOG.info(String.format("Building page number %s", page));
                             buildIncrementalIndex(page, pageSize);
                             page++;
                         }
@@ -294,6 +295,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         StopWatch s = new StopWatch();
         boolean cacheOperationManaged = false;
         try {
+            extensionManager.getProxy().startBatchEvent(products);
             Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
             List<Locale> locales = getAllLocales();
 
@@ -349,6 +351,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             if (!cacheOperationManaged) {
                 SolrIndexCachedOperation.clearCache();
             }
+            extensionManager.getProxy().endBatchEvent();
         }
 
         if (LOG.isDebugEnabled()) {
@@ -695,7 +698,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
                     String displayOrderKey = categoryId + "-" + shs.getProductId(product);
-                    BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
+                    Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
 
                     if (document.getField(categorySortFieldName) == null) {
                         document.addField(categorySortFieldName, displayOrder);
@@ -739,7 +742,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
                     String displayOrderKey = categoryId + "-" + originalId;
-                    BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
+                    Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
 
                     if (document.getField(categorySortFieldName) == null) {
                         document.addField(categorySortFieldName, displayOrder);
@@ -917,5 +920,18 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 LOG.trace(document);
             }
         }
+    }
+
+    /**
+     *  We multiply the BigDecimal by 1,000,000 to maintain any possible decimals in use the
+     *  displayOrder value.
+     *
+     * @param cache
+     * @param displayOrderKey
+     * @return
+     */
+    protected Long convertDisplayOrderToLong(CatalogStructure cache, String displayOrderKey) {
+        BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
+        return displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
     }
 }

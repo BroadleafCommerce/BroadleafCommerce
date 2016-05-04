@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
+import org.broadleafcommerce.common.util.Tuple;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
@@ -35,7 +36,8 @@ import org.broadleafcommerce.openadmin.server.service.persistence.ParentEntityPe
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension.MediaFieldPersistenceProviderExtensionManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension
+        .MediaFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -98,7 +100,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             }
         }
         FieldProviderResponse response = FieldProviderResponse.HANDLED;
-        boolean dirty;
+        boolean dirty = false;
         try {
             setNonDisplayableValues(populateValueRequest);
             Class<?> valueType = getStartingValueType(populateValueRequest);
@@ -107,11 +109,36 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 Media newMedia = mediaBuilderService.convertJsonToMedia(populateValueRequest
                         .getProperty().getUnHtmlEncodedValue(), valueType);
                 boolean persist = false;
+                boolean noPrimary = false;
                 Media media;
+                Boolean cleared;
                 try {
-                    media = (Media) populateValueRequest.getFieldManager().getFieldValue(instance,
-                            populateValueRequest.getProperty().getName());
-                    if (media == null) {
+                    checkExtension:
+                    {
+                        if (extensionManager != null) {
+                            ExtensionResultHolder<Tuple<Media, Boolean>> result = new ExtensionResultHolder<Tuple<Media, Boolean>>();
+                            ExtensionResultStatusType statusType = extensionManager.getProxy().retrieveMedia(instance, populateValueRequest, result);
+                            if (ExtensionResultStatusType.NOT_HANDLED != statusType) {
+                                Tuple<Media,Boolean> tuple = result.getResult();
+                                media = tuple.getFirst();
+                                cleared = tuple.getSecond();
+                                break checkExtension;
+                            }
+                        }
+                        media = (Media) populateValueRequest.getFieldManager().getFieldValue(instance,
+                                populateValueRequest.getProperty().getName());
+                        cleared = false;
+                    }
+                    if (newMedia == null) {
+                        noPrimary = true;
+                        dirty = true;
+                        if (!cleared && media != null) {
+                            // remove entry in sku to media map
+                            populateValueRequest.getFieldManager().setFieldValue(instance,
+                                    populateValueRequest.getProperty().getName(), null);
+                            populateValueRequest.getPersistenceManager().getDynamicEntityDao().remove(media);
+                        }
+                    } else if (media == null) {
                         media = (Media) valueType.newInstance();
 
                         Object parent = extractParent(populateValueRequest, instance);
@@ -127,11 +154,17 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 } catch (FieldNotAvailableException e) {
                     throw new IllegalArgumentException(e);
                 }
-                populateValueRequest.getProperty().setOriginalValue(convertMediaToJson(media));
-                dirty = establishDirtyState(newMedia, media);
+                if (media != null) {
+                    populateValueRequest.getProperty().setOriginalValue(convertMediaToJson(media));
+                }
+                if (!noPrimary) {
+                    dirty = establishDirtyState(newMedia, media);
+                    if (dirty) {
+                        updateMedia(populateValueRequest, newMedia, persist, media);
+                    }
+                }
                 if (dirty) {
-                    updateMedia(populateValueRequest, newMedia, persist, media);
-		            response = FieldProviderResponse.HANDLED_BREAK;
+                    response = FieldProviderResponse.HANDLED_BREAK;
                 }
             } else {
                 throw new UnsupportedOperationException("MediaFields only work with Media types.");
@@ -254,7 +287,13 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     }
 
     protected boolean establishDirtyState(Media newMedia, Media media) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        boolean dirty = !checkEquality(newMedia.getAltText(), media.getAltText());
+        boolean dirty = (newMedia == null && media != null) || (newMedia != null && media == null);
+        if (newMedia == null && media == null) {
+            return false;
+        }
+        if (!dirty) {
+            dirty = !checkEquality(newMedia.getAltText(), media.getAltText());
+        }
         if (!dirty) {
             dirty = !checkEquality(newMedia.getTags(), media.getTags());
         }
@@ -307,6 +346,10 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     }
 
     protected void updateMediaFields(Media oldMedia, Media newMedia) {
+        if (newMedia == null) {
+            return;
+        }
+
         oldMedia.setAltText(newMedia.getAltText());
         oldMedia.setTags(newMedia.getTags());
         oldMedia.setTitle(newMedia.getTitle());

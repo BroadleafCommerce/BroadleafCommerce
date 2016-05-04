@@ -19,8 +19,10 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
 
 import java.util.List;
 
@@ -38,5 +40,24 @@ public interface ProductOptionDao {
     public ProductOption saveProductOption(ProductOption option);
     
     public ProductOptionValue readProductOptionValueById(Long id);
-    
+
+    /**
+     * Returns a list of {@link org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO}
+     * found for given the productId.
+     *
+     * @param productId
+     * @return
+     */
+    public List<AssignedProductOptionDTO> findAssignedProductOptionsByProductId(Long productId);
+
+    /**
+     * Returns a list of {@link org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO}
+     * found for given the {@link org.broadleafcommerce.core.catalog.domain.Product}.
+     *
+     * @param product
+     * @return
+     */
+    public List<AssignedProductOptionDTO> findAssignedProductOptionsByProduct(Product product);
+
+
 }

@@ -36,8 +36,11 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * Default Broadleaf-recommended configuration for REST APIs. Recommended use is to extend this class and annotate
+ * <p>Default Broadleaf-recommended configuration for REST APIs. Recommended use is to extend this class and annotate
  * your extension with {@code @Configuration} and {@link @EnableWebMvc}
+ *
+ * <p>The child class must also be added as the {@code contextConfigLocation} for a new {@link org.springframework.web.servlet.DispatcherServlet}
+ * servlet with {@code contextClass} {@link org.springframework.web.context.support.AnnotationConfigWebApplicationContext} in web.xml.
  *
  * @author Phillip Verheyden (phillipuniverse)
  */

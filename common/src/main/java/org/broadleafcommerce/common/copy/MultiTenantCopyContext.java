@@ -214,6 +214,7 @@ public class MultiTenantCopyContext {
             try {
                 for (Field field : getAllFields(instanceClass)) {
                     if (field.getType().getAnnotation(Embeddable.class) != null && MultiTenantCloneable.class.isAssignableFrom(field.getType())) {
+                        field.setAccessible(true);
                         Object embeddable = field.get(instance);
                         if (embeddable != null) {
                             field.set(response, ((MultiTenantCloneable) embeddable).createOrRetrieveCopyInstance(this).getClone());

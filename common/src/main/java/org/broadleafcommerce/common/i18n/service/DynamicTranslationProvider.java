@@ -50,6 +50,8 @@ public class DynamicTranslationProvider {
             
             if (StringUtils.isNotBlank(translatedValue)) {
                 valueToReturn = translatedValue;
+            } else {
+                valueToReturn = translationService.getDefaultTranslationValue(obj, field, locale, defaultValue);
             }
         }
             

@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.util.Tuple;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 
 /**
  * For internal usage. Allows extending API calls without subclassing the entity.
@@ -36,6 +38,8 @@ public interface MediaFieldPersistenceProviderExtensionHandler extends Extension
     ExtensionResultStatusType postAdd(Media media);
 
     ExtensionResultStatusType postUpdate(Media media);
+
+    ExtensionResultStatusType retrieveMedia(Object instance, PopulateValueRequest request, ExtensionResultHolder<Tuple<Media, Boolean>> resultHolder);
 
     ExtensionResultStatusType checkDirtyState(Media oldMedia, Media newMedia, ExtensionResultHolder<Boolean> resultHolder);
 

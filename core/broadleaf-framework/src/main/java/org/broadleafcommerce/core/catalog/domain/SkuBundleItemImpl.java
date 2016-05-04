@@ -195,7 +195,8 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     
     @Override
     public void clearDynamicPrices() {
-        this.dynamicPrices = null;
+        dynamicPrices = null;
+        sku.clearDynamicPrices();
     }
 
     @Override

@@ -45,10 +45,12 @@ public class JSFieldNameCompatibilityInterceptor extends HandlerInterceptorAdapt
             EntityForm entityForm = (EntityForm) modelAndView.getModelMap().get("entityForm");
     
             if (entity != null) {
+                if (entity.getProperties()!=null){
                 for (Property property : entity.getProperties()) {
                     if (property.getName().contains(".")) {
                         property.setName(JSCompatibilityHelper.encode(property.getName()));
                     }
+                }
                 }
             }
     

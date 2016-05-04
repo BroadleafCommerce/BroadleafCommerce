@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,10 +54,13 @@ public class BroadleafRobotsController {
 
     @Resource(name = "blPageService")
     private PageService pageService;
+    
+    @Resource(name = "blBroadleafContextUtil")
+    protected BroadleafContextUtil blcContextUtil;
 
     public String getRobotsFile(HttpServletRequest request, HttpServletResponse response) {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-
+    	blcContextUtil.establishThinRequestContext();
+    	
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
 

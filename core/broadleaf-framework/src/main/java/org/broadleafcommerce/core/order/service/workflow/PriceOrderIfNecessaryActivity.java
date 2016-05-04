@@ -171,11 +171,7 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
         }
         
         // We need to add the new item to the parent's child order items as well.
-        for (OrderItem oi : order.getOrderItems()) {
-            if (oi.getId().equals(request.getItemRequest().getParentOrderItemId())) {
-                oi.getChildOrderItems().add(request.getOrderItem());
-            }
-        }
+        updateChildOrderItem(request, order);
 
         // If a custom implementation needs to handle additional saves before the parent Order is saved, this method
         // can be overridden to provide that functionality.
@@ -189,6 +185,55 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
         return context;
     }
 
+    /**
+     * Traverses the current OrderItem for a match to the parentOrderItemId.  
+     * If found, populates and returns true.
+     *   
+     * @param request
+     * @param orderItem
+     * @return
+     */
+    protected void updateChildOrderItem(CartOperationRequest request, Order order) {
+        boolean updated = false;
+        for (OrderItem oi : order.getOrderItems()) {
+            if (oi instanceof BundleOrderItem) {
+                BundleOrderItem boi = (BundleOrderItem) oi;
+                updated = checkAndUpdateChildren(request, boi); //check the bundle children
+                if (!updated) {
+                    for (OrderItem discreteOrderItem : boi.getDiscreteOrderItems()) { //check the bundle discrete items
+                        if (checkAndUpdateChildren(request, discreteOrderItem)) {
+                            updated = true;
+                            break; //break out of the discrete items loop
+                        }
+                    }
+                }
+            } else {
+                updated = checkAndUpdateChildren(request, oi);
+            }
+            if (updated) {
+                break;
+            }
+        }
+    }
+
+    protected boolean checkAndUpdateChildren(CartOperationRequest request, OrderItem orderItem) {
+        boolean parentUpdated = false;
+        if (orderItem.getId().equals(request.getItemRequest().getParentOrderItemId())) {
+            orderItem.getChildOrderItems().add(request.getOrderItem());
+            parentUpdated = true;
+        } else {
+            if (CollectionUtils.isNotEmpty(orderItem.getChildOrderItems())) {
+                for (OrderItem childOrderItem : orderItem.getChildOrderItems()) {
+                    parentUpdated = checkAndUpdateChildren(request, childOrderItem);
+                    if (parentUpdated) {
+                        break;
+                    }
+                }
+            }
+        }
+        return parentUpdated;
+    }
+    
     protected void getOiFgiMap(Order order, Map<OrderItem, List<FulfillmentGroupItem>> oiFgiMap, OrderItem oi) {
         List<FulfillmentGroupItem> fgis = new ArrayList<FulfillmentGroupItem>();
 

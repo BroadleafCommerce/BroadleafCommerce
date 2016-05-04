@@ -77,6 +77,13 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
     @Resource(name="blEntityMarkerClassTransformer")
     protected EntityMarkerClassTransformer entityMarkerClassTransformer;
+    
+    /**
+     * This should only be used in a test context to deal with the Spring ApplicationContext refreshing between different
+     * test classes but not needing to do a new transformation of classes every time. This bean will get
+     * re-initialized but all the classes have already been transformed
+     */
+    protected static boolean transformed = false;
 
     @Override
     protected boolean isPersistenceUnitOverrideAllowed() {
@@ -225,7 +232,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             }
             
             // Only validate transformation results if there was a LoadTimeWeaver registered in the first place
-            if (weaverRegistered) {
+            if (weaverRegistered && !transformed) {
                 for (PersistenceUnitInfo pui : mergedPus.values()) {
                     for (String managedClassName : pui.getManagedClassNames()) {
                         if (!managedClassNames.contains(managedClassName)) {
@@ -272,12 +279,19 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                             + "\ncontainer which can trigger early class loading. If the problem persists, ensure that"
                             + "\nthere are no bean references to your entity class anywhere else in your Spring applicationContext"
                             + "\nand consult the documentation for your servlet container to determine if classes are loaded"
-                            + "\nprior to the Spring context initialization. Finally, ensure that Session Persistence is"
-                            + "\nalso disabled by your Servlet Container. To do this in Tomcat, add <Manager pathname=\"\" />"
-                            + "\ninside of the <Context> element in context.xml in your app's META-INF folder or your server's conf folder";
+                            + "\nprior to the Spring context initialization. Also, it is a necessity that "
+                            + "\n'-javaagent:/path/to/spring-instrument-4.1.5.jar' be added to the JVM args of the server."
+                            + "\nFinally, ensure that Session Persistence is also disabled by your Servlet Container." 
+                            + "\nTo do this in Tomcat, add <Manager pathname=\"\" /> inside of the <Context> element"
+                            + "\nin context.xml in your app's META-INF folder or your server's conf folder.";
                     LOG.error(message);
                     throw new IllegalStateException(message);
                 }
+                
+                transformed = true;
+            }
+            if (transformed) {
+                LOG.info("Did not recycle through class transformation since this has already occurred");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -88,6 +88,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -149,7 +150,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         List<Field> headerFields = new ArrayList<Field>();
         ListGrid.Type type = ListGrid.Type.MAIN;
         String idProperty = "id";
-
+        
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
@@ -193,7 +194,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         
         hf.withName(p.getName())
-          .withFriendlyName(fmd.getFriendlyName())
+          .withFriendlyName(StringUtils.isNotEmpty(fmd.getFriendlyName()) ? fmd.getFriendlyName() : p.getName())
           .withOrder(fmd.getGridOrder())
           .withColumnWidth(fmd.getColumnWidth())
           .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
@@ -1093,15 +1094,15 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
-            String parentId)
+            String parentId, boolean isViewCollectionItem)
             throws ServiceException {
         EntityForm ef = createStandardEntityForm();
-        return buildAdornedListForm(adornedMd, adornedList, parentId, ef);
+        return buildAdornedListForm(adornedMd, adornedList, parentId, isViewCollectionItem, ef);
     }
     
     @Override
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
-            String parentId, EntityForm ef)
+            String parentId, boolean isViewCollectionItem, EntityForm ef)
             throws ServiceException {
         ef.setEntityType(adornedList.getAdornedTargetEntityClassname());
 
@@ -1111,13 +1112,17 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .withAdornedList(adornedList);
         ClassMetadata collectionMetadata = adminEntityService.getClassMetadata(request).getDynamicResultSet().getClassMetaData();
 
-        // We want our entity form to only render the maintained adorned target fields
         List<Property> entityFormProperties = new ArrayList<Property>();
-        for (String targetFieldName : adornedMd.getMaintainedAdornedTargetFields()) {
-            Property p = collectionMetadata.getPMap().get(targetFieldName);
-            if (p.getMetadata() instanceof BasicFieldMetadata) {
-                ((BasicFieldMetadata) p.getMetadata()).setVisibility(VisibilityEnum.VISIBLE_ALL);
-                entityFormProperties.add(p);
+        if (isViewCollectionItem) {
+            Collections.addAll(entityFormProperties, collectionMetadata.getProperties());
+        } else {
+            // We want our entity form to only render the maintained adorned target fields
+            for (String targetFieldName : adornedMd.getMaintainedAdornedTargetFields()) {
+                Property p = collectionMetadata.getPMap().get(targetFieldName);
+                if (p.getMetadata() instanceof BasicFieldMetadata) {
+                    ((BasicFieldMetadata) p.getMetadata()).setVisibility(VisibilityEnum.VISIBLE_ALL);
+                    entityFormProperties.add(p);
+                }
             }
         }
 

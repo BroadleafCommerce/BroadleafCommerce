@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.web.checkout.model;
 
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 
 import java.io.Serializable;
@@ -37,6 +38,11 @@ public class BillingInfoForm implements Serializable {
 
     protected Address address = new AddressImpl();
     protected boolean useShippingAddress;
+    protected Long customerPaymentId;
+    protected CustomerPayment customerPayment;
+    protected Boolean saveNewPayment = true;
+    protected Boolean useCustomerPayment = false;
+    protected String paymentName;
 
     public BillingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
@@ -58,5 +64,45 @@ public class BillingInfoForm implements Serializable {
 
     public void setUseShippingAddress(boolean useShippingAddress) {
         this.useShippingAddress = useShippingAddress;
+    }
+
+    public Long getCustomerPaymentId() {
+        return customerPaymentId;
+    }
+
+    public void setCustomerPaymentId(Long customerPaymentId) {
+        this.customerPaymentId = customerPaymentId;
+    }
+
+    public CustomerPayment getCustomerPayment() {
+        return customerPayment;
+    }
+
+    public void setCustomerPayment(CustomerPayment customerPayment) {
+        this.customerPayment = customerPayment;
+    }
+
+    public Boolean getUseCustomerPayment() {
+        return useCustomerPayment == null? false : useCustomerPayment;
+    }
+
+    public void setUseCustomerPayment(Boolean useCustomerPayment) {
+        this.useCustomerPayment = useCustomerPayment == null ? false : useCustomerPayment;
+    }
+
+    public Boolean getSaveNewPayment() {
+        return saveNewPayment == null? false : saveNewPayment;
+    }
+
+    public void setSaveNewPayment(Boolean saveNewPayment) {
+        this.saveNewPayment = saveNewPayment == null ? false : saveNewPayment;
+    }
+
+    public String getPaymentName() {
+        return paymentName;
+    }
+
+    public void setPaymentName(String paymentName) {
+        this.paymentName = paymentName;
     }
 }

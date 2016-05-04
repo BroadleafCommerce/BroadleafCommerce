@@ -38,7 +38,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileFilter;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -124,20 +124,15 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     @Override
     public void closeWorkArea(FileWorkArea fwArea) {
         File tempDirectory = new File(fwArea.getFilePathLocation());
-        try {
-            if (tempDirectory.exists()) {
-                FileUtils.deleteDirectory(tempDirectory);
-            }
+        if (tempDirectory.exists()) {
+            FileUtils.deleteQuietly(tempDirectory);
+        }
 
-            for (int i = 1; i < maxGeneratedDirectoryDepth; i++) {
-                tempDirectory = tempDirectory.getParentFile();
-                if (tempDirectory.list().length == 0 && tempDirectory.exists()) {
-                    FileUtils.deleteDirectory(tempDirectory);
-                }
+        for (int i = 0; i < maxGeneratedDirectoryDepth; i++) {
+            tempDirectory = tempDirectory.getParentFile();
+            if (!tempDirectory.delete()) {
+                break;
             }
-
-        } catch (IOException ioe) {
-            throw new FileServiceException("Unable to delete temporary working directory for " + tempDirectory, ioe);
         }
     }
 
@@ -243,8 +238,17 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
      * Removes the resource matching the passed in file name from the FileProvider
      */
     @Override
-    public boolean removeResource(String resourceName) {
-        return selectFileServiceProvider().removeResource(resourceName);
+    public boolean removeResource(final String resourceName) {
+        boolean response = selectFileServiceProvider().removeResource(resourceName);
+        //First, try to remove any matching files in the shared local directory. There is an edge case where you could
+        //remove a different asset from a different site that had the same name, but this would be rare and the system
+        //would automatically re-generate those extra deleted assets the next time they're requested.
+        String baseDirectory = getBaseDirectory(true);
+        removeLocalCacheFiles(resourceName, baseDirectory);
+        //Second, try to remove any matching assets that are cached in a site specific directory
+        baseDirectory = getBaseDirectory(false);
+        removeLocalCacheFiles(resourceName, baseDirectory);
+        return response;
     }
 
     /**
@@ -291,6 +295,27 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     public List<String> addOrUpdateResourcesForPaths(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea) {
         checkFiles(workArea, files);
         return selectFileServiceProvider().addOrUpdateResourcesForPaths(workArea, files, removeFilesFromWorkArea);
+    }
+
+    protected void removeLocalCacheFiles(final String resourceName, String baseDirectory) {
+        String systemResourcePath = FilenameUtils.separatorsToSystem(resourceName);
+        String filePath = FilenameUtils.normalize(baseDirectory + File.separator + systemResourcePath);
+        if (filePath.contains(".")) {
+            filePath = filePath.substring(0, filePath.lastIndexOf("."));
+        }
+        filePath += "---";
+        final String checkPath = filePath;
+        File dir = new File(baseDirectory);
+        File[] children = dir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                String name = pathname.getAbsolutePath();
+                return name.startsWith(checkPath);
+            }
+        });
+        for (File cache : children) {
+            FileUtils.deleteQuietly(cache);
+        }
     }
 
     /**
@@ -358,14 +383,19 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
         for (int i = 0; i < maxGeneratedDirectoryDepth; i++) {
             if (i == 4) {
                 LOG.warn("Property asset.server.max.generated.file.system.directories set to high, currently set to " +
-                        maxGeneratedDirectoryDepth);
+                        maxGeneratedDirectoryDepth + " ignoring and only creating 4 levels.");
                 break;
             }
             // check next int value
             int num = random.nextInt(256);
             baseDirectory = FilenameUtils.concat(baseDirectory, Integer.toHexString(num));
         }
-        return baseDirectory;
+
+        return FilenameUtils.concat(baseDirectory, buildThreadIdString());
+    }
+
+    protected String buildThreadIdString() {
+        return Long.toHexString(Thread.currentThread().getId());
     }
 
     /**

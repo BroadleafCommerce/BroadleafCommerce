@@ -129,6 +129,16 @@ public interface TranslationDao {
      * @return
      */
     List<Translation> readAllTranslationEntries(TranslatedEntity entityType, ResultType stage);
+    
+    /**
+     * Read all the available translations for the given params.
+     *
+     * @param entityType
+     * @param stage param drives whether to look for entries at a template level or standard site level (multitenant concepts). Can be IGNORE. Any multitenant behavior is ignored in the absence of the multitenant module.
+     * @param entityIds the {@link Translation#getEntityId()} to restrict the results by
+     * @return
+     */
+    List<Translation> readAllTranslationEntries(TranslatedEntity entityType, ResultType stage, List<String> entityIds);
 
     /**
      * Read all translation entries (see {@link #readAllTranslationEntries(org.broadleafcommerce.common.i18n.domain.TranslatedEntity, org.broadleafcommerce.common.extension.ResultType)}),

@@ -130,4 +130,23 @@ public interface TranslationService {
      */
     Cache getCache();
 
+    /**
+     * Intended for use with the {@link DynamicTranslationProvider} to determine the default value when a 
+     * translation was not provided.
+     * 
+     * The default implementation of this method relies on a system property "returnBlankTranslationForNotDefaultLocale". 
+     * If this is true, the system will return blank if the language of the defaultLocale does not match the language
+     * of the passed in locale.
+     * 
+     * For example, consider the "longDescription" property and the system default locale is "en".   If this method is 
+     * called for a locale of "en_CA", the requestedDefaultValue will be returned.   If the method is called with a value
+     * of "fr_CA", blank will be returned.
+     *  
+     * @param entity
+     * @param property
+     * @param locale
+     * @param requestedDefaultValue
+     * @return
+     */
+    String getDefaultTranslationValue(Object entity, String property, Locale locale, String requestedDefaultValue);
 }

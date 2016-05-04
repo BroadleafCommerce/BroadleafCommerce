@@ -253,6 +253,20 @@ public interface AdminEntityService {
             throws ServiceException;
 
     /**
+     * overloading containing paging parameters
+     * @param ppr
+     * @param containingEntity
+     * @param startIndex
+     * @param maxIndex
+     * @param sectionCrumb
+     * @return
+     * @throws ServiceException
+     */
+    public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr,
+            Entity containingEntity, Integer startIndex, Integer maxIndex, List<SectionCrumb> sectionCrumb)
+            throws ServiceException;
+
+    /**
      * Adds an item into the specified collection
      * 
      * @param entityForm
@@ -360,6 +374,5 @@ public interface AdminEntityService {
      * @return the friendly name for the given foreign entity
      */
     public String getForeignEntityName(String owningClass, String id);
-
 
 }

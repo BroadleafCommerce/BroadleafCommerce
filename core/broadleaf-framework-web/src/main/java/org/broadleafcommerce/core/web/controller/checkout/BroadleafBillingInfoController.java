@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -58,9 +59,22 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
     public String saveBillingAddress(HttpServletRequest request, HttpServletResponse response, Model model,
                                  BillingInfoForm billingForm, BindingResult result) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
+        CustomerPayment customerPayment = null;
 
         if (billingForm.isUseShippingAddress()){
             copyShippingAddressToBillingAddress(cart, billingForm);
+        }
+
+        Boolean useCustomerPayment = billingForm.getUseCustomerPayment();
+        if (useCustomerPayment && billingForm.getCustomerPaymentId() != null) {
+            customerPayment = customerPaymentService.readCustomerPaymentById(billingForm.getCustomerPaymentId());
+
+            if (customerPayment != null) {
+                Address address = customerPayment.getBillingAddress();
+                if (address != null) {
+                    copyAddressToBillingAddress(billingForm, address);
+                }
+            }
         }
 
         billingInfoFormValidator.validate(billingForm, result);
@@ -82,10 +96,17 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
         }
 
         boolean found = false;
+        String paymentName = billingForm.getPaymentName();
+        Boolean saveNewPayment = billingForm.getSaveNewPayment();
         for (OrderPayment p : cart.getPayments()) {
-            if (PaymentType.CREDIT_CARD.equals(p.getType()) &&
-                    p.isActive()) {
-                p.setBillingAddress(billingForm.getAddress());
+            if (PaymentType.CREDIT_CARD.equals(p.getType()) && p.isActive()) {
+                if (p.getBillingAddress() == null) {
+                    p.setBillingAddress(billingForm.getAddress());
+                } else {
+                    Address updatedAddress = updateAddress(billingForm.getAddress(), p.getBillingAddress());
+                    p.setBillingAddress(updatedAddress);
+                }
+                
                 found = true;
             }
         }
@@ -121,36 +142,48 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
         if (order.getFulfillmentGroups().get(0) != null) {
             Address shipping = order.getFulfillmentGroups().get(0).getAddress();
             if (shipping != null) {
-                Address billing = addressService.create();
-                billing.setFullName(shipping.getFullName());
-                billing.setFirstName(shipping.getFirstName());
-                billing.setLastName(shipping.getLastName());
-                billing.setAddressLine1(shipping.getAddressLine1());
-                billing.setAddressLine2(shipping.getAddressLine2());
-                billing.setCity(shipping.getCity());
-                billing.setState(shipping.getState());
-                billing.setIsoCountrySubdivision(shipping.getIsoCountrySubdivision());
-                billing.setStateProvinceRegion(shipping.getStateProvinceRegion());
-                billing.setPostalCode(shipping.getPostalCode());
-                billing.setCountry(shipping.getCountry());
-                billing.setIsoCountryAlpha2(shipping.getIsoCountryAlpha2());
-                billing.setPrimaryPhone(shipping.getPrimaryPhone());
-                billing.setSecondaryPhone(shipping.getSecondaryPhone());
-                billing.setFax(shipping.getFax());
-                billing.setPhonePrimary(copyPhone(shipping.getPhonePrimary()));
-                billing.setPhoneSecondary(copyPhone(shipping.getPhoneSecondary()));
-                billing.setPhoneFax(copyPhone(shipping.getPhoneFax()));
-                billing.setEmailAddress(shipping.getEmailAddress());
-                billingInfoForm.setAddress(billing);
+                copyAddressToBillingAddress(billingInfoForm, shipping);
             }
         }
     }
 
-    protected Phone copyPhone(Phone phoneToCopy) {
+    protected void copyAddressToBillingAddress(BillingInfoForm billingInfoForm, Address address) {
+        Address billing = addressService.create();
+        billingInfoForm.setAddress(updateAddress(address, billing));
+    }
+
+    private Address updateAddress(Address updatedInfoAddress, Address addressToBeUpdated) {
+        addressToBeUpdated.setFullName(updatedInfoAddress.getFullName());
+        addressToBeUpdated.setFirstName(updatedInfoAddress.getFirstName());
+        addressToBeUpdated.setLastName(updatedInfoAddress.getLastName());
+        addressToBeUpdated.setAddressLine1(updatedInfoAddress.getAddressLine1());
+        addressToBeUpdated.setAddressLine2(updatedInfoAddress.getAddressLine2());
+        addressToBeUpdated.setCity(updatedInfoAddress.getCity());
+        addressToBeUpdated.setState(updatedInfoAddress.getState());
+        addressToBeUpdated.setIsoCountrySubdivision(updatedInfoAddress.getIsoCountrySubdivision());
+        addressToBeUpdated.setStateProvinceRegion(updatedInfoAddress.getStateProvinceRegion());
+        addressToBeUpdated.setPostalCode(updatedInfoAddress.getPostalCode());
+        addressToBeUpdated.setCountry(updatedInfoAddress.getCountry());
+        addressToBeUpdated.setIsoCountryAlpha2(updatedInfoAddress.getIsoCountryAlpha2());
+        addressToBeUpdated.setPrimaryPhone(updatedInfoAddress.getPrimaryPhone());
+        addressToBeUpdated.setSecondaryPhone(updatedInfoAddress.getSecondaryPhone());
+        addressToBeUpdated.setFax(updatedInfoAddress.getFax());
+        addressToBeUpdated.setPhonePrimary(copyPhone(updatedInfoAddress.getPhonePrimary(), 
+                addressToBeUpdated.getPhonePrimary()));
+        addressToBeUpdated.setPhoneSecondary(copyPhone(updatedInfoAddress.getPhoneSecondary(),
+                addressToBeUpdated.getPhoneSecondary()));
+        addressToBeUpdated.setPhoneFax(copyPhone(updatedInfoAddress.getPhoneFax(), addressToBeUpdated.getPhoneFax()));
+        addressToBeUpdated.setEmailAddress(updatedInfoAddress.getEmailAddress());
+        return addressToBeUpdated;
+    }
+
+    protected Phone copyPhone(Phone phoneToCopy, Phone phoneToUpdate) {
         if (phoneToCopy != null) {
-            Phone copy = phoneService.create();
-            copy.setPhoneNumber(phoneToCopy.getPhoneNumber());
-            return copy;
+            if (phoneToUpdate == null) {
+                phoneToUpdate = phoneService.create();
+            }
+            phoneToUpdate.setPhoneNumber(phoneToCopy.getPhoneNumber());
+            return phoneToUpdate;
         }
         return null;
     }

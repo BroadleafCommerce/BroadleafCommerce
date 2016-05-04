@@ -17,7 +17,10 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.core.payment.service;
+
+import javax.annotation.Resource;
 
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
@@ -37,10 +40,10 @@ import org.broadleafcommerce.common.web.payment.processor.CreditCardTypesExtensi
 import org.broadleafcommerce.common.web.payment.processor.TRCreditCardExtensionHandler;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 /**
- * @author Elbert Bautista (elbertbautista)
+ * Copied from mycompany.sample.payment.service
+ * We need it to be picked up by the  siteintegration setup superlasses of groovy, which already scans "org" packages.
+ * @author gdiaz
  */
 @Service("blNullPaymentGatewayConfigurationService")
 public class NullPaymentGatewayConfigurationServiceImpl implements PaymentGatewayConfigurationService {
@@ -51,16 +54,22 @@ public class NullPaymentGatewayConfigurationServiceImpl implements PaymentGatewa
     @Resource(name = "blNullPaymentGatewayRollbackService")
     protected PaymentGatewayRollbackService rollbackService;
 
+    @Resource(name = "blNullPaymentGatewayHostedTransactionConfirmationService")
+    protected NullPaymentGatewayTransactionConfirmationServiceImpl transactionConfirmationServiceImpl;
+
+    @Resource(name = "blNullPaymentGatewayTransactionService")
+    protected NullPaymentGatewayTransactionServiceImpl transactionService;
+
     public PaymentGatewayConfiguration getConfiguration() {
         return configuration;
     }
 
     public PaymentGatewayTransactionService getTransactionService() {
-        return null;
+        return transactionService;
     }
 
     public PaymentGatewayTransactionConfirmationService getTransactionConfirmationService() {
-        return null;
+        return transactionConfirmationServiceImpl;
     }
 
     public PaymentGatewayReportingService getReportingService() {

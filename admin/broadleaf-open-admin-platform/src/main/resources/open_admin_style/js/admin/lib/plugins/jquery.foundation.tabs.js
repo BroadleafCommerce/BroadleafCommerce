@@ -20,7 +20,8 @@
 
         events : function () {
           $(document).on('click.fndtn', '.tabs a', function (e) {
-            methods.set_tab($(this).parent('dd, li'), e);
+              methods.set_tab($(this).parent('dd, li'), e);
+              $('body').foundationTooltips('reload');
           });
           
           settings.init = true;

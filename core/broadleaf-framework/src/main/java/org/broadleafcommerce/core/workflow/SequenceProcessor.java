@@ -53,13 +53,12 @@ public class SequenceProcessor extends BaseProcessor {
             throw new IllegalStateException("Unable to find an instance of ActivityStateManager registered under bean id blActivityStateManager");
         }
         ProcessContext<?> context = null;
-        RollbackStateLocal rollbackStateLocal = RollbackStateLocal.getRollbackStateLocal();
-        if (rollbackStateLocal == null) {
-            rollbackStateLocal = new RollbackStateLocal();
-            rollbackStateLocal.setThreadId(String.valueOf(Thread.currentThread().getId()));
-            rollbackStateLocal.setWorkflowId(getBeanName());
-            RollbackStateLocal.setRollbackStateLocal(rollbackStateLocal);
-        }
+        
+        RollbackStateLocal rollbackStateLocal = new RollbackStateLocal();
+        rollbackStateLocal.setThreadId(String.valueOf(Thread.currentThread().getId()));
+        rollbackStateLocal.setWorkflowId(getBeanName());
+        RollbackStateLocal.setRollbackStateLocal(rollbackStateLocal);
+        
         try {
             //retrieve injected by Spring
             List<Activity<ProcessContext<?>>> activities = getActivities();
@@ -94,10 +93,10 @@ public class SequenceProcessor extends BaseProcessor {
                                 errorHandler.handleError(context, th);
                             }
                         } catch (RuntimeException e) {
-                            LOG.error("An exception was caught while attempting to handle an activity generated exception", th);
+                            LOG.error("An exception was caught while attempting to handle an activity generated exception", e);
                             throw e;
                         } catch (WorkflowException e) {
-                            LOG.error("An exception was caught while attempting to handle an activity generated exception", th);
+                            LOG.error("An exception was caught while attempting to handle an activity generated exception", e);
                             throw e;
                         }
                     }
@@ -119,7 +118,6 @@ public class SequenceProcessor extends BaseProcessor {
             rollbackStateLocal = RollbackStateLocal.getRollbackStateLocal();
             if (rollbackStateLocal != null && rollbackStateLocal.getWorkflowId().equals(getBeanName())) {
                 activityStateManager.clearAllState();
-                RollbackStateLocal.setRollbackStateLocal(null);
             }
         }
         LOG.debug(getBeanName() + " processor is done.");

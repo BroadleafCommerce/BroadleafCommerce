@@ -90,7 +90,7 @@ public class RegisterCustomerValidator implements Validator {
 
         Customer customerFromDb = customerService.readCustomerByUsername(form.getCustomer().getUsername());
 
-        if (customerFromDb != null) {
+        if (customerFromDb != null && customerFromDb.isRegistered()) {
             if (useEmailForUsername) {
                 errors.rejectValue("customer.emailAddress", "emailAddress.used", null, null);
             } else {

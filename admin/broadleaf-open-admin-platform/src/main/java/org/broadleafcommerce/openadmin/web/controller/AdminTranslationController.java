@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.openadmin.web.controller;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,18 +25,25 @@ import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.util.StringUtil;
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
+import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.service.TranslationFormAction;
 import org.broadleafcommerce.openadmin.web.service.TranslationFormBuilderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,26 +55,25 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 @Controller("blAdminTranslationController")
 @RequestMapping("/translation")
 public class AdminTranslationController extends AdminAbstractController {
-    
+
     @Resource(name = "blTranslationService")
     protected TranslationService translationService;
-    
+
     @Resource(name = "blTranslationFormBuilderService")
     protected TranslationFormBuilderService formService;
-    
+
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
 
     @Resource(name = "blAdminTranslationControllerExtensionManager")
     protected AdminTranslationControllerExtensionManager extensionManager;
 
-    @Resource(name="blPersistenceThreadManager")
+    @Resource(name = "blPersistenceThreadManager")
     protected PersistenceThreadManager persistenceThreadManager;
-    
+
     /**
      * Invoked when the translation button is clicked on a given translatable field
      * 
@@ -80,25 +87,25 @@ public class AdminTranslationController extends AdminAbstractController {
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute(value="form") TranslationForm form, BindingResult result) throws Exception {
+            @ModelAttribute(value = "form") TranslationForm form, BindingResult result) throws Exception {
         if (extensionManager != null) {
             extensionManager.getProxy().applyTransformation(form);
         }
-        
+
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
 
-        List<Translation> translations = 
+        List<Translation> translations =
                 translationService.getTranslations(form.getCeilingEntity(), form.getEntityId(), form.getPropertyName());
         ListGrid lg = formService.buildListGrid(translations, form.getIsRte());
-        
+
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("form", form);
         model.addAttribute("listGrid", lg);
         model.addAttribute("viewType", "modal/translationListGrid");
-        model.addAttribute("modalHeaderType", "translation");
+        model.addAttribute("modalHeaderType", ModalHeaderType.TRANSLATION.getType());
         return "modules/modalContainer";
     }
-    
+
     /**
      * Renders a modal dialog that has a list grid of translations for the specified field
      * 
@@ -112,18 +119,17 @@ public class AdminTranslationController extends AdminAbstractController {
      */
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String showAddTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute(value="form") TranslationForm form, BindingResult result) throws Exception {
+            @ModelAttribute(value = "form") TranslationForm form, BindingResult result) throws Exception {
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
-        
-        EntityForm entityForm = formService.buildTranslationForm(form);
-        
+
+        EntityForm entityForm = formService.buildTranslationForm(form, TranslationFormAction.ADD);
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/translationAdd");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "addTranslation");
+        model.addAttribute("modalHeaderType", ModalHeaderType.ADD_TRANSLATION.getType());
         return "modules/modalContainer";
     }
-    
+
     /**
      * Saves a new translation to the database. 
      * 
@@ -140,7 +146,8 @@ public class AdminTranslationController extends AdminAbstractController {
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-             @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+            @ModelAttribute(value = "entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+
         final TranslationForm form = getTranslationForm(entityForm);
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
         SectionCrumb sectionCrumb = new SectionCrumb();
@@ -161,34 +168,76 @@ public class AdminTranslationController extends AdminAbstractController {
             translatedEntity = TranslatedEntity.getInstance(ceilingEntity);
         }
         entityType.setValue(translatedEntity.getFriendlyType());
+
         Field fieldName = new Field();
         fieldName.setName("fieldName");
         fieldName.setValue(form.getPropertyName());
+
         entityForm.getFields().put("entityType", entityType);
         entityForm.getFields().put("fieldName", fieldName);
 
-        service.addEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
-        return viewTranslation(request, response, model, form, result);
+        Entity entity = service.addEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
+
+        entityFormValidator.validate(entityForm, entity, result);
+        if (result.hasErrors()) {
+            entityForm.setPreventSubmit();
+            String jsErrorMap = resultToJS(result);
+            entityForm.setJsErrorMap(jsErrorMap);
+            model.addAttribute("entity", entity);
+            model.addAttribute("entityForm", entityForm);
+            model.addAttribute("viewType", "modal/translationAdd");
+            model.addAttribute("currentUrl", request.getRequestURL().toString());
+            model.addAttribute("modalHeaderType", ModalHeaderType.ADD_TRANSLATION.getType());
+            return "modules/modalContainer";
+        } else {
+            return viewTranslation(request, response, model, form, result);
+        }
     }
-    
+
+    /**
+     * analyzes the error information, and converts it into a Javascript object  string, which can be passed to to the HTML form through the entityForm
+     * @param result
+     * @return
+     */
+    private String resultToJS(BindingResult result) {
+        StringBuffer sb = new StringBuffer("[");
+        List<ObjectError> errors = result.getAllErrors();
+        for (ObjectError objectError : errors) {
+            if (objectError instanceof FieldError) {
+                FieldError ferr = (FieldError) objectError;
+                sb.append("{");
+                String fieldOnly = StringUtil.extractFieldNameFromExpression(ferr.getField());
+                sb.append("\"").append(fieldOnly).append("\":");
+                String localizedMessage = BLCMessageUtils.getMessage(ferr.getDefaultMessage());
+                sb.append("\"").append(localizedMessage).append("\"");
+                sb.append("},");
+            }
+        }
+        if (sb.length() > 1) {
+            sb.deleteCharAt(sb.length() - 1); //the last comma
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
     @RequestMapping(value = "/update", method = RequestMethod.GET)
     public String showUpdateTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute(value="form") TranslationForm form, BindingResult result) throws Exception {
+            @ModelAttribute(value = "form") TranslationForm form, BindingResult result) throws Exception {
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
-        
+
         Translation t = translationService.findTranslationById(form.getTranslationId());
         form.setTranslatedValue(t.getTranslatedValue());
-        
-        EntityForm entityForm = formService.buildTranslationForm(form);
+
+        EntityForm entityForm = formService.buildTranslationForm(form, TranslationFormAction.UPDATE);
         entityForm.setId(String.valueOf(form.getTranslationId()));
-        
+
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/translationAdd");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "updateTranslation");
+        model.addAttribute("modalHeaderType", ModalHeaderType.UPDATE_TRANSLATION.getType());
         return "modules/modalContainer";
     }
-    
+
     /**
      * Updates the given translation id to the new locale code and translated value
      * 
@@ -202,7 +251,7 @@ public class AdminTranslationController extends AdminAbstractController {
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String updateTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+            @ModelAttribute(value = "entityForm") EntityForm entityForm, BindingResult result) throws Exception {
         final TranslationForm form = getTranslationForm(entityForm);
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
         SectionCrumb sectionCrumb = new SectionCrumb();
@@ -221,7 +270,7 @@ public class AdminTranslationController extends AdminAbstractController {
         service.updateEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
         return viewTranslation(request, response, model, form, result);
     }
-    
+
     /**
      * Deletes the translation specified by the translation id
      * 
@@ -236,13 +285,13 @@ public class AdminTranslationController extends AdminAbstractController {
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String deleteTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute(value="form") final TranslationForm form, BindingResult result) throws Exception {
+            @ModelAttribute(value = "form") final TranslationForm form, BindingResult result) throws Exception {
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
         SectionCrumb sectionCrumb = new SectionCrumb();
         sectionCrumb.setSectionIdentifier(TranslationImpl.class.getName());
         sectionCrumb.setSectionId(String.valueOf(form.getTranslationId()));
         List<SectionCrumb> sectionCrumbs = Arrays.asList(sectionCrumb);
-        EntityForm entityForm = formService.buildTranslationForm(form);
+        EntityForm entityForm = formService.buildTranslationForm(form, TranslationFormAction.OTHER);
         entityForm.setCeilingEntityClassname(Translation.class.getName());
         entityForm.setEntityType(TranslationImpl.class.getName());
 
@@ -255,7 +304,7 @@ public class AdminTranslationController extends AdminAbstractController {
         service.removeEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs);
         return viewTranslation(request, response, model, form, result);
     }
-    
+
     /**
      * Converts an EntityForm into a TranslationForm
      * 

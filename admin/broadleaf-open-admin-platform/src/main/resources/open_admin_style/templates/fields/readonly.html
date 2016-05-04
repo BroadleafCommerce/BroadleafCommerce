@@ -1,10 +1,10 @@
-<div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+<div class="field-label inline" th:text="${!field.isVisible} ? '' : #{__(${#strings.isEmpty(field.friendlyName)}?${field.name}:${field.friendlyName})__}" th:classappend="${field.required ? 'required' : ''}" />
 <div th:substituteby="components/fieldTooltip" />
 <div class="twelve" style="margin-left: 20px; margin-bottom: 10px;" th:switch="*{fields['__${field.name}__'].fieldType}">
 
     <span th:case="'MEDIA'" th:remove="tag">
-        <a th:if="*{fields['__${field.name}__'].media != null and fields['__${field.name}__'].media.url != null}"
-           th:href="@{*{fields['__${field.name}__'].media.url}}" target="_blank">
+        <a th:if="*{fields['__${field.name}__'].media != null and fields['__${field.name}__'].media.url != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}" 
+            th:href="@{*{fields['__${field.name}__'].media.url}}" target="_blank">
             <img class="thumbnail"
                 th:src="@{*{fields['__${field.name}__'].media.url + '?largeAdminThumbnail'}}" />
         </a>

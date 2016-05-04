@@ -48,6 +48,7 @@
 
         problemSaving : 'There was a problem saving. See errors below',
         problemDeleting : 'There was a problem deleting this record. See errors below',
+        problemReverting : 'There was a problem reverting this record.',
         globalErrors : 'Global Errors'
 
     };

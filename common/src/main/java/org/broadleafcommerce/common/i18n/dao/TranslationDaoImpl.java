@@ -20,6 +20,7 @@
 package org.broadleafcommerce.common.i18n.dao;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ResultType;
 import org.broadleafcommerce.common.extension.StandardCacheItem;
@@ -199,12 +200,19 @@ public class TranslationDaoImpl implements TranslationDao {
 
     @Override
     public List<Translation> readAllTranslationEntries(TranslatedEntity entityType, ResultType stage) {
+        return readAllTranslationEntries(entityType, stage, null);
+    }
+    
+    public List<Translation> readAllTranslationEntries(TranslatedEntity entityType, ResultType stage, List<String> entityIds) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
         Root<TranslationImpl> root = criteria.from(TranslationImpl.class);
         criteria.select(root);
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(builder.equal(root.get("entityType"), entityType.getFriendlyType()));
+        if (CollectionUtils.isNotEmpty(entityIds)) {
+            restrictions.add(root.get("entityId").in(entityIds));
+        }
         try {
             if (extensionManager != null) {
                 extensionManager.getProxy().setup(TranslationImpl.class, stage);

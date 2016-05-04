@@ -126,9 +126,9 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
                             CustomerLoggedInEvent loggedInEvent = new CustomerLoggedInEvent(customer, this.getClass().getName()); 
                             publishEvent(loggedInEvent, request, CustomerLoggedInEvent.class.getName(), userName);
                         }
-                    } else {
-                        customer = resolveAuthenticatedCustomer(authentication);
-                    }
+                    } 
+                } else {
+                    customer = resolveAuthenticatedCustomer(authentication);
                 }
             }
         }

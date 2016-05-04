@@ -56,7 +56,8 @@
              */
             
             BLC.get({
-                url : BLC.servletContext + "/sessionTimerReset"
+                url : BLC.servletContext + "/sessionTimerReset",
+                trackAnalytics : false
             }, function(data) {
                 /*
                  * We deduct one minute from the actual session timeout interval to ensure that the server-side session

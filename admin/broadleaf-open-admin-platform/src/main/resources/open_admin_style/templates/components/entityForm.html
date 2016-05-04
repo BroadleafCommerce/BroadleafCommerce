@@ -24,9 +24,11 @@
     <input type="hidden" th:field="*{id}" />
     <input type="hidden" th:field="*{sectionCrumbs}"  />
     <input type="hidden" th:field="*{mainEntityName}" />
+    <input type="hidden" name="preventSubmit" th:value="*{preventSubmit}" />
+    <input type="hidden" name="jsErrorMapString" th:value="*{jsErrorMap}" />
 
     <div th:unless="${hideTopLevelErrors}" class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">
-        <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
+          <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
             <b>[[${tab.key}]]</b>
             <span th:if="${#lists.size(field.value) &gt; 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">
                 <span th:remove="tag" th:text="#{${field.key}}"></span>: <span th:each="message : ${field.value}">[[#{__${message}__}]]</span>
@@ -35,7 +37,7 @@
                 <span th:remove="tag" th:text="#{${field.key}}"></span>: <span th:remove="tag" th:text="#{${field.value.get(0)}}"></span>
             </span>
             <br />
-        </div>
+          </div>
     </div>
 
     <div class="tabs-container" th:if="${renderTabs}">
@@ -93,9 +95,9 @@
             </div>
 
             <div th:each="collectionListGrid : ${tab.listGrids}" class="listgrid-container" th:id="${collectionListGrid.subCollectionFieldName}">
-                <label th:text="#{${collectionListGrid.friendlyName}}" />
-                <div th:include="components/listGridToolbar" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
-                <div th:include="components/listGrid" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
+              <label th:text="#{${collectionListGrid.friendlyName}}" />
+              <div th:include="components/listGridToolbar" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
+              <div th:include="components/listGrid" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
             </div>
 
         </li>

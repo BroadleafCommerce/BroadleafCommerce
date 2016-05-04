@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -17,17 +17,19 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.dao;
+package org.broadleafcommerce.core.web.order.security;
 
-import org.hibernate.ejb.Ejb3Configuration;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
+
 
 /**
- * 
- * @author jfischer
- *
+ * @author bpolster
  */
-public interface EJB3ConfigurationDao {
-
-    public abstract Ejb3Configuration getConfiguration();
-
+@Service("blCartStateRequestProcessorExtensionManager")
+public class CartStateRequestProcessorExtensionManager extends ExtensionManager<CartStateRequestProcessorExtensionHandler> {
+    
+    public CartStateRequestProcessorExtensionManager() {
+        super(CartStateRequestProcessorExtensionHandler.class);
+    }
 }

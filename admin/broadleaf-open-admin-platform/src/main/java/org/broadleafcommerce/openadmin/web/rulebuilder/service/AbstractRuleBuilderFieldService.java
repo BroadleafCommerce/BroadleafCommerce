@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.openadmin.web.rulebuilder.service;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -77,14 +78,14 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
         for (FieldData field : getFields()) {
             FieldDTO fieldDTO = new FieldDTO();
             fieldDTO.setLabel(field.getFieldLabel());
-            
+
             //translate the label to display
             String label = field.getFieldLabel();
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
             MessageSource messages = context.getMessageSource();
             label = messages.getMessage(label, null, label, context.getJavaLocale());
             fieldDTO.setLabel(label);
-            
+
             fieldDTO.setName(field.getFieldName());
             fieldDTO.setOperators(field.getOperators());
             fieldDTO.setOptions(field.getOptions());
@@ -99,7 +100,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
         SupportedFieldType type = null;
         if (fieldName != null) {
             for (FieldData field : getFields()) {
-                if (fieldName.equals(field.getFieldName())){
+                if (fieldName.equals(field.getFieldName())) {
                     return field.getFieldType();
                 }
             }
@@ -112,7 +113,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
         SupportedFieldType type = null;
         if (fieldName != null) {
             for (FieldData field : getFields()) {
-                if (fieldName.equals(field.getFieldName())){
+                if (fieldName.equals(field.getFieldName())) {
                     return field.getSecondaryFieldType();
                 }
             }
@@ -155,7 +156,8 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     @Override
     @SuppressWarnings("unchecked")
     public void setFields(final List<FieldData> fields) {
-        List<FieldData> proxyFields = (List<FieldData>) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[]{List.class}, new InvocationHandler() {
+        List<FieldData> proxyFields = (List<FieldData>) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { List.class }, new InvocationHandler() {
+
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if (method.getName().equals("add")) {
@@ -174,20 +176,22 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
             }
 
             private void testFieldName(FieldData fieldData) throws ClassNotFoundException {
-                if (!StringUtils.isEmpty(fieldData.getFieldName()) && dynamicEntityDao != null) {
-                    Class<?>[] dtos = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName(getDtoClassName()));
-                    if (ArrayUtils.isEmpty(dtos)) {
-                        dtos = new Class<?>[]{Class.forName(getDtoClassName())};
-                    }
-                    Field field = null;
-                    for (Class<?> dto : dtos) {
-                        field = dynamicEntityDao.getFieldManager().getField(dto, fieldData.getFieldName());
-                        if (field != null) {
-                            break;
+                if (!fieldData.getSkipValidation()) {
+                    if (!StringUtils.isEmpty(fieldData.getFieldName()) && dynamicEntityDao != null) {
+                        Class<?>[] dtos = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName(getDtoClassName()));
+                        if (ArrayUtils.isEmpty(dtos)) {
+                            dtos = new Class<?>[] { Class.forName(getDtoClassName()) };
                         }
-                    }
-                    if (field == null) {
-                        throw new IllegalArgumentException("Unable to find the field declared in FieldData (" + fieldData.getFieldName() + ") on the target class (" + getDtoClassName() + "), or any registered entity class that derives from it.");
+                        Field field = null;
+                        for (Class<?> dto : dtos) {
+                            field = dynamicEntityDao.getFieldManager().getField(dto, fieldData.getFieldName());
+                            if (field != null) {
+                                break;
+                            }
+                        }
+                        if (field == null) {
+                            throw new IllegalArgumentException("Unable to find the field declared in FieldData (" + fieldData.getFieldName() + ") on the target class (" + getDtoClassName() + "), or any registered entity class that derives from it.");
+                        }
                     }
                 }
             }
@@ -221,7 +225,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
             PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(TargetModeType.SANDBOX);
             dynamicEntityDao = persistenceManager.getDynamicEntityDao();
             setFields(new ArrayList<FieldData>());
-            
+
             // This cannot be null during startup as we do not want to remove the null safety checks in a multi-tenant env.
             boolean contextWasNull = false;
             if (BroadleafRequestContext.getBroadleafRequestContext() == null) {

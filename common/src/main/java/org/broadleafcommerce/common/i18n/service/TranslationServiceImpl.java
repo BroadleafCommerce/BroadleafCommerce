@@ -19,10 +19,6 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -38,12 +34,15 @@ import org.broadleafcommerce.common.i18n.dao.TranslationDao;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
+import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -51,6 +50,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 
 @Service("blTranslationService")
@@ -75,6 +78,15 @@ public class TranslationServiceImpl implements TranslationService {
 
     @Value("${translation.thresholdForFullCache:1000}")
     protected int thresholdForFullCache;
+
+    @Value("${returnBlankTranslationForNotDefaultLocale:false}")
+    protected boolean returnBlankTranslationForNotDefaultLocale;
+
+    @Resource(name = "blTranslationExceptionProperties")
+    protected List<String> translationExceptionProperties = new ArrayList<String>();
+
+    @Resource(name = "blLocaleService")
+    protected LocaleService localeService;
 
     @Resource(name="blGenericEntityDao")
     protected GenericEntityDao genericEntityDao;
@@ -162,6 +174,14 @@ public class TranslationServiceImpl implements TranslationService {
         if (StringUtils.isNotBlank(locale.getCountry())) {
             localeCountryCode += "_" + locale.getCountry();
         }
+        
+        if (TranslationBatchReadCache.getCache() != null) {
+            Translation translation = TranslationBatchReadCache.getFromCache(entityType, entityId, property, localeCountryCode);
+            if (translation != null) {
+                return translation.getTranslatedValue();
+            }
+        }
+        
         boolean isValidForCache = false;
         if (extensionManager != null) {
             ExtensionResultHolder<Boolean> response = new ExtensionResultHolder<Boolean>();
@@ -410,6 +430,55 @@ public class TranslationServiceImpl implements TranslationService {
             // don't cache when not in a SandBox
             return -1;
         }
+    }
+
+    @Override
+    public String getDefaultTranslationValue(Object entity, String property, Locale locale,
+            String requestedDefaultValue) {
+
+        if (returnBlankTranslationForNotDefaultLocale && !localeMatchesDefaultLocale(locale) && !propertyInDefaultLocaleExceptionList(entity, property)) {
+            return "";
+        }
+
+        return requestedDefaultValue;
+    }
+
+    /**
+     * Returns true if the passed in entity / property combination is in the defaultLocaleExceptionList
+     * 
+     * The default implementation checks the "translationExceptionProperties" list to see if the
+     * property matches one of the regularExpressions in that list.
+     * 
+     * Implementors are expected to override this method for implementation specific needs. 
+     * 
+     * @param entity
+     * @param property
+     * @return
+     */
+    protected boolean propertyInDefaultLocaleExceptionList(Object entity, String property) {
+        TranslatedEntity entityType = getEntityType(entity);
+        if (entityType != null && entityType.getFriendlyType() != null) {
+            for (String exceptionProperty : translationExceptionProperties) {
+                if (property.matches(exceptionProperty)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if the passed in locale's language matches the Broadleaf default locale.
+     * @param locale
+     * @return
+     */
+    protected boolean localeMatchesDefaultLocale(Locale locale) {
+        String defaultLanguage = LocaleUtil.findLanguageCode(localeService.findDefaultLocale());
+
+        if (defaultLanguage != null && locale != null) {
+            return defaultLanguage.equals(locale.getLanguage());
+        }
+        return false;
     }
 
 }

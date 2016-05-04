@@ -63,7 +63,7 @@ import javax.annotation.Resource;
  * {@link PaymentTransactionType.AUTHORIZE_AND_CAPTURE} transactions. This will also confirm any {@link PaymentTransactionType.UNCONFIRMED} transactions
  * that exist on am {@link OrderPayment}.</p>
  * 
- * <p>If there is an exception (either in this activity or later downstream) the confirmed payments are rolled back via {@link ConfirmPaymentsRollbackHandler}
+ * <p>If there is an exception (either in this activity or later downstream) the confirmed payments are rolled back via {@link GenericConfirmPaymentsRollbackHandler}
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
@@ -73,12 +73,14 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     
     /**
      * <p>
-     * Used by the {@link ConfirmPaymentsRollbackHandler} to roll back transactions that this activity confirms.
+     * Used by the {@link GenericConfirmPaymentsRollbackHandler} to roll back transactions that this activity confirms.
      * 
      * <p>
      * This could also contain failed transactions that still need to be rolled back
      */
     public static final String ROLLBACK_TRANSACTIONS = "confirmedTransactions";
+    
+    public static final String FAILED_RESPONSES = "failedResponses";
     
     @Autowired(required = false)
     @Qualifier("blPaymentGatewayConfigurationServiceProvider")
@@ -145,29 +147,29 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(tx.getOrderPayment().getGatewayType());
                         PaymentResponseDTO responseDTO = null;
 
+                        PaymentRequestDTO confirmationRequest = orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx);
+                        populateBillingAddressOnRequest(confirmationRequest, payment);
+                        populateCustomerOnRequest(confirmationRequest, payment);
+                        populateShippingAddressOnRequest(confirmationRequest, payment);
+
                         if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
                             // Handles the PCI-Compliant Scenario where you have an UNCONFIRMED CREDIT_CARD payment on the order.
                             // This can happen if you send the Credit Card directly to Broadleaf or you use a Digital Wallet solution like MasterPass.
                             // The Actual Credit Card PAN is stored in blSecurePU and will need to be sent to the Payment Gateway for processing.
 
-                            PaymentRequestDTO s2sRequest = orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx);
-                            populateCreditCardOnRequest(s2sRequest, payment);
-                            populateBillingAddressOnRequest(s2sRequest, payment);
-                            populateCustomerOnRequest(s2sRequest, payment);
-                            populateShippingAddressOnRequest(s2sRequest, payment);
+                            populateCreditCardOnRequest(confirmationRequest, payment);
 
                             if (cfg.getConfiguration().isPerformAuthorizeAndCapture()) {
-                                responseDTO = cfg.getTransactionService().authorizeAndCapture(s2sRequest);
+                                responseDTO = cfg.getTransactionService().authorizeAndCapture(confirmationRequest);
                             } else {
-                                responseDTO = cfg.getTransactionService().authorize(s2sRequest);
+                                responseDTO = cfg.getTransactionService().authorize(confirmationRequest);
                             }
 
                         } else {
                             // This handles the THIRD_PARTY_ACCOUNT scenario (like PayPal Express Checkout) where
                             // the transaction just needs to be confirmed with the Gateway
 
-                            responseDTO = cfg.getTransactionConfirmationService()
-                                .confirmTransaction(orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx));
+                            responseDTO = cfg.getTransactionConfirmationService().confirmTransaction(confirmationRequest);
                         }
 
                         if (responseDTO == null) {
@@ -296,6 +298,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
          */
         List<OrderPayment> invalidatedPayments = new ArrayList<OrderPayment>();
         List<PaymentTransaction> failedTransactionsToRollBack = new ArrayList<PaymentTransaction>();
+        List<PaymentResponseDTO> failedResponses = new ArrayList<PaymentResponseDTO>();
         for (ResponseTransactionPair responseTransactionPair : failedTransactions) {
             PaymentTransaction tx = orderPaymentService.readTransactionById(responseTransactionPair.getTransactionId());
             if (shouldRollbackFailedTransaction(responseTransactionPair)) {
@@ -305,6 +308,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                 OrderPayment payment = orderPaymentService.save(tx.getOrderPayment());
                 invalidatedPayments.add(payment);
             }
+            failedResponses.add(responseTransactionPair.getResponseDTO());
         }
         
         /**
@@ -315,6 +319,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
          */
         Map<String, Object> rollbackState = new HashMap<String, Object>(); 
         rollbackState.put(ROLLBACK_TRANSACTIONS, failedTransactionsToRollBack);
+        context.getSeedData().getUserDefinedFields().put(FAILED_RESPONSES, failedResponses);
         ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), rollbackState);
         
         if (LOG.isErrorEnabled()) {
@@ -326,7 +331,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                 LOG.trace(responseTransactionPair.getResponseDTO().getRawResponse());
             }
         }
-
+        
         throw new CheckoutException(msg, context.getSeedData());
     }
     

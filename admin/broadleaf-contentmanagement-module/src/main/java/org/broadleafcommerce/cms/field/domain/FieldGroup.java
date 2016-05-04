@@ -45,4 +45,5 @@ public interface FieldGroup extends Serializable, MultiTenantCloneable<FieldGrou
 
     public void setFieldDefinitions(List<FieldDefinition> fieldDefinitions);
 
+    public Boolean isMasterFieldGroup();
 }

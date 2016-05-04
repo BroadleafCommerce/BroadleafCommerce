@@ -29,7 +29,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
 
 import java.util.Collection;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -46,8 +45,6 @@ public class BroadleafAdminLdapUserDetailsMapper extends LdapUserDetailsMapper {
 
     @Resource(name = "blAdminUserProvisioningService")
     protected AdminUserProvisioningService provisioningService;
-
-    protected Map<String, String[]> roleNameSubstitutions;
     
     @Override
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {

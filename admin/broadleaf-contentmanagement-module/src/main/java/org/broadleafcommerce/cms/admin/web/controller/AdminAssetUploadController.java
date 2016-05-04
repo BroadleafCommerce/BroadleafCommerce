@@ -26,6 +26,7 @@ import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
+import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid.Type;
 import org.springframework.http.HttpHeaders;
@@ -94,7 +95,7 @@ public class AdminAssetUploadController extends AdminAbstractController {
         
         model.addAttribute("viewType", "modal/selectAsset");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "selectAsset");
+        model.addAttribute("modalHeaderType", ModalHeaderType.SELECT_ASSET.getType());
 
         model.addAttribute("currentParams", new ObjectMapper().writeValueAsString(requestParams));
         

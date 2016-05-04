@@ -167,19 +167,22 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         for (FieldGroup fieldGroup : structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups()) {
             for (FieldDefinition def : fieldGroup.getFieldDefinitions()) {
                 Property property = new Property();
-                propertiesList.add(property);
                 property.setName(def.getName());
                 String value = null;
                 if (!MapUtils.isEmpty(structuredContentFieldMap)) {
-                    StructuredContentField structuredContentField = structuredContentFieldMap.get(def.getName()).getStructuredContentField();
-                    if (structuredContentField != null) {
-                        value = structuredContentField.getValue();
+                    StructuredContentFieldXref structuredContentFieldXref = structuredContentFieldMap.get(def.getName());
+                    if (structuredContentFieldXref != null) {
+                        StructuredContentField structuredContentField = structuredContentFieldXref.getStructuredContentField();
+                        if (structuredContentField != null) {
+                            value = structuredContentField.getValue();
+                        }
                     }
                 }
                 property.setValue(value);
                 if (!CollectionUtils.isEmpty(dirtyFields) && dirtyFields.contains(property.getName())) {
                     property.setIsDirty(true);
                 }
+                propertiesList.add(property);
             }
         }
         if (includeId) {

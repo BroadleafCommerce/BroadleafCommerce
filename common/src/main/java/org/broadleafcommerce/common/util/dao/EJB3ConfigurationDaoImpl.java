@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.dao;
+package org.broadleafcommerce.common.util.dao;
 
 import org.hibernate.ejb.Ejb3Configuration;
 

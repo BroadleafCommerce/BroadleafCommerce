@@ -73,11 +73,20 @@ public class DynamicSkuPrices implements Serializable {
     }
 
     /**
-     * Returns {@link #getSalePrice()}.  Intended as a hook for
+     * Returns the lower of {@link #getSalePrice()} and {@link #getRetailPrice()}.  Intended as a hook for
      * advanced pricing considerations like those in BLC Enterprise pricing.
      * @return
      */
     public Money getPrice() {
+        if (getSalePrice() == null) {
+            return getRetailPrice();
+        }
+        if (getRetailPrice() != null) {
+            if (getRetailPrice().lessThan(getSalePrice())) {
+                return getRetailPrice();
+            }
+        }
+
         return getSalePrice();
     }
 

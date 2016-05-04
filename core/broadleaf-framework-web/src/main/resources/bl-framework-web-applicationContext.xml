@@ -48,7 +48,6 @@
 
     <bean id="blAddSortLinkProcessor" class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
     <bean id="blCategoriesProcessor" class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
-    <bean id="blFormProcessor" class="org.broadleafcommerce.core.web.processor.FormProcessor" />
     <bean id="blGoogleAnalyticsProcessor" class="org.broadleafcommerce.core.web.processor.GoogleAnalyticsProcessor" />
     <bean id="blHeadProcessor" class="org.broadleafcommerce.core.web.processor.HeadProcessor" />
     <bean id="blNamedOrderProcessor" class="org.broadleafcommerce.core.web.processor.NamedOrderProcessor" />
@@ -68,13 +67,13 @@
     <bean id="blOnePageCheckoutProcessor" class="org.broadleafcommerce.core.web.processor.OnePageCheckoutProcessor"/>
     <bean id="blUncacheableDataProcessor" class="org.broadleafcommerce.core.web.processor.UncacheableDataProcessor"/>
     <bean id="blGoogleUniversalAnalyticsProcessor" class="org.broadleafcommerce.core.web.processor.GoogleUniversalAnalyticsProcessor" />
+    <bean id="blCatalogRelativeHrefProcessor" class="org.broadleafcommerce.core.web.processor.CatalogRelativeHrefProcessor" />
 
     <bean id="blDialectFrameworkProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
         <property name="sourceSet">
             <set>
                 <ref bean="blAddSortLinkProcessor" />
                 <ref bean="blCategoriesProcessor" />
-                <ref bean="blFormProcessor" />
                 <ref bean="blGoogleAnalyticsProcessor" />
                 <ref bean="blHeadProcessor" />
                 <ref bean="blNamedOrderProcessor" />
@@ -95,6 +94,8 @@
                 <ref bean="blCreditCardTypesProcessor" />
                 <ref bean="blUncacheableDataProcessor" />
                 <ref bean="blGoogleUniversalAnalyticsProcessor" />
+                <ref bean="blCatalogRelativeHrefProcessor" />
+                
             </set>
         </property>
     </bean>
@@ -102,19 +103,13 @@
         <property name="collectionRef" value="blDialectFrameworkProcessors" />
         <property name="targetRef" value="blDialectProcessors" />
     </bean>
-    <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
-        <property name="processors" ref="blDialectProcessors" />
-    </bean> 
     
     <!-- This list factory bean will accept classes that implment the BroadleafVariableExpression interface. -->
     <!-- This provides the ability to inject custom expression evaluators into Thymeleaf. -->
     <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
-                <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
-                <bean class="org.broadleafcommerce.common.web.expression.BRCVariableExpression" />
-                <bean class="org.broadleafcommerce.common.web.expression.PropertiesVariableExpression" />
-                <bean class="org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression"/>
+                <bean class="org.broadleafcommerce.core.web.expression.BLCVariableExpression" />
                 <bean class="org.broadleafcommerce.profile.web.core.expression.CustomerVariableExpression"/>
             </list>
         </property>
@@ -164,8 +159,6 @@
         <property name="characterEncoding" value="UTF-8" />
     </bean>  
     
-    <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring4.dialect.SpringStandardDialect" />
-    
     <bean id="blMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
 
     <bean id="blWebTemplateResolvers" class="org.springframework.beans.factory.config.SetFactoryBean">
@@ -184,7 +177,9 @@
         class="org.broadleafcommerce.common.web.BroadleafThymeleafStandardTemplateModeHandlers" />
         
     <bean id="thymeleafLayoutDialect" class="nz.net.ultraq.thymeleaf.LayoutDialect" />
-    
+
+    <bean id="blICacheManager" class="org.broadleafcommerce.core.web.cache.BLCICacheManager" />
+
     <bean id="blWebTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
         <property name="messageResolvers">
             <set>
@@ -193,6 +188,7 @@
             </set>
         </property>
         <property name="templateResolvers" ref="blWebTemplateResolvers" />
+        <property name="cacheManager" ref="blICacheManager" />
         <property name="templateModeHandlers" value="#{blThymeleafStandardTemplateModeHandlers.standardTemplateModeHandlers}" />
         <property name="dialects">
             <set>

@@ -22,14 +22,16 @@ package org.broadleafcommerce.common.i18n.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
+import java.io.Serializable;
+
 /**
  * This domain object represents a translated value for a given property on an entity for a specific locale.
  * 
  * @author Andre Azzolini (apazzolini)
  * @see TranslatedEntity
  */
-public interface Translation extends MultiTenantCloneable<Translation> {
-    
+public interface Translation extends MultiTenantCloneable<Translation>, Serializable {
+
     public Long getId();
 
     public void setId(Long id);

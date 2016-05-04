@@ -48,6 +48,7 @@ import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.exception.EntityNotFoundException;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
@@ -57,7 +58,6 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,7 +69,6 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 /**
@@ -123,7 +122,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         PersistenceResponse response = fetch(request);
         Entity[] entities = response.getDynamicResultSet().getRecords();
-        Assert.isTrue(entities != null && entities.length == 1, "Entity not found");
+        if (ArrayUtils.isEmpty(entities)) {
+            throw new EntityNotFoundException();
+        }
 
         return response;
     }
@@ -266,7 +267,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
             response = fetch(ppr);
             Entity[] entities = response.getDynamicResultSet().getRecords();
-            Assert.isTrue(entities != null && entities.length == 1, "Entity not found");
+            if (ArrayUtils.isEmpty(entities)) {
+                throw new EntityNotFoundException();
+            }
         } else if (md instanceof MapMetadata) {
             MapMetadata mmd = (MapMetadata) md;
             FilterAndSortCriteria fasc = new FilterAndSortCriteria(ppr.getForeignKey().getManyToField());
@@ -289,12 +292,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         } else {
             throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was not an " +
                     "advanced collection field.", collectionProperty.getName(), containingClassMetadata.getCeilingType()));
-        }
-
-        if (response == null) {
-            throw new NoResultException(String.format("Could not find record for class [%s], field [%s], main entity id " +
-                    "[%s], collection entity id [%s]", containingClassMetadata.getCeilingType(),
-                    collectionProperty.getName(), containingEntityId, collectionItemId));
         }
 
         return response;
@@ -354,21 +351,28 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity, List<SectionCrumb> sectionCrumb)
+    public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity, Integer startIndex, Integer maxIndex, List<SectionCrumb> sectionCrumb)
             throws ServiceException {
         Map<String, DynamicResultSet> map = new HashMap<String, DynamicResultSet>();
 
         PersistenceResponse response = getClassMetadata(ppr);
         ClassMetadata cmd = response.getDynamicResultSet().getClassMetaData();
         for (Property p : cmd.getProperties()) {
-            if (ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), containingEntity.getType()[0]) 
+            if (ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), containingEntity.getType()[0])
                     && p.getMetadata() instanceof CollectionMetadata) {
-                PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
+                PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, startIndex, maxIndex, sectionCrumb);
                 map.put(p.getName(), response2.getDynamicResultSet());
             }
         }
 
         return map;
+    }
+
+    @Override
+    public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity, List<SectionCrumb> sectionCrumb)
+            throws ServiceException {
+
+        return getRecordsForAllSubCollections(ppr, containingEntity, null, null, sectionCrumb);
     }
 
     @Override
@@ -851,7 +855,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         
         return null;
     }
-    
+
     protected int getDefaultMaxResults() {
         return BLCSystemProperty.resolveIntSystemProperty("admin.default.max.results", 50);
     }

@@ -239,11 +239,12 @@ public interface FormBuilderService {
      * @param adornedMd
      * @param adornedList
      * @param parentId
+     * @param isViewCollectionItem
      * @return the EntityForm
      * @throws ServiceException
      */
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
-            String parentId)
+            String parentId, boolean isViewCollectionItem)
             throws ServiceException;
 
     /**
@@ -258,12 +259,13 @@ public interface FormBuilderService {
      * @param mapStructure
      * @param cmd
      * @param parentId
+     * @param isViewCollectionItem
      * @param ef the form DTO to populate
      * @return the original {@link EntityForm} passed in but fully populated
      * @throws ServiceException
      */
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
-            String parentId, EntityForm ef)
+            String parentId, boolean isViewCollectionItem, EntityForm ef)
             throws ServiceException;
 
     /**

@@ -21,18 +21,20 @@ package org.broadleafcommerce.core.order.fulfillment.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.List;
 
 /**
  * 
@@ -49,7 +51,8 @@ public class BandedWeightFulfillmentOptionImpl extends FulfillmentOptionImpl imp
 
     @OneToMany(mappedBy="option", targetEntity=FulfillmentWeightBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    protected List<FulfillmentWeightBand> bands;
+    @IgnoreEnterpriseBehavior
+    protected List<FulfillmentWeightBand> bands = new ArrayList<FulfillmentWeightBand>();
 
     @Override
     public List<FulfillmentWeightBand> getBands() {

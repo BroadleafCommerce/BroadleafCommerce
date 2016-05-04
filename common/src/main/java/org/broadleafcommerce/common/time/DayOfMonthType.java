@@ -67,6 +67,7 @@ public class DayOfMonthType implements Serializable, BroadleafEnumerationType {
     public static final DayOfMonthType TWENTYNINE  = new DayOfMonthType("29", "29");
     public static final DayOfMonthType THIRTY  = new DayOfMonthType("30", "30");
     public static final DayOfMonthType THIRTYONE  = new DayOfMonthType("31", "31");
+    public static final DayOfMonthType END_OF_MONTH = new DayOfMonthType("END_OF_MONTH", "END_OF_MONTH");
 
     public static DayOfMonthType getInstance(final String type) {
         return TYPES.get(type);
