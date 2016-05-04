@@ -65,7 +65,7 @@
 
 .listgrid-filter-sort-container i {
     color: #B9B9B9;
-    margin: 0px 0px 0px 4px;
+    margin: 0 0 0 4px;
     cursor: pointer;
 }
 
@@ -101,7 +101,7 @@
 div.alert-box.list-grid-alert.save-alert {
     display: inline-block;
     margin-bottom: 0;
-    margin-left: 0px;
+    margin-left: 0;
     padding-right: 7px;
     background: none;
     border: none;
@@ -138,7 +138,8 @@ div.alert-box.list-grid-alert.save-alert a.close {
     text-transform: none;
 }
 
-.listgrid-toolbar .listgrid-toolbar-actions, .listgrid-toolbar .listgrid-row-actions {
+.listgrid-toolbar .listgrid-toolbar-actions,
+.listgrid-toolbar .listgrid-row-actions {
     display: inline-block;
 }
 
@@ -195,7 +196,8 @@ div.alert-box.list-grid-alert.save-alert a.close {
 /*-------------  END TOOLBAR ------------------------------ */
 /*-------------  START TABLES ----------------------------- */
 
-.table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {
+.table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th,
+.table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {
     padding: 6px 15px;
 }
 
@@ -204,7 +206,8 @@ div.alert-box.list-grid-alert.save-alert a.close {
     border-collapse: separate;
 }
 
-.table.list-grid-table, .table>tbody>tr.selected>td:first-child, .table>tbody>tr.selected>td:last-child {
+.table.list-grid-table, .table>tbody>tr.selected>td:first-child,
+.table>tbody>tr.selected>td:last-child {
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
@@ -215,12 +218,14 @@ div.alert-box.list-grid-alert.save-alert a.close {
     height: 40px;
 }
 
-.listgrid-body-wrapper tbody tr td a:not(.workflow-icon),  tbody tr td a:not(.workflow-icon) {
+.listgrid-body-wrapper tbody tr td a:not(.workflow-icon),
+tbody tr td a:not(.workflow-icon) {
     color: #809831;
     text-decoration: underline;
 }
 
-.listgrid-body-wrapper tbody tr.dirty td a:not(.workflow-icon), tbody tr.dirty td a:not(.workflow-icon) {
+.listgrid-body-wrapper tbody tr.dirty td a:not(.workflow-icon),
+tbody tr.dirty td a:not(.workflow-icon) {
     color: #efbc62;
     text-decoration: underline;
 }
@@ -301,7 +306,7 @@ tr {
 }
 
 .table tbody > tr > td > a.list-grid-primary-field {
-    display : inline;
+    display: inline;
 }
 /**   END TABLE ROWS     **/
 /**   START TABLE HOLDER **/
