@@ -203,9 +203,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> crumbs = getSectionCrumbs(request, null, null);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams, crumbs, pathVars)
-                .withFilterAndSortCriteria(getCriteria(requestParams))
-                .withStartIndex(getStartIndex(requestParams))
-                .withMaxIndex(getMaxIndex(requestParams))
                 .withCustomCriteria(getCustomCriteria(requestParams));
 
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
