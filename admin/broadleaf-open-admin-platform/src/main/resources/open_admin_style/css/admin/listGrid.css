@@ -128,7 +128,8 @@ div.alert-box.list-grid-alert.save-alert a.close {
 }
 /*-------------  END COMMON STYLES  ----------------------- */
 /*-------------  START TOOLBAR ---------------------------- */
-.listgrid-toolbar .button, .listgrid-toolbar .button-group li {
+.listgrid-toolbar .button,
+.listgrid-toolbar .button-group li {
     height: 30px;
     line-height: 30px;
 }
