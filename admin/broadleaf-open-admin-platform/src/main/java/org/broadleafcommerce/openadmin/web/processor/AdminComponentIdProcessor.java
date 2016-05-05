@@ -62,11 +62,9 @@ public class AdminComponentIdProcessor extends AbstractAttributeModifierAttrProc
         if (component instanceof ListGrid) {
             ListGrid lg = (ListGrid) component;
             
-            fieldName = "listGrid-";
-            if (ListGrid.Type.MAIN.toString().toLowerCase().equals(lg.getListGridType())) {
-                fieldName += ListGrid.Type.MAIN.toString().toLowerCase();
-            } else {
-                fieldName = fieldName + lg.getListGridType() + '-' + lg.getSubCollectionFieldName();
+            fieldName = "listGrid-" + lg.getListGridType();
+            if (StringUtils.isNotBlank(lg.getSubCollectionFieldName())) {
+                fieldName += "-" + lg.getSubCollectionFieldName();
             }
         } else if (component instanceof Field) {
             Field field = (Field) component;
