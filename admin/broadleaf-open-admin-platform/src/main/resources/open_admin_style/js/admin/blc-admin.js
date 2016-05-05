@@ -902,9 +902,12 @@ var BLCAdmin = (function($) {
                 var thisClass = $form.find('input[name="ceilingEntityClassname"]').val();
                 if (thisClass != null && thisClass.indexOf(className) >= 0) {
                     var toggleFunction = function(event) {
+                        // Get the containers parent in the event a field is on another tab
+                        var $containerParent = $container.parent();
+
                         // Extract the parent and child field DOM elements from the data
-                        var $parentField = event.data.$parentField;
-                        var $childField = $container.find(event.data.childFieldSelector);
+                        var $parentField = $containerParent.find(event.data.parentFieldSelector);
+                        var $childField = $containerParent.find(event.data.childFieldSelector);
                         var options = event.data.options;
                         var parentValue = BLCAdmin.extractFieldValue($parentField);
                         
@@ -955,8 +958,8 @@ var BLCAdmin = (function($) {
                     var $parentField = $container.find(parentFieldSelector);
                     
                     var data = {
-                        '$parentField' : $parentField,
                         '$container' : $container,
+                        'parentFieldSelector' : parentFieldSelector,
                         'childFieldSelector' : childFieldSelector,
                         'options' : options
                     };
