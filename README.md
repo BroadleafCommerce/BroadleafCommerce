@@ -149,3 +149,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md)
 Broadleaf Commerce core is released under the terms of the Apache Software License 2 (see license.txt). However, various commercial modules that are also available (for instance, price list management) are released under a different commercial license. These are not included with the core Broadleaf framework.
 
 We also offer various levels of [enterprise support licenses](http://broadleafcommerce.com/support). Please [contact us](http://broadleafcommerce.com/contact) for information.
+
+## End Of Life
+
+This version of Broadleaf Commerce is End Of Life and is no longer actively supported.

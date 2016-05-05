@@ -352,6 +352,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         for (PaymentTransaction transaction : payment.getTransactions()) {
             transaction.setArchived('Y');
         }
+        orderPaymentService.save(payment);
     }
 
     @Override
