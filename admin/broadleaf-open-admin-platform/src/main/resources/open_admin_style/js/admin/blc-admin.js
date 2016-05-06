@@ -534,6 +534,12 @@ var BLCAdmin = (function($) {
                         }
                     }
                 });
+
+                $(this).on('input', function() {
+                    if ($(this).val() === "") {
+                        clone.attr('value',"").trigger('input');
+                    }
+                });
             });
 
             $container.find('.timepicker').each(function (index, element) {
