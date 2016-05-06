@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author jfleschler
@@ -44,7 +45,7 @@ public class FieldOnlyPropertiesCustomPersistenceHandler extends CustomPersisten
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
-        return ArrayUtils.isNotEmpty(persistencePackage.getCustomCriteria()) && persistencePackage.getCustomCriteria()[0].equals("fieldImplOnly");
+        return ArrayUtils.isNotEmpty(persistencePackage.getCustomCriteria()) && Objects.equals(persistencePackage.getCustomCriteria()[0], "fieldImplOnly");
     }
 
     @Override
