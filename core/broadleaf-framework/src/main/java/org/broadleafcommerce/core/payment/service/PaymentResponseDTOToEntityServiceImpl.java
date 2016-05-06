@@ -35,6 +35,7 @@ import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
+import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.stereotype.Service;
@@ -65,6 +66,9 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
 
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
+
+    @Resource(name = "blCountrySubdivisionService")
+    protected CountrySubdivisionService countrySubdivisionService;
 
     @Override
     public void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, Address tempBillingAddress, boolean isUseBillingAddressFromGateway) {
@@ -113,7 +117,13 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
                     + " as a state abbreviation in BLC_STATE");
         }
         address.setState(state);
-        address.setStateProvinceRegion(dto.getAddressStateRegion());
+        
+        if (countrySubdivisionService.findSubdivisionByAbbreviation(dto.getAddressStateRegion()) != null) {
+            address.setIsoCountrySubdivision(dto.getAddressStateRegion());
+        } else {
+            //we know that this is a friendy name for the state / province /region and not an ISO Code.
+            address.setStateProvinceRegion(dto.getAddressStateRegion());
+        }
 
         address.setPostalCode(dto.getAddressPostalCode());
 
@@ -138,6 +148,12 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
             Phone billingPhone = phoneService.create();
             billingPhone.setPhoneNumber(dto.getAddressPhone());
             address.setPhonePrimary(billingPhone);
+        }
+        if (dto.getAddressEmail() != null) {
+            address.setEmailAddress(dto.getAddressEmail());
+        }
+        if (dto.getAddressCompanyName() != null) {
+            address.setCompanyName(dto.getAddressCompanyName());
         }
 
         addressService.populateAddressISOCountrySub(address);
