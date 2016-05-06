@@ -504,17 +504,17 @@ var BLCAdmin = (function($) {
         initializeDateFields : function($container) {
             $container.find('.datetimepicker').each(function (index, element) {
                 // create a hidden clone, which will contain the actual value
-                var clone = $(this).clone();
-                var self = $(this);
-                clone.insertAfter(this);
-                clone.hide();
+                var $self = $(this);
+                var $clone = $self.clone();
+                $clone.insertAfter(this);
+                $clone.hide();
 
                 // rename the original field, used to contain the display value
-                $(this).attr('id', $(this).attr('id') + '-display');
-                $(this).attr('name', $(this).attr('name') + '-display');
+                $self.attr('id', $self.attr('id') + '-display');
+                $self.attr('name', $self.attr('name') + '-display');
 
                 // create the datetimepicker with the desired display format
-                $(this).datetimepicker({
+                $self.datetimepicker({
                     format: "l, F d, Y \@ g:ia",
                     onClose: function(current_time, $input) {
                         if (current_time) {
@@ -529,15 +529,15 @@ var BLCAdmin = (function($) {
                                 dateString = dateString.replace("23:59:00", "23:59:59");
                             }
                             // need to escape ids for entity form
-                            clone.attr('value',dateString).trigger('input');
+                            $clone.attr('value',dateString).trigger('input');
                             $input.trigger('input');
                         }
                     }
                 });
 
-                $(this).on('input', function() {
-                    if ($(this).val() === "") {
-                        clone.attr('value',"").trigger('input');
+                $self.on('input', function() {
+                    if ($self.val() === "") {
+                        $clone.attr('value',"").trigger('input');
                     }
                 });
             });
