@@ -387,7 +387,7 @@ public class PricingTest extends BaseTest {
         offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(true);
         offer = offerService.save(offer);
-        offer.setMaxUses(50);
+        offer.setMaxUsesPerOrder(50);
         return offer;
     }
 }
