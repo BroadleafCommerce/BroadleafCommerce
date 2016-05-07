@@ -5,7 +5,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>4.0.9-GA</version>
+    <version>4.0.10-GA</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -61,7 +61,7 @@
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</connection>
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
-        <tag>broadleaf-4.0.9-GA</tag>
+        <tag>broadleaf-4.0.10-GA</tag>
     </scm>
     <build>
         <pluginManagement>
@@ -426,11 +426,11 @@
             <distributionManagement>
                 <snapshotRepository>
                     <id>snapshots</id>
-                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-source-snapshots</url>
+                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/snapshots</url>
                 </snapshotRepository>
                 <repository>
                     <id>releases</id>
-                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-source-releases</url>
+                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/releases</url>
                 </repository>
             </distributionManagement>
             <build>
@@ -598,14 +598,14 @@
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
-                <version>3.2.1</version>
+                <version>3.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
-                <version>4.0</version>
+                <version>4.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>

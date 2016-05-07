@@ -380,13 +380,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             Entity parentEntity, List<SectionCrumb> sectionCrumbs)
             throws ServiceException, ClassNotFoundException {
         // Assemble the properties from the entity form
-        List<Property> properties = new ArrayList<Property>();
-        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
-            Property p = new Property();
-            p.setName(entry.getKey());
-            p.setValue(entry.getValue().getValue());
-            properties.add(p);
-        }
+        List<Property> properties = getPropertiesFromEntityForm(entityForm);
 
         FieldMetadata md = field.getMetadata();
 

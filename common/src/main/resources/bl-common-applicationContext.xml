@@ -126,6 +126,18 @@
         <constructor-arg name="moduleName" value="Conditional Field Annotation Transformation" />
     </bean>
 
+    <!-- NOTE: Remove this transformer when Thymeleaf 2.1.5 is released. See the Javadocs for org.broadleafcommerce.common.web.patch.EvaluationUtilPatch -->
+    <bean id="blEvaluationUtilPatchClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyClassTransformer">
+        <constructor-arg name="moduleName" value="EvaluationUtil Patch Transformation" />
+        <property name="xformTemplates">
+            <map>
+                <entry key="org.thymeleaf.util.EvaluationUtil"
+                       value="org.broadleafcommerce.common.web.patch.EvaluationUtilPatch"/>
+            </map>
+        </property>
+    </bean>
+    <!-- END NOTE -->
+
     <!-- to be overriden by 3rd party modules -->
     <bean id="blMergedClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -133,6 +145,7 @@
                 <ref bean="blAnnotationDirectCopyClassTransformer"/>
                 <ref bean="blEntityMarkerClassTransformer"/>
                 <ref bean="blConditionalFieldAnnotationClassTransformer"/>
+                <ref bean="blEvaluationUtilPatchClassTransformer"/>
             </list>
         </property>
     </bean>
