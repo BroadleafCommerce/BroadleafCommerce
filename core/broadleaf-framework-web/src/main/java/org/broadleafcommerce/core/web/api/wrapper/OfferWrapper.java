@@ -62,7 +62,7 @@ public class OfferWrapper extends BaseWrapper implements APIWrapper<Offer> {
         this.startDate = model.getStartDate().toString();
         this.endDate = model.getStartDate().toString();
         this.description = model.getDescription();
-        this.maxUses = model.getMaxUses();
+        this.maxUses = model.getMaxUsesPerOrder();
     }
 
     @Override

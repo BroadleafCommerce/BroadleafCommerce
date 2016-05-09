@@ -20,8 +20,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
     
     <context:component-scan base-package="org.broadleafcommerce.core">
@@ -204,4 +205,37 @@
         </property>
     </bean>
     <!-- End Section Custom Criteria -->
+
+    <bean id="blOptionalFrameworkTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="optionalOfferUsesFields" value="org.broadleafcommerce.core.offer.weave.WeaveLegacyOfferUses"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blOptionalFrameworkTokenMap"/>
+        <property name="targetRef" value="blDirectCopyTransformTokenMap"/>
+    </bean>
+
+    <bean id="blOfferUsesConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
+        <property name="templateTokens">
+            <util:constant static-field="org.broadleafcommerce.core.offer.service.type.OfferOptionalDirectCopyTransformTypes.OPTIONAL_OFFER_USES_FIELDS"/>
+        </property>
+        <property name="conditionalProperty" value="enable.optional.offer.uses.fields"/>
+    </bean>
+
+    <bean id="blFrameworkConditionalDirectCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="org.broadleafcommerce.core.offer.domain.OfferImpl" value-ref="blOfferUsesConditionalDirectCopyTransformerMember" />
+            </map>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blFrameworkConditionalDirectCopyTransformers"/>
+        <property name="targetRef" value="blConditionalDirectCopyTransformers"/>
+    </bean>
 </beans>
