@@ -277,9 +277,10 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "AUTOMATICALLY_ADDED")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added",
-            group = GroupName.Customer, order = FieldOrder.RequiresCode,
+            tooltip = "OfferImpl_Offer_Automatically_Added_tooltip",
+            group = GroupName.Customer, order = FieldOrder.AutomaticallyAdded,
             fieldType = SupportedFieldType.BOOLEAN, defaultValue = "false")
-    protected Boolean requiresCode = false;
+    protected Boolean automaticallyAdded = false;
 
     @Column(name = "MAX_USES")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order",
@@ -758,21 +759,21 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     }
 
     @Override
-    public boolean getRequiresCode() {
-        if (requiresCode == null) {
+    public boolean isAutomaticallyAdded() {
+        if (automaticallyAdded == null) {
             if (deliveryType != null) {
                 OfferDeliveryType offerDeliveryType = OfferDeliveryType.getInstance(deliveryType);
                 return OfferDeliveryType.AUTOMATIC.equals(offerDeliveryType);
             }
             return false;
         }
-        return requiresCode;
+        return automaticallyAdded;
     }
 
     
     @Override
-    public void setRequiresCode(boolean requiresCode) {
-        this.requiresCode = requiresCode;
+    public void setAutomaticallyAdded(boolean automaticallyAdded) {
+        this.automaticallyAdded = automaticallyAdded;
     }
 
     @Override
@@ -780,7 +781,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @JsonIgnore
     public OfferDeliveryType getDeliveryType() {
         if (deliveryType == null) {
-            if (!getRequiresCode()) {
+            if (!isAutomaticallyAdded()) {
                 return OfferDeliveryType.AUTOMATIC;
             } else {
                 return OfferDeliveryType.MANUAL;
@@ -1032,8 +1033,8 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         }
         Offer cloned = createResponse.getClone();
         cloned.setApplyDiscountToSalePrice(applyToSalePrice);
-        if (requiresCode != null) {
-            cloned.setRequiresCode(requiresCode);
+        if (automaticallyAdded != null) {
+            cloned.setAutomaticallyAdded(automaticallyAdded);
         }
         cloned.setDescription(description);
         cloned.setDiscountType(getDiscountType());
