@@ -272,6 +272,19 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = dynamicEntityDao.merge(adminInstance);
 
+            //Since none of the Sku fields are required, it's possible that the user did not fill out
+            //any Sku fields, and thus a Sku would not be created. Product still needs a default Sku so instantiate one
+            if (adminInstance.getDefaultSku() == null) {
+                Sku newSku = catalogService.createSku();
+                dynamicEntityDao.persist(newSku);
+                adminInstance.setDefaultSku(newSku);
+                adminInstance = dynamicEntityDao.merge(adminInstance);
+            }
+
+            //also set the default product for the Sku
+            adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
+            dynamicEntityDao.merge(adminInstance.getDefaultSku());
+
             // if this is a Pre-Add, skip the rest of the method
             if (entity.isPreAdd()) {
                 return helper.getRecord(adminProperties, adminInstance, null, null);
@@ -285,20 +298,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             if (!handled) {
                 setupXref(adminInstance);
             }
-            
-            //Since none of the Sku fields are required, it's possible that the user did not fill out
-            //any Sku fields, and thus a Sku would not be created. Product still needs a default Sku so instantiate one
-            if (adminInstance.getDefaultSku() == null) {
-                Sku newSku = catalogService.createSku();
-                dynamicEntityDao.persist(newSku);
-                adminInstance.setDefaultSku(newSku);
-                adminInstance = dynamicEntityDao.merge(adminInstance);
-            }
 
-            //also set the default product for the Sku
-            adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
-            dynamicEntityDao.merge(adminInstance.getDefaultSku());
-            
             return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
