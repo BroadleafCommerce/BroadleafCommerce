@@ -53,31 +53,40 @@ public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCom
         }
 
         String[] statements = super.extractCommands(reader);
-        handleBooleans(statements);
+        handleReplacements(statements);
 
         return statements;
     }
 
-    protected void handleBooleans(String[] statements) {
+    protected void handleReplacements(String[] statements) {
         for (int j=0; j<statements.length; j++) {
-            //try start matches
-            statements[j] = statements[j].replaceAll(BOOLEANTRUEMATCH + "\\s*[,]", TRUE + ",");
-            statements[j] = statements[j].replaceAll(BOOLEANFALSEMATCH + "\\s*[,]", FALSE + ",");
-            statements[j] = statements[j].replaceAll(TIMESTAMPMATCH + "\\s*[,]", CURRENT_TIMESTAMP + ",");
-
-            //try middle matches
-            statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANTRUEMATCH + "\\s*[,]", "," + TRUE + ",");
-            statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANFALSEMATCH + "\\s*[,]", "," + FALSE + ",");
-            statements[j] = statements[j].replaceAll("[,]\\s*" + TIMESTAMPMATCH + "\\s*[,]", "," + CURRENT_TIMESTAMP + ",");
-
-            //try end matches
-            statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANTRUEMATCH, "," + TRUE);
-            statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANFALSEMATCH, "," + FALSE);
-            statements[j] = statements[j].replaceAll("[,]\\s*" + TIMESTAMPMATCH, "," + CURRENT_TIMESTAMP);
-
-            //try matches for updates
-            statements[j] = statements[j].replaceAll("[=]\\s*" + BOOLEANTRUEMATCH, "=" + TRUE);
-            statements[j] = statements[j].replaceAll("[=]\\s*" + BOOLEANFALSEMATCH, "=" + FALSE);
+            statements[j] = replaceBoolean(statements[j]);
+            
+            // Replace newline characters
+            statements[j] = statements[j].replaceAll(DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX, "' + CHAR(13) + CHAR(10) + '");
         }
+    }
+    
+    protected String replaceBoolean(String statement) {
+        //try start matches
+        statement = statement.replaceAll(BOOLEANTRUEMATCH + "\\s*[,]", TRUE + ",");
+        statement = statement.replaceAll(BOOLEANFALSEMATCH + "\\s*[,]", FALSE + ",");
+        statement = statement.replaceAll(TIMESTAMPMATCH + "\\s*[,]", CURRENT_TIMESTAMP + ",");
+
+        //try middle matches
+        statement = statement.replaceAll("[,]\\s*" + BOOLEANTRUEMATCH + "\\s*[,]", "," + TRUE + ",");
+        statement = statement.replaceAll("[,]\\s*" + BOOLEANFALSEMATCH + "\\s*[,]", "," + FALSE + ",");
+        statement = statement.replaceAll("[,]\\s*" + TIMESTAMPMATCH + "\\s*[,]", "," + CURRENT_TIMESTAMP + ",");
+
+        //try end matches
+        statement = statement.replaceAll("[,]\\s*" + BOOLEANTRUEMATCH, "," + TRUE);
+        statement = statement.replaceAll("[,]\\s*" + BOOLEANFALSEMATCH, "," + FALSE);
+        statement = statement.replaceAll("[,]\\s*" + TIMESTAMPMATCH, "," + CURRENT_TIMESTAMP);
+
+        //try matches for updates
+        statement = statement.replaceAll("[=]\\s*" + BOOLEANTRUEMATCH, "=" + TRUE);
+        statement = statement.replaceAll("[=]\\s*" + BOOLEANFALSEMATCH, "=" + FALSE);
+        
+        return statement;
     }
 }
