@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.State;
@@ -118,10 +119,12 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
         }
         address.setState(state);
         
-        if (countrySubdivisionService.findSubdivisionByAbbreviation(dto.getAddressStateRegion()) != null) {
-            address.setIsoCountrySubdivision(dto.getAddressStateRegion());
+        CountrySubdivision isoCountrySub = countrySubdivisionService.findSubdivisionByAbbreviation(dto.getAddressStateRegion());
+        if ( isoCountrySub != null) {
+            address.setIsoCountrySubdivision(isoCountrySub.getAbbreviation());
+            address.setStateProvinceRegion(isoCountrySub.getName());
         } else {
-            //we know that this is a friendy name for the state / province /region and not an ISO Code.
+            //Integration does not conform to the ISO Code standard - just set the non-referential state province region
             address.setStateProvinceRegion(dto.getAddressStateRegion());
         }
 
