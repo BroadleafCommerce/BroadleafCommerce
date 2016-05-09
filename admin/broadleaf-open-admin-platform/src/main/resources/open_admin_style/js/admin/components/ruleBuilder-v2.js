@@ -587,6 +587,9 @@
                 field.valueGetter = function(rule) {
                     var value = rule.$el.find('.rule-value-container input.query-builder-selectize-input').val();
                     value = value.replace(/,/g,'\",\"');
+                    if(value.length <= 0) {
+                        return "";
+                    }
                     return "[\"" + value + "\"]";
                 }
             }
