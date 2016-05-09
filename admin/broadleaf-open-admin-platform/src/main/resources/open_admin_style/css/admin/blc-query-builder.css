@@ -37,6 +37,7 @@
     display: block;
     vertical-align: middle;
     float: left;
+    margin: 0 5px 0 0;
 }
 
 .query-builder .rules-group-container {
