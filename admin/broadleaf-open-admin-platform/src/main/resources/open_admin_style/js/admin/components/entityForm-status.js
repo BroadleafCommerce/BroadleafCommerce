@@ -253,8 +253,8 @@
          */
         updateEntityFormChangeMap : function(id, origVal, newVal) {
             var changesFromId = this.getEntityFormChangesById(id);
-            var newValJson = JSON.stringify(newVal);
-            var origValJson = JSON.stringify(origVal);
+            var newValJson = BLCAdmin.unescapeString(JSON.stringify(newVal));
+            var origValJson = BLCAdmin.unescapeString(JSON.stringify(origVal));
 
             // Check if the field is in the change map
             if (changesFromId === undefined) {
@@ -267,7 +267,8 @@
             }
             // If it is, and the values are the same, remove it
             else {
-                if (newValJson == JSON.stringify(changesFromId.originalValue)) {
+                var entityOrigValJson = BLCAdmin.unescapeString(JSON.stringify(changesFromId.originalValue));
+                if (newValJson == entityOrigValJson) {
                     this.removeChangesForId(id);
                 }
             }
