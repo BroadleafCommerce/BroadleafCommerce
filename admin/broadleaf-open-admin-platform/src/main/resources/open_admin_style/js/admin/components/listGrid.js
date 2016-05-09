@@ -186,6 +186,10 @@
             return fields;
         },
 
+        getRows: function ($table) {
+            return $table.find('tbody').find('tr:not(.list-grid-no-results):not(.blank-padding)');
+        },
+
         getSelectedRowIds: function ($button) {
             var link = BLC.servletContext + $button.data('urlpostfix');
 
