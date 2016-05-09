@@ -80,6 +80,13 @@
     -webkit-box-shadow: none;
     box-shadow: none;
 }
+.list-grid-table .workflow-icon {
+    font-weight: bold;
+    color: #efbc62;
+    margin-left: -6px;
+    vertical-align: sub;
+    font-size: 16px;
+}
 .table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {
     padding: 6px 15px;
 }
