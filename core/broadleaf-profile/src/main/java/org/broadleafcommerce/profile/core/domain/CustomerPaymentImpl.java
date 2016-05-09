@@ -63,7 +63,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@EntityListeners(value = { TemporalTimestampListener.class })
+@EntityListeners(value = { TemporalTimestampListener.class, CustomerPaymentPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(name = "CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PAYMENT_TOKEN" }))
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
