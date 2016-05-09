@@ -403,6 +403,12 @@
             //initialize selectize plugin
             var opRef = field.operators;
 
+            function updateFilterHeightBasedOnSelectizeHeight($selectize) {
+                var $selectizeControl = $selectize.$input.siblings('.selectize-control');
+                var inputHeight = $selectizeControl.find('.selectize-input').outerHeight();
+                $selectize.$input.closest('.rule-value-container').height(inputHeight);
+            }
+
             if (opRef && typeof opRef === 'string' && "blcFilterOperators_Selectize" === opRef) {
                 var sectionKey = field.selectizeSectionKey;
 
@@ -422,6 +428,7 @@
                         hideSelected: true,
                         unique: true,
                         placeholder: field.label + " +",
+                        dropdownParent: 'body',
                         onInitialize: function () {
                             var $selectize = this;
                             $selectize.sectionKey = sectionKey;
@@ -463,8 +470,17 @@
                                         }
                                     }
                                 });
+                                if ($selectize.$wrapper.is(':visible') && data.options.length) {
+                                    $selectize.open();
+                                }
                                 callback(data);
                             });
+                        },
+                        onItemAdd: function(value, $item) {
+                            updateFilterHeightBasedOnSelectizeHeight(this);
+                        },
+                        onItemRemove: function(value) {
+                            updateFilterHeightBasedOnSelectizeHeight(this);
                         }
                     };
                 field.valueSetter = function(rule, value) {
@@ -930,7 +946,7 @@ $(document).ready(function() {
 
         el.find('.read-only').remove();
         el.find('.filter-text').remove();
-        var readonlySpan = $("<span>", {
+        var readonlySpan = $("<div>", {
             html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
             'class': "read-only"
         });

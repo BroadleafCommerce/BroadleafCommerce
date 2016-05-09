@@ -95,7 +95,7 @@ public class CreateOfferUtility {
         offer.setCombinableWithOtherOffers(combinable);
         offer.setPriority(priority);
         offer = offerService.save(offer);
-        offer.setMaxUses(50);
+        offer.setMaxUsesPerOrder(50);
         return offer;
     }
 

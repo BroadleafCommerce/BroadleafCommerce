@@ -227,7 +227,7 @@
         clearEntityFormChanges : function () {
             entityFormChangeMap = {};
 
-            $('[data-orig-val]:not([data-orig-val=""])').each(function(i, el) {
+            $('[data-orig-val]').each(function(i, el) {
                 $(el).removeAttr('data-orig-val');
             });
             this.initializeOriginalValues();

@@ -293,12 +293,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         tooltip = "OfferImplMaxUsesPerCustomer_tooltip",
         defaultValue = "0")
     protected Long maxUsesPerCustomer;
-
-    @Column(name = "USES")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Current_Uses",
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    @Deprecated
-    protected int uses;
     
     @Column(name = "OFFER_ITEM_QUALIFIER_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule",
@@ -841,23 +835,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     }
 
     @Override
-    @Deprecated
-    public int getMaxUses() {
-        return getMaxUsesPerOrder();
-    }
-
-    @Override
-    public void setMaxUses(int maxUses) {
-        setMaxUsesPerOrder(maxUses);
-    }
-
-    @Override
-    @Deprecated
-    public int getUses() {
-        return uses;
-    }
-
-    @Override
     public String getMarketingMessage() {
         return DynamicTranslationProvider.getValue(this, "marketingMessage", marketingMessage);
     }
@@ -865,12 +842,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setMarketingMessage(String marketingMessage) {
         this.marketingMessage = marketingMessage;
-    }
-
-    @Override
-    @Deprecated
-    public void setUses(int uses) {
-        this.uses = uses;
     }
 
     //    @Override
@@ -1088,7 +1059,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setQualifyingItemSubTotal(getQualifyingItemSubTotal());
         cloned.setOrderMinSubTotal(getOrderMinSubTotal());
         cloned.setStartDate(startDate);
-        cloned.setUses(uses);
         cloned.setTargetSystem(targetSystem);
         cloned.setRequiresRelatedTargetAndQualifiers(requiresRelatedTargetAndQualifiers);
         cloned.setTreatAsNewFormat(treatAsNewFormat);

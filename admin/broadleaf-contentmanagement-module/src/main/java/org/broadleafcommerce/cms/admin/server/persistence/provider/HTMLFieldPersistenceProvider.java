@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProviderAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -144,6 +145,11 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         }
         
         return val;
+    }
+
+    @Override
+    public int getOrder() {
+        return FieldPersistenceProvider.HTML;
     }
 
 }
