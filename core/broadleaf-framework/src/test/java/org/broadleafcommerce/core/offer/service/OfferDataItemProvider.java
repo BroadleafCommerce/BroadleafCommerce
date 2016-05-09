@@ -736,7 +736,7 @@ public class OfferDataItemProvider {
         offer.setRequiresCode(OfferDeliveryType.AUTOMATIC!=deliveryType);
         offer.setDiscountType(type);
         offer.setEndDate(endDate);
-        offer.setMaxUses(maxUses);
+        offer.setMaxUsesPerOrder(maxUses);
         offer.setOfferItemQualifierRuleType(qualifierType);
         offer.setOfferItemTargetRuleType(targetType);
         offer.setPriority(priority);

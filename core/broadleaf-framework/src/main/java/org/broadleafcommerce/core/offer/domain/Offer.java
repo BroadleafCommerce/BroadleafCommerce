@@ -235,28 +235,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * can be used in the current order.
      *
      * 0 indicates unlimited usage.
-     *
-     * @deprecated use {@link #getMaxUsesPerOrder()} directly instead
-     */
-    @Deprecated
-    public int getMaxUses() ;
-
-    /**
-     * Sets the maximum number of times that this offer
-     * can be used in the current order.
-     *
-     * 0 indicates unlimited usage.
-     *
-     * @deprecated use {@link #setMaxUsesPerOrder(int)} directly instead
-     */
-    @Deprecated
-    public void setMaxUses(int maxUses) ;
-
-    /**
-     * Returns the maximum number of times that this offer
-     * can be used in the current order.
-     *
-     * 0 indicates unlimited usage.
      */
     public int getMaxUsesPerOrder();
 
@@ -280,18 +258,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * Whether or not this offer has limited use in an order. By default this is true if {@link #getMaxUsesPerOrder()} > 0
      */
     public boolean isLimitedUsePerOrder();
-    
-    /**
-     * @deprecated replaced by the {@link OfferAudit} table
-     */
-    @Deprecated
-    public int getUses() ;
-
-    /**
-     * @deprecated replaced by the {@link OfferAudit} table
-     */
-    @Deprecated
-    public void setUses(int uses) ;
 
     //    /**
     //     * @deprecated use {@link #getQualifyingItemCriteriaXref()} instead
