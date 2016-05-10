@@ -1103,6 +1103,25 @@ var BLCAdmin = (function($) {
             $disabledFields.attr('disabled', true);
 
             return serializedForm;
+        },
+
+        /**
+         * Splits out a comma-seperated string into a cleaned array
+         * @param data
+         * @returns {Array}
+         */
+        stringToArray: function(data) {
+            var dataArray = [];
+            $.each(data.split(","), function(index, item) {
+                var item = item.replace(/(^\[")|("$)|(^")|("\]$)/g, '');
+                item = BLCAdmin.unescapeString(item);
+                dataArray.push(item);
+            });
+            return dataArray;
+        },
+        
+        unescapeString: function(data) {
+            return data.replace(/\\/g, '');
         }
     };
 
