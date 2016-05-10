@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
@@ -159,12 +158,9 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     /**
      * Returns true if the offer system should automatically add this offer for consideration (versus requiring a code or 
      * other delivery mechanism).    This does not guarantee that the offer will qualify.   All rules associated with this
-     * offer must still pass.   A true value here just means that the offer will be considered.
+     * offer must still pass.   A true value here just means that the offer will be considered.     
      * 
-     * For backwards compatibility, if the underlying property is null, this method will check the 
-     * {@link #getDeliveryType()} method and return true if that value is set to AUTOMATIC.    
-     * 
-     * If still null, this value will return false.
+     * Returns null if false
      * 
      * @return
      */
@@ -176,22 +172,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * @see #isAutomaticallyAdded()
      */
     public void setAutomaticallyAdded(boolean automaticallyAdded);
-
-    /**
-     * @deprecated Replaced by isAutomaticallyApplied property.   In prior versions of Broadleaf deliveryType was used to 
-     * differentiate "automatic" orders from those requiring a code.   If the underlying property is null, 
-     * this method will return a delivery type based on the isAutomatic property. 
-     * @return
-     */
-    @Deprecated
-    public OfferDeliveryType getDeliveryType();
-
-    /**
-     * @deprecated Replaced by setAutomaticallyApplied(boolean val).
-     * @param deliveryType
-     */
-    @Deprecated
-    public void setDeliveryType(OfferDeliveryType deliveryType);
 
     /**
      * Returns the maximum number of times that this offer

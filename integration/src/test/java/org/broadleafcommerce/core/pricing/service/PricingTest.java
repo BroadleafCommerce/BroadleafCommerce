@@ -37,7 +37,6 @@ import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.service.OfferService;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -371,7 +370,7 @@ public class PricingTest extends BaseTest {
         offer.setType(offerType);
         offer.setDiscountType(discountType);
         offer.setValue(BigDecimal.valueOf(value));
-        offer.setDeliveryType(OfferDeliveryType.CODE);
+        offer.setAutomaticallyAdded(true);
         offer.setStackable(true);
 
         OfferItemCriteria oic = new OfferItemCriteriaImpl();

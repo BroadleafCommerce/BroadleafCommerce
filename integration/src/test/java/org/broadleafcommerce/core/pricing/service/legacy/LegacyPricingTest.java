@@ -30,7 +30,6 @@ import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.service.OfferService;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -345,7 +344,6 @@ public class LegacyPricingTest extends BaseTest {
         offer.setType(offerType);
         offer.setDiscountType(discountType);
         offer.setValue(BigDecimal.valueOf(value));
-        offer.setDeliveryType(OfferDeliveryType.CODE);
         offer.setStackable(true);
         offer.setAppliesToOrderRules(orderRule);
         offer.setAppliesToCustomerRules(customerRule);

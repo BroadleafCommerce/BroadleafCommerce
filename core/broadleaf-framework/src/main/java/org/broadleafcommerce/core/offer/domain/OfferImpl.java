@@ -42,7 +42,6 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
@@ -266,10 +265,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.StackabilityType",
             defaultValue = "NO")
     protected String stackableWithOtherOffers;
-
-    @Column(name = "OFFER_DELIVERY_TYPE")
-    @AdminPresentation(excluded = true)
-    protected String deliveryType;
 
     @Column(name = "AUTOMATICALLY_ADDED")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added",
@@ -733,10 +728,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public boolean isAutomaticallyAdded() {
         if (automaticallyAdded == null) {
-            if (deliveryType != null) {
-                OfferDeliveryType offerDeliveryType = OfferDeliveryType.getInstance(deliveryType);
-                return OfferDeliveryType.AUTOMATIC.equals(offerDeliveryType);
-            }
             return false;
         }
         return automaticallyAdded;
@@ -746,25 +737,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setAutomaticallyAdded(boolean automaticallyAdded) {
         this.automaticallyAdded = automaticallyAdded;
-    }
-
-    @Override
-    @Deprecated
-    @JsonIgnore
-    public OfferDeliveryType getDeliveryType() {
-        if (deliveryType == null) {
-            if (isAutomaticallyAdded()) {
-                return OfferDeliveryType.AUTOMATIC;
-            } else {
-                return OfferDeliveryType.MANUAL;
-            }
-        }
-        return OfferDeliveryType.getInstance(deliveryType);
-    }
-
-    @Override
-    public void setDeliveryType(OfferDeliveryType deliveryType) {
-        this.deliveryType = deliveryType.getType();
     }
 
     @Override
@@ -1007,7 +979,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setValue(value);
         cloned.setPriority(getPriority());
         cloned.setStackable(getStackable());
-        cloned.setDeliveryType(getDeliveryType());
         cloned.setQualifiersCanBeTargets(qualifiersCanBeTargets);
         cloned.setQualifiersCanBeQualifiers(qualifiersCanBeQualifiers);
         cloned.setMaxUsesPerOrder(getMaxUsesPerOrder());
