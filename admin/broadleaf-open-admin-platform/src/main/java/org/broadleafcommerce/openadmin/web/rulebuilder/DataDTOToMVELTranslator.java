@@ -349,17 +349,30 @@ public class DataDTOToMVELTranslator {
                                    boolean isNegation, boolean ignoreQuotes)
             throws MVELTranslationException {
 
-        sb.append("(");
-        sb.append("[");
-        sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
-                ignoreCase, ignoreQuotes));
-        sb.append("] contains ");
-        sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
-        if ((type.equals(SupportedFieldType.ID) && secondaryType != null &&
-                secondaryType.equals(SupportedFieldType.INTEGER)) || type.equals(SupportedFieldType.INTEGER)) {
-            sb.append(".intValue()");
+        if (operator.equals("==") && !isFieldComparison && value.length > 1) {
+            sb.append("(");
+            sb.append("[");
+            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+                    ignoreCase, ignoreQuotes));
+            sb.append("] contains ");
+            sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+            if ((type.equals(SupportedFieldType.ID) && secondaryType != null &&
+                    secondaryType.equals(SupportedFieldType.INTEGER)) || type.equals(SupportedFieldType.INTEGER)) {
+                sb.append(".intValue()");
+            }
+            sb.append(")");
+        } else {
+            sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+            sb.append(operator);
+            if (includeParenthesis) {
+                sb.append("(");
+            }
+            sb.append(formatValue(field, entityKey, type, secondaryType, value,
+                    isFieldComparison, ignoreCase, ignoreQuotes));
+            if (includeParenthesis) {
+                sb.append(")");
+            }
         }
-        sb.append(")");
     }
 
     protected String buildFieldName(String entityKey, String fieldName) {
