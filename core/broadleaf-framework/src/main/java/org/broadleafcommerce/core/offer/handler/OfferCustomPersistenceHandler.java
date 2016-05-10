@@ -5,10 +5,10 @@
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License” located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
  * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
  * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License” located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
  * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.handler;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -25,7 +24,16 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAdminPresentation;
-import org.broadleafcommerce.openadmin.dto.*;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -118,7 +126,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             advancedLabel.setValue((timeRule.getValue() == null) ? "true" : "false");
             entity.addProperty(advancedLabel);
 
-            if (!customCriteria.equals("listGridView")) {
+            if (!"listGridView".equals(customCriteria)) {
                 String setValue = discountValue.getValue();
                 setValue = setValue.replaceAll("\\%", "").replaceAll("\\$", "");
                 discountValue.setValue(setValue);

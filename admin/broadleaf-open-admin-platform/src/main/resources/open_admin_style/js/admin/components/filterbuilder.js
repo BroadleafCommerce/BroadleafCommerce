@@ -5,10 +5,10 @@
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License” located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
  * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
  * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License” located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
  * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
@@ -403,6 +403,12 @@
             //initialize selectize plugin
             var opRef = field.operators;
 
+            function updateFilterHeightBasedOnSelectizeHeight($selectize) {
+                var $selectizeControl = $selectize.$input.siblings('.selectize-control');
+                var inputHeight = $selectizeControl.find('.selectize-input').outerHeight();
+                $selectize.$input.closest('.rule-value-container').height(inputHeight);
+            }
+
             if (opRef && typeof opRef === 'string' && "blcFilterOperators_Selectize" === opRef) {
                 var sectionKey = field.selectizeSectionKey;
 
@@ -422,6 +428,7 @@
                         hideSelected: true,
                         unique: true,
                         placeholder: field.label + " +",
+                        dropdownParent: 'body',
                         onInitialize: function () {
                             var $selectize = this;
                             $selectize.sectionKey = sectionKey;
@@ -434,8 +441,8 @@
                             // after the options have been loaded
                             // (Values may contain multiple items and are sent back as a single String array)
                             var $selectize = this;
-                            var dataHydrate = '[' + $selectize.$input.attr("data-hydrate") + ']';
-                            dataHydrate = $.parseJSON(dataHydrate);
+                            var data = $selectize.$input.attr("data-hydrate");
+                            var dataHydrate = BLCAdmin.stringToArray(data);
                             for (var k=0; k<dataHydrate.length; k++) {
                                 if (!isNaN(dataHydrate[k])) {
                                     $selectize.addItem(Number(dataHydrate[k]), false);
@@ -463,8 +470,17 @@
                                         }
                                     }
                                 });
+                                if ($selectize.$wrapper.is(':visible') && data.options.length) {
+                                    $selectize.open();
+                                }
                                 callback(data);
                             });
+                        },
+                        onItemAdd: function(value, $item) {
+                            updateFilterHeightBasedOnSelectizeHeight(this);
+                        },
+                        onItemRemove: function(value) {
+                            updateFilterHeightBasedOnSelectizeHeight(this);
                         }
                     };
                 field.valueSetter = function(rule, value) {
@@ -930,7 +946,7 @@ $(document).ready(function() {
 
         el.find('.read-only').remove();
         el.find('.filter-text').remove();
-        var readonlySpan = $("<span>", {
+        var readonlySpan = $("<div>", {
             html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
             'class': "read-only"
         });

@@ -5,10 +5,10 @@
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License” located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
  * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
  * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License” located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
  * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
@@ -32,6 +32,7 @@ import org.hibernate.annotations.Parameter;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -42,6 +43,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
+@EntityListeners(value = {CustomerPhonePersistedEntityListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(name="CSTMR_PHONE_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PHONE_NAME" }))
 @AdminPresentationMergeOverrides(

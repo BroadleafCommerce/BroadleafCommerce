@@ -5,10 +5,10 @@
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License” located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
  * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
  * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License” located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
  * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
@@ -30,11 +30,13 @@ import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
+import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.stereotype.Service;
@@ -65,6 +67,9 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
 
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
+
+    @Resource(name = "blCountrySubdivisionService")
+    protected CountrySubdivisionService countrySubdivisionService;
 
     @Override
     public void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, Address tempBillingAddress, boolean isUseBillingAddressFromGateway) {
@@ -113,7 +118,15 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
                     + " as a state abbreviation in BLC_STATE");
         }
         address.setState(state);
-        address.setStateProvinceRegion(dto.getAddressStateRegion());
+        
+        CountrySubdivision isoCountrySub = countrySubdivisionService.findSubdivisionByAbbreviation(dto.getAddressStateRegion());
+        if ( isoCountrySub != null) {
+            address.setIsoCountrySubdivision(isoCountrySub.getAbbreviation());
+            address.setStateProvinceRegion(isoCountrySub.getName());
+        } else {
+            //Integration does not conform to the ISO Code standard - just set the non-referential state province region
+            address.setStateProvinceRegion(dto.getAddressStateRegion());
+        }
 
         address.setPostalCode(dto.getAddressPostalCode());
 
@@ -138,6 +151,12 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
             Phone billingPhone = phoneService.create();
             billingPhone.setPhoneNumber(dto.getAddressPhone());
             address.setPhonePrimary(billingPhone);
+        }
+        if (dto.getAddressEmail() != null) {
+            address.setEmailAddress(dto.getAddressEmail());
+        }
+        if (dto.getAddressCompanyName() != null) {
+            address.setCompanyName(dto.getAddressCompanyName());
         }
 
         addressService.populateAddressISOCountrySub(address);

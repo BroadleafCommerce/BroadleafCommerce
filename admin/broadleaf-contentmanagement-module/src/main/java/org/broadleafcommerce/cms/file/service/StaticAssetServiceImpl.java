@@ -5,10 +5,10 @@
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License” located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
  * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
  * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License” located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
  * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
@@ -36,11 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import eu.medsea.mimeutil.MimeType;
-import eu.medsea.mimeutil.MimeUtil;
-import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
-import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -52,6 +47,11 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Resource;
+
+import eu.medsea.mimeutil.MimeType;
+import eu.medsea.mimeutil.MimeUtil;
+import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
+import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 
 /**
  * Created by bpolster.
@@ -143,14 +143,10 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         
         if (entityType != null && !"null".equals(entityType)) {
             path = path.append(entityType).append("/");
-        } else {
-            LOG.warn("The given entityType to build the asset URL was null for file " + originalFilename + " and entityId " + entityId + ", investigate probably cause");
         }
 
         if (entityId != null && !"null".equals(entityId)) {
             path = path.append(entityId).append("/");
-        } else {
-            LOG.warn("The given entityId to build the asset URL was null for file " + originalFilename + " and entityType " + entityType + ", investigate probably cause");
         }
 
         if (fileName != null) {

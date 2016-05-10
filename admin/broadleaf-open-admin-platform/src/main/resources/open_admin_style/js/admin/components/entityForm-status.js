@@ -5,10 +5,10 @@
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License” located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
  * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
  * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License” located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
  * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
@@ -227,7 +227,7 @@
         clearEntityFormChanges : function () {
             entityFormChangeMap = {};
 
-            $('[data-orig-val]:not([data-orig-val=""])').each(function(i, el) {
+            $('[data-orig-val]').each(function(i, el) {
                 $(el).removeAttr('data-orig-val');
             });
             this.initializeOriginalValues();
@@ -253,8 +253,8 @@
          */
         updateEntityFormChangeMap : function(id, origVal, newVal) {
             var changesFromId = this.getEntityFormChangesById(id);
-            var newValJson = JSON.stringify(newVal);
-            var origValJson = JSON.stringify(origVal);
+            var newValJson = BLCAdmin.unescapeString(JSON.stringify(newVal));
+            var origValJson = BLCAdmin.unescapeString(JSON.stringify(origVal));
 
             // Check if the field is in the change map
             if (changesFromId === undefined) {
@@ -267,7 +267,8 @@
             }
             // If it is, and the values are the same, remove it
             else {
-                if (newValJson == JSON.stringify(changesFromId.originalValue)) {
+                var entityOrigValJson = BLCAdmin.unescapeString(JSON.stringify(changesFromId.originalValue));
+                if (newValJson == entityOrigValJson) {
                     this.removeChangesForId(id);
                 }
             }

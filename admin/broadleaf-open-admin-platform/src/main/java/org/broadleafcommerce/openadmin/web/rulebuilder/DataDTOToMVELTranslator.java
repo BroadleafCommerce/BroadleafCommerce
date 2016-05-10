@@ -5,10 +5,10 @@
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License” located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
  * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
  * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License” located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
  * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
@@ -306,30 +306,25 @@ public class DataDTOToMVELTranslator {
         }
         String stringValue = value.toString().trim();
         Object[] response = new Object[]{};
-        if (isProjection(value)) {
-            List<String> temp = new ArrayList<String>();
-            int initial = 1;
-            //assume this is a multi-value phrase
-            boolean eof = false;
-            while (!eof) {
-                int end = stringValue.indexOf(",", initial);
-                if (end == -1) {
-                    eof = true;
-                    end = stringValue.length() - 1;
-                }
-                temp.add(stringValue.substring(initial, end));
-                initial = end + 1;
+        List<String> temp = new ArrayList<String>();
+        int initial = 1;
+        //assume this is a multi-value phrase
+        boolean eof = false;
+        while (!eof) {
+            int end = stringValue.indexOf(",", initial);
+            if (end == -1) {
+                eof = true;
+                end = stringValue.length() - 1;
             }
-            response = temp.toArray(response);
-        } else {
-            response = new Object[]{value};
-        }
-        return response;
-    }
+            String tempValue = stringValue.substring(initial, end);
+            String regex = "(?<!^)\\\"(?!$)";
+            tempValue = tempValue.replaceAll(regex, "\\\\\"");
 
-    public boolean isProjection(Object value) {
-        String stringValue = value.toString().trim();
-        return stringValue.startsWith("[") && stringValue.endsWith("]") && stringValue.indexOf(",") > 0;
+            temp.add(tempValue);
+            initial = end + 1;
+        }
+        response = temp.toArray(response);
+        return response;
     }
 
     protected void buildCollectionExpression(StringBuffer sb, String entityKey, String field, Object[] value,
@@ -340,16 +335,10 @@ public class DataDTOToMVELTranslator {
         sb.append("CollectionUtils.intersection(");
         sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
         sb.append(",");
-        if (value.length > 1) {
-            sb.append("[");
-            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
-                    ignoreCase, ignoreQuotes));
-            sb.append("])");
-        } else {
-            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
-                    ignoreCase, ignoreQuotes));
-            sb.append(")");
-        }
+        sb.append("[");
+        sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+                ignoreCase, ignoreQuotes));
+        sb.append("])");
 
         sb.append(operator);
     }
@@ -360,30 +349,17 @@ public class DataDTOToMVELTranslator {
                                    boolean isNegation, boolean ignoreQuotes)
             throws MVELTranslationException {
 
-        if (operator.equals("==") && !isFieldComparison && value.length > 1) {
-            sb.append("(");
-            sb.append("[");
-            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
-                    ignoreCase, ignoreQuotes));
-            sb.append("] contains ");
-            sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
-            if ((type.equals(SupportedFieldType.ID) && secondaryType != null &&
-                    secondaryType.equals(SupportedFieldType.INTEGER)) || type.equals(SupportedFieldType.INTEGER)) {
-                sb.append(".intValue()");
-            }
-            sb.append(")");
-        } else {
-            sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
-            sb.append(operator);
-            if (includeParenthesis) {
-                sb.append("(");
-            }
-            sb.append(formatValue(field, entityKey, type, secondaryType, value,
-                    isFieldComparison, ignoreCase, ignoreQuotes));
-            if (includeParenthesis) {
-                sb.append(")");
-            }
+        sb.append("(");
+        sb.append("[");
+        sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+                ignoreCase, ignoreQuotes));
+        sb.append("] contains ");
+        sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+        if ((type.equals(SupportedFieldType.ID) && secondaryType != null &&
+                secondaryType.equals(SupportedFieldType.INTEGER)) || type.equals(SupportedFieldType.INTEGER)) {
+            sb.append(".intValue()");
         }
+        sb.append(")");
     }
 
     protected String buildFieldName(String entityKey, String fieldName) {

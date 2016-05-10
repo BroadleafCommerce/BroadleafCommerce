@@ -5,10 +5,10 @@
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License” located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
  * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
  * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License” located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
  * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
@@ -170,14 +170,14 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * 
      * @return
      */
-    public boolean getRequiresCode();
+    public boolean isAutomaticallyAdded();
 
     /**
      * Sets whether or not this offer should be automatically considered for consideration (versus requiring a code or 
      * other delivery mechanism).
-     * @see #getRequiresCode()
+     * @see #isAutomaticallyAdded()
      */
-    public void setRequiresCode(boolean requiresCode);
+    public void setAutomaticallyAdded(boolean automaticallyAdded);
 
     /**
      * @deprecated Replaced by isAutomaticallyApplied property.   In prior versions of Broadleaf deliveryType was used to 
@@ -235,28 +235,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * can be used in the current order.
      *
      * 0 indicates unlimited usage.
-     *
-     * @deprecated use {@link #getMaxUsesPerOrder()} directly instead
-     */
-    @Deprecated
-    public int getMaxUses() ;
-
-    /**
-     * Sets the maximum number of times that this offer
-     * can be used in the current order.
-     *
-     * 0 indicates unlimited usage.
-     *
-     * @deprecated use {@link #setMaxUsesPerOrder(int)} directly instead
-     */
-    @Deprecated
-    public void setMaxUses(int maxUses) ;
-
-    /**
-     * Returns the maximum number of times that this offer
-     * can be used in the current order.
-     *
-     * 0 indicates unlimited usage.
      */
     public int getMaxUsesPerOrder();
 
@@ -280,18 +258,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * Whether or not this offer has limited use in an order. By default this is true if {@link #getMaxUsesPerOrder()} > 0
      */
     public boolean isLimitedUsePerOrder();
-    
-    /**
-     * @deprecated replaced by the {@link OfferAudit} table
-     */
-    @Deprecated
-    public int getUses() ;
-
-    /**
-     * @deprecated replaced by the {@link OfferAudit} table
-     */
-    @Deprecated
-    public void setUses(int uses) ;
 
     //    /**
     //     * @deprecated use {@link #getQualifyingItemCriteriaXref()} instead
@@ -366,13 +332,13 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     /**
      * Returns the offer codes that can be used to retrieve this Offer. These codes would be used in situations where
-     * this Offer is not automatically considered (meaning {@link Offer#getRequiresCode()} is false}
+     * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}
      */
     public List<OfferCode> getOfferCodes();
     
     /**
      * Sets the offer codes that can be used to retrieve this Offer. These codes would be used in situations where
-     * this Offer is not automatically considered (meaning {@link Offer#getRequiresCode()} is false}
+     * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}
      */
     public void setOfferCodes(List<OfferCode> offerCodes);
 
