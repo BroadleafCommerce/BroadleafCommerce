@@ -781,7 +781,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @JsonIgnore
     public OfferDeliveryType getDeliveryType() {
         if (deliveryType == null) {
-            if (!isAutomaticallyAdded()) {
+            if (isAutomaticallyAdded()) {
                 return OfferDeliveryType.AUTOMATIC;
             } else {
                 return OfferDeliveryType.MANUAL;
