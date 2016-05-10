@@ -340,11 +340,11 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         Object parent = extractParent(populateValueRequest, instance);
         //AntiSamy HTML encodes the rule JSON - pass the unHTMLEncoded version
         EntityManager entityManager = populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager();
-        String entityKey =  RuleIdentifier.ENTITY_KEY_MAP.get(populateValueRequest.getMetadata().getRuleIdentifier());
-        String fieldService =  populateValueRequest.getMetadata().getRuleIdentifier();
-        String jsonPropertyValue = populateValueRequest.getProperty().getUnHtmlEncodedValue();
-        String mappedByEntity =   oneToMany.mappedBy();
-        Property ruleProperty  =  populateValueRequest.getProperty();
+        String fieldService = populateValueRequest.getMetadata().getRuleIdentifier();
+        String entityKey = RuleIdentifier.ENTITY_KEY_MAP.get(fieldService);
+        Property ruleProperty = populateValueRequest.getProperty();
+        String jsonPropertyValue = ruleProperty.getUnHtmlEncodedValue();
+        String mappedByEntity = oneToMany.mappedBy();
         dirty = updateQuantityRule(
                 entityManager, translator, entityKey,
                 fieldService, jsonPropertyValue, rules, valueType, parent,
