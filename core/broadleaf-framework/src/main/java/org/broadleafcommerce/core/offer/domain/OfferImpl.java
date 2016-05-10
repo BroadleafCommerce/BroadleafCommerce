@@ -408,12 +408,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Transient
     Map<String, OfferRule> legacyOfferMatchRules = new HashMap<String, OfferRule>();
-    
-    @Column(name = "USE_NEW_FORMAT")
-    @AdminPresentation(friendlyName = "OfferImpl_Treat_As_New_Format",
-        group = GroupName.Advanced,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Boolean treatAsNewFormat = false;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -899,16 +893,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
    }
 
     @Override
-    public Boolean getTreatAsNewFormat() {
-        return treatAsNewFormat;
-    }
-
-    @Override
-    public void setTreatAsNewFormat(Boolean treatAsNewFormat) {
-        this.treatAsNewFormat = treatAsNewFormat;
-    }
-
-    @Override
     public Character getArchived() {
        ArchiveStatus temp;
        if (archiveStatus == null) {
@@ -1040,7 +1024,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setStartDate(startDate);
         cloned.setTargetSystem(targetSystem);
         cloned.setRequiresRelatedTargetAndQualifiers(requiresRelatedTargetAndQualifiers);
-        cloned.setTreatAsNewFormat(treatAsNewFormat);
         cloned.setTotalitarianOffer(totalitarianOffer);
         cloned.setType(getType());
         for(OfferCode entry : offerCodes){

@@ -301,10 +301,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     void setOfferMatchRulesXref(Map<String, OfferOfferRuleXref> offerMatchRulesXref);
     
-    public Boolean getTreatAsNewFormat();
-
-    public void setTreatAsNewFormat(Boolean treatAsNewFormat);
-    
     /**
      * Indicates the amount of items that must be purchased for this offer to
      * be considered for this order.

@@ -747,7 +747,6 @@ public class OfferDataItemProvider {
         offer.setTotalitarianOffer(totalitarianOffer);
         offer.setType(offerType);
         offer.setValue(value);
-        offer.setTreatAsNewFormat(true);
         offer.setId(getOfferId());
         return offer;
     }
