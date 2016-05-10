@@ -72,7 +72,7 @@ public interface SolrIndexOperation {
      * Perform the a read of the {@link Indexable} items for a particular page and pageSize
      * @throws ServiceException
      */
-    public List<? extends Indexable> readIndexables(int page, int pageSize) throws ServiceException;
+    public List<? extends Indexable> readIndexables(int pageSize, Long lastId) throws ServiceException;
 
     /**
      * Executes after the read, this is where any filters or cleanup for reading can be taken care of
@@ -86,7 +86,7 @@ public interface SolrIndexOperation {
     public void beforeBuildPage();
 
     /**
-     * Build a page from {@link #readIndexables(int, int)} on the {@link #getSolrServerForIndexing()}. This is used as a
+     * Build a page from {@link #readIndexables(int, Long)} on the {@link #getSolrServerForIndexing()}. This is used as a
      * wrapper extension around {@link SolrIndexService#buildIncrementalIndex(List, SolrClient)}.
      */
     public void buildPage(List<? extends Indexable> indexables) throws ServiceException;
