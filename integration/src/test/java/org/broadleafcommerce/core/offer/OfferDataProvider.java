@@ -44,7 +44,6 @@ public class OfferDataProvider {
         o.setStackable(true);
         o.setStartDate(SystemTime.asDate());
         o.setEndDate(new Date(SystemTime.asMillis()+100000000));
-        o.setApplyDiscountToMarkedItems(false);
         o.setTargetSystem("WEB");
         o.setType(OfferType.ORDER_ITEM);
         o.setAppliesToOrderRules(
@@ -75,7 +74,6 @@ public class OfferDataProvider {
         o.setStackable(false);
         o.setStartDate(SystemTime.asDate());
         o.setEndDate(new Date(SystemTime.asMillis()+100000000));
-        o.setApplyDiscountToMarkedItems(false);
         o.setTargetSystem("WEB");
         o.setType(OfferType.FULFILLMENT_GROUP);
         o.setAppliesToOrderRules(

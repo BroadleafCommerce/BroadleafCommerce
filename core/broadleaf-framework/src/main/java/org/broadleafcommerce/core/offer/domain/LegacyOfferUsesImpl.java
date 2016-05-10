@@ -43,6 +43,11 @@ public class LegacyOfferUsesImpl implements LegacyOfferUses, MultiTenantCloneabl
     @Column(name = "USES")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Current_Uses", visibility = VisibilityEnum.HIDDEN_ALL)
     protected int uses;
+    
+    @Column(name = "APPLY_OFFER_TO_MARKED_ITEMS")
+    @AdminPresentation(excluded = true)
+    @Deprecated
+    protected boolean applyDiscountToMarkedItems;    
 
     @Override
     public void setUses(int uses) {
@@ -63,6 +68,25 @@ public class LegacyOfferUsesImpl implements LegacyOfferUses, MultiTenantCloneabl
     public void setMaxUses(int maxUses) {
         offer.setMaxUsesPerOrder(maxUses);
     }
+    
+    @Override
+    @Deprecated
+    public boolean isApplyDiscountToMarkedItems() {
+        return applyDiscountToMarkedItems;
+    }
+
+    @Deprecated
+    public boolean getApplyDiscountToMarkedItems() {
+        return applyDiscountToMarkedItems;
+    }
+    
+    @Override
+    @Deprecated
+    public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems) {
+        this.applyDiscountToMarkedItems = applyDiscountToMarkedItems;
+    }
+
+    
 
     public Offer getOffer() {
         return offer;

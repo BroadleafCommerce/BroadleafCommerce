@@ -221,10 +221,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Deprecated
     protected String appliesToCustomerRules;
 
-    @Column(name = "APPLY_OFFER_TO_MARKED_ITEMS")
-    @AdminPresentation(excluded = true)
-    @Deprecated
-    protected boolean applyDiscountToMarkedItems;
     
     /**
      * No offers can be applied on top of this offer; 
@@ -658,24 +654,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Deprecated
     public void setAppliesToCustomerRules(String appliesToCustomerRules) {
         this.appliesToCustomerRules = appliesToCustomerRules;
-    }
-
-    @Override
-    @Deprecated
-    public boolean isApplyDiscountToMarkedItems() {
-        return applyDiscountToMarkedItems;
-    }
-
-    @Deprecated
-    @JsonIgnore
-    public boolean getApplyDiscountToMarkedItems() {
-        return applyDiscountToMarkedItems;
-    }
-    
-    @Override
-    @Deprecated
-    public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems) {
-        this.applyDiscountToMarkedItems = applyDiscountToMarkedItems;
     }
 
     /**

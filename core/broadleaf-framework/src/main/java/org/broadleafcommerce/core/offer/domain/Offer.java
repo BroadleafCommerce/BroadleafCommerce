@@ -20,7 +20,11 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.core.offer.service.type.*;
+import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
+import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
+import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.offer.service.type.StackabilityType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -102,12 +106,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     @Deprecated
     public void setAppliesToCustomerRules(String appliesToCustomerRules);
-
-    @Deprecated
-    public boolean isApplyDiscountToMarkedItems();
-
-    @Deprecated
-    public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
 
     public OfferItemRestrictionRuleType getOfferItemQualifierRuleType();
 
