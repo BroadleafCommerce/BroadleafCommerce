@@ -32,9 +32,9 @@ public class StackabilityType implements Serializable, BroadleafEnumerationType,
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, StackabilityType> TYPES = new LinkedHashMap<String, StackabilityType>();
-    public static final StackabilityType ORDER_ITEM = new StackabilityType("NO", "No", 1000);
-    public static final StackabilityType ORDER = new StackabilityType("YES", "Yes, with other stackable offers", 2000);
-    public static final StackabilityType FULFILLMENT_GROUP = new StackabilityType("YES_ALWAYS", "Yes, always", 3000);
+    public static final StackabilityType NO = new StackabilityType("NO", "No", 1000);
+    public static final StackabilityType YES = new StackabilityType("YES", "Yes, with other stackable offers", 2000);
+    public static final StackabilityType YES_ALWAYS = new StackabilityType("YES_ALWAYS", "Yes, always", 3000);
 
 
     public static StackabilityType getInstance(final String type) {

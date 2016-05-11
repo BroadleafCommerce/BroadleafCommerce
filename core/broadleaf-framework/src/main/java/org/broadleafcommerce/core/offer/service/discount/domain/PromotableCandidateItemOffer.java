@@ -86,8 +86,6 @@ public interface PromotableCandidateItemOffer extends Serializable {
      * @see {@link ItemOfferProcessor#applyAndCompareOrderAndItemOffers(PromotableOrder, List, List)}
      */
     public void resetUses();
-    
-    public boolean isLegacyOffer();
 
     public List<PromotableOrderItem> getLegacyCandidateTargets();
 

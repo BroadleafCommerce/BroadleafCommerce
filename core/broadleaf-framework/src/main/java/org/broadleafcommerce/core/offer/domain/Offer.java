@@ -70,22 +70,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     public void setEndDate(Date endDate);
 
-    /**
-     * @deprecated
-     * Use isCombinable instead.
-     * @return
-     */
-    @Deprecated
-    public boolean isStackable();
-
-    /**
-     * @deprecated
-     * calls {@link #setCombinableWithOtherOffers(boolean)}
-     * @param stackable
-     */
-    @Deprecated
-    public void setStackable(boolean stackable);
-
     public String getTargetSystem();
 
     public void setTargetSystem(String targetSystem);

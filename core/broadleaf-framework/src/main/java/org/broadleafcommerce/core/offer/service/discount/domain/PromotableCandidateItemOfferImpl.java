@@ -200,11 +200,6 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     }
 
     @Override
-    public boolean isLegacyOffer() {
-        return offer.getQualifyingItemCriteriaXref().isEmpty() && offer.getTargetItemCriteriaXref().isEmpty();
-    }
-
-    @Override
     public List<PromotableOrderItem> getLegacyCandidateTargets() {
         return legacyCandidateTargets;
     }

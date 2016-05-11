@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.offer.service.type.StackabilityType;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -72,7 +73,9 @@ public class CreateOfferUtility {
         offer.setType(offerType);
         offer.setDiscountType(discountType);
         offer.setValue(BigDecimal.valueOf(value));
-        offer.setStackable(stackable);
+        if (stackable) {
+            offer.setStackableWithOtherOffers(StackabilityType.YES);
+        }
         if (stackable) {
             offer.setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
             offer.setOfferItemTargetRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);

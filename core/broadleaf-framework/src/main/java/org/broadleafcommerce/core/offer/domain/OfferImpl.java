@@ -187,14 +187,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         })
     protected Date endDate;
 
-    @Column(name = "STACKABLE")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable",
-            tooltip = "OfferImplStackable_tooltip",
-            group = GroupName.CombineStack,
-            visibility = VisibilityEnum.HIDDEN_ALL)
-    @Deprecated
-    protected Boolean stackable = true;
-
     @Column(name = "TARGET_SYSTEM")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Target_System",
             visibility = VisibilityEnum.HIDDEN_ALL)
@@ -570,35 +562,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-    }
-
-    /**
-     * Returns true if this offer can be stacked on top of another offer.  Stackable is evaluated
-     * against offers with the same offer type.
-     *
-     * @return true if stackable, otherwise false
-     */
-    @Override
-    @Deprecated
-    public boolean isStackable() {
-        return stackable == null ? false : stackable;
-    }
-
-    /**
-     * Sets the stackable value for this offer.
-     *
-     * @param stackable
-     */
-    @Override
-    @Deprecated
-    public void setStackable(boolean stackable) {
-        this.stackable = stackable;
-    }
-
-    @Deprecated
-    @JsonIgnore
-    public boolean getStackable(){
-        return stackable;
     }
     
     @Override
@@ -978,7 +941,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setName(name);
         cloned.setValue(value);
         cloned.setPriority(getPriority());
-        cloned.setStackable(getStackable());
         cloned.setQualifiersCanBeTargets(qualifiersCanBeTargets);
         cloned.setQualifiersCanBeQualifiers(qualifiersCanBeQualifiers);
         cloned.setMaxUsesPerOrder(getMaxUsesPerOrder());

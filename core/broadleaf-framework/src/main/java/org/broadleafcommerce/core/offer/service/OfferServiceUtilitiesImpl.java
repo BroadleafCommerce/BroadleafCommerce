@@ -115,8 +115,6 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
                     // A totalitarian offer has already been applied or this offer is totalitarian
                     // and another offer was already applied.
                     return false;
-                } else if (itemOffer.isLegacyOffer()) {
-                    continue;
                 } else if (!adjustment.isCombinable() || !itemOffer.getOffer().isCombinableWithOtherOffers()) {
                     // A nonCombinable offer has been applied or this is a non-combinable offer
                     // and adjustments have already been applied.

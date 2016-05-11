@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.offer.service.type.StackabilityType;
 import org.testng.annotations.DataProvider;
 
 import java.math.BigDecimal;
@@ -41,7 +42,7 @@ public class OfferDataProvider {
         o.setValue(new BigDecimal("5.00"));
         o.setName("Some test offer");
         o.setPriority(100);
-        o.setStackable(true);
+        o.setStackableWithOtherOffers(StackabilityType.YES);
         o.setStartDate(SystemTime.asDate());
         o.setEndDate(new Date(SystemTime.asMillis()+100000000));
         o.setTargetSystem("WEB");
@@ -71,7 +72,6 @@ public class OfferDataProvider {
         o.setValue(new BigDecimal("5.00"));
         o.setName("Second test offer");
         o.setPriority(100);
-        o.setStackable(false);
         o.setStartDate(SystemTime.asDate());
         o.setEndDate(new Date(SystemTime.asMillis()+100000000));
         o.setTargetSystem("WEB");
