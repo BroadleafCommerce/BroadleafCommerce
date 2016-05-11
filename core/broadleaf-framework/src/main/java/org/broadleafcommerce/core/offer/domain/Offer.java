@@ -78,18 +78,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     public void setApplyDiscountToSalePrice(boolean applyToSalePrice);
 
-    @Deprecated
-    public String getAppliesToOrderRules();
-
-    @Deprecated
-    public void setAppliesToOrderRules(String appliesToRules);
-
-    @Deprecated
-    public String getAppliesToCustomerRules();
-
-    @Deprecated
-    public void setAppliesToCustomerRules(String appliesToCustomerRules);
-
     public OfferItemRestrictionRuleType getOfferItemQualifierRuleType();
 
     public void setOfferItemQualifierRuleType(OfferItemRestrictionRuleType restrictionRuleType);
@@ -135,9 +123,9 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     public void setCombinableWithShippingOffers(Boolean combinableWithShippingOffers);
 
-    public StackabilityType getStackableWithOtherOffers();
+    public StackabilityType getStackabilityType();
 
-    public void setStackableWithOtherOffers(StackabilityType stackableWithOtherOffers);
+    public void setStackabilityType(StackabilityType stackabilityType);
 
     /**
      * Returns true if the offer system should automatically add this offer for consideration (versus requiring a code or 
@@ -221,37 +209,9 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      */
     public boolean isLimitedUsePerOrder();
 
-    //    /**
-    //     * @deprecated use {@link #getQualifyingItemCriteriaXref()} instead
-    //     * @return
-    //     */
-    //    @Deprecated
-    //    public Set<OfferItemCriteria> getQualifyingItemCriteria();
-    //
-    //    /**
-    //     * @deprecated use {@link #setQualifyingItemCriteriaXref(java.util.Set)} instead
-    //     * @param qualifyingItemCriteria
-    //     */
-    //    @Deprecated
-    //    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
-
     Set<OfferQualifyingCriteriaXref> getQualifyingItemCriteriaXref();
 
     void setQualifyingItemCriteriaXref(Set<OfferQualifyingCriteriaXref> qualifyingItemCriteriaXref);
-
-    //    /**
-    //     * @deprecated use {@link #getTargetItemCriteriaXref()} instead
-    //     * @return
-    //     */
-    //    @Deprecated
-    //    public Set<OfferItemCriteria> getTargetItemCriteria();
-    //
-    //    /**
-    //     * @deprecated use {@link #setTargetItemCriteriaXref(java.util.Set)} instead
-    //     * @param targetItemCriteria
-    //     */
-    //    @Deprecated
-    //    public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria);
 
     Set<OfferTargetCriteriaXref> getTargetItemCriteriaXref();
 

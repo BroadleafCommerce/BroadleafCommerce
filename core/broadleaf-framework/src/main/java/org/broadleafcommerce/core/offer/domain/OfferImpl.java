@@ -53,7 +53,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -76,7 +75,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -197,21 +195,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             group = GroupName.Advanced,
             defaultValue = "true")
     protected Boolean applyToSalePrice = true;
-
-    @Column(name = "APPLIES_TO_RULES", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(excluded = true)
-    @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
-    @Deprecated
-    protected String appliesToOrderRules;
-
-    @Column(name = "APPLIES_WHEN_RULES", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(excluded = true)
-    @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
-    @Deprecated
-    protected String appliesToCustomerRules;
-
     
     /**
      * No offers can be applied on top of this offer; 
@@ -584,30 +567,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         this.applyToSalePrice=applyToSalePrice;
     }
 
-    @Override
-    @Deprecated
-    public String getAppliesToOrderRules() {
-        return appliesToOrderRules;
-    }
-
-    @Override
-    @Deprecated
-    public void setAppliesToOrderRules(String appliesToOrderRules) {
-        this.appliesToOrderRules = appliesToOrderRules;
-    }
-
-    @Override
-    @Deprecated
-    public String getAppliesToCustomerRules() {
-        return appliesToCustomerRules;
-    }
-
-    @Override
-    @Deprecated
-    public void setAppliesToCustomerRules(String appliesToCustomerRules) {
-        this.appliesToCustomerRules = appliesToCustomerRules;
-    }
-
     /**
      * Returns true if this offer can be combined with other offers in the order.
      *
@@ -677,12 +636,12 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     }
 
     @Override
-    public StackabilityType getStackableWithOtherOffers() {
+    public StackabilityType getStackabilityType() {
         return StackabilityType.getInstance(stackableWithOtherOffers);
     }
 
     @Override
-    public void setStackableWithOtherOffers(StackabilityType stackableWithOtherOffers) {
+    public void setStackabilityType(StackabilityType stackableWithOtherOffers) {
         if (stackableWithOtherOffers != null) {
             this.stackableWithOtherOffers = stackableWithOtherOffers.getType();
         }
@@ -951,7 +910,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setCombinableWithItemOffersImpactingOtherItems(getCombinableWithItemOffersImpactingOtherItems());
         cloned.setCombinableWithOrderOffers(getCombinableWithOrderOffers());
         cloned.setCombinableWithShippingOffers(getCombinableWithShippingOffers());
-        cloned.setStackableWithOtherOffers(getStackableWithOtherOffers());
+        cloned.setStackabilityType(getStackabilityType());
         cloned.setQualifyingItemSubTotal(getQualifyingItemSubTotal());
         cloned.setOrderMinSubTotal(getOrderMinSubTotal());
         cloned.setStartDate(startDate);

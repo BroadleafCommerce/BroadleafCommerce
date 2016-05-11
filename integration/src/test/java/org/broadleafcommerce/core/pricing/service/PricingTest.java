@@ -383,8 +383,6 @@ public class PricingTest extends BaseTest {
         targetXref.setOfferItemCriteria(oic);
 
         offer.setTargetItemCriteriaXref(Collections.singleton(targetXref));
-
-        offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(true);
         offer = offerService.save(offer);
         offer.setMaxUsesPerOrder(50);

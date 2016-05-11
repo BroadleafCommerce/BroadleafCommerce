@@ -346,8 +346,6 @@ public class LegacyPricingTest extends BaseTest {
         offer.setDiscountType(discountType);
         offer.setValue(BigDecimal.valueOf(value));
         offer.setStackableWithOtherOffers(StackabilityType.YES);
-        offer.setAppliesToOrderRules(orderRule);
-        offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(true);
         offer = offerService.save(offer);
         offer.setMaxUsesPerOrder(50);

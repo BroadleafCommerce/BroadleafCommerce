@@ -48,20 +48,22 @@ public class CreateOfferUtility {
         this.offerService = offerService;
     }
 
-    public OfferCode createOfferCode(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
-        return createOfferCode("NONAME", offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
+    public OfferCode createOfferCode(String offerName, OfferType offerType, OfferDiscountType discountType, double value,
+            String orderRule, boolean stackable, boolean combinable, int priority) {
+        return createOfferCode("NONAME", offerName, offerType, discountType, value, orderRule, stackable, combinable, priority);
     }
 
-    public OfferCode createOfferCode(String offerCodeName, String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
+    public OfferCode createOfferCode(String offerCodeName, String offerName, OfferType offerType, OfferDiscountType discountType, double value, String orderRule, boolean stackable, boolean combinable, int priority) {
         OfferCode offerCode = offerCodeDao.create();
-        Offer offer = createOffer(offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
+        Offer offer = createOffer(offerName, offerType, discountType, value, orderRule, stackable, combinable, priority);
         offerCode.setOffer(offer);
         offerCode.setOfferCode(offerCodeName);
         offerCode = offerService.saveOfferCode(offerCode);
         return offerCode;
     }
 
-    public Offer createOffer(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
+    public Offer createOffer(String offerName, OfferType offerType, OfferDiscountType discountType, double value,
+            String orderRule, boolean stackable, boolean combinable, int priority) {
         Offer offer = offerDao.create();
         offer.setName(offerName);
         offer.setStartDate(SystemTime.asDate());
@@ -91,8 +93,6 @@ public class CreateOfferUtility {
         targetXref.setOfferItemCriteria(oic);
 
         offer.setTargetItemCriteriaXref(Collections.singleton(targetXref));
-
-        offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(combinable);
         offer.setPriority(priority);
         offer = offerService.save(offer);

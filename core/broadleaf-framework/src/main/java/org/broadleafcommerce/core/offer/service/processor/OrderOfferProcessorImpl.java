@@ -158,13 +158,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     protected boolean couldOfferApplyToOrder(Offer offer, PromotableOrder promotableOrder, PromotableOrderItem promotableOrderItem, PromotableFulfillmentGroup promotableFulfillmentGroup) {
         boolean appliesToItem = false;
         String rule = null;
-        if (offer.getAppliesToOrderRules() != null && offer.getAppliesToOrderRules().trim().length() != 0) {
-            rule = offer.getAppliesToOrderRules();
-        } else {
-            OfferOfferRuleXref orderRule = offer.getOfferMatchRulesXref().get(OfferRuleType.ORDER.getType());
-            if (orderRule != null && orderRule.getOfferRule() != null) {
-                rule = orderRule.getOfferRule().getMatchRule();
-            }
+        OfferOfferRuleXref orderRule = offer.getOfferMatchRulesXref().get(OfferRuleType.ORDER.getType());
+        if (orderRule != null && orderRule.getOfferRule() != null) {
+            rule = orderRule.getOfferRule().getMatchRule();
         }
 
         if (rule != null) {
