@@ -268,7 +268,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (section != null) {
                 fieldDTO.setSelectizeSectionKey(section.getSectionKey());
             } else {
-                fieldDTO.setSelectizeSectionKey(context.getRequest().getServletPath());
+                fieldDTO.setSelectizeSectionKey(fmd.getForeignKeyClass());
             }
         } else {
             fieldDTO.setOperators("blcFilterOperators_Text");
