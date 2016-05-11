@@ -156,7 +156,7 @@ public interface OfferAdminPresentation {
         public static final int TimeRule = 3000;
 
         public static final int CustomerRule = 1000;
-        public static final int RequiresCode = 2000;
+        public static final int AutomaticallyAdded = 2000;
 
         public static final int MaxUsesPerOrder = 1000;
         public static final int MaxUsesPerCustomer = 2000;
