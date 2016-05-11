@@ -67,8 +67,8 @@ public class CustomerPaymentCustomPersistenceHandler extends ClassCustomPersiste
 
     private static final Log LOG = LogFactory.getLog(CustomerPaymentCustomPersistenceHandler.class);
 
-    private static final String SAVED_PAYMENT_INFO = "savedPaymentInfo";
-    public static final String NULL_LAST_FOUR = "****null";
+    protected static final String SAVED_PAYMENT_INFO = "savedPaymentInfo";
+    protected static final String NULL_LAST_FOUR = "****null";
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
