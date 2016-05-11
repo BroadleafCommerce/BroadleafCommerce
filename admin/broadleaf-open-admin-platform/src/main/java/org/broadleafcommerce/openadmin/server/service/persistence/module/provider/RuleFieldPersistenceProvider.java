@@ -5,10 +5,10 @@
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License” located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
  * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
  * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License” located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
  * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
@@ -339,13 +339,16 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 (instance, populateValueRequest.getProperty().getName());
         Object parent = extractParent(populateValueRequest, instance);
         //AntiSamy HTML encodes the rule JSON - pass the unHTMLEncoded version
+        EntityManager entityManager = populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager();
+        String fieldService = populateValueRequest.getMetadata().getRuleIdentifier();
+        String entityKey = RuleIdentifier.ENTITY_KEY_MAP.get(fieldService);
+        Property ruleProperty = populateValueRequest.getProperty();
+        String jsonPropertyValue = ruleProperty.getUnHtmlEncodedValue();
+        String mappedByEntity = oneToMany.mappedBy();
         dirty = updateQuantityRule(
-                populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager(),
-                translator, RuleIdentifier.ENTITY_KEY_MAP.get(populateValueRequest.getMetadata().getRuleIdentifier()),
-                populateValueRequest.getMetadata().getRuleIdentifier(),
-                populateValueRequest.getProperty().getUnHtmlEncodedValue(), rules, valueType, parent,
-                oneToMany.mappedBy(),
-                populateValueRequest.getProperty());
+                entityManager, translator, entityKey,
+                fieldService, jsonPropertyValue, rules, valueType, parent,
+                mappedByEntity, ruleProperty);
         return dirty;
     }
 

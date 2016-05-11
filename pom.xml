@@ -210,23 +210,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven.source.plugin.version}</version>
-                <configuration>
-                    <!-- Don't create source as a default part of the release -->
-                    <attach>false</attach>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
-                <configuration>
-                    <deployAtEnd>true</deployAtEnd>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
             <plugin>
@@ -334,11 +317,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>snapshots</id>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-5-snapshots</url>
+            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-snapshots</url>
         </snapshotRepository>
         <repository>
             <id>releases</id>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-5-releases</url>
+            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-releases</url>
         </repository>
     </distributionManagement>
     <profiles>
@@ -426,11 +409,11 @@
             <distributionManagement>
                 <snapshotRepository>
                     <id>snapshots</id>
-                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-5-source-snapshots</url>
+                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-source-snapshots</url>
                 </snapshotRepository>
                 <repository>
                     <id>releases</id>
-                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-5-source-releases</url>
+                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-source-releases</url>
                 </repository>
             </distributionManagement>
             <build>
@@ -1101,7 +1084,7 @@
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
-                <version>2.7.2</version>
+                <version>2.10.2</version>
                 <scope>compile</scope>
                 <type>jar</type>
             </dependency>

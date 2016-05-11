@@ -5,10 +5,10 @@
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License” located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
  * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
  * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License” located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
  * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
@@ -272,6 +272,19 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = dynamicEntityDao.merge(adminInstance);
 
+            //Since none of the Sku fields are required, it's possible that the user did not fill out
+            //any Sku fields, and thus a Sku would not be created. Product still needs a default Sku so instantiate one
+            if (adminInstance.getDefaultSku() == null) {
+                Sku newSku = catalogService.createSku();
+                dynamicEntityDao.persist(newSku);
+                adminInstance.setDefaultSku(newSku);
+                adminInstance = dynamicEntityDao.merge(adminInstance);
+            }
+
+            //also set the default product for the Sku
+            adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
+            dynamicEntityDao.merge(adminInstance.getDefaultSku());
+
             // if this is a Pre-Add, skip the rest of the method
             if (entity.isPreAdd()) {
                 return helper.getRecord(adminProperties, adminInstance, null, null);
@@ -285,20 +298,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             if (!handled) {
                 setupXref(adminInstance);
             }
-            
-            //Since none of the Sku fields are required, it's possible that the user did not fill out
-            //any Sku fields, and thus a Sku would not be created. Product still needs a default Sku so instantiate one
-            if (adminInstance.getDefaultSku() == null) {
-                Sku newSku = catalogService.createSku();
-                dynamicEntityDao.persist(newSku);
-                adminInstance.setDefaultSku(newSku);
-                adminInstance = dynamicEntityDao.merge(adminInstance);
-            }
 
-            //also set the default product for the Sku
-            adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
-            dynamicEntityDao.merge(adminInstance.getDefaultSku());
-            
             return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);

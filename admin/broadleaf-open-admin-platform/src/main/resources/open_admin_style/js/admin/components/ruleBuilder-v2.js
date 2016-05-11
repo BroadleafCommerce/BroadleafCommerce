@@ -5,10 +5,10 @@
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License” located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
  * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
  * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License” located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
  * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
@@ -532,8 +532,8 @@
                         // (Values may contain multiple items and are sent back as a single String array)
                         var $selectize = this;
                         var data = $selectize.$input.attr("data-hydrate");
-                        data = (data.length) ? data : "[]";
-                        var dataHydrate = $.parseJSON(data);
+
+                        var dataHydrate = BLCAdmin.stringToArray(data);
                         for (var k=0; k<dataHydrate.length; k++) {
                             if (!isNaN(dataHydrate[k])) {
                                 $selectize.addItem(Number(dataHydrate[k]), false);
@@ -587,6 +587,9 @@
                 field.valueGetter = function(rule) {
                     var value = rule.$el.find('.rule-value-container input.query-builder-selectize-input').val();
                     value = value.replace(/,/g,'\",\"');
+                    if(value.length <= 0) {
+                        return "";
+                    }
                     return "[\"" + value + "\"]";
                 }
             }

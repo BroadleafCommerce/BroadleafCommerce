@@ -5,10 +5,10 @@
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License” located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
  * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
  * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License” located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
  * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
@@ -277,9 +277,10 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "AUTOMATICALLY_ADDED")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added",
-            group = GroupName.Customer, order = FieldOrder.RequiresCode,
+            tooltip = "OfferImpl_Offer_Automatically_Added_tooltip",
+            group = GroupName.Customer, order = FieldOrder.AutomaticallyAdded,
             fieldType = SupportedFieldType.BOOLEAN, defaultValue = "false")
-    protected Boolean requiresCode = false;
+    protected Boolean automaticallyAdded = false;
 
     @Column(name = "MAX_USES")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order",
@@ -293,12 +294,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         tooltip = "OfferImplMaxUsesPerCustomer_tooltip",
         defaultValue = "0")
     protected Long maxUsesPerCustomer;
-
-    @Column(name = "USES")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Current_Uses",
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    @Deprecated
-    protected int uses;
     
     @Column(name = "OFFER_ITEM_QUALIFIER_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule",
@@ -764,21 +759,21 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     }
 
     @Override
-    public boolean getRequiresCode() {
-        if (requiresCode == null) {
+    public boolean isAutomaticallyAdded() {
+        if (automaticallyAdded == null) {
             if (deliveryType != null) {
                 OfferDeliveryType offerDeliveryType = OfferDeliveryType.getInstance(deliveryType);
                 return OfferDeliveryType.AUTOMATIC.equals(offerDeliveryType);
             }
             return false;
         }
-        return requiresCode;
+        return automaticallyAdded;
     }
 
     
     @Override
-    public void setRequiresCode(boolean requiresCode) {
-        this.requiresCode = requiresCode;
+    public void setAutomaticallyAdded(boolean automaticallyAdded) {
+        this.automaticallyAdded = automaticallyAdded;
     }
 
     @Override
@@ -786,7 +781,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @JsonIgnore
     public OfferDeliveryType getDeliveryType() {
         if (deliveryType == null) {
-            if (!getRequiresCode()) {
+            if (isAutomaticallyAdded()) {
                 return OfferDeliveryType.AUTOMATIC;
             } else {
                 return OfferDeliveryType.MANUAL;
@@ -841,23 +836,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     }
 
     @Override
-    @Deprecated
-    public int getMaxUses() {
-        return getMaxUsesPerOrder();
-    }
-
-    @Override
-    public void setMaxUses(int maxUses) {
-        setMaxUsesPerOrder(maxUses);
-    }
-
-    @Override
-    @Deprecated
-    public int getUses() {
-        return uses;
-    }
-
-    @Override
     public String getMarketingMessage() {
         return DynamicTranslationProvider.getValue(this, "marketingMessage", marketingMessage);
     }
@@ -865,12 +843,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setMarketingMessage(String marketingMessage) {
         this.marketingMessage = marketingMessage;
-    }
-
-    @Override
-    @Deprecated
-    public void setUses(int uses) {
-        this.uses = uses;
     }
 
     //    @Override
@@ -1061,8 +1033,8 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         }
         Offer cloned = createResponse.getClone();
         cloned.setApplyDiscountToSalePrice(applyToSalePrice);
-        if (requiresCode != null) {
-            cloned.setRequiresCode(requiresCode);
+        if (automaticallyAdded != null) {
+            cloned.setAutomaticallyAdded(automaticallyAdded);
         }
         cloned.setDescription(description);
         cloned.setDiscountType(getDiscountType());
@@ -1088,7 +1060,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setQualifyingItemSubTotal(getQualifyingItemSubTotal());
         cloned.setOrderMinSubTotal(getOrderMinSubTotal());
         cloned.setStartDate(startDate);
-        cloned.setUses(uses);
         cloned.setTargetSystem(targetSystem);
         cloned.setRequiresRelatedTargetAndQualifiers(requiresRelatedTargetAndQualifiers);
         cloned.setTreatAsNewFormat(treatAsNewFormat);
