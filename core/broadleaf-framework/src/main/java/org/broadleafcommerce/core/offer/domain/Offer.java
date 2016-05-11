@@ -23,7 +23,6 @@ import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.offer.service.type.StackabilityType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -122,10 +121,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     public Boolean getCombinableWithShippingOffers();
 
     public void setCombinableWithShippingOffers(Boolean combinableWithShippingOffers);
-
-    public StackabilityType getStackabilityType();
-
-    public void setStackabilityType(StackabilityType stackabilityType);
 
     /**
      * Returns true if the offer system should automatically add this offer for consideration (versus requiring a code or 

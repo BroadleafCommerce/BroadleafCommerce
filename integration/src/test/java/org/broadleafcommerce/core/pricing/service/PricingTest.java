@@ -39,7 +39,6 @@ import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.offer.service.type.StackabilityType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -372,7 +371,6 @@ public class PricingTest extends BaseTest {
         offer.setDiscountType(discountType);
         offer.setValue(BigDecimal.valueOf(value));
         offer.setAutomaticallyAdded(true);
-        offer.setStackableWithOtherOffers(StackabilityType.YES);
 
         OfferItemCriteria oic = new OfferItemCriteriaImpl();
         oic.setQuantity(1);

@@ -54,7 +54,6 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.offer.service.type.StackabilityType;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -740,9 +739,7 @@ public class OfferDataItemProvider {
         offer.setOfferItemTargetRuleType(targetType);
         offer.setPriority(priority);
         offer.setQualifyingItemCriteriaXref(qualifyingItemCriteriaXref);
-        if (stackable) {
-            offer.setStackableWithOtherOffers(StackabilityType.YES);
-        }
+
         offer.setStartDate(startDate);
         offer.setTargetItemCriteriaXref(targetItemCriteriaXref);
         offer.setTotalitarianOffer(totalitarianOffer);

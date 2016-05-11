@@ -45,7 +45,6 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.offer.service.type.StackabilityType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -231,15 +230,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             group = GroupName.CombineStack, order = FieldOrder.CombinableWithShippingOffers,
             defaultValue = "true")
     protected Boolean combinableWithShippingOffers = true;
-
-    @Column(name = "STACKABLE_WITH_OTHER_OFFERS")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable",
-            tooltip = "OfferImplStackableWithOffers_tooltip",
-            group = GroupName.CombineStack, order = FieldOrder.StackableWithOtherOffers,
-            fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.StackabilityType",
-            defaultValue = "NO")
-    protected String stackableWithOtherOffers;
 
     @Column(name = "AUTOMATICALLY_ADDED")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added",
@@ -636,18 +626,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     }
 
     @Override
-    public StackabilityType getStackabilityType() {
-        return StackabilityType.getInstance(stackableWithOtherOffers);
-    }
-
-    @Override
-    public void setStackabilityType(StackabilityType stackableWithOtherOffers) {
-        if (stackableWithOtherOffers != null) {
-            this.stackableWithOtherOffers = stackableWithOtherOffers.getType();
-        }
-    }
-
-    @Override
     public boolean isAutomaticallyAdded() {
         if (automaticallyAdded == null) {
             return false;
@@ -910,7 +888,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setCombinableWithItemOffersImpactingOtherItems(getCombinableWithItemOffersImpactingOtherItems());
         cloned.setCombinableWithOrderOffers(getCombinableWithOrderOffers());
         cloned.setCombinableWithShippingOffers(getCombinableWithShippingOffers());
-        cloned.setStackabilityType(getStackabilityType());
         cloned.setQualifyingItemSubTotal(getQualifyingItemSubTotal());
         cloned.setOrderMinSubTotal(getOrderMinSubTotal());
         cloned.setStartDate(startDate);
