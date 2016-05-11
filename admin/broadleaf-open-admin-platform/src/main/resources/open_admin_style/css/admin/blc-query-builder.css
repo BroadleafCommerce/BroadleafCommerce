@@ -94,6 +94,8 @@
     -webkit-box-shadow: none;
     box-shadow: none;
 }
+#field-targetItemCriteria .error {
+    margin-top: -10px;
 }
 .query-builder .rules-list > *:before, .query-builder .rules-list > *:after {
     content: '';

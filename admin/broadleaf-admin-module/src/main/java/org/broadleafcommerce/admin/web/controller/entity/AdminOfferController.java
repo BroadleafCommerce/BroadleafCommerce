@@ -21,18 +21,15 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
@@ -86,33 +83,6 @@ public class AdminOfferController extends AdminBasicEntityController {
         modifyModelAttributes(model);
         return view;
     }
-
-    @Override
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
-    public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
-            @PathVariable(value="id") String id,
-            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result,
-            RedirectAttributes ra) throws Exception {
-        customCriteria = new String[]{};
-        String view = super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
-        modifyModelAttributes(model);
-        if(result.hasErrors()) {
-            //if offerType is orderItem, check to see if targetItemCriteria is the proper value
-            if(OfferType.ORDER_ITEM.getType().equals(entityForm.findField("type").getValue())) {
-                String test = entityForm.findField("targetItemCriteria").getValue();
-                
-                //if this is true, we want to manually add the validation error
-                if(test.contains("\"rawMvel\":null")) {
-                    String[] errorCodes = result.resolveMessageCodes("This field is required", "fields[targetItemCriteria].value");
-                    FieldError fieldError = new FieldError("entityForm", "fields[targetItemCriteria].value",
-                            null, false, errorCodes, null, "This field is required");
-                    result.addError(fieldError);
-                }
-            }
-        }
-        return view;
-    }
     
     @Override
     @RequestMapping(value = "/add", method = RequestMethod.GET)
@@ -146,7 +116,9 @@ public class AdminOfferController extends AdminBasicEntityController {
     protected void modifyModelAttributes(Model model) {
         model.addAttribute("additionalControllerClasses", "offer-form");
         EntityForm form = (EntityForm) model.asMap().get("entityForm");
-        form.findField("targetItemCriteria").setRequired(true);
+        if(form.findField("targetItemCriteria") != null) {
+            form.findField("targetItemCriteria").setRequired(true);
+        }
     }
     
 }
