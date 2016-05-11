@@ -35,9 +35,9 @@
 .query-builder .rule-container .rule-operator-container,
 .query-builder .rule-container .rule-value-container, .query-builder .error-container, .query-builder .drag-handle {
     display: block;
-    margin: 0 5px 0 0;
     vertical-align: middle;
     float: left;
+    margin: 0 5px 0 0;
 }
 
 .query-builder .rules-group-container {
