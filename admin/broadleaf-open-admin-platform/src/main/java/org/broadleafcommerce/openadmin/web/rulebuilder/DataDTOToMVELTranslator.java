@@ -306,25 +306,30 @@ public class DataDTOToMVELTranslator {
         }
         String stringValue = value.toString().trim();
         Object[] response = new Object[]{};
-        List<String> temp = new ArrayList<String>();
-        int initial = 1;
-        //assume this is a multi-value phrase
-        boolean eof = false;
-        while (!eof) {
-            int end = stringValue.indexOf(",", initial);
-            if (end == -1) {
-                eof = true;
-                end = stringValue.length() - 1;
+        if (isProjection(value)) {
+            List<String> temp = new ArrayList<String>();
+            int initial = 1;
+            //assume this is a multi-value phrase
+            boolean eof = false;
+            while (!eof) {
+                int end = stringValue.indexOf(",", initial);
+                if (end == -1) {
+                    eof = true;
+                    end = stringValue.length() - 1;
+                }
+                temp.add(stringValue.substring(initial, end));
+                initial = end + 1;
             }
-            String tempValue = stringValue.substring(initial, end);
-            String regex = "(?<!^)\\\"(?!$)";
-            tempValue = tempValue.replaceAll(regex, "\\\\\"");
-
-            temp.add(tempValue);
-            initial = end + 1;
+            response = temp.toArray(response);
+        } else {
+            response = new Object[]{value};
         }
-        response = temp.toArray(response);
         return response;
+    }
+
+    public boolean isProjection(Object value) {
+        String stringValue = value.toString().trim();
+        return stringValue.startsWith("[") && stringValue.endsWith("]") && stringValue.indexOf(",") > 0;
     }
 
     protected void buildCollectionExpression(StringBuffer sb, String entityKey, String field, Object[] value,
@@ -335,10 +340,16 @@ public class DataDTOToMVELTranslator {
         sb.append("CollectionUtils.intersection(");
         sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
         sb.append(",");
-        sb.append("[");
-        sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
-                ignoreCase, ignoreQuotes));
-        sb.append("])");
+        if (value.length > 1) {
+            sb.append("[");
+            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+                    ignoreCase, ignoreQuotes));
+            sb.append("])");
+        } else {
+            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+                    ignoreCase, ignoreQuotes));
+            sb.append(")");
+        }
 
         sb.append(operator);
     }
