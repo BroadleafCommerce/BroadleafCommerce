@@ -19,7 +19,7 @@
     'use strict';
 
     $.fn.broadleafTabs = function(options) {
-        $(document).on('click', '.nav-tabs li a', function(e) {
+        $(document).on('click', '.nav-tabs li a:not(.hidden)', function(e) {
             e.preventDefault();
 
             // Remove 'selected' outline from tab
