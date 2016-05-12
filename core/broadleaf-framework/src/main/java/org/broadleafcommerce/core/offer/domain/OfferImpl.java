@@ -228,11 +228,11 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     
     @Column(name = "OFFER_ITEM_QUALIFIER_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule",
-            group = GroupName.QualifierRuleRestriction,
-            order = FieldOrder.OfferItemQualifierRuleType,
+        group = GroupName.QualifierRuleRestriction,
+        order = FieldOrder.OfferItemQualifierRuleType,
         tooltip = "OfferItemRestrictionRuleType_tooltip",
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
+        broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
     protected String offerItemQualifierRuleType;
 
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
@@ -250,8 +250,8 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "OFFER_ITEM_TARGET_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Target_Rule",
-            group = GroupName.CombineStack,
-            order = FieldOrder.ItemTargetStackingRule,
+        group = GroupName.CombineStack,
+        order = FieldOrder.ItemTargetStackingRule,
         tooltip = "OfferItemRestrictionRuleType_tooltip",
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType",
@@ -275,9 +275,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         group = GroupName.RuleConfiguration,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM,
-                validationConfigurations = { 
-                        @ValidationConfiguration(
-                            validationImplementation = "blOfferTargetCriteriaItemValidator") })
+        validationConfigurations = @ValidationConfiguration(validationImplementation = "blOfferTargetCriteriaItemValidator"))
     protected Set<OfferTargetCriteriaXref> targetItemCriteria = new HashSet<OfferTargetCriteriaXref>();
 
     @Transient
