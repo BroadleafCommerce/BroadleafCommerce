@@ -63,6 +63,7 @@
             <xsd:element ref="customCriteria" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element ref="maintainedAdornedTargetField" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element ref="gridVisibleField" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element ref="selectizeVisibleField" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:group>
 

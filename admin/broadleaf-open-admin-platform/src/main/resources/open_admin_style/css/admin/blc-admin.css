@@ -225,6 +225,7 @@ circle {
     color: #A4A4A4;
     text-shadow: none;
 }
+.app-content .side-nav ul li .blc-icon-blc-leaf,
 .app-content .side-nav ul li a {
     background-image: none;
     width: 50px;
@@ -241,11 +242,16 @@ circle {
 .app-content .side-nav ul li a.fa-usd:before {
     left: 17px;
 }
+.app-content .side-nav ul li .blc-icon-blc-leaf {
+    float: left;
+    position: relative;
+}
 .app-content .side-nav ul li a.blc-icon-blc-leaf:before {
     font-size: 3.2em;
     color: #809831;
     top: 3px;
     left: 3px;
+    position: absolute;
 }
 .app-content .side-nav ul li a.active.logo { background-position-y: -90px }
 .app-content .side-nav ul li a:hover:before, .app-content .side-nav ul li a.active::before {
