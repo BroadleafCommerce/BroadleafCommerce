@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.web.api.wrapper;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.springframework.context.ApplicationContext;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,9 +29,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * This is a JAXB wrapper around ISOCountry.
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.ISOCountryWrapper}
  *
  * @author Elbert Bautista (elbertbautista)
  */
+@Deprecated
 @XmlRootElement(name = "isoCountry")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class ISOCountryWrapper extends BaseWrapper implements APIWrapper<ISOCountry>, APIUnwrapper<ISOCountry> {

@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
@@ -60,17 +61,17 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-        return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(Customer.class.getName());
+        return Objects.equals(persistencePackage.getCeilingEntityFullyQualifiedClassname(), Customer.class.getCanonicalName());
     }
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(Customer.class.getName());
+        return Objects.equals(persistencePackage.getCeilingEntityFullyQualifiedClassname(), Customer.class.getCanonicalName());
     }
 
     @Override
     public Boolean canHandleRemove(PersistencePackage persistencePackage) {
-        return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(Customer.class.getName());
+        return Objects.equals(persistencePackage.getCeilingEntityFullyQualifiedClassname(), Customer.class.getCanonicalName());
     }
     
     @Override

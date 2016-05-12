@@ -32,8 +32,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * This is a JAXB wrapper around OrderAdjustmentWrapper.
  * <p/>
+ * @deprecated - use {@link com.broadleafcommerce.web.api.v2.wrapper.AdjustmentWrapper}
  * Author: ppatel, bpolster
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.AdjustmentWrapper}
  */
+@Deprecated
 @XmlRootElement(name = "adjustment")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class AdjustmentWrapper extends BaseWrapper implements APIWrapper<Adjustment> {
@@ -60,6 +64,7 @@ public class AdjustmentWrapper extends BaseWrapper implements APIWrapper<Adjustm
     protected BigDecimal discountAmount;
     
 
+    @Override
     public void wrapDetails(Adjustment model, HttpServletRequest request) {
         if (model == null) {
             return;

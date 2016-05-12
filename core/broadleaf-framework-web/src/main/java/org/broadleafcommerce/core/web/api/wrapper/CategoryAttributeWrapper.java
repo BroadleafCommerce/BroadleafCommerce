@@ -29,7 +29,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * 
  * @author Phillip Verheyden
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.CategoryAttributeWrapper}
  */
+@Deprecated
 @XmlRootElement(name = "categoryAttribute")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class CategoryAttributeWrapper extends BaseWrapper implements APIWrapper<CategoryAttribute>{

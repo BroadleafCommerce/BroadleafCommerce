@@ -37,9 +37,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * This is a JAXB wrapper to wrap Sku.
  * <p/>
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.SkuWrapper}
+ * 
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
+@Deprecated
 @XmlRootElement(name = "sku")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku>, APIUnwrapper<Sku> {

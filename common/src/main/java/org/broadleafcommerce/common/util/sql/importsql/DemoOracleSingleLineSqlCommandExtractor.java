@@ -89,13 +89,18 @@ public class DemoOracleSingleLineSqlCommandExtractor extends SingleLineSqlComman
         Pattern pattern = Pattern.compile(TIMESTAMPMATCH);
         statements = stringList.toArray(new String[stringList.size()]);
         for (int x=0; x<statements.length; x++) {
-            Matcher matcher = pattern.matcher(statements[x]);
+            String statement = statements[x];
+            Matcher matcher = pattern.matcher(statement);
             while (matcher.find()) {
                 String date = matcher.group(1);
-                String temp = statements[x].substring(0, statements[x].indexOf(date)) + "{ts " + date + "}" +
-                        statements[x].substring(statements[x].indexOf(date) + date.length(), statements[x].length());
-                statements[x] = temp;
+                statement = statement.substring(0, statements[x].indexOf(date)) + "{ts " + date + "}" +
+                    statement.substring(statement.indexOf(date) + date.length(), statement.length());
             }
+            
+            // Any MySQL-specific newlines replace with newline character concatenation
+            statement = statement.replaceAll(DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX, "' || CHR(13) || CHR(10) || '");
+            
+            statements[x] = statement;
         }
 
         return statements;

@@ -17,10 +17,6 @@
  */
 package org.broadleafcommerce.core.web.api;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -30,7 +26,11 @@ import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConve
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import javax.annotation.Resource;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+
 import java.util.List;
 
 /**
@@ -41,12 +41,12 @@ import java.util.List;
  * servlet with {@code contextClass} {@link org.springframework.web.context.support.AnnotationConfigWebApplicationContext} in web.xml.
  *
  * @author Phillip Verheyden (phillipuniverse)
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.BroadleafRestApiMvcConfiguration}
  */
+@Deprecated
 public class BroadleafRestApiMvcConfiguration extends WebMvcConfigurerAdapter {
 
-    @Resource(name = "blWrapperOverrideTypeModifier")
-    protected WrapperOverrideTypeModifier typeModifier;
-    
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(getJsonConverter());
@@ -76,7 +76,7 @@ public class BroadleafRestApiMvcConfiguration extends WebMvcConfigurerAdapter {
     
     protected ObjectMapper getObjectMapper(boolean useXml) {
         Jackson2ObjectMapperBuilder builder = getObjectMapperBuilder();
-        TypeFactory factory = TypeFactory.defaultInstance().withModifier(typeModifier);
+        TypeFactory factory = TypeFactory.defaultInstance().withModifier(blWrapperOverrideTypeModifier());
         if (useXml) {
             return builder.createXmlMapper(true).build().setTypeFactory(factory);
         } else {
@@ -91,6 +91,11 @@ public class BroadleafRestApiMvcConfiguration extends WebMvcConfigurerAdapter {
             // Enable/disable some features
             .featuresToEnable(new Object[]{DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY})
             .featuresToDisable(new Object[]{SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED});
+    }
+
+    @Bean
+    protected WrapperOverrideTypeModifier blWrapperOverrideTypeModifier() {
+        return new WrapperOverrideTypeModifier();
     }
 
 }

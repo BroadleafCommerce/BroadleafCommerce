@@ -25,6 +25,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.CartMessageWrapper}
+ *
+ */
+@Deprecated
 @XmlRootElement(name = "message")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class CartMessageWrapper extends BaseWrapper implements APIWrapper<ActivityMessageDTO> {

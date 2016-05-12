@@ -24,9 +24,13 @@ import java.util.List;
  * Wrapper classes implementing this interface expose their additionalFields, and they can
  * make use of the utility methods in BaseWrapper to transfer said fields between the wrapper and 
  * the corresponding domain object
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.WrapperAdditionalFields}
+ * 
  * @author gdiaz
  *
  */
+@Deprecated
 public interface WrapperAdditionalFields {
 
     List<MapElementWrapper> getAdditionalFields();

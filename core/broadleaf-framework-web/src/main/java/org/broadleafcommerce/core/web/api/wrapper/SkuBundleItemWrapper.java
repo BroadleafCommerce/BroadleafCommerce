@@ -26,6 +26,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.SkuBundleItemWrapper}
+ */
+
+@Deprecated
 @XmlRootElement(name = "skuBundleItem")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class SkuBundleItemWrapper extends BaseWrapper implements APIWrapper<SkuBundleItem> {

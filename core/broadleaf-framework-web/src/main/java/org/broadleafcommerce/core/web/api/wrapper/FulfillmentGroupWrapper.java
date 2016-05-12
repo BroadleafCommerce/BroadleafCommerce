@@ -42,10 +42,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * This is a JAXB wrapper around FulfillmentGroup.
- *
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentGroupWrapper}
+ * 
  * User: Elbert Bautista
  * Date: 4/10/12
  */
+@Deprecated
 @XmlRootElement(name = "fulfillmentGroup")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<FulfillmentGroup>, APIUnwrapper<FulfillmentGroupRequest> {

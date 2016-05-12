@@ -23,7 +23,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.SimpleType;
@@ -37,9 +36,11 @@ import java.lang.reflect.Type;
  * Provides an implementation of a {@link TypeModifier} that looks up types in the application context for wrapper overrides.
  * This allows for correct instantiation to occur when wrappers have been overridden and a client is actually sending JSON
  * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.WrapperOverrideTypeModifier}
+ * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-@Component("blWrapperOverrideTypeModifier")
+@Deprecated
 public class WrapperOverrideTypeModifier extends TypeModifier implements ApplicationContextAware {
 
     private static final Log LOG = LogFactory.getLog(WrapperOverrideTypeModifier.class);

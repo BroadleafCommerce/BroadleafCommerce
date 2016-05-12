@@ -39,9 +39,13 @@ import javax.servlet.http.HttpServletRequest;
  * @GET, @POST, @PUT, and @DELETE are purposely not provided here to allow implementors finer control over 
  * the details of the endpoint.
  * <p/>
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.web.api.v2.endpoint.order.OrderHistoryEndpoint}
+ * 
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
+@Deprecated
 public abstract class OrderHistoryEndpoint extends BaseEndpoint {
 
     @Resource(name="blOrderService")

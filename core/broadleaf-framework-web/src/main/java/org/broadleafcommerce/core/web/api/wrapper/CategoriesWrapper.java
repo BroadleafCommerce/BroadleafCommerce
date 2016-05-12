@@ -30,7 +30,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * This is a JAXB wrapper class for wrapping a collection of categories.
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.CategoriesWrapper}
  */
+@Deprecated
 @XmlRootElement(name = "categories")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class CategoriesWrapper extends BaseWrapper implements APIWrapper<List<Category>> {

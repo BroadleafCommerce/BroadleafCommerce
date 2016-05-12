@@ -79,8 +79,10 @@ import javax.servlet.http.HttpServletRequest;
  * will override and extend the methods of this class, add new methods, and control the JAX-RS behavior 
  * using annotations according to the JAX-RS specification.
  *
+ * @deprecated - use {@link com.broadleafcommerce.web.api.v2.endpoint.catalog.CatalogEndpoint}
  * User: Kelly Tisdell
  */
+@Deprecated
 public abstract class CatalogEndpoint extends BaseEndpoint {
 
     @Resource(name = "blCatalogService")

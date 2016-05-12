@@ -34,9 +34,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * API wrapper to wrap Order Item Price Details.
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.OrderItemPriceDetailWrapper}
+ * 
  * @author Priyesh Patel
  *
  */
+@Deprecated
 @XmlRootElement(name = "orderItemAttribute")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class OrderItemPriceDetailWrapper extends BaseWrapper implements

@@ -186,6 +186,10 @@
             return fields;
         },
 
+        getRows: function ($table) {
+            return $table.find('tbody').find('tr:not(.list-grid-no-results):not(.blank-padding)');
+        },
+
         getSelectedRowIds: function ($button) {
             var link = BLC.servletContext + $button.data('urlpostfix');
 
@@ -537,13 +541,14 @@ $(document).ready(function () {
             type: "POST",
             data: postData
         }, function (data) {
+            BLCAdmin.hideCurrentModal();
+
             BLCAdmin.listGrid.replaceRelatedCollection($(data), {
                 message: BLCAdmin.messages.saved + '!',
                 alertType: 'save-alert',
                 autoClose: 3000,
                 clearOtherAlerts: true
             });
-            BLCAdmin.hideCurrentModal();
         });
     });
 

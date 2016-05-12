@@ -1,0 +1,9 @@
+<span class="workflow-change-icon" style="width: 15px; display: inline-block;"
+      th:if="${headerFieldStat.first}"
+      th:unless="${field.fieldType == 'IMAGE' or field.fieldType == 'COLOR'}">
+    <a th:if="${record.hasIcon}"
+       data-width="200"
+       th:attr="title=${record.icon.message}"
+       th:class="${record.icon.cssClass + ' tooltip'}"
+       th:classappend="${#bools.isTrue(record.icon.hasDetails) ? 'has-details' : ''}"></a>
+</span>

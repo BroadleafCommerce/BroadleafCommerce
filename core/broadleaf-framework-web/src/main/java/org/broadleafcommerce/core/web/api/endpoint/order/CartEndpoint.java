@@ -58,9 +58,12 @@ import javax.servlet.http.HttpServletRequest;
  * the details of the endpoint.
  *
  * <p/>
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.web.api.v2.endpoint.order.CartEndpoint}
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
+@Deprecated
 public abstract class CartEndpoint extends BaseEndpoint {
 
     @Resource(name="blOrderService")

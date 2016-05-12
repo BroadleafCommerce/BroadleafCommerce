@@ -178,8 +178,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 if (CollectionUtils.isNotEmpty(transformedValues)) {
                     restrictions.add(root.get("category").get("id").in(transformedValues));
                 }
-                //archived?
-                QueryUtils.notArchived(builder, restrictions, root, "archiveStatus");
+
                 criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
                 TypedQuery<Long> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
                 List<Long> productIds = query.getResultList();
