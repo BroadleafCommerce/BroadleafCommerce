@@ -45,9 +45,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * This is a JAXB wrapper around OrderPayment.
  * <p/>
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.OrderPaymentWrapper}
+ * 
  * User: Elbert Bautista
  * Date: 4/26/12
  */
+@Deprecated
 @XmlRootElement(name = "payment")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class OrderPaymentWrapper extends BaseWrapper implements APIWrapper<OrderPayment>, APIUnwrapper<OrderPayment> {

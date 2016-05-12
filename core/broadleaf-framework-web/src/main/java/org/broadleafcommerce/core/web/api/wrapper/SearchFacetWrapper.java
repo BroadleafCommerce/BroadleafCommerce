@@ -36,9 +36,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Search facets are typically returned from a catalog search as part of the result. 
  * You can use facets to narrow a search.
  * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.SearchFacetWrapper}
+ * 
  * @author Kelly Tisdell
  *
  */
+@Deprecated
 @XmlRootElement(name = "searchFacet")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class SearchFacetWrapper extends BaseWrapper implements APIWrapper<SearchFacetDTO> {

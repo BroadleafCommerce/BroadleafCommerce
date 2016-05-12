@@ -26,9 +26,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  * <p>
  * This is a JAXB wrapper to encapsulate a Map<String, Object>
  * <p/>
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.MapElementWrapper}
+ * 
  * User: Elbert Bautista
  * Date: 4/26/12
  */
+@Deprecated
 @XmlRootElement(name = "element")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class MapElementWrapper {

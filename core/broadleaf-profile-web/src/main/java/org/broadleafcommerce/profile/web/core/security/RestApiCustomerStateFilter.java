@@ -57,7 +57,7 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
     
-    protected String customerIdAttributeName = "customerId";
+    public static final String CUSTOMER_ID_ATTRIBUTE = "customerId";
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -70,18 +70,18 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
         if (request.getAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName()) == null){
     
             //First check to see if someone already put the customerId on the request
-            if (request.getAttribute(customerIdAttributeName) != null) {
-                customerId = String.valueOf(request.getAttribute(customerIdAttributeName));
+            if (request.getAttribute(CUSTOMER_ID_ATTRIBUTE) != null) {
+                customerId = String.valueOf(request.getAttribute(CUSTOMER_ID_ATTRIBUTE));
             }
             
             if (customerId == null) {
                 //If it's not on the request attribute, try the parameter
-                customerId = servletRequest.getParameter(customerIdAttributeName);
+                customerId = servletRequest.getParameter(CUSTOMER_ID_ATTRIBUTE);
             }
             
             if (customerId == null) {
                 //If it's not on the request parameter, look on the header
-                customerId = request.getHeader(customerIdAttributeName);
+                customerId = request.getHeader(CUSTOMER_ID_ATTRIBUTE);
             }
             
             if (customerId != null && customerId.trim().length() > 0) {
@@ -100,7 +100,7 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
             if (customerId == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("No customer ID was found for the API request. In order to look up a customer for the request" +
-                            " send a request parameter or request header for the '" + customerIdAttributeName + "' attribute");
+                            " send a request parameter or request header for the '" + CUSTOMER_ID_ATTRIBUTE + "' attribute");
                 }
             }
         }
@@ -115,13 +115,7 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
     }
 
     public String getCustomerIdAttributeName() {
-        return customerIdAttributeName;
+        return CUSTOMER_ID_ATTRIBUTE;
     }
 
-    public void setCustomerIdAttributeName(String customerIdAttributeName) {
-        if (customerIdAttributeName == null || customerIdAttributeName.trim().length() < 1) {
-            throw new IllegalArgumentException("customerIdAttributeName cannot be null");
-        }
-        this.customerIdAttributeName = customerIdAttributeName;
-    }
 }

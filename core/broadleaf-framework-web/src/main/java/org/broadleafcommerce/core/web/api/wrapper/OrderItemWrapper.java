@@ -42,9 +42,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  * For simplicity and most use cases, this wrapper only serializes attributes of <code>DiscreteOrderItem</code>
  * This wrapper should be extended for BundledOrderItems etc...
  *
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.OrderItemWrapper}
+ * 
  * User: Elbert Bautista
  * Date: 4/10/12
  */
+@Deprecated
 @XmlRootElement(name = "orderItem")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderItem> {

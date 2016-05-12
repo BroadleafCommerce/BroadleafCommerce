@@ -44,9 +44,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * This is a JAXB wrapper around Product.
  *
+ *  @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.ProductWrapper}
+ *
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
+@Deprecated
 @XmlRootElement(name = "product")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {

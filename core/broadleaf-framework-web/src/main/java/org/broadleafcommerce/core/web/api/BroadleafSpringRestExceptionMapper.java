@@ -17,13 +17,6 @@
  */
 package org.broadleafcommerce.core.web.api;
 
-import java.util.Locale;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -40,14 +33,24 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.util.Locale;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * <p>
  * Handles exceptions that can occur in the Broadleaf REST APIs. Specifically, this will serialize exceptions into
  * consumable JSON or XML so that clients that utilize the API don't have to treat exception responses as special cases.
  *
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.exception.BroadleafSpringRestExceptionMapper}
+ *
  * @author Chris Kittrell (ckittrell)
  * @author Phillip Verheyden (phillipuniverse)
  */
+@Deprecated
 public class BroadleafSpringRestExceptionMapper {
 
     private static final Log LOG = LogFactory.getLog(BroadleafSpringRestExceptionMapper.class);

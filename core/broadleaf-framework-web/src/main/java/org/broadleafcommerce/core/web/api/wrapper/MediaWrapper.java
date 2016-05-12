@@ -28,7 +28,11 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *  JAXB wrapper class for Media.
+ *  
+ *  @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.MediaWrapper}
+ *  
  */
+@Deprecated
 @XmlRootElement(name = "media")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class MediaWrapper extends BaseWrapper implements APIWrapper<Media> {
