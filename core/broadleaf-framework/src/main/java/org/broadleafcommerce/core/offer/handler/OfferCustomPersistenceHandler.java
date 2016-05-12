@@ -120,7 +120,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         qualifiersCanBeQualifiers.setName(QUALIFIERS_CAN_BE_QUALIFIERS);
         qualifiersCanBeQualifiers.setFriendlyName("OfferImpl_Qualifiers_Can_Be_Qualifiers");
         qualifiersCanBeQualifiers.setGroup(OfferAdminPresentation.GroupName.QualifierRuleRestriction);
-        qualifiersCanBeQualifiers.setOrder(3000);
+        qualifiersCanBeQualifiers.setOrder(OfferAdminPresentation.FieldOrder.QualifiersCanBeQualifiers);
         qualifiersCanBeQualifiers.setDefaultValue("false");
         return qualifiersCanBeQualifiers;
     }
@@ -131,7 +131,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         qualifiersCanBeTargets.setName(QUALIFIERS_CAN_BE_TARGETS);
         qualifiersCanBeTargets.setFriendlyName("OfferImpl_Qualifiers_Can_Be_Targets");
         qualifiersCanBeTargets.setGroup(OfferAdminPresentation.GroupName.QualifierRuleRestriction);
-        qualifiersCanBeTargets.setOrder(4000);
+        qualifiersCanBeTargets.setOrder(OfferAdminPresentation.FieldOrder.QualifiersCanBeTargets);
         qualifiersCanBeTargets.setDefaultValue("false");
         return qualifiersCanBeTargets;
     }
