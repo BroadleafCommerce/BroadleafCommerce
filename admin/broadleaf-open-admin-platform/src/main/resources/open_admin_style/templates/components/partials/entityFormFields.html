@@ -1,8 +1,52 @@
-<div th:if="${field.readOnly}" th:remove="tag">
-    <div th:substituteby="fields/readonly" />
-</div>
-<div th:unless="${field.readOnly}" th:remove="tag">
-    <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}" />
-</div>
+<comment th:remove="all">
+<!-- *** IMPORTANT *** -->
+<!-- When changing this block of code, make sure standaloneField.html is also updated -->
+<!-- *** IMPORTANT *** -->
+</comment>
+<th:block th:if="${groupItem.isField()}" th:with="field=${groupItem.field}">
+    <div th:if="${field.name}"
+         th:class="'field-group' + ${(field.isDirty ? ' dirty' : '')} + ${(field.disabled ? ' disabled' : '')} + ${(#fields.hasErrors('fields[__${field.name}__].value') ? ' has-error' : '')}"
+         blc_admin:component_id="${field}"
+         th:classappend="${!field.isVisible}? 'hidden'">
 
-<span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
+        <div th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
+            <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"/>
+        </div>
+        <div th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
+            <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"/>
+        </div>
+
+        <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}"></span>
+
+    </div>
+</th:block>
+
+<th:block th:if="${groupItem.isCustomField()}" th:with="field=${groupItem.field}">
+    <div th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
+        <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"/>
+    </div>
+    <div th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
+        <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"/>
+    </div>
+</th:block>
+
+<th:block th:if="${groupItem.isListGrid()}" th:with="listGrid=${groupItem.listGrid}">
+    <div th:if="${listGrid.selectType} != 'selectize'"
+         th:id="${listGrid.subCollectionFieldName}"
+         class="listgrid-container fieldgroup-listgrid">
+        <div class="fieldgroup-listgrid-wrapper-header" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden-body'">
+            <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" class="listgrid-friendly-name" th:utext="#{${listGrid.friendlyName}}"></span>
+            <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Record)'"></span>
+            <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Records)'"></span>
+            <div th:include="components/listGridToolbar" th:with="listGrid=${listGrid}" th:remove="tag"/>
+        </div>
+        <div class="fieldgroup-listgrid-wrapper" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
+            <div th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}" th:remove="tag"></div>
+        </div>
+    </div>
+    <div th:if="${listGrid.selectType} == 'selectize'"
+         th:id="${listGrid.subCollectionFieldName}">
+        <div th:include="components/selectizeLabelBar" th:with="listGrid=${listGrid}" th:remove="tag"></div>
+        <div th:include="components/selectizeCollection" th:with="listGrid=${listGrid}" th:remove="tag"></div>
+    </div>
+</th:block>
