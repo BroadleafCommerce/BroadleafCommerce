@@ -97,7 +97,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                             entity.addProperty(myProperty);
                         }
                     } else if (submittedEntity.findProperty(entry.getKey()) != null) {
-                        // Set the dirty state of the property
+                        entity.findProperty(entry.getKey()).setValue(submittedEntity.findProperty(entry.getKey()).getValue());
                         entity.findProperty(entry.getKey()).setIsDirty(submittedEntity.findProperty(entry.getKey()).getIsDirty());
                     }
                 }
