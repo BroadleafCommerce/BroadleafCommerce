@@ -251,11 +251,11 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "OFFER_ITEM_TARGET_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Target_Rule",
         group = GroupName.CombineStack,
-        order = FieldOrder.ItemTargetStackingRule,
         tooltip = "OfferItemRestrictionRuleType_tooltip",
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType",
-        defaultValue = "NONE")
+        defaultValue = "NONE",
+        visibility = VisibilityEnum.HIDDEN_ALL)
     protected String offerItemTargetRuleType;
     
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferQualifyingCriteriaXrefImpl.class, cascade = CascadeType.ALL)

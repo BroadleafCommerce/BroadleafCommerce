@@ -165,7 +165,7 @@ public interface OfferAdminPresentation {
         public static final int Priority = 1000;
 
         public static final int CombinableWithOtherOffers = 1000;
-        public static final int ItemTargetStackingRule = 2000;
+        public static final int StackableWithOtherOffers = 2000;
 
         public static final int QualifyingItemSubTotal = 1000;
         public static final int QualifiersCanBeQualifiers = 2000;

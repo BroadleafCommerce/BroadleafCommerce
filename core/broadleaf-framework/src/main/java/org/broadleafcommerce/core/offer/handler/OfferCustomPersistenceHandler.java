@@ -59,6 +59,8 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     protected static final String QUALIFIERS_CAN_BE_QUALIFIERS = "qualifiersCanBeQualifiers";
     protected static final String QUALIFIERS_CAN_BE_TARGETS = "qualifiersCanBeTargets";
     protected static final String OFFER_ITEM_QUALIFIER_RULE_TYPE = "offerItemQualifierRuleType";
+    protected static final String STACKABLE = "stackableWithOtherOffers";
+    protected static final String OFFER_ITEM_TARGET_RULE_TYPE = "offerItemTargetRuleType";
 
     private Boolean isAssignableFromOffer(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -93,6 +95,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         properties.put(SHOW_ADVANCED_VISIBILITY_OPTIONS, buildAdvancedVisibilityOptionsFieldMetaData());
         properties.put(QUALIFIERS_CAN_BE_QUALIFIERS, buildQualifiersCanBeQualifiersFieldMetaData());
         properties.put(QUALIFIERS_CAN_BE_TARGETS, buildQualifiersCanBeTargetsFieldMetaData());
+        properties.put(STACKABLE, buildStackableFieldMetaData());
 
         allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
         Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
@@ -136,6 +139,18 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         return qualifiersCanBeTargets;
     }
 
+    protected FieldMetadata buildStackableFieldMetaData() {
+        BasicFieldMetadata qualifiersCanBeTargets = new BasicFieldMetadata();
+        qualifiersCanBeTargets.setFieldType(SupportedFieldType.BOOLEAN);
+        qualifiersCanBeTargets.setName(STACKABLE);
+        qualifiersCanBeTargets.setFriendlyName("OfferImpl_Stackable");
+        qualifiersCanBeTargets.setTooltip("OfferImpl_Stackable_tooltip");
+        qualifiersCanBeTargets.setGroup(OfferAdminPresentation.GroupName.CombineStack);
+        qualifiersCanBeTargets.setOrder(OfferAdminPresentation.FieldOrder.StackableWithOtherOffers);
+        qualifiersCanBeTargets.setDefaultValue("false");
+        return qualifiersCanBeTargets;
+    }
+
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         DynamicResultSet resultSet = helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
@@ -162,9 +177,12 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             Property timeRule = entity.findProperty("offerMatchRules---TIME");
             entity.addProperty(buildAdvancedVisibilityOptionsProperty(timeRule));
 
-            Property offerItemQualifierRuleType = entity.findProperty("offerItemQualifierRuleType");
+            Property offerItemQualifierRuleType = entity.findProperty(OFFER_ITEM_QUALIFIER_RULE_TYPE);
             entity.addProperty(buildQualifiersCanBeQualifiersProperty(offerItemQualifierRuleType));
             entity.addProperty(buildQualifiersCanBeTargetsProperty(offerItemQualifierRuleType));
+
+            Property offerItemTargetRuleType = entity.findProperty(OFFER_ITEM_TARGET_RULE_TYPE);
+            entity.addProperty(buildStackableProperty(offerItemTargetRuleType));
 
             if (!"listGridView".equals(customCriteria)) {
                 String setValue = discountValue.getValue();
@@ -200,6 +218,15 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         return property;
     }
 
+    protected Property buildStackableProperty(Property offerItemTargetRuleType) {
+        boolean stackable = isTargetType(offerItemTargetRuleType) || isQualifierTargetType(offerItemTargetRuleType);
+
+        Property property = new Property();
+        property.setName(STACKABLE);
+        property.setValue(String.valueOf(stackable));
+        return property;
+    }
+
     protected boolean isQualifierType(Property offerItemQualifierRuleType) {
         return offerItemQualifierRuleType != null && Objects.equals(offerItemQualifierRuleType.getValue(), OfferItemRestrictionRuleType.QUALIFIER.getType());
     }
@@ -219,10 +246,14 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         Property qualifiersCanBeQualifiers = entity.findProperty(QUALIFIERS_CAN_BE_QUALIFIERS);
         Property qualifiersCanBeTargets = entity.findProperty(QUALIFIERS_CAN_BE_TARGETS);
         Property offerItemQualifierRuleType = buildOfferItemQualifierRuleTypeProperty(qualifiersCanBeQualifiers, qualifiersCanBeTargets);
-
         entity.addProperty(offerItemQualifierRuleType);
         entity.removeProperty(QUALIFIERS_CAN_BE_QUALIFIERS);
         entity.removeProperty(QUALIFIERS_CAN_BE_TARGETS);
+
+        Property stackable = entity.findProperty(STACKABLE);
+        Property offerItemTargetRuleType = buildOfferItemTargetRuleTypeProperty(stackable);
+        entity.addProperty(offerItemTargetRuleType);
+        entity.removeProperty(STACKABLE);
 
         OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
         return helper.getCompatibleModule(updateType).update(persistencePackage);
@@ -246,6 +277,22 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         Property property = new Property();
         property.setName(OFFER_ITEM_QUALIFIER_RULE_TYPE);
         property.setValue(offerItemQualifierRuleType);
+        return property;
+    }
+
+    protected Property buildOfferItemTargetRuleTypeProperty(Property stackable) {
+        String offerItemTargetRuleType;
+        boolean isStackable = stackable == null ? false : Boolean.parseBoolean(stackable.getValue());
+
+        if (isStackable) {
+            offerItemTargetRuleType = OfferItemRestrictionRuleType.QUALIFIER_TARGET.getType();
+        } else {
+            offerItemTargetRuleType = OfferItemRestrictionRuleType.NONE.getType();
+        }
+
+        Property property = new Property();
+        property.setName(OFFER_ITEM_TARGET_RULE_TYPE);
+        property.setValue(offerItemTargetRuleType);
         return property;
     }
 }
