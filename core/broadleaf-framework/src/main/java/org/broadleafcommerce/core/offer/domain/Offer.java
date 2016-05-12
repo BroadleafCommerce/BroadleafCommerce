@@ -85,14 +85,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     public void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType);
 
-    public Boolean getQualifiersCanBeQualifiers();
-
-    public void setQualifiersCanBeQualifiers(Boolean qualifiersCanBeQualifiers);
-
-    public Boolean getQualifiersCanBeTargets();
-
-    public void setQualifiersCanBeTargets(Boolean qualifiersCanBeTargets);
-
     /**
      * Returns false if this offer is not combinable with other offers of the same type.
      * For example, if this is an Item offer it could be combined with other Order or FG offers
@@ -100,27 +92,9 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * 
      * @return
      */
-    @Deprecated
     public boolean isCombinableWithOtherOffers();
 
-    @Deprecated
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers);
-
-    public Boolean getCombinableWithOrderOffers();
-
-    public void setCombinableWithOrderOffers(Boolean combinableWithOrderOffers);
-
-    public Boolean getCombinableWithItemOffers();
-
-    public void setCombinableWithItemOffers(Boolean combinableWithItemOffers);
-
-    public Boolean getCombinableWithItemOffersImpactingOtherItems();
-
-    public void setCombinableWithItemOffersImpactingOtherItems(Boolean combinableWithItemOffersImpactingOtherItems);
-
-    public Boolean getCombinableWithShippingOffers();
-
-    public void setCombinableWithShippingOffers(Boolean combinableWithShippingOffers);
 
     /**
      * Returns true if the offer system should automatically add this offer for consideration (versus requiring a code or 
