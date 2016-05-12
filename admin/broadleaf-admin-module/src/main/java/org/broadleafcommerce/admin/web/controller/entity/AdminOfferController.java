@@ -21,7 +21,6 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -117,7 +116,9 @@ public class AdminOfferController extends AdminBasicEntityController {
     protected void modifyModelAttributes(Model model) {
         model.addAttribute("additionalControllerClasses", "offer-form");
         EntityForm form = (EntityForm) model.asMap().get("entityForm");
-        form.findField("targetItemCriteria").setRequired(true);
+        if(form.findField("targetItemCriteria") != null) {
+            form.findField("targetItemCriteria").setRequired(true);
+        }
     }
     
 }

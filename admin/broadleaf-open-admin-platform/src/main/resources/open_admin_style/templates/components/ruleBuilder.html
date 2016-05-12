@@ -44,7 +44,8 @@
 
     <div th:substituteby="components/fieldTooltip"></div>
  
-    <div th:classappend="${field.ruleType}"
+    <div class="rule-builder-container"
+         th:classappend="${field.ruleType}"
          th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO')) ? 'display: none;' : ''}">
 
         <input type="hidden"

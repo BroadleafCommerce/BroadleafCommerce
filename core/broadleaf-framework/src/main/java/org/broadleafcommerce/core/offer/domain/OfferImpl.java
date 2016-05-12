@@ -312,7 +312,10 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @AdminPresentation(friendlyName = "OfferImpl_Target_Item_Rule",
         group = GroupName.RuleConfiguration,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
-        ruleIdentifier = RuleIdentifier.ORDERITEM)
+        ruleIdentifier = RuleIdentifier.ORDERITEM,
+                validationConfigurations = { 
+                        @ValidationConfiguration(
+                            validationImplementation = "blOfferTargetCriteriaItemValidator") })
     protected Set<OfferTargetCriteriaXref> targetItemCriteria = new HashSet<OfferTargetCriteriaXref>();
 
     @Transient
