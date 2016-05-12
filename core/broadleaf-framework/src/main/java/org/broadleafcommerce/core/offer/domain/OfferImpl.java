@@ -196,40 +196,15 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     protected Boolean applyToSalePrice = true;
     
     /**
-     * No offers can be applied on top of this offer; 
-     * If false, stackable has to be false also
+     * Determines if other offers of the same type can be combined with this offer. 
      */
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Combinable",
         tooltip = "OfferImplCombinableWithOtherOffers_tooltip",
-        group = GroupName.CombineStack,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    @Deprecated
+            group = GroupName.CombineStack,
+            order = FieldOrder.CombinableWithOtherOffers,
+            defaultValue = "true")
     protected Boolean combinableWithOtherOffers = true;
-
-    @Column(name = "COMBINABLE_WITH_ORDER_OFFERS")
-    @AdminPresentation(friendlyName = "OfferImpl_Order_Offer_Combinable",
-            group = GroupName.CombineStack, order = FieldOrder.CombinableWithOrderOffers,
-            defaultValue = "true")
-    protected Boolean combinableWithOrderOffers = true;
-
-    @Column(name = "COMBINABLE_WITH_ITEM_OFFERS")
-    @AdminPresentation(friendlyName = "OfferImpl_Item_Offer_Combinable",
-            group = GroupName.CombineStack, order = FieldOrder.CombinableWithItemOffers,
-            defaultValue = "true")
-    protected Boolean combinableWithItemOffers = true;
-
-    @Column(name = "COMBINABLE_ITM_OFR_IMPACT_ITMS")
-    @AdminPresentation(friendlyName = "OfferImpl_Item_Offer_Impacting_Items_Combinable",
-            group = GroupName.CombineStack, order = FieldOrder.CombinableWithItemOffersImpactingOtherItems,
-            defaultValue = "true")
-    protected Boolean combinableWithItemOffersImpactingOtherItems = true;
-
-    @Column(name = "COMBINABLE_WITH_SHIP_OFFERS")
-    @AdminPresentation(friendlyName = "OfferImpl_Shipping_Offer_Combinable",
-            group = GroupName.CombineStack, order = FieldOrder.CombinableWithShippingOffers,
-            defaultValue = "true")
-    protected Boolean combinableWithShippingOffers = true;
 
     @Column(name = "AUTOMATICALLY_ADDED")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added",
@@ -253,25 +228,12 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     
     @Column(name = "OFFER_ITEM_QUALIFIER_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule",
-        group = GroupName.QualifierRuleRestriction, order = FieldOrder.OfferItemQualifierRuleType,
+            group = GroupName.QualifierRuleRestriction,
+            order = FieldOrder.OfferItemQualifierRuleType,
         tooltip = "OfferItemRestrictionRuleType_tooltip",
-        visibility = VisibilityEnum.HIDDEN_ALL,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-        broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
-    @Deprecated
+            broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
     protected String offerItemQualifierRuleType;
-
-    @Column(name = "QUALIFIERS_CAN_BE_TARGETS")
-    @AdminPresentation(friendlyName = "OfferImpl_Qualifiers_Can_Be_Targets",
-            group = GroupName.QualifierRuleRestriction,
-            defaultValue = "false")
-    protected Boolean qualifiersCanBeTargets = false;
-
-    @Column(name = "QUALIFIERS_CAN_BE_QUALIFIERS")
-    @AdminPresentation(friendlyName = "OfferImpl_Qualifiers_Can_Be_Qualifiers",
-            group = GroupName.QualifierRuleRestriction,
-            defaultValue = "false")
-    protected Boolean qualifiersCanBeQualifiers = false;
 
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Qualifying_Item_Subtotal",
@@ -288,11 +250,11 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "OFFER_ITEM_TARGET_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Target_Rule",
-        group = GroupName.TargetRuleRestriction,
+            group = GroupName.CombineStack,
+            order = FieldOrder.ItemTargetStackingRule,
         tooltip = "OfferItemRestrictionRuleType_tooltip",
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType",
-        visibility = VisibilityEnum.HIDDEN_ALL,
         defaultValue = "NONE")
     protected String offerItemTargetRuleType;
     
@@ -366,9 +328,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     )
     Map<String, OfferOfferRuleXref> offerMatchRules = new HashMap<String, OfferOfferRuleXref>();
 
-    @Transient
-    Map<String, OfferRule> legacyOfferMatchRules = new HashMap<String, OfferRule>();
-
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
@@ -424,9 +383,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     
     @Override
     public OfferItemRestrictionRuleType getOfferItemQualifierRuleType() {
-        // make sure our rule is up to date
-        updateOfferItemQualifierRuleType();
-
         OfferItemRestrictionRuleType returnType = OfferItemRestrictionRuleType.getInstance(offerItemQualifierRuleType);
         if (returnType == null) {
             return OfferItemRestrictionRuleType.NONE;
@@ -453,43 +409,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType) {
         this.offerItemTargetRuleType = restrictionRuleType.getType();
-    }
-
-    @Override
-    public Boolean getQualifiersCanBeQualifiers() {
-        return qualifiersCanBeQualifiers==null?false:qualifiersCanBeQualifiers;
-    }
-
-    @Override
-    public void setQualifiersCanBeQualifiers(Boolean qualifiersCanBeQualifiers) {
-        this.qualifiersCanBeQualifiers = qualifiersCanBeQualifiers;
-        updateOfferItemQualifierRuleType();
-    }
-
-    @Override
-    public Boolean getQualifiersCanBeTargets() {
-        return qualifiersCanBeTargets==null?false:qualifiersCanBeTargets;
-    }
-
-    @Override
-    public void setQualifiersCanBeTargets(Boolean qualifiersCanBeTargets) {
-        this.qualifiersCanBeTargets = qualifiersCanBeTargets;
-        updateOfferItemQualifierRuleType();
-    }
-
-    private void updateOfferItemQualifierRuleType() {
-        Boolean canBeTargets = getQualifiersCanBeTargets();
-        Boolean canBeQualifiers = getQualifiersCanBeQualifiers();
-
-        if (canBeTargets && canBeQualifiers) {
-            setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
-        } else if (canBeTargets) {
-            setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.TARGET);
-        } else if (canBeQualifiers){
-            setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER);
-        } else {
-            setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.NONE);
-        }
     }
 
     @Override
@@ -563,7 +482,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
      * @return true if combinableWithOtherOffers, otherwise false
      */
     @Override
-    @Deprecated
     public boolean isCombinableWithOtherOffers() {
         return combinableWithOtherOffers == null ? false : combinableWithOtherOffers;
     }
@@ -574,55 +492,13 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
      * @param combinableWithOtherOffers
      */
     @Override
-    @Deprecated
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers) {
         this.combinableWithOtherOffers = combinableWithOtherOffers;
     }
 
-    @Deprecated
     @JsonIgnore
     public boolean getCombinableWithOtherOffers() {
         return combinableWithOtherOffers;
-    }
-
-    @Override
-    public Boolean getCombinableWithOrderOffers() {
-        return combinableWithOrderOffers;
-    }
-
-    @Override
-    public void setCombinableWithOrderOffers(Boolean combinableWithOrderOffers) {
-        this.combinableWithOrderOffers = combinableWithOrderOffers;
-    }
-
-    @Override
-    public Boolean getCombinableWithItemOffers() {
-        return combinableWithItemOffers;
-    }
-
-    @Override
-    public void setCombinableWithItemOffers(Boolean combinableWithItemOffers) {
-        this.combinableWithItemOffers = combinableWithItemOffers;
-    }
-
-    @Override
-    public Boolean getCombinableWithItemOffersImpactingOtherItems() {
-        return combinableWithItemOffersImpactingOtherItems;
-    }
-
-    @Override
-    public void setCombinableWithItemOffersImpactingOtherItems(Boolean combinableWithItemOffersImpactingOtherItems) {
-        this.combinableWithItemOffersImpactingOtherItems = combinableWithItemOffersImpactingOtherItems;
-    }
-
-    @Override
-    public Boolean getCombinableWithShippingOffers() {
-        return combinableWithShippingOffers;
-    }
-
-    @Override
-    public void setCombinableWithShippingOffers(Boolean combinableWithShippingOffers) {
-        this.combinableWithShippingOffers = combinableWithShippingOffers;
     }
 
     @Override
@@ -878,16 +754,10 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setName(name);
         cloned.setValue(value);
         cloned.setPriority(getPriority());
-        cloned.setQualifiersCanBeTargets(qualifiersCanBeTargets);
-        cloned.setQualifiersCanBeQualifiers(qualifiersCanBeQualifiers);
         cloned.setMaxUsesPerOrder(getMaxUsesPerOrder());
         cloned.setArchived(getArchived());
         cloned.setOfferItemQualifierRuleType(getOfferItemQualifierRuleType());
         cloned.setCombinableWithOtherOffers(isCombinableWithOtherOffers());
-        cloned.setCombinableWithItemOffers(getCombinableWithItemOffers());
-        cloned.setCombinableWithItemOffersImpactingOtherItems(getCombinableWithItemOffersImpactingOtherItems());
-        cloned.setCombinableWithOrderOffers(getCombinableWithOrderOffers());
-        cloned.setCombinableWithShippingOffers(getCombinableWithShippingOffers());
         cloned.setQualifyingItemSubTotal(getQualifyingItemSubTotal());
         cloned.setOrderMinSubTotal(getOrderMinSubTotal());
         cloned.setStartDate(startDate);
