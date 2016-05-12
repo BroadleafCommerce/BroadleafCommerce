@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAdminPresentation;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -44,6 +45,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Jon on 11/23/15.
@@ -54,6 +56,9 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     private static final Log LOG = LogFactory.getLog(OfferCustomPersistenceHandler.class);
 
     protected static final String SHOW_ADVANCED_VISIBILITY_OPTIONS = "showAdvancedVisibilityOptions";
+    protected static final String QUALIFIERS_CAN_BE_QUALIFIERS = "qualifiersCanBeQualifiers";
+    protected static final String QUALIFIERS_CAN_BE_TARGETS = "qualifiersCanBeTargets";
+    protected static final String OFFER_ITEM_QUALIFIER_RULE_TYPE = "offerItemQualifierRuleType";
 
     private Boolean isAssignableFromOffer(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -71,6 +76,11 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     }
 
     @Override
+    public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
+        return isAssignableFromOffer(persistencePackage);
+    }
+
+    @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         Map<String, FieldMetadata> md = getMetadata(persistencePackage, helper);
 
@@ -81,6 +91,8 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);
 
         properties.put(SHOW_ADVANCED_VISIBILITY_OPTIONS, buildAdvancedVisibilityOptionsFieldMetaData());
+        properties.put(QUALIFIERS_CAN_BE_QUALIFIERS, buildQualifiersCanBeQualifiersFieldMetaData());
+        properties.put(QUALIFIERS_CAN_BE_TARGETS, buildQualifiersCanBeTargetsFieldMetaData());
 
         allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
         Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
@@ -102,7 +114,26 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         return advancedLabelMetadata;
     }
 
+    protected FieldMetadata buildQualifiersCanBeQualifiersFieldMetaData() {
+        BasicFieldMetadata qualifiersCanBeQualifiers = new BasicFieldMetadata();
+        qualifiersCanBeQualifiers.setFieldType(SupportedFieldType.BOOLEAN);
+        qualifiersCanBeQualifiers.setName(QUALIFIERS_CAN_BE_QUALIFIERS);
+        qualifiersCanBeQualifiers.setFriendlyName("OfferImpl_Qualifiers_Can_Be_Qualifiers");
+        qualifiersCanBeQualifiers.setGroup(OfferAdminPresentation.GroupName.QualifierRuleRestriction);
+        qualifiersCanBeQualifiers.setOrder(3000);
+        qualifiersCanBeQualifiers.setDefaultValue("false");
+        return qualifiersCanBeQualifiers;
+    }
 
+    protected FieldMetadata buildQualifiersCanBeTargetsFieldMetaData() {
+        BasicFieldMetadata qualifiersCanBeTargets = new BasicFieldMetadata();
+        qualifiersCanBeTargets.setFieldType(SupportedFieldType.BOOLEAN);
+        qualifiersCanBeTargets.setName(QUALIFIERS_CAN_BE_TARGETS);
+        qualifiersCanBeTargets.setFriendlyName("OfferImpl_Qualifiers_Can_Be_Targets");
+        qualifiersCanBeTargets.setGroup(OfferAdminPresentation.GroupName.QualifierRuleRestriction);
+        qualifiersCanBeTargets.setOrder(4000);
+        qualifiersCanBeTargets.setDefaultValue("false");
+        return qualifiersCanBeTargets;
     }
 
     @Override
@@ -131,6 +162,9 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             Property timeRule = entity.findProperty("offerMatchRules---TIME");
             entity.addProperty(buildAdvancedVisibilityOptionsProperty(timeRule));
 
+            Property offerItemQualifierRuleType = entity.findProperty("offerItemQualifierRuleType");
+            entity.addProperty(buildQualifiersCanBeQualifiersProperty(offerItemQualifierRuleType));
+            entity.addProperty(buildQualifiersCanBeTargetsProperty(offerItemQualifierRuleType));
 
             if (!"listGridView".equals(customCriteria)) {
                 String setValue = discountValue.getValue();
@@ -146,5 +180,72 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         advancedLabel.setName(SHOW_ADVANCED_VISIBILITY_OPTIONS);
         advancedLabel.setValue((timeRule.getValue() == null) ? "true" : "false");
         return advancedLabel;
+    }
+
+    protected Property buildQualifiersCanBeQualifiersProperty(Property offerItemQualifierRuleType) {
+        boolean qualifiersCanBeQualifiers = isQualifierType(offerItemQualifierRuleType) || isQualifierTargetType(offerItemQualifierRuleType);
+
+        Property property = new Property();
+        property.setName(QUALIFIERS_CAN_BE_QUALIFIERS);
+        property.setValue(String.valueOf(qualifiersCanBeQualifiers));
+        return property;
+    }
+
+    protected Property buildQualifiersCanBeTargetsProperty(Property offerItemQualifierRuleType) {
+        boolean qualifiersCanBeTargets = isTargetType(offerItemQualifierRuleType) || isQualifierTargetType(offerItemQualifierRuleType);
+
+        Property property = new Property();
+        property.setName(QUALIFIERS_CAN_BE_TARGETS);
+        property.setValue(String.valueOf(qualifiersCanBeTargets));
+        return property;
+    }
+
+    protected boolean isQualifierType(Property offerItemQualifierRuleType) {
+        return offerItemQualifierRuleType != null && Objects.equals(offerItemQualifierRuleType.getValue(), OfferItemRestrictionRuleType.QUALIFIER.getType());
+    }
+
+    protected boolean isTargetType(Property offerItemQualifierRuleType) {
+        return offerItemQualifierRuleType != null && Objects.equals(offerItemQualifierRuleType.getValue(), OfferItemRestrictionRuleType.TARGET.getType());
+    }
+
+    protected boolean isQualifierTargetType(Property offerItemQualifierRuleType) {
+        return offerItemQualifierRuleType != null && Objects.equals(offerItemQualifierRuleType.getValue(), OfferItemRestrictionRuleType.QUALIFIER_TARGET.getType());
+    }
+
+    @Override
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+
+        Property qualifiersCanBeQualifiers = entity.findProperty(QUALIFIERS_CAN_BE_QUALIFIERS);
+        Property qualifiersCanBeTargets = entity.findProperty(QUALIFIERS_CAN_BE_TARGETS);
+        Property offerItemQualifierRuleType = buildOfferItemQualifierRuleTypeProperty(qualifiersCanBeQualifiers, qualifiersCanBeTargets);
+
+        entity.addProperty(offerItemQualifierRuleType);
+        entity.removeProperty(QUALIFIERS_CAN_BE_QUALIFIERS);
+        entity.removeProperty(QUALIFIERS_CAN_BE_TARGETS);
+
+        OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
+        return helper.getCompatibleModule(updateType).update(persistencePackage);
+    }
+
+    protected Property buildOfferItemQualifierRuleTypeProperty(Property qualifiersCanBeQualifiers, Property qualifiersCanBeTargets) {
+        String offerItemQualifierRuleType;
+        boolean canBeQualifiers = qualifiersCanBeQualifiers == null ? false : Boolean.parseBoolean(qualifiersCanBeQualifiers.getValue());
+        boolean canBeTargets = qualifiersCanBeTargets == null ? false : Boolean.parseBoolean(qualifiersCanBeTargets.getValue());
+
+        if (canBeTargets && canBeQualifiers) {
+            offerItemQualifierRuleType = OfferItemRestrictionRuleType.QUALIFIER_TARGET.getType();
+        } else if (canBeTargets) {
+            offerItemQualifierRuleType = OfferItemRestrictionRuleType.TARGET.getType();
+        } else if (canBeQualifiers){
+            offerItemQualifierRuleType = OfferItemRestrictionRuleType.QUALIFIER.getType();
+        } else {
+            offerItemQualifierRuleType = OfferItemRestrictionRuleType.NONE.getType();
+        }
+
+        Property property = new Property();
+        property.setName(OFFER_ITEM_QUALIFIER_RULE_TYPE);
+        property.setValue(offerItemQualifierRuleType);
+        return property;
     }
 }
