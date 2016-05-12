@@ -53,6 +53,8 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     private static final Log LOG = LogFactory.getLog(OfferCustomPersistenceHandler.class);
 
+    protected static final String SHOW_ADVANCED_VISIBILITY_OPTIONS = "showAdvancedVisibilityOptions";
+
     private Boolean isAssignableFromOffer(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         return Offer.class.getName().equals(ceilingEntityFullyQualifiedClassname);
@@ -78,6 +80,16 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         //retrieve the default properties for WorkflowEvents
         Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);
 
+        properties.put(SHOW_ADVANCED_VISIBILITY_OPTIONS, buildAdvancedVisibilityOptionsFieldMetaData());
+
+        allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
+        Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
+        ClassMetadata mergedMetadata = helper.buildClassMetadata(entityClasses, persistencePackage, allMergedProperties);
+
+        return new DynamicResultSet(mergedMetadata, null, null);
+    }
+
+    protected FieldMetadata buildAdvancedVisibilityOptionsFieldMetaData() {
         BasicFieldMetadata advancedLabelMetadata = new BasicFieldMetadata();
         advancedLabelMetadata.setFieldType(SupportedFieldType.BOOLEAN_LINK);
         advancedLabelMetadata.setForeignKeyCollection(false);
@@ -87,13 +99,10 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         advancedLabelMetadata.setGroup(OfferAdminPresentation.GroupName.ActivityRange);
         advancedLabelMetadata.setOrder(5000);
         advancedLabelMetadata.setDefaultValue("true");
-        properties.put("showAdvancedVisibilityOptions", advancedLabelMetadata);
+        return advancedLabelMetadata;
+    }
 
-        allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
-        Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
-        ClassMetadata mergedMetadata = helper.buildClassMetadata(entityClasses, persistencePackage, allMergedProperties);
 
-        return new DynamicResultSet(mergedMetadata, null, null);
     }
 
     @Override
@@ -120,11 +129,8 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             }
 
             Property timeRule = entity.findProperty("offerMatchRules---TIME");
+            entity.addProperty(buildAdvancedVisibilityOptionsProperty(timeRule));
 
-            Property advancedLabel = new Property();
-            advancedLabel.setName("showAdvancedVisibilityOptions");
-            advancedLabel.setValue((timeRule.getValue() == null) ? "true" : "false");
-            entity.addProperty(advancedLabel);
 
             if (!"listGridView".equals(customCriteria)) {
                 String setValue = discountValue.getValue();
@@ -133,5 +139,12 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             }
         }
         return resultSet;
+    }
+
+    protected Property buildAdvancedVisibilityOptionsProperty(Property timeRule) {
+        Property advancedLabel = new Property();
+        advancedLabel.setName(SHOW_ADVANCED_VISIBILITY_OPTIONS);
+        advancedLabel.setValue((timeRule.getValue() == null) ? "true" : "false");
+        return advancedLabel;
     }
 }
