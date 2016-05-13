@@ -206,8 +206,8 @@ public class OfferServiceImpl implements OfferService {
     }
 
     /**
-     * Private method used to retrieve all offers assigned to this customer.  These offers
-     * have a DeliveryType of MANUAL and are programmatically assigned to the customer.
+     * Private method used to retrieve all offers assigned to this customer.  These offers are
+     * programmatically assigned to the customer.
      *
      * @param customer
      * @return a List of offers assigned to the customer
@@ -218,7 +218,7 @@ public class OfferServiceImpl implements OfferService {
     }
 
     /**
-     * Private method used to retrieve all offers with DeliveryType of AUTOMATIC
+     * Private method used to retrieve all offers with automaticallyAdded set to true
      *
      * @return a List of automatic delivery offers
      */
