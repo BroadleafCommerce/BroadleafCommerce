@@ -48,7 +48,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@EntityListeners(value = { TemporalTimestampListener.class })
+@EntityListeners(value = { TemporalTimestampListener.class, CustomerAddressPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_ADDRESS")
 @AdminPresentationMergeOverrides(

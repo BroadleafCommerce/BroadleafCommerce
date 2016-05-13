@@ -441,8 +441,8 @@
                             // after the options have been loaded
                             // (Values may contain multiple items and are sent back as a single String array)
                             var $selectize = this;
-                            var dataHydrate = '[' + $selectize.$input.attr("data-hydrate") + ']';
-                            dataHydrate = $.parseJSON(dataHydrate);
+                            var data = $selectize.$input.attr("data-hydrate");
+                            var dataHydrate = BLCAdmin.stringToArray(data);
                             for (var k=0; k<dataHydrate.length; k++) {
                                 if (!isNaN(dataHydrate[k])) {
                                     $selectize.addItem(Number(dataHydrate[k]), false);
