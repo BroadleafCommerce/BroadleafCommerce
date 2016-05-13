@@ -232,11 +232,13 @@ $(document).ready(function() {
             var scroll = $('.main-content').scrollTop();
             $sc.find('.content-area-title-bar').css('height', height - scroll);
             $sc.find('.content-area-title-bar').css('line-height', height - scroll + 'px');
+            $sc.find('.content-area-title-bar .ajax-loader').css('margin-top', 30 - scroll / 2 + 'px');
             $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', height - scroll + 'px');
             $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', (-22 + scroll / 2) + 'px');
         } else {
             $sc.find('.content-area-title-bar').css('height', minHeight + 'px');
             $sc.find('.content-area-title-bar').css('line-height', minHeight + 'px');
+            $sc.find('.content-area-title-bar .ajax-loader').css('margin-top', '17px');
             $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', minHeight + 'px');
             $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-7px');
         }
