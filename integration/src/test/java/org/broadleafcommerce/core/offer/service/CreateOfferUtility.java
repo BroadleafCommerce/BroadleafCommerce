@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 
 import java.math.BigDecimal;
@@ -73,11 +74,15 @@ public class CreateOfferUtility {
         offer.setType(offerType);
         offer.setDiscountType(discountType);
         offer.setValue(BigDecimal.valueOf(value));
+
+        if (stackable) {
+            offer.setOfferItemTargetRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
+        }
         
         OfferItemCriteria oic = new OfferItemCriteriaImpl();
         oic.setQuantity(1);
         oic.setMatchRule(orderRule);
-        
+
         OfferTargetCriteriaXref targetXref = new OfferTargetCriteriaXrefImpl();
         targetXref.setOffer(offer);
         targetXref.setOfferItemCriteria(oic);
