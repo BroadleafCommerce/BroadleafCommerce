@@ -63,7 +63,9 @@ public class DemoPostgresSingleLineSqlCommandExtractor extends SingleLineSqlComm
             
             // Any MySQL-specific newlines replace with special character newlines
             newCommand = newCommand.replaceAll(NEWLINE_REPLACEMENT_REGEX, "' || CHR(13) || CHR(10) || '");
-            
+            // Any MySQL CHAR functions with CHR
+            newCommand = newCommand.replace("CHAR(", "CHR(");
+
             newCommands[i] = newCommand;
             i++;
         }
