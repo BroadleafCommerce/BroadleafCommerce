@@ -114,6 +114,12 @@
         invalidateSession : function() {
             $.doTimeout('update-admin-session');
             $.removeCookie('sessionResetTime', { path: resetTimeCookiePath });
+
+            // Disable the entity form status check
+            if (BLCAdmin.entityForm.status) {
+                BLCAdmin.entityForm.status.setDidConfirmLeave(true);
+            }
+
             BLC.get({
                 url : BLC.servletContext + "/adminLogout.htm",
                 error: function(err) {

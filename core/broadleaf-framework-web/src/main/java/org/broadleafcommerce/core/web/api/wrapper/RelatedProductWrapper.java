@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
+
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,14 +27,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
-
 /**
  * This is a JAXB wrapper for RelatedProducts
+ *
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.RelatedProductWrapper}
  *
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
+@Deprecated
 @XmlRootElement(name = "relatedProduct")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class RelatedProductWrapper extends BaseWrapper implements APIWrapper<RelatedProduct> {

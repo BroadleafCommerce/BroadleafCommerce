@@ -154,7 +154,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "roleListTitle",
         group = GroupName.RolesAndPermissions, order = FieldOrder.ROLES,
-        addType = AddMethodType.SELECTIZE_LOOKUP, selectizeVisibleField = "description",
+        addType = AddMethodType.LOOKUP,
         manyToField = "allUsers",
         operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
@@ -165,8 +165,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "permissionListTitle",
         group = GroupName.RolesAndPermissions, order = FieldOrder.PERMISSIONS,
-        addType = AddMethodType.SELECTIZE_LOOKUP,
-        selectizeVisibleField = "description",
+        addType = AddMethodType.LOOKUP,
         customCriteria = "includeFriendlyOnly",
         manyToField = "allUsers",
         operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))

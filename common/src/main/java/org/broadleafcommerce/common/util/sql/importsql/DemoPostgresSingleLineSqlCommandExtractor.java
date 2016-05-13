@@ -38,13 +38,14 @@ import java.io.Reader;
  */
 public class DemoPostgresSingleLineSqlCommandExtractor extends SingleLineSqlCommandExtractor {
 
+    public static final String NEWLINE_REPLACEMENT_REGEX = "\\\\r\\\\n";
+    
     private static final long serialVersionUID = 1L;
     
     private static final SupportLogger LOGGER = SupportLogManager.getLogger("UserOverride", DemoPostgresSingleLineSqlCommandExtractor.class);
     
     @Override
     public String[] extractCommands(Reader reader) {
-        
         String[] commands = super.extractCommands(reader);
         String[] newCommands = new String[commands.length];
         int i = 0;
@@ -59,6 +60,10 @@ public class DemoPostgresSingleLineSqlCommandExtractor extends SingleLineSqlComm
             // are evaluated correctly
             newCommand = newCommand.replaceAll("('.*?')", "E$1");
             newCommand = newCommand.replaceAll("\"\"", "''");
+            
+            // Any MySQL-specific newlines replace with special character newlines
+            newCommand = newCommand.replaceAll(NEWLINE_REPLACEMENT_REGEX, "' || CHR(13) || CHR(10) || '");
+            
             newCommands[i] = newCommand;
             i++;
         }

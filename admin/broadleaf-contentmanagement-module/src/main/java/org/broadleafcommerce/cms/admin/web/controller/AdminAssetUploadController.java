@@ -86,7 +86,8 @@ public class AdminAssetUploadController extends AdminAbstractController {
         ListGrid listGrid = (ListGrid) model.asMap().get("listGrid");
         listGrid.setPathOverride("/" + sectionKey + "/" + id + "/chooseAsset");
         listGrid.setListGridType(Type.ASSET);
-        
+        listGrid.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
+
         String userAgent = request.getHeader("User-Agent");
         model.addAttribute("isIE", userAgent.contains("MSIE"));
         

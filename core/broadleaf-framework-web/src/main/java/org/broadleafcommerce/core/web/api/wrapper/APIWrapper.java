@@ -29,7 +29,10 @@ import javax.servlet.http.HttpServletRequest;
  * This is not a requirement as objects will not generally be passed using a reference to this
  * interface.
  * @param <T>
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.APIWrapper}
  */
+@Deprecated
 public interface APIWrapper<T> extends Serializable {
 
     public void wrapDetails(T model, HttpServletRequest request);

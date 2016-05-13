@@ -32,9 +32,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * This is a JAXB wrapper around Weight
  * <p/>
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.WeightWrapper}
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
+@Deprecated
 @XmlRootElement(name = "weight")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class WeightWrapper implements APIWrapper<Weight>, APIUnwrapper<Weight> {

@@ -31,4 +31,6 @@ public interface OfferCodeDao {
 
     public OfferCode create();
 
+    public Boolean offerCodeIsUsed(OfferCode code);
+
 }

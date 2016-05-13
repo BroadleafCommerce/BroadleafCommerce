@@ -20,10 +20,12 @@ package org.broadleafcommerce.core.order.service;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.util.List;
 
 /**
  * @author bpolster
@@ -31,20 +33,29 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 public abstract class AbstractOrderServiceExtensionHandler extends AbstractExtensionHandler implements
         OrderServiceExtensionHandler {
     
+    @Override
     public ExtensionResultStatusType attachAdditionalDataToNewNamedCart(Customer customer, Order cart) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
+    @Override
     public ExtensionResultStatusType preValidateCartOperation(Order cart, ExtensionResultHolder erh) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
+    @Override
     public ExtensionResultStatusType preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto, 
             ExtensionResultHolder erh) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
     
+    @Override
     public ExtensionResultStatusType attachAdditionalDataToOrder(Order order, boolean priceOrder) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

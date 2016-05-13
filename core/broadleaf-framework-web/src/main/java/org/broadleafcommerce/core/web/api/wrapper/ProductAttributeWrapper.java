@@ -28,9 +28,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * To change this template use File | Settings | File Templates.
  * <p/>
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.ProductAttributeWrapper}
+ * 
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
+@Deprecated
 @XmlRootElement(name = "productAttribute")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class ProductAttributeWrapper extends BaseWrapper implements APIWrapper<ProductAttribute>{

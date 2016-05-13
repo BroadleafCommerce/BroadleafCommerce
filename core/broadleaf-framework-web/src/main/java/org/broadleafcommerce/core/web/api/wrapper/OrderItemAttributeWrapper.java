@@ -27,9 +27,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * API wrapper to wrap Order Item Attributes.
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.OrderItemAttributeWrapper}
+ * 
  * @author Kelly Tisdell
  *
  */
+@Deprecated
 @XmlRootElement(name = "orderItemAttribute")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class OrderItemAttributeWrapper extends BaseWrapper implements

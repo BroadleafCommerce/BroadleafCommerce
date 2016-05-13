@@ -26,6 +26,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * 
+ *  @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.ProductOptionValueWrapper}
+ *
+ */
+
+@Deprecated
 @XmlRootElement(name = "productOptionAllowedValue")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class ProductOptionValueWrapper extends BaseWrapper implements

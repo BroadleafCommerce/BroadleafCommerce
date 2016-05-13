@@ -30,9 +30,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * This is a JAXB wrapper around Phone.
  *
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.PhoneWrapper}
+ * 
  * User: Elbert Bautista
  * Date: 4/24/12
  */
+@Deprecated
 @XmlRootElement(name = "phone")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class PhoneWrapper extends BaseWrapper implements APIWrapper<Phone>, APIUnwrapper<Phone> {

@@ -28,8 +28,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * This is a JAXB wrapper around OfferWrapper.
  * <p/>
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.OfferWrapper}
+ * 
  * User: Priyesh Patel
  */
+@Deprecated
 @XmlRootElement(name = "offer")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class OfferWrapper extends BaseWrapper implements APIWrapper<Offer> {

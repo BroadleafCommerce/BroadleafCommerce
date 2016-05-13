@@ -20,10 +20,12 @@ package org.broadleafcommerce.core.order.service;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.util.List;
 
 /**
  * @author Andre Azzolini (apazzolini), bpolster
@@ -42,4 +44,6 @@ public interface OrderServiceExtensionHandler extends ExtensionHandler {
      * @return
      */
     public ExtensionResultStatusType attachAdditionalDataToOrder(Order order, boolean priceOrder);
+
+    public ExtensionResultStatusType addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder);
 }

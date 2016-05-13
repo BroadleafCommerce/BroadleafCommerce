@@ -27,10 +27,13 @@ import javax.annotation.Resource;
  * to provide an endpoint.  The annotations such as @Path, @Scope, @Context, @PathParam, @QueryParam, 
  * @GET, @POST, @PUT, and @DELETE are purposely not provided here to allow implementors finer control over 
  * the details of the endpoint.
+ * 
  * <p/>
  * User: Kelly Tisdell
  * Date: 4/10/12
+ * @deprecated all Broadleaf endpoints have been moved to the API module as a separate jar. Use {@link com.broadleafcommerce.core.rest.api.v2.endpoint.CutomerEndpoint}
  */
+@Deprecated
 public abstract class CustomerEndpoint extends BaseEndpoint {
 
     @Resource(name="blCustomerService")

@@ -31,9 +31,13 @@ import javax.xml.bind.annotation.XmlElement;
 /**
  * JAXB wrapper for Dimension
  * <p/>
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.DimensionWrapper}
+ * 
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
+@Deprecated
 public class DimensionWrapper extends BaseWrapper implements APIWrapper<Dimension>, APIUnwrapper<Dimension> {
 
     @XmlElement
@@ -194,6 +198,7 @@ public class DimensionWrapper extends BaseWrapper implements APIWrapper<Dimensio
         this.dimensionUnitOfMeasure = dimensionUnitOfMeasure;
     }
 
+    @Override
     public Dimension unwrap(HttpServletRequest request, ApplicationContext context) {
         Dimension dim = new Dimension();
         dim.setContainer(ContainerShapeType.getInstance(this.container));

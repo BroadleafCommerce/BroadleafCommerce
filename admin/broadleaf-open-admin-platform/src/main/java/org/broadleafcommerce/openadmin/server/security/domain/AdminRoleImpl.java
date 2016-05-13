@@ -108,8 +108,7 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "permissionListTitle",
             group = GroupName.Permissions, order = FieldOrder.PERMISSIONS,
-            addType = AddMethodType.SELECTIZE_LOOKUP,
-            selectizeVisibleField = "description",
+            addType = AddMethodType.LOOKUP,
             manyToField = "allRoles",
             customCriteria = "includeFriendlyOnly",
             operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))

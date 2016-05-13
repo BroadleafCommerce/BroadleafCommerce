@@ -23,6 +23,12 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 
+/**
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.endpoint}
+ *
+ */
+@Deprecated
 public abstract class BaseEndpoint implements ApplicationContextAware, MessageSourceAware {
 
     protected ApplicationContext context;

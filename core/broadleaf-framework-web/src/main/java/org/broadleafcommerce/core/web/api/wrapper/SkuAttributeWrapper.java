@@ -28,9 +28,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * This is a JAXB wrapper for SkuAttribute
  * <p/>
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.v2.wrapper.SkuAttributeWrapper}
+ * 
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
+@Deprecated
 @XmlRootElement(name = "skuAttribute")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class SkuAttributeWrapper extends BaseWrapper implements APIWrapper<SkuAttribute>{
