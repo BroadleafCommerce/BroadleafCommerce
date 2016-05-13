@@ -168,7 +168,7 @@ class OrderPaymentConfirmationStrategySpec extends Specification {
         PaymentGatewayConfigurationServiceProvider mockProvider = Mock()
         mockProvider.getGatewayConfigurationService(_) >> {PaymentGatewayType type -> mockConfigService}
         OrderToPaymentRequestDTOService mockRequestService = Mock()
-        mockRequestService.translatePaymentTransaction(*_) >> new PaymentRequestDTO()
+        mockRequestService.translatePaymentTransactionForCheckout(*_) >> new PaymentRequestDTO()
 
         SecureOrderPaymentService mockSecurePaymentService = Mock()
         mockSecurePaymentService.findSecurePaymentInfo(*_) >> secureReference
@@ -204,7 +204,7 @@ class OrderPaymentConfirmationStrategySpec extends Specification {
         requestDTO.transactionTotal(unconfirmedOtherTransaction.amount.toString());
         requestDTO.additionalField("MY_TOKEN", unconfirmedOtherTransaction.additionalFields.get("MY_TOKEN"));
 
-        mockRequestService.translatePaymentTransaction(*_) >> requestDTO
+        mockRequestService.translatePaymentTransactionForCheckout(*_) >> requestDTO
 
         OrderPaymentConfirmationStrategy strategy = new OrderPaymentConfirmationStrategyImpl().with {
             systemPropertiesService = mockSPS
@@ -250,7 +250,7 @@ class OrderPaymentConfirmationStrategySpec extends Specification {
         PaymentGatewayConfigurationServiceProvider mockProvider = Mock()
         mockProvider.getGatewayConfigurationService(_) >> {PaymentGatewayType type -> mockConfigService}
         OrderToPaymentRequestDTOService mockRequestService = Mock()
-        mockRequestService.translatePaymentTransaction(*_) >> new PaymentRequestDTO()
+        mockRequestService.translatePaymentTransactionForCheckout(*_) >> new PaymentRequestDTO()
 
         SecureOrderPaymentService mockSecurePaymentService = Mock()
         mockSecurePaymentService.findSecurePaymentInfo(*_) >> secureReference

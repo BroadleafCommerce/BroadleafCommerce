@@ -90,7 +90,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
         
         if (CollectionUtils.isNotEmpty(transactions)) {
             for (PaymentTransaction tx : transactions) {
-                PaymentRequestDTO rollbackRequest = transactionToPaymentRequestDTOService.translatePaymentTransaction(tx.getAmount(), tx);
+                PaymentRequestDTO rollbackRequest = transactionToPaymentRequestDTOService.translatePaymentTransactionForCheckout(tx.getAmount(), tx);
                 
                 PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(tx.getOrderPayment().getGatewayType());
                 try {

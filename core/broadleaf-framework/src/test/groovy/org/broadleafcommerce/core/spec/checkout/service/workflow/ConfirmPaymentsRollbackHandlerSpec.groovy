@@ -225,7 +225,7 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
         paymentTransactions.add(tx1)
         context.seedData.order.payments.add(tx1.orderPayment)
         stateConfiguration.put(ValidateAndConfirmPaymentActivity.ROLLBACK_TRANSACTIONS,paymentTransactions)
-        mockOrderToPaymentRequestDTOService.translatePaymentTransaction(_, _) >> { new PaymentRequestDTO() }
+        mockOrderToPaymentRequestDTOService.translatePaymentTransactionForCheckout(_, _) >> { new PaymentRequestDTO() }
 
         mockOrderService = Mock()
         mockOrderPaymentService = Mock()
