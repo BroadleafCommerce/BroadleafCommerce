@@ -49,6 +49,21 @@ public interface OrderToPaymentRequestDTOService {
      * additional requests. For example, an existing {@link org.broadleafcommerce.core.payment.domain.PaymentTransaction} of
      * type {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE} might be passed into this method
      * in order for the gateway issue a "reverse auth" against this original transaction.
+     * 
+     * @param transactionAmount the amount that should be placed on {@link PaymentRequestDTO#getTransactionTotal()}
+     * @param paymentTransaction the transaction whose additional fields should be placed on {@link PaymentRequestDTO#getAdditionalFields()}
+     *                           for the gateway to use
+     * @return a new {@link PaymentRequestDTO} populated with the additional fields from <b>paymentTransaction</b> and
+     *         the amount from <b>transactionAmount<b>
+     */
+    public PaymentRequestDTO translateStandalonePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction);
+
+    /**
+     * Utilizes the {@link PaymentTransaction#getAdditionalFields()} map to populate necessary request parameters on the
+     * resulting {@link PaymentRequestDTO}. These additional fields are then used by the payment gateway to construct
+     * additional requests. For example, an existing {@link org.broadleafcommerce.core.payment.domain.PaymentTransaction} of
+     * type {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE} might be passed into this method
+     * in order for the gateway issue a "reverse auth" against this original transaction.
      *
      * Important: As of 4.0.1-GA+ the transaction amount passed in will <b>not</b< be set as the transaction total
      * on the PaymentRequestDTO if coming from a "payment flow". That is, if you are invoking this method via the
@@ -67,7 +82,7 @@ public interface OrderToPaymentRequestDTOService {
      * @see {@link org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity}
      * @see {@link org.broadleafcommerce.core.checkout.service.workflow.ConfirmPaymentsRollbackHandler}
      */
-    public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction);
+    public PaymentRequestDTO translatePaymentTransactionForCheckout(Money transactionAmount, PaymentTransaction paymentTransaction);
 
     /**
      * Uses total information on the Order to populate the

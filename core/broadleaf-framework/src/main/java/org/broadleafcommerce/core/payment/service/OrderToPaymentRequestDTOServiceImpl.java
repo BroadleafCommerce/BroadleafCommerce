@@ -87,8 +87,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     }
 
     @Override
-    public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction) {
-
+    public PaymentRequestDTO translateStandalonePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction) {
         if (LOG.isTraceEnabled()) {
             LOG.trace(String.format("Translating Payment Transaction (ID:%s) into a PaymentRequestDTO for the configured " +
                     "gateway.", paymentTransaction.getId()));
@@ -108,6 +107,23 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         populateShipTo(order, requestDTO);
         populateBillTo(order, requestDTO);
 
+        //Copy Additional Fields from PaymentTransaction into the Request DTO.
+        //This will contain any gateway specific information needed to perform actions on this transaction
+        Map<String, String> additionalFields = paymentTransaction.getAdditionalFields();
+
+        for (String key : additionalFields.keySet()) {
+            requestDTO.additionalField(key, additionalFields.get(key));
+        }
+
+        return requestDTO;
+    }
+
+    @Override
+    public PaymentRequestDTO translatePaymentTransactionForCheckout(Money transactionAmount, PaymentTransaction paymentTransaction) {
+
+        Order order = paymentTransaction.getOrderPayment().getOrder();
+        PaymentRequestDTO requestDTO = translateStandalonePaymentTransaction(transactionAmount, paymentTransaction);
+
         // Only set totals and line items when in a Payment flow
         // (i.e. where the transaction is meant to be charged, UNCONFIRMED -> AUTHORIZE or UNCONFIRMED -> AUTHORIZE_AND_CAPTURE)
         // AND where the order does not contain multiple final payments. (e.g. multiple credit cards)
@@ -119,14 +135,6 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                 !transactionIsDetachedCreditRequest(paymentTransaction)) {
             populateTotals(order, requestDTO);
             populateDefaultLineItemsAndSubtotal(order, requestDTO);
-        }
-
-        //Copy Additional Fields from PaymentTransaction into the Request DTO.
-        //This will contain any gateway specific information needed to perform actions on this transaction
-        Map<String, String> additionalFields = paymentTransaction.getAdditionalFields();
-        
-        for (String key : additionalFields.keySet()) {
-            requestDTO.additionalField(key, additionalFields.get(key));
         }
 
         return requestDTO;

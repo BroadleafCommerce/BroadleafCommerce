@@ -100,7 +100,7 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
         PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(tx.getOrderPayment().getGatewayType());
         PaymentResponseDTO responseDTO = null;
 
-        PaymentRequestDTO confirmationRequest = orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx);
+        PaymentRequestDTO confirmationRequest = orderToPaymentRequestService.translatePaymentTransactionForCheckout(payment.getAmount(), tx);
         populateBillingAddressOnRequest(confirmationRequest, payment);
         populateCustomerOnRequest(confirmationRequest, payment);
         populateShippingAddressOnRequest(confirmationRequest, payment);
