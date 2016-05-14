@@ -20,7 +20,9 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.core.offer.service.type.*;
+import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
+import org.broadleafcommerce.core.offer.service.type.OfferType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -67,22 +69,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     public void setEndDate(Date endDate);
 
-    /**
-     * @deprecated
-     * Use isCombinable instead.
-     * @return
-     */
-    @Deprecated
-    public boolean isStackable();
-
-    /**
-     * @deprecated
-     * calls {@link #setCombinableWithOtherOffers(boolean)}
-     * @param stackable
-     */
-    @Deprecated
-    public void setStackable(boolean stackable);
-
     public String getTargetSystem();
 
     public void setTargetSystem(String targetSystem);
@@ -90,24 +76,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     public boolean getApplyDiscountToSalePrice();
 
     public void setApplyDiscountToSalePrice(boolean applyToSalePrice);
-
-    @Deprecated
-    public String getAppliesToOrderRules();
-
-    @Deprecated
-    public void setAppliesToOrderRules(String appliesToRules);
-
-    @Deprecated
-    public String getAppliesToCustomerRules();
-
-    @Deprecated
-    public void setAppliesToCustomerRules(String appliesToCustomerRules);
-
-    @Deprecated
-    public boolean isApplyDiscountToMarkedItems();
-
-    @Deprecated
-    public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
 
     public OfferItemRestrictionRuleType getOfferItemQualifierRuleType();
 
@@ -117,14 +85,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     public void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType);
 
-    public Boolean getQualifiersCanBeQualifiers();
-
-    public void setQualifiersCanBeQualifiers(Boolean qualifiersCanBeQualifiers);
-
-    public Boolean getQualifiersCanBeTargets();
-
-    public void setQualifiersCanBeTargets(Boolean qualifiersCanBeTargets);
-
     /**
      * Returns false if this offer is not combinable with other offers of the same type.
      * For example, if this is an Item offer it could be combined with other Order or FG offers
@@ -132,41 +92,16 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * 
      * @return
      */
-    @Deprecated
     public boolean isCombinableWithOtherOffers();
 
-    @Deprecated
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers);
-
-    public Boolean getCombinableWithOrderOffers();
-
-    public void setCombinableWithOrderOffers(Boolean combinableWithOrderOffers);
-
-    public Boolean getCombinableWithItemOffers();
-
-    public void setCombinableWithItemOffers(Boolean combinableWithItemOffers);
-
-    public Boolean getCombinableWithItemOffersImpactingOtherItems();
-
-    public void setCombinableWithItemOffersImpactingOtherItems(Boolean combinableWithItemOffersImpactingOtherItems);
-
-    public Boolean getCombinableWithShippingOffers();
-
-    public void setCombinableWithShippingOffers(Boolean combinableWithShippingOffers);
-
-    public StackabilityType getStackableWithOtherOffers();
-
-    public void setStackableWithOtherOffers(StackabilityType stackableWithOtherOffers);
 
     /**
      * Returns true if the offer system should automatically add this offer for consideration (versus requiring a code or 
      * other delivery mechanism).    This does not guarantee that the offer will qualify.   All rules associated with this
-     * offer must still pass.   A true value here just means that the offer will be considered.
+     * offer must still pass.   A true value here just means that the offer will be considered.     
      * 
-     * For backwards compatibility, if the underlying property is null, this method will check the 
-     * {@link #getDeliveryType()} method and return true if that value is set to AUTOMATIC.    
-     * 
-     * If still null, this value will return false.
+     * Returns null if false
      * 
      * @return
      */
@@ -178,22 +113,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * @see #isAutomaticallyAdded()
      */
     public void setAutomaticallyAdded(boolean automaticallyAdded);
-
-    /**
-     * @deprecated Replaced by isAutomaticallyApplied property.   In prior versions of Broadleaf deliveryType was used to 
-     * differentiate "automatic" orders from those requiring a code.   If the underlying property is null, 
-     * this method will return a delivery type based on the isAutomatic property. 
-     * @return
-     */
-    @Deprecated
-    public OfferDeliveryType getDeliveryType();
-
-    /**
-     * @deprecated Replaced by setAutomaticallyApplied(boolean val).
-     * @param deliveryType
-     */
-    @Deprecated
-    public void setDeliveryType(OfferDeliveryType deliveryType);
 
     /**
      * Returns the maximum number of times that this offer
@@ -259,37 +178,9 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      */
     public boolean isLimitedUsePerOrder();
 
-    //    /**
-    //     * @deprecated use {@link #getQualifyingItemCriteriaXref()} instead
-    //     * @return
-    //     */
-    //    @Deprecated
-    //    public Set<OfferItemCriteria> getQualifyingItemCriteria();
-    //
-    //    /**
-    //     * @deprecated use {@link #setQualifyingItemCriteriaXref(java.util.Set)} instead
-    //     * @param qualifyingItemCriteria
-    //     */
-    //    @Deprecated
-    //    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
-
     Set<OfferQualifyingCriteriaXref> getQualifyingItemCriteriaXref();
 
     void setQualifyingItemCriteriaXref(Set<OfferQualifyingCriteriaXref> qualifyingItemCriteriaXref);
-
-    //    /**
-    //     * @deprecated use {@link #getTargetItemCriteriaXref()} instead
-    //     * @return
-    //     */
-    //    @Deprecated
-    //    public Set<OfferItemCriteria> getTargetItemCriteria();
-    //
-    //    /**
-    //     * @deprecated use {@link #setTargetItemCriteriaXref(java.util.Set)} instead
-    //     * @param targetItemCriteria
-    //     */
-    //    @Deprecated
-    //    public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria);
 
     Set<OfferTargetCriteriaXref> getTargetItemCriteriaXref();
 
@@ -302,10 +193,6 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     Map<String, OfferOfferRuleXref> getOfferMatchRulesXref();
 
     void setOfferMatchRulesXref(Map<String, OfferOfferRuleXref> offerMatchRulesXref);
-    
-    public Boolean getTreatAsNewFormat();
-
-    public void setTreatAsNewFormat(Boolean treatAsNewFormat);
     
     /**
      * Indicates the amount of items that must be purchased for this offer to

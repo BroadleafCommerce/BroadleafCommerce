@@ -41,10 +41,6 @@
             $form.find('#field-type').on('change', function() {
                 BLCAdmin.offer.initializeOfferTypeField($form);
             });
-            
-            $form.find('#field-deliveryType').on('change', function() {
-                BLCAdmin.offer.initializeDeliveryTypeField($form);
-            });
 
             $form.find('#field-discountType').on('change', function() {
                 BLCAdmin.offer.initializeDiscountTypeField($form);
@@ -56,7 +52,6 @@
          */
         initializeOfferFormFields : function($form) {
             this.initializeOfferTypeField($form);
-            this.initializeDeliveryTypeField($form);
             this.initializeDiscountTypeField($form);
         },
 
@@ -104,17 +99,6 @@
                 $itemTarget.addClass('hidden');
             }
 
-        },
-        
-        initializeDeliveryTypeField : function($form) {
-            var $deliveryType = $form.find('#field-deliveryType');
-            var $offerCode = $form.find('#field-offerCode-offerCode');
-            
-            if ($deliveryType.find('select').val() == "CODE") {
-                $offerCode.removeClass('hidden');
-            } else {
-                $offerCode.addClass('hidden');
-            }
         }
         
     };

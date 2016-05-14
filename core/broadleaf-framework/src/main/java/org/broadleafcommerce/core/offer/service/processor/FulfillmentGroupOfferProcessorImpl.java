@@ -274,11 +274,8 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
             if (offerCount == 0) {
                 remainingCandidateOffers.add(candidateOffer);
             } else {
-                boolean treatAsNewFormat = false;
-                if (candidateOffer.getOffer().getTreatAsNewFormat() != null && candidateOffer.getOffer().getTreatAsNewFormat()) {
-                    treatAsNewFormat = true;
-                }
-                if ((!treatAsNewFormat && candidateOffer.getOffer().isCombinableWithOtherOffers()) || (treatAsNewFormat && (candidateOffer.getOffer().isTotalitarianOffer() == null || !candidateOffer.getOffer().isTotalitarianOffer()))) {
+                if (candidateOffer.getOffer().isCombinableWithOtherOffers() &&
+                        !candidateOffer.getOffer().isTotalitarianOffer()) {
                     remainingCandidateOffers.add(candidateOffer);
                 }
             }

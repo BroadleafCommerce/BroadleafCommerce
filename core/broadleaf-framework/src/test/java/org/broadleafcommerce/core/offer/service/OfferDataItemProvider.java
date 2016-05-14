@@ -50,7 +50,6 @@ import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImp
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderImpl;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
@@ -702,7 +701,7 @@ public class OfferDataItemProvider {
         String appliesToRules, 
         boolean applyToSalePrice,
         boolean combinableWithOtherOffers,
-        OfferDeliveryType deliveryType,
+            boolean automaticallyAdded,
         OfferDiscountType type,
         Date endDate,
         int maxUses,
@@ -732,8 +731,7 @@ public class OfferDataItemProvider {
                 OfferRuleType.ORDER.getType()));
         offer.setApplyDiscountToSalePrice(applyToSalePrice);
         offer.setCombinableWithOtherOffers(combinableWithOtherOffers);
-        offer.setDeliveryType(deliveryType);
-        offer.setAutomaticallyAdded(OfferDeliveryType.AUTOMATIC==deliveryType);
+        offer.setAutomaticallyAdded(automaticallyAdded);
         offer.setDiscountType(type);
         offer.setEndDate(endDate);
         offer.setMaxUsesPerOrder(maxUses);
@@ -741,13 +739,12 @@ public class OfferDataItemProvider {
         offer.setOfferItemTargetRuleType(targetType);
         offer.setPriority(priority);
         offer.setQualifyingItemCriteriaXref(qualifyingItemCriteriaXref);
-        offer.setStackable(stackable);
+
         offer.setStartDate(startDate);
         offer.setTargetItemCriteriaXref(targetItemCriteriaXref);
         offer.setTotalitarianOffer(totalitarianOffer);
         offer.setType(offerType);
         offer.setValue(value);
-        offer.setTreatAsNewFormat(true);
         offer.setId(getOfferId());
         return offer;
     }
@@ -765,7 +762,7 @@ public class OfferDataItemProvider {
     }
     
     public List<Offer> createCustomerBasedOffer(String customerRule, Date startDate, Date endDate, OfferDiscountType discountType) {
-        Offer offer = createOffer(customerRule, null, null, true, true, OfferDeliveryType.AUTOMATIC, discountType, endDate, 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, startDate, null, false, OfferType.ORDER, BigDecimal.valueOf(10));
+        Offer offer = createOffer(customerRule, null, null, true, true, true, discountType, endDate, 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, startDate, null, false, OfferType.ORDER, BigDecimal.valueOf(10));
         List<Offer> offers = new ArrayList<Offer>();
         offers.add(offer);
         
@@ -773,7 +770,7 @@ public class OfferDataItemProvider {
     }
     
     public List<Offer> createOrderBasedOffer(String orderRule, OfferDiscountType discountType) {
-        Offer offer = createOffer(null, null, orderRule, true, true, OfferDeliveryType.AUTOMATIC, discountType, tomorrow(), 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, yesterday(), null, false, OfferType.ORDER, BigDecimal.valueOf(10));
+        Offer offer = createOffer(null, null, orderRule, true, true, true, discountType, tomorrow(), 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, yesterday(), null, false, OfferType.ORDER, BigDecimal.valueOf(10));
         List<Offer> offers = new ArrayList<Offer>();
         offers.add(offer);
         
@@ -781,7 +778,7 @@ public class OfferDataItemProvider {
     }
     
     public List<Offer> createFGBasedOffer(String orderRule, String fgRule, OfferDiscountType discountType) {
-        Offer offer = createOffer(null, fgRule, orderRule, true, true, OfferDeliveryType.AUTOMATIC, discountType, tomorrow(), 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, yesterday(), null, false, OfferType.FULFILLMENT_GROUP, BigDecimal.valueOf(10));
+        Offer offer = createOffer(null, fgRule, orderRule, true, true, true, discountType, tomorrow(), 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, yesterday(), null, false, OfferType.FULFILLMENT_GROUP, BigDecimal.valueOf(10));
         List<Offer> offers = new ArrayList<Offer>();
         offers.add(offer);
         

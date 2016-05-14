@@ -22,7 +22,15 @@ import org.broadleafcommerce.core.offer.domain.OfferAudit;
 
 /**
  * This interface represents an Offer instance that has some additional, deprecated fields related to uses and maxUses
- * weaved in at runtime. These fields are not currently used by the codebase and have been removed in version 5.0
+ * 
+ * These fields may be showing up as required by the database as they were initially non-nullable.   If you don't have
+ * custom logic using these fields, it is safe to remove the fields from your database.
+ * 
+ * If you do have these fields, this class supports weaving in the legacy fields back into the system.   This should 
+ * be done as a last resort with a preference being to remove the columns (or at least the Non-Null restriction) from your
+ * DB and refactor any code you have referencing these fields. 
+ * 
+ * These fields are not currently used by the codebase and have been removed in version 5.0
  * of the framework. However, for backwards compatibility reasons related to the non-nullable "uses" database field,
  * we are allowing these fields to be dynamically re-introduced via a application property. To enable
  * this behavior, add "enable.optional.offer.uses.fields=true" to the appropriate application property files.
@@ -64,5 +72,20 @@ public interface LegacyOfferUses {
      */
     @Deprecated
     public void setMaxUses(int maxUses) ;
+    
+    
+    @Deprecated
+    /**
+     * This field is not used by BLC.
+     * @return
+     */
+    public boolean isApplyDiscountToMarkedItems();
+
+    @Deprecated
+    /**
+     * This field is not used by BLC.
+     * @return
+     */
+    public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
 
 }

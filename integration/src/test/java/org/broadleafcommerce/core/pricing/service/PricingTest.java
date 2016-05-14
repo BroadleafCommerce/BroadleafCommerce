@@ -37,7 +37,6 @@ import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.service.OfferService;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -371,8 +370,7 @@ public class PricingTest extends BaseTest {
         offer.setType(offerType);
         offer.setDiscountType(discountType);
         offer.setValue(BigDecimal.valueOf(value));
-        offer.setDeliveryType(OfferDeliveryType.CODE);
-        offer.setStackable(true);
+        offer.setAutomaticallyAdded(true);
 
         OfferItemCriteria oic = new OfferItemCriteriaImpl();
         oic.setQuantity(1);
@@ -383,8 +381,6 @@ public class PricingTest extends BaseTest {
         targetXref.setOfferItemCriteria(oic);
 
         offer.setTargetItemCriteriaXref(Collections.singleton(targetXref));
-
-        offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(true);
         offer = offerService.save(offer);
         offer.setMaxUsesPerOrder(50);

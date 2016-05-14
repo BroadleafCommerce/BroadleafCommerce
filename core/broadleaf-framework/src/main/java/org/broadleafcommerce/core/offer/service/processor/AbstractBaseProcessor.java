@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.offer.service.processor;
 
 import org.apache.commons.collections4.map.LRUMap;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -41,6 +40,7 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.joda.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+
 import javax.annotation.Resource;
 
 /**
@@ -479,14 +480,9 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         boolean appliesToCustomer = false;
         
         String rule = null;
-        if (!StringUtils.isEmpty(offer.getAppliesToCustomerRules())) {
-            rule = offer.getAppliesToCustomerRules();
-        } else {
-
-            OfferOfferRuleXref ruleXref = offer.getOfferMatchRulesXref().get(OfferRuleType.CUSTOMER.getType());
-            if (ruleXref != null && ruleXref.getOfferRule() != null) {
-                rule = ruleXref.getOfferRule().getMatchRule();
-            }
+        OfferOfferRuleXref ruleXref = offer.getOfferMatchRulesXref().get(OfferRuleType.CUSTOMER.getType());
+        if (ruleXref != null && ruleXref.getOfferRule() != null) {
+            rule = ruleXref.getOfferRule().getMatchRule();
         }
 
         if (rule != null) {

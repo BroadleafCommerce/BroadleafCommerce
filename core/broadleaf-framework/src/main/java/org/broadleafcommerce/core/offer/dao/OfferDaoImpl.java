@@ -163,11 +163,8 @@ public class OfferDaoImpl implements OfferDao {
         criteria.add(Restrictions.or(Restrictions.isNull("endDate"), Restrictions.gt("endDate", c.getTime())));
         criteria.add(Restrictions.or(Restrictions.eq("archiveStatus.archived", 'N'),
                 Restrictions.isNull("archiveStatus.archived")));
-
-        // Automatically Added or (Automatically Added is null and deliveryType is Automatic)
-        criteria.add(Restrictions.or(Restrictions.eq("automaticallyAdded", true),
-                Restrictions.and(Restrictions.isNull("automaticallyAdded"),
-                        Restrictions.eq("deliveryType", "AUTOMATIC"))));
+        
+        criteria.add(Restrictions.eq("automaticallyAdded", true));
 
         criteria.setCacheable(true);
         criteria.setCacheRegion("query.Offer");

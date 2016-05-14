@@ -164,14 +164,12 @@ public interface OfferAdminPresentation {
 
         public static final int Priority = 1000;
 
-        public static final int CombinableWithOrderOffers = 1000;
-        public static final int CombinableWithItemOffers = 2000;
-        public static final int CombinableWithItemOffersImpactingOtherItems = 3000;
-        public static final int CombinableWithShippingOffers = 4000;
-        public static final int StackableWithOtherOffers = 5000;
+        public static final int CombinableWithOtherOffers = 1000;
+        public static final int StackableWithOtherOffers = 2000;
 
-        public static final int OfferItemQualifierRuleType = 1000;
-        public static final int QualifyingItemSubTotal = 2000;
+        public static final int QualifyingItemSubTotal = 1000;
+        public static final int QualifiersCanBeQualifiers = 2000;
+        public static final int QualifiersCanBeTargets = 3000;
 
         public static final int OfferCodes = 1000;
     }
