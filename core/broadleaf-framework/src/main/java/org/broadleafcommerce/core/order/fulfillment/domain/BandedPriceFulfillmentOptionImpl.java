@@ -21,12 +21,9 @@ package org.broadleafcommerce.core.order.fulfillment.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -56,7 +53,7 @@ public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl impl
     @OneToMany(mappedBy="option", targetEntity=FulfillmentPriceBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @AdminPresentationCollection(friendlyName = "BandedPriceFulfillmentOptionBands", excluded = true)
-    protected List<FulfillmentPriceBand> bands = new ArrayList<FulfillmentPriceBand>();
+    protected List<FulfillmentPriceBand> priceBands = new ArrayList<FulfillmentPriceBand>();
 
     @Override
     public List<FulfillmentPriceBand> getPriceBands() {
