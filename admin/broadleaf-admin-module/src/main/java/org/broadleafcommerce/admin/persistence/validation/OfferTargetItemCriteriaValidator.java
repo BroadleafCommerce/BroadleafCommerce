@@ -58,6 +58,9 @@ public class OfferTargetItemCriteriaValidator extends ValidationConfigurationBas
         Property offerTypeProperty = entity.findProperty("type");
         if(OfferType.ORDER_ITEM.getType().equals(offerTypeProperty.getValue())) {
             String targetItemCriteriaJson = entity.findProperty("targetItemCriteria").getUnHtmlEncodedValue();
+            if (targetItemCriteriaJson == null) {
+                targetItemCriteriaJson = entity.findProperty("targetItemCriteriaJson").getUnHtmlEncodedValue();
+            }
             DataWrapper dw = ruleFieldExtractionUtility.convertJsonToDataWrapper(targetItemCriteriaJson);
 
             if (CollectionUtils.isEmpty(dw.getData()) && dw.getRawMvel() == null) {
