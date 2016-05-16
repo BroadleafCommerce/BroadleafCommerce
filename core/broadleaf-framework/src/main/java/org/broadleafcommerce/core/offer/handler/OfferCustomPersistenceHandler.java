@@ -244,16 +244,22 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         Entity entity = persistencePackage.getEntity();
 
         Property qualifiersCanBeQualifiers = entity.findProperty(QUALIFIERS_CAN_BE_QUALIFIERS);
+        if (qualifiersCanBeQualifiers != null) {
+            qualifiersCanBeQualifiers.setIsDirty(true);
+        }
         Property qualifiersCanBeTargets = entity.findProperty(QUALIFIERS_CAN_BE_TARGETS);
+        if (qualifiersCanBeTargets != null) {
+            qualifiersCanBeTargets.setIsDirty(true);
+        }
         Property offerItemQualifierRuleType = buildOfferItemQualifierRuleTypeProperty(qualifiersCanBeQualifiers, qualifiersCanBeTargets);
         entity.addProperty(offerItemQualifierRuleType);
-        entity.removeProperty(QUALIFIERS_CAN_BE_QUALIFIERS);
-        entity.removeProperty(QUALIFIERS_CAN_BE_TARGETS);
 
         Property stackable = entity.findProperty(STACKABLE);
+        if (stackable != null) {
+            stackable.setIsDirty(true);
+        }
         Property offerItemTargetRuleType = buildOfferItemTargetRuleTypeProperty(stackable);
         entity.addProperty(offerItemTargetRuleType);
-        entity.removeProperty(STACKABLE);
 
         OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
         return helper.getCompatibleModule(updateType).update(persistencePackage);
