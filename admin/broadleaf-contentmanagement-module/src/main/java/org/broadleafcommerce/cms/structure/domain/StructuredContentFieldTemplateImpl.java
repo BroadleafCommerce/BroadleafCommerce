@@ -19,7 +19,23 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Transformer;
+import org.broadleafcommerce.cms.field.domain.FieldGroup;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -29,25 +45,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OrderColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.cms.field.domain.FieldGroup;
-import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 /**
  * Created by bpolster.
@@ -78,13 +78,11 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
     @AdminPresentation(friendlyName = "StructuredContentFieldTemplateImpl_Field_Template_Name", order = 1, gridOrder = 2, group = "StructuredContentFieldTemplateImpl_Details", prominent = true)
     protected String name;
 
-    @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_SC_FLDGRP_XREF", joinColumns = @JoinColumn(name = "SC_FLD_TMPLT_ID", referencedColumnName = "SC_FLD_TMPLT_ID"), inverseJoinColumns = @JoinColumn(name = "FLD_GROUP_ID", referencedColumnName = "FLD_GROUP_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(targetEntity = StructuredContentFieldGroupXrefImpl.class, mappedBy = "template", cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
-    @OrderColumn(name = "GROUP_ORDER")
+    @OrderBy("groupOrder")
     @BatchSize(size = 20)
-    protected List<FieldGroup> fieldGroups = new ArrayList<FieldGroup>();
+    protected List<StructuredContentFieldGroupXref> fieldGroupXrefs = new ArrayList<StructuredContentFieldGroupXref>();
 
     @Override
     public Long getId() {
@@ -108,12 +106,30 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
 
     @Override
     public List<FieldGroup> getFieldGroups() {
-        return fieldGroups;
+        Collection<FieldGroup> transformed = CollectionUtils.collect(fieldGroupXrefs, new Transformer<StructuredContentFieldGroupXref, FieldGroup>() {
+
+            @Override
+            public FieldGroup transform(StructuredContentFieldGroupXref input) {
+                return input.getFieldGroup();
+            }
+        });
+        
+        return Collections.unmodifiableList(new ArrayList<FieldGroup>(transformed));
     }
 
     @Override
     public void setFieldGroups(List<FieldGroup> fieldGroups) {
-        this.fieldGroups = fieldGroups;
+        throw new UnsupportedOperationException("Not Supported - Use setAllFieldGroupXrefs()");
+    }
+    
+    @Override
+    public List<StructuredContentFieldGroupXref> getFieldGroupXrefs() {
+        return fieldGroupXrefs;
+    }
+
+    @Override
+    public void setFieldGroupXrefs(List<StructuredContentFieldGroupXref> fieldGroupXrefs) {
+        this.fieldGroupXrefs = fieldGroupXrefs;
     }
 
     @Override
@@ -124,13 +140,13 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
         }
         StructuredContentFieldTemplate cloned = createResponse.getClone();
         cloned.setName(name);
-        for(FieldGroup entry : fieldGroups){
-            CreateResponse<FieldGroup> clonedGroupRsp = entry.createOrRetrieveCopyInstance(context);
-            FieldGroup clonedGroup = clonedGroupRsp.getClone();
-            cloned.getFieldGroups().add(clonedGroup);
+        for (StructuredContentFieldGroupXref entry : fieldGroupXrefs) {
+            CreateResponse<StructuredContentFieldGroupXref> clonedGroupRsp = entry.createOrRetrieveCopyInstance(context);
+            cloned.getFieldGroupXrefs().add(clonedGroupRsp.getClone());
         }
 
         return createResponse;
     }
+
 }
 
