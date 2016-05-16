@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.payment.PaymentTransactionType
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService
+import org.broadleafcommerce.common.payment.service.PaymentGatewayClientTokenService
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationServiceProvider
@@ -175,6 +176,10 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
             }
 
             public PaymentGatewayTransparentRedirectService getTransparentRedirectService() {
+                return null
+            }
+
+            public PaymentGatewayClientTokenService getClientTokenService() {
                 return null
             }
 

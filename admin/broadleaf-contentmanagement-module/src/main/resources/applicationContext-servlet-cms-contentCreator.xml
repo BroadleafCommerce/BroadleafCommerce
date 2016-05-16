@@ -32,6 +32,13 @@
         already be picked up in the global component scan included in the root context (from bl-cms-contentCreator-applicationContext)-->
     <context:component-scan base-package="org.broadleafcommerce.cms.admin.web.controller" />
     
+    <bean id="blAdminStructuredContentController" class="org.broadleafcommerce.cms.admin.web.controller.AdminStructuredContentController" />
+    
+    <bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">     
+        <property name="maxUploadSize" value="${asset.server.max.uploadable.file.size}"/>
+    </bean>
+    
     <aop:config/>
 
 </beans>

@@ -20,6 +20,11 @@
 package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.extension.ResultType;
+import org.broadleafcommerce.common.i18n.dao.TranslationDao;
+import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
+import org.broadleafcommerce.common.i18n.domain.Translation;
+import org.broadleafcommerce.common.i18n.service.TranslationBatchReadCache;
 import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -27,12 +32,14 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +65,9 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
 
     @Resource(name = "blTranslationService")
     protected TranslationService translationService;
+    
+    @Resource(name = "blTranslationDao")
+    protected TranslationDao translationDao;
 
     @Resource(name = "blLocaleService")
     protected LocaleService localeService;
@@ -95,7 +105,7 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
             try {
                 for (Locale locale : locales) {
                     String localeCode = locale.getLocaleCode();
-                    if (!Boolean.TRUE.equals(locale.getUseCountryInSearchIndex())) {
+                    if (Boolean.FALSE.equals(locale.getUseCountryInSearchIndex())) {
                         int pos = localeCode.indexOf("_");
                         if (pos > 0) {
                             localeCode = localeCode.substring(0, pos);
@@ -147,6 +157,34 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
         }
 
         return ExtensionResultStatusType.NOT_HANDLED;
+    }
+    
+    @Override
+    public ExtensionResultStatusType startBatchEvent(List<? extends Indexable> indexables) {
+        
+        List<String> defaultSkuIds = new ArrayList<String>(indexables.size());
+        List<String> productIds = new ArrayList<String>(indexables.size());
+        for (Indexable indexable : indexables) {
+            if (Product.class.isAssignableFrom(indexable.getClass())) {
+                Product product = (Product) indexable;
+                productIds.add(product.getId().toString());
+                defaultSkuIds.add(product.getDefaultSku().getId().toString());
+            }
+        }
+        
+        List<Translation> defaultSkuTranslations = translationDao.readAllTranslationEntries(TranslatedEntity.SKU, ResultType.STANDARD, defaultSkuIds);
+        TranslationBatchReadCache.addToCache(defaultSkuTranslations);
+        
+        List<Translation> productTranslations = translationDao.readAllTranslationEntries(TranslatedEntity.PRODUCT, ResultType.STANDARD, productIds);
+        TranslationBatchReadCache.addToCache(productTranslations);
+        
+        return ExtensionResultStatusType.HANDLED_CONTINUE;
+    }
+    
+    @Override
+    public ExtensionResultStatusType endBatchEvent(List<? extends Indexable> indexables) {
+        TranslationBatchReadCache.clearCache();
+        return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
 
     @Override

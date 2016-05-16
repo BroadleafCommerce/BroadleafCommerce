@@ -27,17 +27,15 @@ import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
+import org.broadleafcommerce.common.payment.service.AbstractPaymentGatewayRollbackService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayRollbackService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.springframework.stereotype.Service;
 
-/**
- * @author Elbert Bautista (elbertbautista)
- */
-@Service("blNullPaymentGatewayRollbackService")
-public class NullPaymentGatewayRollbackServiceImpl implements PaymentGatewayRollbackService {
+@Service("blNullIntegrationGatewayRollbackService")
+public class NullIntegrationGatewayRollbackServiceImpl extends AbstractPaymentGatewayRollbackService {
 
-    protected static final Log LOG = LogFactory.getLog(NullPaymentGatewayRollbackServiceImpl.class);
+    protected static final Log LOG = LogFactory.getLog(NullIntegrationGatewayRollbackServiceImpl.class);
 
     @Override
     public PaymentResponseDTO rollbackAuthorize(PaymentRequestDTO transactionToBeRolledBack) throws PaymentException {
@@ -46,7 +44,7 @@ public class NullPaymentGatewayRollbackServiceImpl implements PaymentGatewayRoll
         }
 
         return new PaymentResponseDTO(PaymentType.CREDIT_CARD,
-                NullPaymentGatewayType.NULL_GATEWAY)
+                NullIntegrationGatewayType.NULL_INTEGRATION_GATEWAY)
                 .rawResponse("rollback authorize - successful")
                 .successful(true)
                 .paymentTransactionType(PaymentTransactionType.REVERSE_AUTH)
@@ -66,7 +64,7 @@ public class NullPaymentGatewayRollbackServiceImpl implements PaymentGatewayRoll
         }
 
         return new PaymentResponseDTO(PaymentType.CREDIT_CARD,
-                NullPaymentGatewayType.NULL_GATEWAY)
+                NullIntegrationGatewayType.NULL_INTEGRATION_GATEWAY)
                 .rawResponse("rollback authorize and capture - successful")
                 .successful(true)
                 .paymentTransactionType(PaymentTransactionType.VOID)

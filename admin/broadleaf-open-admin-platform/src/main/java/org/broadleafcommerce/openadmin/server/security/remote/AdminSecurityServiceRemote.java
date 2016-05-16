@@ -144,6 +144,8 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
             globalValidationResult = rowLevelSecurityService.validateUpdateRequest(getPersistentAdminUser(), entity, persistencePackage);
         } else if (operationType.equals(EntityOperationType.REMOVE)) {
             globalValidationResult = rowLevelSecurityService.validateRemoveRequest(getPersistentAdminUser(), entity, persistencePackage);
+        } else if (operationType.equals(EntityOperationType.ADD)) {
+            globalValidationResult = rowLevelSecurityService.validateAddRequest(getPersistentAdminUser(), entity, persistencePackage);
         }
         
         if (globalValidationResult != null) {

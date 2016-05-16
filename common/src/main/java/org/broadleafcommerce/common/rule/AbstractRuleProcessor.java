@@ -22,7 +22,6 @@ package org.broadleafcommerce.common.rule;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
-import org.mvel2.CompileException;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
@@ -61,26 +60,7 @@ public abstract class AbstractRuleProcessor<T> implements RuleProcessor<T> {
      * @return the result of the expression
      */
     protected Boolean executeExpression(String expression, Map<String, Object> vars) {
-        Serializable exp = (Serializable) expressionCache.get(expression);
-        vars.put("MVEL", MVEL.class);
-
-        if (exp == null) {
-            try {
-                exp = MVEL.compileExpression(expression, getParserContext());
-            } catch (CompileException ce) {
-                LOG.warn("Compile exception processing phrase: " + expression,ce);
-                return Boolean.FALSE;
-            }
-            expressionCache.put(expression, exp);
-        }
-
-        try {
-            return (Boolean) MVEL.executeExpression(exp, vars);
-        } catch (Exception e) {
-            LOG.error(e);
-        }
-
-        return false;
+        return MvelHelper.evaluateRule(expression, vars, expressionCache);
     }
 
     /**

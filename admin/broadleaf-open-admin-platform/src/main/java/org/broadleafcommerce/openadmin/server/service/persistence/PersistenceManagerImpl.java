@@ -51,6 +51,7 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.hibernate.mapping.PersistentClass;
 import org.springframework.beans.BeansException;
@@ -132,27 +133,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     @Override
     public Class<?>[] getUpDownInheritance(Class<?> testClass) {
-        Class<?>[] pEntities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(testClass);
-        if (ArrayUtils.isEmpty(pEntities)) {
-            return pEntities;
-        }
-        Class<?> topConcreteClass = pEntities[pEntities.length - 1];
-        List<Class<?>> temp = new ArrayList<Class<?>>(pEntities.length);
-        temp.addAll(Arrays.asList(pEntities));
-        Collections.reverse(temp);
-        boolean eof = false;
-        while (!eof) {
-            Class<?> superClass = topConcreteClass.getSuperclass();
-            PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(superClass.getName());
-            if (persistentClass == null) {
-                eof = true;
-            } else {
-                temp.add(0, superClass);
-                topConcreteClass = superClass;
-            }
-        }
-
-        return temp.toArray(new Class<?>[temp.size()]);
+        return dynamicEntityDao.getUpDownInheritance(testClass);
     }
 
     @Override
@@ -488,7 +469,29 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         //support legacy api
         persistenceResponse.setEntity(postAdd(persistenceResponse.getEntity(), persistencePackage));
 
+        executeDeferredOperations(persistencePackage);
+
         return persistenceResponse;
+    }
+
+    protected void executeDeferredOperations(PersistencePackage persistencePackage) throws ServiceException {
+        if (!persistencePackage.getDeferredOperations().isEmpty()) {
+            for (Map.Entry<ChangeType, List<PersistencePackage>> entry : persistencePackage.getDeferredOperations().entrySet()) {
+                for (PersistencePackage change : entry.getValue()) {
+                    switch (entry.getKey()) {
+                        case UPDATE:
+                            update(change);
+                            break;
+                        case ADD:
+                            add(change);
+                            break;
+                        case DELETE:
+                            remove(change);
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -608,6 +611,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         //support legacy api
         persistenceResponse.setEntity(postUpdate(persistenceResponse.getEntity(), persistencePackage));
 
+        executeDeferredOperations(persistencePackage);
+
         return persistenceResponse;
     }
 
@@ -666,6 +671,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
             }
         }
+
+        executeDeferredOperations(persistencePackage);
 
         return persistenceResponse;
     }

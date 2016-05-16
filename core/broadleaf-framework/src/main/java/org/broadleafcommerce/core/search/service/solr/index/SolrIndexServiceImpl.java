@@ -44,6 +44,7 @@ import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
@@ -65,7 +66,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -79,7 +79,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.annotation.Resource;
 
 
@@ -120,6 +119,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Resource(name = "blSkuDao")
     protected SkuDao skuDao;
+
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
 
     @Resource(name = "blFieldDao")
     protected FieldDao fieldDao;
@@ -217,8 +219,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         return new GlobalSolrFullReIndexOperation(this, shs, errorOnConcurrentReIndex) {
 
             @Override
-            public List<? extends Indexable> readIndexables(int page, int pageSize) {
-                return readAllActiveIndexables(page, pageSize);
+            public List<? extends Indexable> readIndexables(int pageSize, Long lastId) {
+                return readAllActiveIndexables(pageSize, lastId);
             }
 
             @Override
@@ -260,8 +262,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     @Override
                     public void execute() throws ServiceException {
                         int page = 0;
+                        Long lastId = null;
                         while ((page * pageSize) < numItemsToIndex) {
-                            buildIncrementalIndex(page, pageSize, operation);
+                            LOG.info(String.format("Building page number %s", page));
+                            lastId = buildIncrementalIndex(pageSize, lastId, operation);
                             page++;
                         }
                     }
@@ -339,19 +343,22 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
     }
 
-    protected void buildIncrementalIndex(int page, int pageSize, SolrIndexOperation operation) throws ServiceException {
+    protected Long buildIncrementalIndex(int pageSize, Long lastId, SolrIndexOperation operation) throws ServiceException {
         TransactionStatus status = TransactionUtils.createTransaction("readItemsToIndex",
             TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (SolrIndexCachedOperation.getCache() == null) {
             LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
                     "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
         }
-        
+        Long response = null;
         try {
             List<? extends Indexable> indexables;
             try {
                 operation.beforeReadIndexables();
-                indexables = operation.readIndexables(page, pageSize);
+                indexables = operation.readIndexables(pageSize, lastId);
+                if (CollectionUtils.isNotEmpty(indexables)) {
+                    response = indexables.get(indexables.size()-1).getId();
+                }
             } finally {
                 operation.afterReadIndexables();
             }
@@ -370,7 +377,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw e;
         }
-
+        return response;
     }
     
     @Override
@@ -388,6 +395,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         
         StopWatch s = new StopWatch();
         try {
+            sandBoxHelper.ignoreCloneCache(true);
             extensionManager.getProxy().startBatchEvent(indexables);
             Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
             List<Locale> locales = getAllLocales();
@@ -443,15 +451,16 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             throw e;
         } finally {
             extensionManager.getProxy().endBatchEvent(indexables);
+            sandBoxHelper.ignoreCloneCache(false);
         }
     }
 
-    protected List<? extends Indexable> readAllActiveIndexables(int page, int pageSize) {
+    protected List<? extends Indexable> readAllActiveIndexables(int pageSize, Long lastId) {
         if (useSku) {
-            List<Sku> skus = skuDao.readAllActiveSkus(page, pageSize);
+            List<Sku> skus = skuDao.readAllActiveSkus(pageSize, lastId);
             return filterIndexableSkus(skus);
         } else {
-            return productDao.readAllActiveProducts(page, pageSize);
+            return productDao.readAllActiveProducts(pageSize, lastId);
         }
     }
     
@@ -525,8 +534,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                                 String solrPropertyName = shs.getPropertyNameForIndexField(indexField, fieldType, prefix);
                                 Object value = entry.getValue();
-
-                                document.addField(solrPropertyName, value);
+                                
+                                if (FieldType.isMultiValued(fieldType)) {
+                                    document.addField(solrPropertyName, value);
+                                } else {
+                                    document.setField(solrPropertyName, value);
+                                }
                             }
                         }
                     }

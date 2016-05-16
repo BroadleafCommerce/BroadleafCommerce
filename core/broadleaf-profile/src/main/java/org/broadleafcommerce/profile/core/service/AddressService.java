@@ -63,4 +63,13 @@ public interface AddressService {
      * @return
      */
     public Address copyAddress(Address dest, Address orig);
+
+    /**
+     * Convenience method that attempts to pre-populate the ISO Country Subdivision on an address.
+     * Strategy attempts to identify the ISO subdivision based on the contents of the "friendly" state/province/region
+     * attribute and the ISO alpha-2 country code already populated on the passed in address.
+     * It will attempt to look for the "alternate abbreviation" first, and if not found will check the "name" next.
+     * @param address
+     */
+    public void populateAddressISOCountrySub(Address address);
 }

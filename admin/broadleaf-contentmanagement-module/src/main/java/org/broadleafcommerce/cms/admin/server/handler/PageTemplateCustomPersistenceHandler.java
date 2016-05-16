@@ -183,27 +183,31 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
 
             // Some of the values in this entity might be foreign key lookups. In this case, we need to set the display
             // value appropriately
-            for (Property prop : entity.getProperties()) {
-                if (StringUtils.isNotBlank(prop.getValue()) && StringUtils.isNotBlank(prop.getMetadata().getOwningClass())) {
-                    Class<?> clazz = Class.forName(prop.getMetadata().getOwningClass());
-                    Class<?>[] lookupClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(clazz);
-
-                    int i = 0;
-                    Object foreignEntity = null;
-                    while (foreignEntity == null && i < lookupClasses.length) {
-                        foreignEntity = dynamicEntityDao.find(lookupClasses[i++], Long.parseLong(prop.getValue()));
-                    }
-
-                    if (foreignEntity instanceof AdminMainEntity) {
-                        prop.setDisplayValue(((AdminMainEntity) foreignEntity).getMainEntityName());
-                    }
-                    prop.getMetadata().setOwningClass(null);
-                }
-            }
+            setDisplayValueOnFKLookups(dynamicEntityDao, entity);
 
             return results;
         } catch (Exception e) {
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
+        }
+    }
+
+    protected void setDisplayValueOnFKLookups(DynamicEntityDao dynamicEntityDao, Entity entity) throws ClassNotFoundException {
+        for (Property prop : entity.getProperties()) {
+            if (StringUtils.isNotBlank(prop.getValue()) && StringUtils.isNotBlank(prop.getMetadata().getOwningClass())) {
+                Class<?> clazz = Class.forName(prop.getMetadata().getOwningClass());
+                Class<?>[] lookupClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(clazz);
+
+                int i = 0;
+                Object foreignEntity = null;
+                while (foreignEntity == null && i < lookupClasses.length) {
+                    foreignEntity = dynamicEntityDao.find(lookupClasses[i++], Long.parseLong(prop.getValue()));
+                }
+
+                if (foreignEntity instanceof AdminMainEntity) {
+                    prop.setDisplayValue(((AdminMainEntity) foreignEntity).getMainEntityName());
+                }
+                prop.getMetadata().setOwningClass(null);
+            }
         }
     }
 

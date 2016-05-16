@@ -22,6 +22,7 @@ package org.broadleafcommerce.admin.server.service.handler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -29,6 +30,8 @@ import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
@@ -49,27 +52,27 @@ import javax.annotation.Resource;
 
 /**
  * Overridden to provide the option values field on the SkuBundleItem list
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blSkuBundleItemCustomPersistenceHandler")
 public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(SkuBundleItemCustomPersistenceHandler.class);
-    
+
     @Resource(name = "blSkuCustomPersistenceHandler")
     protected SkuCustomPersistenceHandler skuPersistenceHandler;
-    
+
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
         return canHandle(persistencePackage);
     }
-    
+
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
         return canHandle(persistencePackage);
     }
-    
+
     protected Boolean canHandle(PersistencePackage persistencePackage) {
         String className = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
@@ -79,7 +82,7 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
             return false;
         }
     }
-    
+
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         try {
@@ -93,7 +96,7 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
             FieldMetadata options = skuPersistenceHandler.createConsolidatedOptionField(SkuBundleItemImpl.class);
             options.setOrder(3);
             properties.put(SkuCustomPersistenceHandler.CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME, options);
-            
+
             allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(SkuBundleItem.class);
             ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
@@ -113,6 +116,14 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+
+            // sort it
+            if (foreignKey != null && foreignKey.getSortField() != null) {
+                FilterAndSortCriteria sortCriteria = cto.get(foreignKey.getSortField());
+                sortCriteria.setSortAscending(foreignKey.getSortAscending());
+
+            }
             //get the default properties from Inventory and its subclasses
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(SkuBundleItem.class.getName(), persistencePerspective);
 
@@ -121,13 +132,13 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
 
             //attach the product option criteria
             skuPersistenceHandler.applyProductOptionValueCriteria(filterMappings, cto, persistencePackage, "sku");
-            
+
             List<Serializable> records = helper.getPersistentRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
             //Convert Skus into the client-side Entity representation
             Entity[] payload = helper.getRecords(originalProps, records);
 
             int totalRecords = helper.getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
-            
+
             for (int i = 0; i < payload.length; i++) {
                 Entity entity = payload[i];
                 SkuBundleItem bundleItem = (SkuBundleItem) records.get(i);
@@ -141,5 +152,5 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
             throw new ServiceException("There was a problem fetching inventory. See server logs for more details", e);
         }
     }
-    
+
 }

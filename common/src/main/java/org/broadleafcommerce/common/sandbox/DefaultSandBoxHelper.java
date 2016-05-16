@@ -47,11 +47,6 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
         return requestedParent;
     }
 
-//    @Override
-//    public Long getCombinedSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent) {
-//        return requestedParent;
-//    }
-
     @Override
     public List<Long> mergeCloneIds(Class<?> type, Long... originalIds) {
         return Arrays.asList(originalIds);
@@ -79,21 +74,6 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
         return null;
     }
 
-    //    @Override
-//    public void setupSandBoxState(Object clone, EntityManager em) {
-//        //do nothing
-//    }
-//
-//    @Override
-//    public void archiveObject(Object start, EntityManager em) {
-//        //do nothing
-//    }
-//
-//    @Override
-//    public String[] getSandBoxDiscriminatorFieldList() {
-//        return new String[]{};
-//    }
-
     @Override
     public boolean isSandBoxable(String className) {
         return false;
@@ -117,5 +97,10 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     @Override
     public Long getProductionRecordIdIfApplicable(EntityManager em, Object startFieldValue) {
         return (Long) em.unwrap(Session.class).getIdentifier(startFieldValue);
+    }
+
+    @Override
+    public void ignoreCloneCache(boolean ignoreCache) {
+        //do nothing
     }
 }

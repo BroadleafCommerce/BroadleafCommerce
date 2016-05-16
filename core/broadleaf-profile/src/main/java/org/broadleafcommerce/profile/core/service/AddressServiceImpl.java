@@ -19,12 +19,14 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.dao.AddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.service.exception.AddressVerificationException;
 import org.springframework.stereotype.Service;
@@ -51,6 +53,9 @@ public class AddressServiceImpl implements AddressService {
 
     @Resource(name = "blPhoneService")
     protected PhoneService phoneService;
+
+    @Resource(name = "blCountrySubdivisionService")
+    protected CountrySubdivisionService countrySubdivisionService;
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
@@ -160,6 +165,24 @@ public class AddressServiceImpl implements AddressService {
         }
 
         return null;
+    }
+
+    @Override
+    public void populateAddressISOCountrySub(Address address) {
+        if (StringUtils.isBlank(address.getIsoCountrySubdivision()) &&
+                address.getIsoCountryAlpha2() != null &&
+                StringUtils.isNotBlank(address.getStateProvinceRegion())) {
+
+            String friendlyStateProvRegion = address.getStateProvinceRegion();
+            CountrySubdivision isoCountrySub = countrySubdivisionService.findSubdivisionByCountryAndAltAbbreviation(address.getIsoCountryAlpha2().getAlpha2(), friendlyStateProvRegion);
+            if (isoCountrySub == null) {
+                isoCountrySub = countrySubdivisionService.findSubdivisionByCountryAndName(address.getIsoCountryAlpha2().getAlpha2(), friendlyStateProvRegion);
+            }
+
+            if (isoCountrySub != null) {
+                address.setIsoCountrySubdivision(isoCountrySub.getAbbreviation());
+            }
+        }
     }
 
     /**

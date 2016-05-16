@@ -150,7 +150,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         List<Field> headerFields = new ArrayList<Field>();
         ListGrid.Type type = ListGrid.Type.MAIN;
         String idProperty = "id";
-
+        
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
@@ -194,7 +194,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         
         hf.withName(p.getName())
-          .withFriendlyName(fmd.getFriendlyName())
+          .withFriendlyName(StringUtils.isNotEmpty(fmd.getFriendlyName()) ? fmd.getFriendlyName() : p.getName())
           .withOrder(fmd.getGridOrder())
           .withColumnWidth(fmd.getColumnWidth())
           .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())

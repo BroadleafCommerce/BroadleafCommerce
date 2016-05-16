@@ -60,7 +60,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
     @Value("${use.email.for.site.login:true}")
     protected boolean useEmailForLogin;
 
-    protected static String registerSuccessView = "ajaxredirect:/";
+    protected static String registerSuccessView = "ajaxredirect:";
     protected static String registerView = "authentication/register";
     
     @Resource(name="blCustomerService")

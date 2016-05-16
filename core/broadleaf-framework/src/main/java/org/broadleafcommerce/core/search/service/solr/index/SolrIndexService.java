@@ -20,13 +20,13 @@
 package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.IndexField;
-import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -92,7 +92,7 @@ public interface SolrIndexService {
      * @throws ServiceException
      */
     public void postBuildIndex() throws IOException, ServiceException;
-
+    
     /**
      * Creates the  SolrIndexOperation for rebuilding the current index, used by {@link #buildIndex()}. This is the primary
      * index operation used to rebuild the index.

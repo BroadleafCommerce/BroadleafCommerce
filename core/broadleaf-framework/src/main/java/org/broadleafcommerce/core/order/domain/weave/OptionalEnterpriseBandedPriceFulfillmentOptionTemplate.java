@@ -39,11 +39,12 @@ import javax.persistence.OneToMany;
  * @author Kelly Tisdell
  *
  */
+@Deprecated
 public abstract class OptionalEnterpriseBandedPriceFulfillmentOptionTemplate {
 
-    @OneToMany(mappedBy="option", targetEntity=FulfillmentPriceBandImpl.class)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(friendlyName = "BandedPriceFulfillmentOptionImpl_bands")
-    protected List<FulfillmentPriceBand> priceBands = new ArrayList<FulfillmentPriceBand>();
+    @OneToMany(mappedBy = "option", targetEntity = FulfillmentPriceBandImpl.class)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @AdminPresentationCollection(friendlyName = "BandedPriceFulfillmentOptionBands", excluded = true)
+    protected List<FulfillmentPriceBand> bands = new ArrayList<FulfillmentPriceBand>();
 
 }

@@ -50,16 +50,22 @@ public class CategorySiteMapGeneratorTest extends SiteMapGeneratorTest {
 
         Category c1 = new CategoryImpl();
         c1.setUrl("/");
+        c1.setId(1l);
         Category c2 = new CategoryImpl();
         c2.setUrl("/hot-sauces");
+        c2.setId(2l);
         Category c3 = new CategoryImpl();
         c3.setUrl("merchandise");
+        c3.setId(3l);
         Category c4 = new CategoryImpl();
         c4.setUrl("/clearance");
+        c4.setId(4l);
         Category c5 = new CategoryImpl();
         c5.setUrl("/mens");
+        c5.setId(5l);
         Category c6 = new CategoryImpl();
         c6.setUrl("/womens");
+        c6.setId(6l);
 
         List<Category> merchandiseSubcategories = new ArrayList<Category>();
         merchandiseSubcategories.add(c5);
@@ -68,12 +74,29 @@ public class CategorySiteMapGeneratorTest extends SiteMapGeneratorTest {
         CategoryDao categoryDao = EasyMock.createMock(CategoryDao.class);
         EasyMock.expect(categoryDao.readActiveSubCategoriesByCategory(c1, 5, 0)).andReturn(new ArrayList<Category>())
                 .atLeastOnce();
+        EasyMock.expect(categoryDao.readCategoryById(c1.getId())).andReturn(c1).atLeastOnce();
+        
         EasyMock.expect(categoryDao.readActiveSubCategoriesByCategory(c2, 5, 0)).andReturn(new ArrayList<Category>())
                 .atLeastOnce();
+        EasyMock.expect(categoryDao.readCategoryById(c2.getId())).andReturn(c2).atLeastOnce();
+        
         EasyMock.expect(categoryDao.readActiveSubCategoriesByCategory(c3, 5, 0)).andReturn(merchandiseSubcategories)
                 .atLeastOnce();
+        EasyMock.expect(categoryDao.readCategoryById(c3.getId())).andReturn(c3).atLeastOnce();
+        
         EasyMock.expect(categoryDao.readActiveSubCategoriesByCategory(c4, 5, 0)).andReturn(new ArrayList<Category>())
                 .atLeastOnce();
+        EasyMock.expect(categoryDao.readCategoryById(c4.getId())).andReturn(c4).atLeastOnce();
+        
+        EasyMock.expect(categoryDao.readActiveSubCategoriesByCategory(c5, 5, 0)).andReturn(new ArrayList<Category>())
+            .atLeastOnce();
+        EasyMock.expect(categoryDao.readCategoryById(c5.getId())).andReturn(c5).atLeastOnce();
+
+        EasyMock.expect(categoryDao.readActiveSubCategoriesByCategory(c6, 5, 0)).andReturn(new ArrayList<Category>())
+            .atLeastOnce();
+        EasyMock.expect(categoryDao.readCategoryById(c6.getId())).andReturn(c6).atLeastOnce();
+        
+        // Initialize the mocks
         EasyMock.replay(categoryDao);
 
         CategorySiteMapGenerator csmg = new CategorySiteMapGenerator();
@@ -88,7 +111,7 @@ public class CategorySiteMapGeneratorTest extends SiteMapGeneratorTest {
         c1CSMGC.setSiteMapChangeFreq(SiteMapChangeFreqType.HOURLY);
         c1CSMGC.setSiteMapPriority(SiteMapPriorityType.POINT5);
         c1CSMGC.setRootCategory(c1);
-        c1CSMGC.setStartingDepth(1);
+        c1CSMGC.setStartingDepth(0);
         c1CSMGC.setEndingDepth(1);
         smgcList.add(c1CSMGC);
 
@@ -98,7 +121,7 @@ public class CategorySiteMapGeneratorTest extends SiteMapGeneratorTest {
         c2CSMGC.setSiteMapChangeFreq(SiteMapChangeFreqType.HOURLY);
         c2CSMGC.setSiteMapPriority(SiteMapPriorityType.POINT5);
         c2CSMGC.setRootCategory(c2);
-        c2CSMGC.setStartingDepth(1);
+        c2CSMGC.setStartingDepth(0);
         c2CSMGC.setEndingDepth(1);
         smgcList.add(c2CSMGC);
 
@@ -108,7 +131,7 @@ public class CategorySiteMapGeneratorTest extends SiteMapGeneratorTest {
         c3CSMGC.setSiteMapChangeFreq(SiteMapChangeFreqType.HOURLY);
         c3CSMGC.setSiteMapPriority(SiteMapPriorityType.POINT5);
         c3CSMGC.setRootCategory(c3);
-        c3CSMGC.setStartingDepth(1);
+        c3CSMGC.setStartingDepth(0);
         c3CSMGC.setEndingDepth(1);
         smgcList.add(c3CSMGC);
 
@@ -118,7 +141,7 @@ public class CategorySiteMapGeneratorTest extends SiteMapGeneratorTest {
         c4CSMGC.setSiteMapChangeFreq(SiteMapChangeFreqType.HOURLY);
         c4CSMGC.setSiteMapPriority(SiteMapPriorityType.POINT5);
         c4CSMGC.setRootCategory(c4);
-        c4CSMGC.setStartingDepth(1);
+        c4CSMGC.setStartingDepth(0);
         c4CSMGC.setEndingDepth(1);
         smgcList.add(c4CSMGC);
 

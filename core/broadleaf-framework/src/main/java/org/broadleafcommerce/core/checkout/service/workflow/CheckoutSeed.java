@@ -21,12 +21,13 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 
 import org.broadleafcommerce.core.order.domain.Order;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class CheckoutSeed implements CheckoutResponse {
 
     protected Order order;
-    protected final Map<String, Object> userDefinedFields;
+    protected Map<String, Object> userDefinedFields = new HashMap<>();
 
     public CheckoutSeed(Order order, Map<String, Object> userDefinedFields) {
         this.order = order;

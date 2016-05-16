@@ -367,52 +367,57 @@
                     }
                 }
             }
-            
             if (startIndex != null && maxIndex != null) {
-                var delta;
-                if (startIndex <= topIndex && maxIndex <= botIndex) {
-                    // Top range missing - show in the middle of the top and max
-                    delta = (topIndex + maxIndex) / 2;
-                } else if (startIndex > topIndex && maxIndex < botIndex) {
-                    // Mid range missing - show in the middle of the start and max
-                    delta = (startIndex + maxIndex) / 2;
-                } else if (startIndex > topIndex && maxIndex >= botIndex) {
-                    // Bottom range missing - show in the middle of the start and bot
-                    delta = (startIndex + botIndex) / 2;
-                } else {
-                    // Full range missing - show in the middle of the top and bot
-                    delta = (topIndex + botIndex) / 2;
-                }
-                delta = delta - topIndex;
-                spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (this.getRowHeight($tbody) * delta);
-                BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
-
-                var params =  BLCAdmin.history.getUrlParameters();
-                for (var param in params) {
-                    baseUrl = BLCAdmin.history.getUrlWithParameter(param, params[param], null, baseUrl);
-                }
-
-                var url = BLCAdmin.history.getUrlWithParameter('startIndex', startIndex, null, baseUrl);
-                url = BLCAdmin.history.getUrlWithParameter('maxIndex', maxIndex, null, url);
-                
-                //console.log('Loading more records -- ' + url);
-                
-                BLC.ajax({ url: url, type: 'GET' }, function(data) {
-                    var $newTbody = data.find('tbody');
-                    BLCAdmin.listGrid.paginate.injectRecords($tbody, $newTbody);
-                    BLCAdmin.listGrid.paginate.releaseLock();
-                    
-                    // now that I've loaded records, see if I need to do it again
-                    var topIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($tbody);
-                    var topIndexLoaded = BLCAdmin.listGrid.paginate.isIndexLoaded($tbody, topIndex);
-                    var botIndex = BLCAdmin.listGrid.paginate.getBottomVisibleIndex($tbody);
-                    var botIndexLoaded = BLCAdmin.listGrid.paginate.isIndexLoaded($tbody, botIndex);
-                    if (!botIndexLoaded || !topIndexLoaded) {
-                        BLCAdmin.listGrid.paginate.loadRecords($tbody, baseUrl);
+                // If we find that the start index is greater than the max index, we do not
+                // need to gather any further records, so don't make an ajax call. We also do not
+                // want to show the spinner as nothing needs to be done in the first place.
+                if (startIndex <= maxIndex) {
+                    var delta;
+                    if (startIndex <= topIndex && maxIndex <= botIndex) {
+                        // Top range missing - show in the middle of the top and max
+                        delta = (topIndex + maxIndex) / 2;
+                    } else if (startIndex > topIndex && maxIndex < botIndex) {
+                        // Mid range missing - show in the middle of the start and max
+                        delta = (startIndex + maxIndex) / 2;
+                    } else if (startIndex > topIndex && maxIndex >= botIndex) {
+                        // Bottom range missing - show in the middle of the start and bot
+                        delta = (startIndex + botIndex) / 2;
                     } else {
-                        BLCAdmin.listGrid.hideLoadingSpinner($tbody);
+                        // Full range missing - show in the middle of the top and bot
+                        delta = (topIndex + botIndex) / 2;
                     }
-                });
+                    delta = delta - topIndex;
+                    spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (this.getRowHeight($tbody) * delta);
+                    
+                
+                    BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
+    
+                    var params =  BLCAdmin.history.getUrlParameters();
+                    for (var param in params) {
+                        baseUrl = BLCAdmin.history.getUrlWithParameter(param, params[param], null, baseUrl);
+                    }
+    
+                    var url = BLCAdmin.history.getUrlWithParameter('startIndex', startIndex, null, baseUrl);
+                    url = BLCAdmin.history.getUrlWithParameter('maxIndex', maxIndex, null, url);
+                    
+                    //console.log('Loading more records -- ' + url);
+                    BLC.ajax({ url: url, type: 'GET' }, function(data) {
+                        var $newTbody = data.find('tbody');
+                        BLCAdmin.listGrid.paginate.injectRecords($tbody, $newTbody);
+                        BLCAdmin.listGrid.paginate.releaseLock();
+                        
+                        // now that I've loaded records, see if I need to do it again
+                        var topIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($tbody);
+                        var topIndexLoaded = BLCAdmin.listGrid.paginate.isIndexLoaded($tbody, topIndex);
+                        var botIndex = BLCAdmin.listGrid.paginate.getBottomVisibleIndex($tbody);
+                        var botIndexLoaded = BLCAdmin.listGrid.paginate.isIndexLoaded($tbody, botIndex);
+                        if (!botIndexLoaded || !topIndexLoaded) {
+                            BLCAdmin.listGrid.paginate.loadRecords($tbody, baseUrl);
+                        } else {
+                            BLCAdmin.listGrid.hideLoadingSpinner($tbody);
+                        }
+                    });
+                }
             } else {
                 BLCAdmin.listGrid.paginate.releaseLock();
             }
@@ -423,7 +428,10 @@
         // ************************* *
         
         getRowHeight : function($tbody) {
-            return $tbody.find('tr:not(.blank-padding):first').height();
+            // Updated the code here to return the exact value (possibly float values) of
+            // the height of the row. Previously it would round this value which led to
+            // inaccurate math.
+            return $tbody.find('tr:not(.blank-padding):first')[0].getBoundingClientRect().height;
         },
         
         getTopVisibleIndex : function($tbody) {
@@ -440,7 +448,10 @@
         getBottomVisibleIndex : function($tbody) {
             var scrollOffset = $tbody.closest('.mCSB_container').position().top;
             var trHeight = this.getRowHeight($tbody);
-            var bottomVisibleIndex = Math.floor((scrollOffset * -1 + $tbody.closest('.listgrid-body-wrapper').height() - 4) / trHeight);
+            // Updated the code here to use the exact value (possibly float value) of
+            // the listgrid body wrapper. Previously it would round this value which
+            // led to inaccurate math.
+            var bottomVisibleIndex = Math.floor((scrollOffset * -1 + $tbody.closest('.listgrid-body-wrapper')[0].getBoundingClientRect().height - trHeight) / trHeight);
             return bottomVisibleIndex;
         },
         

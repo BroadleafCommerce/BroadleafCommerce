@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 
@@ -38,6 +39,8 @@ public class SearchResult {
     protected Integer totalResults;
     protected Integer page;
     protected Integer pageSize;
+
+    protected QueryResponse queryResponse;
 
     public List<Product> getProducts() {
         return products;
@@ -99,4 +102,11 @@ public class SearchResult {
         return ((products == null || products.size() == 0) && (skus == null || skus.size() == 0)) ? 1 : (int) Math.ceil(totalResults * 1.0 / pageSize);
     }
 
+    public QueryResponse getQueryResponse() {
+        return queryResponse;
+    }
+
+    public void setQueryResponse(QueryResponse queryResponse) {
+        this.queryResponse = queryResponse;
+    }
 }

@@ -185,6 +185,7 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
         }
         CategoryProductXref cloned = createResponse.getClone();
         cloned.setDisplayOrder(displayOrder);
+        cloned.setDefaultReference(defaultReference);
         if (product != null) {
             cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
         }

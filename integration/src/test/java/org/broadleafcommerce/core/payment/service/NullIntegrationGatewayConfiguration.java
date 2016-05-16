@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -17,17 +17,15 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.dao;
 
-import org.hibernate.ejb.Ejb3Configuration;
+package org.broadleafcommerce.core.payment.service;
 
-/**
- * 
- * @author jfischer
- *
- */
-public interface EJB3ConfigurationDao {
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 
-    public abstract Ejb3Configuration getConfiguration();
+public interface NullIntegrationGatewayConfiguration extends PaymentGatewayConfiguration {
+
+    public String getTransparentRedirectUrl();
+
+    public String getTransparentRedirectReturnUrl();
 
 }

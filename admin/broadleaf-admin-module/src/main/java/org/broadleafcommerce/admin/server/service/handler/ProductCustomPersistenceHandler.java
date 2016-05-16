@@ -62,7 +62,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
-import org.hibernate.ejb.QueryHints;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -80,7 +79,6 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
 
 /**
  * @author Jeff Fischer
@@ -102,6 +100,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Value("${product.query.limit:500}")
     protected long queryLimit;
+
+    @Value("${product.eager.fetch.associations.admin:true}")
+    protected boolean eagerFetchAssociations = true;
 
     private static final Log LOG = LogFactory.getLog(ProductCustomPersistenceHandler.class);
 
@@ -176,7 +177,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 criteria.select(root.get("product").get("id").as(Long.class));
                 List<Predicate> restrictions = new ArrayList<Predicate>();
                 restrictions.add(builder.equal(root.get("defaultReference"), Boolean.TRUE));
-                restrictions.add(root.get("category").get("id").in(transformedValues));
+                if (CollectionUtils.isNotEmpty(transformedValues)) {
+                    restrictions.add(root.get("category").get("id").in(transformedValues));
+                }
                 //archived?
                 QueryUtils.notArchived(builder, restrictions, root, "archiveStatus");
                 criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
@@ -212,23 +215,48 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
         }
 
-        cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
-                .withDirectFilterValues(new EmptyFilterValues())
-                .withRestriction(new Restriction()
-                                .withPredicateProvider(new PredicateProvider() {
-                                    @Override
-                                    public Predicate buildPredicate(CriteriaBuilder builder,
-                                                                    FieldPathBuilder fieldPathBuilder, From root,
-                                                                    String ceilingEntity,
-                                                                    String fullPropertyName, Path explicitPath,
-                                                                    List directValues) {
-                                        root.fetch("defaultSku", JoinType.LEFT);
-                                        root.fetch("defaultCategory", JoinType.LEFT);
-                                        return null;
-                                    }
-                                })
-                ));
-        return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+        if (eagerFetchAssociations) {
+            cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
+                    .withDirectFilterValues(new EmptyFilterValues())
+                    .withRestriction(new Restriction()
+                            .withPredicateProvider(new PredicateProvider() {
+                                @Override
+                                public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                FieldPathBuilder fieldPathBuilder, From root,
+                                                                String ceilingEntity,
+                                                                String fullPropertyName, Path explicitPath,
+                                                                List directValues) {
+                                    root.fetch("defaultSku", JoinType.LEFT);
+                                    root.fetch("defaultCategory", JoinType.LEFT);
+                                    return null;
+                                }
+                            })
+                    ));
+        }
+        if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
+                (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
+            //Add special handling for product list grid fetches
+            boolean hasExplicitSort = false;
+            for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
+                hasExplicitSort = filter.getSortDirection() != null;
+                if (hasExplicitSort) {
+                    break;
+                }
+            }
+            if (!hasExplicitSort) {
+                FilterAndSortCriteria filter = cto.get("id");
+                filter.setNullsLast(false);
+                filter.setSortAscending(true);
+            }
+            try {
+                extensionManager.getProxy().initiateFetchState();
+                return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+            } finally {
+                extensionManager.getProxy().endFetchState();
+            }
+        } else {
+            return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+        }
     }
 
     @Override

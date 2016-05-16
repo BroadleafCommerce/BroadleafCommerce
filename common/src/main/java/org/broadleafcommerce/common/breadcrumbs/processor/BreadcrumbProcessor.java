@@ -23,7 +23,6 @@ import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
 import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -39,7 +38,6 @@ import javax.annotation.Resource;
  *
  * @author bpolster
  */
-@Component("blBreadcrumbProcessor")
 public class BreadcrumbProcessor extends AbstractModelVariableModifierProcessor {
 
     @Resource(name = "blBreadcrumbService")

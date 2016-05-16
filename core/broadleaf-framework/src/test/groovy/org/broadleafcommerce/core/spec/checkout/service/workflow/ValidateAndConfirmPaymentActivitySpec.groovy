@@ -33,6 +33,8 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction
 import org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl
 import org.broadleafcommerce.core.payment.service.DefaultPaymentGatewayCheckoutService
 import org.broadleafcommerce.core.payment.service.OrderPaymentService
+import org.broadleafcommerce.core.payment.service.OrderPaymentStatusService
+import org.broadleafcommerce.core.payment.service.OrderPaymentStatusServiceImpl
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl
 import org.broadleafcommerce.core.workflow.state.RollbackStateLocal
 
@@ -40,6 +42,8 @@ import org.broadleafcommerce.core.workflow.state.RollbackStateLocal
  * @author Elbert Bautista (elbertbautista)
  */
 class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
+
+    OrderPaymentStatusService statusService = new OrderPaymentStatusServiceImpl()
 
     OrderPayment confirmedCC = new OrderPaymentImpl()
     PaymentTransaction confirmedCCTransaction = new PaymentTransactionImpl()
@@ -93,7 +97,10 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
     }
 
     def reset() {
-        activity = new ValidateAndConfirmPaymentActivity()
+        activity = new ValidateAndConfirmPaymentActivity().with {
+            orderPaymentStatusService = statusService;
+            it
+        }
         context.seedData.order.payments = new ArrayList<OrderPayment>()
         context.seedData.order.total = null
     }
@@ -150,6 +157,7 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
         mockOrderPaymentService.save(_ as PaymentTransaction) >> {PaymentTransaction transaction -> transaction}
 
         activity = new ValidateAndConfirmPaymentActivity().with {
+            orderPaymentStatusService = statusService;
             orderPaymentConfirmationStrategy = mockStrategy
             orderPaymentService = mockOrderPaymentService
             it
@@ -200,6 +208,7 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
         mockCheckoutService.orderPaymentService = mockOrderPaymentService
 
         activity = new ValidateAndConfirmPaymentActivity().with {
+            orderPaymentStatusService = statusService;
             orderPaymentConfirmationStrategy = mockStrategy
             orderPaymentService = mockOrderPaymentService
             paymentGatewayCheckoutService = mockCheckoutService
@@ -240,6 +249,7 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
         mockOrderPaymentService.save(_ as PaymentTransaction) >> {PaymentTransaction transaction -> transaction}
 
         activity = new ValidateAndConfirmPaymentActivity().with {
+            orderPaymentStatusService = statusService;
             orderPaymentConfirmationStrategy = mockStrategy
             orderPaymentService = mockOrderPaymentService
             it

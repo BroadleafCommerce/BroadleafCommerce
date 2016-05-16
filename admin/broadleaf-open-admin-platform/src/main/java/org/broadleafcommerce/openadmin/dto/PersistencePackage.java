@@ -22,11 +22,14 @@ package org.broadleafcommerce.openadmin.dto;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PersistencePackage implements Serializable, StateDescriptor {
@@ -45,6 +48,7 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     protected Map<String, PersistencePackage> subPackages = new LinkedHashMap<String, PersistencePackage>();
     protected boolean validateUnsubmittedProperties = true;
     protected SectionCrumb[] sectionCrumbs;
+    protected Map<ChangeType, List<PersistencePackage>> deferredOperations = new LinkedHashMap<ChangeType, List<PersistencePackage>>();
 
     //internalUsage
     protected boolean isProcessedInternal = false;
@@ -245,6 +249,31 @@ public class PersistencePackage implements Serializable, StateDescriptor {
             return new SectionCrumb();
         }
         return sectionCrumbs[0];
+    }
+
+    /**
+     * Retrieve any PersistencePackages that should be executed after the current PersistencePackage is fully
+     * processed. These packages are arranged according to the CRUD operation that should be performed.
+     *
+     * @return
+     */
+    public Map<ChangeType, List<PersistencePackage>> getDeferredOperations() {
+        return deferredOperations;
+    }
+
+    public void setDeferredOperations(Map<ChangeType, List<PersistencePackage>> deferredOperations) {
+        this.deferredOperations = deferredOperations;
+    }
+
+    public void addDeferredOperation(ChangeType changeType, PersistencePackage persistencePackage) {
+        List<PersistencePackage> changes;
+        if (!deferredOperations.containsKey(changeType)) {
+            changes = new ArrayList<PersistencePackage>();
+            deferredOperations.put(changeType, changes);
+        } else {
+            changes = deferredOperations.get(changeType);
+        }
+        changes.add(persistencePackage);
     }
 
     /**

@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.i18n.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -175,11 +176,24 @@ public class TranslationImpl implements Serializable, Translation {
             return createResponse;
         }
         Translation cloned = createResponse.getClone();
-        cloned.setEntityId(entityId);
+
+        //this assumes that TranslationImpl copying occurs last after all other entity copying
+        Object referenceClone;
+        try {
+            referenceClone = context.getPreviousClone(Class.forName(getEntityType().getType()), Long.parseLong(entityId));
+        } catch (ClassNotFoundException e) {
+            throw ExceptionHelper.refineException(e);
+        }
+        String convertedId = entityId;
+        if (referenceClone != null) {
+            convertedId = String.valueOf(context.getIdentifier(referenceClone));
+        }
+        cloned.setEntityId(convertedId);
         cloned.setFieldName(fieldName);
         cloned.setLocaleCode(localeCode);
         cloned.setTranslatedValue(translatedValue);
         cloned.setEntityType(getEntityType());
         return createResponse;
     }
+
 }

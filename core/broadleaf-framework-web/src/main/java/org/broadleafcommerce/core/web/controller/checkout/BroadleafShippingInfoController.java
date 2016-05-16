@@ -115,6 +115,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
             copyBillingAddressToShippingAddress(cart, shippingForm);
         }
 
+        addressService.populateAddressISOCountrySub(shippingForm.getAddress());
         shippingInfoFormValidator.validate(shippingForm, result);
         if (result.hasErrors()) {
             return getCheckoutView();
@@ -251,6 +252,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
      */
     public String saveMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model,
                                           ShippingInfoForm addressForm, BindingResult result) throws ServiceException {
+        addressService.populateAddressISOCountrySub(addressForm.getAddress());
         multishipAddAddressFormValidator.validate(addressForm, result);
         if (result.hasErrors()) {
             return showMultishipAddAddress(request, response, model);

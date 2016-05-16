@@ -44,6 +44,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -52,6 +53,7 @@ import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -126,6 +128,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
     
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericEntityDao;
+
     /**
      * This should only ever be called when using the Solr reindex service to do a full reindex. 
      */
@@ -231,7 +236,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public Long getCategoryId(Long category) {
         Long[] returnId = new Long[1];
-        ExtensionResultStatusType result = indexExtensionManager.getProxy().getCategoryId(category, returnId);
+        //TODO (qa 607) Need to review the performance of retrieval of the Category instance here every time (using the id version breaks for indexing derived catalogs)
+        ExtensionResultStatusType result = searchExtensionManager.getProxy().getCategoryId(genericEntityDao.readGenericEntity(CategoryImpl.class, category), returnId);
         if (result.equals(ExtensionResultStatusType.HANDLED)) {
             return returnId[0];
         }
@@ -654,26 +660,54 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             String[] sortFields = sortQuery.split(",");
 
             for (String sortField : sortFields) {
-                List<IndexFieldType> fieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviation(sortField.split(" ")[0]);
-
+                String[] sortFieldsSegments = sortField.split(" ");
+                String requestedSortFieldName = sortFieldsSegments[0];
+                
+                List<IndexFieldType> fieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviation(requestedSortFieldName);
+                
+                // Used to determine if, by looping through the index field types managed in the database, we actually
+                // attach the sort field that is being requested. If we do, then we shouldn't manually add the requested
+                // sort field ourselves but if not, we should
+                boolean requestedSortFieldAdded = false;
+                
+                // Loop through all of the field types for the given sort field and add each generated field name
+                // as a sort. Generated field names are comprised of both the field abbreviation and their type, and each
+                // field could have indexed multiple field types. Rather than try to guess which field type to sort by
+                // this sorts by them all
                 for (IndexFieldType fieldType : fieldTypes) {
                     String field = getPropertyNameForIndexField(fieldType.getIndexField(), fieldType.getFieldType());
-
-                    ORDER order = ORDER.asc;
-                    String[] sortFieldsSegments = sortField.split(" ");
-                    if (sortFieldsSegments.length < 2) {
-                        StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
-                        msg.append("\nDefaulting to ASCending");
-                        LOG.warn(msg.toString());
-                    } else if ("desc".equals(sortFieldsSegments[1])) {
-                        order = ORDER.desc;
+                    
+                    // Verify that the field that is being added as a sort is a match for the field that is requesting
+                    // to be sorted by. Since field abbreviations are what are added to the index, this is what should
+                    // be checked
+                    if (fieldType.getIndexField().getField().getAbbreviation().equals(requestedSortFieldName)) {
+                        requestedSortFieldAdded = true;
                     }
-                    if (field != null) {
-                        query.addSort(new SortClause(field, order));
-                    }
+                    
+                    ORDER order = getSortOrder(sortFieldsSegments, sortQuery);
+                    query.addSort(new SortClause(field, order));
+                }
+                
+                // At the end here, it's possible that the field that was passed in to sort by was not managed in the
+                // database in the list of index fields and their types. If that's the case, go ahead and add it as a sort
+                // field anyway since we're trusting that the field was actually added to the index by some programmatic means
+                if (!requestedSortFieldAdded) {
+                    query.addSort(new SortClause(requestedSortFieldName, getSortOrder(sortFieldsSegments, sortQuery)));
                 }
             }
         }
+    }
+    
+    protected ORDER getSortOrder(String[] sortFieldsSegments, String sortQuery) {
+        ORDER order = ORDER.asc;
+        if (sortFieldsSegments.length < 2) {
+            StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
+            msg.append("\nDefaulting to ASCending");
+            LOG.warn(msg.toString());
+        } else if ("desc".equals(sortFieldsSegments[1])) {
+            order = ORDER.desc;
+        }
+        return order;
     }
 
     @Override
@@ -769,6 +803,13 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             return null;
         }
 
+        boolean isPropertyReadable = PropertyUtils.isReadable(object, components[currentPosition]);
+        if (!isPropertyReadable) {
+            LOG.debug(String.format("Could not find %s on %s, assuming this exists elsewhere in the class hierarchy",
+                components[currentPosition], object.getClass().getName()));
+            return null;
+        }
+        
         Object propertyObject = PropertyUtils.getProperty(object, components[currentPosition]);
 
         if (propertyObject != null) {
@@ -852,5 +893,16 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         }
 
         return fields;
+    }
+
+    @Override
+    public List<Long> getCategoryFilterIds(Category category, SearchCriteria searchCriteria) {
+        List<Long> categoryIds = new ArrayList<>();
+
+        categoryIds.add(getCategoryId(category));
+
+        searchExtensionManager.getProxy().addAdditionalCategoryIds(category, searchCriteria, categoryIds);
+
+        return categoryIds;
     }
 }

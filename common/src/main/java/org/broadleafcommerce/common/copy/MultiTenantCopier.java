@@ -173,9 +173,9 @@ public abstract class MultiTenantCopier implements Ordered {
         }
     }
 
-    protected void persistNode(final Object copy, MultiTenantCopyContext context) {
+    protected void persistNode(final Object copy, final MultiTenantCopyContext context) {
         if (!genericEntityService.sessionContains(copy) && !genericEntityService.idAssigned(copy)) {
-            Object original = genericEntityService.readGenericEntity(copy.getClass().getName(), context.removeOriginalIdentifier(copy));
+            final Object original = genericEntityService.readGenericEntity(copy.getClass().getName(), context.removeOriginalIdentifier(copy));
             extensionManager.getProxy().transformCopy(context, original, copy);
             extensionManager.getProxy().prepareForSave(context, original, copy);
 
@@ -183,6 +183,7 @@ public abstract class MultiTenantCopier implements Ordered {
                 @Override
                 public Void execute() {
                     genericEntityService.persist(copy);
+                    extensionManager.getProxy().postSave(context, original, copy);
                     return null;
                 }
             }, context.getToSite(), context.getToSite(), context.getToCatalog());

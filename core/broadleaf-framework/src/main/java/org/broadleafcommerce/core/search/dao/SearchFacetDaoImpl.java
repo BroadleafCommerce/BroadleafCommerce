@@ -62,7 +62,7 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         criteria.select(facet);
         criteria.where(
                 builder.equal(facet.get("showOnSearch").as(Boolean.class), true),
-                builder.equal(facet.join("fieldType").join("indexField").join("field").get("entityType").as(String.class), entityType.getType())
+                facet.join("fieldType").join("indexField").join("field").get("entityType").as(String.class).in(entityType.getAllLookupTypes())
         );
 
         TypedQuery<SearchFacet> query = em.createQuery(criteria);

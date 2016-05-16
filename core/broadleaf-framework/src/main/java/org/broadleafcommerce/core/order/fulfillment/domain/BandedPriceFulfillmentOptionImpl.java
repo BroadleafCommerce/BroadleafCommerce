@@ -55,9 +55,8 @@ public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl impl
     
     @OneToMany(mappedBy="option", targetEntity=FulfillmentPriceBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(friendlyName = "BandedPriceFulfillmentOptionImpl_bands")
-    @IgnoreEnterpriseBehavior
-    protected List<FulfillmentPriceBand> priceBands = new ArrayList<FulfillmentPriceBand>();
+    @AdminPresentationCollection(friendlyName = "BandedPriceFulfillmentOptionBands", excluded = true)
+    protected List<FulfillmentPriceBand> bands = new ArrayList<FulfillmentPriceBand>();
 
     @Override
     public List<FulfillmentPriceBand> getPriceBands() {
@@ -68,7 +67,6 @@ public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl impl
     public void setPriceBands(List<FulfillmentPriceBand> priceBands) {
         this.priceBands = priceBands;
     }
-
 
     @Override
     public CreateResponse<BandedPriceFulfillmentOption> createOrRetrieveCopyInstance(MultiTenantCopyContext context)

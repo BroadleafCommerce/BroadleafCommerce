@@ -20,15 +20,19 @@
 package org.broadleafcommerce.profile.core.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
 import org.broadleafcommerce.profile.core.domain.CountrySubdivisionImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -45,6 +49,34 @@ public class CountrySubdivisionDaoImpl implements CountrySubdivisionDao {
     @Override
     public CountrySubdivision findSubdivisionByAbbreviation(String abbreviation) {
         return (CountrySubdivision) em.find(CountrySubdivisionImpl.class, abbreviation);
+    }
+
+    @Override
+    public CountrySubdivision findSubdivisionByCountryAndAltAbbreviation(@Nonnull String countryAbbreviation, @Nonnull String altAbbreviation) {
+        TypedQuery<CountrySubdivision> query = new TypedQueryBuilder<CountrySubdivision>(CountrySubdivision.class, "cSub")
+                .addRestriction("cSub.country.abbreviation", "=", countryAbbreviation)
+                .addRestriction("cSub.alternateAbbreviation", "=", altAbbreviation)
+                .toQuery(em);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public CountrySubdivision findSubdivisionByCountryAndName(@Nonnull String countryAbbreviation, @Nonnull String name) {
+        TypedQuery<CountrySubdivision> query = new TypedQueryBuilder<CountrySubdivision>(CountrySubdivision.class, "cSub")
+                .addRestriction("cSub.country.abbreviation", "=", countryAbbreviation)
+                .addRestriction("cSub.name", "=", name)
+                .toQuery(em);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override

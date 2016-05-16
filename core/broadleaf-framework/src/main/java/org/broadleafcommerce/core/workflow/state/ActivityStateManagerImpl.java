@@ -53,6 +53,7 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
     public void clearAllState() {
         RollbackStateLocal rollbackStateLocal = getRollbackStateLocal();
         stateMap.remove(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
+        RollbackStateLocal.clearRollbackStateLocal();
     }
 
     @Override

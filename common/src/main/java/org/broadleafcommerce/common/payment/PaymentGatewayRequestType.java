@@ -35,8 +35,8 @@ import java.util.Map;
  * 1. Certain gateways support the idea of a "Transparent Redirect" request.
  *    Within that set, only certain ones support the idea of a transparent redirect tokenization only request.
  *    In order to utilize the same {@link org.broadleafcommerce.common.payment.service.PaymentGatewayTransparentRedirectService},
- *    a particular request type, (e.g. {@link #CUSTOMER_PAYMENT_TR} can be put on the
- *    {@link org.broadleafcommerce.common.payment.dto.PaymentRequestDTO#getAdditionalFields()} map to distinguish which request to construct.
+ *    a particular request type, (e.g. {@link #CREATE_CUSTOMER_PAYMENT_TR} can be put on the
+ *    {@link org.broadleafcommerce.common.payment.dto.PaymentRequestDTO} to distinguish which request to construct.
  * 2. Certain gateways support the idea of a "Detached Credit" also referred to as a "blind credit"
  *    In some cases, the gateways implementation utilizes the same "refund" api as a normal credit.
  *    {@link #DETACHED_CREDIT_REFUND} can be passed to an implementation's
@@ -57,10 +57,9 @@ public class PaymentGatewayRequestType implements Serializable, BroadleafEnumera
 
     private static final Map<String, PaymentGatewayRequestType> TYPES = new LinkedHashMap<String, PaymentGatewayRequestType>();
 
-    public static final PaymentGatewayRequestType PAYMENT_TRANSACTION_TR = new PaymentGatewayRequestType("PAYMENT_TRANSACTION_TR", "Transparent Redirect Payment Transaction Request");
-    public static final PaymentGatewayRequestType CUSTOMER_PAYMENT_TR = new PaymentGatewayRequestType("CUSTOMER_PAYMENT_TR", "Transparent Redirect Customer Payment Tokenization Request");
+    public static final PaymentGatewayRequestType CREATE_CUSTOMER_PAYMENT_TR = new PaymentGatewayRequestType("CREATE_CUSTOMER_PAYMENT_TR", "Transparent Redirect Create Customer Payment Tokenization Request");
+    public static final PaymentGatewayRequestType UPDATE_CUSTOMER_PAYMENT_TR = new PaymentGatewayRequestType("UPDATE_CUSTOMER_PAYMENT_TR", "Transparent Redirect Update Customer Payment Tokenization Request");
     public static final PaymentGatewayRequestType DETACHED_CREDIT_REFUND = new PaymentGatewayRequestType("DETACHED_CREDIT_REFUND", "Detached Credit Refund Request");
-    public static final PaymentGatewayRequestType FOLLOW_ON_REFUND = new PaymentGatewayRequestType("FOLLOW_ON_REFUND", "Follow-on Refund Request");
     public static final PaymentGatewayRequestType MANUAL_AUTHORIZATION = new PaymentGatewayRequestType("MANUAL_AUTHORIZATION", "Manual Authorization Request");
 
     public static PaymentGatewayRequestType getInstance(final String type) {
