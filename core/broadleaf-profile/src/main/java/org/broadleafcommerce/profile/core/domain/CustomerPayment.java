@@ -21,6 +21,8 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.payment.PaymentType;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -47,6 +49,14 @@ public interface CustomerPayment extends AdditionalFields, Serializable, MultiTe
     public String getPaymentToken();
 
     public void setPaymentToken(String paymentToken);
+
+    public PaymentType getPaymentType();
+
+    public void setPaymentType(PaymentType paymentType);
+
+    public PaymentGatewayType getPaymentGatewayType();
+
+    public void setPaymentGatewayType(PaymentGatewayType paymentGatewayType);
 
     public boolean isDefault();
 

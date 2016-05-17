@@ -150,6 +150,10 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     )
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
+    @Column(name = "SAVE_TOKEN")
+    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Save_Token")
+    protected Boolean saveToken = false;
+
     @Override
     public Long getId() {
         return id;
@@ -253,6 +257,16 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Override
     public void setAdditionalFields(Map<String, String> additionalFields) {
         this.additionalFields = additionalFields;
+    }
+
+    @Override
+    public boolean isSaveToken() {
+        return saveToken == null ? false : saveToken;
+    }
+
+    @Override
+    public void setSaveToken(boolean saveToken) {
+        this.saveToken = saveToken;
     }
 
     @Override

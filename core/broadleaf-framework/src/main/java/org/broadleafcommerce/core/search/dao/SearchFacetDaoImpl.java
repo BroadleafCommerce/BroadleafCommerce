@@ -26,8 +26,8 @@ import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetImpl;
-import org.broadleafcommerce.core.search.domain.SearchField;
-import org.broadleafcommerce.core.search.domain.SearchFieldImpl;
+import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -62,7 +62,7 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         criteria.select(facet);
         criteria.where(
                 builder.equal(facet.get("showOnSearch").as(Boolean.class), true),
-                builder.equal(facet.join("field").get("entityType").as(String.class), entityType.getType())
+                facet.join("fieldType").join("indexField").join("field").get("entityType").as(String.class).in(entityType.getAllLookupTypes())
         );
 
         TypedQuery<SearchFacet> query = em.createQuery(criteria);
@@ -123,7 +123,7 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
 
         criteria.select(facet);
         criteria.where(
-                builder.equal(facet.join("field").get("id").as(Long.class), field.getId())
+                builder.equal(facet.join("fieldType").join("indexField").join("field").get("id").as(Long.class), field.getId())
         );
 
         TypedQuery<SearchFacet> query = em.createQuery(criteria);

@@ -100,6 +100,11 @@ public class PaymentResponseDTO {
      * If this was a Transaction request, it will be the amount that was sent back from the gateway
      */
     protected Money amount;
+
+    /**
+     * If this is a Tokenization request, this will hold the token sent back from the gateway
+     */
+    protected String paymentToken;
     
     /**
      * Whether or not the transaction on the gateway was successful. This should be provided by the gateway alone.
@@ -191,6 +196,11 @@ public class PaymentResponseDTO {
         return this;
     }
 
+    public PaymentResponseDTO paymentToken(String paymentToken) {
+        this.paymentToken = paymentToken;
+        return this;
+    }
+
     public PaymentResponseDTO paymentTransactionType(PaymentTransactionType paymentTransactionType) {
         this.paymentTransactionType = paymentTransactionType;
         return this;
@@ -250,6 +260,10 @@ public class PaymentResponseDTO {
 
     public Money getAmount() {
         return amount;
+    }
+
+    public String getPaymentToken() {
+        return paymentToken;
     }
 
     public PaymentTransactionType getPaymentTransactionType() {

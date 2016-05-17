@@ -48,4 +48,26 @@ public class PhoneServiceImpl implements PhoneService {
     public Phone create() {
         return phoneDao.create();
     }
+
+    @Override
+    public Phone copyPhone(Phone orig) {
+        return copyPhone(null, orig);
+    }
+
+    @Override
+    public Phone copyPhone(Phone dest, Phone orig) {
+        if (dest == null) {
+            dest = create();
+        }
+
+        if (orig != null) {
+            dest.setPhoneNumber(orig.getPhoneNumber());
+            dest.setCountryCode(orig.getCountryCode());
+            dest.setExtension(orig.getExtension());
+            return dest;
+        }
+
+        return null;
+    }
+
 }

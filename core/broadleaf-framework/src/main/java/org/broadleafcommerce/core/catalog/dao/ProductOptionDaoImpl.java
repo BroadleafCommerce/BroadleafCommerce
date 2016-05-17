@@ -20,12 +20,22 @@
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
+import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl;
+import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -60,6 +70,40 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
     @Override
     public ProductOptionValue readProductOptionValueById(Long id) {
         return em.find(ProductOptionValueImpl.class, id);
+    }
+
+    @Override
+    public List<AssignedProductOptionDTO> findAssignedProductOptionsByProductId(Long productId) {
+        Session session = em.unwrap(Session.class);
+        Criteria criteria = session.createCriteria(SkuProductOptionValueXrefImpl.class);
+        List dtoList = criteria
+            .createAlias("sku", "sku")
+            .createAlias("sku.product", "product")
+            .createAlias("productOptionValue", "productOptionValue")
+            .createAlias("productOptionValue.productOption", "productOption")
+            .setProjection(Projections.distinct(
+                    Projections.projectionList()
+                    .add(Projections.property("product.id"), "productId")
+                    .add(Projections.property("productOption.attributeName"), "productOptionAttrName")
+                    .add(Projections.property("productOptionValue"), "productOptionValue")
+                    .add(Projections.property("sku"), "sku")
+                )
+            ).setResultTransformer(Transformers.aliasToBean(AssignedProductOptionDTO.class))
+            .add(Restrictions.eq("product.id", productId))
+            .addOrder(Order.asc("productOption.attributeName")).list();
+        List<AssignedProductOptionDTO> results = new ArrayList<AssignedProductOptionDTO>();
+        for (Object o : dtoList) {
+            AssignedProductOptionDTO dto = (AssignedProductOptionDTO) o;
+            if (dto.getSku().isActive()) {
+                results.add(dto);
+            }
+        }
+        return results;
+    }
+
+    @Override
+    public List<AssignedProductOptionDTO> findAssignedProductOptionsByProduct(Product product) {
+        return findAssignedProductOptionsByProductId(product.getId());
     }
 
 }

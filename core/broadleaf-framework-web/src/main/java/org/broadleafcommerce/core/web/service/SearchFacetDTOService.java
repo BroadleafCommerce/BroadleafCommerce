@@ -39,11 +39,11 @@ public interface SearchFacetDTOService {
      * this method will build out a SearchCriteria object to be used by the ProductSearchService. It will
      * perform translations from query string parameters to the SearchCriteria.
      * 
-     * @param request
      * @param availableFacets
-     * @return the SearchCriteria 
+     * @param request
+     * @return the SearchCriteria
      */
-    public SearchCriteria buildSearchCriteria(HttpServletRequest request, List<SearchFacetDTO> availableFacets);
+    public SearchCriteria buildSearchCriteria(HttpServletRequest request);
 
     /**
      * Sets the "active" boolean on a given SearchFacetResultDTO as determined by the current request

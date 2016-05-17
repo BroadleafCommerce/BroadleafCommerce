@@ -20,7 +20,10 @@
 package org.broadleafcommerce.common.entity.service;
 
 import org.broadleafcommerce.common.entity.dto.EntityInformationDto;
+import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+
+import java.util.List;
 
 /**
  * Class that provides guidance to modules that need to react when running in a multi-tenant mode.   Especially, 
@@ -46,10 +49,19 @@ public interface EntityInformationService {
      * Given a Site object, returns the Base Profile Id if one exists.    This method provides a hook
      * for Broadleaf MultiTenant functionality
      * 
-     * @param o
+     * @param site
      * @return
      */
     Long getBaseProfileIdForSite(Site site);
+
+    /**
+     * Given a profile {@link Site} object, returns the parent site, if one exists. This method provides a hook
+     * for Broadleaf MultiTenant functionality.
+     *
+     * @param profile
+     * @return
+     */
+    Site getParentSiteForProfile(Site profile);
 
     /**
      * Given an entity instance, returns true if the object has access to a Site Discriminator.
@@ -58,6 +70,13 @@ public interface EntityInformationService {
      * @return
      */
     boolean getOkayToUseSiteDiscriminator(Object o);
+
+    /**
+     * Returns all of the catalogs, using multi-tenant mode
+     *
+     * @return
+     */
+    List<Catalog> findAllCatalogs();
 
     /**
      * Given a Site object, returns the default catalog id. This method provides a hook for Broadleaf MultiTenant functionality

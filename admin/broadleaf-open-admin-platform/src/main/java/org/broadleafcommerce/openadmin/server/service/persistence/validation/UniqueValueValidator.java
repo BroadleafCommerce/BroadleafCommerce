@@ -21,18 +21,15 @@ package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
-import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
-import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -48,9 +45,9 @@ public class UniqueValueValidator implements PropertyValidator {
 
     protected static final Log LOG = LogFactory.getLog(UniqueValueValidator.class);
 
-    @Resource(name = "blAdminEntityService")
-    protected AdminEntityService adminEntityService;
-    
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericEntityDao;
+
     @Override
     public PropertyValidationResult validate(Entity entity,
             Serializable instance,
@@ -60,11 +57,7 @@ public class UniqueValueValidator implements PropertyValidator {
             String propertyName,
             String value) {
 
-        PersistencePackageRequest ppr = PersistencePackageRequest.standard()
-                .withCeilingEntityClassname(entity.getType()[0])
-                .withFilterAndSortCriteria(new FilterAndSortCriteria[]{
-                        new FilterAndSortCriteria(propertyName, value)
-                });
+        List<Long> responseIds = genericEntityDao.readOtherEntitiesWithPropertyValue(instance, propertyName, value);
 
         String message = validationConfiguration.get(ConfigurationItem.ERROR_MESSAGE);
         if (message == null) {
@@ -72,15 +65,9 @@ public class UniqueValueValidator implements PropertyValidator {
                     propertyName + " already exists. This attribute's value must be unique.";
         }
 
-        try {
-            PersistenceResponse response = adminEntityService.getRecords(ppr);
-            if(response.getDynamicResultSet().getTotalRecords() == 0) {
-                return new PropertyValidationResult(true, message);
-            } else {
-                return new PropertyValidationResult(false, message);
-            }
-        } catch (ServiceException e) {
-            LOG.error(message, e);
+        if(responseIds.size() == 0) {
+            return new PropertyValidationResult(true, message);
+        } else {
             return new PropertyValidationResult(false, message);
         }
     }

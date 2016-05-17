@@ -48,6 +48,7 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
     public static final PaymentType CUSTOMER_CREDIT = new PaymentType("CUSTOMER_CREDIT", "Customer Credit", false);
     public static final PaymentType COD = new PaymentType("COD", "Collect On Delivery", false);
     public static final PaymentType CUSTOMER_PAYMENT = new PaymentType("CUSTOMER_PAYMENT", "Customer Payment", true);
+    public static final PaymentType PURCHASE_ORDER = new PaymentType("PURCHASE_ORDER", "Purchase Order", false);
     /**
      * Intended for modules like PayPal Express Checkout
      *

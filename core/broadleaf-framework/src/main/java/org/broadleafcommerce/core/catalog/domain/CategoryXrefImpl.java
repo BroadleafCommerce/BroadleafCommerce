@@ -163,6 +163,7 @@ public class CategoryXrefImpl implements CategoryXref {
             cloned.setSubCategory(subCategory.createOrRetrieveCopyInstance(context).getClone());
         }
         cloned.setDisplayOrder(displayOrder);
+        cloned.setDefaultReference(defaultReference);
         return createResponse;
     }
 }

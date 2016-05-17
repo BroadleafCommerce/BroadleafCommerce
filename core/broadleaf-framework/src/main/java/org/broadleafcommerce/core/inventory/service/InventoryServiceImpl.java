@@ -127,7 +127,6 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                         if (sku.getQuantityAvailable() == null) {
                             inventories.put(sku, 0);
                         }
-                        inventories.put(sku, sku.getQuantityAvailable());
                     } else if (sku.getInventoryType() == null || InventoryType.ALWAYS_AVAILABLE.equals(sku.getInventoryType())) {
                         inventories.put(sku, null);
                     } else {

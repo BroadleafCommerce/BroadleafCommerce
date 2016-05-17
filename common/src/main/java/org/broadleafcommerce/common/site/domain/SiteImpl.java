@@ -66,7 +66,6 @@ import javax.persistence.Table;
 @Table(name = "BLC_SITE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "baseSite")
-@SQLDelete(sql="UPDATE BLC_SITE SET ARCHIVED = 'Y' WHERE SITE_ID = ?")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER)
 })
@@ -298,6 +297,23 @@ public class SiteImpl implements Site, AdminMainEntity {
     @Override
     public String getMainEntityName() {
         return getName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SiteImpl)) return false;
+
+        SiteImpl site = (SiteImpl) o;
+
+        if (id != null && site.id != null && id.equals(site.id)) return true;
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }
 

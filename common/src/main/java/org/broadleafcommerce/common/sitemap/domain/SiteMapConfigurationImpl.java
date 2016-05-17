@@ -23,6 +23,8 @@ package org.broadleafcommerce.common.sitemap.domain;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
+import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminatable;
+import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminatableType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -58,6 +60,7 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
 
     @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @AdminPresentationCollection(friendlyName = "SiteMapConfigurationImpl_Generator_Configurations")
+    @SiteDiscriminatable(type = SiteDiscriminatableType.SITE)
     protected List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations = new ArrayList<SiteMapGeneratorConfiguration>();
 
     @Column(name = "SITE_MAP_FILE_NAME")

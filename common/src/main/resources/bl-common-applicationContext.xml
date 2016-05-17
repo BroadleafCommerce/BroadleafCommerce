@@ -70,6 +70,7 @@
     <bean id="blDirectCopyTransformTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
+                <entry key="archiveOnly" value="org.broadleafcommerce.common.weave.WeaveArchiveStatus"/>
             </map>
         </property>
     </bean>
@@ -126,6 +127,18 @@
         <constructor-arg name="moduleName" value="Conditional Field Annotation Transformation" />
     </bean>
 
+    <!-- NOTE: Remove this transformer when Thymeleaf 2.1.5 is released. See the Javadocs for org.broadleafcommerce.common.web.patch.EvaluationUtilPatch -->
+    <bean id="blEvaluationUtilPatchClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyClassTransformer">
+        <constructor-arg name="moduleName" value="EvaluationUtil Patch Transformation" />
+        <property name="xformTemplates">
+            <map>
+                <entry key="org.thymeleaf.util.EvaluationUtil"
+                       value="org.broadleafcommerce.common.web.patch.EvaluationUtilPatch"/>
+            </map>
+        </property>
+    </bean>
+    <!-- END NOTE -->
+
     <!-- to be overriden by 3rd party modules -->
     <bean id="blMergedClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -133,6 +146,7 @@
                 <ref bean="blAnnotationDirectCopyClassTransformer"/>
                 <ref bean="blEntityMarkerClassTransformer"/>
                 <ref bean="blConditionalFieldAnnotationClassTransformer"/>
+                <ref bean="blEvaluationUtilPatchClassTransformer"/>
             </list>
         </property>
     </bean>
@@ -342,10 +356,14 @@
         </property>
     </bean>
     
+    <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring4.dialect.SpringStandardDialect" />
+    
     <bean id="blVariableExpressionEvaluator" class="org.broadleafcommerce.common.web.expression.BroadleafVariableExpressionEvaluator" />
     <bean id="blDataDrivenEnumerationProcessor" class="org.broadleafcommerce.common.web.processor.DataDrivenEnumerationProcessor" />
     <bean id="blResourceBundleProcessor" class="org.broadleafcommerce.common.web.processor.ResourceBundleProcessor" />
     <bean id="blConfigVariableProcessor" class="org.broadleafcommerce.common.web.processor.ConfigVariableProcessor" />
+    <bean id="blBreadcrumbProcessor" class="org.broadleafcommerce.common.breadcrumbs.processor.BreadcrumbProcessor" />
+    <bean id="blFormProcessor" class="org.broadleafcommerce.common.web.processor.FormProcessor" />
     
     <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
     <!-- own dialect and add your processors there. -->
@@ -356,7 +374,26 @@
                 <ref bean="blResourceBundleProcessor" />
                 <ref bean="blConfigVariableProcessor" />
                 <ref bean="blBreadcrumbProcessor" />
+                <ref bean="blFormProcessor" />
             </set>
+        </property>
+    </bean>
+    
+    <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
+        <property name="processors" ref="blDialectProcessors" />
+    </bean>
+    
+    <!-- This list factory bean will accept classes that implment the BroadleafVariableExpression interface. -->
+    <!-- This provides the ability to inject custom expression evaluators into Thymeleaf. -->
+    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <bean class="org.broadleafcommerce.common.web.expression.AssetURLVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.expression.BRCVariableExpression" />                
+                <bean class="org.broadleafcommerce.common.web.expression.PropertiesVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression"/>
+            </list>
         </property>
     </bean>
     
@@ -403,6 +440,20 @@
             </map>
         </property>
     </bean>
+
+    <bean id="blConditionalEntities" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="blConditionalOrmFiles" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+            </map>
+        </property>
+    </bean>
     
     <bean id="blConditionalFieldAnnotationCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
@@ -410,83 +461,5 @@
             </map>
         </property>
     </bean>
-
-    <!-- Start - this block should be removed in 4.1, since the DirectCopyTransform annotations will appear on these entities at that point -->
-    <bean id="blSiteMapGeneratorConfigurationConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
-        <property name="templateTokens">
-            <util:constant static-field="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes.MULTITENANT_SITE"/>
-        </property>
-        <property name="conditionalProperty" value="enable.site.map.mt.disc"/>
-    </bean>
-    
-    <!-- This is to conditionally add workflow annotation to FulfillmentPriceBandImpl -->
-    <bean id="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
-        <property name="templateTokens">
-            <array>
-                <util:constant static-field="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes.SANDBOX"/>
-                <util:constant static-field="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes.MULTITENANT_SITE"/>
-            </array>
-        </property>
-        <property name="conditionalProperty" value="enable.banded.ff.option.wrkflow.mt.disc"/>
-    </bean>
-
-    <bean id="blCommonConditionalDirectCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl" value-ref="blSiteMapGeneratorConfigurationConditionalDirectCopyTransformerMember"/>
-                <entry key="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl" value-ref="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember"/>
-                <entry key="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl" value-ref="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember"/>
-            </map>
-        </property>
-    </bean>
-    
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blCommonConditionalDirectCopyTransformers"/>
-        <property name="targetRef" value="blConditionalDirectCopyTransformers"/>
-    </bean>
-
-    <bean id="blSiteMapConfigurationSiteMapGeneratorConfigurationConditionalFieldAnnotationTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalFieldAnnotationCopyTransformMemberDTO">
-        <property name="templateNames">
-            <array>
-                <value>org.broadleafcommerce.common.sitemap.domain.weave.OptionalEnterpriseSiteMapConfigurationSiteMapGeneratorConfigurationTemplate</value>
-            </array>
-        </property>
-        <property name="conditionalProperty" value="enable.site.map.mt.disc"/>
-    </bean>
-    
-    <bean id="blBandedPriceFulfillmentOptionConditionalFieldAnnotationTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalFieldAnnotationCopyTransformMemberDTO">
-        <property name="templateNames">
-            <array>
-                <value>org.broadleafcommerce.core.order.domain.weave.OptionalEnterpriseBandedPriceFulfillmentOptionTemplate</value>
-            </array>
-        </property>
-        <property name="conditionalProperty" value="enable.banded.ff.option.wrkflow.mt.disc"/>
-    </bean>
-    
-    <bean id="blBandedWeightFulfillmentOptionConditionalFieldAnnotationTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalFieldAnnotationCopyTransformMemberDTO">
-        <property name="templateNames">
-            <array>
-                <value>org.broadleafcommerce.core.order.domain.weave.OptionalEnterpriseBandedWeightFulfillmentOptionTemplate</value>
-            </array>
-        </property>
-        <property name="conditionalProperty" value="enable.banded.ff.option.wrkflow.mt.disc"/>
-    </bean>
-    
-    <bean id="blCommonConditionalFieldAnnotationCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOptionImpl" value-ref="blBandedPriceFulfillmentOptionConditionalFieldAnnotationTransformerMember"/>
-                <entry key="org.broadleafcommerce.core.order.fulfillment.domain.BandedWeightFulfillmentOptionImpl" value-ref="blBandedWeightFulfillmentOptionConditionalFieldAnnotationTransformerMember"/>
-                <entry key="org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl" value-ref="blSiteMapConfigurationSiteMapGeneratorConfigurationConditionalFieldAnnotationTransformerMember"/>
-            </map>
-        </property>
-    </bean>
-    
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blCommonConditionalFieldAnnotationCopyTransformers"/>
-        <property name="targetRef" value="blConditionalFieldAnnotationCopyTransformers"/>
-    </bean>
-    
-    <!-- End - this block should be removed in 4.1, since the DirectCopyTransform annotations will appear on these entities at that point -->
 
 </beans>

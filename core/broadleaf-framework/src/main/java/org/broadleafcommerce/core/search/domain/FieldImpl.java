@@ -30,7 +30,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -98,26 +97,10 @@ public class FieldImpl implements Field, AdminMainEntity {
     @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_general", order = 3, excluded = true)
     protected String abbreviation;
 
-    @Deprecated
-    @Column(name = "SEARCHABLE")
-    @AdminPresentation(friendlyName = "FieldImpl_searchable", group = "FieldImpl_general", order = 4, excluded = true)
-    protected Boolean searchable = false;
-    
-    // This is a broadleaf enumeration
-    @Deprecated
-    @Column(name = "FACET_FIELD_TYPE")
-    @AdminPresentation(friendlyName = "FieldImpl_facetFieldType", group = "FieldImpl_general", excluded = true)
-    protected String facetFieldType;
-    
     @Column(name = "TRANSLATABLE")
     @AdminPresentation(friendlyName = "FieldImpl_translatable", group = "FieldImpl_general", excluded = true)
     protected Boolean translatable = false;
 
-    @Column(name = "IS_CUSTOM")
-    @AdminPresentation(friendlyName = "FieldImpl_isCustom", group = "FieldImpl_general",
-            visibility = VisibilityEnum.VISIBLE_ALL)
-    protected Boolean isCustom = false;
-    
     @Override
     public String getQualifiedFieldName() {
         return getEntityType().getFriendlyType() + "." + propertyName;
@@ -173,33 +156,6 @@ public class FieldImpl implements Field, AdminMainEntity {
         this.friendlyName = friendlyName;
     }
 
-    @Deprecated
-    @Override
-    public Boolean getSearchable() {
-        if (searchable == null) {
-            return false;
-        }
-        return searchable;
-    }
-
-    @Deprecated
-    @Override
-    public void setSearchable(Boolean searchable) {
-        this.searchable = searchable;
-    }
-
-    @Deprecated
-    @Override
-    public FieldType getFacetFieldType() {
-        return FieldType.getInstance(facetFieldType);
-    }
-
-    @Deprecated
-    @Override
-    public void setFacetFieldType(FieldType facetFieldType) {
-        this.facetFieldType = facetFieldType == null ? null : facetFieldType.getType();
-    }
-    
     @Override
     public Boolean getTranslatable() {
         return translatable == null ? false : translatable;
@@ -208,16 +164,6 @@ public class FieldImpl implements Field, AdminMainEntity {
     @Override
     public void setTranslatable(Boolean translatable) {
         this.translatable = translatable;
-    }
-
-    @Override
-    public Boolean getIsCustom() {
-        return translatable == null ? false : translatable;
-    }
-
-    @Override
-    public void setIsCustom(Boolean isCustom) {
-        this.isCustom = isCustom;
     }
 
     @Deprecated
@@ -263,10 +209,8 @@ public class FieldImpl implements Field, AdminMainEntity {
         }
         Field cloned = createResponse.getClone();
         cloned.setAbbreviation(abbreviation);
-        cloned.setFacetFieldType(getFacetFieldType());
         cloned.setFriendlyName(friendlyName);
         cloned.setPropertyName(propertyName);
-        cloned.setSearchable(searchable);
         cloned.setTranslatable(translatable);
         cloned.setEntityType(getEntityType());
         return createResponse;

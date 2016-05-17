@@ -39,19 +39,19 @@ import javax.persistence.EntityManager;
  */
 public interface DynamicDaoHelper {
 
-    public Map<String, Object> getIdMetadata(Class<?> entityClass, HibernateEntityManager entityManager);
+    Map<String, Object> getIdMetadata(Class<?> entityClass, HibernateEntityManager entityManager);
     
-    public List<String> getPropertyNames(Class<?> entityClass, HibernateEntityManager entityManager);
+    List<String> getPropertyNames(Class<?> entityClass, HibernateEntityManager entityManager);
     
-    public List<Type> getPropertyTypes(Class<?> entityClass, HibernateEntityManager entityManager);
+    List<Type> getPropertyTypes(Class<?> entityClass, HibernateEntityManager entityManager);
     
-    public SessionFactory getSessionFactory(HibernateEntityManager entityManager);
+    SessionFactory getSessionFactory(HibernateEntityManager entityManager);
 
-    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, SessionFactory sessionFactory, boolean includeUnqualifiedPolymorphicEntities, boolean useCache);
+    Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, SessionFactory sessionFactory, boolean includeUnqualifiedPolymorphicEntities, boolean useCache);
 
-    public Class<?>[] sortEntities(Class<?> ceilingClass, List<Class<?>> entities);
+    Class<?>[] sortEntities(Class<?> ceilingClass, List<Class<?>> entities);
 
-    public boolean isExcludeClassFromPolymorphism(Class<?> clazz);
+    boolean isExcludeClassFromPolymorphism(Class<?> clazz);
 
     Serializable getIdentifier(Object entity, EntityManager em);
 
@@ -60,5 +60,8 @@ public interface DynamicDaoHelper {
     Field getIdField(Class<?> clazz, EntityManager em);
 
     Field getIdField(Class<?> clazz, Session session);
+
+    Class<?>[] getUpDownInheritance(Class<?> testClass, SessionFactory sessionFactory,
+                    boolean includeUnqualifiedPolymorphicEntities, boolean useCache, EJB3ConfigurationDao ejb3ConfigurationDao);
 
 }

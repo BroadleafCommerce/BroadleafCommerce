@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -64,7 +65,7 @@ public class PasswordFieldMetadataProvider extends AbstractFieldMetadataProvider
             confirmMd.setFieldName("passwordConfirm");
             confirmMd.setFriendlyName("AdminUserImpl_Admin_Password_Confirm");
             confirmMd.setExplicitFieldType(SupportedFieldType.PASSWORD_CONFIRM);
-            confirmMd.setValidationConfigurations(new HashMap<String, Map<String,String>>());
+            confirmMd.setValidationConfigurations(new HashMap<String, List<Map<String,String>>>());
             metadata.put("passwordConfirm", confirmMd);
             return FieldProviderResponse.HANDLED;
         } else {

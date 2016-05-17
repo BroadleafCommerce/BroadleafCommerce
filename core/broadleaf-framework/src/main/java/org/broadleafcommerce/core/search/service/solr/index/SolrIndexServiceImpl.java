@@ -44,20 +44,20 @@ import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.search.dao.CatalogStructure;
 import org.broadleafcommerce.core.search.dao.FieldDao;
+import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
-import org.broadleafcommerce.core.search.dao.SearchFieldDao;
 import org.broadleafcommerce.core.search.dao.SolrIndexDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
-import org.broadleafcommerce.core.search.domain.SearchFacet;
-import org.broadleafcommerce.core.search.domain.SearchField;
-import org.broadleafcommerce.core.search.domain.SearchFieldType;
+import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrContext;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
@@ -66,7 +66,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -80,7 +79,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.annotation.Resource;
 
 
@@ -122,6 +120,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Resource(name = "blSkuDao")
     protected SkuDao skuDao;
 
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
+
     @Resource(name = "blFieldDao")
     protected FieldDao fieldDao;
 
@@ -146,8 +147,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Resource(name = "blSearchFacetDao")
     protected SearchFacetDao searchFacetDao;
 
-    @Resource(name = "blSearchFieldDao")
-    protected SearchFieldDao searchFieldDao;
+    @Resource(name = "blIndexFieldDao")
+    protected IndexFieldDao indexFieldDao;
 
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
@@ -218,8 +219,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         return new GlobalSolrFullReIndexOperation(this, shs, errorOnConcurrentReIndex) {
 
             @Override
-            public List<? extends Indexable> readIndexables(int page, int pageSize) {
-                return readAllActiveIndexables(page, pageSize);
+            public List<? extends Indexable> readIndexables(int pageSize, Long lastId) {
+                return readAllActiveIndexables(pageSize, lastId);
             }
 
             @Override
@@ -261,8 +262,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     @Override
                     public void execute() throws ServiceException {
                         int page = 0;
+                        Long lastId = null;
                         while ((page * pageSize) < numItemsToIndex) {
-                            buildIncrementalIndex(page, pageSize, operation);
+                            LOG.info(String.format("Building page number %s", page));
+                            lastId = buildIncrementalIndex(pageSize, lastId, operation);
                             page++;
                         }
                     }
@@ -340,19 +343,22 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
     }
 
-    protected void buildIncrementalIndex(int page, int pageSize, SolrIndexOperation operation) throws ServiceException {
+    protected Long buildIncrementalIndex(int pageSize, Long lastId, SolrIndexOperation operation) throws ServiceException {
         TransactionStatus status = TransactionUtils.createTransaction("readItemsToIndex",
             TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (SolrIndexCachedOperation.getCache() == null) {
             LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
                     "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
         }
-        
+        Long response = null;
         try {
             List<? extends Indexable> indexables;
             try {
                 operation.beforeReadIndexables();
-                indexables = operation.readIndexables(page, pageSize);
+                indexables = operation.readIndexables(pageSize, lastId);
+                if (CollectionUtils.isNotEmpty(indexables)) {
+                    response = indexables.get(indexables.size()-1).getId();
+                }
             } finally {
                 operation.afterReadIndexables();
             }
@@ -371,7 +377,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw e;
         }
-
+        return response;
     }
     
     @Override
@@ -389,6 +395,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         
         StopWatch s = new StopWatch();
         try {
+            sandBoxHelper.ignoreCloneCache(true);
             extensionManager.getProxy().startBatchEvent(indexables);
             Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
             List<Locale> locales = getAllLocales();
@@ -402,11 +409,11 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
             solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
 
-            List<Field> fields = null;
+            List<IndexField> fields = null;
             FieldEntity currentFieldType = null;
             for (Indexable indexable : indexables) {
                 if (fields == null || ObjectUtils.notEqual(currentFieldType, indexable.getFieldEntityType())) {
-                    fields = fieldDao.readFieldsByEntityType(indexable.getFieldEntityType());
+                    fields = indexFieldDao.readFieldsByEntityType(indexable.getFieldEntityType());
                 }
                 
                 SolrInputDocument doc = buildDocument(indexable, fields, locales);
@@ -444,15 +451,16 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             throw e;
         } finally {
             extensionManager.getProxy().endBatchEvent(indexables);
+            sandBoxHelper.ignoreCloneCache(false);
         }
     }
 
-    protected List<? extends Indexable> readAllActiveIndexables(int page, int pageSize) {
+    protected List<? extends Indexable> readAllActiveIndexables(int pageSize, Long lastId) {
         if (useSku) {
-            List<Sku> skus = skuDao.readAllActiveSkus(page, pageSize);
+            List<Sku> skus = skuDao.readAllActiveSkus(pageSize, lastId);
             return filterIndexableSkus(skus);
         } else {
-            return productDao.readAllActiveProducts(page, pageSize);
+            return productDao.readAllActiveProducts(pageSize, lastId);
         }
     }
     
@@ -491,7 +499,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
     
     @Override
-    public SolrInputDocument buildDocument(final Indexable indexable, List<Field> fields, List<Locale> locales) {
+    public SolrInputDocument buildDocument(final Indexable indexable, List<IndexField> fields, List<Locale> locales) {
         final SolrInputDocument document = new SolrInputDocument();
 
         attachBasicDocumentFields(indexable, document);
@@ -504,27 +512,19 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     @Override
-    public void attachIndexableDocumentFields(SolrInputDocument document, Indexable indexable, List<Field> fields, List<Locale> locales) {
-        // Keep track of searchable fields added to the index.   We need to also add the search facets if
-        // they weren't already added as a searchable field.
-        List<String> addedProperties = new ArrayList<String>();
-
-        for (Field field : fields) {
+    public void attachIndexableDocumentFields(SolrInputDocument document, Indexable indexable, List<IndexField> fields, List<Locale> locales) {
+        for (IndexField indexField : fields) {
             try {
-                // Index the searchable fields
-                // Determine if field is searchable (check if it has a search field entry in BLC_SEARCH_FIELD)
-                SearchField searchField = searchFieldDao.readSearchFieldForField(field);
-
-                // If we find a SearchField entry for this field, then this field is searchable
-                if (searchField != null) {
-                    List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
+                // If we find an IndexField entry for this field, then we need to store it in the index
+                if (indexField != null) {
+                    List<IndexFieldType> searchableFieldTypes = indexField.getFieldTypes();
 
                     // For each of its search field types, get the property values, and add a field to the document for each property value
-                    for (SearchFieldType sft : searchableFieldTypes) {
-                        FieldType fieldType = sft.getSearchableFieldType();
-                        Map<String, Object> propertyValues = getPropertyValues(indexable, field, fieldType, locales);
+                    for (IndexFieldType sft : searchableFieldTypes) {
+                        FieldType fieldType = sft.getFieldType();
+                        Map<String, Object> propertyValues = getPropertyValues(indexable, indexField.getField(), fieldType, locales);
 
-                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForSearchField(document, field, fieldType, propertyValues, addedProperties);
+                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForIndexField(document, indexField, fieldType, propertyValues);
 
                         if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
                             // Build out the field for every prefix
@@ -532,45 +532,21 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                                 String prefix = entry.getKey();
                                 prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
 
-                                String solrPropertyName = shs.getPropertyNameForFieldSearchable(field, fieldType, prefix);
+                                String solrPropertyName = shs.getPropertyNameForIndexField(indexField, fieldType, prefix);
                                 Object value = entry.getValue();
-
-                                document.addField(solrPropertyName, value);
-                                addedProperties.add(solrPropertyName);
-                            }
-                        }
-                    }
-                }
-
-                // Index the faceted field type as well
-                // Determine if field is faceted (check if it has a search facet entry in BLC_SEARCH_FACET)
-                SearchFacet searchFacet = searchFacetDao.readSearchFacetForField(field);
-
-                // If we find a SearchFacet entry for this field, then this field is faceted
-                if (searchFacet != null && searchFacet.getFacetFieldType() != null) {
-                    // Get the FacetFieldType for the SearchFacet, get the property values, and add a field to the document for each property value
-                    FieldType facetType = FieldType.getInstance(searchFacet.getFacetFieldType());
-
-                    if (facetType != null) {
-                        Map<String, Object> propertyValues = getPropertyValues(indexable, field, facetType, locales);
-
-                        // Build out the field for every prefix
-                        for (Entry<String, Object> entry : propertyValues.entrySet()) {
-                            String prefix = entry.getKey();
-                            prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
-
-                            String solrFacetPropertyName = shs.getPropertyNameForFieldFacet(field, prefix, facetType);
-                            Object value = entry.getValue();
-
-                            if (!addedProperties.contains(solrFacetPropertyName)) {
-                                document.addField(solrFacetPropertyName, value);
+                                
+                                if (FieldType.isMultiValued(fieldType)) {
+                                    document.addField(solrPropertyName, value);
+                                } else {
+                                    document.setField(solrPropertyName, value);
+                                }
                             }
                         }
                     }
                 }
 
             } catch (Exception e) {
-                LOG.error("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
+                LOG.error("Could not get value for property[" + indexField.getField().getQualifiedFieldName() + "] for product id["
                         + indexable.getId() + "]", e);
                 throw ExceptionHelper.refineException(e);
             }

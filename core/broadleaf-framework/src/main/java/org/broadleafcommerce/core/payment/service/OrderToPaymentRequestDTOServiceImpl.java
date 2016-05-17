@@ -21,7 +21,11 @@
 package org.broadleafcommerce.core.payment.service;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
+import org.broadleafcommerce.common.payment.PaymentGatewayRequestType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
@@ -41,10 +45,18 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 /**
+ * Service that translates various pieces of information such as:
+ * - {@link org.broadleafcommerce.core.order.domain.Order}
+ * - {@link org.broadleafcommerce.core.payment.domain.PaymentTransaction}
+ * into a {@link org.broadleafcommerce.common.payment.dto.PaymentRequestDTO} so that the gateway can create
+ * the appropriate request for a specific transaction.
+ *
  * @author Elbert Bautista (elbertbautista)
  */
 @Service("blOrderToPaymentRequestDTOService")
 public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentRequestDTOService {
+
+    private static final Log LOG = LogFactory.getLog(OrderToPaymentRequestDTOServiceImpl.class);
 
     public static final String ZERO_TOTAL = "0";
     
@@ -54,6 +66,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     @Override
     public PaymentRequestDTO translateOrder(Order order) {
         if (order != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(String.format("Translating Order (ID:%s) into a PaymentRequestDTO for the configured " +
+                        "gateway.", order.getId()));
+            }
             PaymentRequestDTO requestDTO = new PaymentRequestDTO()
                     .orderId(order.getId().toString());
             if (order.getCurrency() != null) {
@@ -71,12 +87,15 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
         return null;
     }
-    
-    //Logger LOG = Logger.getLogger(this.getClass().getName()); 
 
     @Override
     public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction) {
-    	
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(String.format("Translating Payment Transaction (ID:%s) into a PaymentRequestDTO for the configured " +
+                    "gateway.", paymentTransaction.getId()));
+        }
+
         //Will set the full amount to be charged on the transaction total/subtotal and not worry about shipping/tax breakdown
         PaymentRequestDTO requestDTO = new PaymentRequestDTO()
             .transactionTotal(transactionAmount.getAmount().toPlainString())
@@ -92,10 +111,18 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         populateBillTo(order, requestDTO);
 
         // Only set totals and line items when in a Payment flow
-        if (PaymentTransactionType.UNCONFIRMED.equals(paymentTransaction.getType())) {
+        // (i.e. where the transaction is meant to be charged, UNCONFIRMED -> AUTHORIZE or UNCONFIRMED -> AUTHORIZE_AND_CAPTURE)
+        // AND where the order does not contain multiple final payments. (e.g. multiple credit cards)
+        // - If in a REFUND flow OR paying with multiple final payments OR this is a DETACHED_CREDIT request,
+        //   you cannot use the total after applied payments convenience method.
+        // - The amounts to be sent to the gateway are the amounts passed in.
+        if (PaymentTransactionType.UNCONFIRMED.equals(paymentTransaction.getType()) &&
+                !orderContainsMultipleFinalPayments(order) &&
+                !transactionIsDetachedCreditRequest(paymentTransaction)) {
             populateTotals(order, requestDTO);
             populateDefaultLineItemsAndSubtotal(order, requestDTO);
         }
+
         //Copy Additional Fields from PaymentTransaction into the Request DTO.
         //This will contain any gateway specific information needed to perform actions on this transaction
         Map<String, String> additionalFields = paymentTransaction.getAdditionalFields();
@@ -105,6 +132,33 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         }
 
         return requestDTO;
+    }
+
+    /**
+     * determine whether or not this order contains multiple final payments.
+     * (e.g. paying with multiple credit cards)
+     * @param order
+     * @return
+     */
+    protected boolean orderContainsMultipleFinalPayments(Order order) {
+        int finalPaymentCount = 0;
+        for (OrderPayment payment : order.getPayments()) {
+            if (payment.isActive() && payment.isFinalPayment()) {
+                finalPaymentCount++;
+            }
+        }
+        return finalPaymentCount > 1;
+    }
+
+    /**
+     * determine whether or not this transaction is a detached credit request.
+     * By default, will look at the additional fields map to determine intent
+     * (as the actual type of the transaction is UNCONFIRMED).
+     * @param transaction
+     * @return
+     */
+    protected boolean transactionIsDetachedCreditRequest(PaymentTransaction transaction) {
+        return transaction.getAdditionalFields().containsKey(PaymentGatewayRequestType.DETACHED_CREDIT_REFUND.getType());
     }
 
     @Override

@@ -375,5 +375,4 @@ public interface AdminEntityService {
      */
     public String getForeignEntityName(String owningClass, String id);
 
-
 }

@@ -99,8 +99,10 @@ public class AdminOfferController extends AdminBasicEntityController {
      */
     protected void modifyModelAttributes(Model model) {
         model.addAttribute("additionalControllerClasses", "offer-form");
-        EntityForm form = (EntityForm) model.asMap().get("entityForm");
-        form.findField("targetItemCriteria").setRequired(true);
+        if (model.asMap().containsKey("entityForm")) {
+            EntityForm form = (EntityForm) model.asMap().get("entityForm");
+            form.findField("targetItemCriteria").setRequired(true);
+        }
     }
     
 }

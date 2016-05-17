@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -55,6 +58,9 @@ import javax.persistence.Table;
 @Table(name = "BLC_ADMIN_SECTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "AdminSectionImpl_baseAdminSection")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+})
 public class AdminSectionImpl implements AdminSection {
 
     private static final long serialVersionUID = 1L;

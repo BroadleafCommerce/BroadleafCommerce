@@ -82,24 +82,9 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
     @Resource(name = "blCheckoutService")
     protected CheckoutService checkoutService;
-    
-    @Resource(name = "blAddressService")
-    protected AddressService addressService;
-    
-    @Resource(name = "blStateService")
-    protected StateService stateService;
-    
-    @Resource(name = "blCountryService")
-    protected CountryService countryService;
 
-    @Resource(name = "blISOService")
-    protected ISOService isoService;
-    
-    @Resource(name = "blPhoneService")
-    protected PhoneService phoneService;
-
-    @Resource(name = "blFulfillmentGroupService")
-    protected FulfillmentGroupService fulfillmentGroupService;
+    @Resource(name = "blPaymentResponseDTOToEntityService")
+    protected PaymentResponseDTOToEntityService dtoToEntityService;
 
     @Value("${default.payment.gateway.checkout.useGatewayBillingAddress}")
     protected boolean useBillingAddressFromGateway = true;
@@ -144,7 +129,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         }
 
         // If the gateway sends back Shipping Information, we will save that to the first shippable fulfillment group.
-        populateShippingInfo(responseDTO, order);
+        dtoToEntityService.populateShippingInfo(responseDTO, order);
 
         // ALWAYS create a new order payment for the payment that comes in. Invalid payments should be cleaned up by
         // invoking {@link #markPaymentAsInvalid}.
@@ -186,7 +171,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         // Response DTO sent back from the Gateway as it may have Address Verification or Standardization.
         // If you do not wish to use the Billing Address coming back from the Gateway, you can override the
         // populateBillingInfo() method or set the useBillingAddressFromGateway property.
-        populateBillingInfo(responseDTO, payment, tempBillingAddress);
+        dtoToEntityService.populateBillingInfo(responseDTO, payment, tempBillingAddress, isUseBillingAddressFromGateway());
         
         // Create the transaction for the payment
         PaymentTransaction transaction = orderPaymentService.createTransaction();
@@ -229,78 +214,6 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         }
         
         return payment.getId();
-    }
-
-    protected void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, Address tempBillingAddress) {
-        Address billingAddress = tempBillingAddress;
-        if (responseDTO.getBillTo() != null && isUseBillingAddressFromGateway()) {
-            billingAddress = addressService.create();
-            AddressDTO<PaymentResponseDTO> billToDTO = responseDTO.getBillTo();
-            populateAddressInfo(billingAddress, billToDTO);
-        }
-
-        payment.setBillingAddress(billingAddress);
-    }
-    
-    protected void populateShippingInfo(PaymentResponseDTO responseDTO, Order order) {
-        FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order);
-        Address shippingAddress = null;
-        if (responseDTO.getShipTo() != null && shippableFulfillmentGroup != null) {
-            shippingAddress = addressService.create();
-            AddressDTO<PaymentResponseDTO> shipToDTO = responseDTO.getShipTo();
-            populateAddressInfo(shippingAddress, shipToDTO);
-            
-            shippableFulfillmentGroup = fulfillmentGroupService.findFulfillmentGroupById(shippableFulfillmentGroup.getId());
-            if (shippableFulfillmentGroup != null) {
-                shippableFulfillmentGroup.setAddress(shippingAddress);
-                fulfillmentGroupService.save(shippableFulfillmentGroup);
-            }
-        }
-    }
-    
-    protected void populateAddressInfo(Address address, AddressDTO<PaymentResponseDTO> dto) {
-        address.setFirstName(dto.getAddressFirstName());
-        address.setLastName(dto.getAddressLastName());
-        address.setFullName(dto.getAddressFirstName() + " " + dto.getAddressLastName());
-        address.setAddressLine1(dto.getAddressLine1());
-        address.setAddressLine2(dto.getAddressLine2());
-        address.setCity(dto.getAddressCityLocality());
-
-        State state = null;
-        if(dto.getAddressStateRegion() != null) {
-            state = stateService.findStateByAbbreviation(dto.getAddressStateRegion());
-        }
-        if (state == null) {
-            LOG.warn("The given state from the response: " + dto.getAddressStateRegion() + " could not be found"
-                    + " as a state abbreviation in BLC_STATE");
-        }
-        address.setState(state);
-        address.setStateProvinceRegion(dto.getAddressStateRegion());
-
-        address.setPostalCode(dto.getAddressPostalCode());
-
-        Country country = null;
-        ISOCountry isoCountry = null;
-        if (dto.getAddressCountryCode() != null) {
-            country = countryService.findCountryByAbbreviation(dto.getAddressCountryCode());
-            isoCountry = isoService.findISOCountryByAlpha2Code(dto.getAddressCountryCode());
-        }
-        if (country == null) {
-            LOG.warn("The given country from the response: " + dto.getAddressCountryCode() + " could not be found"
-                    + " as a country abbreviation in BLC_COUNTRY");
-        } else if (isoCountry == null) {
-            LOG.error("The given country from the response: " + dto.getAddressCountryCode() + " could not be found"
-                    + " as a country alpha-2 code in BLC_ISO_COUNTRY");
-        }
-
-        address.setCountry(country);
-        address.setIsoCountryAlpha2(isoCountry);
-
-        if (dto.getAddressPhone() != null) {
-            Phone billingPhone = phoneService.create();
-            billingPhone.setPhoneNumber(dto.getAddressPhone());
-            address.setPhonePrimary(billingPhone);
-        }
     }
 
     /**

@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
+import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
 import org.broadleafcommerce.profile.core.domain.Address;
 
 import java.io.Serializable;
@@ -127,7 +128,7 @@ public interface OrderPayment extends Serializable, Status {
      * just archiving this payment type (by deleting it) and creating a new payment for the new gateway.</p>
      */
     public void setPaymentGatewayType(PaymentGatewayType gatewayType);
-    
+
     /**
      * <p>All of the transactions that have been applied to this particular payment. Transactions are denoted by the various
      * {@link PaymentTransactionType}s. In almost all scenarios (as in, 99.9999% of all cases) there will be a at least one
@@ -167,10 +168,8 @@ public interface OrderPayment extends Serializable, Status {
     public List<PaymentTransaction> getTransactionsForType(PaymentTransactionType type);
 
     /**
-     * Returns the initial transaction for this order payment. This would either be an {@link PaymentTransactionType#AUTHORIZE}
-     * or {@link PaymentTransactionType#AUTHORIZE_AND_CAPTURE} or {@link PaymentTransactionType#UNCONFIRMED}.
-     * Implementation-wise this would
-     * be any PaymentTransaction whose parentTransaction is NULL.
+     * Returns the initial transaction for this order payment.
+     * Implementation-wise this would be any PaymentTransaction whose parentTransaction is NULL.
      *
      * @return the initial transaction for this order payment or null if there isn't any
      */
@@ -195,8 +194,15 @@ public interface OrderPayment extends Serializable, Status {
     public Money getSuccessfulTransactionAmountForType(PaymentTransactionType type);
 
     /**
+     * Convenience method to get the calculated status of this order payment based on the
+     * state of the {@link #getTransactions()}
+     * @return {@link org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus}
+     */
+    public OrderPaymentStatus getStatus();
+
+    /**
      * Looks through all of the transactions for this payment and returns whether or not
-     * it contains a transaction of type {@link PaymentTransactionType#AUTHORIZE_AND_CAPTURE} or
+     * it contains a successful transaction of type {@link PaymentTransactionType#AUTHORIZE_AND_CAPTURE} or
      * {@link PaymentTransactionType#AUTHORIZE}
      *
      * @return

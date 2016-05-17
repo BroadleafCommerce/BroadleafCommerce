@@ -26,10 +26,10 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
@@ -44,6 +44,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -52,11 +53,16 @@ import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
+import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.RequiredFacet;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
@@ -116,9 +122,15 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Resource(name = "blSearchFacetDao")
     protected SearchFacetDao searchFacetDao;
 
+    @Resource(name = "blIndexFieldDao")
+    protected IndexFieldDao indexFieldDao;
+
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
     
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericEntityDao;
+
     /**
      * This should only ever be called when using the Solr reindex service to do a full reindex. 
      */
@@ -149,7 +161,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
                         .setAliasedCollections(reindexCollectionName).process(primary);
                 new CollectionAdminRequest.CreateAlias().setAliasName(reindex.getDefaultCollection())
-                        .setAliasedCollections(primaryCollectionName).process(primary);
+                        .setAliasedCollections(primaryCollectionName).process(reindex);
             } catch (Exception e) {
                 LOG.error("An exception occured swapping cores.", e);
                 throw new ServiceException("Unable to swap SolrCloud collections after a full reindex.", e);
@@ -186,46 +198,19 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType, String prefix) {
+    public String getPropertyNameForIndexField(IndexField field, FieldType fieldType, String prefix) {
         return new StringBuilder()
                 .append(prefix)
-                .append(field.getAbbreviation()).append("_").append(searchableFieldType.getType())
+                .append(field.getField().getAbbreviation()).append("_").append(fieldType.getType())
                 .toString();
     }
 
     @Override
-    public String getPropertyNameForFieldFacet(Field field, String prefix, FieldType facetType) {
-        if (facetType == null) {
-            return null;
-        }
-
-        return new StringBuilder()
-                .append(prefix)
-                .append(field.getAbbreviation()).append("_").append(facetType.getType())
-                .toString();
-    }
-
-    @Override
-    public String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType) {
+    public String getPropertyNameForIndexField(IndexField field, FieldType searchableFieldType) {
         List<String> prefixList = new ArrayList<String>();
-        searchExtensionManager.getProxy().buildPrefixListForSearchableField(field, searchableFieldType, prefixList);
+        searchExtensionManager.getProxy().buildPrefixListForIndexField(field, searchableFieldType, prefixList);
         String prefix = convertPrefixListToString(prefixList);
-        return getPropertyNameForFieldSearchable(field, searchableFieldType, prefix);
-    }
-
-    @Override
-    public String getPropertyNameForFieldFacet(Field field) {
-        SearchFacet searchFacet = searchFacetDao.readSearchFacetForField(field);
-        if (searchFacet == null || searchFacet.getFacetFieldType() == null) {
-            return null;
-        }
-
-        List<String> prefixList = new ArrayList<String>();
-
-        searchExtensionManager.getProxy().buildPrefixListForSearchableFacet(field, prefixList);
-        String prefix = convertPrefixListToString(prefixList);
-
-        return getPropertyNameForFieldFacet(field, prefix, FieldType.getInstance(searchFacet.getFacetFieldType()));
+        return getPropertyNameForIndexField(field, searchableFieldType, prefix);
     }
 
     protected String convertPrefixListToString(List<String> prefixList) {
@@ -251,7 +236,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public Long getCategoryId(Long category) {
         Long[] returnId = new Long[1];
-        ExtensionResultStatusType result = indexExtensionManager.getProxy().getCategoryId(category, returnId);
+        //TODO (qa 607) Need to review the performance of retrieval of the Category instance here every time (using the id version breaks for indexing derived catalogs)
+        ExtensionResultStatusType result = searchExtensionManager.getProxy().getCategoryId(genericEntityDao.readGenericEntity(CategoryImpl.class, category), returnId);
         if (result.equals(ExtensionResultStatusType.HANDLED)) {
             return returnId[0];
         }
@@ -588,6 +574,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 facetDTO.getFacetValues().add(resultDTO);
             }
         }
+
+        searchExtensionManager.getProxy().setFacetResults(namedFacetMap, response);
     }
 
     @Override
@@ -614,19 +602,23 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
             SearchFacetDTO dto = entry.getValue();
 
-            // Clone the list - we don't want to remove these facets from the DB
-            List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
+            ExtensionResultStatusType status = searchExtensionManager.getProxy().attachFacet(query, entry.getKey(), dto);
 
-            if (searchExtensionManager != null) {
-                searchExtensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
-            }
+            if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+                // Clone the list - we don't want to remove these facets from the DB
+                List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
 
-            if (facetRanges != null && facetRanges.size() > 0) {
-                for (SearchFacetRange range : facetRanges) {
-                    query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
+                if (searchExtensionManager != null) {
+                    searchExtensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
                 }
-            } else {
-                query.addFacetField(getSolrTaggedFieldString(entry.getKey(), "ex", null));
+
+                if (facetRanges != null && facetRanges.size() > 0) {
+                    for (SearchFacetRange range : facetRanges) {
+                        query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
+                    }
+                } else {
+                    query.addFacetField(getSolrTaggedFieldString(entry.getKey(), "ex", null));
+                }
             }
         }
     }
@@ -658,9 +650,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort, List<Field> fields) {
-        Map<String, String> solrFieldKeyMap = getSolrFieldKeyMap(searchCriteria, fields);
-
+    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
         String sortQuery = searchCriteria.getSortQuery();
         if (StringUtils.isBlank(sortQuery)) {
             sortQuery = defaultSort;
@@ -668,32 +658,65 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
         if (StringUtils.isNotBlank(sortQuery)) {
             String[] sortFields = sortQuery.split(",");
+
             for (String sortField : sortFields) {
-                String field = sortField.split(" ")[0];
-                if (solrFieldKeyMap.containsKey(field)) {
-                    field = solrFieldKeyMap.get(field);
-                }
-                ORDER order = ORDER.asc;
                 String[] sortFieldsSegments = sortField.split(" ");
-                if (sortFieldsSegments.length < 2) {
-                    StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
-                    msg.append("\nDefaulting to ASCending");
-                    LOG.warn(msg.toString());
-                } else if ("desc".equals(sortFieldsSegments[1])) {
-                    order = ORDER.desc;
-                }
-                if (field != null) {
+                String requestedSortFieldName = sortFieldsSegments[0];
+                
+                List<IndexFieldType> fieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviation(requestedSortFieldName);
+                
+                // Used to determine if, by looping through the index field types managed in the database, we actually
+                // attach the sort field that is being requested. If we do, then we shouldn't manually add the requested
+                // sort field ourselves but if not, we should
+                boolean requestedSortFieldAdded = false;
+                
+                // Loop through all of the field types for the given sort field and add each generated field name
+                // as a sort. Generated field names are comprised of both the field abbreviation and their type, and each
+                // field could have indexed multiple field types. Rather than try to guess which field type to sort by
+                // this sorts by them all
+                for (IndexFieldType fieldType : fieldTypes) {
+                    String field = getPropertyNameForIndexField(fieldType.getIndexField(), fieldType.getFieldType());
+                    
+                    // Verify that the field that is being added as a sort is a match for the field that is requesting
+                    // to be sorted by. Since field abbreviations are what are added to the index, this is what should
+                    // be checked
+                    if (fieldType.getIndexField().getField().getAbbreviation().equals(requestedSortFieldName)) {
+                        requestedSortFieldAdded = true;
+                    }
+                    
+                    ORDER order = getSortOrder(sortFieldsSegments, sortQuery);
                     query.addSort(new SortClause(field, order));
+                }
+                
+                // At the end here, it's possible that the field that was passed in to sort by was not managed in the
+                // database in the list of index fields and their types. If that's the case, go ahead and add it as a sort
+                // field anyway since we're trusting that the field was actually added to the index by some programmatic means
+                if (!requestedSortFieldAdded) {
+                    query.addSort(new SortClause(requestedSortFieldName, getSortOrder(sortFieldsSegments, sortQuery)));
                 }
             }
         }
     }
+    
+    protected ORDER getSortOrder(String[] sortFieldsSegments, String sortQuery) {
+        ORDER order = ORDER.asc;
+        if (sortFieldsSegments.length < 2) {
+            StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
+            msg.append("\nDefaulting to ASCending");
+            LOG.warn(msg.toString());
+        } else if ("desc".equals(sortFieldsSegments[1])) {
+            order = ORDER.desc;
+        }
+        return order;
+    }
 
     @Override
-    public Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria, List<Field> fields) {
+    public Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria, List<IndexField> fields) {
         Map<String, String> solrFieldKeyMap = new HashMap<String, String>();
-        for (Field field : fields) {
-            solrFieldKeyMap.put(field.getAbbreviation(), getPropertyNameForFieldFacet(field));
+        for (IndexField field : fields) {
+            for (IndexFieldType type : field.getFieldTypes()) {
+                solrFieldKeyMap.put(field.getField().getAbbreviation(), getPropertyNameForIndexField(field, type.getFieldType()));
+            }
         }
         return solrFieldKeyMap;
     }
@@ -705,7 +728,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
             @Override
             public String getKey(SearchFacetDTO facet) {
-                return getPropertyNameForFieldFacet(facet.getFacet().getField());
+                return getPropertyNameForIndexField(facet.getFacet().getFieldType().getIndexField(),
+                        FieldType.getInstance(facet.getFacet().getFacetFieldType()));
             }
         });
     }
@@ -742,19 +766,28 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                             selectedValues[i] = "\"" + scrubFacetValue(selectedValues[i]) + "\"";
                         }
                     }
-                    StringBuilder valueString = new StringBuilder();
-                    if (rangeQuery) {
-                        valueString.append(solrKey).append(":(");
-                        valueString.append(StringUtils.join(selectedValues, " OR "));
-                        valueString.append(")");
-                    } else {
-                        valueString.append("{!tag=").append(solrKey).append("}");
-                        valueString.append(solrKey).append(":(");
-                        valueString.append(StringUtils.join(selectedValues, " OR "));
-                        valueString.append(")");
+
+                    FieldEntity entityType = namedFacetMap.get(solrKey).getFacet().getFieldType().getIndexField().getField().getEntityType();
+                    List<String> valueStrings = new ArrayList<>();
+                    ExtensionResultStatusType status = searchExtensionManager.getProxy().buildActiveFacetFilter(entityType, solrKey, selectedValues, valueStrings);
+
+                    if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+                        StringBuilder valueString = new StringBuilder();
+
+                        if (rangeQuery) {
+                            valueString.append(solrKey).append(":(");
+                            valueString.append(StringUtils.join(selectedValues, " OR "));
+                            valueString.append(")");
+                        } else {
+                            valueString.append("{!tag=").append(solrKey).append("}");
+                            valueString.append(solrKey).append(":(");
+                            valueString.append(StringUtils.join(selectedValues, " OR "));
+                            valueString.append(")");
+                        }
+                        valueStrings.add(valueString.toString());
                     }
 
-                    query.addFilterQuery(valueString.toString());
+                    query.addFilterQuery(valueStrings.toArray(new String[valueStrings.size()]));
                 }
             }
         }
@@ -770,6 +803,13 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             return null;
         }
 
+        boolean isPropertyReadable = PropertyUtils.isReadable(object, components[currentPosition]);
+        if (!isPropertyReadable) {
+            LOG.debug(String.format("Could not find %s on %s, assuming this exists elsewhere in the class hierarchy",
+                components[currentPosition], object.getClass().getName()));
+            return null;
+        }
+        
         Object propertyObject = PropertyUtils.getProperty(object, components[currentPosition]);
 
         if (propertyObject != null) {
@@ -838,5 +878,31 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         }
     }
 
+    @Override
+    public List<IndexField> getSearchableIndexFields() {
+        List<IndexField> fields = new ArrayList<>();
 
+        ExtensionResultStatusType status = searchExtensionManager.getProxy().getSearchableIndexFields(fields);
+
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+            if (useSku) {
+                fields = indexFieldDao.readSearchableFieldsByEntityType(FieldEntity.SKU);
+            } else {
+                fields = indexFieldDao.readSearchableFieldsByEntityType(FieldEntity.PRODUCT);
+            }
+        }
+
+        return fields;
+    }
+
+    @Override
+    public List<Long> getCategoryFilterIds(Category category, SearchCriteria searchCriteria) {
+        List<Long> categoryIds = new ArrayList<>();
+
+        categoryIds.add(getCategoryId(category));
+
+        searchExtensionManager.getProxy().addAdditionalCategoryIds(category, searchCriteria, categoryIds);
+
+        return categoryIds;
+    }
 }

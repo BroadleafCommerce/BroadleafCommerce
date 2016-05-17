@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
 
@@ -74,13 +75,8 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
     }
 
     @Override
-    public ExtensionResultStatusType buildPrefixListForSearchableFacet(Field field, List<String> prefixList) {
-        return getLocalePrefix(field, prefixList);
-    }
-
-    @Override
-    public ExtensionResultStatusType buildPrefixListForSearchableField(Field field, FieldType searchableFieldType, List<String> prefixList) {
-        return getLocalePrefix(field, prefixList);
+    public ExtensionResultStatusType buildPrefixListForIndexField(IndexField field, FieldType fieldType, List<String> prefixList) {
+        return getLocalePrefix(field.getField(), prefixList);
     }
 
 

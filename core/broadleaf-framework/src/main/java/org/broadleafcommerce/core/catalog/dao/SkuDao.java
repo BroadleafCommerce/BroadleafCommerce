@@ -138,6 +138,19 @@ public interface SkuDao {
     public List<Sku> readAllActiveSkus(int page, int pageSize);
 
     /**
+     * Reads all skus from the database that are currently active. This method utilizes efficient
+     * paging to retrieve a subset of records. This approach does not use an offset technique (like {@link #readAllActiveSkus(int, int)},
+     * but rather limits the retrieved records to those greater than the given id and returns a max results of pageSize. This
+     * is more efficient that using an offset, since the database will not have to retrieve all the records from the beginning
+     * of the table and trim the offset.
+     *
+     * @param pageSize the number of results per page
+     * @param lastId the last id from the previous page - can be null if this is the first page request
+     * @return a list of active skus for the given page
+     */
+    List<Sku> readAllActiveSkus(Integer pageSize, Long lastId);
+
+    /**
      * Returns the number of milliseconds that the current date/time will be cached for queries before refreshing.
      * This aids in query caching, otherwise every query that utilized current date would be different and caching
      * would be ineffective.

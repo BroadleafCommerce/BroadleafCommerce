@@ -21,6 +21,7 @@ package org.broadleafcommerce.admin.web.controller.action;
 
 import org.broadleafcommerce.admin.server.service.AdminCatalogService;
 import org.broadleafcommerce.admin.web.controller.entity.AdminProductController;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,12 +43,18 @@ import javax.servlet.http.HttpServletResponse;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link AdminProductController}
+ * 
  */
 @Controller("blAdminCatalogActionsController")
 public class AdminCatalogActionsController extends AdminAbstractController {
     
     @Resource(name = "blAdminCatalogService")
     protected AdminCatalogService adminCatalogService;
+
+    public static String NO_SKUS_GENERATED = BLCMessageUtils.getMessage("noSkusGenerated");
+    public static String NO_PRODUCT_OPTIONS_GENERATED = BLCMessageUtils.getMessage("noProductOptionsConfigured");
+    public static String FAILED_SKU_GENERATION = BLCMessageUtils.getMessage("errorNeedAllowedValue");
+    public static String NUMBER_SKUS_GENERATED = BLCMessageUtils.getMessage("numberSkusGenerated");
 
     /**
      * Invokes a separate service to generate a list of Skus for a particular {@link Product} and that {@link Product}'s
@@ -62,14 +69,16 @@ public class AdminCatalogActionsController extends AdminAbstractController {
         HashMap<String, Object> result = new HashMap<String, Object>();
         Integer skusGenerated = adminCatalogService.generateSkusFromProduct(productId);
         
-        //TODO: Externalize these messages to property files
+        //TODO: Modify the message "Failed to generate Skus...." to include which Product Option is the offender
         if (skusGenerated == 0) {
-            result.put("message", "No Skus were generated. It is likely that each product option value permutation " +
-            		"already has a Sku associated with it");
+            result.put("message", NO_SKUS_GENERATED);
         } else if (skusGenerated == -1) {
-            result.put("message", "This product has no Product Options configured to generate Skus from");
+            result.put("message", NO_PRODUCT_OPTIONS_GENERATED);
+        } else if (skusGenerated == -2) {
+            result.put("message", FAILED_SKU_GENERATION);
+            result.put("error", "no-allowed-value-error");
         } else {
-            result.put("message", skusGenerated + " Skus have been generated from the configured product options");
+            result.put("message", skusGenerated + " " + NUMBER_SKUS_GENERATED);
         }
         
         String url = request.getRequestURL().toString();

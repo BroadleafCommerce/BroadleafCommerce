@@ -23,12 +23,13 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.util.HibernateUtils;
-import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
-import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
+import org.hibernate.SessionFactory;
+import org.hibernate.ejb.HibernateEntityManager;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -54,7 +55,6 @@ public class FieldManager {
 
     protected EntityConfiguration entityConfiguration;
     protected EntityManager entityManager;
-    protected DynamicDaoHelper helper = new DynamicDaoHelperImpl();
     protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
 
     public FieldManager(EntityConfiguration entityConfiguration, EntityManager entityManager) {
@@ -63,97 +63,17 @@ public class FieldManager {
     }
 
     public static Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        try {
-            return clazz.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException nsf) {
-            // Try superclass
-            if (clazz.getSuperclass() != null) {
-                return getSingleField(clazz.getSuperclass(), fieldName);
-            }
-
-            return null;
-        }
+        return BLCFieldUtils.getSingleField(clazz, fieldName);
     }
 
     public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
         PersistenceManager persistenceManager = getPersistenceManager();
-        String[] tokens = fieldName.split("\\.");
-        Field field = null;
-
-        for (int j=0;j<tokens.length;j++) {
-            String propertyName = tokens[j];
-            Class<?>[] myEntities = persistenceManager.getUpDownInheritance(clazz);
-            Class<?> myClass;
-            if (ArrayUtils.isEmpty(myEntities)) {
-                myClass = clazz;
-            } else {
-                myClass = getClassForField(persistenceManager, propertyName, null, myEntities);
-            }
-            if (myClass == null) {
-                LOG.debug(String.format("Unable to find the field (%s) anywhere in the inheritance hierarchy for (%s)", propertyName, clazz.getName()));
-                return null;
-            }
-            field = getSingleField(myClass, propertyName);
-            if (field != null && j < tokens.length - 1) {
-                Class<?>[] fieldEntities = persistenceManager.getUpDownInheritance(field.getType());
-                if (!ArrayUtils.isEmpty(fieldEntities)) {
-                    clazz = getClassForField(persistenceManager, tokens[j + 1], field, fieldEntities);
-                    if (clazz == null) {
-                        return null;
-                    }
-                } else {
-                    //may be an embedded class - try the class directly
-                    clazz = field.getType();
-                }
-            } else {
-                break;
-            }
-        }
-
-        if (field != null) {
-            field.setAccessible(true);
-        }
-        return field;
-    }
-    protected Class<?> getClassForField(PersistenceManager persistenceManager, String token, Field field, Class<?>[] entities) {
-        Class<?> clazz;
-        List<Class<?>> matchedClasses = new ArrayList<Class<?>>();
-        for (Class<?> entity : entities) {
-            Field peekAheadField = null;
-            try {
-                peekAheadField = entity.getDeclaredField(token);
-            } catch (NoSuchFieldException nsf) {
-                //do nothing
-            }
-            if (peekAheadField != null) {
-                matchedClasses.add(entity);
-            }
-        }
-        if (matchedClasses.size() > 1) {
-            LOG.warn("Found the property (" + token + ") in more than one class of an inheritance hierarchy. " +
-                    "This may lead to unwanted behavior, as the system does not know which class was intended. Do not " +
-                    "use the same property name in different levels of the inheritance hierarchy. Defaulting to the " +
-                    "first class found (" + matchedClasses.get(0).getName() + ")");
-        }
-        if (matchedClasses.isEmpty()) {
-            //probably an artificial field (i.e. passwordConfirm on AdminUserImpl)
-            return null;
-        }
-        Class<?> myClass = field != null?field.getType():entities[0];
-        if (getSingleField(matchedClasses.get(0), token) != null) {
-            clazz = matchedClasses.get(0);
-            Class<?>[] entities2 = persistenceManager.getUpDownInheritance(clazz);
-            if (!ArrayUtils.isEmpty(entities2) && matchedClasses.size() == 1 && clazz.isInterface()) {
-                try {
-                    clazz = entityConfiguration.lookupEntityClass(myClass.getName());
-                } catch (Exception e) {
-                    // Do nothing - we'll use the matchedClass
-                }
-            }
-        } else {
-            clazz = myClass;
-        }
-        return clazz;
+        SessionFactory sessionFactory = persistenceManager.getDynamicEntityDao().getDynamicDaoHelper().
+                getSessionFactory((HibernateEntityManager) persistenceManager.getDynamicEntityDao().getStandardEntityManager());
+        BLCFieldUtils fieldUtils = new BLCFieldUtils(sessionFactory, true, persistenceManager.getDynamicEntityDao().useCache(),
+                persistenceManager.getDynamicEntityDao().getEjb3ConfigurationDao(), entityConfiguration,
+                persistenceManager.getDynamicEntityDao().getDynamicDaoHelper());
+        return fieldUtils.getField(clazz, fieldName);
     }
 
     public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException, FieldNotAvailableException {

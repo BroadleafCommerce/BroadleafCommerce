@@ -35,15 +35,11 @@
     <context:component-scan base-package="org.broadleafcommerce.openadmin.web.controller"/>
     
     <bean id="blAdminStructuredContentController" class="org.broadleafcommerce.cms.admin.web.controller.AdminStructuredContentController" />
+    <bean id="blAdminUserManagementController" class="org.broadleafcommerce.openadmin.web.controller.AdminUserManagementController" />
 
     <bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
         <property name="order" value="1"/>
     </bean>
-    
-    <bean id="multipartResolver"
-        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">     
-        <property name="maxUploadSize" value="${asset.server.max.uploadable.file.size}"/>
-    </bean>    
     
     <mvc:annotation-driven>
         <!-- This changes the ordering of the message converters such that JSON appears prior to any XML converters -->
@@ -58,6 +54,8 @@
 
     <context:component-scan base-package="org.broadleafcommerce.openadmin.web.controller" />
     
+    <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
+    
     <bean id="blAdminDialectProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
         <property name="sourceSet">
             <set>
@@ -67,6 +65,7 @@
                 <ref bean="blAdminSectionHrefProcessor"/>
                 <ref bean="blAdminFieldBuilderProcessor"/>
                 <ref bean="blErrorsProcessor"/>
+                
             </set>
         </property>
     </bean>
@@ -142,5 +141,6 @@
     <mvc:interceptors>
       <bean class="org.broadleafcommerce.openadmin.web.compatibility.JSFieldNameCompatibilityInterceptor" />
     </mvc:interceptors>
-       
+
+
 </beans>

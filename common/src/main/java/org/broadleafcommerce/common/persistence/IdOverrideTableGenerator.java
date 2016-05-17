@@ -26,12 +26,13 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.enhanced.TableGenerator;
 import org.hibernate.type.Type;
 
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.persistence.Id;
 
 /**
  *
@@ -40,8 +41,14 @@ import java.util.Properties;
 public class IdOverrideTableGenerator extends TableGenerator {
 
     public static final String ENTITY_NAME_PARAM = "entity_name";
-    private static final Map<String, Field> FIELD_CACHE = MapUtils.synchronizedMap(new HashMap<String, Field>());
+    
+    public static final String DEFAULT_TABLE_NAME = "SEQUENCE_GENERATOR";
+    public static final String DEFAULT_SEGMENT_COLUMN_NAME = "ID_NAME";
+    public static final String DEFAULT_VALUE_COLUMN_NAME = "ID_VAL";
+    public static final int DEFAULT_INCREMENT_SIZE = 50;
 
+    private static final Map<String, Field> FIELD_CACHE = MapUtils.synchronizedMap(new HashMap<String, Field>());
+    
     private String entityName;
 
     private Field getIdField(Class<?> clazz) {
@@ -97,15 +104,15 @@ public class IdOverrideTableGenerator extends TableGenerator {
         }
 
         if (params.get("segment_column_name") == null) {
-            params.put("segment_column_name", "ID_NAME");
+            params.put("segment_column_name", DEFAULT_SEGMENT_COLUMN_NAME);
         }
 
         if (params.get("value_column_name") == null) {
-            params.put("value_column_name", "ID_VAL");
+            params.put("value_column_name", DEFAULT_VALUE_COLUMN_NAME);
         }
 
         if (params.get("increment_size") == null) {
-            params.put("increment_size", 50);
+            params.put("increment_size", DEFAULT_INCREMENT_SIZE);
         }
         super.configure(type, params, dialect);
         entityName = (String) params.get(ENTITY_NAME_PARAM);

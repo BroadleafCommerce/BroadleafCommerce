@@ -25,7 +25,7 @@ import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstrac
 
 /**
  * <p>The default implementation of this interface is represented in the core Broadleaf framework at
- * {@link org.broadleafcommerce.core.payment.service.BroadleafPaymentGatewayCheckoutService}. This is designed as
+ * {@link oorg.broadleafcommerce.core.payment.service.DefaultPaymentGatewayCheckoutService}. This is designed as
  * a generic contract for allowing payment modules to add payments to an order represented in Broadleaf while still
  * staying decoupled from any of the Broadleaf core framework concepts.</p>
  * 
@@ -41,9 +41,9 @@ public interface PaymentGatewayCheckoutService {
 
     /**
      * @param responseDTO the response that came back from the gateway
-     * @param configService configuration values for the payment gateway
-     * @return a unique ID of the payment as it is saved in the Broadleaf domain. This ID can be referred to to retrieve
-     * the payment on the Broadleaf side for other methods like {@link #markPaymentAsInvalid(Long)}
+     * @param config values for the payment gateway
+     * @return a unique ID of the payment as it is saved in the core commerce engine. If using Broadleaf core,
+     * this ID can be used to retrieve the payment on the Broadleaf side for other methods like {@link #markPaymentAsInvalid(Long)}
      * @throws IllegalArgumentException if the {@link PaymentResponseDTO#getValid()} returns false or if the order that
      * the {@link PaymentResponseDTO} is attempted to be applied to has already gone through checkout
      */
@@ -60,7 +60,7 @@ public interface PaymentGatewayCheckoutService {
     /**
      * Initiates the checkout process for a given <b>orderId</b>. This is usually from {@link PaymentResponseDTO#getOrderId()}
      * @param orderId the order to check out
-     * @return the response from checking out the order
+     * @return the order number generated when checking out the order
      */
     public String initiateCheckout(Long orderId) throws Exception;
 

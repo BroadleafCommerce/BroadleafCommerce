@@ -22,6 +22,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceImpl;
@@ -49,8 +50,8 @@ public interface Indexable {
      * Which type of {@link Field} should be queried for when looking up database-driven search fields to store in the
      * search index
      * 
-     * {@see SolrIndexService#buildIncrementalIndex(java.util.List, org.apache.solr.client.solrj.SolrClient)}
-     * {@see FieldDao#readFieldsByEntityType(FieldEntity)}
+     * @see SolrIndexService#buildIncrementalIndex(java.util.List, org.apache.solr.client.solrj.SolrClient)
+     * @see FieldDao#readFieldsByEntityType(FieldEntity)
      */
     public FieldEntity getFieldEntityType();
     

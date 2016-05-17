@@ -47,19 +47,35 @@ public interface SearchFacet extends Serializable, MultiTenantCloneable<SearchFa
     public void setId(Long id);
 
     /**
-     * Returns the field associated with this facet. 
+     * The main relationship to the rest of the search index entities
+     * @see {@link #getField()}
+     * @see {@link #getFacetFieldType()}
+     */
+    public IndexFieldType getFieldType();
+    
+    public void setFieldType(IndexFieldType fieldType);
+    
+    /**
+     * <p>
+     * Returns the field associated with this facet.
+     * 
+     * <p>
+     * This is a convenience method for <pre>{@code getFieldType().getIndexField().getField()}</pre>
      * 
      * @return the fieldName
      */
     public Field getField();
-
+    
     /**
-     * Sets the field associated with this facet.
-     * 
-     * @see #getFieldName()
-     * @param fieldName
+     * <p>
+     * This String represents the FieldType for the given SearchFacet. This is the FieldType that will be used when this Field is indexed in Solr
+     *
+     * <p>
+     * This is a convience method for <pre>{@code getFieldType().getFieldType().getType()}</pre>
+     *
+     * @return the String representing the FieldType of this SearchFacet
      */
-    public void setField(Field field);
+    public String getFacetFieldType();
 
     /**
      * Gets the name of this SearchFacet. This is for admin naming purposes.
@@ -202,17 +218,4 @@ public interface SearchFacet extends Serializable, MultiTenantCloneable<SearchFa
      */
     public void setRequiresAllDependentFacets(Boolean requiresAllDependentFacets);
 
-    /**
-     * This String represents the FieldType for the given SearchFacet. This is the FieldType that will be used when this Field is indexed in Solr
-     *
-     * @return the String representing the FieldType of this SearchFacet
-     */
-    public String getFacetFieldType();
-
-    /**
-     * Sets the FieldType for the current SearchFacet
-     *
-     * @param facetFieldType the String representation of a FieldType
-     */
-    public void setFacetFieldType(String facetFieldType);
 }

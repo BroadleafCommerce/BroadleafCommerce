@@ -37,7 +37,7 @@
 
     <named-query name="BC_FIND_ALL_STORES_BY_STATE" >
         <query>SELECT store FROM org.broadleafcommerce.core.store.domain.Store store
-            WHERE store.state = :state
+            WHERE store.address.isoCountrySubdivision = :state
             AND (store.archiveStatus.archived IS NULL OR store.archiveStatus.archived = :archived)
         </query>
     </named-query>
