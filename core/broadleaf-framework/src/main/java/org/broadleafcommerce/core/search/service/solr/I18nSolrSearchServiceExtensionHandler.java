@@ -32,7 +32,9 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
@@ -204,28 +206,50 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
      */
     @Override
     public ExtensionResultStatusType startBatchEvent(List<Product> products) {
-        List<String> defaultSkuIds = new ArrayList<String>(products.size());
-        List<String> productIds = new ArrayList<String>(products.size());
-        for (Product product : products) {
-            productIds.add(product.getId().toString());
-            defaultSkuIds.add(product.getDefaultSku().getId().toString());
+        List<String> skuIds = new ArrayList<String>(products.size());
+        List<String> productIds = new ArrayList<String>();
+        List<String> skuAttributeIds = new ArrayList<String>();
+        List<String> productAttributeIds = new ArrayList<String>();
+        for (Product indexable : products) {
+            Sku sku = null;
+            if (Product.class.isAssignableFrom(indexable.getClass())) {
+                Product product = indexable;
+                productIds.add(product.getId().toString());
+                for (Map.Entry<String, ProductAttribute> attributeEntry :  product.getProductAttributes().entrySet()) {
+                    ProductAttribute attribute = attributeEntry.getValue();
+                    productAttributeIds.add(attribute.getId().toString());
+                }
+                sku = product.getDefaultSku();
+            }
+            
+            if (sku != null) {
+                skuIds.add(sku.getId().toString());
+                for (Map.Entry<String, SkuAttribute> attributeEntry :  sku.getSkuAttributes().entrySet()) {
+                    SkuAttribute attribute = attributeEntry.getValue();
+                    skuAttributeIds.add(attribute.getId().toString());
+                }
+            }
         }
-        
-        List<Translation> defaultSkuTranslations = translationDao.readAllTranslationEntries(TranslatedEntity.SKU, ResultType.STANDARD, defaultSkuIds);
-        TranslationBatchReadCache.addToCache(defaultSkuTranslations);
-        
-        List<Translation> productTranslations = translationDao.readAllTranslationEntries(TranslatedEntity.PRODUCT, ResultType.STANDARD, productIds);
-        TranslationBatchReadCache.addToCache(productTranslations);
-        
+
+        addEntitiesToTranslationCache(skuIds, TranslatedEntity.SKU);
+        addEntitiesToTranslationCache(productIds, TranslatedEntity.PRODUCT);
+        addEntitiesToTranslationCache(skuAttributeIds, TranslatedEntity.SKU_ATTRIBUTE);
+        addEntitiesToTranslationCache(productAttributeIds, TranslatedEntity.PRODUCT_ATTRIBUTE);
+
         return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
-    
+
+    private void addEntitiesToTranslationCache(List<String> entityIds, TranslatedEntity translatedEntity) {
+        List<Translation> translations = translationDao.readAllTranslationEntries(translatedEntity, ResultType.STANDARD, entityIds);
+        TranslationBatchReadCache.addToCache(translations);
+    }
+
     @Override
     public ExtensionResultStatusType endBatchEvent() {
         TranslationBatchReadCache.clearCache();
         return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
-
+    
     @Override
     public int getPriority() {
         return 1000;
