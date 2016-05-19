@@ -70,7 +70,6 @@ public interface PageService {
      * fix the URL if the site has overridden the URL for images.   If secure is true
      * and images are being overridden, the system will use https.
      *
-     * @param currentSandbox - current sandbox
      * @param locale - current locale
      * @param uri - the URI to return a page for
      * @param ruleDTOs - ruleDTOs that are used as the data to process page rules
@@ -111,8 +110,7 @@ public interface PageService {
      * @param locale
      * @return copy of DTOList
      */
+    public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure, String identifier, Locale locale);
 
-    String getPageMapCacheKey(String uri, Long sandBox, Long site);
-
-
+    String getPageMapCacheKey(String uri);
 }
