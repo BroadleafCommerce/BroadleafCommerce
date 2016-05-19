@@ -130,33 +130,16 @@ public class PageServiceImpl implements PageService {
         return pageDao.savePageTemplate(template);
     }
 
-    /**
+    /*
      * Retrieve the page if one is available for the passed in uri.
      */
     @Override
     public PageDTO findPageByURI(Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure) {
         List<PageDTO> returnList = null;
+
         if (uri != null) {
-            Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
-            BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-            //store the language only locale for cache since we have to use the lowest common denominator (i.e. the cache
-            //locale and the pageTemplate locale used for cache invalidation can be different countries)
-            Long sandBox = context.getSandBox() == null?null:context.getSandBox().getId();
-            Long site = context.getSite() == null?null:context.getSite().getId();
-            String key = buildKey(sandBox, site, languageOnlyLocale, uri);
-            key = key + "-" + secure;
-            if (context.isProductionSandBox()) {
-                returnList = getPageListFromCache(key);
-            }
-            if (returnList == null) {
-                //TODO does this pull the right sandbox in multitenant?
-                List<Page> pageList = pageDao.findPageByURI(uri);
-                returnList = buildPageDTOList(pageList, secure);
-                if (context.isProductionSandBox()) {
-                    Collections.sort(returnList, new BeanComparator("priority"));
-                    addPageListToCache(returnList, key, uri, sandBox, site);
-                }
-            }
+            List<Page> pageList = pageDao.findPageByURI(uri);
+            returnList = buildPageDTOList(pageList, secure, uri, locale);
         }
         
         PageDTO dto = evaluatePageRules(returnList, locale, ruleDTOs);
@@ -180,9 +163,39 @@ public class PageServiceImpl implements PageService {
         return dto;
     }
 
+    /*
+     * Converts a list of pages to a list of pageDTOs, and caches the list.
+     */
     @Override
-    public List<Page> readAllPages() {
-        return pageDao.readAllPages();
+    public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure, String identifier, Locale locale) {
+        List<PageDTO> dtoList = new ArrayList<>();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+
+        if (context.isProductionSandBox()) {
+            String key = buildKey(identifier, locale, secure);
+            List<PageDTO> cachedList = getPageListFromCache(key);
+
+            if (cachedList != null && cachedList.size() == pageList.size()) {
+                dtoList = cachedList;
+            }
+
+            if (dtoList == null || dtoList.isEmpty()) {
+                if (pageList != null) {
+                    for(Page page : pageList) {
+                        PageDTO pageDTO = pageServiceUtility.buildPageDTO(page, secure);
+                        if (!dtoList.contains(pageDTO)) {
+                            dtoList.add(pageDTO);
+                        }
+                    }
+                }
+                if (dtoList != null && !dtoList.isEmpty()) {
+                    Collections.sort(dtoList, new BeanComparator("priority"));
+                    addPageListToCache(dtoList, key);
+                }
+            }
+        }
+
+        return copyDTOList(dtoList);
     }
 
     @Override

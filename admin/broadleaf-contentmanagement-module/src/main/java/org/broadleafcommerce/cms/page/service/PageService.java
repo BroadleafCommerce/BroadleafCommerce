@@ -103,13 +103,14 @@ public interface PageService {
     Cache getPageMapCache();
 
     /**
-     * Builds a list of {@link PageDTO} objects from the given list of {@link Page} objects.
+     * Builds a list of {@link PageDTO} objects from the given list of {@link Page} objects and caches the list
      * 
      * @param pageList
      * @param secure
-     * @return
+     * @param identifier
+     * @param locale
+     * @return copy of DTOList
      */
-    public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure);
 
     String getPageMapCacheKey(String uri, Long sandBox, Long site);
 
