@@ -108,10 +108,14 @@
     BLCAdmin.addInitializationHandler(function($container) {
         var $form = $container.closest('form.offer-form');
         BLCAdmin.offer.addOnChangeTriggers($form);
-        BLCAdmin.offer.initializeOfferFormFields($form);
-        BLCAdmin.offer.initValueFieldStyle($form);
     });
 
+    BLCAdmin.addFieldInitializationHandler(function($container) {
+        var $form = $container.closest('form.offer-form');
+        BLCAdmin.offer.initializeOfferFormFields($form);
+        BLCAdmin.offer.initValueFieldStyle($form);
+    })
+    
     $.each(['org.broadleafcommerce.core.offer.domain.Offer'], function(idx, clazz) {
 
         BLCAdmin.addDependentFieldHandler(
