@@ -40,6 +40,7 @@ import org.broadleafcommerce.common.page.dto.NullPageDTO;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.rule.RuleProcessor;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
@@ -182,7 +183,7 @@ public class PageServiceImpl implements PageService {
                 }
                 if (dtoList != null && !dtoList.isEmpty()) {
                     Collections.sort(dtoList, new BeanComparator("priority"));
-                    addPageListToCache(dtoList, key);
+                    addPageListToCache(dtoList, identifier, locale, secure);
                 }
             }
         }
@@ -190,25 +191,73 @@ public class PageServiceImpl implements PageService {
         return copyDTOList(dtoList);
     }
 
+    protected List<PageDTO> getPageListFromCache(String key) {
+        if (key != null) {
+            Element cacheElement = getPageCache().get(key);
+
+            if (cacheElement != null && cacheElement.getObjectValue() != null) {
+                statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), true);
+                return (List<PageDTO>) cacheElement.getObjectValue();
+            }
+            statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), false);
+        }
+
+        return null;
+    }
+
+    protected void addPageListToCache(List<PageDTO> pageList, String identifier, Locale locale, boolean secure) {
+        String key = buildKey(identifier, locale, secure);
+        getPageCache().put(new Element(key, pageList));
+        addPageMapCacheEntry(identifier, key);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void addPageMapCacheEntry(String identifier, String key) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        Site site = context.getNonPersistentSite();
+        Long siteId = (site != null) ? site.getId() : null;
+        Long sandBoxId = context.getSandBoxId();
+
+        String mapKey = getPageMapCacheKey(identifier, sandBoxId, siteId);
+
+        if (mapKey != null) {
+            Element e = getPageMapCache().get(mapKey);
+
+            if (e == null || e.getObjectValue() == null) {
+                List<String> keys = new ArrayList<>();
+                keys.add(key);
+                getPageMapCache().put(new Element(mapKey, keys));
+            } else {
+                ((List<String>) e.getObjectValue()).add(mapKey);
+            }
+        }
+    }
+
+    @Override
+    public String getPageMapCacheKey(String uri, Long sandBoxId, Long site) {
+        String siteString = (site == null) ? "ALL" : String.valueOf(site);
+        return uri + "-" + sandBoxId + "-" + siteString;
+    }
+
     protected String buildKey(String identifier, Locale locale, Boolean secure) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        StringBuilder key = new StringBuilder(identifier);
-        locale = (locale == null) ? context.getLocale() : locale;
+        Long sandBoxId = context.getSandBoxId();
+        Site site = context.getNonPersistentSite();
+        Long siteId = (site != null) ? site.getId() : null;
         locale = findLanguageOnlyLocale(locale);
-        Long sandBox = (context.getSandBox() == null) ? null : context.getSandBox().getId();
-        Long site = (context.getNonPersistentSite() == null) ? null : context.getNonPersistentSite().getId();
+        StringBuilder key = new StringBuilder(identifier);
 
         if (locale != null) {
             key.append("-").append(locale.getLocaleCode());
         }
-        if (sandBox != null) {
-            key.append("-").append(sandBox);
-        }
-        if (site != null) {
-            key.append("-").append(site);
-        }
         if (secure != null) {
             key.append("-").append(secure);
+        }
+        if (sandBoxId != null) {
+            key.append("-").append(sandBoxId);
+        }
+        if (siteId != null) {
+            key.append("-").append(siteId);
         }
 
         return key.toString();
@@ -224,41 +273,12 @@ public class PageServiceImpl implements PageService {
         return locale;
     }
 
-    protected List<PageDTO> getPageListFromCache(String key) {
-        Element cacheElement = getPageCache().get(key);
-
-        if (cacheElement != null && cacheElement.getObjectValue() != null) {
-            statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), true);
-            return (List<PageDTO>) cacheElement.getObjectValue();
-        }
-        statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), false);
-        return null;
-    }
-
-    protected void addPageListToCache(List<PageDTO> pageList, String key) {
-        getPageCache().put(new Element(key, pageList));
-        addPageMapCacheEntry(key);
-    }
-
     @Override
     public Cache getPageCache() {
         if (pageCache == null) {
             pageCache = CacheManager.getInstance().getCache("cmsPageCache");
         }
         return pageCache;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void addPageMapCacheEntry(String key) {
-        Element e = getPageMapCache().get(key);
-
-        if (e == null || e.getObjectValue() == null) {
-            List<String> keys = new ArrayList<>();
-            keys.add(key);
-            getPageMapCache().put(new Element(key, keys));
-        } else {
-            ((List<String>) e.getObjectValue()).add(key);
-        }
     }
 
     @Override
@@ -335,30 +355,20 @@ public class PageServiceImpl implements PageService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void removePageFromCache(String key) {
-        Element e = getPageMapCache().get(key);
-        if (e != null && e.getObjectValue() != null) {
-            List<String> keys = (List<String>) e.getObjectValue();
-            for (String k : keys) {
-                getPageCache().remove(k);
+    public Boolean removePageFromCache(String mapKey) {
+        Boolean success = Boolean.FALSE;
+        if (mapKey != null) {
+            Element e = getPageMapCache().get(mapKey);
+
+            if (e != null && e.getObjectValue() != null) {
+                List<String> keys = (List<String>) e.getObjectValue();
+                for (String k : keys) {
+                    success = Boolean.valueOf(getPageCache().remove(k));
+                }
             }
         }
-        // if the key is not in the map cache, we will need to check the cache directly to make sure it is not included
-        // in a cached list
-    }
 
-    protected Boolean isContainedInPageDTOList(String key) {
-        Cache pageMapCache = getPageMapCache();
-        List<String> mapKeys = pageMapCache.getKeys();
-
-        for (String mapKey : mapKeys) {
-            Element e = pageMapCache.get(mapKey);
-        }
-    }
-    
-    @Override
-    public String getPageMapCacheKey(String uri) {
-        return buildKey(uri, null, null);
+        return success;
     }
 
 }

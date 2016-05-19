@@ -94,8 +94,9 @@ public interface PageService {
      * Call to evict all known PageDTOs that are associated with the given page from cache
      * 
      * @param key
+     * @return whether successful
      */
-    public void removePageFromCache(String key);
+    public Boolean removePageFromCache(String key);
 
     Cache getPageCache();
 
@@ -112,5 +113,5 @@ public interface PageService {
      */
     public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure, String identifier, Locale locale);
 
-    String getPageMapCacheKey(String uri);
+    String getPageMapCacheKey(String uri, Long sandBoxId, Long site);
 }
