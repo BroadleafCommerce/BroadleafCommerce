@@ -473,7 +473,7 @@ select:not(#sandboxes) {
 input.color-picker-value {
     width: 16.66667%;
 }
-.numeric-field {
+.changes.numeric-field {
     min-width: 200px;
     width: 16.6667% !important;
 }
