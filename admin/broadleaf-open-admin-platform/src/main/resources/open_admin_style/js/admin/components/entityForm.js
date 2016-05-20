@@ -208,6 +208,21 @@
         },
 
         toggleFieldVisibility : function($field, shouldShow) {
+            var hideGroupIfFieldsAreHidden = function ($groupContainer) {
+                var $groupContent = $groupContainer.find('.fieldset-card-content');
+                var $fields = $groupContent.find('.field-group');
+                var $hiddenFields = $fields.filter(function() { return $(this).css('display') === 'none' });
+
+                if ($fields.length === $hiddenFields.length) {
+                    $groupContainer.hide().addClass('hidden');
+                } else {
+                    $groupContainer.show().removeClass('hidden');
+                    if ($groupContainer.find('.titlebar .collapsed').length && !$groupContent.hasClass('content-collapsed')) {
+                        $groupContainer.find('.titlebar').click();
+                    }
+                }
+            }
+
             $field.toggle(shouldShow);
 
             if (shouldShow) {
@@ -215,22 +230,7 @@
             }
 
             var $card = $field.closest('.fieldset-card');
-            BLCAdmin.entityForm.hideGroupIfFieldsAreHidden($card);
-        },
-
-        hideGroupIfFieldsAreHidden : function($groupContainer) {
-            var $groupContent = $groupContainer.find('.fieldset-card-content');
-            var $fields = $groupContent.find('.field-group');
-            var $hiddenFields = $fields.filter(function() { return $(this).css('display') === 'none' });
-
-            if ($fields.length === $hiddenFields.length) {
-                $groupContainer.hide().addClass('hidden');
-            } else {
-                $groupContainer.show().removeClass('hidden');
-                if ($groupContainer.find('.titlebar .collapsed').length && !$groupContent.hasClass('content-collapsed')) {
-                    $groupContainer.find('.titlebar').click();
-                }
-            }
+            hideGroupIfFieldsAreHidden($card);
         }
     };
 })(jQuery, BLCAdmin);
