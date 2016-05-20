@@ -2,9 +2,6 @@
 
 <div class="side-nav">
     <ul>
-        <li>
-            <span class="nav-section blc-icon-blc-leaf"></span>
-        </li>
         <li th:each="module : ${adminMenu.adminModules}" th:inline="text">
             <a th:class="${'nav-section ' + module.icon}" th:href="@{${'/overview'}}" th:if="${module.icon == 'blc-icon-blc-leaf'}"></a>
             <a th:class="${'nav-section ' + module.icon}" href="" th:attr="data-toggle=${'#' + module.moduleKey}"
