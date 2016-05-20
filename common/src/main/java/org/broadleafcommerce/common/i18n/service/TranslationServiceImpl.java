@@ -19,6 +19,15 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -41,15 +50,6 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -175,7 +175,7 @@ public class TranslationServiceImpl implements TranslationService {
             localeCountryCode += "_" + locale.getCountry();
         }
         
-        if (TranslationBatchReadCache.getCache() != null && TranslationBatchReadCache.getCache().getSize() != 0) {
+        if (TranslationBatchReadCache.hasCache()) {
             Translation translation = TranslationBatchReadCache.getFromCache(entityType, entityId, property, localeCountryCode);
             if (translation != null) {
                 return translation.getTranslatedValue();
