@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Profile
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.profile.core.domain;
@@ -36,11 +34,13 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                     order = CustomerAdminPresentation.GroupOrder.Customer,
                     untitled = true),
                 @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.ContactInfo,
-                    order = CustomerAdminPresentation.GroupOrder.ContactInfo,
-                    collapsed = true),
+                    order = CustomerAdminPresentation.GroupOrder.ContactInfo),
                 @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.QualificationOptions,
                     order = CustomerAdminPresentation.GroupOrder.QualificationOptions,
-                    column = 1, untitled = true)
+                    column = 1, untitled = true),
+                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Audit,
+                    order = CustomerAdminPresentation.GroupOrder.Audit,
+                    column = 1, collapsed = true)
             }
         ),
         @AdminTabPresentation(name = CustomerAdminPresentation.TabName.PaymentMethods,
@@ -52,14 +52,6 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Pricing,
                     order = CustomerAdminPresentation.GroupOrder.Pricing,
                     untitled = true)
-            }
-        ),
-        @AdminTabPresentation(name = CustomerAdminPresentation.TabName.Advanced,
-            order = CustomerAdminPresentation.TabOrder.Advanced,
-            groups = {
-                @AdminGroupPresentation(name = CustomerAdminPresentation.GroupName.Audit,
-                    order = CustomerAdminPresentation.GroupOrder.Audit,
-                    column = 1)
             }
         )
     }
@@ -74,8 +66,8 @@ public interface CustomerAdminPresentation {
 
     public static class TabOrder {
         public static final int General = 1000;
-        public static final int PaymentMethods = 3000;
-        public static final int Pricing = 4000;
+        public static final int PaymentMethods = 2000;
+        public static final int Pricing = 3000;
         public static final int Advanced = 5000;
     }
 
@@ -84,7 +76,7 @@ public interface CustomerAdminPresentation {
         public static final String ContactInfo = "CustomerImpl_ContactInfo";
         public static final String QualificationOptions = "CustomerImpl_Qualification_Options";
         public static final String Pricing = "Pricing";
-        public static final String Audit = "CustomerImpl_Audit";
+        public static final String Audit = "AdminAuditable_Audit";
     }
 
     public static class GroupOrder {
@@ -92,7 +84,7 @@ public interface CustomerAdminPresentation {
         public static final int ContactInfo = 2000;
         public static final int QualificationOptions = 1000;
         public static final int Pricing = 1000;
-        public static final int Audit = 1000;
+        public static final int Audit = 2000;
     }
 
     public static class FieldOrder {

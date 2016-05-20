@@ -2,29 +2,25 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.web.controller;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.JsonResponse;
@@ -39,6 +35,7 @@ import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
+import org.broadleafcommerce.openadmin.security.ClassNameRequestParamValidationService;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
@@ -116,6 +113,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
     @Resource(name = "blAdminAbstractControllerExtensionManager")
     protected AdminAbstractControllerExtensionManager extensionManager;
+
+    @Resource(name="blClassNameRequestParamValidationService")
+    protected ClassNameRequestParamValidationService validationService;
     
     // *********************************************************
     // UNBOUND CONTROLLER METHODS (USED BY DIFFERENT SECTIONS) *
@@ -495,20 +495,12 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * the database, will return the value passed into this function. For example, if there is a mapping from "/myentity" to
      * "com.mycompany.myentity", both "http://localhost/myentity" and "http://localhost/com.mycompany.myentity" are valid
      * request paths.
-     * 
+     *
      * @param sectionKey
      * @return the className for this sectionKey if found in the database or the sectionKey if not
      */
     protected String getClassNameForSection(String sectionKey) {
-        AdminSection section = adminNavigationService.findAdminSectionByURI("/" + sectionKey);
-        
-        ExtensionResultHolder erh = new ExtensionResultHolder();
-        extensionManager.getProxy().overrideClassNameForSection(erh, sectionKey, section);
-        if (erh.getContextMap().get(AbstractAdminAbstractControllerExtensionHandler.NEW_CLASS_NAME) != null) {
-            return (String) erh.getContextMap().get(AbstractAdminAbstractControllerExtensionHandler.NEW_CLASS_NAME); 
-        }
-        
-        return (section == null) ? sectionKey : section.getCeilingEntity();
+        return validationService.getClassNameForSection(sectionKey, "blPU");
     }
 
     /**
@@ -718,19 +710,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
     protected List<SectionCrumb> getSectionCrumbs(HttpServletRequest request, String currentSection, String currentSectionId) {
         String crumbs = request.getParameter("sectionCrumbs");
-        List<SectionCrumb> myCrumbs = new ArrayList<SectionCrumb>();
-        if (!StringUtils.isEmpty(crumbs)) {
-            String[] crumbParts = crumbs.split(",");
-            for (String part : crumbParts) {
-                SectionCrumb crumb = new SectionCrumb();
-                String[] crumbPieces = part.split("--");
-                crumb.setSectionIdentifier(crumbPieces[0]);
-                crumb.setSectionId(crumbPieces[1]);
-                if (!myCrumbs.contains(crumb)) {
-                    myCrumbs.add(crumb);
-                }
-            }
-        }
+        List<SectionCrumb> myCrumbs = validationService.getSectionCrumbs(crumbs, "blPU");
         if (currentSection != null && currentSectionId != null) {
             SectionCrumb crumb = new SectionCrumb();
             if (currentSection.startsWith("/")) {

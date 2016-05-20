@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.resource.service;
@@ -125,7 +123,6 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 BufferedWriter out =
                         new BufferedWriter(new OutputStreamWriter(baos, "utf-8"));) {
-
             minify(in, out, filename, type);
             
             out.flush();
@@ -140,7 +137,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     
     protected void minify(BufferedReader in, BufferedWriter out, String filename, String type) throws IOException {
         if (JS_TYPE.equals(type)) {
-            JavaScriptCompressor jsc = new JavaScriptCompressor(in, getLogBasedErrorReporter());
+            JavaScriptCompressor jsc = new JavaScriptCompressor(in, getLogBasedErrorReporter(filename));
             jsc.compress(out, linebreak, munge, verbose, preserveAllSemiColons, disableOptimizations);
         } else if (CSS_TYPE.equals(type)) {
             CssCompressor cssc = new CssCompressor(in);
@@ -163,14 +160,17 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
         return null;
     }
     
-    protected ErrorReporter getLogBasedErrorReporter() {
+    protected ErrorReporter getLogBasedErrorReporter(final String filename) {
         return new ErrorReporter() {
             @Override
             public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
                 if (line < 0) {
                     LOG.warn(message);
                 } else {
-                    LOG.warn(line + ':' + lineOffset + ':' + message);
+                    if (sourceName == null) {
+                        sourceName = filename;
+                    }
+                    LOG.warn(sourceName + " - " + lineSource + " - " + line + ':' + lineOffset + " - " + message);
                 }
             }
 
@@ -179,13 +179,19 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
                 if (line < 0) {
                     LOG.error(message);
                 } else {
-                    LOG.error(line + ':' + lineOffset + ':' + message);
+                    if (sourceName == null) {
+                        sourceName = filename;
+                    }
+                    LOG.error(sourceName + " - " + lineSource + " - " + line + ':' + lineOffset + " - " + message);
                 }
             }
 
             @Override
             public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource, 
                     int lineOffset) {
+                if (sourceName == null) {
+                    sourceName = filename;
+                }
                 error(message, sourceName, line, lineSource, lineOffset);
                 return new EvaluatorException(message);
             }

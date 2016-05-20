@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 /**
@@ -33,7 +31,7 @@
         RULE_SIMPLE : "rule-builder-simple",
         RULE_SIMPLE_TIME : "rule-builder-simple-time",
         RULE_WITH_QUANTITY : "rule-builder-with-quantity"
-    }
+    };
 
     /**
      * An Admin page may contain multiple rule builders of various different types.
@@ -143,7 +141,7 @@
 
             };
 
-            ruleBuildersArray.push(ruleBuilder)
+            ruleBuildersArray.push(ruleBuilder);
             return ruleBuilder;
         },
 
@@ -458,8 +456,8 @@
             if (opRef && typeof opRef === 'string' && ("blcOperators_Boolean" === opRef)) {
                 field.input = 'radio';
                 field.values = {
-                    true: 'true',
-                    false: 'false'
+                    'true': 'true',
+                    'false': 'false'
                 }
             }
         },
@@ -534,8 +532,8 @@
                         // (Values may contain multiple items and are sent back as a single String array)
                         var $selectize = this;
                         var data = $selectize.$input.attr("data-hydrate");
-                        data = (data.length) ? data : "[]";
-                        var dataHydrate = $.parseJSON(data);
+
+                        var dataHydrate = BLCAdmin.stringToArray(data);
                         for (var k=0; k<dataHydrate.length; k++) {
                             if (!isNaN(dataHydrate[k])) {
                                 $selectize.addItem(Number(dataHydrate[k]), false);
@@ -589,6 +587,9 @@
                 field.valueGetter = function(rule) {
                     var value = rule.$el.find('.rule-value-container input.query-builder-selectize-input').val();
                     value = value.replace(/,/g,'\",\"');
+                    if(value.length <= 0) {
+                        return "";
+                    }
                     return "[\"" + value + "\"]";
                 }
             }
@@ -716,7 +717,7 @@
             collectedData.data = [];
             for (var j = 0; j < ruleBuilder.builders.length; j++) {
                 var builder = ruleBuilder.builders[j];
-                var dataDTO = $(builder).queryBuilder('getRules');
+                var dataDTO = $(builder).queryBuilder('getRules', { displayErrors : ruleBuilder.displayErrors });
                 if (dataDTO.rules) {
                     dataDTO.pk = $(builder).find(".rules-group-header-item-pk").val();
                     dataDTO.quantity = $(builder).find(".rules-group-header-item-qty").val();
@@ -933,7 +934,9 @@
             if (BLCAdmin.entityForm.status) {
                 // Set the original value on the rule builder once its been completely initialized
                 if (ruleBuilder.builders.length) {
+                    ruleBuilder.displayErrors = false;
                     var rules = BLCAdmin.ruleBuilders.getAllRuleBuilderRules(ruleBuilder);
+                    delete ruleBuilder.displayErrors;
                     var origVal = JSON.stringify(rules);
                     $(rulesContainer).attr('data-orig-val', JSON.stringify(origVal));
                     BLCAdmin.entityForm.status.removeChangesForId($(rulesContainer).attr('id'));
@@ -1116,7 +1119,7 @@ $(document).ready(function() {
 
         //clear out the original faulty input
         var $fieldContainer = $($builderContainer.parent());
-        var $ruleData = $fieldContainer.find('.rule-builder-data')
+        var $ruleData = $fieldContainer.find('.rule-builder-data');
         var hiddenInput = $fieldContainer.find('input#' + $ruleData.data('hiddenid'));
         hiddenInput.val('');
         //reset the error as now there isn't one

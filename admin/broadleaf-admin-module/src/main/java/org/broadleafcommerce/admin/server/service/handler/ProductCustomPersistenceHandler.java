@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Admin Module
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.admin.server.service.handler;
@@ -101,6 +99,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Value("${product.query.limit:500}")
     protected long queryLimit;
 
+    @Value("${product.eager.fetch.associations.admin:true}")
+    protected boolean eagerFetchAssociations = true;
+
     private static final Log LOG = LogFactory.getLog(ProductCustomPersistenceHandler.class);
 
     @Override
@@ -177,8 +178,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 if (CollectionUtils.isNotEmpty(transformedValues)) {
                     restrictions.add(root.get("category").get("id").in(transformedValues));
                 }
-                //archived?
-                QueryUtils.notArchived(builder, restrictions, root, "archiveStatus");
+
                 criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
                 TypedQuery<Long> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
                 List<Long> productIds = query.getResultList();
@@ -212,23 +212,48 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
         }
 
-        cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
-                .withDirectFilterValues(new EmptyFilterValues())
-                .withRestriction(new Restriction()
-                                .withPredicateProvider(new PredicateProvider() {
-                                    @Override
-                                    public Predicate buildPredicate(CriteriaBuilder builder,
-                                                                    FieldPathBuilder fieldPathBuilder, From root,
-                                                                    String ceilingEntity,
-                                                                    String fullPropertyName, Path explicitPath,
-                                                                    List directValues) {
-                                        root.fetch("defaultSku", JoinType.LEFT);
-                                        root.fetch("defaultCategory", JoinType.LEFT);
-                                        return null;
-                                    }
-                                })
-                ));
-        return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+        if (eagerFetchAssociations) {
+            cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
+                    .withDirectFilterValues(new EmptyFilterValues())
+                    .withRestriction(new Restriction()
+                            .withPredicateProvider(new PredicateProvider() {
+                                @Override
+                                public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                FieldPathBuilder fieldPathBuilder, From root,
+                                                                String ceilingEntity,
+                                                                String fullPropertyName, Path explicitPath,
+                                                                List directValues) {
+                                    root.fetch("defaultSku", JoinType.LEFT);
+                                    root.fetch("defaultCategory", JoinType.LEFT);
+                                    return null;
+                                }
+                            })
+                    ));
+        }
+        if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
+                (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
+            //Add special handling for product list grid fetches
+            boolean hasExplicitSort = false;
+            for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
+                hasExplicitSort = filter.getSortDirection() != null;
+                if (hasExplicitSort) {
+                    break;
+                }
+            }
+            if (!hasExplicitSort) {
+                FilterAndSortCriteria filter = cto.get("id");
+                filter.setNullsLast(false);
+                filter.setSortAscending(true);
+            }
+            try {
+                extensionManager.getProxy().initiateFetchState();
+                return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+            } finally {
+                extensionManager.getProxy().endFetchState();
+            }
+        } else {
+            return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+        }
     }
 
     @Override
@@ -246,6 +271,19 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = dynamicEntityDao.merge(adminInstance);
 
+            //Since none of the Sku fields are required, it's possible that the user did not fill out
+            //any Sku fields, and thus a Sku would not be created. Product still needs a default Sku so instantiate one
+            if (adminInstance.getDefaultSku() == null) {
+                Sku newSku = catalogService.createSku();
+                dynamicEntityDao.persist(newSku);
+                adminInstance.setDefaultSku(newSku);
+                adminInstance = dynamicEntityDao.merge(adminInstance);
+            }
+
+            //also set the default product for the Sku
+            adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
+            dynamicEntityDao.merge(adminInstance.getDefaultSku());
+
             // if this is a Pre-Add, skip the rest of the method
             if (entity.isPreAdd()) {
                 return helper.getRecord(adminProperties, adminInstance, null, null);
@@ -259,20 +297,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             if (!handled) {
                 setupXref(adminInstance);
             }
-            
-            //Since none of the Sku fields are required, it's possible that the user did not fill out
-            //any Sku fields, and thus a Sku would not be created. Product still needs a default Sku so instantiate one
-            if (adminInstance.getDefaultSku() == null) {
-                Sku newSku = catalogService.createSku();
-                dynamicEntityDao.persist(newSku);
-                adminInstance.setDefaultSku(newSku);
-                adminInstance = dynamicEntityDao.merge(adminInstance);
-            }
 
-            //also set the default product for the Sku
-            adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
-            dynamicEntityDao.merge(adminInstance.getDefaultSku());
-            
             return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);

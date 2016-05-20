@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.offer.service.processor;
@@ -38,6 +36,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfil
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -113,9 +112,14 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
     public void calculateFulfillmentGroupTotal(PromotableOrder order) {
         Money totalFulfillmentCharges = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getOrderCurrency());
         for (PromotableFulfillmentGroup fulfillmentGroupMember : order.getFulfillmentGroups()) {
-            PromotableFulfillmentGroup fulfillmentGroup = fulfillmentGroupMember;
-            Money fulfillmentCharges = fulfillmentGroup.getFinalizedPriceWithAdjustments();
-            fulfillmentGroup.getFulfillmentGroup().setFulfillmentPrice(fulfillmentCharges);
+            FulfillmentGroup fulfillmentGroup = fulfillmentGroupMember.getFulfillmentGroup();
+            Money fulfillmentCharges;
+            if (fulfillmentGroup.getShippingOverride()) {
+                fulfillmentCharges = fulfillmentGroup.getFulfillmentPrice();
+            } else {
+                fulfillmentCharges = fulfillmentGroupMember.getFinalizedPriceWithAdjustments();
+                fulfillmentGroupMember.getFulfillmentGroup().setFulfillmentPrice(fulfillmentCharges);
+            }
             totalFulfillmentCharges = totalFulfillmentCharges.add(fulfillmentCharges);
         }
         order.setTotalFufillmentCharges(totalFulfillmentCharges);
@@ -270,11 +274,8 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
             if (offerCount == 0) {
                 remainingCandidateOffers.add(candidateOffer);
             } else {
-                boolean treatAsNewFormat = false;
-                if (candidateOffer.getOffer().getTreatAsNewFormat() != null && candidateOffer.getOffer().getTreatAsNewFormat()) {
-                    treatAsNewFormat = true;
-                }
-                if ((!treatAsNewFormat && candidateOffer.getOffer().isCombinableWithOtherOffers()) || (treatAsNewFormat && (candidateOffer.getOffer().isTotalitarianOffer() == null || !candidateOffer.getOffer().isTotalitarianOffer()))) {
+                if (candidateOffer.getOffer().isCombinableWithOtherOffers() &&
+                        !candidateOffer.getOffer().isTotalitarianOffer()) {
                     remainingCandidateOffers.add(candidateOffer);
                 }
             }

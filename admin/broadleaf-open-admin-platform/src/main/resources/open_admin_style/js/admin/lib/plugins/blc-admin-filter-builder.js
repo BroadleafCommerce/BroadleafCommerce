@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 /**
@@ -48,7 +46,7 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
             // add "Apply" button
             var applyButton = $("<button>", {
                 html: "Apply",
-                class: "button primary filter-apply-button"
+                'class': "button primary filter-apply-button"
             });
             rule.$el.find('.rule-header .rule-actions').append(applyButton);
             rule.$el.find('.rule-header .remove-row').css('right', '').css('left', '16px');
@@ -73,7 +71,7 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
         var filterText = el.find('div.rule-filter-container > div > div.selectize-input .item').text();
         var readonlyFilter = $("<span>", {
             html: "<strong>" + filterText + "</strong>",
-            class: "filter-text"
+            'class': "filter-text"
         });
         el.find('div.rule-filter-container').append($(readonlyFilter));
         el.find('div.rule-filter-container > div > div.selectize-input').hide();
@@ -160,8 +158,7 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
 
         //el.find('div.rule-filter-container > div > div.selectize-input').width("222px");
         //el.find('div.rule-operator-container > div > div.selectize-input').width("100px");
-        //el.find('div.rule-value-container > div > div.selectize-input').width("223px");
-        //el.find('div.rule-value-container').css("display", "inline-block");
+        el.find('div.rule-value-container').css('width', '223px');
     }
 
 }, {

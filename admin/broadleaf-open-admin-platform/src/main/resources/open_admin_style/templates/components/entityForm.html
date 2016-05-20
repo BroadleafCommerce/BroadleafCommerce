@@ -8,9 +8,8 @@
     <!--    hideActions - boolean value determining whether or not to hide the entity form actions -->
 </comment>
 
-<div th:object="${entityForm}" th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
-
-    <div class="section-tabs" th:if="${renderTabs}">
+<div th:object="${entityForm}" th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}" th:remove="tag">
+    <div class="section-tabs" th:classappend="${renderTabs == false} ? empty-section-tabs">
 
         <div class="errors" blc_admin:errors="*{*}" >
             <div th:if="${tabErrors}" th:remove="tag">
@@ -25,105 +24,139 @@
             </div>
         </div>
 
+        <div class="entity-errors"></div>
         <ul class="nav nav-tabs">
-            <li th:each="tab : ${entityForm.tabs}"
+            <li th:each="tab, tabStat : ${entityForm.tabs}"
                 th:class="${#ef.isTabActive(entityForm, tab)}? 'active'"
-                th:if="${tab.isVisible}"
+                th:if="${tab.hasFieldOrListGrid()}"
                 role="presentation">
-                <a th:href="'#tab' + ${tabStat.count}"
-                   th:class="${tab.tabClass}"
-                   th:text="#{${tab.title}}" />
+                <a th:href="'#tab' + ${tabStat.count}" th:class="${tabStat.first} ? 'first-tab'" th:classappend="${tab.tabClass}">
+                    <span th:attr="data-tabkey=${tab.key}" th:utext="#{${tab.title}}"></span>
+                    <i class="fa-pulse fa fa-spinner" style="display: none;"></i>
+                </a>
             </li>
         </ul>
     </div>
 
     <div class="content-yield">
-        <div class="row entity-edit">
-            <blc:form th:object="${entityForm}"
+        <div class="row">
+            <blc:form class="entity-form" th:object="${entityForm}"
                       method="POST"
                       th:classappend="${(additionalClasses == null ? '' : additionalClasses + ' ')
                          + (additionalControllerClasses == null ? '' : additionalControllerClasses)}"
                       th:action="@{${currentUrl}}">
 
                 <span style="display: none;" id="previewurl"
-                      th:attr="data-href=@{/sandbox/preview(ceilingEntity=*{ceilingEntityClassname}, id=*{id}, directPreview=true)}" />
+                      th:attr="data-href=@{/sandbox/preview(ceilingEntity=*{ceilingEntityClassname}, id=*{id}, directPreview=true)}"></span>
+
+                <input type="hidden" th:if="${parentId}" class="treeListGrid" id="parentId" name="parentId" th:value="${parentId}" />
+                <input type="hidden" th:if="${parentColumnDepth}" class="treeListGrid" id="parentColumnDepth" name="parentColumnDepth" th:value="${parentColumnDepth}" />
 
                 <input type="hidden" th:field="*{ceilingEntityClassname}" />
                 <input type="hidden" th:field="*{entityType}" />
                 <input type="hidden" th:field="*{id}" />
                 <input type="hidden" th:field="*{sectionCrumbs}"  />
                 <input type="hidden" th:field="*{mainEntityName}" />
-                <input type="hidden" name="preventSubmit" th:value="*{preventSubmit}" />
-                <input type="hidden" name="jsErrorMapString" th:value="*{jsErrorMap}" />
-
 
                 <div class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
-                    <div th:each="tab : ${entityForm.tabs}"
+                    <div th:each="tab, tabStat : ${entityForm.tabs}"
+                         th:if="${tab.hasFieldOrListGrid()}"
                          th:class="'tab' + ${tabStat.count} + 'Tab entityFormTab' + ${tab.tabClass}"
-                         th:classappend="${(tabStat.first and tab.isVisible) or ((tabStat.index > 1 and not entityForm.tabs[tabStat.index-1].isVisible) and tab.isVisible)}? 'active'"
+                         th:classappend="${#ef.isTabActive(entityForm, tab)}? 'active'"
                          th:inline="text">
 
-                        <div class="col11">
-                            <div class="row">
-                                <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
-                                    <legend th:text="${group.title}" />
+                        <div th:if="${tab.customTemplate != null}" th:remove="tag">
+                            <div th:substituteBy="${tab.customTemplate}"></div>
+                        </div>
+                        <div th:unless="${tab.customTemplate != null}" th:remove="tag">
+                            <div th:class="${inModal != null and inModal? 'col12' : tab.isMultiColumn != null and tab.isMultiColumn? 'col8' : tab.wantsFullScreen? 'col12' : 'col10'}">
+                                <div class="row">
 
-                                    <comment th:remove="all">
-                                        <!-- *** IMPORTANT *** -->
-                                        <!-- When changing this block of code, make sure standaloneField.html is also updated -->
-                                        <!-- *** IMPORTANT *** -->
-                                    </comment>
-                                    <div th:each="field : ${group.fields}"
-                                         th:if="${field.name}"
-                                         th:class="${'field-group' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}"
-                                         blc_admin:component_id="${field}"
-                                         th:classappend="${!field.isVisible}? 'hidden'">
+                                    <fieldset th:each="group, groupStat : ${tab.fieldGroups}" th:remove="tag" th:if="${group.column} == 0 or ${group.column} == null">
+                                        <div th:if="${group.customTemplate == null}" th:include="components/partials/entityFormGroups" th:remove="tag"></div>
+                                        <div th:unless="${group.customTemplate == null}" th:remove="tag">
+                                            <div th:substituteBy="${group.customTemplate}"></div>
+                                        </div>
+                                    </fieldset>
 
-                    <div th:if="${field.readOnly}" th:remove="tag">
-                        <div th:substituteby="fields/readonly" />
-                    </div>
-                    <div th:unless="${field.readOnly}" th:remove="tag">
-                        <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}" />
-                    </div>
+                                    <div th:if="${dynamicFormTemplateOverride == null}" th:remove="tag">
+                                        <div th:if="${tabStat.first}" th:each="dynamicForm : *{dynamicForms}" th:remove="tag">
+                                            <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}"></div>
+                                        </div>
+                                    </div>
 
-                                        <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
+                                    <div th:remove="tag" th:unless="${dynamicFormTemplateOverride == null}">
+                                        <div th:replace="${dynamicFormTemplateOverride}"></div>
+                                    </div>
 
+                                    <fieldset th:each="listGrid : ${tab.listGrids}" th:remove="tag"
+                                              th:if="${listGrid.selectType} != 'selectize' and ${listGrid.listGridType} != 'asset_grid'">
+                                        <div class="fieldset-card field-group listgrid-container entityform-listgrid"
+                                             th:id="${listGrid.subCollectionFieldName}">
+                                            <div class="fieldgroup-listgrid-wrapper-header titlebar" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden-body'">
+                                                <div class="titlebar-title">
+                                                    <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" class="listgrid-friendly-name" th:utext="#{${listGrid.friendlyName}}"></span>
+                                                    <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Record)'"></span>
+                                                    <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Records)'"></span>
+                                                </div>
+                                                <div th:include="components/listGridToolbar" th:with="listGrid=${listGrid}" th:remove="tag"/>
+                                            </div>
+                                            <div class="fieldgroup-listgrid-wrapper fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
+                                                <div th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}" th:remove="tag"></div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+
+                                    <div th:each="listGrid : ${tab.listGrids}"
+                                              th:id="${listGrid.subCollectionFieldName}"
+                                              class="media-container entityform-listgrid"
+                                              th:if="${listGrid.selectType} != 'selectize' and ${listGrid.listGridType} == 'asset_grid'">
+                                        <div th:include="components/mediaGrid" th:with="listGrid=${listGrid}"></div>
+                                    </div>
+
+                                    <div th:each="listGrid : ${tab.listGrids}" th:remove="tag"
+                                         th:if="${listGrid.selectType} == 'selectize'">
+                                        <div class="fieldset-card field-group listgrid-container entityform-listgrid"
+                                             th:id="${listGrid.subCollectionFieldName}">
+                                            <a class="titlebar" href="#">
+                                                <div class="titlebar-title">
+                                                    <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" th:utext="#{${listGrid.friendlyName}}"></span>
+                                                </div>
+                                                <div class="collapser">
+                                                    <span th:unless="${#lists.isEmpty(listGrid.records)}" class="expanded" href="#">(hide)</span>
+                                                    <span th:if="${#lists.isEmpty(listGrid.records)}" class="collapsed" href="#">(show)</span>
+                                                </div>
+                                            </a>
+                                            <div class="fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records) ? 'content-collapsed' : ''}">
+                                                <div th:include="components/selectizeLabelBar" th:with="listGrid=${listGrid}" th:remove="tag"></div>
+                                                <div th:include="components/selectizeCollection" th:with="listGrid=${listGrid}" th:remove="tag"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:if="${tab.isMultiColumn != null and tab.isMultiColumn}" th:class="${inModal != null and inModal? 'col12' : 'col4'}">
+                                <fieldset th:each="group : ${tab.fieldGroups}" th:if="${group.column} != 0 and ${group.column} != null" th:remove="tag">
+                                    <div th:if="${group.customTemplate == null}" th:include="components/partials/entityFormGroups" th:remove="tag"></div>
+                                    <div th:unless="${group.customTemplate == null}" th:remove="tag">
+                                        <div th:substituteBy="${group.customTemplate}"></div>
                                     </div>
                                 </fieldset>
-
-                                <div th:remove="tag" th:if="${dynamicFormTemplateOverride == null}">
-                                    <div th:if="${tabStat.first}" th:each="dynamicForm : *{dynamicForms}">
-                                        <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
-                                    </div>
-                                </div>
-
-                                <div th:remove="tag" th:unless="${dynamicFormTemplateOverride == null}">
-                                    <div th:include="${dynamicFormTemplateOverride}" />
-                                </div>
-
-                                <div th:each="collectionListGrid : ${tab.listGrids}" class="listgrid-container" th:id="${collectionListGrid.subCollectionFieldName}">
-                                    <label th:text="#{${collectionListGrid.friendlyName}}" />
-                                    <div th:include="components/listGridToolbar" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
-                                    <div th:include="components/listGrid" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div class="entity-form-actions">
                     <button th:each="action : ${entityForm.actions}"
-                            class="button radius dark"
+                            class="button"
                             th:type="${action.buttonType}"
-                            th:attr="data-action=${action.urlPostfix}"
+                            th:attr="data-action=${action.urlPostfix}, data-actionurl=@{${action.urlOverride}}"
                             th:classappend="${action.buttonClass}" th:unless="${hideActions}">
-                        <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+                        <span th:utext="#{${action.displayText}}" th:remove="tag"></span>
                     </button>
                     <img th:src="@{/img/admin/ajax-loader.gif}" class="ajax-loader" />
                 </div>
-
             </blc:form>
-
         </div>
     </div>
 </div>

@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Profile
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 
@@ -26,10 +24,9 @@ import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
@@ -65,21 +62,22 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@EntityListeners(value = { TemporalTimestampListener.class })
+@EntityListeners(value = { TemporalTimestampListener.class, CustomerPaymentPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(name = "CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PAYMENT_TOKEN" }))
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
 {
-        @AdminPresentationMergeOverride(name = "billingAddress.addressLine1", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true)),
+        @AdminPresentationMergeOverride(name = "billingAddress.addressLine1", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3000)
+        }),
         @AdminPresentationMergeOverride(name = "billingAddress.", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = CustomerPaymentImpl.Presentation.Tab.Name.BILLING_ADDRESS),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = CustomerPaymentImpl.Presentation.Tab.Order.BILLING_ADDRESS)
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = CustomerPaymentAdminPresentation.TabName.BillingAddress),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = CustomerPaymentAdminPresentation.TabOrder.BillingAddress)
         })
 })
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
-public class CustomerPaymentImpl implements CustomerPayment {
+public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
@@ -97,7 +95,7 @@ public class CustomerPaymentImpl implements CustomerPayment {
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = AddressImpl.class, optional = true)
@@ -107,31 +105,29 @@ public class CustomerPaymentImpl implements CustomerPayment {
     @Column(name = "PAYMENT_TOKEN")
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_paymentToken",
             tooltip = "CustomerPaymentImpl_paymentToken_tooltip",
-            tab = Presentation.Tab.Name.PAYMENT,
-            tabOrder = Presentation.Tab.Order.PAYMENT,
-            group = Presentation.Group.Name.PAYMENT,
-            groupOrder = Presentation.Group.Order.PAYMENT)
+            group = GroupName.Payment, order = FieldOrder.PAYMENT_TOKEN)
     protected String paymentToken;
 
     @Column(name = "PAYMENT_TYPE")
     @Index(name="CUSTOMERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
-    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Payment_Type", prominent=true,
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Payment_Type",
+            group = GroupName.Payment, order = FieldOrder.PAYMENT_TYPE,
             fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentType")
+            broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentType",
+            prominent=true, gridOrder = 1000)
     protected String paymentType;
 
     @Column(name = "GATEWAY_TYPE")
-    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Gateway_Type", prominent=true,
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Gateway_Type",
+            group = GroupName.Payment, order = FieldOrder.PAYMENT_GATEWAY_TYPE,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentGatewayType")
+            broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentGatewayType",
+            prominent=true, gridOrder = 2000)
     protected String paymentGatewayType;
 
     @Column(name = "IS_DEFAULT")
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_isDefault",
-            tab = Presentation.Tab.Name.PAYMENT,
-            tabOrder = Presentation.Tab.Order.PAYMENT,
-            group = Presentation.Group.Name.PAYMENT,
-            groupOrder = Presentation.Group.Order.PAYMENT)
+            group = GroupName.Payment, order = FieldOrder.IS_DEFAULT)
     protected boolean isDefault = false;
 
     @ElementCollection()
@@ -140,12 +136,11 @@ public class CustomerPaymentImpl implements CustomerPayment {
     @Type(type = "org.hibernate.type.StringClobType")
     @CollectionTable(name = "BLC_CUSTOMER_PAYMENT_FIELDS", joinColumns = @JoinColumn(name = "CUSTOMER_PAYMENT_ID"))
     @MapKeyColumn(name = "FIELD_NAME", nullable = false)
-    @Column(name = "FIELD_VALUE")
+    @Column(name = "FIELD_VALUE", length = Integer.MAX_VALUE - 1)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @AdminPresentationMap(friendlyName = "CustomerPaymentImpl_additionalFields",
-            tab = Presentation.Tab.Name.PAYMENT,
-            tabOrder = Presentation.Tab.Order.PAYMENT,
+            tab = TabName.Payment,
             keyPropertyFriendlyName = "CustomerPaymentImpl_additional_field_key",
             forceFreeFormKeys = true)
     protected Map<String, String> additionalFields = new HashMap<String, String>();
@@ -252,40 +247,6 @@ public class CustomerPaymentImpl implements CustomerPayment {
             cloned.getAdditionalFields().put(entry.getKey(), entry.getValue());
         }
         return createResponse;
-    }
-
-    public static class Presentation {
-
-        public static class Group {
-
-            public static class Name {
-
-                public static final String PAYMENT = "CustomerPaymentImpl_payment";
-
-            }
-
-            public static class Order {
-
-                public static final int PAYMENT = 1000;
-            }
-
-        }
-
-        public static class Tab {
-
-            public static class Name {
-
-                public static final String PAYMENT = "CustomerPaymentImpl_payment";
-                public static final String BILLING_ADDRESS = "CustomerPaymentImpl_billingAddress";
-            }
-
-            public static class Order {
-
-                public static final int PAYMENT = 1000;
-                public static final int BILLING_ADDRESS = 2000;
-            }
-        }
-
     }
 
 }

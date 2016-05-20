@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.search.service.solr.index;
@@ -33,6 +31,9 @@ import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
@@ -158,29 +159,54 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
 
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-    
+
     @Override
     public ExtensionResultStatusType startBatchEvent(List<? extends Indexable> indexables) {
-        
-        List<String> defaultSkuIds = new ArrayList<String>(indexables.size());
-        List<String> productIds = new ArrayList<String>(indexables.size());
+
+        List<String> skuIds = new ArrayList<String>(indexables.size());
+        List<String> productIds = new ArrayList<String>();
+        List<String> skuAttributeIds = new ArrayList<String>();
+        List<String> productAttributeIds = new ArrayList<String>();
         for (Indexable indexable : indexables) {
+            Sku sku = null;
             if (Product.class.isAssignableFrom(indexable.getClass())) {
                 Product product = (Product) indexable;
                 productIds.add(product.getId().toString());
-                defaultSkuIds.add(product.getDefaultSku().getId().toString());
+                for (Map.Entry productAttributeEntry :  product.getMultiValueProductAttributes().entrySet()) {
+                    List<ProductAttribute> productAttributes = (List<ProductAttribute>) productAttributeEntry.getValue();
+                    for (ProductAttribute productAttribute : productAttributes) {
+                        productAttributeIds.add(productAttribute.getId().toString());
+                    }
+                }
+                sku = product.getDefaultSku();
+            } else if (Sku.class.isAssignableFrom(indexable.getClass())) {
+                sku = (Sku) indexable;
+            }
+            
+            if (sku != null) {
+                skuIds.add(sku.getId().toString());
+                for (Map.Entry skuAttributeEntry :  sku.getMultiValueSkuAttributes().entrySet()) {
+                    List<SkuAttribute> skuAttributes = (List<SkuAttribute>) skuAttributeEntry.getValue();
+                    for (SkuAttribute skuAttribute : skuAttributes) {
+                        skuAttributeIds.add(skuAttribute.getId().toString());
+                    }
+                }
             }
         }
-        
-        List<Translation> defaultSkuTranslations = translationDao.readAllTranslationEntries(TranslatedEntity.SKU, ResultType.STANDARD, defaultSkuIds);
-        TranslationBatchReadCache.addToCache(defaultSkuTranslations);
-        
-        List<Translation> productTranslations = translationDao.readAllTranslationEntries(TranslatedEntity.PRODUCT, ResultType.STANDARD, productIds);
-        TranslationBatchReadCache.addToCache(productTranslations);
-        
+
+        addEntitiesToTranslationCache(skuIds, TranslatedEntity.SKU);
+        addEntitiesToTranslationCache(productIds, TranslatedEntity.PRODUCT);
+        addEntitiesToTranslationCache(skuAttributeIds, TranslatedEntity.SKU_ATTRIBUTE);
+        addEntitiesToTranslationCache(productAttributeIds, TranslatedEntity.PRODUCT_ATTRIBUTE);
+
         return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
-    
+
+    private void addEntitiesToTranslationCache(List<String> entityIds, TranslatedEntity translatedEntity) {
+        List<Translation> translations = translationDao.readAllTranslationEntries(translatedEntity, ResultType.STANDARD, entityIds);
+        TranslationBatchReadCache.addToCache(translations);
+    }
+
     @Override
     public ExtensionResultStatusType endBatchEvent(List<? extends Indexable> indexables) {
         TranslationBatchReadCache.clearCache();

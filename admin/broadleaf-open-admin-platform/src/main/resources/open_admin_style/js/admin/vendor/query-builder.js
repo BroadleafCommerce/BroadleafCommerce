@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 /*!
@@ -2660,6 +2658,89 @@ QueryBuilder.extend({
         });
 
         this.setFilters(delete_orphans, filters);
+    },
+
+    /**
+     * Overrides the default getRules method to provide us with greater controll over whether or not
+     * to display validation errors.
+     *
+     */
+    getRules: function() {
+        var isValid = true;
+
+        if (arguments[0] && arguments[0].displayErrors === false) {
+            // Gather the original value of `display-errors` so that we can later reestablish the value
+            var origVal = this.settings.display_errors;
+
+            // Temporarily disable the display of errors
+            this.settings.display_errors = false;
+            isValid = this.validate();
+
+            // Reestablish the original value of `display_errors`
+            this.settings.display_errors = origVal;
+        } else {
+            isValid = this.validate();
+        }
+
+        // If validation failed, then attempting to retrieve the rules will result in JS errors. Therefore,
+        // we'll simply return an empty object.
+        // Note, we must call `getRulesWithoutValidation` since a call to `getRules` or `QueryBuilder.prototype.getRules`
+        // will result in an infinite loop.
+        return !isValid ? {} : this.getRulesWithoutValidation();
+    },
+
+    /**
+     * Gathers all of the relevant rules without running validation. The main purpose of
+     *  this method is to split the gathering of rules from the validation so that additional logic can be
+     *  introduced around the validation.
+     *
+     * WARNING: Simply running this method without first running & processing validation in some way, could
+     *  easily run into JS errors if the data is not valid.
+     *
+     * Note: This is essentially a duplication of the default getRules method, with the validation step removed.
+     *
+     */
+    getRulesWithoutValidation: function() {
+        var out = (function parse(group) {
+            var data = {
+                condition: group.condition,
+                rules: []
+            };
+
+            if (group.data) {
+                data.data = $.extendext(true, 'replace', {}, group.data);
+            }
+
+            group.each(function(model) {
+                var value = null;
+                if (model.operator.nb_inputs !== 0) {
+                    value = model.value;
+                }
+
+                var rule = {
+                    id: model.filter.id,
+                    field: model.filter.field,
+                    type: model.filter.type,
+                    input: model.filter.input,
+                    operator: model.operator.type,
+                    value: value
+                };
+
+                if (model.filter.data || model.data) {
+                    rule.data = $.extendext(true, 'replace', {}, model.filter.data, model.data);
+                }
+
+                data.rules.push(rule);
+
+            }, function(model) {
+                data.rules.push(parse(model));
+            });
+
+            return data;
+
+        }(this.model.root));
+
+        return this.change('getRules', out);
     }
 });
 
@@ -2919,7 +3000,7 @@ QueryBuilder.defaults({
     mongoOperators: {
         equal:            function(v){ return v[0]; },
         not_equal:        function(v){ return {'$ne': v[0]}; },
-        in:               function(v){ return {'$in': v}; },
+        'in':             function(v){ return {'$in': v}; },
         not_in:           function(v){ return {'$nin': v}; },
         less:             function(v){ return {'$lt': v[0]}; },
         less_or_equal:    function(v){ return {'$lte': v[0]}; },
@@ -3326,7 +3407,7 @@ QueryBuilder.defaults({
     sqlOperators: {
         equal:            { op: '= ?' },
         not_equal:        { op: '!= ?' },
-        in:               { op: 'IN(?)',     sep: ', ' },
+        'in':             { op: 'IN(?)',     sep: ', ' },
         not_in:           { op: 'NOT IN(?)', sep: ', ' },
         less:             { op: '< ?' },
         less_or_equal:    { op: '<= ?' },

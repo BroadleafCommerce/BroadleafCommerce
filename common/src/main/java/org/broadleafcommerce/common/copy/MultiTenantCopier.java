@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2014 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.copy;
@@ -42,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 import javax.annotation.Resource;
 import javax.persistence.Embeddable;
@@ -72,6 +71,8 @@ public abstract class MultiTenantCopier implements Ordered {
     protected StreamingTransactionCapableUtil transUtil;
     
     protected int order = 0;
+    
+    protected List<Matcher> classExcludeRegexList = new ArrayList<Matcher>();
 
     /**
      * Main method that should be implemented by each {@link MultiTenantCopier} to drive the logic of
@@ -118,7 +119,8 @@ public abstract class MultiTenantCopier implements Ordered {
     }
 
     protected void persistCopyObjectTreeInternal(Object copy, Set<Integer> library, MultiTenantCopyContext context) {
-        if (library.contains(System.identityHashCode(copy))) {
+        if (library.contains(System.identityHashCode(copy)) || !(copy instanceof MultiTenantCloneable)
+                || excludeFromCopyRegex(copy)) {
             return;
         }
         library.add(System.identityHashCode(copy));
@@ -171,6 +173,15 @@ public abstract class MultiTenantCopier implements Ordered {
                         "recognizes Collection and Map. (%s.%s)", copy.getClass().getName(), ((Field) collectionItem[0]).getName()));
             }
         }
+    }
+
+    protected Boolean excludeFromCopyRegex(Object copy) {
+        for (Matcher regex : classExcludeRegexList) {
+            if (regex.reset(copy.getClass().toString()).matches()) {
+               return true; 
+            }
+        }
+        return false;
     }
 
     protected void persistNode(final Object copy, final MultiTenantCopyContext context) {

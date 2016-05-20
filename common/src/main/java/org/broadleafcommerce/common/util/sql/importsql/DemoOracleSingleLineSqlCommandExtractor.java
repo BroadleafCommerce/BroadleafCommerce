@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.util.sql.importsql;
@@ -91,13 +89,18 @@ public class DemoOracleSingleLineSqlCommandExtractor extends SingleLineSqlComman
         Pattern pattern = Pattern.compile(TIMESTAMPMATCH);
         statements = stringList.toArray(new String[stringList.size()]);
         for (int x=0; x<statements.length; x++) {
-            Matcher matcher = pattern.matcher(statements[x]);
+            String statement = statements[x];
+            Matcher matcher = pattern.matcher(statement);
             while (matcher.find()) {
                 String date = matcher.group(1);
-                String temp = statements[x].substring(0, statements[x].indexOf(date)) + "{ts " + date + "}" +
-                        statements[x].substring(statements[x].indexOf(date) + date.length(), statements[x].length());
-                statements[x] = temp;
+                statement = statement.substring(0, statements[x].indexOf(date)) + "{ts " + date + "}" +
+                    statement.substring(statement.indexOf(date) + date.length(), statement.length());
             }
+            
+            // Any MySQL-specific newlines replace with newline character concatenation
+            statement = statement.replaceAll(DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX, "' || CHR(13) || CHR(10) || '");
+            
+            statements[x] = statement;
         }
 
         return statements;

@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 /* ========================================================================
@@ -32,23 +30,23 @@
   // DROPDOWN CLASS DEFINITION
   // =========================
 
-  var backdrop = '.dropdown-backdrop'
-  var toggle   = '[data-toggle="dropdown"]'
+  var backdrop = '.dropdown-backdrop';
+  var toggle   = '[data-toggle="dropdown"]';
   var Dropdown = function (element) {
     $(element).on('click.bs.dropdown', this.toggle)
-  }
+  };
 
-  Dropdown.VERSION = '3.3.4'
+  Dropdown.VERSION = '3.3.4';
 
   Dropdown.prototype.toggle = function (e) {
-    var $this = $(this)
+    var $this = $(this);
 
-    if ($this.is('.disabled, :disabled')) return
+    if ($this.is('.disabled, :disabled')) return;
 
-    var $parent  = getParent($this)
-    var isActive = $parent.hasClass('open')
+    var $parent  = getParent($this);
+    var isActive = $parent.hasClass('open');
 
-    clearMenus()
+    clearMenus();
 
     if (!isActive) {
       if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
@@ -56,14 +54,14 @@
         $('<div class="dropdown-backdrop"/>').insertAfter($(this)).on('click', clearMenus)
       }
 
-      var relatedTarget = { relatedTarget: this }
-      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+      var relatedTarget = { relatedTarget: this };
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget));
 
-      if (e.isDefaultPrevented()) return
+      if (e.isDefaultPrevented()) return;
 
       $this
         .trigger('focus')
-        .attr('aria-expanded', 'true')
+        .attr('aria-expanded', 'true');
 
       $parent
         .toggleClass('open')
@@ -71,68 +69,68 @@
     }
 
     return false
-  }
+  };
 
   Dropdown.prototype.keydown = function (e) {
-    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return;
 
-    var $this = $(this)
+    var $this = $(this);
 
-    e.preventDefault()
-    e.stopPropagation()
+    e.preventDefault();
+    e.stopPropagation();
 
-    if ($this.is('.disabled, :disabled')) return
+    if ($this.is('.disabled, :disabled')) return;
 
-    var $parent  = getParent($this)
-    var isActive = $parent.hasClass('open')
+    var $parent  = getParent($this);
+    var isActive = $parent.hasClass('open');
 
     if ((!isActive && e.which != 27) || (isActive && e.which == 27)) {
-      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      if (e.which == 27) $parent.find(toggle).trigger('focus');
       return $this.trigger('click')
     }
 
-    var desc = ' li:not(.disabled):visible a'
-    var $items = $parent.find('[role="menu"]' + desc + ', [role="listbox"]' + desc)
+    var desc = ' li:not(.disabled):visible a';
+    var $items = $parent.find('[role="menu"]' + desc + ', [role="listbox"]' + desc);
 
-    if (!$items.length) return
+    if (!$items.length) return;
 
-    var index = $items.index(e.target)
+    var index = $items.index(e.target);
 
-    if (e.which == 38 && index > 0)                 index--                        // up
-    if (e.which == 40 && index < $items.length - 1) index++                        // down
-    if (!~index)                                      index = 0
+    if (e.which == 38 && index > 0)                 index--;                        // up
+    if (e.which == 40 && index < $items.length - 1) index++;                        // down
+    if (!~index)                                      index = 0;
 
     $items.eq(index).trigger('focus')
-  }
+  };
 
   function clearMenus(e) {
-    if (e && e.which === 3) return
-    $(backdrop).remove()
+    if (e && e.which === 3) return;
+    $(backdrop).remove();
     $(toggle).each(function () {
-      var $this         = $(this)
-      var $parent       = getParent($this)
-      var relatedTarget = { relatedTarget: this }
+      var $this         = $(this);
+      var $parent       = getParent($this);
+      var relatedTarget = { relatedTarget: this };
 
-      if (!$parent.hasClass('open')) return
+      if (!$parent.hasClass('open')) return;
 
-      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget));
 
-      if (e.isDefaultPrevented()) return
+      if (e.isDefaultPrevented()) return;
 
-      $this.attr('aria-expanded', 'false')
+      $this.attr('aria-expanded', 'false');
       $parent.removeClass('open').trigger('hidden.bs.dropdown', relatedTarget)
     })
   }
 
   function getParent($this) {
-    var selector = $this.attr('data-target')
+    var selector = $this.attr('data-target');
 
     if (!selector) {
-      selector = $this.attr('href')
-      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+      selector = $this.attr('href');
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, ''); // strip for ie7
     }
 
-    var $parent = selector && $(selector)
+    var $parent = selector && $(selector);
 
     return $parent && $parent.length ? $parent : $this.parent()
   }
@@ -143,27 +141,27 @@
 
   function Plugin(option) {
     return this.each(function () {
-      var $this = $(this)
-      var data  = $this.data('bs.dropdown')
+      var $this = $(this);
+      var data  = $this.data('bs.dropdown');
 
-      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)));
       if (typeof option == 'string') data[option].call($this)
     })
   }
 
-  var old = $.fn.dropdown
+  var old = $.fn.dropdown;
 
-  $.fn.dropdown             = Plugin
-  $.fn.dropdown.Constructor = Dropdown
+  $.fn.dropdown             = Plugin;
+  $.fn.dropdown.Constructor = Dropdown;
 
 
   // DROPDOWN NO CONFLICT
   // ====================
 
   $.fn.dropdown.noConflict = function () {
-    $.fn.dropdown = old
+    $.fn.dropdown = old;
     return this
-  }
+  };
 
 
   // APPLY TO STANDARD DROPDOWN ELEMENTS

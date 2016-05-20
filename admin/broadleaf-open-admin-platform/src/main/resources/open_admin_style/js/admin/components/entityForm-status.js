@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 
@@ -208,6 +206,12 @@
                     $matchValue.val(origVal);
                     continue;
                 }
+                // If this is a color picker, we need to set the color picker widget
+                else if ($(el).hasClass('color-picker-value')) {
+                    $(el).val(origVal).trigger('blur');
+                    $(el).closest('.field-group').find('input.color-picker').spectrum('set', origVal);
+                    continue;
+                }
 
                 // If we made it this far, set the fields value.
                 $(el).val(origVal).trigger('blur');
@@ -223,7 +227,7 @@
         clearEntityFormChanges : function () {
             entityFormChangeMap = {};
 
-            $('[data-orig-val]:not([data-orig-val=""])').each(function(i, el) {
+            $('[data-orig-val]').each(function(i, el) {
                 $(el).removeAttr('data-orig-val');
             });
             this.initializeOriginalValues();
@@ -249,8 +253,8 @@
          */
         updateEntityFormChangeMap : function(id, origVal, newVal) {
             var changesFromId = this.getEntityFormChangesById(id);
-            var newValJson = JSON.stringify(newVal);
-            var origValJson = JSON.stringify(origVal);
+            var newValJson = BLCAdmin.unescapeString(JSON.stringify(newVal));
+            var origValJson = BLCAdmin.unescapeString(JSON.stringify(origVal));
 
             // Check if the field is in the change map
             if (changesFromId === undefined) {
@@ -263,7 +267,8 @@
             }
             // If it is, and the values are the same, remove it
             else {
-                if (newValJson == JSON.stringify(changesFromId.originalValue)) {
+                var entityOrigValJson = BLCAdmin.unescapeString(JSON.stringify(changesFromId.originalValue));
+                if (newValJson == entityOrigValJson) {
                     this.removeChangesForId(id);
                 }
             }
@@ -277,7 +282,7 @@
          */
         updateEntityFormActions : function() {
             // Grab all buttons we might want to enable/disable
-            var $saveBtn = $('.entity-form-actions').find('button.submit-button');
+            var $saveBtn = $('.sticky-container').find('.entity-form-actions').find('button.submit-button');
             var $promoteBtn = $('.sandbox-actions').find('.button a:contains("Promote")').parent();
             var $approveBtn = $('.sandbox-actions').find('.button a:contains("Approve")').parent();
 
@@ -382,6 +387,11 @@
              * original value as a data field.  This is used for comparison when the field value changes.
              */
             $('input:radio').each(function(i, el) {
+                // if this element is in an OMS tab, we don't want to track
+                if ($(el).closest('.oms-tab').length) {
+                    return false;
+                }
+
                 var id = $(el).attr('name');
                 var $thisRadio = $('[name="' + id + '"]');
                 var $checkedRadio = $('[name="' + id + '"]:checked');
@@ -399,6 +409,11 @@
              * their original url as a data field.  This is used for comparison when the field value changes.
              */
             $('input.mediaItem').each(function(i, el) {
+                // if this element is in an OMS tab, we don't want to track
+                if ($(el).closest('.oms-tab').length) {
+                    return false;
+                }
+
                 var origVal = $(el).val() || '';
                 var mediaUrl;
                 if ($(el).hasClass('mediaUrl')) {
@@ -414,11 +429,16 @@
              * For lookups we need to store the original id value as well as the original display value
              */
             $('.additional-foreign-key-container').each(function(i, el) {
-                var $valueContainer = $(el).find('.value')
+                // if this element is in an OMS tab, we don't want to track
+                if ($(el).closest('.oms-tab').length) {
+                    return false;
+                }
+
+                var $valueContainer = $(el).find('.value');
                 var origVal = $valueContainer.val() || '';
                 $valueContainer.attr('data-orig-val', origVal);
 
-                var $displayContainer = $(el).find('.hidden-display-value')
+                var $displayContainer = $(el).find('.hidden-display-value');
                 var origVal = $displayContainer.val() || '';
                 $displayContainer.attr('data-orig-val', origVal);
             });
@@ -428,6 +448,11 @@
              * main container.
              */
             $('.rule-builder-required-field').each(function(i, el) {
+                // if this element is in an OMS tab, we don't want to track
+                if ($(el).closest('.oms-tab').length) {
+                    return false;
+                }
+
                 var rulesContainer = $($(this)).siblings('.query-builder-rules-container');
                 var rulesContainerID = rulesContainer.attr('id');
                 var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilder(rulesContainerID);
@@ -517,6 +542,12 @@
          * @returns {boolean}
          */
         checkIfShouldTrackChanges : function(el) {
+
+            // if this element is in an OMS tab, we don't want to track
+            if (el !== undefined && $(el).closest('.oms-tab').length) {
+                return false;
+            }
+
             // Don't track if we are in a modal, on an OMS page, or not on a page with an entity form
             if ((el !== undefined && $(el).closest('.modal').length) ||
                 $('.oms').length ||

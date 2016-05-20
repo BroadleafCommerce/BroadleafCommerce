@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.offer.domain;
@@ -152,6 +150,28 @@ public interface OfferAdminPresentation {
         public static final int Amount = 5000;
         public static final int OfferType = 5000;
         public static final int DiscountType = 5000;
+
+        public static final int StartDate = 1000;
+        public static final int EndDate = 2000;
+        public static final int TimeRule = 3000;
+
+        public static final int CustomerRule = 1000;
+        public static final int AutomaticallyAdded = 2000;
+
+        public static final int MaxUsesPerOrder = 1000;
+        public static final int MaxUsesPerCustomer = 2000;
+        public static final int OrderMinSubTotal = 3000;
+
+        public static final int Priority = 1000;
+
+        public static final int CombinableWithOtherOffers = 1000;
+        public static final int StackableWithOtherOffers = 2000;
+
+        public static final int QualifyingItemSubTotal = 1000;
+        public static final int QualifiersCanBeQualifiers = 2000;
+        public static final int QualifiersCanBeTargets = 3000;
+
+        public static final int OfferCodes = 1000;
     }
 
 }

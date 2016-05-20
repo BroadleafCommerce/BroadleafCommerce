@@ -2,27 +2,27 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.payment.service;
 
+import org.apache.commons.collections4.MapUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
-import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -30,14 +30,15 @@ import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -116,9 +117,27 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
     public OrderPayment createOrderPaymentFromCustomerPayment(Order order, CustomerPayment customerPayment, Money amount) {
         OrderPayment orderPayment = create();
         orderPayment.setOrder(order);
-        orderPayment.setType(customerPayment.getPaymentType());
         orderPayment.setBillingAddress(addressService.copyAddress(customerPayment.getBillingAddress()));
-        orderPayment.setPaymentGatewayType(customerPayment.getPaymentGatewayType());
+        
+        PaymentGatewayType gatewayType = customerPayment.getPaymentGatewayType();
+        PaymentType paymentType = customerPayment.getPaymentType();
+        Map<String, String> additionalFields = customerPayment.getAdditionalFields();
+        if (gatewayType == null || paymentType == null) {
+            if (MapUtils.isEmpty(additionalFields)) {
+                additionalFields = new HashMap<>();
+            }
+            String paymentTypeKey = PaymentAdditionalFieldType.PAYMENT_TYPE.getType();
+            if (additionalFields.containsKey(paymentTypeKey)) {
+                paymentType = PaymentType.getInstance(additionalFields.get(paymentTypeKey));
+            }
+            String gatewayTypeKey = PaymentAdditionalFieldType.GATEWAY_TYPE.getType();
+            if (additionalFields.containsKey(gatewayTypeKey)) {
+                gatewayType = PaymentGatewayType.getInstance(additionalFields.get(gatewayTypeKey));
+            }
+        }
+        orderPayment.setPaymentGatewayType(gatewayType);
+        orderPayment.setType(paymentType);
+
         orderPayment.setAmount(amount);
 
         PaymentTransaction unconfirmedTransaction = createTransaction();
@@ -156,3 +175,4 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
     }
 
 }
+

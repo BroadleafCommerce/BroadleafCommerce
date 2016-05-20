@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.util.dao;
@@ -23,6 +21,8 @@ import javassist.util.proxy.ProxyFactory;
 
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ProxyDetectionException;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -44,13 +44,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 
 
 public class DynamicDaoHelperImpl implements DynamicDaoHelper {
-    
+
+    private static final Log LOG = LogFactory.getLog(DynamicDaoHelperImpl.class);
     public static final Object LOCK_OBJECT = new Object();
     public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE = new LRUMap<Class<?>, Class<?>[]>(1000);
     public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<Class<?>, Class<?>[]>(1000);
@@ -78,6 +81,9 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         }
         return response;
     }
+
+    private final Object WHITELIST_LOCK = new Object();
+    private final Set<String> ENTITY_WHITELIST = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     
     @Override
     public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, SessionFactory sessionFactory,
@@ -308,5 +314,33 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         Field idField = ReflectionUtils.findField(clazz, metadata.getIdentifierPropertyName());
         idField.setAccessible(true);
         return idField;
+    }
+
+    @Override
+    public void initializeEntityWhiteList(SessionFactory sessionFactory, String persistenceUnitName) {
+        synchronized(WHITELIST_LOCK) {
+            if (ENTITY_WHITELIST.isEmpty()) {
+                for (Object item : sessionFactory.getAllClassMetadata().values()) {
+                    ClassMetadata metadata = (ClassMetadata) item;
+                    Class<?> mappedClass = metadata.getMappedClass();
+                    ENTITY_WHITELIST.add(persistenceUnitName + "_" + mappedClass.getName());
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean validateEntityClassName(String entityClassName, String persistenceUnitName) {
+        String key = persistenceUnitName + "_" + entityClassName;
+        boolean isValid = ENTITY_WHITELIST.contains(key);
+        if (!isValid) {
+            isValid = ENTITY_WHITELIST.contains(key + "Impl");
+        }
+
+        if (!isValid) {
+            LOG.warn("The system detected an entity class name submitted that is not present in the registered entities known to the system.");
+        }
+
+        return isValid;
     }
 }

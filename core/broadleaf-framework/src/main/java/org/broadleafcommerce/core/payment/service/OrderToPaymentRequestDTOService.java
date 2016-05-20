@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 
@@ -52,14 +50,6 @@ public interface OrderToPaymentRequestDTOService {
      * type {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE} might be passed into this method
      * in order for the gateway issue a "reverse auth" against this original transaction.
      *
-     * Important: As of 4.0.1-GA+ the transaction amount passed in will <b>not</b< be set as the transaction total
-     * on the PaymentRequestDTO if coming from a "payment flow". That is, if you are invoking this method via the
-     * {@link org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity} and the
-     * payment transaction passed in is of type {@link org.broadleafcommerce.common.payment.PaymentTransactionType#UNCONFIRMED}.
-     * If it is an unconfirmed payment, the transaction total will be set from the "final payment" details that
-     * are coming off the order itself (along with other details like shipping/billing info etc...)
-     * @see {@link https://github.com/BroadleafCommerce/BroadleafCommerce/issues/1423} for details.
-     * 
      * @param transactionAmount the amount that should be placed on {@link PaymentRequestDTO#getTransactionTotal()}
      * @param paymentTransaction the transaction whose additional fields should be placed on {@link PaymentRequestDTO#getAdditionalFields()}
      *                           for the gateway to use
@@ -70,6 +60,22 @@ public interface OrderToPaymentRequestDTOService {
      * @see {@link org.broadleafcommerce.core.checkout.service.workflow.ConfirmPaymentsRollbackHandler}
      */
     public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction);
+
+    /**
+     * Important: As of 4.0.1-GA+, there is a requirement to automatically populate the transaction amount on the DTO
+     * only if coming from a "checkout payment flow". That is, if you are invoking this method via the
+     * {@link org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity} and the
+     * payment transaction passed in is of type {@link org.broadleafcommerce.common.payment.PaymentTransactionType#UNCONFIRMED}.
+     * If the totals need to be auto-calculated, the transaction total will be set from the "final payment" details that
+     * are coming off the order itself (along with other details like shipping/billing info etc...)
+     * @see {@link https://github.com/BroadleafCommerce/BroadleafCommerce/issues/1423} for details.
+     *
+     * @param transactionAmount
+     * @param paymentTransaction
+     * @param autoCalculateFinalPaymentTotals
+     * @return
+     */
+    public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction, boolean autoCalculateFinalPaymentTotals);
 
     /**
      * Uses total information on the Order to populate the

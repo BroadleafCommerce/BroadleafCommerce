@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 /* Utility methods provided by Broadleaf Commerce for admin */
@@ -393,6 +391,8 @@ var BLCAdmin = (function($) {
                         var $submitButton = BLCAdmin.currentModal().find("button[type='submit']");
                         $submitButton.prop('disabled', true);
                     }
+                    
+                    BLCAdmin.currentModal().trigger('content-loaded');
                 });
             } else {
                 showLinkAsModal(link);
@@ -411,7 +411,7 @@ var BLCAdmin = (function($) {
         },
 
         hideAllModals : function() {
-            var currentModal = BLCAdmin.currentModal()
+            var currentModal = BLCAdmin.currentModal();
             while (currentModal) {
                 currentModal.modal('hide');
                 currentModal = BLCAdmin.currentModal();
@@ -504,17 +504,17 @@ var BLCAdmin = (function($) {
         initializeDateFields : function($container) {
             $container.find('.datetimepicker').each(function (index, element) {
                 // create a hidden clone, which will contain the actual value
-                var clone = $(this).clone();
-                var self = $(this);
-                clone.insertAfter(this);
-                clone.hide();
+                var $self = $(this);
+                var $clone = $self.clone();
+                $clone.insertAfter(this);
+                $clone.hide();
 
                 // rename the original field, used to contain the display value
-                $(this).attr('id', $(this).attr('id') + '-display');
-                $(this).attr('name', $(this).attr('name') + '-display');
+                $self.attr('id', $self.attr('id') + '-display');
+                $self.attr('name', $self.attr('name') + '-display');
 
                 // create the datetimepicker with the desired display format
-                $(this).datetimepicker({
+                $self.datetimepicker({
                     format: "l, F d, Y \@ g:ia",
                     onClose: function(current_time, $input) {
                         if (current_time) {
@@ -529,9 +529,15 @@ var BLCAdmin = (function($) {
                                 dateString = dateString.replace("23:59:00", "23:59:59");
                             }
                             // need to escape ids for entity form
-                            clone.attr('value',dateString).trigger('input');
+                            $clone.attr('value',dateString).trigger('input');
                             $input.trigger('input');
                         }
+                    }
+                });
+
+                $self.on('input', function() {
+                    if ($self.val() === "") {
+                        $clone.attr('value',"").trigger('input');
                     }
                 });
             });
@@ -607,10 +613,10 @@ var BLCAdmin = (function($) {
                 showButtons: false,
                 preferredFormat: "hex6",
                 change: function(color) {
-                    $(this).closest('.field-group').find('input.color-picker-value').val(color);
+                    $(this).closest('.field-group').find('input.color-picker-value').val(color).trigger('input');
                 },
                 move: function(color) {
-                    $(this).closest('.field-group').find('input.color-picker-value').val(color);
+                    $(this).closest('.field-group').find('input.color-picker-value').val(color).trigger('input');
                 }
             });
         },
@@ -621,7 +627,7 @@ var BLCAdmin = (function($) {
                 excludedSelectors += ', ' + excludedSelectizeSelectors[i];
             }
 
-            $('select:not(".selectize-collection, .selectize-adder' + excludedSelectors + '")')
+            $container.find('select:not(".selectize-collection, .selectize-adder' + excludedSelectors + '")')
                 .blSelectize({
                     sortField: 'text',
                     closeAfterSelect: true,
@@ -902,9 +908,12 @@ var BLCAdmin = (function($) {
                 var thisClass = $form.find('input[name="ceilingEntityClassname"]').val();
                 if (thisClass != null && thisClass.indexOf(className) >= 0) {
                     var toggleFunction = function(event) {
+                        // Get the containers parent in the event a field is on another tab
+                        var $containerParent = $container.parent();
+
                         // Extract the parent and child field DOM elements from the data
-                        var $parentField = event.data.$parentField;
-                        var $childField = $container.find(event.data.childFieldSelector);
+                        var $parentField = $containerParent.find(event.data.parentFieldSelector);
+                        var $childField = $containerParent.find(event.data.childFieldSelector);
                         var options = event.data.options;
                         var parentValue = BLCAdmin.extractFieldValue($parentField);
                         
@@ -955,8 +964,8 @@ var BLCAdmin = (function($) {
                     var $parentField = $container.find(parentFieldSelector);
                     
                     var data = {
-                        '$parentField' : $parentField,
                         '$container' : $container,
+                        'parentFieldSelector' : parentFieldSelector,
                         'childFieldSelector' : childFieldSelector,
                         'options' : options
                     };
@@ -986,7 +995,7 @@ var BLCAdmin = (function($) {
             dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)] = {
                 parentFieldSelector : parentFieldSelector,
                 childFieldPropertyName : childFieldPropertyName
-            }
+            };
             
             // If the parentFieldRequired option is turned on, we need to toggle the behavior of the child field accordingly
             if (options != null && options['parentFieldRequired']) {
@@ -1094,6 +1103,25 @@ var BLCAdmin = (function($) {
             $disabledFields.attr('disabled', true);
 
             return serializedForm;
+        },
+
+        /**
+         * Splits out a comma-seperated string into a cleaned array
+         * @param data
+         * @returns {Array}
+         */
+        stringToArray: function(data) {
+            var dataArray = [];
+            $.each(data.split(","), function(index, item) {
+                var item = item.replace(/(^\[")|("$)|(^")|("\]$)/g, '');
+                item = BLCAdmin.unescapeString(item);
+                dataArray.push(item);
+            });
+            return dataArray;
+        },
+        
+        unescapeString: function(data) {
+            return data.replace(/\\/g, '');
         }
     };
 
@@ -1231,7 +1259,7 @@ Selectize.define('enter_key_blur', function (options) {
             return original.apply(this, arguments)
         }
     })()
-})
+});
 
 // Replace the default AJAX error handler with this custom admin one that relies on the exception
 // being set on the model instead of a stack trace page when an error occurs on an AJAX request.
@@ -1254,7 +1282,7 @@ BLC.defaultErrorHandler = function(data) {
             BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.errorOccurred);
         }
     }
-}
+};
 
 BLC.addPreAjaxCallbackHandler(function($data) {
     if (!($data instanceof jQuery)) {
@@ -1447,7 +1475,7 @@ $('body').on('click', 'button.change-password-confirm', function(event) {
             $ef.append($('<input type="hidden" name="fields[\'saveAsNew\'].value" value="true" />'));
             */
             
-            $this.closest('')
+            $this.closest('');
             $this.closest('.actions').hide();
             
             //$ef.submit();
@@ -1455,6 +1483,15 @@ $('body').on('click', 'button.change-password-confirm', function(event) {
     });
     
     event.preventDefault();
+});
+
+$('body').on('click', '.add-main-entity', function (e) {
+    if (BLCAdmin.workflow == undefined) {
+        e.preventDefault();
+        var action = $(this).data('url');
+
+        BLCAdmin.showLinkAsModal(action);
+    }
 });
 
 // add scroll handler for the body

@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Profile Web
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.profile.web.core.security;
@@ -59,7 +57,7 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
     
-    protected String customerIdAttributeName = "customerId";
+    public static final String CUSTOMER_ID_ATTRIBUTE = "customerId";
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -72,18 +70,18 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
         if (request.getAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName()) == null){
     
             //First check to see if someone already put the customerId on the request
-            if (request.getAttribute(customerIdAttributeName) != null) {
-                customerId = String.valueOf(request.getAttribute(customerIdAttributeName));
+            if (request.getAttribute(CUSTOMER_ID_ATTRIBUTE) != null) {
+                customerId = String.valueOf(request.getAttribute(CUSTOMER_ID_ATTRIBUTE));
             }
             
             if (customerId == null) {
                 //If it's not on the request attribute, try the parameter
-                customerId = servletRequest.getParameter(customerIdAttributeName);
+                customerId = servletRequest.getParameter(CUSTOMER_ID_ATTRIBUTE);
             }
             
             if (customerId == null) {
                 //If it's not on the request parameter, look on the header
-                customerId = request.getHeader(customerIdAttributeName);
+                customerId = request.getHeader(CUSTOMER_ID_ATTRIBUTE);
             }
             
             if (customerId != null && customerId.trim().length() > 0) {
@@ -102,7 +100,7 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
             if (customerId == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("No customer ID was found for the API request. In order to look up a customer for the request" +
-                            " send a request parameter or request header for the '" + customerIdAttributeName + "' attribute");
+                            " send a request parameter or request header for the '" + CUSTOMER_ID_ATTRIBUTE + "' attribute");
                 }
             }
         }
@@ -117,13 +115,7 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
     }
 
     public String getCustomerIdAttributeName() {
-        return customerIdAttributeName;
+        return CUSTOMER_ID_ATTRIBUTE;
     }
 
-    public void setCustomerIdAttributeName(String customerIdAttributeName) {
-        if (customerIdAttributeName == null || customerIdAttributeName.trim().length() < 1) {
-            throw new IllegalArgumentException("customerIdAttributeName cannot be null");
-        }
-        this.customerIdAttributeName = customerIdAttributeName;
-    }
 }

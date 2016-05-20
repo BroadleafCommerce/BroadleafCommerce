@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.offer.service.processor;
@@ -208,29 +206,6 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         List<PromotableOrderItemPriceDetail> itemPriceDetails = order.getAllPromotableOrderItemPriceDetails();
         offerServiceUtilities.applyAdjustmentsForItemPriceDetails(itemOffer, itemPriceDetails);
     }
-
-
-    /**
-     * Legacy adjustments use the stackable flag instead of item qualifiers and targets
-     * @param order
-     * @param itemOffer
-     */
-    protected void applyLegacyAdjustments(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
-        for (PromotableOrderItem item : itemOffer.getLegacyCandidateTargets()) {
-            for (PromotableOrderItemPriceDetail itemPriceDetail : item.getPromotableOrderItemPriceDetails()) {
-                if (!itemOffer.getOffer().isStackable() || !itemOffer.getOffer().isCombinableWithOtherOffers()) {
-                    if (itemPriceDetail.getCandidateItemAdjustments().size() != 0) {
-                        continue;
-                    }
-                } else {
-                    if (itemPriceDetail.hasNonCombinableAdjustments()) {
-                        continue;
-                    }
-                }
-                offerServiceUtilities.applyOrderItemAdjustment(itemOffer, itemPriceDetail);
-            }
-        }
-    }
      
     /**
      * Call out to extension managers.
@@ -258,12 +233,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         if (applyItemOfferExtension(order, itemOffer)) {
             if (offerServiceUtilities.itemOfferCanBeApplied(itemOffer, order.getAllPromotableOrderItemPriceDetails())) {
                 applyItemQualifiersAndTargets(itemOffer, order);
-
-                if (itemOffer.isLegacyOffer()) {
-                    applyLegacyAdjustments(order, itemOffer);
-                } else {
-                    applyAdjustments(order, itemOffer);
-                }
+                applyAdjustments(order, itemOffer);
             }
         }
     }
@@ -299,17 +269,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
    
     protected void applyItemQualifiersAndTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
-        if (itemOffer.isLegacyOffer()) {
-            LOG.warn("The item offer with id " + itemOffer.getOffer().getId() + " is a legacy offer which means that it" +
-            		" does not have any item qualifier criteria AND does not have any target item criteria. As a result," +
-            		" we are skipping the marking of qualifiers and targets which will cause issues if you are relying on" +
-            		" 'maxUsesPerOrder' behavior. To resolve this, qualifier criteria is not required but you must at least" +
-            		" create some target item criteria for this offer.");
-            return;
-        } else {
-            markQualifiersAndTargets(order, itemOffer);
-            splitDetailsIfNecessary(order.getAllPromotableOrderItemPriceDetails());
-        }
+        markQualifiersAndTargets(order, itemOffer);
+        splitDetailsIfNecessary(order.getAllPromotableOrderItemPriceDetails());
     }
 
     protected List<PromotableOrderItemPriceDetail> buildPriceDetailListFromOrderItems(List<PromotableOrderItem> items) {
@@ -466,23 +427,16 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         if (itemOffers.size() > 1) {
             for (PromotableCandidateItemOffer itemOffer : itemOffers) {
                 Money potentialSavings = new Money(order.getOrderCurrency());
-                if (itemOffer.isLegacyOffer()) {
-                    for (PromotableOrderItem item : itemOffer.getLegacyCandidateTargets()) {
-                        Money savings = itemOffer.calculateSavingsForOrderItem(item, item.getQuantity());
-                        potentialSavings = potentialSavings.add(savings);
+                markQualifiersAndTargets(order, itemOffer);
+                for (PromotableOrderItemPriceDetail detail : order.getAllPromotableOrderItemPriceDetails()) {
+                    PromotableOrderItem item = detail.getPromotableOrderItem();
+                    for (PromotionDiscount discount : detail.getPromotionDiscounts()) {
+                        Money itemSavings = calculatePotentialSavingsForOrderItem(itemOffer, item, discount.getQuantity());
+                        potentialSavings = potentialSavings.add(itemSavings);
                     }
-                } else {
-                    markQualifiersAndTargets(order, itemOffer);
-                    for (PromotableOrderItemPriceDetail detail : order.getAllPromotableOrderItemPriceDetails()) {
-                        PromotableOrderItem item = detail.getPromotableOrderItem();
-                        for (PromotionDiscount discount : detail.getPromotionDiscounts()) {
-                            Money itemSavings = calculatePotentialSavingsForOrderItem(itemOffer, item, discount.getQuantity());
-                            potentialSavings = potentialSavings.add(itemSavings);
-                        }
-                        // Reset state back for next offer
-                        detail.getPromotionDiscounts().clear();
-                        detail.getPromotionQualifiers().clear();
-                    }
+                    // Reset state back for next offer
+                    detail.getPromotionDiscounts().clear();
+                    detail.getPromotionQualifiers().clear();
                 }
                 itemOffer.setPotentialSavings(potentialSavings);
                 if (itemOffer.getUses() == 0) {
@@ -496,10 +450,6 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
     protected void markQualifiersAndTargets(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
         boolean matchFound = true;
-
-        if (itemOffer.isLegacyOffer()) {
-            return;
-        }
 
         int count = 1;
         do {

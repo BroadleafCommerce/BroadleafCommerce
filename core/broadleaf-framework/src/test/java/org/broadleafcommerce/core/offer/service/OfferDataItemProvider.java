@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.offer.service;
@@ -52,7 +50,6 @@ import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImp
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderImpl;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
@@ -704,7 +701,7 @@ public class OfferDataItemProvider {
         String appliesToRules, 
         boolean applyToSalePrice,
         boolean combinableWithOtherOffers,
-        OfferDeliveryType deliveryType,
+            boolean automaticallyAdded,
         OfferDiscountType type,
         Date endDate,
         int maxUses,
@@ -734,22 +731,20 @@ public class OfferDataItemProvider {
                 OfferRuleType.ORDER.getType()));
         offer.setApplyDiscountToSalePrice(applyToSalePrice);
         offer.setCombinableWithOtherOffers(combinableWithOtherOffers);
-        offer.setDeliveryType(deliveryType);
-        offer.setRequiresCode(OfferDeliveryType.AUTOMATIC!=deliveryType);
+        offer.setAutomaticallyAdded(automaticallyAdded);
         offer.setDiscountType(type);
         offer.setEndDate(endDate);
-        offer.setMaxUses(maxUses);
+        offer.setMaxUsesPerOrder(maxUses);
         offer.setOfferItemQualifierRuleType(qualifierType);
         offer.setOfferItemTargetRuleType(targetType);
         offer.setPriority(priority);
         offer.setQualifyingItemCriteriaXref(qualifyingItemCriteriaXref);
-        offer.setStackable(stackable);
+
         offer.setStartDate(startDate);
         offer.setTargetItemCriteriaXref(targetItemCriteriaXref);
         offer.setTotalitarianOffer(totalitarianOffer);
         offer.setType(offerType);
         offer.setValue(value);
-        offer.setTreatAsNewFormat(true);
         offer.setId(getOfferId());
         return offer;
     }
@@ -767,7 +762,7 @@ public class OfferDataItemProvider {
     }
     
     public List<Offer> createCustomerBasedOffer(String customerRule, Date startDate, Date endDate, OfferDiscountType discountType) {
-        Offer offer = createOffer(customerRule, null, null, true, true, OfferDeliveryType.AUTOMATIC, discountType, endDate, 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, startDate, null, false, OfferType.ORDER, BigDecimal.valueOf(10));
+        Offer offer = createOffer(customerRule, null, null, true, true, true, discountType, endDate, 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, startDate, null, false, OfferType.ORDER, BigDecimal.valueOf(10));
         List<Offer> offers = new ArrayList<Offer>();
         offers.add(offer);
         
@@ -775,7 +770,7 @@ public class OfferDataItemProvider {
     }
     
     public List<Offer> createOrderBasedOffer(String orderRule, OfferDiscountType discountType) {
-        Offer offer = createOffer(null, null, orderRule, true, true, OfferDeliveryType.AUTOMATIC, discountType, tomorrow(), 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, yesterday(), null, false, OfferType.ORDER, BigDecimal.valueOf(10));
+        Offer offer = createOffer(null, null, orderRule, true, true, true, discountType, tomorrow(), 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, yesterday(), null, false, OfferType.ORDER, BigDecimal.valueOf(10));
         List<Offer> offers = new ArrayList<Offer>();
         offers.add(offer);
         
@@ -783,7 +778,7 @@ public class OfferDataItemProvider {
     }
     
     public List<Offer> createFGBasedOffer(String orderRule, String fgRule, OfferDiscountType discountType) {
-        Offer offer = createOffer(null, fgRule, orderRule, true, true, OfferDeliveryType.AUTOMATIC, discountType, tomorrow(), 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, yesterday(), null, false, OfferType.FULFILLMENT_GROUP, BigDecimal.valueOf(10));
+        Offer offer = createOffer(null, fgRule, orderRule, true, true, true, discountType, tomorrow(), 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, yesterday(), null, false, OfferType.FULFILLMENT_GROUP, BigDecimal.valueOf(10));
         List<Offer> offers = new ArrayList<Offer>();
         offers.add(offer);
         

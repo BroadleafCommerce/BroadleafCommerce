@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.catalog.dao;
@@ -26,7 +24,6 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
@@ -37,12 +34,8 @@ import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
@@ -247,50 +240,6 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
 
         DynamicResultSet resultSet = helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
         return resultSet;
-    }
-
-    protected PersistencePackage createPersistencePackage(IndexField searchField, FieldType fieldType) {
-        PersistencePackage pp = new PersistencePackage();
-        pp.setCeilingEntityFullyQualifiedClassname(IndexFieldTypeImpl.class.getName());
-        pp.setSecurityCeilingEntityFullyQualifiedClassname(IndexFieldTypeImpl.class.getName());
-        pp.setSectionEntityField("fieldTypes");
-
-        PersistencePerspective perspective = new PersistencePerspective(new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC,
-                OperationType.BASIC, OperationType.BASIC), new String[]{}, new ForeignKey[]{});
-        ForeignKey foreignKey = new ForeignKey("indexField", IndexFieldImpl.class.getName());
-        foreignKey.setOriginatingField(pp.getSectionEntityField());
-        foreignKey.setDisplayValueProperty("name");
-        perspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
-        pp.setPersistencePerspective(perspective);
-
-        Entity entity = new Entity();
-        entity.setType(new String[] { IndexFieldTypeImpl.class.getName() });
-        List<Property> properties = new ArrayList<Property>();
-        {
-            Property prop = new Property();
-            prop.setName("indexField");
-            prop.setValue(String.valueOf(searchField.getId()));
-            prop.setIsDirty(true);
-            properties.add(prop);
-        }
-        {
-            Property prop = new Property();
-            prop.setName("fieldType");
-            prop.setValue(fieldType.getType());
-            prop.setIsDirty(true);
-            properties.add(prop);
-        }
-
-
-        entity.setProperties(properties.toArray(new Property[properties.size()]));
-        pp.setEntity(entity);
-        pp.setRequestingEntityName(searchField.getField().getFriendlyName());
-        SectionCrumb section = new SectionCrumb();
-        section.setSectionIdentifier(IndexFieldImpl.class.getName());
-        section.setSectionId(String.valueOf(searchField.getId()));
-        pp.setSectionCrumbs(new SectionCrumb[] { section });
-
-        return pp;
     }
 
 }

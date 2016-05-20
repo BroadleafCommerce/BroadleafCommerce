@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.web.api;
@@ -26,8 +24,11 @@ import java.util.Map;
 /**
  * The purpose of this is to allow REST endpoints to build an exception with 
  * @author Kelly Tisdell
+ * 
+ * @deprecated - use {@link com.broadleafcommerce.core.rest.api.exception.BroadleafWebServicesException}
  *
  */
+@Deprecated
 public class BroadleafWebServicesException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
@@ -52,6 +53,7 @@ public class BroadleafWebServicesException extends RuntimeException {
     public static final String FULFILLMENT_GROUP_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.fulfillmentGroupNotFound";
     public static final String FULFILLMENT_OPTION_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.fulfillmentOptionNotFound";
     public static final String CUSTOMER_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.customerNotFound";
+    public static final String CUSTOMER_ADDRESS_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.customerAddressNotFound";
     public static final String CHECKOUT_PROCESSING_ERROR = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.checkoutProcessingError";
     public static final String CONTENT_TYPE_NOT_SUPPORTED = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.contentTypeNotSupported";
     public static final String QUERY_PARAMETER_NOT_PRESENT = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.queryParameterNotPresent";

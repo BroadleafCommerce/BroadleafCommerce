@@ -3,7 +3,7 @@
     <parent>
         <artifactId>core</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-profile-web</artifactId>
@@ -15,37 +15,24 @@
     </properties>
     <licenses>
         <license>
-            <name>Apache 2</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <name>Broadleaf Fair Use 1.0</name>
+            <url>http://license.broadleafcommerce.org/fair_use_license-1.0.txt</url>
             <distribution>repo</distribution>
-            <comments>A business-friendly OSS license</comments>
+            <comments>Fair Use Community License</comments>
+        </license>
+        <license>
+            <name>Broadleaf End User License Agreement 1.1</name>
+            <url>http://license.broadleafcommerce.org/commercial_license-1.1.txt</url>
+            <distribution>repo</distribution>
+            <comments>Commercial License Applicable When Bounds of Fair Use License Are Exceeded</comments>
         </license>
     </licenses>
     <developers>
         <developer>
-            <id>jeff</id>
-            <name>Jeff Fischer</name>
-            <email>jfischer@broadleafcommerce.org</email>
+            <id>architect</id>
+            <email>architect@broadleafcommerce.org</email>
             <organization>Broadleaf Commerce</organization>
             <organizationUrl>http://www.broadleafcommerce.org</organizationUrl>
-            <roles>
-                <role>cto</role>
-                <role>architect</role>
-                <role>developer</role>
-            </roles>
-            <timezone>-6</timezone>
-        </developer>
-        <developer>
-            <id>brian</id>
-            <name>Brian Polster</name>
-            <email>bpolster@broadleafcommerce.org</email>
-            <organization>Broadleaf Commerce</organization>
-            <organizationUrl>http://www.broadleafcommerce.org</organizationUrl>
-            <roles>
-                <role>president</role>
-                <role>architect</role>
-                <role>developer</role>
-            </roles>
             <timezone>-6</timezone>
         </developer>
     </developers>

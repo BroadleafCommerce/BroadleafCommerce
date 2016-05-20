@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.checkout.service.strategy;
@@ -24,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentGatewayRequestType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -34,6 +33,7 @@ import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationS
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment;
@@ -102,7 +102,16 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
         PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(tx.getOrderPayment().getGatewayType());
         PaymentResponseDTO responseDTO = null;
 
-        PaymentRequestDTO confirmationRequest = orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx);
+        // Auto-calculate totals and line items to send to the gateway when in a "Checkout Payment flow"
+        // (i.e. where the transaction is part of a final payment that is meant to be charged last at checkout: UNCONFIRMED -> AUTHORIZE or UNCONFIRMED -> AUTHORIZE_AND_CAPTURE)
+        //Note: the total for the request cannot be auto-calculated if the order contains multiple final payments (i.e. multiple credit cards)
+        PaymentRequestDTO confirmationRequest;
+        if (payment.isFinalPayment() && !orderContainsMultipleFinalPayments(payment.getOrder())) {
+            confirmationRequest = orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx, true);
+        } else {
+            confirmationRequest = orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx);
+        }
+
         populateBillingAddressOnRequest(confirmationRequest, payment);
         populateCustomerOnRequest(confirmationRequest, payment);
         populateShippingAddressOnRequest(confirmationRequest, payment);
@@ -132,6 +141,33 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
         }
 
         return responseDTO;
+    }
+
+    /**
+     * determine whether or not this order contains multiple final payments.
+     * (e.g. paying with multiple credit cards)
+     * @param order
+     * @return
+     */
+    protected boolean orderContainsMultipleFinalPayments(Order order) {
+        int finalPaymentCount = 0;
+        for (OrderPayment payment : order.getPayments()) {
+            if (payment.isActive() && payment.isFinalPayment()) {
+                finalPaymentCount++;
+            }
+        }
+        return finalPaymentCount > 1;
+    }
+
+    /**
+     * determine whether or not this transaction is a detached credit request.
+     * By default, will look at the additional fields map to determine intent
+     * (as the actual type of the transaction is UNCONFIRMED).
+     * @param transaction
+     * @return
+     */
+    protected boolean transactionIsDetachedCreditRequest(PaymentTransaction transaction) {
+        return transaction.getAdditionalFields().containsKey(PaymentGatewayRequestType.DETACHED_CREDIT_REFUND.getType());
     }
 
     protected PaymentResponseDTO constructPendingTransaction(PaymentType paymentType, PaymentGatewayType gatewayType,

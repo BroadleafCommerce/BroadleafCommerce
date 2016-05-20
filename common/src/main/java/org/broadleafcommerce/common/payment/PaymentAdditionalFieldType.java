@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 
@@ -40,6 +38,7 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
 
     // Generic Fields that can be used for multiple payment types
     public static final PaymentAdditionalFieldType PAYMENT_TYPE = new PaymentAdditionalFieldType("PAYMENT_TYPE", "Type of OrderPayment");
+    public static final PaymentAdditionalFieldType GATEWAY_TYPE = new PaymentAdditionalFieldType("GATEWAY_TYPE", "Gateway Type");
     public static final PaymentAdditionalFieldType NAME_ON_ACCOUNT = new PaymentAdditionalFieldType("NAME_ON_ACCOUNT", "Name on Account");
     public static final PaymentAdditionalFieldType ACCOUNT_TYPE = new PaymentAdditionalFieldType("ACCOUNT_TYPE", "Account Type");
     public static final PaymentAdditionalFieldType LAST_FOUR = new PaymentAdditionalFieldType("LAST_FOUR", "Last Four Digits ofAccount or CC");
@@ -70,10 +69,12 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
         setType(type);
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getFriendlyType() {
         return friendlyType;
     }
@@ -95,18 +96,23 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (!getClass().isAssignableFrom(obj.getClass()))
+        }
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
+        }
         PaymentAdditionalFieldType other = (PaymentAdditionalFieldType) obj;
         if (type == null) {
-            if (other.type != null)
+            if (other.type != null) {
                 return false;
-        } else if (!type.equals(other.type))
+            }
+        } else if (!type.equals(other.type)) {
             return false;
+        }
         return true;
     }
 }

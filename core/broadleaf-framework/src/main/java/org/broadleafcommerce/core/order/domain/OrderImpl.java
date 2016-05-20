@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.order.domain;
@@ -159,7 +157,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = GroupName.General,
             order=FieldOrder.STATUS, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus",
-            gridOrder = 3000)
+            gridOrder = 1000)
     protected String status;
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
@@ -179,21 +177,25 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Column(name = "ORDER_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = GroupName.General,
-            order=FieldOrder.TOTAL, fieldType= SupportedFieldType.MONEY, prominent=true,
+            order=FieldOrder.TOTAL,
+            fieldType = SupportedFieldType.MONEY,
+            prominent=true,
             gridOrder = 4000)
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
     @AdminPresentation(friendlyName = "OrderImpl_Order_Submit_Date", group = GroupName.General,
             order=FieldOrder.SUBMITDATE,
+            prominent = true,
             gridOrder = 5000)
     protected Date submitDate;
 
     @Column(name = "ORDER_NUMBER")
     @Index(name="ORDER_NUMBER_INDEX", columnNames={"ORDER_NUMBER"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Number", group = GroupName.General,
-            order=FieldOrder.ORDERNUMBER, prominent=true,
-            gridOrder = 1000)
+            order = FieldOrder.ORDERNUMBER,
+            prominent = true,
+            gridOrder = 3000)
     private String orderNumber;
 
     @Column(name = "EMAIL_ADDRESS")
@@ -259,7 +261,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="name")
     @AdminPresentationMap(friendlyName = "OrderImpl_Attributes",
-        forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderImpl_Attributes_Key_Name"
+        forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderImpl_Attributes_Key_Name", tab = TabName.Advanced
     )
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
     

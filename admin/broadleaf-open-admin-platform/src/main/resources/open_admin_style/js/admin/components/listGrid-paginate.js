@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 (function($, BLCAdmin) {
@@ -734,7 +732,7 @@
         computeActualMaxHeight : function($tbody, desiredMaxHeight) {
             // what is the height of the visible rows?
             var rowHeight = BLCAdmin.listGrid.paginate.getRowHeight($tbody);
-            var loadedRecordRange = BLCAdmin.listGrid.paginate.getLoadedRecordRanges($tbody)[0]
+            var loadedRecordRange = BLCAdmin.listGrid.paginate.getLoadedRecordRanges($tbody)[0];
             // This gives me back a 0-indexed range, I need the row count so add 1
             var numLoadedRows = loadedRecordRange.hi - loadedRecordRange.lo + 1;
             var numPaddedRows = Math.max(0, BLCAdmin.listGrid.paginate.getTotalRecords($tbody) - numLoadedRows);
@@ -928,7 +926,11 @@ $(document).ready(function() {
     $(window).resize(function() {
         $.doTimeout('resizeListGrid', 0, function() {
             if ($('.oms').length == 0) {
-                BLCAdmin.getActiveTab().find('tbody').each(function (index, element) {
+                BLCAdmin.getActiveTab().find('tbody:not(.no-update)').each(function (index, element) {
+                    if ($(element).closest('.oms-tab').length) {
+                        return;
+                    }
+
                     if ($(element).is(':visible')) {
                         BLCAdmin.listGrid.paginate.updateGridSize($(element));
                     } else {

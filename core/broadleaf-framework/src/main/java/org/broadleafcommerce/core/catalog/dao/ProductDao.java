@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.catalog.dao;
@@ -271,7 +269,9 @@ public interface ProductDao {
      * 
      * It will fetch results in pages. For example, if page = 3 and pageSize = 25, this method would
      * return rows 75-99 from the database.
-     * 
+     *
+     * When possible, it is suggested to use {@link #readAllActiveProducts(Integer, Long)} instead for performance.
+     *
      * @param page - the number of the page to get (0 indexed)
      * @param pageSize - the number of results per page
      * @return a list of active products for the given page
@@ -279,7 +279,20 @@ public interface ProductDao {
     public List<Product> readAllActiveProducts(int page, int pageSize);
 
     /**
-     * @deprecated Use {@link #readAllActiveProducts(page, pageSize)}
+     * Reads all products from the database that are currently active. This method utilizes efficient
+     * paging to retrieve a subset of records. This approach does not use an offset technique (like {@link #readAllActiveProducts(int, int)},
+     * but rather limits the retrieved records to those greater than the given id and returns a max results of pageSize. This
+     * is more efficient that using an offset, since the database will not have to retrieve all the records from the beginning
+     * of the table and trim the offset.
+     *
+     * @param pageSize the number of results per page
+     * @param lastId the last id from the previous page - can be null if this is the first page request
+     * @return a list of active products for the given page
+     */
+    List<Product> readAllActiveProducts(Integer pageSize, Long lastId);
+
+    /**
+     * @deprecated Use {@link #readAllActiveProducts(int, int)}
      * 
      * @param page - the number of the page to get (0 indexed)
      * @param pageSize - the number of results per page
@@ -297,7 +310,7 @@ public interface ProductDao {
     public Long readCountAllActiveProducts();
 
     /**
-     * @deprecated {@link #readActiveProductCount()}
+     * @deprecated {@link #readCountAllActiveProducts()}
      * 
      * @param currentDate
      * @return the number of currently active products

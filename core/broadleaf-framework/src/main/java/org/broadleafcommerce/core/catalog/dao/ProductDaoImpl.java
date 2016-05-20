@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.catalog.dao;
@@ -541,6 +539,12 @@ public class ProductDaoImpl implements ProductDao {
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
         return readAllActiveProductsInternal(page, pageSize, currentDate);
     }
+
+    @Override
+    public List<Product> readAllActiveProducts(Integer pageSize, Long lastId) {
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        return readAllActiveProductsInternal(pageSize, currentDate, lastId);
+    }
     
     @Override
     @Deprecated
@@ -556,6 +560,15 @@ public class ProductDaoImpl implements ProductDao {
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
         return query.setFirstResult(firstResult).setMaxResults(pageSize).getResultList();
+    }
+
+    protected List<Product> readAllActiveProductsInternal(Integer pageSize, Date currentDate, Long lastId) {
+        CriteriaQuery<Product> criteria = getCriteriaForActiveProducts(currentDate, lastId);
+        TypedQuery<Product> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.setMaxResults(pageSize).getResultList();
     }
     
     @Override
@@ -620,24 +633,31 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     protected CriteriaQuery<Product> getCriteriaForActiveProducts(Date currentDate) {
+        return getCriteriaForActiveProducts(currentDate, null);
+    }
+
+    protected CriteriaQuery<Product> getCriteriaForActiveProducts(Date currentDate, Long lastId) {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
-        
+
         // The root of our search is Product
         Root<ProductImpl> product = criteria.from(ProductImpl.class);
-        
+
         // We need to filter on active date on the sku
         Join<Product, Sku> sku = product.join("defaultSku");
         product.fetch("defaultSku");
-        
+
         // Product objects are what we want back
         criteria.select(product);
-        
+
         // Ensure the product is currently active
         List<Predicate> restrictions = new ArrayList<Predicate>();
         attachActiveRestriction(currentDate, product, sku, restrictions);
-        
+        if (lastId != null) {
+            restrictions.add(builder.gt(product.get("id").as(Long.class), lastId));
+        }
+
         // Add the restrictions to the criteria query
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 

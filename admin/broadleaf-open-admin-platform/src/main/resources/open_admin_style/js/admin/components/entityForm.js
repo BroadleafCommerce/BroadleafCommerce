@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 
@@ -154,7 +152,6 @@
                         if (!$('.modal:not(#expire-message)').length && $('.entity-form').length) {
                             if (BLCAdmin.entityForm.status) {
                                 BLCAdmin.entityForm.status.clearEntityFormChanges();
-                                BLCAdmin.entityForm.status.updateEntityFormActions();
                             }
                         }
 
@@ -235,15 +232,36 @@ $(document).ready(function() {
             var scroll = $('.main-content').scrollTop();
             $sc.find('.content-area-title-bar').css('height', height - scroll);
             $sc.find('.content-area-title-bar').css('line-height', height - scroll + 'px');
-            $sc.find('.content-area-title-bar h3').css('line-height', height - scroll + 'px');
+            $sc.find('.content-area-title-bar .ajax-loader').css('margin-top', 30 - scroll / 2 + 'px');
+            $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', height - scroll + 'px');
             $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', (-22 + scroll / 2) + 'px');
         } else {
             $sc.find('.content-area-title-bar').css('height', minHeight + 'px');
             $sc.find('.content-area-title-bar').css('line-height', minHeight + 'px');
-            $sc.find('.content-area-title-bar h3').css('line-height', minHeight + 'px');
+            $sc.find('.content-area-title-bar .ajax-loader').css('margin-top', '17px');
+            $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', minHeight + 'px');
             $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-7px');
         }
     });
+
+    /**
+     * Initialize the sticky bar
+     */
+    if ($('form.entity-form').length && !$('.oms').length) {
+        var $sc = $('.sticky-container');
+        var $scp = $('.sticky-container-padding');
+        var height = BLCAdmin.entityForm.getOriginalStickyBarHeight();
+
+        $scp.show();
+        $sc.addClass('sticky-fixed').css('top', BLCAdmin.entityForm.getOriginalStickyBarOffset());
+        $sc.outerWidth($('.main-content').outerWidth());
+        $scp.outerHeight(height);
+
+        $sc.find('.content-area-title-bar').css('height', height);
+        $sc.find('.content-area-title-bar').css('line-height', height + 'px');
+        $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', height + 'px');
+        $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-22px');
+    }
     
     var tabs_action=null;
     $('body div.section-tabs li').find('a:not(".workflow-tab, .system-property-tab' +
@@ -310,7 +328,7 @@ $(document).ready(function() {
         var $form = BLCAdmin.getForm($(this));
 
         var currentAction = $form.attr('action');
-        var deleteUrl = currentAction + '/delete'
+        var deleteUrl = currentAction + '/delete';
 
         BLCAdmin.entityForm.showActionSpinner($(this).closest('.entity-form-actions'));
         
@@ -401,6 +419,8 @@ $(document).ready(function() {
                 type: "POST",
                 data: BLCAdmin.serialize($form)
             }, function(data) {
+                BLCAdmin.runPostFormSubmitHandlers($form, data);
+
                 BLCAdmin.ruleBuilders.removeModalRuleBuilders($form);
                 var $modal = BLCAdmin.currentModal();
                 BLCAdmin.entityForm.swapModalEntityForm($modal, data);
@@ -423,6 +443,8 @@ $(document).ready(function() {
                 type: "POST",
                 data: BLCAdmin.serialize($form)
             }, function (data) {
+                BLCAdmin.runPostFormSubmitHandlers($form, data);
+
                 BLCAdmin.entityForm.hideActionSpinner($form.closest('.modal').find('.entity-form-actions'));
 
                 //if there is a validation error, replace the current form that's there with this new one
@@ -556,26 +578,27 @@ $(document).ready(function() {
         event.preventDefault();
 
         var $collapser = $(this).find('.collapser span');
-        var $content = $(this).closest('.fieldset-card').find('.fieldset-card-content');
+        var content = $(this).closest('.fieldset-card').find('.fieldset-card-content')[0];
         if ($collapser.hasClass('collapsed')) {
             $collapser.removeClass('collapsed').addClass('expanded');
             $collapser.text("(hide)");
-            //$collapser.find('i').removeClass('fa-angle-down').addClass('fa-angle-up');
-            $content.removeClass('content-collapsed');
+            $(content).removeClass('content-collapsed');
 
             // update content height
             BLCAdmin.updateContentHeight($(this));
         } else {
             $collapser.removeClass('expanded').addClass('collapsed');
             $collapser.text("(show)");
-            //$collapser.find('i').removeClass('fa-angle-up').addClass('fa-angle-down');
-            $content.addClass('content-collapsed');
+            $(content).addClass('content-collapsed');
         }
 
         var $fieldSetCard = $(this).closest('.fieldset-card');
         var $tableBodies = $fieldSetCard.find('.listgrid-body-wrapper tbody');
         $tableBodies.each(function( index, tbody ) {
             BLCAdmin.listGrid.paginate.updateGridSize($(tbody));
+        });
+        $fieldSetCard.find('.fieldgroup-listgrid-wrapper-header').each(function (index, element) {
+            BLCAdmin.listGrid.updateGridTitleBarSize($(element));
         });
     });
 

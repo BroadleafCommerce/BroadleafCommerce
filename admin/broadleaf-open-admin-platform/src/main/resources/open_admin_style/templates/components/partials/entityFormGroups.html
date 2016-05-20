@@ -1,0 +1,20 @@
+<div class="fieldset-card field-group"
+     th:if="${group.hasFieldOrListGrid()}"
+     th:classappend="${(!group.isVisible ? 'hidden' : '') + (group.isVisible and group.isUntitled ? ' untitledGroup' : '') + (group.groupAttributes['additionalGroupClasses'] == null ? '' : ' ' + group.groupAttributes['additionalGroupClasses']) + (inModal != null and inModal ? ' inModal' : '')}">
+    <a class="titlebar" href="#">
+        <div class="titlebar-title">
+            <span th:unless="${group.isUntitled}" th:utext="#{${group.title}}"></span>
+            <i class="fa fa-question-circle help-tip" th:unless="${#strings.isEmpty(group.toolTip)}" th:attr="data-tip=#{${group.toolTip}}"></i>
+        </div>
+
+        <div class="collapser">
+            <span class="collapsed" href="#" th:if="${group.collapsed}">(show)</span>
+            <span class="expanded" href="#" th:unless="${group.collapsed}">(hide)</span>
+        </div>
+    </a>
+    <div class="fieldset-card-content" th:classappend="${(group.collapsed ? 'content-collapsed' : '')}">
+        <th:block  th:each="groupItem, groupItemStat : ${group.groupItems}">
+            <div th:include="components/partials/entityFormFields" th:remove="tag"></div>
+        </th:block>
+    </div>
+</div>

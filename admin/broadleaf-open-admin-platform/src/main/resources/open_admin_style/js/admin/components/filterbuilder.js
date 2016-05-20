@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 /**
@@ -142,7 +140,7 @@
 
             };
 
-            filterBuildersArray.push(filterBuilder)
+            filterBuildersArray.push(filterBuilder);
             return filterBuilder;
         },
 
@@ -243,7 +241,7 @@
                 pk: null,
                 condition:'AND',
                 rules: []
-            }
+            };
             return emptyData;
         },
 
@@ -342,7 +340,7 @@
         getNoFilterText: function() {
             var noFiltersText = $("<li>", {
                 html: "No filters applied yet.  Click Add New Filter",
-                class: "rule-container no-filters"
+                'class': "rule-container no-filters"
             });
             return noFiltersText;
         },
@@ -405,6 +403,12 @@
             //initialize selectize plugin
             var opRef = field.operators;
 
+            function updateFilterHeightBasedOnSelectizeHeight($selectize) {
+                var $selectizeControl = $selectize.$input.siblings('.selectize-control');
+                var inputHeight = $selectizeControl.find('.selectize-input').outerHeight();
+                $selectize.$input.closest('.rule-value-container').height(inputHeight);
+            }
+
             if (opRef && typeof opRef === 'string' && "blcFilterOperators_Selectize" === opRef) {
                 var sectionKey = field.selectizeSectionKey;
 
@@ -424,6 +428,7 @@
                         hideSelected: true,
                         unique: true,
                         placeholder: field.label + " +",
+                        dropdownParent: 'body',
                         onInitialize: function () {
                             var $selectize = this;
                             $selectize.sectionKey = sectionKey;
@@ -436,8 +441,8 @@
                             // after the options have been loaded
                             // (Values may contain multiple items and are sent back as a single String array)
                             var $selectize = this;
-                            var dataHydrate = '[' + $selectize.$input.attr("data-hydrate") + ']';
-                            dataHydrate = $.parseJSON(dataHydrate);
+                            var data = $selectize.$input.attr("data-hydrate");
+                            var dataHydrate = BLCAdmin.stringToArray(data);
                             for (var k=0; k<dataHydrate.length; k++) {
                                 if (!isNaN(dataHydrate[k])) {
                                     $selectize.addItem(Number(dataHydrate[k]), false);
@@ -465,8 +470,17 @@
                                         }
                                     }
                                 });
+                                if ($selectize.$wrapper.is(':visible') && data.options.length) {
+                                    $selectize.open();
+                                }
                                 callback(data);
                             });
+                        },
+                        onItemAdd: function(value, $item) {
+                            updateFilterHeightBasedOnSelectizeHeight(this);
+                        },
+                        onItemRemove: function(value) {
+                            updateFilterHeightBasedOnSelectizeHeight(this);
                         }
                     };
                 field.valueSetter = function(rule, value) {
@@ -668,6 +682,23 @@
             });
 
             $('.error-container').hide();
+        },
+
+        clearFilters : function(hiddenId) {
+            var $filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
+            // clear the filters from the filterbuilder
+            var jsonVal = JSON.stringify({ 'data' : [] });
+            $('#' + hiddenId).val(jsonVal);
+
+            var $tbody = $('.list-grid-table[data-hiddenid=' + hiddenId + ']:not([id$=-header])');
+            if ($tbody.data('listgridtype') == 'main') {
+                // remove query string from URL
+                $(BLCAdmin.history.getUrlParameters()).each(function (index, input) {
+                    for (var key in input) {
+                        BLCAdmin.history.replaceUrlParameter(key, null);
+                    }
+                });
+            }
         },
 
         /**
@@ -915,9 +946,9 @@ $(document).ready(function() {
 
         el.find('.read-only').remove();
         el.find('.filter-text').remove();
-        var readonlySpan = $("<span>", {
+        var readonlySpan = $("<div>", {
             html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
-            class: "read-only"
+            'class': "read-only"
         });
         el.append($(readonlySpan));
 
@@ -960,7 +991,7 @@ $(document).ready(function() {
         var filterText = el.find('div.rule-filter-container > div > div.selectize-input .item').text();
         var readonlyFilter = $("<span>", {
             html: "<strong>" + filterText + "</strong>",
-            class: "filter-text"
+            'class': "filter-text"
         });
         el.find('div.rule-filter-container').append($(readonlyFilter));
 
@@ -978,7 +1009,7 @@ $(document).ready(function() {
         // add "Apply" button
         var applyButton = $("<button>", {
             html: "Apply",
-            class: "button primary filter-apply-button"
+            'class': "button primary filter-apply-button"
         });
         el.find('.rule-header .rule-actions').append(applyButton);
         el.find('.rule-header .remove-row').css('right', '').css('left', '16px');
@@ -1001,19 +1032,7 @@ $(document).ready(function() {
         var $filterButton = $($(this)).siblings('.filter-button');
         var hiddenId = $filterButton.data('hiddenid');
 
-        // clear the filters from the filterbuilder
-        var jsonVal = JSON.stringify({ 'data' : [] });
-        $('#' + hiddenId).val(jsonVal);
-
-        var $tbody = $('.list-grid-table[data-hiddenid=' + hiddenId + ']:not([id$=-header])');
-        if ($tbody.data('listgridtype') == 'main') {
-            // remove query string from URL
-            $(BLCAdmin.history.getUrlParameters()).each(function (index, input) {
-                for (var key in input) {
-                    BLCAdmin.history.replaceUrlParameter(key, null);
-                }
-            });
-        }
+        BLCAdmin.filterBuilders.clearFilters(hiddenId);
 
         // clear the search field
         $filterButton.closest('.listgrid-search').find('.custom-entity-search input').val('');
@@ -1128,7 +1147,7 @@ $(document).ready(function() {
             el.find('.read-only').remove();
             var readonlySpan = $("<span>", {
                 html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
-                class: "read-only"
+                'class': "read-only"
             });
             el.append($(readonlySpan));
 

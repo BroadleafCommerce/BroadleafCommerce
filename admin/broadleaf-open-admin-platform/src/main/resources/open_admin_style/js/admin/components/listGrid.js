@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 (function ($, BLCAdmin) {
@@ -188,6 +186,10 @@
             return fields;
         },
 
+        getRows: function ($table) {
+            return $table.find('tbody').find('tr:not(.list-grid-no-results):not(.blank-padding)');
+        },
+
         getSelectedRowIds: function ($button) {
             var link = BLC.servletContext + $button.data('urlpostfix');
 
@@ -262,25 +264,22 @@
             var alertType = options.alertType || '';
             var autoClose = options.autoClose || 3000;
 
-            var $alert = $('<span>').addClass('alert-box').addClass(alertType);
-
-            $alert.append('&nbsp;&nbsp;' + message);
-
             if (options.clearOtherAlerts) {
                 $container.find('.alert-box').remove();
             }
+
+            var $alert = $('<span>').addClass('alert-box').addClass(alertType);
+            $alert.append('&nbsp;&nbsp;' + message);
 
             var alertTarget = $container.find('.titlebar:first-child .titlebar-title');
             if (!alertTarget.length) {
                 alertTarget = $container.find('label span');
             }
+            alertTarget.append($alert);
 
             setTimeout(function () {
-                alertTarget.append($alert);
-                setTimeout(function () {
-                    $alert.fadeOut();
-                }, autoClose);
-            });
+                $alert.fadeOut();
+            }, autoClose);
         },
 
         fixHelper: function (e, ui) {
@@ -396,6 +395,10 @@
         $('body').on('click', '.side-nav ul li a', function () {
             $container.find('.listgrid-container').each(function (index, element) {
                 $(element).find('tbody').each(function (index, element) {
+                    if ($(element).closest('.oms-tab').length) {
+                        return;
+                    }
+
                     if ($(element).is(':visible')) {
                         BLCAdmin.listGrid.paginate.updateGridSize($(element));
                     } else {
@@ -538,13 +541,14 @@ $(document).ready(function () {
             type: "POST",
             data: postData
         }, function (data) {
+            BLCAdmin.hideCurrentModal();
+
             BLCAdmin.listGrid.replaceRelatedCollection($(data), {
                 message: BLCAdmin.messages.saved + '!',
                 alertType: 'save-alert',
                 autoClose: 3000,
                 clearOtherAlerts: true
             });
-            BLCAdmin.hideCurrentModal();
         });
     });
 
@@ -810,6 +814,7 @@ $(document).ready(function () {
 
                         BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', {
                             alertType: 'save-alert',
+                            clearOtherAlerts: true,
                             autoClose: 3000
                         });
                         $container = $this.closest('.listgrid-container');

@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder;
@@ -319,7 +317,10 @@ public class DataDTOToMVELTranslator {
                     eof = true;
                     end = stringValue.length() - 1;
                 }
-                temp.add(stringValue.substring(initial, end));
+                String processedValue = stringValue.substring(initial, end);
+                processedValue = escapeInternalQuotes(processedValue);
+
+                temp.add(processedValue);
                 initial = end + 1;
             }
             response = temp.toArray(response);
@@ -329,29 +330,27 @@ public class DataDTOToMVELTranslator {
         return response;
     }
 
+    protected String escapeInternalQuotes(String processedValue) {
+        String regex = "(?<!^)(?<!^\\s)\\\"(?!\\s$)(?!$)";
+        return processedValue.replaceAll(regex, "\\\\\"");
+    }
+
     public boolean isProjection(Object value) {
         String stringValue = value.toString().trim();
-        return stringValue.startsWith("[") && stringValue.endsWith("]") && stringValue.indexOf(",") > 0;
+        return stringValue.startsWith("[") && stringValue.endsWith("]");
     }
 
     protected void buildCollectionExpression(StringBuffer sb, String entityKey, String field, Object[] value,
-                                             SupportedFieldType type, SupportedFieldType secondaryType, String operator,
-                                             boolean includeParenthesis, boolean isFieldComparison, boolean ignoreCase,
-                                             boolean isNegation, boolean ignoreQuotes)
-            throws MVELTranslationException {
+            SupportedFieldType type, SupportedFieldType secondaryType, String operator,
+            boolean includeParenthesis, boolean isFieldComparison, boolean ignoreCase,
+            boolean isNegation, boolean ignoreQuotes) throws MVELTranslationException {
         sb.append("CollectionUtils.intersection(");
         sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
         sb.append(",");
-        if (value.length > 1) {
-            sb.append("[");
-            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
-                    ignoreCase, ignoreQuotes));
-            sb.append("])");
-        } else {
-            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
-                    ignoreCase, ignoreQuotes));
-            sb.append(")");
-        }
+        sb.append("[");
+        sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+                ignoreCase, ignoreQuotes));
+        sb.append("])");
 
         sb.append(operator);
     }

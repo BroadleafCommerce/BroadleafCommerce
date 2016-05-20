@@ -2,19 +2,17 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.offer.service;
@@ -23,6 +21,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.offer.domain.Adjustment;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
@@ -56,6 +57,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -99,6 +101,12 @@ public class OfferServiceImpl implements OfferService {
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
+
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
+
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericEntityDao;
 
     @Override
     public List<Offer> findAllOffers() {
@@ -158,7 +166,7 @@ public class OfferServiceImpl implements OfferService {
                 offers.add(customerOffer.getOffer());
             }
         }
-        List<OfferCode> orderOfferCodes = order.getAddedOfferCodes();
+        List<OfferCode> orderOfferCodes = refreshOfferCodesIfApplicable(order);
         orderOfferCodes = removeOutOfDateOfferCodes(orderOfferCodes);
         for (OfferCode orderOfferCode : orderOfferCodes) {
             if (!offers.contains(orderOfferCode.getOffer())) {
@@ -198,8 +206,8 @@ public class OfferServiceImpl implements OfferService {
     }
 
     /**
-     * Private method used to retrieve all offers assigned to this customer.  These offers
-     * have a DeliveryType of MANUAL and are programmatically assigned to the customer.
+     * Private method used to retrieve all offers assigned to this customer.  These offers are
+     * programmatically assigned to the customer.
      *
      * @param customer
      * @return a List of offers assigned to the customer
@@ -210,7 +218,7 @@ public class OfferServiceImpl implements OfferService {
     }
 
     /**
-     * Private method used to retrieve all offers with DeliveryType of AUTOMATIC
+     * Private method used to retrieve all offers with automaticallyAdded set to true
      *
      * @return a List of automatic delivery offers
      */
@@ -242,6 +250,26 @@ public class OfferServiceImpl implements OfferService {
             offerCodes.remove(offerCode);
         }
         return offerCodes;
+    }
+
+    /**
+     * For enterprise installations, this will refresh any OfferCodes found to be out-of-date with
+     * current sandbox status.
+     *
+     * @param order the order to check
+     * @return the refreshed list of OfferCodes
+     */
+    protected List<OfferCode> refreshOfferCodesIfApplicable(Order order) {
+        List<OfferCode> orderOfferCodes = order.getAddedOfferCodes();
+        for (OfferCode offerCode : orderOfferCodes) {
+            if (offerCode.getOffer() != null) {
+                Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(OfferImpl.class, offerCode.getOffer().getId());
+                if (sandBoxVersionId != null && !Objects.equals(sandBoxVersionId, offerCode.getOffer().getId())) {
+                    genericEntityDao.getEntityManager().refresh(offerCode);
+                }
+            }
+        }
+        return orderOfferCodes;
     }
 
     /*
@@ -485,6 +513,17 @@ public class OfferServiceImpl implements OfferService {
         return offerToCodeMapping;
     }
     
+    @Override
+    @Transactional("blTransactionManager")
+    public Boolean deleteOfferCode(OfferCode code) {
+        if (offerCodeDao.offerCodeIsUsed(code)) {
+            return false;
+        }
+
+        offerCodeDao.delete(code);
+        return true;
+    }
+
     @Override
     public CustomerOfferDao getCustomerOfferDao() {
         return customerOfferDao;
