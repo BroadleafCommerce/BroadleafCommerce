@@ -246,6 +246,7 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
         this.name = model.getName();
         this.description = model.getDescription();
         this.longDescription = model.getLongDescription();
+        this.manufacturer = model.getManufacturer();
         this.active = model.isActive();
 
         if (model instanceof ProductBundle) {
