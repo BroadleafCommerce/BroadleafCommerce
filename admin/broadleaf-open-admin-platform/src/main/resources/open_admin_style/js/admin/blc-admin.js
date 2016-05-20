@@ -27,6 +27,7 @@ var BLCAdmin = (function($) {
     var dependentFieldFilterHandlers = {};
     var initializationHandlers = [];
     var selectizeInitializationHandlers = [];
+    var selectizeUpdateHandlers = [];
     var excludedSelectizeSelectors = [];
     var updateHandlers = [];
     var fieldInitializationHandlers = [];
@@ -151,6 +152,10 @@ var BLCAdmin = (function($) {
         addSelectizeInitializationHandler : function(fn) {
             selectizeInitializationHandlers.push(fn);
         },
+
+        addSelectizeUpdateHandler : function(fn) {
+            selectizeUpdateHandlers.push(fn);
+        },
         
         addUpdateHandler : function(fn) {
             updateHandlers.push(fn);
@@ -228,6 +233,16 @@ var BLCAdmin = (function($) {
                 }
             }
             return true;
+        },
+
+        /**
+         * Runs all of the field initialization handlers. Returns a boolean indicating if normal field initialization
+         * should continue or not
+         */
+        runSelectizeUpdateHandlers : function($container) {
+            for (var i = 0; i < selectizeUpdateHandlers.length; i++) {
+                selectizeUpdateHandlers[i]($container);
+            }
         },
         
         setModalMaxHeight : function($modal) {
@@ -737,11 +752,13 @@ var BLCAdmin = (function($) {
                             }
 
                             $item.closest('.selectize-input').find('input').blur();
+                            BLCAdmin.runSelectizeUpdateHandlers($(selectizeWrapper));
                         });
                     },
                     onItemRemove: function (value, $item) {
                         select_adder.addOption({value: $item.data('value'), text: $item.html()});
                         $select_adder.siblings('.selectize-control.selectize-adder').find('.selectize-input input').attr('placeholder', placeholder);
+                        BLCAdmin.runSelectizeUpdateHandlers($(selectizeWrapper));
                     }
                 };
 
