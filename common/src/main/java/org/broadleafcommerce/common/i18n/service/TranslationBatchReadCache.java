@@ -22,15 +22,15 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -54,7 +54,8 @@ public class TranslationBatchReadCache {
     
     protected static Map<String, Translation> getThreadlocalCache() {
         long threadId = Thread.currentThread().getId();
-        return (Map<String, Translation>) getCache().get(threadId);
+        Element cacheElement = getCache().get(threadId);
+        return cacheElement == null ? null : (Map<String, Translation>) cacheElement.getObjectValue();
     }
     
     public static void clearCache() {
