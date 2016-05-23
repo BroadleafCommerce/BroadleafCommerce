@@ -167,13 +167,7 @@ ADMIN COMMON ENTITY CONTENT RELATED STYLES
     vertical-align: middle;
 }
 .input-group-btn>.button+.button {
-    margin-left: -2px;
-}
-.input-group-btn>.button, .input-group-btn>.btn-group {
-    margin-right: -2px;
-}
-.input-group-btn>.button, .input-group-btn>.btn-group {
-    margin-right: -1px;
+    margin-left: -1px;
 }
 .input-group-btn button.button {
     height: 34px;
@@ -675,9 +669,6 @@ a.description-link {
     text-overflow: ellipsis;
     padding: 10px 15px;
     cursor: auto;
-}
-.foreign-key-value-container .input-group-btn .button.secondary:disabled {
-    border: 1px solid #D8D5D0;
 }
 .foreign-key-value-container .input-group-btn .button.secondary:disabled:first-of-type {
     border-left: none;
