@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.offer.service.discount;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 
@@ -36,7 +37,8 @@ public class PromotionQualifier implements Serializable{
     private OfferItemCriteria itemCriteria;
     private int quantity;
     private int finalizedQuantity;
-    
+    private Money price;
+
     public Offer getPromotion() {
         return promotion;
     }
@@ -101,4 +103,11 @@ public class PromotionQualifier implements Serializable{
         return quantity == finalizedQuantity;
     }
 
+    public void setPrice(Money price) {
+        this.price = price;
+    }
+    
+    public Money getPrice() {
+        return price;
+    }
 }
