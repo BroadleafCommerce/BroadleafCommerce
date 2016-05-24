@@ -60,9 +60,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -281,6 +283,11 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         if (!populateValueRequest.getProperty().getName().contains(FieldManager.MAPFIELDSEPARATOR)) {
                             populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), null);
                         } else {
+                            //Since this class explicitly removes the simple rule - we must also preserve the id of the element
+                            //as the CacheInvalidationProducer will need this in order to remove the member cache instance as well.
+                            BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+                            context.getAdditionalProperties().put("deletedSimpleRule", rule);
+
                             populateValueRequest.getPersistenceManager().getDynamicEntityDao().remove(rule);
                         }
                     }
