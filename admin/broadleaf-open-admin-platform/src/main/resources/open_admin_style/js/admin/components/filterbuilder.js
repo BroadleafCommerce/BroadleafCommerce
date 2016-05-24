@@ -614,24 +614,16 @@
 
             // Convert JSON to request params
             var filters = JSON.parse($('#' + hiddenId).val());
-            var inputs = [];
+            var inputs = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
 
-            if (filters.data.length > 0) {
-                var rules = filters.data[0].rules;
-                $(rules).each(function (i, e) {
-                    if (e.value != '[]') {
-                        var input = {'name': e.id, 'value': BLCAdmin.filterBuilders.formatInput(e.value, e.operator)};
-                        inputs.push(input);
-                    }
-                });
-            } else {
+            if (filters.data.length <= 0) {
                 $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
             }
 
             BLC.ajax({
                 url: $($filterFields[0]).data('action'),
                 type: "GET",
-                data: $.param(inputs)
+                data: inputs
             }, function(data) {
                 if ($tbody.data('listgridtype') == 'main') {
                     // clear all url params
@@ -871,6 +863,25 @@
                     filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
                 }
             }
+        },
+
+
+        getFiltersAsURLParams: function(hiddenId) {
+            // Convert JSON to request params
+            var filters = JSON.parse($('#' + hiddenId).val());
+            var inputs = [];
+
+            if (filters.data.length > 0) {
+                var rules = filters.data[0].rules;
+                $(rules).each(function (i, e) {
+                    if (e.value != '[]') {
+                        var input = {'name': e.id, 'value': BLCAdmin.filterBuilders.formatInput(e.value, e.operator)};
+                        inputs.push(input);
+                    }
+                });
+            }
+
+            return $.param(inputs);
         }
     };
 
