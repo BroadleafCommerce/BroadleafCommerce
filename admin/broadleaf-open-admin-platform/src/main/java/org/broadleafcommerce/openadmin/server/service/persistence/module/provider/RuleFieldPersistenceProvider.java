@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
 import org.broadleafcommerce.common.rule.SimpleRule;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -482,6 +483,11 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 //if an item was not included in the comprehensive submit from the client, we can assume that the
                 //listing was deleted, so we remove it here.
                 Iterator<QuantityBasedRule> itr = criteriaList.iterator();
+                //Since this class explicitly removes the quantity based rule - we must also preserve the id of the element
+                //as the CacheInvalidationProducer will need this in order to remove each collection member cache instance as well.
+                BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+                context.getAdditionalProperties().put("deletedQuantityBasedRules", new HashSet<QuantityBasedRule>());
+
                 while (itr.hasNext()) {
                     checkForRemove:
                     {
@@ -493,6 +499,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                                 break checkForRemove;
                             }
                         }
+                        ((Set<QuantityBasedRule>)context.getAdditionalProperties().get("deletedQuantityBasedRules")).add(original);
                         em.remove(original);
                         itr.remove();
                         dirty = true;
