@@ -445,7 +445,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                         Money itemSavings = calculatePotentialSavingsForOrderItem(itemOffer, item, discount.getQuantity());
                         potentialSavings = potentialSavings.add(itemSavings);
                         if (useCalculatePercent(offer)) {
-                            calculatedWeightedPercent = calculatedWeightedPercent.add(calculatePercent(item, itemSavings));
+                            calculatedWeightedPercent = calculatedWeightedPercent.add(calculatePercent(item.calculateTotalWithoutAdjustments(), itemSavings));
                         } else if (hasQualifierAndQualifierRestricted(offer)) {
                             calculatedWeightedPercent = calculatedWeightedPercent.add(calculateWeightedPercent(discount, item, itemSavings));
                         }
@@ -469,8 +469,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         }
     }
 
-    protected BigDecimal calculatePercent(PromotableOrderItem item, Money itemSavings) {
-        return itemSavings.getAmount().divide(item.calculateTotalWithoutAdjustments().getAmount()).multiply(new BigDecimal(100));
+    protected BigDecimal calculatePercent(Money itemSubTotal, Money itemSavings) {
+        return itemSavings.getAmount().divide(itemSubTotal.getAmount(), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
     }
 
     protected BigDecimal calculateWeightedPercent(PromotionDiscount discount, PromotableOrderItem item, Money itemSavings) {
@@ -482,7 +482,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             }
         }
         
-        return itemSavings.getAmount().divide(effectedItemsSubtotal.getAmount(), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+        return calculatePercent(effectedItemsSubtotal, itemSavings);
     }
 
     protected boolean useCalculatePercent(Offer offer) {

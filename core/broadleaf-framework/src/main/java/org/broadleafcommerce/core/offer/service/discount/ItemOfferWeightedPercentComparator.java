@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.offer.service.discount;
 
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 
 /**
@@ -30,16 +31,44 @@ public class ItemOfferWeightedPercentComparator implements Comparator<Promotable
 
     public int compare(PromotableCandidateItemOffer p1, PromotableCandidateItemOffer p2) {
 
+        if (nullDetected(p1, p2)) {
+            return nullCheckCompare(p1, p2);
+        }
+
         Integer priority1 = p1.getPriority();
         Integer priority2 = p2.getPriority();
 
         int result = priority1.compareTo(priority2);
-
-        if (result == 0) {
-            // highest weighted percent wins
-            return p2.getWeightedPercentSaved().compareTo(p1.getWeightedPercentSaved());
+        
+        if (result != 0) {
+            return result;
         }
-        return result;
+
+        BigDecimal weightedPercentSaved1 = p1.getWeightedPercentSaved();
+        BigDecimal weightedPercentSaved2 = p2.getWeightedPercentSaved();
+
+        if (nullDetected(weightedPercentSaved1, weightedPercentSaved2)) {
+            return nullCheckCompare(weightedPercentSaved1, weightedPercentSaved2);
+        }
+
+        // highest weighted percent wins
+        return weightedPercentSaved2.compareTo(weightedPercentSaved1);
+    }
+
+    private Boolean nullDetected(Object p1, Object p2) {
+        return p1 == null || p2 == null;
+    }
+
+    private Integer nullCheckCompare(Object p1, Object p2) {
+        if (p1 == null && p2 == null) {
+            return 0;
+        }
+
+        if (p1 == null) {
+            return 1;
+        }
+
+        return -1;
     }
 
 }
