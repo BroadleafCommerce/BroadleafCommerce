@@ -445,9 +445,11 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                         Money itemSavings = calculatePotentialSavingsForOrderItem(itemOffer, item, discount.getQuantity());
                         potentialSavings = potentialSavings.add(itemSavings);
                         if (useCalculatePercent(offer)) {
-                            calculatedWeightedPercent = calculatedWeightedPercent.add(calculatePercent(item.calculateTotalWithoutAdjustments(), itemSavings));
+                            BigDecimal discountPercent = calculatePercent(item.calculateTotalWithoutAdjustments(), itemSavings);
+                            calculatedWeightedPercent = calculatedWeightedPercent.add(discountPercent);
                         } else if (hasQualifierAndQualifierRestricted(offer)) {
-                            calculatedWeightedPercent = calculatedWeightedPercent.add(calculateWeightedPercent(discount, item, itemSavings));
+                            BigDecimal discountPercent = calculateWeightedPercent(discount, item, itemSavings);
+                            calculatedWeightedPercent = calculatedWeightedPercent.add(discountPercent);
                         }
                     }
                     // Reset state back for next offer
