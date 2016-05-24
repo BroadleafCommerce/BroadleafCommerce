@@ -47,12 +47,15 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Filter and apply order item offers.
@@ -552,8 +555,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         listOfOfferLists.add(offers);
         
         if (offers.size() > 1) {
-            addQuantityOfOnePermutations(offers, listOfOfferLists);
-            addBestWeightedPercentPermutation(offers, listOfOfferLists);
+            listOfOfferLists.add(getPermutationByComparator(offers, ItemOfferQtyOneComparator.INSTANCE));
+            listOfOfferLists.add(getPermutationByComparator(offers, ItemOfferWeightedPercentComparator.INSTANCE));
         }
 
         if (offerListStartsWithNonCombinable(offers)) {
@@ -563,7 +566,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         return listOfOfferLists;
     }
 
-    private void removeTotalitarianAndNonCombinableOffers(List<PromotableCandidateItemOffer> offers, List<List<PromotableCandidateItemOffer>> listOfOfferLists) {
+    protected void removeTotalitarianAndNonCombinableOffers(List<PromotableCandidateItemOffer> offers, List<List<PromotableCandidateItemOffer>> listOfOfferLists) {
         List<PromotableCandidateItemOffer> listWithoutTotalitarianOrNonCombinables =
                 new ArrayList<PromotableCandidateItemOffer>(offers);
 
@@ -580,30 +583,10 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         }
     }
 
-    private void addQuantityOfOnePermutations(List<PromotableCandidateItemOffer> offers, List<List<PromotableCandidateItemOffer>> listOfOfferLists) {
-        List<PromotableCandidateItemOffer> qtyOneOffers = new ArrayList<PromotableCandidateItemOffer>(offers);
-        Collections.sort(qtyOneOffers, ItemOfferQtyOneComparator.INSTANCE);
-
-        // We only want to add this additional list when the qty of one list is not identical to the original one
-        for (int i = 0; i < qtyOneOffers.size(); i++) {
-            if (qtyOneOffers.get(i) != offers.get(i)) {
-                listOfOfferLists.add(qtyOneOffers);
-                break;
-            }
-        }
-    }
-
-    private void addBestWeightedPercentPermutation(List<PromotableCandidateItemOffer> offers, List<List<PromotableCandidateItemOffer>> listOfOfferLists) {
-        List<PromotableCandidateItemOffer> weightedPercentOffers = new ArrayList<PromotableCandidateItemOffer>(offers);
-        Collections.sort(weightedPercentOffers, ItemOfferWeightedPercentComparator.INSTANCE);
-
-        // We only want to add this additional list when the qty of one list is not identical to the original one
-        for (int i = 0; i < weightedPercentOffers.size(); i++) {
-            if (weightedPercentOffers.get(i) != offers.get(i)) {
-                listOfOfferLists.add(weightedPercentOffers);
-                break;
-            }
-        }
+    protected List<PromotableCandidateItemOffer> getPermutationByComparator(List<PromotableCandidateItemOffer> offers, Comparator instance) {
+        List<PromotableCandidateItemOffer> sortedOffers = new ArrayList<PromotableCandidateItemOffer>(offers);
+        Collections.sort(sortedOffers, instance);
+        return sortedOffers;
     }
 
     protected void restPriceDetails(PromotableOrderItem item) {
@@ -617,6 +600,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
     protected void determineBestPermutation(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order) {
         List<List<PromotableCandidateItemOffer>> permutations = buildItemOfferPermutations(itemOffers);
+        removeDuplicatePermutations(permutations);
         List<PromotableCandidateItemOffer> bestOfferList = null;
         Money lowestSubtotal = null;
         if (permutations.size() > 1) {
@@ -648,6 +632,30 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         }
 
         applyAllItemOffers(bestOfferList, order);
+    }
+
+    protected void removeDuplicatePermutations(List<List<PromotableCandidateItemOffer>> permutations) {
+        Set<List<Long>> offerIdListSet = new HashSet<>();
+        
+        Iterator<List<PromotableCandidateItemOffer>> permutationsIterator = permutations.iterator();
+        
+        while (permutationsIterator.hasNext()) {
+            List<PromotableCandidateItemOffer> offerList = permutationsIterator.next();
+            List<Long> offerIdList = convertToIdList(offerList);
+            
+            if (!offerIdListSet.add(offerIdList)) {
+                permutationsIterator.remove();
+            }
+        }
+    }
+
+    protected List<Long> convertToIdList(List<PromotableCandidateItemOffer> offerList) {
+        List<Long> idList = new ArrayList<>();
+        for (PromotableCandidateItemOffer offer : offerList) {
+            idList.add(offer.getOffer().getId());
+        }
+        
+        return idList;
     }
 
     @Override
