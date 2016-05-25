@@ -21,7 +21,6 @@ package org.broadleafcommerce.core.search.service.solr;
 
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.extension.ResultType;
-import org.broadleafcommerce.common.i18n.dao.TranslationDao;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.service.TranslationBatchReadCache;
@@ -66,9 +65,6 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
 
     @Resource(name = "blTranslationService")
     protected TranslationService translationService;
-    
-    @Resource(name = "blTranslationDao")
-    protected TranslationDao translationDao;
 
     @Resource(name = "blLocaleService")
     protected LocaleService localeService;
@@ -233,8 +229,8 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
         return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
 
-    private void addEntitiesToTranslationCache(List<String> entityIds, TranslatedEntity translatedEntity) {
-        List<Translation> translations = translationDao.readAllTranslationEntries(translatedEntity, ResultType.STANDARD, entityIds);
+    protected void addEntitiesToTranslationCache(List<String> entityIds, TranslatedEntity translatedEntity) {
+        List<Translation> translations = translationService.findAllTranslationEntries(translatedEntity, ResultType.STANDARD, entityIds);
         TranslationBatchReadCache.addToCache(translations);
     }
 
