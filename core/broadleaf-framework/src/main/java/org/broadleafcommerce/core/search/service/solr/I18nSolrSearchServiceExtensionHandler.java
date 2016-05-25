@@ -139,20 +139,6 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
 
             try {
                 for (Locale locale : locales) {
-                    String localeCode = locale.getLocaleCode();
-                    if (Boolean.FALSE.equals(locale.getUseCountryInSearchIndex())) {
-                        int pos = localeCode.indexOf("_");
-                        if (pos > 0) {
-                            localeCode = localeCode.substring(0, pos);
-                            if (processedLocaleCodes.contains(localeCode)) {
-                                continue;
-                            } else {
-                                locale = localeService.findLocaleByCode(localeCode);
-                            }
-                        }
-                    }
-
-                    processedLocaleCodes.add(localeCode);
                     tempContext.setLocale(locale);
 
                     final Object propertyValue;
@@ -162,6 +148,14 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
                         propertyValue = shs.getPropertyValue(product, propertyName);
                     }
 
+                    String localeCode = locale.getLocaleCode();
+                    if (Boolean.FALSE.equals(locale.getUseCountryInSearchIndex())) {
+                        int pos = localeCode.indexOf("_");
+                        if (pos > 0) {
+                            localeCode = localeCode.substring(0, pos);
+                        }
+                    }
+                    
                     values.put(localeCode, propertyValue);
                 }
             } finally {
@@ -185,7 +179,7 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
                 Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
                 if (locale != null) {
                     String localeCode = locale.getLocaleCode();
-                    if (!Boolean.TRUE.equals(locale.getUseCountryInSearchIndex())) {
+                    if (Boolean.FALSE.equals(locale.getUseCountryInSearchIndex())) {
                         int pos = localeCode.indexOf("_");
                         if (pos > 0) {
                             localeCode = localeCode.substring(0, pos);
