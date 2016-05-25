@@ -25,8 +25,11 @@ import org.apache.solr.common.SolrDocument;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
@@ -36,6 +39,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -180,4 +184,20 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @return HANDLED_CONTINUE if it added field, NOT_HANDLED otherwise
      */
     public ExtensionResultStatusType getSearchableIndexFields(List<IndexField> fields);
+
+    /**
+     * Perform actions at the start of a batch to improve performance of Solr search for the list of batch products.  
+     * For example we want to get, in bulk, the SkuPriceData for each product and save these in memory by default.
+     *
+     * @param products
+     * @return
+     */
+    public ExtensionResultStatusType startBatchEvent(List<Product> products);
+
+    /**
+     * Perform actions to end a batch event, such as closing any Contexts that have been previously created.
+     *
+     * @return
+     */
+    public ExtensionResultStatusType endBatchEvent();
 }

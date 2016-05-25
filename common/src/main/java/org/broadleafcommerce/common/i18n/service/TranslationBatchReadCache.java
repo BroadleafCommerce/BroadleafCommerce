@@ -22,14 +22,15 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
+import org.broadleafcommerce.common.util.BLCMapUtils;
+import org.broadleafcommerce.common.util.TypedClosure;
 
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -47,44 +48,65 @@ public class TranslationBatchReadCache {
     
     public static final String CACHE_NAME = "blBatchTranslationCache";
 
-    public static Cache getCache() {
+    protected static Cache getCache() {
         return CacheManager.getInstance().getCache(CACHE_NAME);
     }
     
+    protected static Map<String, Translation> getThreadlocalCache() {
+        long threadId = Thread.currentThread().getId();
+        Element cacheElement = getCache().get(threadId);
+        return cacheElement == null ? null : (Map<String, Translation>) cacheElement.getObjectValue();
+    }
+    
     public static void clearCache() {
-        getCache().removeAll();
+        long threadId = Thread.currentThread().getId();
+        getCache().remove(threadId);
+    }
+    
+    public static boolean hasCache() {
+        return getThreadlocalCache() != null;
     }
     
     public static void addToCache(List<Translation> translations) {
-        Collection<Element> translationCacheElements = CollectionUtils.collect(translations, new Transformer<Translation, Element>() {
+        long threadId = Thread.currentThread().getId();
+        Map<String, Translation> threadlocalCache = getThreadlocalCache();
+        if (threadlocalCache == null) {
+            threadlocalCache = new HashMap<String, Translation>();
+        }
+        
+        Map<String, Translation> additionalTranslations = BLCMapUtils.keyedMap(translations, new TypedClosure<String, Translation>() {
 
             @Override
-            public Element transform(Translation input) {
-                return new Element(buildCacheKey(input), input);
+            public String getKey(Translation translation) {
+                return buildCacheKey(translation);
             }
-            
         });
-        getCache().putAll(translationCacheElements);
+        
+        threadlocalCache.putAll(additionalTranslations);
+        
+        getCache().put(new Element(threadId, threadlocalCache));
     }
     
     public static Translation getFromCache(TranslatedEntity entityType, String id, String propertyName, String localeCode) {
-        Element cacheEntry = getCache().get(buildCacheKey(entityType, id, propertyName, localeCode));
-        if (cacheEntry == null && StringUtils.contains(localeCode, '_')) {
+        Map<String, Translation> threadlocalCache = getThreadlocalCache();
+        Translation translation = threadlocalCache.get(buildCacheKey(entityType, id, propertyName, localeCode));
+        
+        if (translation == null && StringUtils.contains(localeCode, '_')) {
             String languageWithoutCountryCode = localeCode.substring(localeCode.indexOf('_') + 1);
-            cacheEntry = getCache().get(buildCacheKey(entityType, id, propertyName, languageWithoutCountryCode));
+            translation = threadlocalCache.get(buildCacheKey(entityType, id, propertyName, languageWithoutCountryCode));
         }
         
-        return (cacheEntry == null) ? null : (Translation) cacheEntry.getObjectValue();
+        return translation;
     }
     
-    public static String buildCacheKey(Translation translation) {
+    protected static String buildCacheKey(Translation translation) {
         return buildCacheKey(translation.getEntityType(),
             translation.getEntityId(),
             translation.getFieldName(),
             translation.getLocaleCode());
     }
     
-    public static String buildCacheKey(TranslatedEntity entityType, String id, String propertyName, String localeCode) {
+    protected static String buildCacheKey(TranslatedEntity entityType, String id, String propertyName, String localeCode) {
         return StringUtils.join(new String[]{entityType.getType(), id, propertyName, localeCode}, "-");
     }
 }
