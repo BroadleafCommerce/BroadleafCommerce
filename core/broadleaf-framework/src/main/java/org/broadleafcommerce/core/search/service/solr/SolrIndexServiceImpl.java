@@ -521,7 +521,23 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public List<Locale> getAllLocales() {
-        return localeService.findAllLocales();
+        List<Locale> allLocales = localeService.findAllLocales();
+        Map<String, Locale> processedLocales = new HashMap<>();
+        // Optimize the list of locales we are looking at. If I have an 'en' and 'en_US' in the locale set and I'm
+        // not using the country code to index the values, then I only need to index the locale 'en'
+        for (Locale locale : allLocales) {
+            String localeCode = locale.getLocaleCode();
+            int underscoreLocation = localeCode.indexOf("_");
+            if (underscoreLocation > 0 && Boolean.FALSE.equals(locale.getUseCountryInSearchIndex())) {
+                String localeCodeWithoutCountry = localeCode.substring(0, underscoreLocation);
+                if (!processedLocales.containsKey(localeCodeWithoutCountry)) {
+                    processedLocales.put(localeCodeWithoutCountry, locale);
+                }
+            } else {
+                processedLocales.put(locale.getLocaleCode(), locale);
+            }
+        }
+        return new ArrayList<>(processedLocales.values());
     }
     
     @Override
