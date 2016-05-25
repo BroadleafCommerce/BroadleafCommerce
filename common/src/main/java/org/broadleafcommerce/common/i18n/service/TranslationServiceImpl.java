@@ -446,6 +446,11 @@ public class TranslationServiceImpl implements TranslationService {
         return requestedDefaultValue;
     }
 
+    @Override
+    public List<Translation> findAllTranslationEntries(TranslatedEntity translatedEntity, ResultType standard, List<String> entityIds) {
+        return dao.readAllTranslationEntries(translatedEntity, standard, entityIds);
+    }
+
     /**
      * Returns true if the passed in entity / property combination is in the defaultLocaleExceptionList
      * 
