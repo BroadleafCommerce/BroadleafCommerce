@@ -212,6 +212,9 @@
                     $(el).closest('.field-group').find('input.color-picker').spectrum('set', origVal);
                     continue;
                 }
+                else if ($(el).hasClass('ace-editor-content')) {
+                    BLCAdmin.ace.revertRegisteredEditors();
+                }
 
                 // If we made it this far, set the fields value.
                 $(el).val(origVal).trigger('blur');
@@ -372,7 +375,7 @@
             else if ($(el).hasClass('rules-group-header-item-qty')) {
                 var $ruleGroupContainer = $(el).closest('.rules-group-container');
                 id = $ruleGroupContainer.attr('id');
-                origVal = $ruleGroupContainer.attr('orig-val');
+                origVal = $ruleGroupContainer.attr('data-orig-val');
             }
 
             this.updateEntityFormChangeMap(id, origVal, newVal);
