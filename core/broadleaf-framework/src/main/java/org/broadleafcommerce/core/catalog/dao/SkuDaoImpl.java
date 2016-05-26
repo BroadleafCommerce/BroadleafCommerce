@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.util.DialectHelper;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
@@ -69,9 +68,6 @@ public class SkuDaoImpl implements SkuDao {
 
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
-
-    @Resource(name = "blDialectHelper")
-    protected DialectHelper dialectHelper;
 
     @Resource(name = "blSkuDaoExtensionManager")
     protected SkuDaoExtensionManager extensionManager;
@@ -152,9 +148,6 @@ public class SkuDaoImpl implements SkuDao {
         criteria.where(sku.get("id").as(Long.class).in(
                 sandBoxHelper.mergeCloneIds(SkuImpl.class,
                         skuIds.toArray(new Long[skuIds.size()]))));
-        if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
-            criteria.distinct(true);
-        }
 
         TypedQuery<Sku> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
