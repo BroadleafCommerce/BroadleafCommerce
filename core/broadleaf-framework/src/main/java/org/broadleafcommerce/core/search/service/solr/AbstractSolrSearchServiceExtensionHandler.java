@@ -137,7 +137,7 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
     }
 
     @Override
-    public ExtensionResultStatusType batchFetchSandBoxCollectionMembers(List<Product> products) {
+    public ExtensionResultStatusType batchFetchCatalogData(List<Product> products) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 }

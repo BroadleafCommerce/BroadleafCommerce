@@ -197,7 +197,9 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
 
     /**
      * Perform actions at the start of a batch to improve performance of Solr search for the list of batch products.  
-     * For example we want to get, in bulk, the SkuPriceData for each product and save these in memory by default.
+     * For example we want to get, in bulk, the SkuPriceData for each product and save these in memory by default. This
+     * is intended for usage while performing a solr index. For search results and category landing page results,
+     * see {@link #batchFetchCatalogData(List)}.
      * 
      * @param products
      * @return
@@ -212,10 +214,12 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
     ExtensionResultStatusType endBatchEvent();
 
     /**
-     * Batch fetch important collections for the entire list of products in single batch fetch queries.
+     * Batch fetch important collections for the entire list of products in single batch fetch queries. In general, this is intended
+     * to be used for search results and category landing page results. For batch fetching during solr indexing, see
+     * {@link #startBatchEvent(List)}.
      *
      * @param products
      * @return
      */
-    ExtensionResultStatusType batchFetchSandBoxCollectionMembers(List<Product> products);
+    ExtensionResultStatusType batchFetchCatalogData(List<Product> products);
 }
