@@ -168,7 +168,7 @@ $.fn.queryBuilder.define('blc-admin-query-builder', function(options) {
             var hiddenId = $ruleBuilderContainer.next('.rule-builder-data').data('hiddenid');
             var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
 
-            var origVal = ruleBuilder.builders[0].queryBuilder('getRules');
+            var origVal = ruleBuilder.builders[0].queryBuilder('getRules', { displayErrors : ruleBuilder.displayErrors });
             $ruleBuilderContainer.attr('data-orig-val', origVal);
         }
     });

@@ -922,7 +922,8 @@ QueryBuilder.prototype.clearErrors = function(node) {
  */
 QueryBuilder.prototype.displayError = function(node) {
     if (this.settings.display_errors) {
-        if (node.error === null) {
+        if (node.error === null ||
+            (node.error.length == 1 && node.error[0] === 'no_filter')) {
             node.$el.removeClass('has-error');
         }
         else {
