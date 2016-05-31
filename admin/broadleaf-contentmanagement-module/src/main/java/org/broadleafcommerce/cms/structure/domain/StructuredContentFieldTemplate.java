@@ -22,11 +22,10 @@ package org.broadleafcommerce.cms.structure.domain;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
-import java.io.Serializable;
-import java.util.List;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * A structured content field template holds the structure for a
@@ -75,10 +74,6 @@ public interface StructuredContentFieldTemplate extends Serializable, MultiTenan
      */
     @Nullable
     List<FieldGroup> getFieldGroups();
-    
-    List<StructuredContentFieldGroupXref> getFieldGroupXrefs();
-    
-    void setFieldGroupXrefs(List<StructuredContentFieldGroupXref> fieldGroupXrefs);
 
     /**
      * Sets the list of field groups for this template.
