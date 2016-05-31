@@ -26,8 +26,8 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 
 /**
  * A bean representation of a URLHandler
- *
  * @author bpolster
+ *
  */
 public class URLHandlerDTO implements URLHandler {
 
@@ -36,7 +36,6 @@ public class URLHandlerDTO implements URLHandler {
     protected String incomingURL = "";
     protected String newURL;
     protected String urlRedirectType;
-    protected boolean isRegex = false;
 
     public URLHandlerDTO(String newUrl, URLRedirectType redirectType) {
         setUrlRedirectType(redirectType);
@@ -68,16 +67,6 @@ public class URLHandlerDTO implements URLHandler {
     }
 
     @Override
-    public boolean isRegexHandler() {
-        return isRegex;
-    }
-
-    @Override
-    public void setRegexHandler(boolean regexHandler) {
-        this.isRegex = regexHandler;
-    }
-
-    @Override
     public URLRedirectType getUrlRedirectType() {
         return URLRedirectType.getInstance(urlRedirectType);
     }
@@ -96,8 +85,7 @@ public class URLHandlerDTO implements URLHandler {
         URLHandler cloned = createResponse.getClone();
         cloned.setIncomingURL(incomingURL);
         cloned.setNewURL(newURL);
-        cloned.setUrlRedirectType(URLRedirectType.getInstance(urlRedirectType));
-        cloned.setRegexHandler(isRegex);
-        return createResponse;
+        cloned.setUrlRedirectType( URLRedirectType.getInstance(urlRedirectType));
+        return  createResponse;
     }
 }
