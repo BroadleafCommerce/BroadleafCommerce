@@ -34,7 +34,7 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
 
         var numElements = rule.$el.find('.rule-value-container span.rule-val-sep').length + 1;
         if (numElements > 1) {
-            var dynamicWidth = 205/numElements;
+            var dynamicWidth = 180/numElements;
             rule.$el.find('.rule-value-container span.rule-val-sep').parent()
                 .find('input').each(function() {
                     var $this = $(this);
