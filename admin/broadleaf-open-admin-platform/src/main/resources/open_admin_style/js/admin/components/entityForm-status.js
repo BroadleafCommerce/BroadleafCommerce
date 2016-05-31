@@ -557,6 +557,11 @@
                 !$('.entity-form').length) {
                 return false;
             }
+
+            // If this is a Selectize Adder input, we don't want to track as changes are auto-saved
+            if (el !== undefined && $(el).closest('.selectize-adder')) {
+                return false;
+            }
             return true;
         }
     };
