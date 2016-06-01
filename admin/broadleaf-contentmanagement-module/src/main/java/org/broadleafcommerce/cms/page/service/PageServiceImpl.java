@@ -17,10 +17,6 @@
  */
 package org.broadleafcommerce.cms.page.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,6 +47,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * @author Brian Polster (bpolster)
@@ -363,6 +363,9 @@ public class PageServiceImpl implements PageService {
                 List<String> keys = (List<String>) e.getObjectValue();
                 for (String k : keys) {
                     success = Boolean.valueOf(getPageCache().remove(k));
+                    if (success) {
+                        break;
+                    }
                 }
             }
         }
