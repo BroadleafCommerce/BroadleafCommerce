@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.dao;
 
+import java.math.BigDecimal;
 
 /**
  * Container object for the results of a lightweight query that retrieves the parent category
@@ -28,20 +29,22 @@ package org.broadleafcommerce.core.search.dao;
  */
 public class ParentCategoryByProduct {
 
-    protected Long parent;
+    protected Long category;
     protected Long product;
+    protected BigDecimal displayOrder;
 
-    public ParentCategoryByProduct(Long parent, Long product) {
-        this.parent = parent;
+    public ParentCategoryByProduct(Long category, Long product, BigDecimal displayOrder) {
+        this.category = category;
         this.product = product;
+        this.displayOrder = displayOrder;
     }
 
-    public Long getParent() {
-        return parent;
+    public Long getCategory() {
+        return category;
     }
 
-    public void setParent(Long parent) {
-        this.parent = parent;
+    public void setCategory(Long category) {
+        this.category = category;
     }
 
     public Long getProduct() {
@@ -50,6 +53,14 @@ public class ParentCategoryByProduct {
 
     public void setProduct(Long product) {
         this.product = product;
+    }
+
+    public BigDecimal getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(BigDecimal displayOrder) {
+        this.displayOrder = displayOrder;
     }
     
 }
