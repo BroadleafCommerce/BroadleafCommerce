@@ -40,7 +40,7 @@ import spock.lang.Specification
 
 class SolrIndexServiceSpec extends Specification {
     
-    SolrIndexServiceImpl service;
+    SolrIndexServiceImpl service
     SolrIndexDao mockSolrIndexDao = Mock()
     FieldDao mockFieldDao = Mock()
     PlatformTransactionManager mockTransactionManager = Mock()
@@ -53,6 +53,9 @@ class SolrIndexServiceSpec extends Specification {
     
     
     def setup() {
+        mockLocaleService.findAllLocales() >> new ArrayList<Locale>()
+        mockExtensionManager.getProxy() >> Mock(SolrSearchServiceExtensionHandler)
+        
         service = Spy(SolrIndexServiceImpl)
         service.solrIndexDao = mockSolrIndexDao
         service.fieldDao = mockFieldDao
@@ -67,7 +70,6 @@ class SolrIndexServiceSpec extends Specification {
     
     def "Test that Categories are being properly associated to skus when creating the solr index"(){
         setup:
-        mockExtensionManager.getProxy() >> Mock(SolrSearchServiceExtensionHandler)
         mockFieldDao.readAllSkuFields() >> new ArrayList<Field>()
         
         service.buildDocument(*_) >> null
@@ -97,7 +99,6 @@ class SolrIndexServiceSpec extends Specification {
     
     def "Test that Categories are being properly associated to skus when creating the solr index for out of order skus"(){
         setup:
-        mockExtensionManager.getProxy() >> Mock(SolrSearchServiceExtensionHandler)
         mockFieldDao.readAllSkuFields() >> new ArrayList<Field>()
         
         service.buildDocument(*_) >> null
