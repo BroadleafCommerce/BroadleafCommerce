@@ -38,6 +38,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Created by jfischer
@@ -85,6 +86,9 @@ public class LocaleImpl implements Locale, AdminMainEntity {
         group = "LocaleImpl_Details", 
         prominent = true, gridOrder = 3)
     protected Boolean useInSearchIndex = false;
+    
+    @Transient
+    protected java.util.Locale javaLocale;
     
     @Override
     public String getLocaleCode() {
@@ -138,6 +142,14 @@ public class LocaleImpl implements Locale, AdminMainEntity {
     @Override
     public void setUseCountryInSearchIndex(Boolean useInSearchIndex) {
         this.useInSearchIndex = useInSearchIndex;
+    }
+    
+    public java.util.Locale getJavaLocale() {
+        if (javaLocale == null && getLocaleCode() != null) {
+            String localeString = getLocaleCode();
+            return org.springframework.util.StringUtils.parseLocaleString(localeString);
+        }
+        return javaLocale;
     }
 
     @Override
