@@ -213,6 +213,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             wrapper.setFields(defaultWrapperFields);
         }
         listGrid.setFieldWrapper(wrapper);
+        listGrid.setHideFriendlyName(true);
 
         String blankJsonString =  "{\"data\":[]}";
         listGrid.setJson(blankJsonString);
@@ -571,7 +572,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // Set up the filter builder params
         Date c = new Date();
         String friendlyName = field.getMetadata().getFriendlyName();
-        listGrid.setJsonFieldName(friendlyName + c.getTime() + "Json");
+        String jsonFriendlyName = friendlyName.replaceAll(" ", "_");
+        listGrid.setJsonFieldName(jsonFriendlyName + c.getTime() + "Json");
         listGrid.setFriendlyName(friendlyName);
         listGrid.setFieldBuilder("RULE_SIMPLE");
         if (CollectionUtils.isEmpty(wrapper.getFields())) {
