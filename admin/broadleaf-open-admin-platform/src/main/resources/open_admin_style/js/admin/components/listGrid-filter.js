@@ -302,13 +302,13 @@ $(document).ready(function() {
             oldParams = {};
         }
         oldParams['isLookup'] = $(this).closest('.modal').length > 0;
-        var $url = BLCAdmin.buildUrlWithParams($(this).closest('.filter-fields').data('action'), oldParams);
+        var url = BLCAdmin.buildUrlWithParams($(this).closest('.filter-fields').data('action'), oldParams);
 
-        $url = getFilteredParams(this, $url);
+        url = getFilteredParams($(this), url);
 
         BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
         BLC.ajax({
-            url: $url,
+            url: url,
             type: "GET",
             data: $(nonBlankInputs).serialize()
         }, function(data) {
@@ -427,18 +427,18 @@ $(document).ready(function() {
         return false;
     });
 
-    function getFilteredParams($el, $url) {
-        var $container = $($el).closest('.listgrid-container');
+    function getFilteredParams($el, url) {
+        var $container = $el.closest('.listgrid-container');
         var $filterButton = $container.find('.filter-button');
         var hiddenId = $filterButton.data('hiddenid');
         if (hiddenId) {
             var filteredValues = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
-            if ($url.indexOf('?') >= 0) {
-                $url += '&' + filteredValues;
+            if (url.indexOf('?') >= 0) {
+                url += '&' + filteredValues;
             } else {
-                $url += '?' + filteredValues;
+                url += '?' + filteredValues;
             }
         }
-        return $url;
+        return url;
     }
 });
