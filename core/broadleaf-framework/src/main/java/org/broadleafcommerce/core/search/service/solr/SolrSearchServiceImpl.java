@@ -780,6 +780,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
         List<Product> products = productDao.readProductsByIds(productIds);
 
+        extensionManager.getProxy().batchFetchCatalogData(products);
+
         // We have to sort the products list by the order of the productIds list to maintain sortability in the UI
         if (products != null) {
             Collections.sort(products, new Comparator<Product>() {

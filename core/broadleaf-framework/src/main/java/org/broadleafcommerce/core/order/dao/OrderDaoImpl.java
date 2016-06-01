@@ -259,6 +259,8 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
         List<Order> orders = query.getResultList();
         
         // Filter out orders that don't match the current locale (if one is set)

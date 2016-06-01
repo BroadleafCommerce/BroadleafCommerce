@@ -47,12 +47,12 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
     /**
      * Returns a prefix if required for the passed in facet.
      */
-    public ExtensionResultStatusType buildPrefixListForSearchableFacet(Field field, List<String> prefixList);
+    ExtensionResultStatusType buildPrefixListForSearchableFacet(Field field, List<String> prefixList);
 
     /**
      * Returns a prefix if required for the passed in searchable field. 
      */
-    public ExtensionResultStatusType buildPrefixListForSearchableField(Field field, FieldType searchableFieldType,
+    ExtensionResultStatusType buildPrefixListForSearchableField(Field field, FieldType searchableFieldType,
             List<String> prefixList);
 
     /**
@@ -62,7 +62,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param dto
      * @param ranges
      */
-    public ExtensionResultStatusType filterSearchFacetRanges(SearchFacetDTO dto, List<SearchFacetRange> ranges);
+    ExtensionResultStatusType filterSearchFacetRanges(SearchFacetDTO dto, List<SearchFacetRange> ranges);
 
     /**
      * Given the input field, populates the values array with the fields needed for the 
@@ -79,7 +79,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    public ExtensionResultStatusType addPropertyValues(Product product, Field field, FieldType fieldType,
+    ExtensionResultStatusType addPropertyValues(Product product, Field field, FieldType fieldType,
             Map<String, Object> values, String propertyName, List<Locale> locales)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
 
@@ -98,7 +98,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    public ExtensionResultStatusType addPropertyValues(Sku sku, Field field, FieldType fieldType,
+    ExtensionResultStatusType addPropertyValues(Sku sku, Field field, FieldType fieldType,
             Map<String, Object> values, String propertyName, List<Locale> locales)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
 
@@ -113,18 +113,18 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param defaultSort
      *      * @return
      */
-    public ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
+    ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
             List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort);
 
     /**
      * Allows the extension additional fields to the document that are not configured via the DB.
      */
-    public ExtensionResultStatusType attachAdditionalBasicFields(Product product, SolrInputDocument document, SolrHelperService shs);
+    ExtensionResultStatusType attachAdditionalBasicFields(Product product, SolrInputDocument document, SolrHelperService shs);
 
     /**
      * Allows the extension additional fields to the document that are not configured via the DB.
      */
-    public ExtensionResultStatusType attachAdditionalBasicFields(Sku sku, SolrInputDocument document, SolrHelperService shs);
+    ExtensionResultStatusType attachAdditionalBasicFields(Sku sku, SolrInputDocument document, SolrHelperService shs);
     
     /**
      * In certain scenarios, we may want to produce a different Solr document id than the default.
@@ -135,7 +135,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param product
      * @return the extension result status type
      */
-    public ExtensionResultStatusType getSolrDocumentId(SolrInputDocument document, Product product, String[] returnContainer);
+    ExtensionResultStatusType getSolrDocumentId(SolrInputDocument document, Product product, String[] returnContainer);
 
     /**
      * In certain scenarios, we may want to produce a different Solr document id than the default.
@@ -146,7 +146,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param sku
      * @return the extension result status type
      */
-    public ExtensionResultStatusType getSolrDocumentId(SolrInputDocument document, Sku sku, String[] returnContainer);
+    ExtensionResultStatusType getSolrDocumentId(SolrInputDocument document, Sku sku, String[] returnContainer);
 
     /**
      * In certain scenarios, the requested category id might not be the one that should be used in Solr.
@@ -157,7 +157,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param returnContainer
      * @return the extension result status type
      */
-    public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer);
+    ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer);
 
     /**
      * In certain scenarios, the requested category id might not be the one that should be used in Solr.
@@ -168,7 +168,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param returnContainer
      * @return the extension result status type
      */
-    public ExtensionResultStatusType getCategoryId(Long category, Long[] returnContainer);
+    ExtensionResultStatusType getCategoryId(Long category, Long[] returnContainer);
 
     /**
      * In certain scenarios, the requested product id might not be the one that should be used in Solr.
@@ -179,7 +179,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param returnContainer
      * @return the extension result status type
      */
-    public ExtensionResultStatusType getProductId(Product product, Long[] returnContainer);
+    ExtensionResultStatusType getProductId(Product product, Long[] returnContainer);
     
     /**
      * In certain scenarios, the requested sku id might not be the one that should be used in Solr.
@@ -190,23 +190,36 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param returnContainer
      * @return
      */
-    public ExtensionResultStatusType getSkuId(Sku sku, Long[] returnContainer);
+    ExtensionResultStatusType getSkuId(Sku sku, Long[] returnContainer);
     
-    public ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<Product> products, List<Field> fields, List<Locale> locales);
+    ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<Product> products,
+            List<Field> fields, List<Locale> locales);
 
     /**
      * Perform actions at the start of a batch to improve performance of Solr search for the list of batch products.  
-     * For example we want to get, in bulk, the SkuPriceData for each product and save these in memory by default.
+     * For example we want to get, in bulk, the SkuPriceData for each product and save these in memory by default. This
+     * is intended for usage while performing a solr index. For search results and category landing page results,
+     * see {@link #batchFetchCatalogData(List)}.
      * 
      * @param products
      * @return
      */
-    public ExtensionResultStatusType startBatchEvent(List<Product> products);
+    ExtensionResultStatusType startBatchEvent(List<Product> products);
 
     /**
      * Perform actions to end a batch event, such as closing any Contexts that have been previously created.
      * 
      * @return
      */
-    public ExtensionResultStatusType endBatchEvent();
+    ExtensionResultStatusType endBatchEvent();
+
+    /**
+     * Batch fetch important collections for the entire list of products in single batch fetch queries. In general, this is intended
+     * to be used for search results and category landing page results. For batch fetching during solr indexing, see
+     * {@link #startBatchEvent(List)}.
+     *
+     * @param products
+     * @return
+     */
+    ExtensionResultStatusType batchFetchCatalogData(List<Product> products);
 }
