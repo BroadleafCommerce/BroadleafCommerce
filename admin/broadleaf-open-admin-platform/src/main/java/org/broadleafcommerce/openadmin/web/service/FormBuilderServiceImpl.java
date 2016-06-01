@@ -571,7 +571,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         // Set up the filter builder params
         Date c = new Date();
-        String friendlyName = field.getMetadata().getFriendlyName().replaceAll(" ", "_");
+        String friendlyName = field.getMetadata().getFriendlyName();
+        friendlyName = friendlyName.replaceAll(" ", "_");
         listGrid.setJsonFieldName(friendlyName + c.getTime() + "Json");
         listGrid.setFriendlyName(friendlyName);
         listGrid.setFieldBuilder("RULE_SIMPLE");
