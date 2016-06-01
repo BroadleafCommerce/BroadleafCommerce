@@ -122,11 +122,11 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * Attaches the given dto to the given query, if possible
      *
      * @param query the SolrQuery to attach the facet to
-     * @param key the key
      * @param dto
+     * @param searchCriteria
      * @return the result of the handler
      */
-    public ExtensionResultStatusType attachFacet(SolrQuery query, String indexField, SearchFacetDTO dto);
+    public ExtensionResultStatusType attachFacet(SolrQuery query, String indexField, SearchFacetDTO dto, SearchCriteria searchCriteria);
 
     /**
      * Attaches any additional facet results to the namedFacetMap if they exist. This should only attach facets if they do

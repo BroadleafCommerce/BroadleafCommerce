@@ -214,7 +214,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // Attach additional restrictions
         attachSortClause(solrQuery, searchCriteria, defaultSort);
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
-        attachFacets(solrQuery, namedFacetMap);
+        attachFacets(solrQuery, namedFacetMap, searchCriteria);
         
         modifySolrQuery(solrQuery, searchCriteria.getQuery(), facets, searchCriteria, defaultSort);
 
@@ -449,12 +449,12 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * Notifies solr about which facets you want it to determine results and counts for
-     * 
      * @param query
      * @param namedFacetMap
+     * @param searchCriteria
      */
-    protected void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap) {
-        shs.attachFacets(query, namedFacetMap);
+    protected void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, SearchCriteria searchCriteria) {
+        shs.attachFacets(query, namedFacetMap, searchCriteria);
     }
 
     /**
