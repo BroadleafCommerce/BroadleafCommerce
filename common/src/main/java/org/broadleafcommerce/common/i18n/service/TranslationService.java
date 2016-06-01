@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.i18n.service;
 
 import net.sf.ehcache.Cache;
 
+import org.broadleafcommerce.common.extension.ResultType;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 
@@ -149,4 +150,14 @@ public interface TranslationService {
      * @return
      */
     String getDefaultTranslationValue(Object entity, String property, Locale locale, String requestedDefaultValue);
+
+    /**
+     * Find all the available translations for the given params.
+     *
+     * @param entityType
+     * @param stage param drives whether to look for entries at a template level or standard site level (multitenant concepts). Can be IGNORE. Any multitenant behavior is ignored in the absence of the multitenant module.
+     * @param entityIds the {@link Translation#getEntityId()} to restrict the results by
+     * @return
+     */
+    List<Translation> findAllTranslationEntries(TranslatedEntity translatedEntity, ResultType standard, List<String> entityIds);
 }
