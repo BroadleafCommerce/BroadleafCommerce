@@ -20,7 +20,6 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,9 +57,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -146,27 +143,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             SolrIndexCachedOperation.setCache(cache);
             cacheOperation.execute();
         } finally {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Cleaning up Solr index cache from memory - size approx: " + getCacheSizeInMemoryApproximation(SolrIndexCachedOperation.getCache()) + " bytes");
-            }
             SolrIndexCachedOperation.clearCache();
-        }
-    }
-
-    protected int getCacheSizeInMemoryApproximation(CatalogStructure structure) {
-        try {
-            if (structure == null) {
-                return 0;
-            }
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(structure);
-            IOUtils.closeQuietly(oos);
-            int size = baos.size();
-            IOUtils.closeQuietly(baos);
-            return size;
-        } catch (IOException e) {
-            throw ExceptionHelper.refineException(e);
         }
     }
 
