@@ -22,8 +22,6 @@ package org.broadleafcommerce.core.search.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
-import org.broadleafcommerce.common.util.BLCCollectionUtils;
-import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
@@ -95,48 +93,22 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                         }
                         //We only want the sandbox parent - if applicable
                         //Long sandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(CategoryImpl.class, item.getParent());
-                        Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(CategoryImpl.class, item.getParent());
+                        Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(CategoryImpl.class, item.getCategory());
                         if (sandBoxVal == null) {
-                            sandBoxVal = item.getParent();
+                            sandBoxVal = item.getCategory();
                         }
                         parentCategoriesByProduct.get(sandBoxProductVal).add(sandBoxVal);
                     }
+                    
+                    // Cache the display order bigdecimals
+                    BigDecimal displayOrder = (item.getDisplayOrder() == null) ? new BigDecimal("1.00000") : item.getDisplayOrder();
+                    catalogStructure.getDisplayOrdersByCategoryProduct().put(item.getCategory() + "-" + item.getProduct(), displayOrder);
                 }
                 for (Map.Entry<Long, Set<Long>> entry : parentCategoriesByProduct.entrySet()) {
                     for (Long categoryId : entry.getValue()) {
                         if (!catalogStructure.getParentCategoriesByCategory().containsKey(categoryId)) {
                             Set<Long> hierarchy = new HashSet<Long>();
                             parentCategoriesByCategory.put(categoryId, hierarchy);
-                        }
-                        if (!catalogStructure.getProductsByCategory().containsKey(categoryId)) {
-                            List<ProductsByCategoryWithOrder> categoryChildren = readProductIdsByCategory(categoryId);
-    
-                            // Cache the display order bigdecimals
-                            BigDecimal displayOrder = new BigDecimal("1.00000");
-                            for (ProductsByCategoryWithOrder child : categoryChildren) {
-                                catalogStructure.getDisplayOrdersByCategoryProduct().put(categoryId + "-" + child.getProductId(), child.getDisplayOrder()==null?displayOrder:child.getDisplayOrder());
-                                if (child.getDisplayOrder() != null) {
-                                    displayOrder = child.displayOrder;
-                                }
-                                displayOrder = displayOrder.add(new BigDecimal("1.00000"));
-                            }
-    
-                            //filter the list for sandbox values
-                            for (Map.Entry<Long, Long> sandBoxProduct : sandBoxProductToOriginalMap.entrySet()) {
-                                for (ProductsByCategoryWithOrder child : categoryChildren) {
-                                    if (child.getProductId().equals(sandBoxProduct.getValue())) {
-                                        child.setProductId(sandBoxProduct.getKey());
-                                    }
-                                }
-                            }
-                            
-                            List<Long> categoryChildProductIds = BLCCollectionUtils.collectList(categoryChildren, new TypedTransformer<Long>() {
-                                @Override
-                                public Long transform(Object input) {
-                                    return ((ProductsByCategoryWithOrder) input).getProductId();
-                                }
-                            });
-                            catalogStructure.getProductsByCategory().put(categoryId, categoryChildProductIds);
                         }
                     }
                 }
@@ -149,12 +121,6 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
         } finally {
             context.setInternalIgnoreFilters(oldIgnoreFilters);
         }
-    }
-
-    protected List<ProductsByCategoryWithOrder> readProductIdsByCategory(Long categoryId) {
-        TypedQuery<ProductsByCategoryWithOrder> query = em.createNamedQuery("BC_READ_PRODUCT_IDS_BY_CATEGORY_WITH_ORDER", ProductsByCategoryWithOrder.class);
-        query.setParameter("categoryIds", sandBoxHelper.mergeCloneIds(CategoryImpl.class, categoryId));
-        return query.getResultList();
     }
 
     /**

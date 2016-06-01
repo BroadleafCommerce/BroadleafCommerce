@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.currency.domain;
 
+import java.util.Currency;
+
 public class NullBroadleafCurrency implements BroadleafCurrency {
     private static final long serialVersionUID = 7926395625817119455L;
 
@@ -50,6 +52,11 @@ public class NullBroadleafCurrency implements BroadleafCurrency {
     @Override
     public void setDefaultFlag(boolean defaultFlag) {
         // Do nothing
+    }
+
+    @Override
+    public Currency getJavaCurrency() {
+        return null;
     }
 
 }

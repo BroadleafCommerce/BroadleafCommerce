@@ -61,14 +61,6 @@ public class CatalogStructure implements Serializable {
         this.parentCategoriesByCategory = parentCategoriesByCategory;
     }
 
-    public Map<Long, List<Long>> getProductsByCategory() {
-        return productsByCategory;
-    }
-
-    public void setProductsByCategory(Map<Long, List<Long>> productsByCategory) {
-        this.productsByCategory = productsByCategory;
-    }
-
     public Map<String, BigDecimal> getDisplayOrdersByCategoryProduct() {
         return displayOrdersByCategoryProduct;
     }
