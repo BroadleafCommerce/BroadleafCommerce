@@ -63,7 +63,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
         initializePriceDetails();
     }
 
-    private void initializePriceDetails() {
+    protected void initializePriceDetails() {
         if (includeAdjustments) {
             for (OrderItemPriceDetail detail : orderItem.getOrderItemPriceDetails()) {
                 PromotableOrderItemPriceDetail poid =
