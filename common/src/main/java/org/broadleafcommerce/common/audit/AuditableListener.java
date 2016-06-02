@@ -17,19 +17,16 @@
  */
 package org.broadleafcommerce.common.audit;
 
-import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
 
 import java.lang.reflect.Field;
-import java.util.Calendar;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
-public class AuditableListener {
+public class AuditableListener extends AbstractAuditableListener {
 
     @PrePersist
     public void setAuditCreatedBy(Object entity) throws Exception {
@@ -41,12 +38,7 @@ public class AuditableListener {
         setAuditUpdatedBy(entity, new Auditable());
     }
 
-    protected void setAuditValueTemporal(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
-        Calendar cal = SystemTime.asCalendar();
-        field.setAccessible(true);
-        field.set(entity, cal.getTime());
-    }
-
+    @Override
     protected void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
         try {
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
@@ -59,12 +51,12 @@ public class AuditableListener {
 
                 if (customer != null) {
                     Class<?> customerClass = customer.getClass();
-                    Field userNameField = getSingleField(customerClass, "username");
+                    Field userNameField = BLCFieldUtils.getSingleField(customerClass, "username");
                     userNameField.setAccessible(true);
                     String username = (String) userNameField.get(customer);
                     if (username != null) {
                         //the customer has been persisted
-                        Field idField = getSingleField(customerClass, "id");
+                        Field idField = BLCFieldUtils.getSingleField(customerClass, "id");
                         idField.setAccessible(true);
                         customerId = (Long) idField.get(customer);
                     }
@@ -75,19 +67,6 @@ public class AuditableListener {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        try {
-            return clazz.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException nsf) {
-            // Try superclass
-            if (clazz.getSuperclass() != null) {
-                return getSingleField(clazz.getSuperclass(), fieldName);
-            }
-
-            return null;
         }
     }
 

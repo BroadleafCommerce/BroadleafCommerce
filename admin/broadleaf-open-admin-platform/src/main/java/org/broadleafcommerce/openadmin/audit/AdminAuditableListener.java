@@ -17,19 +17,15 @@
  */
 package org.broadleafcommerce.openadmin.audit;
 
-import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.audit.AbstractAuditableListener;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 
 import java.lang.reflect.Field;
-import java.util.Calendar;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
-public class AdminAuditableListener {
+public class AdminAuditableListener extends AbstractAuditableListener {
 
     @PrePersist
     public void setAuditCreatedBy(Object entity) throws Exception {
@@ -41,18 +37,13 @@ public class AdminAuditableListener {
         setAuditUpdatedBy(entity, new AdminAuditable());
     }
 
-    protected void setAuditValueTemporal(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
-        Calendar cal = SystemTime.asCalendar();
-        field.setAccessible(true);
-        field.set(entity, cal.getTime());
-    }
-
+    @Override
     protected void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
         try {
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-            if (context != null && context.getAdmin() && context.getAdditionalProperties().containsKey("adminUser")) {
+            if (context != null && context.getAdmin() && context.getAdminUserId() != null) {
                 field.setAccessible(true);
-                field.set(entity, ((AdminUser) context.getAdditionalProperties().get("adminUser")).getId());
+                field.set(entity, context.getAdminUserId());
             }
         } catch (IllegalStateException e) {
             //do nothing
@@ -61,20 +52,4 @@ public class AdminAuditableListener {
         }
     }
 
-    protected String getAuditableFieldName() {
-        return "auditable";
-    }
-
-    private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        try {
-            return clazz.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException nsf) {
-            // Try superclass
-            if (clazz.getSuperclass() != null) {
-                return getSingleField(clazz.getSuperclass(), fieldName);
-            }
-
-            return null;
-        }
-    }
 }
