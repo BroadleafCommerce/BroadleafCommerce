@@ -69,12 +69,12 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
                 PromotableOrderItemPriceDetail poid =
                         itemFactory.createPromotableOrderItemPriceDetail(this, detail.getQuantity());
                 itemPriceDetails.add(poid);
-                poid.chooseSaleOrRetailAdjustments();
                 for (OrderItemPriceDetailAdjustment adjustment : detail.getOrderItemPriceDetailAdjustments()) {
                     PromotableOrderItemPriceDetailAdjustment poidAdj =
                             new PromotableOrderItemPriceDetailAdjustmentImpl(adjustment, poid);
                     poid.addCandidateItemPriceDetailAdjustment(poidAdj);
                 }
+                poid.chooseSaleOrRetailAdjustments();
 
                 List<OrderItemQualifier> oiqs = poid.getPromotableOrderItem().getOrderItem().getOrderItemQualifiers();
                 if (CollectionUtils.isNotEmpty(oiqs)) {
