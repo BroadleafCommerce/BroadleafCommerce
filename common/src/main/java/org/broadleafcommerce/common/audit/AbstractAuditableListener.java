@@ -26,14 +26,47 @@ import java.util.Calendar;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 
+/**
+ * Implements behavior shared by auditable listener implementations
+ *
+ * @author Chris Kittrell (ckittrell)
+ */
 public abstract class AbstractAuditableListener {
 
+    /**
+     * Method that will be invoked in a registered listener to set the entity's creation data.
+     *  In most cases, calling {@link AbstractAuditableListener#setAuditCreatedBy(Object, Class)} should suffice.
+     *
+     * @param entity
+     * @return
+     */
     public abstract void setAuditCreatedBy(Object entity) throws Exception;
 
+    /**
+     * Method that will be invoked in a registered listener to set the entity's update data.
+     *  In most cases, calling {@link AbstractAuditableListener#setAuditUpdatedBy(Object, Class)} should suffice.
+     *
+     * @param entity
+     * @return
+     */
     public abstract void setAuditUpdatedBy(Object entity) throws Exception;
 
+    /**
+     * Method that sets the user-related data.
+     *
+     * @param field
+     * @param entity
+     * @return
+     */
     protected abstract void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException;
 
+    /**
+     * Sets the value of the dateCreated, createdBy, and dateUpdated fields.
+     *
+     * @param entity
+     * @param auditableClass
+     * @return
+     */
     public void setAuditCreatedBy(Object entity, Class auditableClass) throws Exception {
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
             Field field = BLCFieldUtils.getSingleField(entity.getClass(), getAuditableFieldName());
@@ -54,6 +87,13 @@ public abstract class AbstractAuditableListener {
         }
     }
 
+    /**
+     * Sets the value of the dateUpdated and updatedBy fields.
+     *
+     * @param entity
+     * @param auditableClass
+     * @return
+     */
     public void setAuditUpdatedBy(Object entity, Class auditableClass) throws Exception {
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
             Field field = BLCFieldUtils.getSingleField(entity.getClass(), getAuditableFieldName());
@@ -71,13 +111,26 @@ public abstract class AbstractAuditableListener {
             }
         }
     }
-    
+
+    /**
+     * Used to set the timestamp for dateCreated and dateUpdated.
+     *
+     * @param field
+     * @param entity
+     * @return
+     */
     protected void setAuditValueTemporal(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
         Calendar cal = SystemTime.asCalendar();
         field.setAccessible(true);
         field.set(entity, cal.getTime());
     }
 
+    /**
+     * Gathers the auditable field name.
+     *  The major purpose of this method is to provide a hook point for extensions to declare a different field name.
+     *
+     * @return the name of the auditable field
+     */
     protected String getAuditableFieldName() {
         return "auditable";
     }
