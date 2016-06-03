@@ -352,7 +352,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, true, true, 10));
         order.addOfferCode(createOfferUtility.createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != " + sku1, true, true, 10));
         
-        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10, null);
         offer.setDeliveryType(OfferDeliveryType.AUTOMATIC);
         offer.setAutomaticallyAdded(true);
         offer = offerService.save(offer);
@@ -374,7 +374,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, true, true, 10));
         order.addOfferCode(createOfferUtility.createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != " + sku1, true, true, 10));
         
-        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10, null);
         offer.setDeliveryType(OfferDeliveryType.MANUAL);
         offer = offerService.save(offer);
         CustomerOffer customerOffer = new CustomerOfferImpl();
@@ -396,9 +396,9 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 20D, null, true, 1, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 20D, null, true, 1, order));
 
-        order.addOfferCode(createOfferUtility.createOfferCode("15%OFF", "15 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 15, null, null, false, true, 0));
+        order.addOfferCode(createOfferUtility.createOfferCode("15%OFF", "15 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 15, null, null, false, true, 0, null));
 
-        Offer offer1 = createOfferUtility.createOffer("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, false, true, 0);
+        Offer offer1 = createOfferUtility.createOffer("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, false, true, 0, null);
         offer1.setDeliveryType(OfferDeliveryType.MANUAL);
         offerDao.save(offer1);
         CustomerOffer customerOffer1 = new CustomerOfferImpl();
@@ -406,7 +406,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         customerOffer1.setOffer(offer1);
         customerOfferDao.save(customerOffer1);
 
-        Offer offer2 = createOfferUtility.createOffer("10 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 10, null, "discreteOrderItem.sku.id == " + sku2, false, true, 0);
+        Offer offer2 = createOfferUtility.createOffer("10 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 10, null, "discreteOrderItem.sku.id == " + sku2, false, true, 0, null);
         offer2.setDeliveryType(OfferDeliveryType.MANUAL);
         offerDao.save(offer2);
         CustomerOffer customerOffer2 = new CustomerOfferImpl();
@@ -448,14 +448,14 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         Long customerId = customer.getId();
         customerOffer.setCustomer(customerService.saveCustomer(customer));
 
-        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10, null);
         offer = offerService.save(offer);
         Long offerId = offer.getId();
         offerDao.delete(offer);
         Offer deletedOffer = offerDao.readOfferById(offerId);
         assert ((OfferImpl) deletedOffer).getArchived() == 'Y';
 
-        offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10, null);
         offer = offerService.save(offer);
 
         customerOffer.setOffer(offer);
@@ -479,7 +479,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
     @Test(groups = { "testReadAllOffersLegacy" })
     @Transactional
     public void testReadAllOffers() throws Exception {
-        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10, null);
         offer.setDeliveryType(OfferDeliveryType.MANUAL);
         offer = offerService.save(offer);
         List<Offer> allOffers = offerService.findAllOffers();
@@ -516,7 +516,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
     @Transactional
     public void testCustomerOffers() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
-        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10, null);
         CustomerOffer customerOffer = new CustomerOfferImpl();
         customerOffer.setCustomer(order.getCustomer());
         customerOffer.setOffer(offer);

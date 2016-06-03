@@ -26,6 +26,8 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
+import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXref;
+import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
@@ -51,19 +53,19 @@ public class CreateOfferUtility {
     }
 
     public OfferCode createOfferCode(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
-        return createOfferCode("NONAME", offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
+        return createOfferCode("NONAME", offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority, null);
     }
 
-    public OfferCode createOfferCode(String offerCodeName, String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
+    public OfferCode createOfferCode(String offerCodeName, String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority, String qualifierRule) {
         OfferCode offerCode = offerCodeDao.create();
-        Offer offer = createOffer(offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
+        Offer offer = createOffer(offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority, qualifierRule);
         offerCode.setOffer(offer);
         offerCode.setOfferCode(offerCodeName);
         offerCode = offerService.saveOfferCode(offerCode);
         return offerCode;
     }
 
-    public Offer createOffer(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
+    public Offer createOffer(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority, String qualifierRule) {
         Offer offer = offerDao.create();
         offer.setName(offerName);
         offer.setStartDate(SystemTime.asDate());
@@ -95,6 +97,20 @@ public class CreateOfferUtility {
 
         offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(combinable);
+
+        if (qualifierRule != null) {
+            OfferItemCriteria qoic = new OfferItemCriteriaImpl();
+            qoic.setQuantity(1);
+            qoic.setMatchRule(qualifierRule);
+            
+            OfferQualifyingCriteriaXref qualifyingXref = new OfferQualifyingCriteriaXrefImpl();
+            qualifyingXref.setOffer(offer);
+            qualifyingXref.setOfferItemCriteria(qoic);
+
+            offer.setQualifyingItemCriteriaXref(Collections.singleton(qualifyingXref));
+
+            offer.setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
+        }
         offer.setPriority(priority);
         offer = offerService.save(offer);
         offer.setMaxUses(50);

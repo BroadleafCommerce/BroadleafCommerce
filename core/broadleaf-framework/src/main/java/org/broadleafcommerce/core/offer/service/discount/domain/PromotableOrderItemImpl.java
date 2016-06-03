@@ -85,6 +85,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
                         pq.setPromotion(oiq.getOffer());
                         pq.setQuantity(oiq.getQuantity().intValue());
                         pq.setFinalizedQuantity(oiq.getQuantity().intValue());
+                        pq.setPrice(oiq.getOrderItem().getPriceBeforeAdjustments(oiq.getOffer().getApplyDiscountToSalePrice()));
                         poid.getPromotionQualifiers().add(pq);
                     }
                 }

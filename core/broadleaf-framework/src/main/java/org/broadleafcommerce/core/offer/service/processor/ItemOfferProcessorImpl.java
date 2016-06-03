@@ -29,26 +29,35 @@ import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.ItemOfferComparator;
 import org.broadleafcommerce.core.offer.service.discount.ItemOfferQtyOneComparator;
+import org.broadleafcommerce.core.offer.service.discount.ItemOfferWeightedPercentComparator;
 import org.broadleafcommerce.core.offer.service.discount.OrderOfferComparator;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
+import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
+import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.dto.OrderItemHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Filter and apply order item offers.
@@ -446,6 +455,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         if (itemOffers.size() > 1) {
             for (PromotableCandidateItemOffer itemOffer : itemOffers) {
                 Money potentialSavings = new Money(order.getOrderCurrency());
+                BigDecimal calculatedWeightedPercent = new BigDecimal(0);
+                Offer offer = itemOffer.getOffer();
                 if (itemOffer.isLegacyOffer()) {
                     for (PromotableOrderItem item : itemOffer.getLegacyCandidateTargets()) {
                         Money savings = itemOffer.calculateSavingsForOrderItem(item, item.getQuantity());
@@ -458,6 +469,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                         for (PromotionDiscount discount : detail.getPromotionDiscounts()) {
                             Money itemSavings = calculatePotentialSavingsForOrderItem(itemOffer, item, discount.getQuantity());
                             potentialSavings = potentialSavings.add(itemSavings);
+                            if (useCalculatePercent(offer)) {
+                                BigDecimal discountPercent = calculatePercent(item.calculateTotalWithoutAdjustments(), itemSavings);
+                                calculatedWeightedPercent = calculatedWeightedPercent.add(discountPercent);
+                            } else if (hasQualifierAndQualifierRestricted(offer)) {
+                                BigDecimal discountPercent = calculateWeightedPercent(discount, item, itemSavings);
+                                calculatedWeightedPercent = calculatedWeightedPercent.add(discountPercent);
+                            }
                         }
                         // Reset state back for next offer
                         detail.getPromotionDiscounts().clear();
@@ -465,6 +483,11 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                     }
                 }
                 itemOffer.setPotentialSavings(potentialSavings);
+                if (usePercentOffValue(offer)) {
+                    itemOffer.setWeightedPercentSaved(offer.getValue());
+                } else if (useCalculatePercent(offer) || hasQualifierAndQualifierRestricted(offer)) {
+                    itemOffer.setWeightedPercentSaved(calculatedWeightedPercent);
+                }
                 if (itemOffer.getUses() == 0) {
                     itemOffer.setPotentialSavingsQtyOne(potentialSavings);
                 } else {
@@ -472,6 +495,39 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 }
             }
         }
+    }
+
+    protected BigDecimal calculatePercent(Money itemSubTotal, Money itemSavings) {
+        return itemSavings.getAmount().divide(itemSubTotal.getAmount(), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+    }
+
+    protected BigDecimal calculateWeightedPercent(PromotionDiscount discount, PromotableOrderItem item, Money itemSavings) {
+        Money effectedItemsSubtotal = discount.getCandidateItemOffer().getOriginalPrice();
+        for (PromotableOrderItemPriceDetail itemPriceDetail : item.getPromotableOrderItemPriceDetails()) {
+            for (PromotionQualifier qualifierDetail : itemPriceDetail.getPromotionQualifiers()) {
+                Integer qualifierQuantity = qualifierDetail.getFinalizedQuantity();
+                effectedItemsSubtotal = effectedItemsSubtotal.add(qualifierDetail.getPrice().multiply(qualifierQuantity));
+            }
+        }
+        
+        return calculatePercent(effectedItemsSubtotal, itemSavings);
+    }
+
+    protected boolean useCalculatePercent(Offer offer) {
+        return !isPercentOffOffer(offer) && !hasQualifierAndQualifierRestricted(offer);
+    }
+
+    protected boolean isPercentOffOffer(Offer offer) {
+        return Objects.equals(offer.getDiscountType(), OfferDiscountType.PERCENT_OFF);
+    }
+
+    protected boolean usePercentOffValue(Offer offer) {
+        return isPercentOffOffer(offer) && !hasQualifierAndQualifierRestricted(offer);
+    }
+
+    private boolean hasQualifierAndQualifierRestricted(Offer offer) {
+        return !offer.getQualifyingItemCriteriaXref().isEmpty()
+                && Objects.equals(offer.getOfferItemQualifierRuleType(), OfferItemRestrictionRuleType.NONE);
     }
 
     protected void markQualifiersAndTargets(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
@@ -531,36 +587,38 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         listOfOfferLists.add(offers);
         
         if (offers.size() > 1) {
-            List<PromotableCandidateItemOffer> qtyOneOffers = new ArrayList<PromotableCandidateItemOffer>(offers);
-            Collections.sort(qtyOneOffers, ItemOfferQtyOneComparator.INSTANCE);
-            
-            // We only want to add this additional list when the qty of one list is not identical to the original one
-            for (int i = 0; i < qtyOneOffers.size(); i++) {
-                if (qtyOneOffers.get(i) != offers.get(i)) {
-                    listOfOfferLists.add(qtyOneOffers);
-                    break;
-                }
-            }
+            listOfOfferLists.add(getPermutationByComparator(offers, ItemOfferQtyOneComparator.INSTANCE));
+            listOfOfferLists.add(getPermutationByComparator(offers, ItemOfferWeightedPercentComparator.INSTANCE));
         }
 
         if (offerListStartsWithNonCombinable(offers)) {
-            List<PromotableCandidateItemOffer> listWithoutTotalitarianOrNonCombinables =
-                    new ArrayList<PromotableCandidateItemOffer>(offers);
-
-            Iterator<PromotableCandidateItemOffer> offerIterator = listWithoutTotalitarianOrNonCombinables.iterator();
-            while (offerIterator.hasNext()) {
-                PromotableCandidateItemOffer offer = offerIterator.next();
-                if (offer.getOffer().isTotalitarianOffer() || !offer.getOffer().isCombinableWithOtherOffers()) {
-                    offerIterator.remove();
-                }
-            }
-
-            if (listWithoutTotalitarianOrNonCombinables.size() > 0) {
-                listOfOfferLists.add(listWithoutTotalitarianOrNonCombinables);
-            }
+            removeTotalitarianAndNonCombinableOffers(offers, listOfOfferLists);
         }
 
         return listOfOfferLists;
+    }
+
+    protected void removeTotalitarianAndNonCombinableOffers(List<PromotableCandidateItemOffer> offers, List<List<PromotableCandidateItemOffer>> listOfOfferLists) {
+        List<PromotableCandidateItemOffer> listWithoutTotalitarianOrNonCombinables =
+                new ArrayList<PromotableCandidateItemOffer>(offers);
+
+        Iterator<PromotableCandidateItemOffer> offerIterator = listWithoutTotalitarianOrNonCombinables.iterator();
+        while (offerIterator.hasNext()) {
+            PromotableCandidateItemOffer offer = offerIterator.next();
+            if (offer.getOffer().isTotalitarianOffer() || !offer.getOffer().isCombinableWithOtherOffers()) {
+                offerIterator.remove();
+            }
+        }
+
+        if (listWithoutTotalitarianOrNonCombinables.size() > 0) {
+            listOfOfferLists.add(listWithoutTotalitarianOrNonCombinables);
+        }
+    }
+
+    protected List<PromotableCandidateItemOffer> getPermutationByComparator(List<PromotableCandidateItemOffer> offers, Comparator instance) {
+        List<PromotableCandidateItemOffer> sortedOffers = new ArrayList<PromotableCandidateItemOffer>(offers);
+        Collections.sort(sortedOffers, instance);
+        return sortedOffers;
     }
 
     protected void restPriceDetails(PromotableOrderItem item) {
@@ -574,6 +632,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
     protected void determineBestPermutation(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order) {
         List<List<PromotableCandidateItemOffer>> permutations = buildItemOfferPermutations(itemOffers);
+        removeDuplicatePermutations(permutations);
         List<PromotableCandidateItemOffer> bestOfferList = null;
         Money lowestSubtotal = null;
         if (permutations.size() > 1) {
@@ -605,6 +664,30 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         }
 
         applyAllItemOffers(bestOfferList, order);
+    }
+
+    protected void removeDuplicatePermutations(List<List<PromotableCandidateItemOffer>> permutations) {
+        Set<List<Long>> offerIdListSet = new HashSet<>();
+        
+        Iterator<List<PromotableCandidateItemOffer>> permutationsIterator = permutations.iterator();
+        
+        while (permutationsIterator.hasNext()) {
+            List<PromotableCandidateItemOffer> offerList = permutationsIterator.next();
+            List<Long> offerIdList = convertToIdList(offerList);
+            
+            if (!offerIdListSet.add(offerIdList)) {
+                permutationsIterator.remove();
+            }
+        }
+    }
+
+    protected List<Long> convertToIdList(List<PromotableCandidateItemOffer> offerList) {
+        List<Long> idList = new ArrayList<>();
+        for (PromotableCandidateItemOffer offer : offerList) {
+            idList.add(offer.getOffer().getId());
+        }
+        
+        return idList;
     }
 
     @Override
