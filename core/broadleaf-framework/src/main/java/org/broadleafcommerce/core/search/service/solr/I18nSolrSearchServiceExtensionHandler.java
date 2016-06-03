@@ -117,56 +117,6 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    /**
-     * Read all of the translations for this product batch and their default Skus. By reading this up front we save some
-     * time by not having to go to the database for each product in each locale
-     */
-    @Override
-    public ExtensionResultStatusType startBatchEvent(List<Product> products) {
-        List<String> skuIds = new ArrayList<String>(products.size());
-        List<String> productIds = new ArrayList<String>();
-        List<String> skuAttributeIds = new ArrayList<String>();
-        List<String> productAttributeIds = new ArrayList<String>();
-        for (Product indexable : products) {
-            Sku sku = null;
-            if (Product.class.isAssignableFrom(indexable.getClass())) {
-                Product product = indexable;
-                productIds.add(product.getId().toString());
-                for (Map.Entry<String, ProductAttribute> attributeEntry :  product.getProductAttributes().entrySet()) {
-                    ProductAttribute attribute = attributeEntry.getValue();
-                    productAttributeIds.add(attribute.getId().toString());
-                }
-                sku = product.getDefaultSku();
-            }
-            
-            if (sku != null) {
-                skuIds.add(sku.getId().toString());
-                for (Map.Entry<String, SkuAttribute> attributeEntry :  sku.getSkuAttributes().entrySet()) {
-                    SkuAttribute attribute = attributeEntry.getValue();
-                    skuAttributeIds.add(attribute.getId().toString());
-                }
-            }
-        }
-
-        addEntitiesToTranslationCache(skuIds, TranslatedEntity.SKU);
-        addEntitiesToTranslationCache(productIds, TranslatedEntity.PRODUCT);
-        addEntitiesToTranslationCache(skuAttributeIds, TranslatedEntity.SKU_ATTRIBUTE);
-        addEntitiesToTranslationCache(productAttributeIds, TranslatedEntity.PRODUCT_ATTRIBUTE);
-
-        return ExtensionResultStatusType.HANDLED_CONTINUE;
-    }
-
-    protected void addEntitiesToTranslationCache(List<String> entityIds, TranslatedEntity translatedEntity) {
-        List<Translation> translations = translationService.findAllTranslationEntries(translatedEntity, ResultType.STANDARD, entityIds);
-        TranslationBatchReadCache.addToCache(translations);
-    }
-
-    @Override
-    public ExtensionResultStatusType endBatchEvent() {
-        TranslationBatchReadCache.clearCache();
-        return ExtensionResultStatusType.HANDLED_CONTINUE;
-    }
-
     @Override
     public int getPriority() {
         return 1000;

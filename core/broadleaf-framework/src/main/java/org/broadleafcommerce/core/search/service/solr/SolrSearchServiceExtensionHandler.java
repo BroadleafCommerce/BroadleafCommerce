@@ -185,19 +185,4 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType getSearchableIndexFields(List<IndexField> fields);
 
-    /**
-     * Perform actions at the start of a batch to improve performance of Solr search for the list of batch products.  
-     * For example we want to get, in bulk, the SkuPriceData for each product and save these in memory by default.
-     *
-     * @param products
-     * @return
-     */
-    public ExtensionResultStatusType startBatchEvent(List<Product> products);
-
-    /**
-     * Perform actions to end a batch event, such as closing any Contexts that have been previously created.
-     *
-     * @return
-     */
-    public ExtensionResultStatusType endBatchEvent();
 }
