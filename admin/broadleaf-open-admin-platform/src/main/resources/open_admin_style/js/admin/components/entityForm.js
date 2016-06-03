@@ -423,11 +423,14 @@ $(document).ready(function() {
 
                 BLCAdmin.ruleBuilders.removeModalRuleBuilders($form);
                 var $modal = BLCAdmin.currentModal();
-                BLCAdmin.entityForm.swapModalEntityForm($modal, data);
 
-                BLCAdmin.initializeFields($('.modal .modal-body .tabs-content'));
-                $modal.find('.submit-button').show();
-                $modal.find('img.ajax-loader').hide();
+                if ($modal) {
+                    BLCAdmin.entityForm.swapModalEntityForm($modal, data);
+
+                    BLCAdmin.initializeFields($modal.find('.modal-body .tabs-content'));
+                    $modal.find('.submit-button').show();
+                    $modal.find('img.ajax-loader').hide();
+                }
             });
         }
         return false;
