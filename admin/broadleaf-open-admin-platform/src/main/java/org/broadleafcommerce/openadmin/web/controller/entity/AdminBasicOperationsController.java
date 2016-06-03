@@ -235,6 +235,12 @@ public class AdminBasicOperationsController extends AdminAbstractController {
                 .with("errorLogged", true)
                 .done();
     }
+
+    @RequestMapping(value = "/update-navigation", method = RequestMethod.GET)
+    public String updateAdminNavigation(HttpServletRequest request, HttpServletResponse response, Model model,
+                                        @PathVariable Map<String, String> pathVars) throws Exception {
+        return "layout/partials/secondLeftNav";
+    }
     
     /**
      * Hook method to allow a user to modify the persistence package request for a fetch on a select lookup.
