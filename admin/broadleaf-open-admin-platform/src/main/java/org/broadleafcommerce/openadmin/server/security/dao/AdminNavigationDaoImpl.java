@@ -54,7 +54,9 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
 
     @Override
     public void remove(AdminSection adminSection) {
+        AdminModule module = adminSection.getModule();
         em.remove(adminSection);
+        em.refresh(module);
     }
 
     @Override
