@@ -1117,6 +1117,19 @@ var BLCAdmin = (function($) {
         
         unescapeString: function(data) {
             return data.replace(/\\/g, '');
+        },
+
+        updateAdminNavigation: function() {
+            // var url = window.location.pathname.replace("/admin", '');
+            BLC.ajax({
+                url: BLC.servletContext + '/update-navigation',
+                type: "GET",
+                error: function (error) {
+                }
+            }, function (data) {
+                var $nav = $('.secondary-nav').parent();
+                $nav.replaceWith($(data));
+            });
         }
     };
 
