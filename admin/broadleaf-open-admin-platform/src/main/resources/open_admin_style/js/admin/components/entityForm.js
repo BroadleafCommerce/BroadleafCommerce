@@ -215,9 +215,9 @@
                 var $hiddenFields = $fields.filter(function() { return $(this).css('display') === 'none' });
 
                 if ($fields.length === $hiddenFields.length) {
-                    $card.hide();
+                    $card.addClass('hidden');
                 } else {
-                    $card.show();
+                    $card.removeClass('hidden');
                     if ($card.find('.titlebar .collapsed').length && !$groupContent.hasClass('content-collapsed')) {
                         $card.find('.titlebar').click();
                     }
