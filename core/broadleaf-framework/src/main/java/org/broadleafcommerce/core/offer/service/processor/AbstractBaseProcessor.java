@@ -183,10 +183,9 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     protected void checkForItemRequirements(Offer offer, CandidatePromotionItems candidates, OfferItemCriteria criteria, List<PromotableOrderItem> promotableOrderItems, boolean isQualifier) {
         boolean matchFound = false;
         int criteriaQuantity = criteria.getQuantity();
-        int matchedQuantity = 0;
-
-        if (criteriaQuantity > 0) {
-            // If matches are found, add the candidate items to a list and store it with the itemCriteria
+        
+        if (criteriaQuantity > 0) {         
+            // If matches are found, add the candidate items to a list and store it with the itemCriteria 
             // for this promotion.
             for (PromotableOrderItem item : promotableOrderItems) {
                 if (couldOrderItemMeetOfferRequirement(criteria, item)) {
@@ -195,12 +194,11 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                     } else {
                         candidates.addTarget(criteria, item);
                     }
-                    matchedQuantity++;
+                    matchFound = true;
                 }
             }
-            matchFound = (matchedQuantity == criteriaQuantity);
         }
-
+        
         if (isQualifier) {
             candidates.setMatchedQualifier(matchFound);
         } else {
