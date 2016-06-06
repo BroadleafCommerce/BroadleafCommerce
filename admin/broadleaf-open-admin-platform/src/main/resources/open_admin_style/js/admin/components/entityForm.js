@@ -209,19 +209,20 @@
 
         toggleFieldVisibility : function($field, shouldShow) {
             var hideGroupIfFieldsAreHidden = function ($groupContainer) {
-                var $groupContent = $groupContainer.find('.fieldset-card-content');
+                var $groupContent = $groupContainer.closest('.fieldset-card-content');
+                var $card = $groupContent.closest('.fieldset-card');
                 var $fields = $groupContent.find('.field-group');
                 var $hiddenFields = $fields.filter(function() { return $(this).css('display') === 'none' });
 
                 if ($fields.length === $hiddenFields.length) {
-                    $groupContainer.hide().addClass('hidden');
+                    $card.hide();
                 } else {
-                    $groupContainer.show().removeClass('hidden');
-                    if ($groupContainer.find('.titlebar .collapsed').length && !$groupContent.hasClass('content-collapsed')) {
-                        $groupContainer.find('.titlebar').click();
+                    $card.show();
+                    if ($card.find('.titlebar .collapsed').length && !$groupContent.hasClass('content-collapsed')) {
+                        $card.find('.titlebar').click();
                     }
                 }
-            }
+            };
 
             $field.toggle(shouldShow);
 
@@ -229,8 +230,7 @@
                 $field.removeClass('hidden');
             }
 
-            var $card = $field.closest('.fieldset-card');
-            hideGroupIfFieldsAreHidden($card);
+            hideGroupIfFieldsAreHidden($field);
         }
     };
 })(jQuery, BLCAdmin);
