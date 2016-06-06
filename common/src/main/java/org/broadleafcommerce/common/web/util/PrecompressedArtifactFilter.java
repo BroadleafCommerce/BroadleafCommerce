@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.web.util;
 
 import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.BufferedInputStream;
@@ -45,9 +44,6 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
 
     private boolean useWhileInDefaultEnvironment = true;
 
-    @Value("${enable.precompressed.artifact.usage:false}")
-    protected boolean precompressedArtifactUsageEnabled;
-
     @Resource(name = "blPrecompressedArtifactFileExtensionWhitelist")
     List<String> fileExtensionWhitelist;
 
@@ -58,11 +54,6 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-
-        if (!precompressedArtifactUsageEnabled) {
-            chain.doFilter(request, response);
-        }
-
         checkOutput: {
             if (!configurer.determineEnvironment().equals(configurer.getDefaultEnvironment()) || useWhileInDefaultEnvironment) {
                 String path = getResourcePath(request);
