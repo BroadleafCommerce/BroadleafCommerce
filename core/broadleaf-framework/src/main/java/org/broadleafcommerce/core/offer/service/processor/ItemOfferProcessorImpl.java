@@ -166,18 +166,19 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     
     
     protected boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
-        if (itemOffer.getOffer().getQualifyingItemSubTotal() == null || itemOffer.getOffer().getQualifyingItemSubTotal().lessThanOrEqual(Money.ZERO)) {
+        Money qualifyingItemSubTotal = itemOffer.getOffer().getQualifyingItemSubTotal();
+        if (qualifyingItemSubTotal == null || qualifyingItemSubTotal.lessThanOrEqual(Money.ZERO)) {
             return true;
         }
+        Money subtotal = Money.ZERO;
 
         for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
             List<PromotableOrderItem> promotableItems = itemOffer.getCandidateQualifiersMap().get(itemCriteria);
 
-            Money subtotal = Money.ZERO;
             for (PromotableOrderItem item : promotableItems) {
                 Money lineItemAmount = item.getPriceBeforeAdjustments(itemOffer.getOffer().getApplyDiscountToSalePrice()).multiply(item.getQuantity());
                 subtotal = subtotal.add(lineItemAmount);
-                if (subtotal.greaterThanOrEqual(itemOffer.getOffer().getQualifyingItemSubTotal())) {
+                if (subtotal.greaterThanOrEqual(qualifyingItemSubTotal)) {
                     return true;
                 }
             }
