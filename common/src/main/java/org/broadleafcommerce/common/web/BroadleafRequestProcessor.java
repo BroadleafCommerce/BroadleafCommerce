@@ -32,6 +32,8 @@ import org.broadleafcommerce.common.site.domain.Theme;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.util.DeployBehaviorUtil;
 import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.errors.EncodingException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -144,11 +146,19 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
                 clearBroadleafSessionAttrs(request);
                 
                 StringBuffer url = hsr.getRequestURL();
+                String encodedURL;
+
                 if (hsr.getQueryString() != null) {
                     url.append('?').append(hsr.getQueryString());
                 }
                 try {
-                    ((ServletWebRequest) request).getResponse().sendRedirect(url.toString());
+                    try {
+                        encodedURL = ESAPI.encoder().encodeForURL(url.toString());
+                        ((ServletWebRequest) request).getResponse().sendRedirect(encodedURL);
+                    } catch(EncodingException e) {
+                        LOG.error("Encoding Exception for url when reprocessing request", e);
+                        ((ServletWebRequest) request).getResponse().sendError(403);
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

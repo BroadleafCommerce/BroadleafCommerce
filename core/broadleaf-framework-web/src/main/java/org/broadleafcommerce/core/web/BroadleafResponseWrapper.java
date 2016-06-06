@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.web;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.EncodingException;
 
@@ -32,6 +34,8 @@ import java.util.Locale;
  *
  */
 public class BroadleafResponseWrapper implements HttpServletResponse {
+
+    protected final Log LOG = LogFactory.getLog(getClass());
     
     private HttpServletResponse response;
     private int status;
@@ -233,7 +237,16 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
      * @see javax.servlet.http.HttpServletResponse#sendRedirect(java.lang.String)
      */
     public void sendRedirect(String arg0) throws IOException {
-        response.sendRedirect(arg0);
+
+        String encodedUrl;
+
+        try {
+            encodedUrl = ESAPI.encoder().encodeForURL(arg0);
+            response.sendRedirect(encodedUrl);
+        } catch(EncodingException e) {
+            LOG.error("Encoding Exception when encoding url", e);
+            response.sendError(403);
+        }
     }
 
     /**

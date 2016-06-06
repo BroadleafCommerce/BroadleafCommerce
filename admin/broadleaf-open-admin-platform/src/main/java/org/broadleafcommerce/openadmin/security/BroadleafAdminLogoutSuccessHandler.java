@@ -18,6 +18,8 @@
 package org.broadleafcommerce.openadmin.security;
 
 import org.apache.commons.lang.StringUtils;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.errors.EncodingException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -39,6 +41,7 @@ public class BroadleafAdminLogoutSuccessHandler extends AbstractAuthenticationTa
 
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineTargetUrl(request, response);
+        String encodedTargetUrl;
 
         if (response.isCommitted()) {
             logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
@@ -51,7 +54,16 @@ public class BroadleafAdminLogoutSuccessHandler extends AbstractAuthenticationTa
         }
 
         request.getSession().invalidate();
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+
+        try {
+            encodedTargetUrl = ESAPI.encoder().encodeForURL(targetUrl);
+            getRedirectStrategy().sendRedirect(request, response, encodedTargetUrl);
+        } catch (EncodingException e) {
+            logger.error("Encoding Exception for target Url", e);
+            response.sendError(403);
+        }
+
+
     }
 
 }
