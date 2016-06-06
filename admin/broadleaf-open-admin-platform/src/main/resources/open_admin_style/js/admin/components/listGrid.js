@@ -322,7 +322,7 @@
 
             // update date fields
             $($.find("[data-fieldname='dateLabel']")).each(function () {
-                var day = moment($(this).html());
+                var day = moment.utc($(this).html()).local();
                 if (day.isValid()) {
                     $(this).html(day.fromNow());
                 }
