@@ -130,30 +130,6 @@
             '#field-embeddableAdvancedOffer--offerTimeZoneType',
             'true'
         );
-        BLCAdmin.addDependentFieldHandler(
-            clazz,
-            '#field-type',
-            '#field-combinableWithOrderOffers',
-            hideOrderFields
-        );
-        BLCAdmin.addDependentFieldHandler(
-            clazz,
-            '#field-type',
-            '#field-combinableWithItemOffers',
-            hideItemFields
-        );
-        BLCAdmin.addDependentFieldHandler(
-            clazz,
-            '#field-type',
-            '#field-combinableWithItemOffersImpactingOtherItems',
-            'ORDER_ITEM'
-        );
-        BLCAdmin.addDependentFieldHandler(
-            clazz,
-            '#field-type',
-            '#field-combinableWithShippingOffers',
-            hideShippingFields
-        );
 
         BLCAdmin.addDependentFieldHandler(
             clazz,

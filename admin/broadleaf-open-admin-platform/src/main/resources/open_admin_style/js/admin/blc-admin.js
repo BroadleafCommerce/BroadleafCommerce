@@ -947,29 +947,7 @@ var BLCAdmin = (function($) {
                             BLCAdmin.setFieldValue($childField, null);
                         }
 
-                        // Toggle the visiblity of the child field appropriately
-                        $childField.toggle(shouldShow);
-                        if (shouldShow) {
-                            $childField.removeClass('hidden');
-                        }
-
-                        var $cardContent = $childField.closest('.fieldset-card-content');
-                        var $card = $cardContent.closest('.fieldset-card');
-                        var numTotalFields = $cardContent.find('.field-group').length;
-                        var numHiddenFields = 0;
-                        $cardContent.find('.field-group').each(function() {
-                            if ($(this).css('display') == 'none') {
-                                numHiddenFields += 1;
-                            }
-                        });
-                        if (numTotalFields === numHiddenFields) {
-                            $card.hide();
-                        } else {
-                            $card.show();
-                            if ($card.find('.titlebar .collapsed').length && !$cardContent.hasClass('content-collapsed')) {
-                                $card.find('.titlebar').click();
-                            }
-                        }
+                        BLCAdmin.entityForm.toggleFieldVisibility($childField, shouldShow);
                         
                         if (options != null 
                                 && options['additionalChangeAction'] 
@@ -1139,6 +1117,19 @@ var BLCAdmin = (function($) {
         
         unescapeString: function(data) {
             return data.replace(/\\/g, '');
+        },
+
+        updateAdminNavigation: function() {
+            // var url = window.location.pathname.replace("/admin", '');
+            BLC.ajax({
+                url: BLC.servletContext + '/update-navigation',
+                type: "GET",
+                error: function (error) {
+                }
+            }, function (data) {
+                var $nav = $('.secondary-nav').parent();
+                $nav.replaceWith($(data));
+            });
         }
     };
 
