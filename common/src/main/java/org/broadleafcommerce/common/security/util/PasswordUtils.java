@@ -26,7 +26,7 @@ import java.util.Random;
 public class PasswordUtils {
 
     private static final Random RANDOM = new SecureRandom();
-    private static final String CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789@#$%^&*_=+-/";
+    private static final String CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
     
     public static String generateSecurePassword(int requiredLength) {
 
