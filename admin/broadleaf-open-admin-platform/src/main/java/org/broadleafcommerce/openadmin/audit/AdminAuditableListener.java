@@ -30,12 +30,12 @@ public class AdminAuditableListener extends AbstractAuditableListener {
 
     @PrePersist
     public void setAuditCreatedBy(Object entity) throws Exception {
-        setAuditCreatedBy(entity, this.getClass());
+        setAuditCreatedBy(entity, new AdminAuditable());
     }
 
     @PreUpdate
     public void setAuditUpdatedBy(Object entity) throws Exception {
-        setAuditUpdatedBy(entity, this.getClass());
+        setAuditUpdatedBy(entity, new AdminAuditable());
     }
 
     @Override

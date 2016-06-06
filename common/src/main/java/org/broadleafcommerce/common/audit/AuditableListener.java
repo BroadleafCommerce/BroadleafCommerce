@@ -30,12 +30,12 @@ public class AuditableListener extends AbstractAuditableListener {
 
     @PrePersist
     public void setAuditCreatedBy(Object entity) throws Exception {
-        setAuditCreatedBy(entity, this.getClass());
+        setAuditCreatedBy(entity, new Auditable());
     }
     
     @PreUpdate
     public void setAuditUpdatedBy(Object entity) throws Exception {
-        setAuditUpdatedBy(entity, this.getClass());
+        setAuditUpdatedBy(entity, new Auditable());
     }
 
     @Override

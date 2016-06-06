@@ -35,7 +35,7 @@ public abstract class AbstractAuditableListener {
 
     /**
      * Method that will be invoked in a registered listener to set the entity's creation data.
-     *  In most cases, calling {@link AbstractAuditableListener#setAuditCreatedBy(Object, Class)} should suffice.
+     *  In most cases, calling {@link AbstractAuditableListener#setAuditCreatedBy(Object, Object)} should suffice.
      *
      * @param entity
      * @return
@@ -44,7 +44,7 @@ public abstract class AbstractAuditableListener {
 
     /**
      * Method that will be invoked in a registered listener to set the entity's update data.
-     *  In most cases, calling {@link AbstractAuditableListener#setAuditUpdatedBy(Object, Class)} should suffice.
+     *  In most cases, calling {@link AbstractAuditableListener#setAuditUpdatedBy(Object, Object)} should suffice.
      *
      * @param entity
      * @return
@@ -64,17 +64,17 @@ public abstract class AbstractAuditableListener {
      * Sets the value of the dateCreated, createdBy, and dateUpdated fields.
      *
      * @param entity
-     * @param auditableClass
+     * @param auditableObject
      * @return
      */
-    public void setAuditCreatedBy(Object entity, Class auditableClass) throws Exception {
+    public void setAuditCreatedBy(Object entity, Object auditableObject) throws Exception {
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
             Field field = BLCFieldUtils.getSingleField(entity.getClass(), getAuditableFieldName());
             field.setAccessible(true);
             if (field.isAnnotationPresent(Embedded.class)) {
                 Object auditable = field.get(entity);
                 if (auditable == null) {
-                    field.set(entity, auditableClass);
+                    field.set(entity, auditableObject);
                     auditable = field.get(entity);
                 }
                 Field temporalCreatedField = auditable.getClass().getDeclaredField("dateCreated");
@@ -91,17 +91,17 @@ public abstract class AbstractAuditableListener {
      * Sets the value of the dateUpdated and updatedBy fields.
      *
      * @param entity
-     * @param auditableClass
+     * @param auditableObject
      * @return
      */
-    public void setAuditUpdatedBy(Object entity, Class auditableClass) throws Exception {
+    public void setAuditUpdatedBy(Object entity, Object auditableObject) throws Exception {
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
             Field field = BLCFieldUtils.getSingleField(entity.getClass(), getAuditableFieldName());
             field.setAccessible(true);
             if (field.isAnnotationPresent(Embedded.class)) {
                 Object auditable = field.get(entity);
                 if (auditable == null) {
-                    field.set(entity, auditableClass);
+                    field.set(entity, auditableObject);
                     auditable = field.get(entity);
                 }
                 Field temporalField = auditable.getClass().getDeclaredField("dateUpdated");
