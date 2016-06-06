@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.web.catalog.taglib;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -31,7 +30,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.owasp.esapi.Encoder;
+import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -49,7 +48,6 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
     private static final Log LOG = LogFactory.getLog(GoogleAnalyticsTag.class);
 
     protected String webPropertyId;
-    protected Encoder encoder;
     
     protected String getWebPropertyIdDefault() {
         return BLCSystemProperty.resolveSystemProperty("googleAnalytics.webPropertyId");
@@ -120,11 +118,11 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
                 }
             }
 
-            String encodedId = encoder.encodeForJavaScript(String.valueOf(order.getId()));
-            String encodedName = encoder.encodeForJavaScript(order.getName());
-            String encodedTotal = encoder.encodeForJavaScript(String.valueOf(order.getTotal()));
-            String encodedTotalTax = encoder.encodeForJavaScript(String.valueOf(order.getTotalTax()));
-            String encodedTotalShipping = encoder.encodeForJavaScript(String.valueOf(order.getTotalShipping()));
+            String encodedId = ESAPI.encoder().encodeForJavaScript(String.valueOf(order.getId()));
+            String encodedName = ESAPI.encoder().encodeForJavaScript(order.getName());
+            String encodedTotal = ESAPI.encoder().encodeForJavaScript(String.valueOf(order.getTotal()));
+            String encodedTotalTax = ESAPI.encoder().encodeForJavaScript(String.valueOf(order.getTotalTax()));
+            String encodedTotalShipping = ESAPI.encoder().encodeForJavaScript(String.valueOf(order.getTotalShipping()));
 
             sb.append("_gaq.push(['_addTrans','" + encodedId + "'");
             sb.append(",'" + encodedName + "'");
@@ -147,16 +145,16 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
                     country = paymentAddress.getCountry().getName();
                 }
 
-                String encodedCity = encoder.encodeForJavaScript(paymentAddress.getCity());
+                String encodedCity = ESAPI.encoder().encodeForJavaScript(paymentAddress.getCity());
                 sb.append(",'" + encodedCity + "'");
 
                 if (state != null) {
-                    String encodedState = encoder.encodeForJavaScript(state);
+                    String encodedState = ESAPI.encoder().encodeForJavaScript(state);
                     sb.append(",'" + encodedState + "'");
                 }
 
                 if (country != null) {
-                    String encodedCountry = encoder.encodeForJavaScript(country);
+                    String encodedCountry = ESAPI.encoder().encodeForJavaScript(country);
                     sb.append(",'" + encodedCountry + "'");
                 }
             }
@@ -168,12 +166,12 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
                     Sku sku = orderItem.getSku();
                     Product product = orderItem.getProduct();
 
-                    String encodedOrderItemId = encoder.encodeForJavaScript(String.valueOf(order.getId()));
-                    String encodedSkuId = encoder.encodeForJavaScript(String.valueOf(sku.getId()));
-                    String encodedSkuName = encoder.encodeForJavaScript(sku.getName());
-                    String encodedProductCategory = encoder.encodeForJavaScript(String.valueOf(product.getCategory()));
-                    String encodedOrderItemPrice = encoder.encodeForJavaScript(String.valueOf(orderItem.getAveragePrice()));
-                    String encodedOrderItemQuantity = encoder.encodeForJavaScript(String.valueOf(orderItem.getQuantity()));
+                    String encodedOrderItemId = ESAPI.encoder().encodeForJavaScript(String.valueOf(order.getId()));
+                    String encodedSkuId = ESAPI.encoder().encodeForJavaScript(String.valueOf(sku.getId()));
+                    String encodedSkuName = ESAPI.encoder().encodeForJavaScript(sku.getName());
+                    String encodedProductCategory = ESAPI.encoder().encodeForJavaScript(String.valueOf(product.getCategory()));
+                    String encodedOrderItemPrice = ESAPI.encoder().encodeForJavaScript(String.valueOf(orderItem.getAveragePrice()));
+                    String encodedOrderItemQuantity = ESAPI.encoder().encodeForJavaScript(String.valueOf(orderItem.getQuantity()));
 
                     sb.append("_gaq.push(['_addItem','" + encodedOrderItemId + "'");
                     sb.append(",'" + encodedSkuId + "'");
