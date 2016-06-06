@@ -30,14 +30,13 @@ public class PasswordUtils {
     
     public static String generateSecurePassword(int requiredLength) {
 
-        int start, end;
-        start = 0;
-        end = CHARS.length();
-        boolean letters, numbers;
-        letters = numbers = true;
+        int start = 0;
+        int end = CHARS.length();
+        boolean letters = true;
+        boolean numbers = true;
 
-        String pass = RandomStringUtils.random(requiredLength, start, end, letters, numbers, CHARS.toCharArray(), RANDOM);
+        String password = RandomStringUtils.random(requiredLength, start, end, letters, numbers, CHARS.toCharArray(), RANDOM);
 
-        return pass;
+        return password;
     }
 }
