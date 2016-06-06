@@ -185,9 +185,9 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return customerDao.save(customer);
     }
-    
+
     protected String generateSecurePassword() {
-        return RandomStringUtils.randomAlphanumeric(16);
+        return PasswordUtils.generateSecurePassword(16);
     }
 
     @Override
@@ -244,7 +244,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Customer resetPassword(PasswordReset passwordReset) {
         Customer customer = readCustomerByUsername(passwordReset.getUsername());
-        String newPassword = PasswordUtils.generateTemporaryPassword(passwordReset.getPasswordLength());
+        String newPassword = PasswordUtils.generateSecurePassword(passwordReset.getPasswordLength());
         customer.setUnencodedPassword(newPassword);
         customer.setPasswordChangeRequired(passwordReset.getPasswordChangeRequired());
         customer = saveCustomer(customer);
@@ -505,7 +505,7 @@ public class CustomerServiceImpl implements CustomerService {
         checkCustomer(customer, response);
 
         if (! response.getHasErrors()) {        
-            String token = PasswordUtils.generateTemporaryPassword(getPasswordTokenLength());
+            String token = PasswordUtils.generateSecurePassword(getPasswordTokenLength());
             token = token.toLowerCase();
 
             Object salt = getSalt(customer, token);

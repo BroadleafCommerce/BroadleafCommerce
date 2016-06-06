@@ -18,7 +18,6 @@
 package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -70,7 +69,8 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     private static final Log LOG = LogFactory.getLog(AdminSecurityServiceImpl.class);
 
-    private static int PASSWORD_TOKEN_LENGTH = 12;
+    private static int TEMP_PASSWORD_LENGTH = 12;
+    private static final int FULL_PASSWORD_LENGTH = 16;
 
     @Resource(name = "blAdminRoleDao")
     protected AdminRoleDao adminRoleDao;
@@ -229,13 +229,11 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             returnUser.setPassword(encodePassword(unencodedPassword, getSalt(returnUser, unencodedPassword)));
         }
 
-
-
         return adminUserDao.saveAdminUser(returnUser);
     }
 
     protected String generateSecurePassword() {
-        return RandomStringUtils.randomAlphanumeric(16);
+        return PasswordUtils.generateSecurePassword(FULL_PASSWORD_LENGTH);
     }
 
     @Override
@@ -333,7 +331,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         checkUser(user,response);
         
         if (! response.getHasErrors()) {        
-            String token = PasswordUtils.generateTemporaryPassword(PASSWORD_TOKEN_LENGTH);
+            String token = PasswordUtils.generateSecurePassword(TEMP_PASSWORD_LENGTH);
             token = token.toLowerCase();
 
             ForgotPasswordSecurityToken fpst = new ForgotPasswordSecurityTokenImpl();
@@ -451,11 +449,11 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
 
     public static int getPASSWORD_TOKEN_LENGTH() {
-        return PASSWORD_TOKEN_LENGTH;
+        return TEMP_PASSWORD_LENGTH;
     }
 
     public static void setPASSWORD_TOKEN_LENGTH(int PASSWORD_TOKEN_LENGTH) {
-        AdminSecurityServiceImpl.PASSWORD_TOKEN_LENGTH = PASSWORD_TOKEN_LENGTH;
+        AdminSecurityServiceImpl.TEMP_PASSWORD_LENGTH = PASSWORD_TOKEN_LENGTH;
     }
 
     public EmailInfo getSendUsernameEmailInfo() {
