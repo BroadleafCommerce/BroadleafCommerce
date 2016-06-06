@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.core.web;
 
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.errors.EncodingException;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +49,7 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
      * @see org.owasp.esapi.HTTPUtilities#addCookie(HttpServletResponse, Cookie)
      */
     public void addCookie(Cookie arg0) {
-        response.addCookie(arg0);
+        ESAPI.httpUtilities().addCookie(response, arg0);
     }
 
     /**
@@ -64,7 +67,7 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
      * @see org.owasp.esapi.HTTPUtilities#addHeader(HttpServletResponse, String, String)
      */
     public void addHeader(String arg0, String arg1) {
-        response.addHeader(arg0, arg1);
+        ESAPI.httpUtilities().addHeader(response, arg0, arg1);
     }
 
     /**
