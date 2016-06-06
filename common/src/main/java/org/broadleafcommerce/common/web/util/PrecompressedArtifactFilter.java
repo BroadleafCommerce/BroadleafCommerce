@@ -18,7 +18,16 @@
 package org.broadleafcommerce.common.web.util;
 
 import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.filter.GenericFilterBean;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Enumeration;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
@@ -28,12 +37,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Enumeration;
 
 /**
  * @author Jeff Fischer
@@ -42,6 +45,12 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
 
     private boolean useWhileInDefaultEnvironment = true;
 
+    @Value("${enable.precompressed.artifact.usage:false}")
+    protected boolean precompressedArtifactUsageEnabled;
+
+    @Resource(name = "blPrecompressedArtifactFileExtensionWhitelist")
+    List<String> fileExtensionWhitelist;
+
     @Resource(name="blConfiguration")
     RuntimeEnvironmentPropertiesConfigurer configurer;
 
@@ -49,6 +58,11 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+        if (!precompressedArtifactUsageEnabled) {
+            chain.doFilter(request, response);
+        }
+
         checkOutput: {
             if (!configurer.determineEnvironment().equals(configurer.getDefaultEnvironment()) || useWhileInDefaultEnvironment) {
                 String path = getResourcePath(request);
@@ -143,7 +157,7 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
 
         String temp = path.toLowerCase();
 
-        if (temp.endsWith(".gif") || temp.endsWith(".png") || temp.endsWith(".jpg")) {
+        if (!fileExtensionInWhitelist(temp)) {
             return false;
         }
 
@@ -172,6 +186,24 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
         }
 
         return true;
+    }
+
+    protected boolean fileExtensionInWhitelist(String path) {
+        if (path == null || !path.contains(".")) {
+            return false;
+        }
+
+        path = path.toLowerCase();
+        boolean inWhitelist = false;
+
+        for (String validFileExtension : fileExtensionWhitelist) {
+            if (path.endsWith(validFileExtension)) {
+                inWhitelist = true;
+                break;
+            }
+        }
+
+        return inWhitelist;
     }
 
     public boolean isUseWhileInDefaultEnvironment() {
