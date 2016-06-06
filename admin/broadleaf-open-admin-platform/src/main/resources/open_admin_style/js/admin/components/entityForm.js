@@ -208,8 +208,8 @@
         },
 
         toggleFieldVisibility : function($field, shouldShow) {
-            var hideGroupIfFieldsAreHidden = function ($groupContainer) {
-                var $groupContent = $groupContainer.closest('.fieldset-card-content');
+            var hideGroupIfFieldsAreHidden = function ($field) {
+                var $groupContent = $field.closest('.fieldset-card-content');
                 var $card = $groupContent.closest('.fieldset-card');
                 var $fields = $groupContent.find('.field-group');
                 var $hiddenFields = $fields.filter(function() { return $(this).css('display') === 'none' });
