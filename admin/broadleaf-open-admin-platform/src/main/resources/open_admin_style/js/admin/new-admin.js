@@ -78,7 +78,7 @@ $(document).ready(function(){
                     hideSecondaryNav();
                 }
             });
-            backdrop.appendTo($('.content-yield'));
+            backdrop.appendTo($('.main-content'));
         }
     };
 
