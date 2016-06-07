@@ -103,11 +103,10 @@ $(document).ready(function(){
             $(".secondary-nav").hide();
             $(".secondary-nav").removeClass('slide-in slide-open slide-out');
             $(selector).show();
+            $(selector).addClass('slide-in');
 
-            if (!isOpen) {
-                $(selector).addClass('slide-in');
-            } else {
-                $(selector).addClass('slide-in slide-open');
+            if (isOpen) {
+                $(selector).addClass('slide-open');
             }
         }
     });
