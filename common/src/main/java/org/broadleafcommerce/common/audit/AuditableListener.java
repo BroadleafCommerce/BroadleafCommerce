@@ -40,11 +40,15 @@ public class AuditableListener extends AbstractAuditableListener {
 
     @Override
     protected void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
-        Long customerId = 0L;
         try {
-            BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
-            if (requestContext != null && requestContext.getWebRequest() != null) {
+            BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+            if (context != null && context.getAdmin() && context.getAdminUserId() != null) {
+                field.setAccessible(true);
+                field.set(entity, context.getAdminUserId());
+            } else if (context != null && context.getWebRequest() != null) {
+                Long customerId = 0L;
                 Object customer = BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomer();
+
                 if (customer != null) {
                     Class<?> customerClass = customer.getClass();
                     Field userNameField = BLCFieldUtils.getSingleField(customerClass, "username");
@@ -57,12 +61,13 @@ public class AuditableListener extends AbstractAuditableListener {
                         customerId = (Long) idField.get(customer);
                     }
                 }
+
+                field.setAccessible(true);
+                field.set(entity, customerId);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        field.setAccessible(true);
-        field.set(entity, customerId);
     }
     
 }
