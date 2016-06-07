@@ -62,6 +62,7 @@ import javax.annotation.Resource;
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
     private static final Log LOG = LogFactory.getLog(CustomerServiceImpl.class);
+    private static final int PASSWORD_LENGTH = 16;
     
     @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
@@ -186,7 +187,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     protected String generateSecurePassword() {
-        return PasswordUtils.generateSecurePassword(16);
+        return PasswordUtils.generateSecurePassword(PASSWORD_LENGTH);
     }
 
     @Override
