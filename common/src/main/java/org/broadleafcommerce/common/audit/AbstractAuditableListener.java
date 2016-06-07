@@ -68,21 +68,7 @@ public abstract class AbstractAuditableListener {
      * @return
      */
     protected void setAuditCreationData(Object entity, Object auditableObject) throws Exception {
-        if (entity.getClass().isAnnotationPresent(Entity.class)) {
-            Field field = BLCFieldUtils.getSingleField(entity.getClass(), getAuditableFieldName());
-            field.setAccessible(true);
-            if (field.isAnnotationPresent(Embedded.class)) {
-                Object auditable = field.get(entity);
-                if (auditable == null) {
-                    field.set(entity, auditableObject);
-                    auditable = field.get(entity);
-                }
-                Field temporalCreatedField = auditable.getClass().getDeclaredField("dateCreated");
-                Field agentField = auditable.getClass().getDeclaredField("createdBy");
-                setAuditValueTemporal(temporalCreatedField, auditable);
-                setAuditValueAgent(agentField, auditable);
-            }
-        }
+        setAuditData(entity, auditableObject, "dateCreated", "createdBy");
     }
 
     /**
@@ -93,6 +79,10 @@ public abstract class AbstractAuditableListener {
      * @return
      */
     protected void setAuditUpdateData(Object entity, Object auditableObject) throws Exception {
+        setAuditData(entity, auditableObject, "dateUpdated", "updatedBy");
+    }
+
+    protected void setAuditData(Object entity, Object auditableObject, String dateField, String userField) throws Exception {
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
             Field field = BLCFieldUtils.getSingleField(entity.getClass(), getAuditableFieldName());
             field.setAccessible(true);
@@ -102,8 +92,8 @@ public abstract class AbstractAuditableListener {
                     field.set(entity, auditableObject);
                     auditable = field.get(entity);
                 }
-                Field temporalField = auditable.getClass().getDeclaredField("dateUpdated");
-                Field agentField = auditable.getClass().getDeclaredField("updatedBy");
+                Field temporalField = auditable.getClass().getDeclaredField(dateField);
+                Field agentField = auditable.getClass().getDeclaredField(userField);
                 setAuditValueTemporal(temporalField, auditable);
                 setAuditValueAgent(agentField, auditable);
             }
