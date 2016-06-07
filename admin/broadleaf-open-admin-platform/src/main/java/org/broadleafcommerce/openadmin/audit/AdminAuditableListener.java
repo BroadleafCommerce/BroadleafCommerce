@@ -28,13 +28,16 @@ import javax.persistence.PreUpdate;
 public class AdminAuditableListener extends AbstractAuditableListener {
 
     @PrePersist
-    public void setAuditCreatedBy(Object entity) throws Exception {
-        setAuditCreatedBy(entity, new AdminAuditable());
+    @Override
+    public void setAuditCreationAndUpdateData(Object entity) throws Exception {
+        setAuditCreationData(entity, new AdminAuditable());
+        setAuditUpdateData(entity, new AdminAuditable());
     }
 
     @PreUpdate
-    public void setAuditUpdatedBy(Object entity) throws Exception {
-        setAuditUpdatedBy(entity, new AdminAuditable());
+    @Override
+    public void setAuditUpdateData(Object entity) throws Exception {
+        setAuditUpdateData(entity, new AdminAuditable());
     }
 
     @Override
