@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.catalog.service.dynamic;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 
@@ -36,11 +35,11 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
     public DefaultDynamicSkuPricingInvocationHandler(Sku sku) {
         this.delegate = sku;
         try {
-            Field retail = BLCFieldUtils.getSingleField(delegate.getClass(), "retailPrice");
+            Field retail = getSingleField(delegate.getClass(), "retailPrice");
             retail.setAccessible(true);
             Object retailVal = retail.get(delegate);
             retailPrice = retailVal==null?null:new Money((BigDecimal) retailVal);
-            Field sale = BLCFieldUtils.getSingleField(delegate.getClass(), "salePrice");
+            Field sale = getSingleField(delegate.getClass(), "salePrice");
             sale.setAccessible(true);
             Object saleVal = sale.get(delegate);
             salePrice = saleVal==null?null:new Money((BigDecimal) saleVal);
@@ -65,6 +64,7 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
     /**
      * This is used with SkuBundleItem to allow the bundle override price.
      *
+     * @param sku
      * @param salePriceOverride
      */
     public DefaultDynamicSkuPricingInvocationHandler(BigDecimal salePriceOverride) {
@@ -87,6 +87,19 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
         if (adjustments != null) {
             salePrice = (salePrice == null) ? adjustments : salePrice.add(adjustments);
             retailPrice = (retailPrice == null) ? adjustments : retailPrice.add(adjustments);
+        }
+    }
+    
+    private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
+        try {
+            return clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException nsf) {
+            // Try superclass
+            if (clazz.getSuperclass() != null) {
+                return getSingleField(clazz.getSuperclass(), fieldName);
+            }
+
+            return null;
         }
     }
     
