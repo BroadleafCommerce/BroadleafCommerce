@@ -17,101 +17,60 @@
  */
 package org.broadleafcommerce.common.audit;
 
-import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
 
 import java.lang.reflect.Field;
-import java.util.Calendar;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
-public class AuditableListener {
+public class AuditableListener extends AbstractAuditableListener {
 
     @PrePersist
-    public void setAuditCreatedBy(Object entity) throws Exception {
-        if (entity.getClass().isAnnotationPresent(Entity.class)) {
-            Field field = getSingleField(entity.getClass(), "auditable");
-            field.setAccessible(true);
-            if (field.isAnnotationPresent(Embedded.class)) {
-                Object auditable = field.get(entity);
-                if (auditable == null) {
-                    field.set(entity, new Auditable());
-                    auditable = field.get(entity);
-                }
-                Field temporalField = auditable.getClass().getDeclaredField("dateCreated");
-                Field agentField = auditable.getClass().getDeclaredField("createdBy");
-                setAuditValueTemporal(temporalField, auditable);
-                setAuditValueAgent(agentField, auditable);
-            }
-        }
+    @Override
+    public void setAuditCreationAndUpdateData(Object entity) throws Exception {
+        setAuditCreationData(entity, new Auditable());
+        setAuditUpdateData(entity, new Auditable());
     }
-    
+
     @PreUpdate
-    public void setAuditUpdatedBy(Object entity) throws Exception {
-        if (entity.getClass().isAnnotationPresent(Entity.class)) {
-            Field field = getSingleField(entity.getClass(), "auditable");
-            field.setAccessible(true);
-            if (field.isAnnotationPresent(Embedded.class)) {
-                Object auditable = field.get(entity);
-                if (auditable == null) {
-                    field.set(entity, new Auditable());
-                    auditable = field.get(entity);
-                }
-                Field temporalField = auditable.getClass().getDeclaredField("dateUpdated");
-                Field agentField = auditable.getClass().getDeclaredField("updatedBy");
-                setAuditValueTemporal(temporalField, auditable);
-                setAuditValueAgent(agentField, auditable);
-            }
-        }
+    @Override
+    public void setAuditUpdateData(Object entity) throws Exception {
+        setAuditUpdateData(entity, new Auditable());
     }
-    
-    protected void setAuditValueTemporal(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
-        Calendar cal = SystemTime.asCalendar();
-        field.setAccessible(true);
-        field.set(entity, cal.getTime());
-    }
-    
+
+    @Override
     protected void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
-        Long customerId = 0L;
         try {
-            BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
-            if (requestContext != null && requestContext.getWebRequest() != null) {
+            BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+            if (context != null && context.getAdmin() && context.getAdminUserId() != null) {
+                field.setAccessible(true);
+                field.set(entity, context.getAdminUserId());
+            } else if (context != null && context.getWebRequest() != null) {
+                Long customerId = 0L;
                 Object customer = BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomer();
+
                 if (customer != null) {
                     Class<?> customerClass = customer.getClass();
-                    Field userNameField = getSingleField(customerClass, "username");
+                    Field userNameField = BLCFieldUtils.getSingleField(customerClass, "username");
                     userNameField.setAccessible(true);
                     String username = (String) userNameField.get(customer);
                     if (username != null) {
                         //the customer has been persisted
-                        Field idField = getSingleField(customerClass, "id");
+                        Field idField = BLCFieldUtils.getSingleField(customerClass, "id");
                         idField.setAccessible(true);
                         customerId = (Long) idField.get(customer);
                     }
                 }
+
+                field.setAccessible(true);
+                field.set(entity, customerId);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        field.setAccessible(true);
-        field.set(entity, customerId);
     }
 
-    private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        try {
-            return clazz.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException nsf) {
-            // Try superclass
-            if (clazz.getSuperclass() != null) {
-                return getSingleField(clazz.getSuperclass(), fieldName);
-            }
-
-            return null;
-        }
-    }
-    
 }
