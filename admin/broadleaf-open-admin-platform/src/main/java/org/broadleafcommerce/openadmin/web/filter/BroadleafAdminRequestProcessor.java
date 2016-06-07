@@ -157,6 +157,11 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             brc.setRequestedBroadleafCurrency(dto.getRequestedCurrency());
         }
 
+        AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
+        if (adminUser != null) {
+            brc.setAdminUserId(adminUser.getId());
+        }
+
         prepareSandBox(request, brc);
         prepareProfile(request, brc);
         prepareCatalog(request, brc);
