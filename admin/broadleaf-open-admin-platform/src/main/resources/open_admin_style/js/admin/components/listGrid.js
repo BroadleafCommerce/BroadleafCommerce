@@ -1005,12 +1005,6 @@ $(document).ready(function () {
 
     $("input[type=checkbox].listgrid-checkbox").prop('checked', false);
     $("input[type=checkbox].multiselect-checkbox").prop('checked', false);
-
-    $(".listgrid-table-spinner-container").scroll(function() {
-        debugger;
-        // target.prop("scrollTop", this.scrollTop)
-        //     .prop("scrollLeft", this.scrollLeft);
-    });
 });
 
 function updateMultiSelectCheckbox($tbody, $listgridHeader) {
