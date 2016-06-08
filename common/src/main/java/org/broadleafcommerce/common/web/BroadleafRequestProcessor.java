@@ -146,14 +146,13 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
                 clearBroadleafSessionAttrs(request);
                 
                 StringBuffer url = hsr.getRequestURL();
-                String encodedURL;
 
                 if (hsr.getQueryString() != null) {
                     url.append('?').append(hsr.getQueryString());
                 }
                 try {
                     try {
-                        encodedURL = ESAPI.encoder().encodeForURL(url.toString());
+                        String encodedURL = ESAPI.encoder().encodeForURL(url.toString());
                         ((ServletWebRequest) request).getResponse().sendRedirect(encodedURL);
                     } catch(EncodingException e) {
                         LOG.error("Encoding Exception for url when reprocessing request", e);

@@ -22,12 +22,13 @@ import org.apache.commons.logging.LogFactory;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.EncodingException;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jfischer
@@ -237,11 +238,8 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
      * @see javax.servlet.http.HttpServletResponse#sendRedirect(java.lang.String)
      */
     public void sendRedirect(String arg0) throws IOException {
-
-        String encodedUrl;
-
         try {
-            encodedUrl = ESAPI.encoder().encodeForURL(arg0);
+            String encodedUrl = ESAPI.encoder().encodeForURL(arg0);
             response.sendRedirect(encodedUrl);
         } catch(EncodingException e) {
             LOG.error("Encoding Exception when encoding url", e);

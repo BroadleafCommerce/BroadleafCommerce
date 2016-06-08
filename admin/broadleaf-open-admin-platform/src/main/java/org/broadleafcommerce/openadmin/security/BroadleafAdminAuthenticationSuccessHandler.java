@@ -72,7 +72,6 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
 
         // Use the DefaultSavedRequest URL
         String targetUrl = savedRequest.getRedirectUrl();
-        String encodedTargetUrl;
 
         // Remove the sessionTimeout flag if necessary
         targetUrl = targetUrl.replace("sessionTimeout=true", "");
@@ -96,7 +95,7 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
         logger.debug("Redirecting to DefaultSavedRequest Url: " + targetUrl);
 
         try {
-            encodedTargetUrl = ESAPI.encoder().encodeForURL(targetUrl);
+            String encodedTargetUrl = ESAPI.encoder().encodeForURL(targetUrl);
             getRedirectStrategy().sendRedirect(request, response, encodedTargetUrl);
         } catch (Exception e) {
             logger.error("Encoding Exception for target Url", e);

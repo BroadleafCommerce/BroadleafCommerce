@@ -41,7 +41,6 @@ public class BroadleafAdminLogoutSuccessHandler extends AbstractAuthenticationTa
 
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineTargetUrl(request, response);
-        String encodedTargetUrl;
 
         if (response.isCommitted()) {
             logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
@@ -56,7 +55,7 @@ public class BroadleafAdminLogoutSuccessHandler extends AbstractAuthenticationTa
         request.getSession().invalidate();
 
         try {
-            encodedTargetUrl = ESAPI.encoder().encodeForURL(targetUrl);
+            String encodedTargetUrl = ESAPI.encoder().encodeForURL(targetUrl);
             getRedirectStrategy().sendRedirect(request, response, encodedTargetUrl);
         } catch (EncodingException e) {
             logger.error("Encoding Exception for target Url", e);
