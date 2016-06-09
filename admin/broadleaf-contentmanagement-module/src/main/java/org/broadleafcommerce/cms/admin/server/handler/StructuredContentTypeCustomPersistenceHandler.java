@@ -32,6 +32,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -55,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -67,6 +69,8 @@ import javax.persistence.PersistenceContext;
 public class StructuredContentTypeCustomPersistenceHandler extends CustomPersistenceHandlerAdapter implements DynamicEntityRetriever {
 
     private final Log LOG = LogFactory.getLog(StructuredContentTypeCustomPersistenceHandler.class);
+    private static String GENERAL_DYNAMIC_FIELD_VALIDATION_ERROR = "structuredContentDynamicFieldValidationFailure";
+    private static String REQUIRED_FIELD_VALIDATION_ERROR = "requiredValidationFailure";
 
     @Resource(name="blStructuredContentService")
     protected StructuredContentService structuredContentService;
@@ -222,11 +226,8 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             for (Property property : properties) {
                 md.put(property.getName(), property.getMetadata());
             }
-            
-            boolean validated = helper.validate(persistencePackage.getEntity(), null, md);
-            if (!validated) {
-                throw new ValidationException(persistencePackage.getEntity(), "Structured Content dynamic fields failed validation");
-            }
+
+            validateSCFields(persistencePackage.getEntity(), md, helper);
             
             List<String> templateFieldNames = new ArrayList<String>(20);
             for (FieldGroup group : structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups()) {
@@ -293,5 +294,41 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         } catch (Exception e) {
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
+    }
+
+    protected void validateSCFields(Entity entity, Map<String, FieldMetadata> fieldMetaDataMap, RecordHelper helper) throws ValidationException{
+        Serializable instance = null;
+        Boolean valid = helper.validate(entity, instance, fieldMetaDataMap);
+
+        if (valid) {
+            // check if required fields are set
+            Property[] properties = entity.getProperties();
+            Set<String> keys = fieldMetaDataMap.keySet();
+
+            for (Property property : properties) {
+                String name = property.getName();
+                String value = property.getValue();
+
+                if (keys.contains(name)) {
+                    BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) fieldMetaDataMap.get(name);
+                    Boolean required = fieldMetadata.getRequiredOverride();
+
+                    if(isRequired(required) && isNullOrEmptyValue(value)) {
+                        throw new ValidationException(entity, REQUIRED_FIELD_VALIDATION_ERROR);
+                    }
+                }
+            }
+
+        } else {
+            throw new ValidationException(entity, GENERAL_DYNAMIC_FIELD_VALIDATION_ERROR);
+        }
+    }
+
+    protected Boolean isRequired(Boolean required) {
+        return required != null && required;
+    }
+
+    protected Boolean isNullOrEmptyValue(String value) {
+        return value == null || value.isEmpty();
     }
 }
