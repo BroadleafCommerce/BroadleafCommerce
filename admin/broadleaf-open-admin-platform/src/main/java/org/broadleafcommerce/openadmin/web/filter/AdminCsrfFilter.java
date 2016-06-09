@@ -44,9 +44,11 @@ import javax.servlet.http.HttpServletResponse;
  * instead of the CsrfFilter
  * 
  *     <bean id="blCsrfFilter" class="org.broadleafcommerce.openadmin.web.filter.AdminCsrfFilter" />
- *     
+ *
+ * @deprecated Use {@link AdminSecurityFilter} instead
  * @author trevorleffert
  */
+@Deprecated
 public class AdminCsrfFilter extends CsrfFilter {
     
     @Resource(name = "blAdminAuthenticationFailureHandler")
