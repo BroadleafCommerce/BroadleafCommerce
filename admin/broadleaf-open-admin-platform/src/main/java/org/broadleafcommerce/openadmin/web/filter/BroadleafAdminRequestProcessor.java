@@ -32,6 +32,8 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.sandbox.service.SandBoxService;
+import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
+import org.broadleafcommerce.common.security.service.StaleStateServiceException;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.service.SiteService;
@@ -118,6 +120,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     @Resource(name = "blAdminRequestProcessorExtensionManager")
     protected AdminRequestProcessorExtensionManager extensionManager;
 
+    @Resource(name = "blStaleStateProtectionService")
+    protected StaleStateProtectionService staleStateProtectionService;
+
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
@@ -162,6 +167,8 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         prepareSandBox(request, brc);
         prepareProfile(request, brc);
         prepareCatalog(request, brc);
+
+        brc.getAdditionalProperties().put(staleStateProtectionService.getStateVersionTokenParameter(), staleStateProtectionService.getStateVersionToken());
     }
 
     protected void prepareProfile(WebRequest request, BroadleafRequestContext brc) {
@@ -170,6 +177,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             //clear any profile
             if (BLCRequestUtils.isOKtoUseSession(request)) {
                 request.removeAttribute(PROFILE_REQ_PARAM, WebRequest.SCOPE_GLOBAL_SESSION);
+                staleStateProtectionService.invalidateState();
             }
         } else {
             Site profile = null;
@@ -179,6 +187,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 if (profile == null) {
                     throw new IllegalArgumentException(String.format("Unable to find the requested profile: %s", profileId));
                 }
+                String token = request.getParameter(staleStateProtectionService.getStateVersionTokenParameter());
+                staleStateProtectionService.compareToken(token);
+                staleStateProtectionService.invalidateState();
             }
 
             if (profile == null) {
@@ -224,6 +235,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             //clear any catalog
             if (BLCRequestUtils.isOKtoUseSession(request)) {
                 request.removeAttribute(CATALOG_REQ_PARAM, WebRequest.SCOPE_GLOBAL_SESSION);
+                staleStateProtectionService.invalidateState();
             }
         } else {
             Catalog catalog = null;
@@ -233,6 +245,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 if (catalog == null) {
                     throw new IllegalArgumentException(String.format("Unable to find the requested catalog: %s", catalogId));
                 }
+                String token = request.getParameter(staleStateProtectionService.getStateVersionTokenParameter());
+                staleStateProtectionService.compareToken(token);
+                staleStateProtectionService.invalidateState();
             }
 
             if (catalog == null) {
@@ -278,6 +293,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             //clear any sandbox
             if (BLCRequestUtils.isOKtoUseSession(request)) {
                 request.removeAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+                staleStateProtectionService.invalidateState();
             }
         } else {
             SandBox sandBox = null;
@@ -293,6 +309,11 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                             sandBox = sandBoxService.createUserSandBox(adminUser.getId(), approvalOrUserSandBox);
                         }
                     }
+                }
+                if (BLCRequestUtils.isOKtoUseSession(request)) {
+                    String token = request.getParameter(staleStateProtectionService.getStateVersionTokenParameter());
+                    staleStateProtectionService.compareToken(token);
+                    staleStateProtectionService.invalidateState();
                 }
             }
 

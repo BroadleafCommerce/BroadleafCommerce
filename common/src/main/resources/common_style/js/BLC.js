@@ -143,6 +143,16 @@ var BLC = (function($) {
                         options.data += "csrfToken=" + csrfToken;
                     }
                 }
+                if (options.data.indexOf('stateVersionToken') < 0) {
+                    var stateVersionToken = getStateVersionToken();
+                    if (stateVersionToken != null) {
+                        if (options.data.indexOf('=') > 0) {
+                            options.data += "&";
+                        }
+
+                        options.data += "stateVersionToken=" + stateVersionToken;
+                    }
+                }
             } else if (typeof options.data == 'object') {
                 if (options.data['csrfToken'] == null || options.data['csrfToken'] == '') {
                     var csrfToken = getCsrfToken();
@@ -150,10 +160,20 @@ var BLC = (function($) {
                         options.data['csrfToken'] = csrfToken;
                     }
                 }
+                if (options.data['stateVersionToken'] == null || options.data['stateVersionToken'] == '') {
+                    var stateVersionToken = getStateVersionToken();
+                    if (stateVersionToken != null) {
+                        options.data['stateVersionToken'] = stateVersionToken;
+                    }
+                }
             } else if (!options.data) {
                 var csrfToken = getCsrfToken();
                 if (csrfToken) {
                     options.data = { 'csrfToken': csrfToken }
+                }
+                var stateVersionToken = getStateVersionToken();
+                if (stateVersionToken) {
+                    options.data = { 'stateVersionToken': stateVersionToken }
                 }
             }
         }
@@ -230,6 +250,15 @@ var BLC = (function($) {
         
         return csrfTokenInput.val();
     }
+
+    function getStateVersionToken() {
+        var stateVersionTokenInput = $('input[name="stateVersionToken"]');
+        if (stateVersionTokenInput.length == 0) {
+            return null;
+        }
+
+        return stateVersionTokenInput.val();
+    }
     
     function defaultErrorHandler(data) {
         if (data.getAllResponseHeaders()) {
@@ -294,6 +323,7 @@ var BLC = (function($) {
         get : get,
         post : post,
         ajax : ajax,
+        getStateVersionToken : getStateVersionToken,
         defaultErrorHandler : defaultErrorHandler,
         serializeObject : serializeObject,
         addUrlParam : addUrlParam,

@@ -645,7 +645,9 @@ var BLCAdmin = (function($) {
 // being set on the model instead of a stack trace page when an error occurs on an AJAX request.
 BLC.defaultErrorHandler = function(data) {
     if (data.status == "403") {
-        BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.forbidden403);
+		BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.forbidden403);
+	} else if (data.status == "409") {
+		BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.staleContent);
     } else {
         var $data;
         
@@ -730,6 +732,11 @@ $('body').on('click', '.disabled', function(e) {
 $('body').on('change', 'input.color-picker-value', function() {
     var $this = $(this);
     $this.closest('.field-box').find('input.color-picker').spectrum('set', $this.val());
+});
+
+$('body').on('click', 'button.page-reset', function() {
+	var currentUrl = '//' + location.host + location.pathname;
+	window.location = currentUrl;
 });
 
 /**
