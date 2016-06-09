@@ -900,7 +900,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         cloned.setParentOrderItem(parentOrderItem == null ? null : parentOrderItem.createOrRetrieveCopyInstance(context).getClone());
         for(OrderItem entry : childOrderItems){
             OrderItem clonedEntry = ((OrderItem)entry).createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setParentOrderItem(clonedEntry);
+            clonedEntry.setParentOrderItem(cloned);
             cloned.getChildOrderItems().add(clonedEntry);
         }
         for(CandidateItemOffer entry : candidateItemOffers){
