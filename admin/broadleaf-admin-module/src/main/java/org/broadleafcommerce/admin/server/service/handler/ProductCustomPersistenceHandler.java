@@ -67,10 +67,8 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
@@ -191,10 +189,10 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 filter.setSortAscending(true);
             }
 
-            List<Product> filteredProducts = buildSkuFilters(cto, dynamicEntityDao, helper);
-            // If a list of products was returned, use them instead of proceeding through the pipeline.
-            if (filteredProducts != null) {
-                // Convert the result list into a list of entities
+            // Check if we are only sorting/filtering on Sku related fields. If so, return the filtered product list.
+            List<Product> filteredProducts = filterProductsBySkuFields(cto, dynamicEntityDao, helper);
+            if (isSkuOnlyFilter(cto)) {
+                // Convert the filtered product list into a list of entities
                 PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
                 Map<String, FieldMetadata> indexFieldMetadata = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
                 Entity[] entities = helper.getRecords(indexFieldMetadata, filteredProducts);
@@ -207,6 +205,12 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 // Create a Dynamic Result Set from the entity list created above.
                 DynamicResultSet resultSet = new DynamicResultSet(entities, totalRecords);
                 return resultSet;
+
+            } else {
+                if (filteredProducts.size() != 0) {
+                    clearFilteredProperties(cto);
+                    addSkuFilterMapping(cto, filteredProducts);
+                }
             }
 
             try {
@@ -289,33 +293,6 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
         return true;
     }
 
-    private List<Product> buildSkuFilters(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) {
-        // Setup the Sku query.
-        CriteriaBuilder builder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
-        CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
-        Root<SkuImpl> root = criteria.from(SkuImpl.class);
-        criteria.select(root.get("defaultProduct").as(Product.class));
-
-        // Build our list of Sku related restrictions.
-        Map<String, Predicate> restrictions = buildSkuRestrictions(cto, helper, builder, criteria, root);
-
-        TypedQuery<Product> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
-        List<Product> filteredProducts = query.getResultList();
-
-        // Check if we are only sorting/filtering on Sku related fields. If so, return the filtered product list.
-        if (isSkuOnlyFilter(cto)) {
-            return filteredProducts;
-        }
-
-        // If we have any filtered products, clear out the associated filter and sort criteria values and add a new
-        // filter mapping to the cto.
-        if (filteredProducts.size() != 0) {
-            clearFilteredProperties(cto, restrictions.keySet());
-            addSkuFilterMapping(cto, filteredProducts);
-        }
-        return null;
-    }
-
     private Boolean isSkuOnlyFilter(CriteriaTransferObject cto) {
         Boolean isSkuOnly = Boolean.TRUE;
         int skuFilters = 0;
@@ -332,9 +309,30 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
         return isSkuOnly && (skuFilters > 0);
     }
 
+    private List<Product> filterProductsBySkuFields(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) {
+        // Setup the Sku query.
+        CriteriaBuilder builder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
+        Root<SkuImpl> root = criteria.from(SkuImpl.class);
+        criteria.select(root.get("defaultProduct").as(Product.class));
+
+        // Build our list of Sku related restrictions.
+        List<Predicate> restrictions = buildSkuRestrictions(cto, helper, builder, criteria, root);
+
+        // Apply the restrictions if any.
+        if (restrictions.size() > 0) {
+            criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        }
+
+        TypedQuery<Product> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
+        List<Product> filteredProducts = query.getResultList();
+
+        return filteredProducts;
+    }
+
     @SuppressWarnings("unchecked")
-    private Map<String, Predicate> buildSkuRestrictions(CriteriaTransferObject cto, RecordHelper helper, CriteriaBuilder builder, CriteriaQuery<Product> criteria, Root<SkuImpl> root) {
-        Map<String, Predicate> restrictions = new HashMap<>();
+    private List<Predicate> buildSkuRestrictions(CriteriaTransferObject cto, RecordHelper helper, CriteriaBuilder builder, CriteriaQuery<Product> criteria, Root<SkuImpl> root) {
+        List<Predicate> restrictions = new ArrayList<>();
         for (String filterProperty : cto.getCriteriaMap().keySet()) {
             if (filterProperty.startsWith(DEFAULT_SKU)) {
                 FilterAndSortCriteria fasc = cto.getCriteriaMap().get(filterProperty);
@@ -345,14 +343,14 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 // If we have filter values, create the appropriate restrictions.
                 if (fasc.getFilterValues().size() > 0) {
                     if (field.getType().isAssignableFrom(String.class)) {
-                        restrictions.put(filterProperty, builder.like(skuFieldPath.as(String.class), "%" + fasc.getFilterValues().get(0) + "%"));
+                        restrictions.add(builder.like(skuFieldPath.as(String.class), "%" + fasc.getFilterValues().get(0) + "%"));
                     } else if (field.getType().isAssignableFrom(BigDecimal.class)) {
                         if (fasc.getFilterValues().size() == 1) {
-                            restrictions.put(filterProperty, builder.equal(skuFieldPath.as(String.class), fasc.getFilterValues().get(0)));
+                            restrictions.add(builder.equal(skuFieldPath.as(String.class), fasc.getFilterValues().get(0)));
                         } else {
                             BigDecimal firstValue = new BigDecimal(fasc.getFilterValues().get(0));
                             BigDecimal secondValue = new BigDecimal(fasc.getFilterValues().get(1));
-                            restrictions.put(filterProperty, builder.between(skuFieldPath.as(BigDecimal.class), firstValue, secondValue));
+                            restrictions.add(builder.between(skuFieldPath.as(BigDecimal.class), firstValue, secondValue));
                         }
                     }
                 }
@@ -366,11 +364,6 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                     }
                 }
             }
-        }
-
-        // Apply the restrictions if any.
-        if (restrictions.size() > 0) {
-            criteria.where(restrictions.values().toArray(new Predicate[restrictions.size()]));
         }
         return restrictions;
     }
@@ -409,9 +402,14 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
         return productIds;
     }
 
-    private void clearFilteredProperties(CriteriaTransferObject cto, Set<String> filteredProperties) {
-        for (String filterProperty : filteredProperties) {
-            cto.getCriteriaMap().get(filterProperty).setFilterValues(Collections.<String>emptyList());
+    private void clearFilteredProperties(CriteriaTransferObject cto) {
+        for (String filterProperty : cto.getCriteriaMap().keySet()) {
+            if (filterProperty.startsWith(DEFAULT_SKU)) {
+                FilterAndSortCriteria fasc = cto.getCriteriaMap().get(filterProperty);
+                if (fasc.getFilterValues().size() > 0) {
+                    cto.getCriteriaMap().get(filterProperty).setFilterValues(Collections.<String>emptyList());
+                }
+            }
         }
     }
 
