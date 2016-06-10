@@ -83,7 +83,9 @@ public class MergeManager {
 
     static {
         try {
-            DocumentBuilderFactory dbf = SecureDocumentBuilderFactoryUtil.getSecureDocumentBuilderFactory();
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            // Disable DTDs to prevent XXE attack
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             builder = dbf.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             LOG.error("Unable to create document builder", e);

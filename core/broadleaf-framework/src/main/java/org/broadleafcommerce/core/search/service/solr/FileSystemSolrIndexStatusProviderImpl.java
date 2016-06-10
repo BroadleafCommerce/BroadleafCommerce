@@ -82,9 +82,12 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
             if (searchService instanceof SolrSearchServiceImpl) {
                 File statusFile = getStatusFile((SolrSearchServiceImpl) searchService);
                 boolean exists = statusFile.exists();
-                DocumentBuilderFactory dbf = SecureDocumentBuilderFactoryUtil.getSecureDocumentBuilderFactory();
-                dbf.setIgnoringElementContentWhitespace(true);
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 dbf.setNamespaceAware(true);
+                dbf.setIgnoringElementContentWhitespace(true);
+                // Disable DTDs to prevent XXE attack
+                dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
                 if (builder == null) {
                     builder = dbf.newDocumentBuilder();
                 }
@@ -158,8 +161,12 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
                 File statusFile = getStatusFile((SolrSearchServiceImpl) searchService);
                 boolean exists = statusFile.exists();
                 if (exists) {
-                    DocumentBuilderFactory dbf = SecureDocumentBuilderFactoryUtil.getSecureDocumentBuilderFactory();
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    // Disable DTDs to prevent XXE attack
+                    dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
                     dbf.setNamespaceAware(true);
+                    dbf.setIgnoringElementContentWhitespace(true);
+
                     if (builder == null) {
                         builder = dbf.newDocumentBuilder();
                     }

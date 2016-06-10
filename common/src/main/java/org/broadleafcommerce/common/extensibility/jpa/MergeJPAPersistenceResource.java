@@ -106,7 +106,11 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
     }
 
     private void compileMappingFiles(List<String> mappingFiles, byte[] sourceArray) throws IOException, ParserConfigurationException, SAXException {
-        DocumentBuilderFactory dbf = SecureDocumentBuilderFactoryUtil.getSecureDocumentBuilderFactory();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        // Disable DTDs to prevent XXE attack
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
         DocumentBuilder parser = dbf.newDocumentBuilder();
         parser.setErrorHandler(handler);
 
