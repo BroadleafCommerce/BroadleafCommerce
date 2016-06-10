@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.broadleafcommerce.common.exception.ExceptionHelper;
-import org.broadleafcommerce.common.util.xml.SecureDocumentBuilderFactoryUtil;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.search.service.solr.index.IndexStatusInfo;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexStatusProvider;
