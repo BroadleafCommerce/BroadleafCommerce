@@ -176,8 +176,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                             })
                     ));
         }
-        if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
-                (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
+        if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) && !hasCriteriaForId(cto)) {
             //Add special handling for product list grid fetches
             boolean hasExplicitSort = false;
             for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
@@ -219,6 +218,10 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
         } else {
             return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
         }
+    }
+
+    protected Boolean hasCriteriaForId(CriteriaTransferObject cto) {
+        return cto.getCriteriaMap().containsKey("id") && !CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues());
     }
 
     @SuppressWarnings("unchecked")
