@@ -229,7 +229,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     }
 
     @SuppressWarnings("unchecked")
-    private boolean setupNonLegacyProductCategory(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao) {
+    protected boolean setupNonLegacyProductCategory(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao) {
         //the following code applies when filters are present only:
         //"legacy" means that the parent category filter still utilizes Product.defaultCategory as the field to be matched
         //against the categories chosen in the listGrid filter. The default behavior up to this point, assumes the "legacy" mode.
@@ -293,7 +293,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
         return true;
     }
 
-    private Boolean isSkuOnlyFilter(CriteriaTransferObject cto) {
+    protected Boolean isSkuOnlyFilter(CriteriaTransferObject cto) {
         Boolean isSkuOnly = Boolean.TRUE;
         int skuFilters = 0;
         for (String filterProperty : cto.getCriteriaMap().keySet()) {
@@ -309,7 +309,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
         return isSkuOnly && (skuFilters > 0);
     }
 
-    private List<Product> filterProductsBySkuFields(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) {
+    protected List<Product> filterProductsBySkuFields(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) {
         // Setup the Sku query.
         CriteriaBuilder builder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
@@ -331,7 +331,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     }
 
     @SuppressWarnings("unchecked")
-    private List<Predicate> buildSkuRestrictions(CriteriaTransferObject cto, RecordHelper helper, CriteriaBuilder builder, CriteriaQuery<Product> criteria, Root<SkuImpl> root) {
+    protected List<Predicate> buildSkuRestrictions(CriteriaTransferObject cto, RecordHelper helper, CriteriaBuilder builder, CriteriaQuery<Product> criteria, Root<SkuImpl> root) {
         List<Predicate> restrictions = new ArrayList<>();
         for (String filterProperty : cto.getCriteriaMap().keySet()) {
             if (filterProperty.startsWith(DEFAULT_SKU)) {
@@ -369,7 +369,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     }
 
     @SuppressWarnings("unchecked")
-    private void addSkuFilterMapping(CriteriaTransferObject cto, List<Product> filterValues) {
+    protected void addSkuFilterMapping(CriteriaTransferObject cto, List<Product> filterValues) {
         List<String> productIds = buildProductIdList(filterValues);
         cto.getAdditionalFilterMappings().add(new FilterMapping()
                 .withFieldPath(new FieldPath().withTargetProperty("id"))
@@ -386,7 +386,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 ));
     }
 
-    private List<String> buildProductIdList(List<Product> filterValues) {
+    protected List<String> buildProductIdList(List<Product> filterValues) {
         List<String> productIds = BLCCollectionUtils.collectList(filterValues, new TypedTransformer<String>() {
             @Override
             public String transform(Object input) {
@@ -402,7 +402,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
         return productIds;
     }
 
-    private void clearFilteredProperties(CriteriaTransferObject cto) {
+    protected void clearFilteredProperties(CriteriaTransferObject cto) {
         for (String filterProperty : cto.getCriteriaMap().keySet()) {
             if (filterProperty.startsWith(DEFAULT_SKU)) {
                 FilterAndSortCriteria fasc = cto.getCriteriaMap().get(filterProperty);
