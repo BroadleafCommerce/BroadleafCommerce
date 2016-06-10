@@ -23,14 +23,4 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
-
-    <named-query name="BC_READ_SEARCH_URL" >
-        <query>SELECT page
-               FROM org.broadleafcommerce.core.search.redirect.domain.SearchRedirect page
-               WHERE
-                 upper(page.searchTerm) = upper(:searchTerm)  and (page.activeStartDate is null or page.activeStartDate &lt;= :now) and (page.activeEndDate is null or :now &lt;= page.activeEndDate   )
-               order by page.searchPriority
-        </query>
-    </named-query>
-
 </entity-mappings>
