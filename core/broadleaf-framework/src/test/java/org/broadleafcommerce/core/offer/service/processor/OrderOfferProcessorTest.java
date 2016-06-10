@@ -194,7 +194,8 @@ public class OrderOfferProcessorTest extends TestCase {
         Offer firstOffer = offers.get(0);
 
         OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
-        qualCriteria.setQuantity(6);
+        int originalQuantityOnOrder = 5;
+        qualCriteria.setQuantity(originalQuantityOnOrder + 1);
         qualCriteria.setMatchRule("([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
         Set<OfferQualifyingCriteriaXref> criterias = new HashSet<OfferQualifyingCriteriaXref>();
         OfferQualifyingCriteriaXref xref = new OfferQualifyingCriteriaXrefImpl();
