@@ -35,7 +35,7 @@ public class EntityFormAction implements Cloneable {
     protected String displayText = "";
     protected String id = "";
     protected String urlOverride = null;
-    protected Boolean isConfirmEnabled = false;
+    protected Boolean isConfirmEnabled = Boolean.FALSE;
     protected String confirmEnabledText = "";
     
     public EntityFormAction(String id) {
@@ -156,7 +156,7 @@ public class EntityFormAction implements Cloneable {
     }
 
     public Boolean getIsConfirmEnabled() {
-        return isConfirmEnabled == null ? false : isConfirmEnabled;
+        return isConfirmEnabled == null ? Boolean.FALSE : isConfirmEnabled;
     }
 
     public void setIsConfirmEnabled(Boolean confirmEnabled) {
