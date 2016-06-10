@@ -956,7 +956,7 @@ $(document).ready(function () {
 
         // Remove the criteria input val
         $container.find('.value').val('').trigger('change').trigger('input');
-        $this.toggle();
+        $this.hide();
 
         $container.find('.external-link-container').hide();
 
