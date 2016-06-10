@@ -292,19 +292,24 @@
         showLoadingSpinner: function ($tbody, spinnerOffset) {
             var $spinner = $tbody.closest('.listgrid-container').find('.listgrid-table-spinner-container');
 
-            if (spinnerOffset) {
-                $spinner.css('position', 'absolute');
-                $spinner.css('top', spinnerOffset + 'px');
-            }
-
-            // Subtract 2 to account for left & right boarder lines
-            $spinner.css('width',$tbody.innerWidth() - 2);
+            var spinnerHalfSize = 20;
+            var tableHalfWidth = $tbody.innerWidth() / 2;
+            var tableHalfHeight = $tbody.closest('.mCustomScrollBox').height() / 2;
+            
+            $spinner.css('top', (Math.floor(spinnerOffset) + tableHalfHeight - spinnerHalfSize) + 'px');
+            $spinner.css('left', tableHalfWidth + spinnerHalfSize + 'px');
             $spinner.css('display', 'block');
+            
+            var backdrop = $('<div>', {
+               'class' : 'spinner-backdrop'
+            });
+            $spinner.prepend(backdrop);
         },
 
         hideLoadingSpinner: function ($tbody) {
             var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
             $spinner.parent().css('display', 'none');
+            $spinner.parent().find('.spinner-backdrop').remove();
         },
 
         initialize: function ($container) {
@@ -1000,7 +1005,6 @@ $(document).ready(function () {
 
     $("input[type=checkbox].listgrid-checkbox").prop('checked', false);
     $("input[type=checkbox].multiselect-checkbox").prop('checked', false);
-
 });
 
 function updateMultiSelectCheckbox($tbody, $listgridHeader) {
