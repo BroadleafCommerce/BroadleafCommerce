@@ -26,8 +26,10 @@ import org.broadleafcommerce.admin.server.service.extension.ProductCustomPersist
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.filter.Filter;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
@@ -40,9 +42,12 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
+import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -50,7 +55,9 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -59,16 +66,25 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionType;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -77,13 +93,15 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 /**
  * @author Jeff Fischer
  */
 @Component("blProductCustomPersistenceHandler")
 public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-    
+
+    public static final String DEFAULT_SKU = "defaultSku";
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
@@ -148,68 +166,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao
             dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        
-        boolean legacy = parentCategoryLegacyModeService.isLegacyMode();
-        
-        //the following code applies when filters are present only:
-        //"legacy" means that the parent category filter still utilizes Product.defaultCategory as the field to be matched
-        //against the categories chosen in the listGrid filter. The default behavior up to this point, assumes the "legacy" mode. 
-        //This means that one of the FilterAndSortCriterias will try to match the chosen values against "defaultCategory".
-        //If "legacy" is false, we remove that FilterAndSortCriteria from the CTO, and inject a new FilterMapping in cto.additionalFilterMappings,
-        //which seeks matching values in  allParentCategoryXRefs instead
-        if (!legacy) {
-            FilterAndSortCriteria fsc = cto.getCriteriaMap().get("defaultCategory");
-            if (fsc != null) {
-                List<String> filterValues = fsc.getFilterValues();
-                cto.getCriteriaMap().remove("defaultCategory");
 
-                List<Long> transformedValues = BLCCollectionUtils.collectList(filterValues, new TypedTransformer<Long>() {
-                    @Override
-                    public Long transform(Object input) {
-                        return Long.parseLong(((String) input));
-                    }
-                });
-                CriteriaBuilder builder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
-                CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
-                Root<CategoryProductXrefImpl> root = criteria.from(CategoryProductXrefImpl.class);
-                criteria.select(root.get("product").get("id").as(Long.class));
-                List<Predicate> restrictions = new ArrayList<Predicate>();
-                restrictions.add(builder.equal(root.get("defaultReference"), Boolean.TRUE));
-                if (CollectionUtils.isNotEmpty(transformedValues)) {
-                    restrictions.add(root.get("category").get("id").in(transformedValues));
-                }
-
-                criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-                TypedQuery<Long> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
-                List<Long> productIds = query.getResultList();
-                productIds = sandBoxHelper.mergeCloneIds(ProductImpl.class, productIds.toArray(new Long[productIds.size()]));
-
-                if(productIds.size() == 0){
-                    return new DynamicResultSet(null, new Entity[0],0);
-                }
-                if (productIds.size() <= queryLimit) {
-                    FilterMapping filterMapping = new FilterMapping()
-                        .withFieldPath(new FieldPath().withTargetProperty("id"))
-                        .withDirectFilterValues(productIds)
-                        .withRestriction(new Restriction()
-                            .withPredicateProvider(new PredicateProvider() {
-                                   @Override
-                                   public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
-                                                                   From root, String ceilingEntity, String fullPropertyName,
-                                                                   Path explicitPath, List directValues) {
-                                       return explicitPath.in(directValues);
-                                   }
-                               }
-                            )
-                        );
-                    cto.getAdditionalFilterMappings().add(filterMapping);
-                } else {
-                    String joined = StringUtils.join(transformedValues, ',');
-                    LOG.warn(String.format("Skipping default category filtering for product fetch query since there are " +
-                            "more than "+queryLimit+" products found to belong to the selected default categories(%s). This is a " +
-                            "filter query limitation.", joined));
-                }
-            }
+        if (!setupNonLegacyProductCategory(cto, dynamicEntityDao)) {
+            return new DynamicResultSet(null, new Entity[0], 0);
         }
 
         if (eagerFetchAssociations) {
@@ -245,6 +204,25 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 filter.setNullsLast(false);
                 filter.setSortAscending(true);
             }
+
+            List<Product> filteredProducts = buildSkuFilters(cto, dynamicEntityDao, helper);
+            // If a list of products was returned, use them instead of proceeding through the pipeline.
+            if (filteredProducts != null) {
+                // Convert the result list into a list of entities
+                PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+                Map<String, FieldMetadata> indexFieldMetadata = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+                Entity[] entities = helper.getRecords(indexFieldMetadata, filteredProducts);
+
+                // We need to get the total number of records available because the entityList returned may not be the full set.
+                Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+                List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, Product.class.getName(), originalProps);
+                int totalRecords = helper.getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
+
+                // Create a Dynamic Result Set from the entity list created above.
+                DynamicResultSet resultSet = new DynamicResultSet(entities, totalRecords);
+                return resultSet;
+            }
+
             try {
                 extensionManager.getProxy().initiateFetchState();
                 return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
@@ -253,6 +231,197 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
         } else {
             return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean setupNonLegacyProductCategory(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao) {
+        //the following code applies when filters are present only:
+        //"legacy" means that the parent category filter still utilizes Product.defaultCategory as the field to be matched
+        //against the categories chosen in the listGrid filter. The default behavior up to this point, assumes the "legacy" mode.
+        //This means that one of the FilterAndSortCriterias will try to match the chosen values against "defaultCategory".
+        //If "legacy" is false, we remove that FilterAndSortCriteria from the CTO, and inject a new FilterMapping in cto.additionalFilterMappings,
+        //which seeks matching values in  allParentCategoryXRefs instead
+        if (!isDefaultCategoryLegacyMode()) {
+            FilterAndSortCriteria fsc = cto.getCriteriaMap().get("defaultCategory");
+            if (fsc != null) {
+                List<String> filterValues = fsc.getFilterValues();
+                cto.getCriteriaMap().remove("defaultCategory");
+
+                List<Long> transformedValues = BLCCollectionUtils.collectList(filterValues, new TypedTransformer<Long>() {
+                    @Override
+                    public Long transform(Object input) {
+                        return Long.parseLong(((String) input));
+                    }
+                });
+                CriteriaBuilder builder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
+                CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+                Root<CategoryProductXrefImpl> root = criteria.from(CategoryProductXrefImpl.class);
+                criteria.select(root.get("product").get("id").as(Long.class));
+                List<Predicate> restrictions = new ArrayList<Predicate>();
+                restrictions.add(builder.equal(root.get("defaultReference"), Boolean.TRUE));
+                if (CollectionUtils.isNotEmpty(transformedValues)) {
+                    restrictions.add(root.get("category").get("id").in(transformedValues));
+                }
+
+                criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+                TypedQuery<Long> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
+                List<Long> productIds = query.getResultList();
+                productIds = sandBoxHelper.mergeCloneIds(ProductImpl.class, productIds.toArray(new Long[productIds.size()]));
+
+                if(productIds.size() == 0){
+                    return false;
+                }
+                if (productIds.size() <= queryLimit) {
+                    FilterMapping filterMapping = new FilterMapping()
+                        .withFieldPath(new FieldPath().withTargetProperty("id"))
+                        .withDirectFilterValues(productIds)
+                        .withRestriction(new Restriction()
+                            .withPredicateProvider(new PredicateProvider() {
+                                   @Override
+                                   public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
+                                                                   From root, String ceilingEntity, String fullPropertyName,
+                                                                   Path explicitPath, List directValues) {
+                                       return explicitPath.in(directValues);
+                                   }
+                               }
+                            )
+                        );
+                    cto.getAdditionalFilterMappings().add(filterMapping);
+                } else {
+                    String joined = StringUtils.join(transformedValues, ',');
+                    LOG.warn(String.format("Skipping default category filtering for product fetch query since there are " +
+                            "more than " + queryLimit + " products found to belong to the selected default categories(%s). This is a " +
+                            "filter query limitation.", joined));
+                }
+            }
+        }
+        return true;
+    }
+
+    private List<Product> buildSkuFilters(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) {
+        // Setup the Sku query.
+        CriteriaBuilder builder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
+        Root<SkuImpl> root = criteria.from(SkuImpl.class);
+        criteria.select(root.get("defaultProduct").as(Product.class));
+
+        // Build our list of Sku related restrictions.
+        Map<String, Predicate> restrictions = buildSkuRestrictions(cto, helper, builder, criteria, root);
+
+        TypedQuery<Product> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
+        List<Product> filteredProducts = query.getResultList();
+
+        // Check if we are only sorting/filtering on Sku related fields. If so, return the filtered product list.
+        if (isSkuOnlyFilter(cto)) {
+            return filteredProducts;
+        }
+
+        // If we have any filtered products, clear out the associated filter and sort criteria values and add a new
+        // filter mapping to the cto.
+        if (filteredProducts.size() != 0) {
+            clearFilteredProperties(cto, restrictions.keySet());
+            addSkuFilterMapping(cto, filteredProducts);
+        }
+        return null;
+    }
+
+    private Boolean isSkuOnlyFilter(CriteriaTransferObject cto) {
+        Boolean isSkuOnly = Boolean.TRUE;
+        int skuFilters = 0;
+        for (String filterProperty : cto.getCriteriaMap().keySet()) {
+            if (!filterProperty.startsWith(DEFAULT_SKU)
+                    && !filterProperty.equals("id")
+                    && !filterProperty.equals("isLookup")) {
+                isSkuOnly = Boolean.FALSE;
+                break;
+            } else if (filterProperty.startsWith(DEFAULT_SKU)){
+                skuFilters++;
+            }
+        }
+        return isSkuOnly && (skuFilters > 0);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Predicate> buildSkuRestrictions(CriteriaTransferObject cto, RecordHelper helper, CriteriaBuilder builder, CriteriaQuery<Product> criteria, Root<SkuImpl> root) {
+        Map<String, Predicate> restrictions = new HashMap<>();
+        for (String filterProperty : cto.getCriteriaMap().keySet()) {
+            if (filterProperty.startsWith(DEFAULT_SKU)) {
+                FilterAndSortCriteria fasc = cto.getCriteriaMap().get(filterProperty);
+                String skuField = filterProperty.replace(DEFAULT_SKU + ".","");
+                Path skuFieldPath = root.get(skuField);
+                Field field = helper.getFieldManager().getField(SkuImpl.class, skuField);
+
+                // If we have filter values, create the appropriate restrictions.
+                if (fasc.getFilterValues().size() > 0) {
+                    if (field.getType().isAssignableFrom(String.class)) {
+                        restrictions.put(filterProperty, builder.like(skuFieldPath.as(String.class), "%" + fasc.getFilterValues().get(0) + "%"));
+                    } else if (field.getType().isAssignableFrom(BigDecimal.class)) {
+                        if (fasc.getFilterValues().size() == 1) {
+                            restrictions.put(filterProperty, builder.equal(skuFieldPath.as(String.class), fasc.getFilterValues().get(0)));
+                        } else {
+                            BigDecimal firstValue = new BigDecimal(fasc.getFilterValues().get(0));
+                            BigDecimal secondValue = new BigDecimal(fasc.getFilterValues().get(1));
+                            restrictions.put(filterProperty, builder.between(skuFieldPath.as(BigDecimal.class), firstValue, secondValue));
+                        }
+                    }
+                }
+
+                // Add sorting if applicable.
+                if (fasc.getSortDirection() != null) {
+                    if (fasc.getSortAscending()) {
+                        criteria.orderBy(builder.asc(skuFieldPath));
+                    } else {
+                        criteria.orderBy(builder.desc(skuFieldPath));
+                    }
+                }
+            }
+        }
+
+        // Apply the restrictions if any.
+        if (restrictions.size() > 0) {
+            criteria.where(restrictions.values().toArray(new Predicate[restrictions.size()]));
+        }
+        return restrictions;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void addSkuFilterMapping(CriteriaTransferObject cto, List<Product> filterValues) {
+        List<String> productIds = buildProductIdList(filterValues);
+        cto.getAdditionalFilterMappings().add(new FilterMapping()
+                .withFieldPath(new FieldPath().withTargetProperty("id"))
+                .withDirectFilterValues(productIds)
+                .withRestriction(new Restriction()
+                        .withPredicateProvider(new PredicateProvider() {
+                            @Override
+                            public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
+                                                            From root, String ceilingEntity,
+                                                            String fullPropertyName, Path explicitPath, List directValues) {
+                                return explicitPath.in(directValues);
+                            }
+                        })
+                ));
+    }
+
+    private List<String> buildProductIdList(List<Product> filterValues) {
+        List<String> productIds = BLCCollectionUtils.collectList(filterValues, new TypedTransformer<String>() {
+            @Override
+            public String transform(Object input) {
+                // Make sure we have the actual product id.
+                Long originalId = sandBoxHelper.getOriginalId(input);
+                if (originalId != null) {
+                    return originalId.toString();
+                } else {
+                    return ((Product)input).getId().toString();
+                }
+            }
+        });
+        return productIds;
+    }
+
+    private void clearFilteredProperties(CriteriaTransferObject cto, Set<String> filteredProperties) {
+        for (String filterProperty : filteredProperties) {
+            cto.getCriteriaMap().get(filterProperty).setFilterValues(Collections.<String>emptyList());
         }
     }
 
