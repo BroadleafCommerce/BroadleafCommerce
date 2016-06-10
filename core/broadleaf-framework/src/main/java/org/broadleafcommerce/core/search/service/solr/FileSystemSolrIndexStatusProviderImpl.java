@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.broadleafcommerce.common.exception.ExceptionHelper;
+import org.broadleafcommerce.common.util.xml.SecureDocumentBuilderFactoryUtil;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.search.service.solr.index.IndexStatusInfo;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexStatusProvider;
@@ -81,7 +82,7 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
             if (searchService instanceof SolrSearchServiceImpl) {
                 File statusFile = getStatusFile((SolrSearchServiceImpl) searchService);
                 boolean exists = statusFile.exists();
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                DocumentBuilderFactory dbf = SecureDocumentBuilderFactoryUtil.getSecureDocumentBuilderFactory();
                 dbf.setIgnoringElementContentWhitespace(true);
                 dbf.setNamespaceAware(true);
                 if (builder == null) {
@@ -157,7 +158,7 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
                 File statusFile = getStatusFile((SolrSearchServiceImpl) searchService);
                 boolean exists = statusFile.exists();
                 if (exists) {
-                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    DocumentBuilderFactory dbf = SecureDocumentBuilderFactoryUtil.getSecureDocumentBuilderFactory();
                     dbf.setNamespaceAware(true);
                     if (builder == null) {
                         builder = dbf.newDocumentBuilder();

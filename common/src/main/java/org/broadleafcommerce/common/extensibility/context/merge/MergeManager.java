@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.extensibility.context.merge.exceptions.Merge
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeManagerSetupException;
 import org.broadleafcommerce.common.extensibility.context.merge.handlers.MergeHandler;
 import org.broadleafcommerce.common.extensibility.context.merge.handlers.MergeHandlerAdapter;
+import org.broadleafcommerce.common.util.xml.SecureDocumentBuilderFactoryUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -81,8 +82,8 @@ public class MergeManager {
     private static DocumentBuilder builder;
 
     static {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
+            DocumentBuilderFactory dbf = SecureDocumentBuilderFactoryUtil.getSecureDocumentBuilderFactory();
             builder = dbf.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             LOG.error("Unable to create document builder", e);

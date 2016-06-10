@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeManagerSetupException;
+import org.broadleafcommerce.common.util.xml.SecureDocumentBuilderFactoryUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.ByteArrayResource;
@@ -105,8 +106,7 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
     }
 
     private void compileMappingFiles(List<String> mappingFiles, byte[] sourceArray) throws IOException, ParserConfigurationException, SAXException {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
+        DocumentBuilderFactory dbf = SecureDocumentBuilderFactoryUtil.getSecureDocumentBuilderFactory();
         DocumentBuilder parser = dbf.newDocumentBuilder();
         parser.setErrorHandler(handler);
 
