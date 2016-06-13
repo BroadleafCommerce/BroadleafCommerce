@@ -207,13 +207,13 @@ var BLC = (function($) {
     
     function trackAjaxAnalytics(options, data) {
         try {
-            if (typeof _gaq != 'undefined') {
-                _gaq.push(['_trackPageview', options.url]);
+            if (window.ga && ga.create) {
+                ga('send', 'pageview', options.url);
                 console.log('Tracked GA pageview: ' + options.url);
                 
                 if (options.additionalAnalyticsEvents) {
                     for (var i = 0; i < options.additionalAnalyticsEvents.length; i++) {
-                        _gaq.push(options.additionalAnalyticsEvents[i]);
+                        ga('send', options.additionalAnalyticsEvents[i]);
                         console.log('Tracked additional GA event: ' + options.additionalAnalyticsEvents[i]);
                     }
                 }
