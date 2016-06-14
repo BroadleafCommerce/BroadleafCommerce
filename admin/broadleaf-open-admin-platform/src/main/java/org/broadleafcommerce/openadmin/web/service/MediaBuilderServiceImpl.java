@@ -66,7 +66,8 @@ public class MediaBuilderServiceImpl implements MediaBuilderService {
                     Media mediaField = entityConfiguration.createEntityInstance(Media.class.getName(), Media.class);
                     field.set(media, mediaField);
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    // Nothing to do here.  If this assignment failed, we fall back to `createEntityInstance()` within the
+                    // parent class.
                 }
             }
         }
