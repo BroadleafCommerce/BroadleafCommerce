@@ -149,4 +149,12 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
         }
         return result;
     }
+
+    protected Class getClassForName(String ceilingEntityFullyQualifiedClassname) {
+        try {
+            return Class.forName(ceilingEntityFullyQualifiedClassname);
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
 }
