@@ -33,17 +33,16 @@ import org.broadleafcommerce.core.search.domain.FieldEntity
 import org.broadleafcommerce.core.search.service.solr.SolrContext
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService
 import org.broadleafcommerce.core.search.service.solr.SolrHelperServiceImpl
+import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceExtensionHandler
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionHandler
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl
 import org.springframework.transaction.PlatformTransactionManager
-
 import spock.lang.Specification
-
 
 class SolrIndexServiceSpec extends Specification {
     
-    SolrIndexServiceImpl service;
+    SolrIndexServiceImpl service
     SolrIndexDao mockSolrIndexDao = Mock()
     IndexFieldDao mockFieldDao = Mock()
     PlatformTransactionManager mockTransactionManager = Mock()
