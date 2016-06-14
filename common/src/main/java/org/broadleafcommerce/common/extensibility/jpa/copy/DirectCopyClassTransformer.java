@@ -19,6 +19,23 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.LoaderClassPath;
+import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.AnnotationMemberValue;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.MemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,23 +60,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityListeners;
-
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.AnnotationMemberValue;
-import javassist.bytecode.annotation.ArrayMemberValue;
-import javassist.bytecode.annotation.BooleanMemberValue;
-import javassist.bytecode.annotation.MemberValue;
-import javassist.bytecode.annotation.StringMemberValue;
 
 /**
  * This class transformer will copy fields, methods, and interface definitions from a source class to a target class,
@@ -115,12 +115,12 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
             String convertedClassName = className.replace('/', '.');
             ClassPool classPool = null;
             String xformKey = convertedClassName;
-            String[] xformVals = null;
+            Set<String> buildXFormVals = new HashSet<String>();
             Boolean[] xformSkipOverlaps = null;
             Boolean[] xformRenameMethodOverlaps = null;
             if (!xformTemplates.isEmpty()) {
                 if (xformTemplates.containsKey(xformKey)) {
-                    xformVals = xformTemplates.get(xformKey).split(",");
+                    buildXFormVals.addAll(Arrays.asList(xformTemplates.get(xformKey).split(",")));
                     classPool = ClassPool.getDefault();
                     clazz = classPool.makeClass(new ByteArrayInputStream(classfileBuffer), false);
                 }
@@ -157,12 +157,15 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     if (conditionalParams != null && !conditionalParams.isEmpty()) {
                         params = combineXFormParams(params, conditionalParams);
                     }
-                    xformVals = params.getXformVals();
+                    if (params.getXformVals() != null && params.getXformVals().length > 0) {
+                        buildXFormVals.addAll(Arrays.asList(params.getXformVals()));
+                    }
                     xformSkipOverlaps = params.getXformSkipOverlaps();
                     xformRenameMethodOverlaps = params.getXformRenameMethodOverlaps();
                 }
             }
-            if (xformVals != null && xformVals.length > 0) {
+            if (buildXFormVals.size() > 0) {
+                String[] xformVals = buildXFormVals.toArray(new String[buildXFormVals.size()]);
                 logger.debug(String.format("[%s] - Transform - Copying into [%s] from [%s]", LifeCycleEvent.END, xformKey,
                         StringUtils.join(xformVals, ",")));
                 // Load the destination class and defrost it so it is eligible for modifications
