@@ -126,8 +126,10 @@
                     th:classappend="${action.buttonClass}"
                     th:each="action,iterStat : ${entityForm.actions}"
                     th:if="${iterStat.index == #lists.size(entityForm.actions) - 1}"
-                    th:attr="data-url=@{'/' + ${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix}"
-                    th:disabled="#{${action.displayText}} == 'Save'">
+                    th:disabled="#{${action.displayText}} == 'Save'"
+                    th:attr="data-url=@{'/' + ${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix},
+                         data-confirm=${action.isConfirmEnabled},
+                         data-confirm-text=${action.confirmEnabledText}">
                 <span th:text="#{${action.displayText}}" th:remove="tag"></span>
             </button>
             <button type="button" class="button primary large dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -135,8 +137,10 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-right" role="menu">
                 <li th:each="action,iterStat : ${entityForm.actions}" th:if="${iterStat.index != #lists.size(entityForm.actions) - 1}">
-                <a th:attr="data-url=@{'/' + ${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix}"
-                   th:classappend="${action.buttonClass}">
+                <a th:classappend="${action.buttonClass}"
+                   th:attr="data-url=@{'/' + ${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix},
+                         data-confirm=${action.isConfirmEnabled},
+                         data-confirm-text=${action.confirmEnabledText}">
                         <span th:text="#{${action.displayText}}" th:remove="tag"></span>
                     </a>
                 </li>
@@ -147,9 +151,11 @@
         <div th:unless="${#lists.size(entityForm.actions) > 1}" th:remove="tag">
             <button type="button" class="button primary large"
                     th:each="action,iterStat : ${entityForm.actions}" th:if="${iterStat.index == #lists.size(entityForm.actions) - 1}"
-                    th:attr="data-url=@{'/' + ${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix}"
                     th:classappend="${action.buttonClass}"
-                    th:disabled="#{${action.displayText}} == 'Save'">
+                    th:disabled="#{${action.displayText}} == 'Save'"
+                    th:attr="data-url=@{'/' + ${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix},
+                         data-confirm=${action.isConfirmEnabled},
+                         data-confirm-text=${action.confirmEnabledText}">
                 <span th:text="#{${action.displayText}}" th:remove="tag"></span>
             </button>
         </div>
