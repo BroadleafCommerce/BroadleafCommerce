@@ -56,6 +56,9 @@ class SolrIndexServiceSpec extends Specification {
     
     
     def setup() {
+        mockLocaleService.findAllLocales() >> new ArrayList<Locale>()
+        mockExtensionManager.getProxy() >> Mock(SolrSearchServiceExtensionHandler)
+
         service = Spy(SolrIndexServiceImpl)
         service.solrIndexDao = mockSolrIndexDao
         service.indexFieldDao = mockFieldDao
@@ -75,7 +78,7 @@ class SolrIndexServiceSpec extends Specification {
         
         service.buildDocument(*_) >> null
         service.useSku = true;
-        
+
         SkuImpl testSku1 = Mock(SkuImpl)
         SkuImpl testSku2 = Mock(SkuImpl)
         ProductImpl testProduct1 = Mock(ProductImpl)
@@ -106,7 +109,7 @@ class SolrIndexServiceSpec extends Specification {
         
         service.buildDocument(*_) >> null
         service.useSku = true;
-        
+
         SkuImpl testSku1 = Mock(SkuImpl)
         SkuImpl testSku2 = Mock(SkuImpl)
         SkuImpl testSku3 = Mock(SkuImpl)

@@ -22,7 +22,10 @@ package org.broadleafcommerce.core.offer.service.processor;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
 import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXref;
+import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
@@ -33,7 +36,9 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.easymock.classextension.EasyMock;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import junit.framework.TestCase;
@@ -176,6 +181,45 @@ public class OrderOfferProcessorTest extends TestCase {
         //test that the invalid order offer is excluded because there are no qualifying items
         assertFalse(candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1);
         
+        verify();
+    }
+
+    public void testQualifyingQuantity() throws Exception {
+        replay();
+
+        PromotableOrder order = dataProvider.createBasicPromotableOrder();
+
+        List<Offer> offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>20", OfferDiscountType.PERCENT_OFF);
+
+        Offer firstOffer = offers.get(0);
+
+        OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
+        int originalQuantityOnOrder = 5;
+        qualCriteria.setQuantity(originalQuantityOnOrder + 1);
+        qualCriteria.setMatchRule("([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
+        Set<OfferQualifyingCriteriaXref> criterias = new HashSet<OfferQualifyingCriteriaXref>();
+        OfferQualifyingCriteriaXref xref = new OfferQualifyingCriteriaXrefImpl();
+        xref.setOffer(firstOffer);
+        xref.setOfferItemCriteria(qualCriteria);
+        criterias.add(xref);
+
+        firstOffer.setQualifyingItemCriteriaXref(criterias);
+
+        List<PromotableOrderItem> orderItems = new ArrayList<PromotableOrderItem>();
+        for (PromotableOrderItem orderItem : order.getDiscountableOrderItems()) {
+            orderItems.add(orderItem);
+        }
+        CandidatePromotionItems candidates = orderProcessor.couldOfferApplyToOrderItems(offers.get(0), orderItems);
+        //test that the valid order offer is not included
+        assertTrue(!candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1);
+
+        int quantity = orderItems.get(0).getOrderItem().getQuantity();
+        orderItems.get(0).getOrderItem().setQuantity(quantity + 1);
+
+        candidates = orderProcessor.couldOfferApplyToOrderItems(offers.get(0), orderItems);
+        //test that the valid order offer is included
+        assertTrue(candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1);
+
         verify();
     }
 }

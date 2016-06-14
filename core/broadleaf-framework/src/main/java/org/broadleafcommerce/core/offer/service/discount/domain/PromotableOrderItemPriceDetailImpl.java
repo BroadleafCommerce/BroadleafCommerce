@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPriceDetail {
@@ -328,6 +329,15 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         }
 
         PromotionQualifier pq = new PromotionQualifier();
+        
+        Money pqPriceBeforeAdjustment = new Money(0);
+        for (Map.Entry<OfferItemCriteria, List<PromotableOrderItem>> qualifierMapEntry : candidatePromotion.getCandidateQualifiersMap().entrySet()) {
+            for (PromotableOrderItem promotableOrderItem : qualifierMapEntry.getValue()) {
+                Money priceBeforeAdjustments = promotableOrderItem.getOrderItem().getPriceBeforeAdjustments(candidatePromotion.getOffer().getApplyDiscountToSalePrice());
+                pqPriceBeforeAdjustment = pqPriceBeforeAdjustment.add(priceBeforeAdjustments);
+            }
+        }
+        pq.setPrice(pqPriceBeforeAdjustment);
         pq.setPromotion(promotion);
         promotionQualifiers.add(pq);
         return pq;

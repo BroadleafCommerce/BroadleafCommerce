@@ -38,7 +38,7 @@
     </named-query>
 
     <named-query name="BC_READ_PARENT_CATEGORY_IDS_BY_PRODUCTS" >
-        <query>SELECT NEW org.broadleafcommerce.core.search.dao.ParentCategoryByProduct(categoryProduct.category.id, categoryProduct.product.id)
+        <query>SELECT NEW org.broadleafcommerce.core.search.dao.ParentCategoryByProduct(categoryProduct.category.id, categoryProduct.product.id, categoryProduct.displayOrder)
             FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
             WHERE categoryProduct.product.id IN :productIds
             ORDER BY categoryProduct.product.id

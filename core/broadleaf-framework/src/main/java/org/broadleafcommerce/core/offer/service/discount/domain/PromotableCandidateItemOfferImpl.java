@@ -37,6 +37,8 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     protected PromotableOrder promotableOrder;
     protected Money potentialSavings;
     protected Money potentialSavingsQtyOne;
+    protected BigDecimal weightedPercentSaved;
+    protected Money originalPrice;
     protected int uses = 0;
     
     protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap =
@@ -62,10 +64,10 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     @Override
     public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings) {
         Money savings = new Money(promotableOrder.getOrderCurrency());
-        Money price = orderItem.getPriceBeforeAdjustments(getOffer().getApplyDiscountToSalePrice());
+        originalPrice = orderItem.getPriceBeforeAdjustments(getOffer().getApplyDiscountToSalePrice());
 
         BigDecimal offerUnitValue = PromotableOfferUtility.determineOfferUnitValue(offer, this);
-        savings = PromotableOfferUtility.computeAdjustmentValue(price, offerUnitValue, this, this);
+        savings = PromotableOfferUtility.computeAdjustmentValue(originalPrice, offerUnitValue, this, this);
         return savings.multiply(qtyToReceiveSavings);
     }
 
@@ -214,5 +216,28 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     @Override
     public void setLegacyCandidateTargets(List<PromotableOrderItem> candidateTargets) {
         this.legacyCandidateTargets = candidateTargets;
+    }
+
+    @Override
+    public BigDecimal getWeightedPercentSaved() {
+        if (weightedPercentSaved == null) {
+            return new BigDecimal(0);
+        }
+        return weightedPercentSaved;
+    }
+
+    @Override
+    public void setWeightedPercentSaved(BigDecimal weightedPercentSaved) {
+        this.weightedPercentSaved = weightedPercentSaved;
+    }
+
+    @Override
+    public Money getOriginalPrice() {
+        return originalPrice;
+    }
+
+    @Override
+    public void setOriginalPrice(Money originalPrice) {
+        this.originalPrice = originalPrice;
     }
 }

@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.web.processor;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.handler.CsrfFilter;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
+import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -44,6 +45,9 @@ public class FormProcessor extends AbstractElementProcessor {
     
     @Resource(name = "blExploitProtectionService")
     protected ExploitProtectionService eps;
+
+    @Resource(name = "blStaleStateProtectionService")
+    protected StaleStateProtectionService spps;
     
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -68,6 +72,10 @@ public class FormProcessor extends AbstractElementProcessor {
         if (!"GET".equalsIgnoreCase(element.getAttributeValueFromNormalizedName("method"))) {
             try {
                 String csrfToken = eps.getCSRFToken();
+                String stateVersionToken = null;
+                if (spps.isEnabled()) {
+                    stateVersionToken = spps.getStateVersionToken();
+                }
 
                 //detect multipart form
                 if ("multipart/form-data".equalsIgnoreCase(element.getAttributeValueFromNormalizedName("enctype"))) {
@@ -75,6 +83,9 @@ public class FormProcessor extends AbstractElementProcessor {
                             .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValueFromNormalizedName("th:action"));
                     String action = (String) expression.execute(arguments.getConfiguration(), arguments);
                     String csrfQueryParameter = "?" + eps.getCsrfTokenParameter() + "=" + csrfToken;
+                    if (stateVersionToken != null) {
+                        csrfQueryParameter += "&" + spps.getStateVersionTokenParameter() + "=" + stateVersionToken;
+                    }
                     element.removeAttribute("th:action");
                     element.setAttribute("action", action + csrfQueryParameter);
                 } else {
@@ -83,6 +94,13 @@ public class FormProcessor extends AbstractElementProcessor {
                     csrfNode.setAttribute("name", eps.getCsrfTokenParameter());
                     csrfNode.setAttribute("value", csrfToken);
                     element.addChild(csrfNode);
+                    if (stateVersionToken != null) {
+                        Element versionNode = new Element("input");
+                        versionNode.setAttribute("type", "hidden");
+                        versionNode.setAttribute("name", spps.getStateVersionTokenParameter());
+                        versionNode.setAttribute("value", stateVersionToken);
+                        element.addChild(versionNode);
+                    }
                 }
 
             } catch (ServiceException e) {

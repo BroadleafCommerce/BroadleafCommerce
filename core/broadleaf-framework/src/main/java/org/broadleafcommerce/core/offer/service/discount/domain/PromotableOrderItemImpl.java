@@ -65,18 +65,18 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
         initializePriceDetails();
     }
 
-    private void initializePriceDetails() {
+    protected void initializePriceDetails() {
         if (includeAdjustments) {
             for (OrderItemPriceDetail detail : orderItem.getOrderItemPriceDetails()) {
                 PromotableOrderItemPriceDetail poid =
                         itemFactory.createPromotableOrderItemPriceDetail(this, detail.getQuantity());
                 itemPriceDetails.add(poid);
-                poid.chooseSaleOrRetailAdjustments();
                 for (OrderItemPriceDetailAdjustment adjustment : detail.getOrderItemPriceDetailAdjustments()) {
                     PromotableOrderItemPriceDetailAdjustment poidAdj =
                             new PromotableOrderItemPriceDetailAdjustmentImpl(adjustment, poid);
                     poid.addCandidateItemPriceDetailAdjustment(poidAdj);
                 }
+                poid.chooseSaleOrRetailAdjustments();
 
                 List<OrderItemQualifier> oiqs = poid.getPromotableOrderItem().getOrderItem().getOrderItemQualifiers();
                 if (CollectionUtils.isNotEmpty(oiqs)) {
@@ -85,6 +85,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
                         pq.setPromotion(oiq.getOffer());
                         pq.setQuantity(oiq.getQuantity().intValue());
                         pq.setFinalizedQuantity(oiq.getQuantity().intValue());
+                        pq.setPrice(oiq.getOrderItem().getPriceBeforeAdjustments(oiq.getOffer().getApplyDiscountToSalePrice()));
                         poid.getPromotionQualifiers().add(pq);
                     }
                 }

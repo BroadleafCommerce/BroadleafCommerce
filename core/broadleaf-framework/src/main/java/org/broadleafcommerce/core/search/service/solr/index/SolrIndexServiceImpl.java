@@ -157,27 +157,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             SolrIndexCachedOperation.setCache(cache);
             cacheOperation.execute();
         } finally {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Cleaning up Solr index cache from memory - size approx: " + getCacheSizeInMemoryApproximation(SolrIndexCachedOperation.getCache()) + " bytes");
-            }
             SolrIndexCachedOperation.clearCache();
-        }
-    }
-
-    protected int getCacheSizeInMemoryApproximation(CatalogStructure structure) {
-        try {
-            if (structure == null) {
-                return 0;
-            }
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(structure);
-            IOUtils.closeQuietly(oos);
-            int size = baos.size();
-            IOUtils.closeQuietly(baos);
-            return size;
-        } catch (IOException e) {
-            throw ExceptionHelper.refineException(e);
         }
     }
 
@@ -238,7 +218,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Override
     public void executeSolrIndexOperation(final SolrIndexOperation operation) throws ServiceException, IOException {
         operation.obtainLock();
-        
+
         try {
             LOG.info("Executing Indexing operation");
             StopWatch s = new StopWatch();
@@ -280,7 +260,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             operation.releaseLock();
         }
     }
-    
+
     /**
      * @return
      */
@@ -313,7 +293,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     protected void deleteAllReindexCoreDocuments() throws ServiceException {
         deleteAllNamespaceDocuments(SolrContext.getReindexServer());
     }
-    
+
     @Override
     public void deleteAllNamespaceDocuments(SolrClient server) throws ServiceException {
         try {
@@ -371,7 +351,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 operation.afterBuildPage();
             }
 
-            
+
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
         } catch (RuntimeException e) {
             TransactionUtils.finalizeTransaction(status, transactionManager, true);
@@ -379,7 +359,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
         return response;
     }
-    
+
     @Override
     public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrClient solrServer) throws ServiceException {
         TransactionStatus status = TransactionUtils.createTransaction("executeIncrementalIndex",
@@ -392,7 +372,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("Building incremental product index - pageSize: [%s]...", indexables.size()));
         }
-        
+
         StopWatch s = new StopWatch();
         try {
             sandBoxHelper.ignoreCloneCache(true);
@@ -415,7 +395,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 if (fields == null || ObjectUtils.notEqual(currentFieldType, indexable.getFieldEntityType())) {
                     fields = indexFieldDao.readFieldsByEntityType(indexable.getFieldEntityType());
                 }
-                
+
                 SolrInputDocument doc = buildDocument(indexable, fields, locales);
                 //If someone overrides the buildDocument method and determines that they don't want a product 
                 //indexed, then they can return null. If the document is null it does not get added to 
@@ -424,7 +404,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     documents.add(doc);
                 }
             }
-            
+
             extensionManager.getProxy().modifyBuiltDocuments(documents, indexables, fields, locales);
 
             logDocuments(documents);
@@ -438,7 +418,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(String.format("Built incremental product index - pageSize: [%s] in [%s]", indexables.size(), s.toLapString()));
             }
-            
+
             return documents;
         } catch (SolrServerException e) {
             TransactionUtils.finalizeTransaction(status, transactionManager, true);
@@ -463,7 +443,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             return productDao.readAllActiveProducts(pageSize, lastId);
         }
     }
-    
+
     @Override
     public List<Sku> filterIndexableSkus(List<Sku> skus) {
         ArrayList<Sku> skusToIndex = new ArrayList<Sku>();
@@ -550,7 +530,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                                 String solrPropertyName = shs.getPropertyNameForIndexField(indexField, fieldType, prefix);
                                 Object value = entry.getValue();
-                                
+
                                 if (FieldType.isMultiValued(fieldType)) {
                                     document.addField(solrPropertyName, value);
                                 } else {
@@ -589,15 +569,15 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             LOG.error(msg);
             throw new IllegalStateException(msg);
         }
-        
+
         // Add the namespace and ID fields for this product
         document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
         document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, indexable));
         document.addField(shs.getTypeFieldName(), shs.getDocumentType(indexable));
         document.addField(shs.getIndexableIdFieldName(), shs.getIndexableId(indexable));
-        
+
         extensionManager.getProxy().attachAdditionalBasicFields(indexable, document, shs);
-        
+
         Long cacheKey = this.shs.getCurrentProductId(indexable); // current
         if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
             cacheKey = sandBoxHelper.getOriginalId(cacheKey); // parent
@@ -605,7 +585,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 cacheKey = shs.getIndexableId(indexable); // master
             }
         }
-        
+
         // TODO: figure this out more generally; this doesn't work for CMS content
         // The explicit categories are the ones defined by the product itself
         if (cache.getParentCategoriesByProduct().containsKey(cacheKey)) {

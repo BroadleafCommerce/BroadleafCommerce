@@ -194,8 +194,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     public int markRelatedQualifiersAndTargetsForItemCriteria(PromotableCandidateItemOffer itemOffer, PromotableOrder order,
             OrderItemHolder orderItemHolder, OfferItemCriteria itemCriteria,
             List<PromotableOrderItemPriceDetail> priceDetails, ItemOfferMarkTargets itemOfferMarkTargets) {
-        sortQualifierItemDetails(priceDetails,
-                itemOffer.getOffer().getApplyDiscountToSalePrice());
+        sortQualifierItemDetails(priceDetails, itemOffer.getOffer().getApplyDiscountToSalePrice());
 
         // Calculate the number of qualifiers needed that will not receive the promotion.  
         // These will be reserved first before the target is assigned.
@@ -221,6 +220,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
                     int qtyToMarkAsQualifier = Math.min(qualifierQtyNeeded, itemQtyAvailableToBeUsedAsQualifier);
                     qualifierQtyNeeded -= qtyToMarkAsQualifier;
                     PromotionQualifier pq = detail.addPromotionQualifier(itemOffer, itemCriteria, qtyToMarkAsQualifier);
+                    pq.setPrice(detail.getPromotableOrderItem().getPriceBeforeAdjustments(itemOffer.getOffer().getApplyDiscountToSalePrice()));
 
                     // Now, we need to see if there exists a target(s) that is suitable for this qualifier due to
                     // the relationship flag. If we are on the last qualifier required for this offer, we want to 

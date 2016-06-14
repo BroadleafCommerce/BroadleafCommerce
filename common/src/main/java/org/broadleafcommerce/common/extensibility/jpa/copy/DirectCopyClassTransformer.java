@@ -225,6 +225,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                                     logger.debug(String.format("Skipping overlapped field [%s]", field.getName()));
                                     continue;
                                 }
+                                clazz.removeField(ctField);
                             } catch (NotFoundException e) {
                                 //do nothing -- field does not exist
                             }
