@@ -61,8 +61,13 @@ public class BundleResourceResolver extends AbstractResourceResolver implements 
                 Resource bundle = bundlingService.resolveBundleResource(requestPath);
 
                 logTraceInformation(bundle);
-                if (bundle != null && bundle.exists()) {
-                    return bundle;
+                if (bundle != null) {
+                    if (!bundle.exists()) {
+                        bundle = bundlingService.rebuildBundledResource(requestPath);
+                    }
+                    if (bundle != null) {
+                        return bundle;
+                    }
                 }
             }
         }
