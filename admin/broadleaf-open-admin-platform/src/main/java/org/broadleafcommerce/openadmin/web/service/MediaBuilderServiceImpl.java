@@ -27,6 +27,8 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.lang.reflect.Field;
+
 import javax.annotation.Resource;
 
 /**
@@ -51,6 +53,22 @@ public class MediaBuilderServiceImpl implements MediaBuilderService {
                 LOG.warn("Error parsing json to media " + json, e);
             }
         }
-        return entityConfiguration.createEntityInstance(MediaDto.class.getName(), MediaDto.class);
+        return entityConfiguration.createEntityInstance(Media.class.getName(), Media.class);
+    }
+
+    @Override
+    public void instantiateMediaFields(Media media) {
+        Field[] fields = media.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (Media.class.isAssignableFrom(field.getType())) {
+                field.setAccessible(true);
+                try {
+                    Media mediaField = entityConfiguration.createEntityInstance(Media.class.getName(), Media.class);
+                    field.set(media, mediaField);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
