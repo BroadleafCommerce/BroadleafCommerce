@@ -23,6 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.BLCNumberUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.SessionFactory;
 import org.hibernate.annotations.GenericGenerator;
@@ -165,7 +166,8 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                     }
                     
                     if (CollectionUtils.isNotEmpty(results) && results.get(0) != null) {
-                        Long maxEntityId = (Long) results.get(0);
+                        LOG.debug(String.format("Checking for sequence corruption on entity %s", segmentValue));
+                        Long maxEntityId = BLCNumberUtils.toLong(results.get(0));
                         if (maxEntityId > maxSequenceId) {
                             LOG.error(String.format("The sequence value for %s in %s was found as %d (or an entry did not exist) but the actual max sequence in"
                                 + " %s's table was found as %d", segmentValue, tableName, maxSequenceId, mappedClass.getName(), maxEntityId));
