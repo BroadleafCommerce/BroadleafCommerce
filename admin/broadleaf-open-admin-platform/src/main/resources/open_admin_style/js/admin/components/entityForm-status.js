@@ -137,6 +137,8 @@
                 else if ($(el).closest('.additional-foreign-key-container').length) {
                     if ($(el).hasClass('hidden-display-value')) {
                         var $container = $(el).closest('.additional-foreign-key-container');
+                        $container.trigger({ type:"change", revertEntityFormChanges: true });
+
                         if (origVal != '') {
                             $container.find('.display-value').val(origVal).show();
                             $container.find('.clear-foreign-key').show();
