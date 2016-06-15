@@ -138,6 +138,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         }
                     } else if (media == null) {
                         media = (Media) valueType.newInstance();
+                        mediaBuilderService.instantiateMediaFields(media);
 
                         Object parent = extractParent(populateValueRequest, instance);
 

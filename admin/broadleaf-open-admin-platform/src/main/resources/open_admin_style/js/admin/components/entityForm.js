@@ -351,63 +351,82 @@ $(document).ready(function() {
     // When the delete button is clicked, we can change the desired action for the
     // form and submit it normally (not via AJAX).
     $('body').on('click', 'button.delete-button, a.delete-button', function(event) {
-        var $form = BLCAdmin.getForm($(this));
+        var $button = $(this);
+        var mustConfirm = $button.data('confirm');
+        var confirmMsg = $button.data('confirm-text');
 
-        var currentAction = $form.attr('action');
-        var deleteUrl = currentAction + '/delete';
+        BLCAdmin.confirmProcessBeforeProceeding(mustConfirm, confirmMsg, processDeleteCall, [$button]);
 
-        BLCAdmin.entityForm.showActionSpinner($(this).closest('.entity-form-actions'));
-        
-        // On success this should redirect, on failure we'll get some JSON back
-        BLC.ajax({
-            url: deleteUrl,
-            type: "POST",
-            data: $form.serializeArray(),
-            complete: BLCAdmin.entityForm.hideActionSpinner()
-        }, function (data) {
-            $("#headerFlashAlertBoxContainer").removeClass("hidden");
-            $(".errors, .error, .tab-error-indicator, .tabError").remove();
-            $('.has-error').removeClass('has-error');
+        function processDeleteCall (params) {
+            var $deleteButton = params[0];
+            var $form = BLCAdmin.getForm($deleteButton);
 
-            if (!data.errors) {
-                var $titleBar = $form.closest('.main-content').find('.content-area-title-bar');
-                BLCAdmin.alert.showAlert($titleBar, 'Successfully ' + BLCAdmin.messages.deleted + '!', {
-                    alertType: 'save-alert',
-                    autoClose: 2000,
-                    clearOtherAlerts: true
-                });
-            } else {
-                BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemDeleting);
-            }
+            var currentAction = $form.attr('action');
+            var deleteUrl = currentAction + '/delete';
 
-            BLCAdmin.runPostFormSubmitHandlers($form, data);
-        });
-        
-        event.preventDefault();
+            BLCAdmin.entityForm.showActionSpinner($deleteButton.closest('.entity-form-actions'));
+
+            // On success this should redirect, on failure we'll get some JSON back
+            BLC.ajax({
+                url: deleteUrl,
+                type: "POST",
+                data: $form.serializeArray(),
+                complete: BLCAdmin.entityForm.hideActionSpinner()
+            }, function (data) {
+                $("#headerFlashAlertBoxContainer").removeClass("hidden");
+                $(".errors, .error, .tab-error-indicator, .tabError").remove();
+                $('.has-error').removeClass('has-error');
+
+                if (!data.errors) {
+                    var $titleBar = $form.closest('.main-content').find('.content-area-title-bar');
+                    BLCAdmin.alert.showAlert($titleBar, 'Successfully ' + BLCAdmin.messages.deleted + '!', {
+                        alertType: 'save-alert',
+                        autoClose: 2000,
+                        clearOtherAlerts: true
+                    });
+                } else {
+                    BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemDeleting);
+                }
+
+                BLCAdmin.runPostFormSubmitHandlers($form, data);
+            });
+
+            event.preventDefault();
+        }
     });
 
     $('body').on('click', 'button.submit-button, a.submit-button', function(event) {
-        if ($(this).hasClass('disabled') || $(this).is(':disabled')) {
+        var $button = $(this);
+        if ($button.hasClass('disabled') || $button.is(':disabled')) {
             return;
         }
 
-        $('body').click(); // Defocus any current elements in case they need to act prior to form submission
-        var $form = BLCAdmin.getForm($(this));
+        var mustConfirm = $button.data('confirm');
+        var confirmMsg = $button.data('confirm-text');
 
-        BLCAdmin.entityForm.showActionSpinner($(this).closest('.content-area-title-bar.entity-form-actions'));
+        BLCAdmin.confirmProcessBeforeProceeding(mustConfirm, confirmMsg, processSubmitCall, [$button]);
 
-        // This is a save, we need to enable the page to be reloaded (in the case of an initial save)
-        if (BLCAdmin.entityForm.status) {
-            BLCAdmin.entityForm.status.setDidConfirmLeave(true);
+        function processSubmitCall(params) {
+            var $submitButton = params[0];
+
+            $('body').click(); // Defocus any current elements in case they need to act prior to form submission
+            var $form = BLCAdmin.getForm($submitButton);
+
+            BLCAdmin.entityForm.showActionSpinner($submitButton.closest('.content-area-title-bar.entity-form-actions'));
+
+            // This is a save, we need to enable the page to be reloaded (in the case of an initial save)
+            if (BLCAdmin.entityForm.status) {
+                BLCAdmin.entityForm.status.setDidConfirmLeave(true);
+            }
+
+            if ($(".blc-admin-ajax-update").length && $form.parents(".modal-body").length == 0) {
+                BLCAdmin.entityForm.submitFormViaAjax($form);
+            } else {
+                $form.submit();
+            }
+
+            event.preventDefault();
         }
-
-        if ($(".blc-admin-ajax-update").length && $form.parents(".modal-body").length == 0) {
-            BLCAdmin.entityForm.submitFormViaAjax($form);
-        } else {
-            $form.submit();
-        }
-
-        event.preventDefault();
     });
 
     function getTabText($tab) {
