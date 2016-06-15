@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.util.DialectHelper;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
@@ -87,9 +86,6 @@ public class ProductDaoImpl implements ProductDao {
     @Resource(name = "blProductDaoExtensionManager")
     protected ProductDaoExtensionManager extensionManager;
 
-    @Resource(name = "blDialectHelper")
-    protected DialectHelper dialectHelper;
-
     protected Long currentDateResolution = 10000L;
     protected Date cachedDate = SystemTime.asDate();
 
@@ -131,19 +127,13 @@ public class ProductDaoImpl implements ProductDao {
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
         Root<ProductImpl> product = criteria.from(ProductImpl.class);
 
-        FetchParent fetchParent = product.fetch("defaultSku", JoinType.LEFT);
-        if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
-            fetchParent.fetch("skuMedia", JoinType.LEFT);
-        }
+        product.fetch("defaultSku", JoinType.LEFT);
         criteria.select(product);
 
         // We only want results that match the product IDs
         criteria.where(product.get("id").as(Long.class).in(
                 sandBoxHelper.mergeCloneIds(ProductImpl.class,
                         productIds.toArray(new Long[productIds.size()]))));
-        if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
-            criteria.distinct(true);
-        }
 
         TypedQuery<Product> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);

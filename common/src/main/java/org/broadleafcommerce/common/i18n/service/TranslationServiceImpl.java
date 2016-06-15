@@ -173,7 +173,7 @@ public class TranslationServiceImpl implements TranslationService {
             localeCountryCode += "_" + locale.getCountry();
         }
         
-        if (TranslationBatchReadCache.getCache() != null && TranslationBatchReadCache.getCache().getSize() != 0) {
+        if (TranslationBatchReadCache.hasCache()) {
             Translation translation = TranslationBatchReadCache.getFromCache(entityType, entityId, property, localeCountryCode);
             if (translation != null) {
                 return translation.getTranslatedValue();
@@ -442,6 +442,11 @@ public class TranslationServiceImpl implements TranslationService {
         }
 
         return requestedDefaultValue;
+    }
+
+    @Override
+    public List<Translation> findAllTranslationEntries(TranslatedEntity translatedEntity, ResultType standard, List<String> entityIds) {
+        return dao.readAllTranslationEntries(translatedEntity, standard, entityIds);
     }
 
     /**

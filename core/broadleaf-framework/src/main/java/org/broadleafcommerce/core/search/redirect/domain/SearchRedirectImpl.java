@@ -25,12 +25,16 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.common.web.resource.resolver.BLCSystemPropertyResourceResolver;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 
@@ -93,6 +97,7 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date",
             order = 3000, group = GroupName.Dates,
             tooltip = "skuStartDateTooltip", groupOrder = 1,
+            requiredOverride = RequiredOverride.REQUIRED,
             defaultValue = "today")
     protected Date activeStartDate;
 
@@ -164,12 +169,20 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
 
     @Override
     public boolean isActive() {
-        if (LOG.isDebugEnabled()) {
-            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
-                LOG.debug("product, " + id + ", inactive due to date");
-            }
+        Long date = SystemTime.asMillis(true);
+        boolean isNullActiveStartDateActive = BLCSystemProperty.resolveBooleanSystemProperty("searchRedirect.is.null.activeStartDate.active");
+
+        boolean isActive;
+        if (isNullActiveStartDateActive) {
+            isActive = (getActiveStartDate() == null || getActiveStartDate().getTime() <= date) && (getActiveEndDate() == null || getActiveEndDate().getTime() > date);
+        } else {
+            isActive = (getActiveStartDate() != null && getActiveStartDate().getTime() <= date) && (getActiveEndDate() == null || getActiveEndDate().getTime() > date);
         }
-        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
+
+        if (LOG.isDebugEnabled() && !isActive) {
+            LOG.debug("product, " + id + ", inactive due to date");
+        }
+        return isActive;
     }
 
     @Override
