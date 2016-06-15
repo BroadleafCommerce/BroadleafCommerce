@@ -138,7 +138,9 @@
                     if ($(el).hasClass('hidden-display-value')) {
                         var $container = $(el).closest('.additional-foreign-key-container');
                         if (origVal != '') {
-                            $container.find('.display-value').val(origVal);
+                            $container.find('.display-value').val(origVal).show();
+                            $container.find('.clear-foreign-key').show();
+                            $container.find('.display-value-none-selected').hide();
                         } else {
                             $container.find('.display-value').hide();
                             $container.find('.clear-foreign-key').hide();
