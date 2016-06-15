@@ -34,6 +34,15 @@ import java.util.List;
 public interface ResourceBundlingService {
 
     /**
+     * Returns a newly rebuilt bundled resource given that the passed requestedBundleName had previously been built and cached/persisted via 
+     * the {@code resolveBundleResourceName} method
+     * 
+     * @param requestedBundleName
+     * @return
+     */
+    public Resource rebuildBundledResource(String requestedBundleName);
+
+    /**
      * Returns a file name representing a versioned copy of the bundle.
      * 
      * <p>

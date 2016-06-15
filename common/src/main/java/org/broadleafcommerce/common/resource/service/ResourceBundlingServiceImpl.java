@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.BroadleafFileService;
+import org.broadleafcommerce.common.resource.BundledResourceInfo;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.resource.BroadleafDefaultResourceResolverChain;
@@ -90,7 +91,24 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
     private KeyLockManager keyLockManager = KeyLockManagers.newLock();
 
-    private ConcurrentHashMap<String, Resource> createdBundles = new ConcurrentHashMap<String, Resource>();
+    private ConcurrentHashMap<String, BundledResourceInfo> createdBundles = new ConcurrentHashMap<String, BundledResourceInfo>();
+
+    @Override
+    public Resource rebuildBundledResource(String requestedBundleName) {
+        String resourceName = lookupBundlePath(requestedBundleName);
+        BundledResourceInfo bundleInfo = createdBundles.get(resourceName);
+        if (bundleInfo != null) {
+            createdBundles.remove(resourceName);
+            ResourceHttpRequestHandler resourceRequestHandler = findResourceHttpRequestHandler(requestedBundleName);
+            if (resourceRequestHandler != null) {
+                ResourceResolverChain resolverChain = new BroadleafDefaultResourceResolverChain(
+                        resourceRequestHandler.getResourceResolvers());
+                List<Resource> locations = resourceRequestHandler.getLocations();
+                createBundleIfNeeded(bundleInfo.getVersionedBundleName(), bundleInfo.getBundledFilePaths(), resolverChain, locations);
+            }
+        }
+        return resourceName != null ? getBundledResource(resourceName) : null;
+    }
     
     @Override
     public String resolveBundleResourceName(String requestedBundleName, String mappingPrefix, List<String> files) {
@@ -139,9 +157,9 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
     @Override
     public Resource resolveBundleResource(String versionedBundleResourceName) {
-        return createdBundles.get(lookupBundlePath(versionedBundleResourceName));
+        return getBundledResource(lookupBundlePath(versionedBundleResourceName));
     }
-
+    
     @Override
     public boolean checkForRegisteredBundleFile(String versionedBundleName) {
         versionedBundleName = lookupBundlePath(versionedBundleName);
@@ -153,6 +171,11 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         return bundleRegistered;
     }
 
+    protected Resource getBundledResource(String versionedBundleName) {
+        BundledResourceInfo bundledResourceInfo = createdBundles.get(versionedBundleName);
+        return bundledResourceInfo != null ? bundledResourceInfo.getResource() : null;
+    }
+   
     protected String lookupBundlePath(String requestPath) {
         if (requestPath.contains(".css")) {
             if (!requestPath.startsWith("/css/")) {
@@ -173,14 +196,15 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
                 @Override
                 public void doInLock() {
-                    Resource bundleResource = createdBundles.get(versionedBundleName);
+                    Resource bundleResource = getBundledResource(versionedBundleName);
                     if (bundleResource == null || !bundleResource.exists()) {
                         bundleResource = createBundle(versionedBundleName, filePaths, resolverChain, locations);
                         if (bundleResource != null) {
                             saveBundle(bundleResource);
                         }
                         Resource savedResource = readBundle(versionedBundleName);
-                        createdBundles.put(versionedBundleName, savedResource);
+                        BundledResourceInfo bundledResourceInfo = new BundledResourceInfo(savedResource, versionedBundleName, filePaths);
+                        createdBundles.put(versionedBundleName, bundledResourceInfo);
                     }
                 }
             });
