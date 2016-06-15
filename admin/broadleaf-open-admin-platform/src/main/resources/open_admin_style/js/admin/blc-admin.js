@@ -1130,6 +1130,31 @@ var BLCAdmin = (function($) {
                 var $nav = $('.secondary-nav').parent();
                 $nav.replaceWith($(data));
             });
+        },
+
+        confirmProcessBeforeProceeding: function(mustConfirm, confirmMsg, processMethod, methodParams) {
+            if (mustConfirm) {
+                if (confirmMsg == undefined || !confirmMsg.length) {
+                    confirmMsg = BLCAdmin.messages.defaultConfirmMessage;
+                }
+
+                var cancel = false;
+                $.confirm({
+                    content: confirmMsg,
+                    confirm: function() {
+                        processMethod(methodParams);
+                    },
+                    cancel: function() {
+                        cancel = true;
+                    }
+                });
+                if (cancel) {
+                    event.preventDefault();
+                    return false;
+                }
+            } else {
+                processMethod(methodParams);
+            }
         }
     };
 
