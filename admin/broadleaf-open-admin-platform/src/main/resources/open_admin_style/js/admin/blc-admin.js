@@ -893,7 +893,9 @@ var BLCAdmin = (function($) {
             }
 
             $field.find('select').val(value);
-            $field.find('input[type="text"]').val(value);
+            if (!$field.find('.additional-foreign-key-container')) {
+                $field.find('input[type="text"]').val(value);
+            }
             
             if (value == null && $field.find('button.clear-foreign-key')) {
                 $field.find('button.clear-foreign-key').click();
