@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.admin.server.handler;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
@@ -69,6 +70,7 @@ import javax.persistence.PersistenceContext;
 public class StructuredContentTypeCustomPersistenceHandler extends CustomPersistenceHandlerAdapter implements DynamicEntityRetriever {
 
     private final Log LOG = LogFactory.getLog(StructuredContentTypeCustomPersistenceHandler.class);
+
     private static String GENERAL_DYNAMIC_FIELD_VALIDATION_ERROR = "structuredContentDynamicFieldValidationFailure";
     private static String REQUIRED_FIELD_VALIDATION_ERROR = "requiredValidationFailure";
 
@@ -302,33 +304,26 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
         if (valid) {
             // check if required fields are set
-            Property[] properties = entity.getProperties();
             Set<String> keys = fieldMetaDataMap.keySet();
 
-            for (Property property : properties) {
+            for (Property property : entity.getProperties()) {
                 String name = property.getName();
                 String value = property.getValue();
 
                 if (keys.contains(name)) {
                     BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) fieldMetaDataMap.get(name);
-                    Boolean required = fieldMetadata.getRequiredOverride();
+                    boolean isRequired = fieldMetadata.getRequiredOverride();
 
-                    if(isRequired(required) && isNullOrEmptyValue(value)) {
+                    if(isRequired && StringUtils.isEmpty(value)) {
+                        entity.addValidationError(name, REQUIRED_FIELD_VALIDATION_ERROR);
                         throw new ValidationException(entity, REQUIRED_FIELD_VALIDATION_ERROR);
                     }
                 }
             }
 
         } else {
+            entity.addGlobalValidationError(GENERAL_DYNAMIC_FIELD_VALIDATION_ERROR);
             throw new ValidationException(entity, GENERAL_DYNAMIC_FIELD_VALIDATION_ERROR);
         }
-    }
-
-    protected Boolean isRequired(Boolean required) {
-        return required != null && required;
-    }
-
-    protected Boolean isNullOrEmptyValue(String value) {
-        return value == null || value.isEmpty();
     }
 }
