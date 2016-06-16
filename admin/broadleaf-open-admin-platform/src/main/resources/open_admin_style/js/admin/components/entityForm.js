@@ -231,6 +231,17 @@
             }
 
             hideGroupIfFieldsAreHidden($field);
+        },
+
+        /**
+         * Add isPostAdd URL parameter to an existing form action
+         * @param {$form}     form jQuery object
+         */
+        addIsPostAddToFormAction : function addIsPostAddToFormAction($form) {
+            var formUrl = $form.attr('action');
+            var isPostAddParam = {"isPostAdd":"true"};
+
+            $form.attr('action', BLCAdmin.buildUrlWithParams(formUrl, isPostAddParam));
         }
     };
 })(jQuery, BLCAdmin);
@@ -411,6 +422,10 @@ $(document).ready(function() {
 
             $('body').click(); // Defocus any current elements in case they need to act prior to form submission
             var $form = BLCAdmin.getForm($submitButton);
+
+            if (window.location.href.indexOf('isPostAdd') != -1) {
+                BLCAdmin.entityForm.addIsPostAddToFormAction($form);
+            }
 
             BLCAdmin.entityForm.showActionSpinner($submitButton.closest('.content-area-title-bar.entity-form-actions'));
 
