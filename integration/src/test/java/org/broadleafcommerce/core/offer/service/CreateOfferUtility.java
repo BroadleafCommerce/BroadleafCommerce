@@ -80,7 +80,7 @@ public class CreateOfferUtility {
         if (stackable) {
             offer.setOfferItemTargetRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
         }
-        
+
         OfferItemCriteria oic = new OfferItemCriteriaImpl();
         oic.setQuantity(1);
         oic.setMatchRule(orderRule);
@@ -96,7 +96,7 @@ public class CreateOfferUtility {
             OfferItemCriteria qoic = new OfferItemCriteriaImpl();
             qoic.setQuantity(1);
             qoic.setMatchRule(qualifierRule);
-            
+
             OfferQualifyingCriteriaXref qualifyingXref = new OfferQualifyingCriteriaXrefImpl();
             qualifyingXref.setOffer(offer);
             qualifyingXref.setOfferItemCriteria(qoic);

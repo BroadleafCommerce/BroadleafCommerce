@@ -32,4 +32,13 @@ public interface MediaBuilderService {
      * @param type the {@link Class} that the {@link Media} should be
      */
     public Media convertJsonToMedia(String json, Class<?> type);
+
+    /**
+     * Instantiates any {@link org.broadleafcommerce.common.media.domain.Media} assignable field on the passed in
+     * {@link org.broadleafcommerce.common.media.domain.Media} object.  This is used for xref
+     * objects that implement {@link org.broadleafcommerce.common.media.domain.Media}
+     *
+     * @param media
+     */
+    public void instantiateMediaFields(Media media);
 }

@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Open Admin Platform
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,27 +15,13 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.currency.domain;
 
-import java.io.Serializable;
+#lightbox #expire-message #expire-text-container {
+    padding: 15px 30px;
+    background-color: #F9F7F3;
+}
 
-/**
- * Author: jerryocanas
- * Date: 9/6/12
- */
-public interface BroadleafCurrency extends Serializable {
-
-    public String getCurrencyCode();
-    
-    public java.util.Currency getJavaCurrency();
-
-    public void setCurrencyCode(String code);
-
-    public String getFriendlyName();
-
-    public void setFriendlyName(String friendlyName);
-
-    public boolean getDefaultFlag();
-
-    public void setDefaultFlag(boolean defaultFlag);
+#lightbox #expire-message #expire-text span {
+    color: #8EAA2B;
+    font-weight: bold;
 }

@@ -63,8 +63,8 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     protected static final String OFFER_ITEM_TARGET_RULE_TYPE = "offerItemTargetRuleType";
 
     private Boolean isAssignableFromOffer(PersistencePackage persistencePackage) {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return Offer.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        Class ceilingEntityClass = getClassForName(persistencePackage.getCeilingEntityFullyQualifiedClassname());
+        return ceilingEntityClass != null && Offer.class.isAssignableFrom(ceilingEntityClass);
     }
 
     @Override
@@ -84,13 +84,13 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
-        Map<String, FieldMetadata> md = getMetadata(persistencePackage, helper);
+        Class ceilingEntityClass = getClassForName(persistencePackage.getCeilingEntityFullyQualifiedClassname());
 
         PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
         Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
 
         //retrieve the default properties for WorkflowEvents
-        Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);
+        Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(ceilingEntityClass.getCanonicalName(), persistencePerspective);
 
         properties.put(SHOW_ADVANCED_VISIBILITY_OPTIONS, buildAdvancedVisibilityOptionsFieldMetaData());
         properties.put(QUALIFIERS_CAN_BE_QUALIFIERS, buildQualifiersCanBeQualifiersFieldMetaData());
@@ -98,7 +98,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         properties.put(STACKABLE, buildStackableFieldMetaData());
 
         allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
-        Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
+        Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityClass);
         ClassMetadata mergedMetadata = helper.buildClassMetadata(entityClasses, persistencePackage, allMergedProperties);
 
         return new DynamicResultSet(mergedMetadata, null, null);

@@ -15,46 +15,28 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.currency.domain;
+package org.broadleafcommerce.common.security.service;
 
-import java.util.Currency;
+/**
+ * This exception is thrown when the system detects a request from a "stale" page. This relates to a
+ * Http Status 409 error response. See {@link StaleStateProtectionService} for more information.
+ *
+ * @author Jeff Fischer
+ */
+public class StaleStateServiceException extends RuntimeException {
 
-public class NullBroadleafCurrency implements BroadleafCurrency {
-    private static final long serialVersionUID = 7926395625817119455L;
-
-    @Override
-    public String getCurrencyCode() {
-        return null;
+    public StaleStateServiceException() {
     }
 
-    @Override
-    public void setCurrencyCode(String code) {
-        // Do nothing
+    public StaleStateServiceException(Throwable cause) {
+        super(cause);
     }
 
-    @Override
-    public String getFriendlyName() {
-        return null;
+    public StaleStateServiceException(String message) {
+        super(message);
     }
 
-    @Override
-    public void setFriendlyName(String friendlyName) {
-        // Do nothing
+    public StaleStateServiceException(String message, Throwable cause) {
+        super(message, cause);
     }
-
-    @Override
-    public boolean getDefaultFlag() {
-        return false;
-    }
-
-    @Override
-    public void setDefaultFlag(boolean defaultFlag) {
-        // Do nothing
-    }
-
-    @Override
-    public Currency getJavaCurrency() {
-        return null;
-    }
-
 }
