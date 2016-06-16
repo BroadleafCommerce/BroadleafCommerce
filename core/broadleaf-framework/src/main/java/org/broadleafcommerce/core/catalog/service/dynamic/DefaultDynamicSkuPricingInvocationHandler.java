@@ -18,32 +18,32 @@
 package org.broadleafcommerce.core.catalog.service.dynamic;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHandler {
 
-    private Sku delegate;
-    private Money retailPrice;
-    private Money salePrice;
-    
+    protected Sku delegate;
+    protected Money retailPrice;
+    protected Money salePrice;
+    protected static final ConcurrentHashMap<String, Field> FIELD_CACHE = new ConcurrentHashMap<>();
+
     public DefaultDynamicSkuPricingInvocationHandler(Sku sku) {
         this.delegate = sku;
         try {
-            Field retail = BLCFieldUtils.getSingleField(delegate.getClass(), "retailPrice");
-            retail.setAccessible(true);
+            Field retail = getSingleField(delegate.getClass(), "retailPrice");
             Object retailVal = retail.get(delegate);
-            retailPrice = retailVal==null?null:new Money((BigDecimal) retailVal);
-            Field sale = BLCFieldUtils.getSingleField(delegate.getClass(), "salePrice");
-            sale.setAccessible(true);
+            retailPrice = retailVal == null ? null : new Money((BigDecimal) retailVal);
+            Field sale = getSingleField(delegate.getClass(), "salePrice");
             Object saleVal = sale.get(delegate);
-            salePrice = saleVal==null?null:new Money((BigDecimal) saleVal);
+            salePrice = saleVal == null ? null : new Money((BigDecimal) saleVal);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -62,6 +62,7 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
             salePrice = new Money(salePriceOverride);
         }
     }
+
     /**
      * This is used with SkuBundleItem to allow the bundle override price.
      *
@@ -74,6 +75,7 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
             salePrice = new Money(salePriceOverride);
         }
     }
+
     /**
      * Used to add ProductOptionValue price adjustments to the proxy Sku
      * 
@@ -89,7 +91,22 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
             retailPrice = (retailPrice == null) ? adjustments : retailPrice.add(adjustments);
         }
     }
-    
+
+    protected synchronized Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
+        if (FIELD_CACHE.containsKey(clazz.getName())) {
+            return FIELD_CACHE.get(clazz.getName());
+        }
+
+        Field field = ReflectionUtils.findField(clazz, fieldName);
+        if (field != null) {
+            field.setAccessible(true);
+        }
+
+        FIELD_CACHE.put(clazz.getName(), field);
+
+        return field;
+    }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.getName().equals("getRetailPrice")) {
