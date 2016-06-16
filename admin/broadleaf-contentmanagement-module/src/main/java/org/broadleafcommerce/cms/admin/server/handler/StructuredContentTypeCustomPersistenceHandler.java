@@ -312,9 +312,9 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
                 if (keys.contains(name)) {
                     BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) fieldMetaDataMap.get(name);
-                    boolean isRequired = fieldMetadata.getRequiredOverride();
+                    Boolean isRequired = fieldMetadata.getRequiredOverride();
 
-                    if(isRequired && StringUtils.isEmpty(value)) {
+                    if(Boolean.TRUE.equals(isRequired) && StringUtils.isEmpty(value)) {
                         entity.addValidationError(name, REQUIRED_FIELD_VALIDATION_ERROR);
                         throw new ValidationException(entity, REQUIRED_FIELD_VALIDATION_ERROR);
                     }

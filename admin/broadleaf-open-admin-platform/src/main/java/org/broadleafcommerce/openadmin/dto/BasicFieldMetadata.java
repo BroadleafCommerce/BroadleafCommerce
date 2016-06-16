@@ -332,7 +332,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     }
 
     public Boolean getRequiredOverride() {
-        return requiredOverride == null ? false : requiredOverride;
+        return requiredOverride;
     }
 
     public void setRequiredOverride(Boolean requiredOverride) {
