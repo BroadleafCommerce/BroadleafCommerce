@@ -15,46 +15,29 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.currency.domain;
+package org.broadleafcommerce.common.util;
 
-import java.util.Currency;
-
-public class NullBroadleafCurrency implements BroadleafCurrency {
-    private static final long serialVersionUID = 7926395625817119455L;
-
-    @Override
-    public String getCurrencyCode() {
-        return null;
+/**
+ * Convenience methods for interacting with Java number types
+ * 
+ * @author Daniel Colgrove (dcolgrove)
+ */
+public class BLCNumberUtils {
+    
+    /**
+     * Given an Object of type Integer or Long, converts the Object instance to a Long.  This will throw a ClassCastException
+     * if the past parameter is not either an Integer or a Long.
+     * 
+     * @param Object
+     * @return Long
+     */
+    public static Long toLong(Object objectToConvert) {
+        Long convertedLongValue;
+        if (objectToConvert instanceof Integer) {
+            convertedLongValue = new Long((Integer) objectToConvert);
+        } else {
+            convertedLongValue = (Long) objectToConvert;
+        }
+        return convertedLongValue;
     }
-
-    @Override
-    public void setCurrencyCode(String code) {
-        // Do nothing
-    }
-
-    @Override
-    public String getFriendlyName() {
-        return null;
-    }
-
-    @Override
-    public void setFriendlyName(String friendlyName) {
-        // Do nothing
-    }
-
-    @Override
-    public boolean getDefaultFlag() {
-        return false;
-    }
-
-    @Override
-    public void setDefaultFlag(boolean defaultFlag) {
-        // Do nothing
-    }
-
-    @Override
-    public Currency getJavaCurrency() {
-        return null;
-    }
-
 }

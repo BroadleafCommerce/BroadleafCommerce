@@ -47,22 +47,22 @@ var BLCAdmin = (function($) {
             backdrop: (modals.length < 1),
             keyboard: false  // disable default keyboard behavior; wasn't intended to work with layered modals
         });
-        
+
         // If we already have an active modal, we need to modify its z-index so that it will be
         // hidden by the current backdrop
         if (modals.length > 0) {
             modals.last().css('z-index', '1040');
-            
+
             // We will also offset modals by the given option values
             $data.css('left', $data.position().left + (stackedModalOptions.left * modals.length) + 'px');
             $data.css('top', $data.position().top + (stackedModalOptions.top * modals.length) + 'px');
         }
-        
+
         // Save our new modal into our stack
         modals.push($data);
         // Bind a callback for the modal hidden event...
         $data.on('hidden', function() {
-            
+
             // Allow custom callbacks
             if (onModalHide != null) {
                 onModalHide(onModalHideArgs);
@@ -72,11 +72,11 @@ var BLCAdmin = (function($) {
             $(this).find('.filter-info .filter-button').each(function() {
                 BLCAdmin.filterBuilders.removeFilterBuilderByHiddenId($(this).data('hiddenid'));
             });
-            
+
             // Remove the modal from the DOM and from our stack
             $(this).remove();
             modals.pop();
-            
+
             // If this wasn't the only modal, take the last modal and put it above the backdrop
             if (modals.length > 0) {
                 var $backdrop = $('.modal-backdrop');
@@ -85,7 +85,7 @@ var BLCAdmin = (function($) {
                 // Move the last modal to one above the backdrop
                 modals.last().css('z-index', parseInt($backdrop.css('z-index')) + 1);
             }
-            
+
             if (BLCAdmin.currentModal()) {
                 BLCAdmin.currentModal().find('.submit-button').show();
                 BLCAdmin.currentModal().find('img.ajax-loader').hide();
@@ -108,7 +108,7 @@ var BLCAdmin = (function($) {
     function getDependentFieldFilterKey(className, childFieldName) {
         return className + '-' + childFieldName;
     }
-    
+
     return {
         /**
          * Handlers to run before client-side validation takes place
@@ -116,7 +116,7 @@ var BLCAdmin = (function($) {
         addPreValidationSubmitHandler : function(fn) {
             preValidationFormSubmitHandlers.push(fn);
         },
-        
+
         /**
          * Handlers explicitly designed to validate forms on the client before submitting to the server. If a single handler
          * in the list of client-side validation handlers returns 'false', then the form will not be submitted to the
@@ -144,7 +144,7 @@ var BLCAdmin = (function($) {
         addPostFormSubmitHandler : function(fn) {
             postFormSubmitHandlers.push(fn);
         },
-        
+
         addInitializationHandler : function(fn) {
             initializationHandlers.push(fn);
         },
@@ -156,7 +156,7 @@ var BLCAdmin = (function($) {
         addSelectizeUpdateHandler : function(fn) {
             selectizeUpdateHandlers.push(fn);
         },
-        
+
         addUpdateHandler : function(fn) {
             updateHandlers.push(fn);
         },
@@ -168,7 +168,7 @@ var BLCAdmin = (function($) {
         /**
          * Add a field initialization handler that runs before normal field initialization. If any of the handlers return
          * false then all subsequent execution is exited
-         * 
+         *
          * Method signatures should take 1 argument:
          *  $container - the html container that inputs are being initialized for
          */
@@ -181,7 +181,7 @@ var BLCAdmin = (function($) {
                 preValidationFormSubmitHandlers[i]($form);
             }
         },
-        
+
         /**
          * Returns false if a single validation handler returns false. All validation handlers are iterated through before
          * returning. If this method returns false, then the form should not be submitted to the server
@@ -220,8 +220,8 @@ var BLCAdmin = (function($) {
             BLCAdmin.runPostValidationSubmitHandlers($form);
             return submit;
         },
-        
-        /** 
+
+        /**
          * Runs all of the field initialization handlers. Returns a boolean indicating if normal field initialization
          * should continue or not
          */
@@ -244,7 +244,7 @@ var BLCAdmin = (function($) {
                 selectizeUpdateHandlers[i]($container);
             }
         },
-        
+
         setModalMaxHeight : function($modal) {
             // Resize the modal height to the user's browser
             var availableHeight = $(window).height()
@@ -281,13 +281,13 @@ var BLCAdmin = (function($) {
 
             return $modal;
         },
-        
+
         initializeModalTabs : function($data) {
             $.fn.broadleafTabs();
 
             BLCAdmin.currentModal().find('.nav-tabs li.active > a').click();
         },
-        
+
         initializeModalButtons : function($data) {
             var $buttonDiv = $data.find('div.entity-form-actions');
             if ($buttonDiv.length > 0) {
@@ -309,21 +309,21 @@ var BLCAdmin = (function($) {
                 $buttonDiv.remove().appendTo($footer);
             }
         },
-        
+
         showMessageAsModal : function(header, message) {
             if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
                 BLCAdmin.hideCurrentModal();
             }
-            
+
             var $modal = BLCAdmin.getModalSkeleton();
 
             $modal.find('.modal-header h3').text(header);
             $modal.find('.modal-body').append(message);
             $modal.find('.modal-body').css('padding-bottom', '20px');
-            
+
             this.showElementAsModal($modal);
         },
-        
+
         showElementAsModal : function($element, onModalHide, onModalHideArgs) {
             if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
                 BLCAdmin.hideCurrentModal();
@@ -336,7 +336,7 @@ var BLCAdmin = (function($) {
             $('body').append($element);
             showModal($element, onModalHide, onModalHideArgs);
         },
-        
+
         showLinkAsModal : function(link, onModalHide, onModalHideArgs) {
             // Show a loading message
             var $modal = BLCAdmin.getModalSkeleton();
@@ -350,7 +350,7 @@ var BLCAdmin = (function($) {
             // Then replace it with the actual requested link
             BLCAdmin.modalNavigateTo(link);
         },
-        
+
         // Convenience function for hiding the replacing the current modal with the given link
         modalNavigateTo : function(link) {
             if (BLCAdmin.currentModal()) {
@@ -406,19 +406,19 @@ var BLCAdmin = (function($) {
                         var $submitButton = BLCAdmin.currentModal().find("button[type='submit']");
                         $submitButton.prop('disabled', true);
                     }
-                    
+
                     BLCAdmin.currentModal().trigger('content-loaded');
                 });
             } else {
                 showLinkAsModal(link);
             }
         },
-        
+
         // Convenience function for returning the current modal
         currentModal : function() {
             return modals.last();
         },
-        
+
         hideCurrentModal : function() {
             if (BLCAdmin.currentModal()) {
                 BLCAdmin.currentModal().modal('hide');
@@ -432,28 +432,28 @@ var BLCAdmin = (function($) {
                 currentModal = BLCAdmin.currentModal();
             }
         },
-        
+
         focusOnTopModal : function() {
             if (BLCAdmin.currentModal()) {
                 BLCAdmin.currentModal().focus();
             }
         },
-        
+
         getActiveTab : function() {
             var $modal = this.currentModal();
             if ($modal != null) {
                 var $tabs = $modal.find('div.section-tabs');
-                
+
                 if ($tabs.length == 0) {
                     return $modal;
                 } else {
                     return $modal.find('.entityFormTab.active');
                 }
-                
+
             } else {
                 var $body = $('body');
                 var $tabs = $body.find('div.section-tabs');
-                
+
                 if ($tabs.length == 0) {
                     return $body;
                 } else {
@@ -463,7 +463,7 @@ var BLCAdmin = (function($) {
         },
 
         initializeFields : function($container) {
-            
+
             // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
             if ($container == null) {
                 $container = BLCAdmin.getActiveTab();
@@ -822,7 +822,7 @@ var BLCAdmin = (function($) {
                 $('.selectize-control.selectize-collection input').attr('disabled','disabled');
             });
         },
-        
+
         updateFields : function($container) {
             for (var i = 0; i < updateHandlers.length; i++) {
                 updateHandlers[i]($container);
@@ -848,7 +848,7 @@ var BLCAdmin = (function($) {
  
         getForm : function($element) {
             var $form;
-            
+
             if ($element.closest('.modal').length > 0) {
                 $form = $element.closest('.modal').find('.modal-body form');
             } else {
@@ -863,14 +863,14 @@ var BLCAdmin = (function($) {
             if (!$form.length) {
                 $form = $('.content-yield form');
             }
-            
+
             return $form;
         },
 
         getFieldSelectors : function getFieldSelectors() {
             return fieldSelectors.concat();
         },
-        
+
         extractFieldValue : function extractFieldValue($field) {
             var value = $field.find('input[type="radio"]:checked').val();
             if (value == null) {
@@ -884,7 +884,7 @@ var BLCAdmin = (function($) {
             }
             return value;
         },
-        
+
         setFieldValue : function setFieldValue($field, value) {
             if (value == null) {
                 $field.find('input[type="radio"]:checked').removeAttr('checked')
@@ -1114,7 +1114,7 @@ var BLCAdmin = (function($) {
             });
             return dataArray;
         },
-        
+
         unescapeString: function(data) {
             return data.replace(/\\/g, '');
         },
@@ -1130,6 +1130,31 @@ var BLCAdmin = (function($) {
                 var $nav = $('.secondary-nav').parent();
                 $nav.replaceWith($(data));
             });
+        },
+
+        confirmProcessBeforeProceeding: function(mustConfirm, confirmMsg, processMethod, methodParams) {
+            if (mustConfirm) {
+                if (confirmMsg == undefined || !confirmMsg.length) {
+                    confirmMsg = BLCAdmin.messages.defaultConfirmMessage;
+                }
+
+                var cancel = false;
+                $.confirm({
+                    content: confirmMsg,
+                    confirm: function() {
+                        processMethod(methodParams);
+                    },
+                    cancel: function() {
+                        cancel = true;
+                    }
+                });
+                if (cancel) {
+                    event.preventDefault();
+                    return false;
+                }
+            } else {
+                processMethod(methodParams);
+            }
         }
     };
 
@@ -1273,7 +1298,9 @@ Selectize.define('enter_key_blur', function (options) {
 // being set on the model instead of a stack trace page when an error occurs on an AJAX request.
 BLC.defaultErrorHandler = function(data) {
     if (data.status == "403") {
-        BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.forbidden403);
+		BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.forbidden403);
+	} else if (data.status == "409") {
+		BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.staleContent);
     } else {
         var $data;
         
@@ -1360,6 +1387,11 @@ $('body').on('click', '.disabled', function(e) {
 $('body').on('change', 'input.color-picker-value', function() {
     var $this = $(this);
     $this.closest('.field-group').find('input.color-picker').spectrum('set', $this.val());
+});
+
+$('body').on('click', 'button.page-reset', function() {
+	var currentUrl = '//' + location.host + location.pathname;
+	window.location = currentUrl;
 });
 
 
@@ -1489,7 +1521,7 @@ $('body').on('click', 'button.change-password-confirm', function(event) {
             //$ef.submit();
         }
     });
-    
+
     event.preventDefault();
 });
 

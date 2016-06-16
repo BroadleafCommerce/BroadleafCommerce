@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.extension.ResultType;
-import org.broadleafcommerce.common.i18n.dao.TranslationDao;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.service.TranslationBatchReadCache;
@@ -66,9 +65,6 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
 
     @Resource(name = "blTranslationService")
     protected TranslationService translationService;
-    
-    @Resource(name = "blTranslationDao")
-    protected TranslationDao translationDao;
 
     @Resource(name = "blLocaleService")
     protected LocaleService localeService;
@@ -162,7 +158,6 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
 
     @Override
     public ExtensionResultStatusType startBatchEvent(List<? extends Indexable> indexables) {
-
         List<String> skuIds = new ArrayList<String>(indexables.size());
         List<String> productIds = new ArrayList<String>();
         List<String> skuAttributeIds = new ArrayList<String>();
@@ -172,24 +167,18 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
             if (Product.class.isAssignableFrom(indexable.getClass())) {
                 Product product = (Product) indexable;
                 productIds.add(product.getId().toString());
-                for (Map.Entry productAttributeEntry :  product.getMultiValueProductAttributes().entrySet()) {
-                    List<ProductAttribute> productAttributes = (List<ProductAttribute>) productAttributeEntry.getValue();
-                    for (ProductAttribute productAttribute : productAttributes) {
-                        productAttributeIds.add(productAttribute.getId().toString());
-                    }
+                for (Map.Entry<String, ProductAttribute> attributeEntry :  product.getProductAttributes().entrySet()) {
+                    ProductAttribute attribute = attributeEntry.getValue();
+                    productAttributeIds.add(attribute.getId().toString());
                 }
                 sku = product.getDefaultSku();
-            } else if (Sku.class.isAssignableFrom(indexable.getClass())) {
-                sku = (Sku) indexable;
             }
-            
+
             if (sku != null) {
                 skuIds.add(sku.getId().toString());
-                for (Map.Entry skuAttributeEntry :  sku.getMultiValueSkuAttributes().entrySet()) {
-                    List<SkuAttribute> skuAttributes = (List<SkuAttribute>) skuAttributeEntry.getValue();
-                    for (SkuAttribute skuAttribute : skuAttributes) {
-                        skuAttributeIds.add(skuAttribute.getId().toString());
-                    }
+                for (Map.Entry<String, SkuAttribute> attributeEntry :  sku.getSkuAttributes().entrySet()) {
+                    SkuAttribute attribute = attributeEntry.getValue();
+                    skuAttributeIds.add(attribute.getId().toString());
                 }
             }
         }
@@ -198,12 +187,12 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
         addEntitiesToTranslationCache(productIds, TranslatedEntity.PRODUCT);
         addEntitiesToTranslationCache(skuAttributeIds, TranslatedEntity.SKU_ATTRIBUTE);
         addEntitiesToTranslationCache(productAttributeIds, TranslatedEntity.PRODUCT_ATTRIBUTE);
-
+        
         return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
 
-    private void addEntitiesToTranslationCache(List<String> entityIds, TranslatedEntity translatedEntity) {
-        List<Translation> translations = translationDao.readAllTranslationEntries(translatedEntity, ResultType.STANDARD, entityIds);
+    protected void addEntitiesToTranslationCache(List<String> entityIds, TranslatedEntity translatedEntity) {
+        List<Translation> translations = translationService.findAllTranslationEntries(translatedEntity, ResultType.STANDARD, entityIds);
         TranslationBatchReadCache.addToCache(translations);
     }
 

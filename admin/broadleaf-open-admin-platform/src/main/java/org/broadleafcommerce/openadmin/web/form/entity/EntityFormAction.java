@@ -35,6 +35,8 @@ public class EntityFormAction implements Cloneable {
     protected String displayText = "";
     protected String id = "";
     protected String urlOverride = null;
+    protected Boolean isConfirmEnabled = Boolean.FALSE;
+    protected String confirmEnabledText = "";
     
     public EntityFormAction(String id) {
         this.id = id;
@@ -49,6 +51,8 @@ public class EntityFormAction implements Cloneable {
                 .append(urlPostfix, that.urlPostfix)
                 .append(iconClass, that.iconClass)
                 .append(displayText, that.displayText)
+                .append(isConfirmEnabled, that.isConfirmEnabled)
+                .append(confirmEnabledText, that.confirmEnabledText)
                 .build();
         }
         return false;
@@ -62,6 +66,8 @@ public class EntityFormAction implements Cloneable {
         cloned.urlPostfix = urlPostfix;
         cloned.iconClass = iconClass;
         cloned.displayText = displayText;
+        cloned.isConfirmEnabled = isConfirmEnabled;
+        cloned.confirmEnabledText = confirmEnabledText;
         return cloned;
     }
     
@@ -92,6 +98,16 @@ public class EntityFormAction implements Cloneable {
     
     public EntityFormAction withUrlOverride(String urlOverride) {
         setUrlOverride(urlOverride);
+        return this;
+    }
+
+    public EntityFormAction withIsConfirmEnabled(Boolean confirmEnabled) {
+        setIsConfirmEnabled(confirmEnabled);
+        return this;
+    }
+
+    public EntityFormAction withConfirmEnabledText(String confirmEnabledText) {
+        setConfirmEnabledText(confirmEnabledText);
         return this;
     }
     
@@ -138,7 +154,23 @@ public class EntityFormAction implements Cloneable {
     public void setDisplayText(String displayText) {
         this.displayText = displayText;
     }
-    
+
+    public Boolean getIsConfirmEnabled() {
+        return isConfirmEnabled == null ? Boolean.FALSE : isConfirmEnabled;
+    }
+
+    public void setIsConfirmEnabled(Boolean confirmEnabled) {
+        isConfirmEnabled = confirmEnabled;
+    }
+
+    public String getConfirmEnabledText() {
+        return confirmEnabledText;
+    }
+
+    public void setConfirmEnabledText(String confirmEnabledText) {
+        this.confirmEnabledText = confirmEnabledText;
+    }
+
     /**
      * Gets the manual override for the data-actionurl attribute on an action.
      * 

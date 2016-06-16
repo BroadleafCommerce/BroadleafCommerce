@@ -17,6 +17,10 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -48,10 +52,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 
 @Service("blTranslationService")
@@ -173,7 +173,7 @@ public class TranslationServiceImpl implements TranslationService {
             localeCountryCode += "_" + locale.getCountry();
         }
         
-        if (TranslationBatchReadCache.getCache() != null && TranslationBatchReadCache.getCache().getSize() != 0) {
+        if (TranslationBatchReadCache.hasCache()) {
             Translation translation = TranslationBatchReadCache.getFromCache(entityType, entityId, property, localeCountryCode);
             if (translation != null) {
                 return translation.getTranslatedValue();
@@ -442,6 +442,11 @@ public class TranslationServiceImpl implements TranslationService {
         }
 
         return requestedDefaultValue;
+    }
+
+    @Override
+    public List<Translation> findAllTranslationEntries(TranslatedEntity translatedEntity, ResultType standard, List<String> entityIds) {
+        return dao.readAllTranslationEntries(translatedEntity, standard, entityIds);
     }
 
     /**
