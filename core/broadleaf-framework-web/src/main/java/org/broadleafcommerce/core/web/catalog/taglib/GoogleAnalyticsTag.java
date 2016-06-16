@@ -22,12 +22,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -83,7 +86,7 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
         if (webPropertyId.equals("UA-XXXXXXX-X")) {
             LOG.warn("googleAnalytics.webPropertyId has not been overridden in a custom property file. Please set this in order to properly use the Google Analytics tag");
         }
-        
+
         out.println(analytics(webPropertyId, order));
         super.doTag();
     }
@@ -99,6 +102,8 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
      */
     protected String analytics(String webPropertyId, Order order) {
         StringBuffer sb = new StringBuffer();
+
+        webPropertyId = encoder.encodeForHTML(webPropertyId);
         
         sb.append("<script type=\"text/javascript\">");
         sb.append("var _gaq = _gaq || [];");
@@ -113,11 +118,17 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
                 }
             }
 
-            sb.append("_gaq.push(['_addTrans','" + order.getId() + "'");
-            sb.append(",'" + order.getName() + "'");
-            sb.append(",'" + order.getTotal() + "'");
-            sb.append(",'" + order.getTotalTax() + "'");
-            sb.append(",'" + order.getTotalShipping() + "'");
+            String encodedId = ESAPI.encoder().encodeForJavaScript(String.valueOf(order.getId()));
+            String encodedName = ESAPI.encoder().encodeForJavaScript(order.getName());
+            String encodedTotal = ESAPI.encoder().encodeForJavaScript(String.valueOf(order.getTotal()));
+            String encodedTotalTax = ESAPI.encoder().encodeForJavaScript(String.valueOf(order.getTotalTax()));
+            String encodedTotalShipping = ESAPI.encoder().encodeForJavaScript(String.valueOf(order.getTotalShipping()));
+
+            sb.append("_gaq.push(['_addTrans','" + encodedId + "'");
+            sb.append(",'" + encodedName + "'");
+            sb.append(",'" + encodedTotal + "'");
+            sb.append(",'" + encodedTotalTax + "'");
+            sb.append(",'" + encodedTotalShipping + "'");
 
             if (paymentAddress != null) {
                 String state = null;
@@ -134,14 +145,17 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
                     country = paymentAddress.getCountry().getName();
                 }
 
-                sb.append(",'" + paymentAddress.getCity() + "'");
+                String encodedCity = ESAPI.encoder().encodeForJavaScript(paymentAddress.getCity());
+                sb.append(",'" + encodedCity + "'");
 
                 if (state != null) {
-                    sb.append(",'" + state + "'");
+                    String encodedState = ESAPI.encoder().encodeForJavaScript(state);
+                    sb.append(",'" + encodedState + "'");
                 }
 
                 if (country != null) {
-                    sb.append(",'" + country + "'");
+                    String encodedCountry = ESAPI.encoder().encodeForJavaScript(country);
+                    sb.append(",'" + encodedCountry + "'");
                 }
             }
             sb.append("]);");
@@ -149,12 +163,22 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
             for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
                 for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                     DiscreteOrderItem orderItem = (DiscreteOrderItem) fulfillmentGroupItem.getOrderItem();
-                    sb.append("_gaq.push(['_addItem','" + order.getId() + "'");
-                    sb.append(",'" + orderItem.getSku().getId() + "'");
-                    sb.append(",'" + orderItem.getSku().getName() + "'");
-                    sb.append(",' " + orderItem.getProduct().getDefaultCategory() + "'");
-                    sb.append(",'" + orderItem.getPrice() + "'");
-                    sb.append(",'" + orderItem.getQuantity() + "'");
+                    Sku sku = orderItem.getSku();
+                    Product product = orderItem.getProduct();
+
+                    String encodedOrderItemId = ESAPI.encoder().encodeForJavaScript(String.valueOf(order.getId()));
+                    String encodedSkuId = ESAPI.encoder().encodeForJavaScript(String.valueOf(sku.getId()));
+                    String encodedSkuName = ESAPI.encoder().encodeForJavaScript(sku.getName());
+                    String encodedProductCategory = ESAPI.encoder().encodeForJavaScript(String.valueOf(product.getCategory()));
+                    String encodedOrderItemPrice = ESAPI.encoder().encodeForJavaScript(String.valueOf(orderItem.getAveragePrice()));
+                    String encodedOrderItemQuantity = ESAPI.encoder().encodeForJavaScript(String.valueOf(orderItem.getQuantity()));
+
+                    sb.append("_gaq.push(['_addItem','" + encodedOrderItemId + "'");
+                    sb.append(",'" + encodedSkuId + "'");
+                    sb.append(",'" + encodedSkuName + "'");
+                    sb.append(",' " + encodedProductCategory + "'");
+                    sb.append(",'" + encodedOrderItemPrice + "'");
+                    sb.append(",'" + encodedOrderItemQuantity + "'");
                     sb.append("]);");
                 }
             }
