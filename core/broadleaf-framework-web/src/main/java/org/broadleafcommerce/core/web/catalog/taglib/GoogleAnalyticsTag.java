@@ -103,7 +103,7 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
     protected String analytics(String webPropertyId, Order order) {
         StringBuffer sb = new StringBuffer();
 
-        webPropertyId = encoder.encodeForHTML(webPropertyId);
+        webPropertyId = ESAPI.encoder().encodeForHTML(webPropertyId);
         
         sb.append("<script type=\"text/javascript\">");
         sb.append("var _gaq = _gaq || [];");
