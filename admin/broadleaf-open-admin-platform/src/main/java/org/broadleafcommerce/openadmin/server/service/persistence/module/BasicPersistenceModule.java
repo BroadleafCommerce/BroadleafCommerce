@@ -383,9 +383,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         } else {
                             try {
                                 if (fieldManager.getFieldValue(instance, property.getName()) != null && !entity.isPreAdd() && (metadata.getFieldType() != SupportedFieldType.ID || setId) && metadata.getFieldType() != SupportedFieldType.PASSWORD) {
-                                    if (fieldManager.getFieldValue(instance, property.getName()) != null) {
-                                        property.setIsDirty(true);
-                                    }
+                                    property.setIsDirty(true);
+                                    PopulateValueRequest request = new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd());
+                                    defaultFieldPersistenceProvider.populateValue(request, instance);
                                     fieldManager.setFieldValue(instance, property.getName(), null);
                                 }
                             } catch (FieldNotAvailableException e) {
