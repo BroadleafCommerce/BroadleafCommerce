@@ -893,7 +893,9 @@ var BLCAdmin = (function($) {
             }
 
             $field.find('select').val(value);
-            $field.find('input[type="text"]').val(value);
+            if (!$field.find('.additional-foreign-key-container')) {
+                $field.find('input[type="text"]').val(value);
+            }
             
             if (value == null && $field.find('button.clear-foreign-key')) {
                 $field.find('button.clear-foreign-key').click();
@@ -942,8 +944,8 @@ var BLCAdmin = (function($) {
                             shouldShow = (parentValue == showIfValue);
                         }
 
-                        // Clear the data in the child field if that option was set and the parent value is null
-                        if (options != null && options['clearChildData'] && !event.initialization) {
+                        // Clear the data in the child field if that option was set
+                        if (options != null && options['clearChildData'] && !event.initialization && !event.revertEntityFormChanges) {
                             BLCAdmin.setFieldValue($childField, null);
                         }
 

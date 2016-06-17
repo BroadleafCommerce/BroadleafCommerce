@@ -19,7 +19,6 @@ package org.broadleafcommerce.profile.core.service;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,6 +62,7 @@ import javax.annotation.Resource;
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
     private static final Log LOG = LogFactory.getLog(CustomerServiceImpl.class);
+    private static final int PASSWORD_LENGTH = 16;
     
     @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
@@ -185,9 +185,9 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return customerDao.save(customer);
     }
-    
+
     protected String generateSecurePassword() {
-        return RandomStringUtils.randomAlphanumeric(16);
+        return PasswordUtils.generateSecurePassword(PASSWORD_LENGTH);
     }
 
     @Override
@@ -244,7 +244,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Customer resetPassword(PasswordReset passwordReset) {
         Customer customer = readCustomerByUsername(passwordReset.getUsername());
-        String newPassword = PasswordUtils.generateTemporaryPassword(passwordReset.getPasswordLength());
+        String newPassword = PasswordUtils.generateSecurePassword(passwordReset.getPasswordLength());
         customer.setUnencodedPassword(newPassword);
         customer.setPasswordChangeRequired(passwordReset.getPasswordChangeRequired());
         customer = saveCustomer(customer);
@@ -505,7 +505,7 @@ public class CustomerServiceImpl implements CustomerService {
         checkCustomer(customer, response);
 
         if (! response.getHasErrors()) {        
-            String token = PasswordUtils.generateTemporaryPassword(getPasswordTokenLength());
+            String token = PasswordUtils.generateSecurePassword(getPasswordTokenLength());
             token = token.toLowerCase();
 
             Object salt = getSalt(customer, token);
