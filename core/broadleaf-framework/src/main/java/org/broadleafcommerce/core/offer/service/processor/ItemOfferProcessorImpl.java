@@ -484,7 +484,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 effectedItemsSubtotal = effectedItemsSubtotal.add(qualifierDetail.getPrice().multiply(qualifierQuantity));
             }
         }
-        
+
         return calculatePercent(effectedItemsSubtotal, itemSavings);
     }
 
@@ -639,13 +639,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
     protected void removeDuplicatePermutations(List<List<PromotableCandidateItemOffer>> permutations) {
         Set<List<Long>> offerIdListSet = new HashSet<>();
-        
+
         Iterator<List<PromotableCandidateItemOffer>> permutationsIterator = permutations.iterator();
-        
+
         while (permutationsIterator.hasNext()) {
             List<PromotableCandidateItemOffer> offerList = permutationsIterator.next();
             List<Long> offerIdList = convertToIdList(offerList);
-            
+
             if (!offerIdListSet.add(offerIdList)) {
                 permutationsIterator.remove();
             }
@@ -657,7 +657,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         for (PromotableCandidateItemOffer offer : offerList) {
             idList.add(offer.getOffer().getId());
         }
-        
+
         return idList;
     }
 

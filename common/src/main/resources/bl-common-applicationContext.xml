@@ -460,4 +460,17 @@
         </property>
     </bean>
 
+    <bean id="blPrecompressedArtifactFileExtensionWhitelist" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <value>.html</value>
+                <value>.js</value>
+                <value>.css</value>
+                <value>.ico</value>
+                <value>.woff</value>
+                <value>.txt</value>
+            </list>
+        </property>
+    </bean>
+
 </beans>

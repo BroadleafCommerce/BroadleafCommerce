@@ -633,35 +633,18 @@ $(document).ready(function () {
      * to-one fields on an entity form.
      */
     $('body').on('click', '.to-one-lookup', function (event) {
-        var $toOneLookup = $(this);
-        var fkValue = $toOneLookup.closest('div.additional-foreign-key-container').find('.value');
+        var $lookupButton = $(this);
+        var fkValue = $lookupButton.closest('div.additional-foreign-key-container').find('.value');
         var fkValueFound = fkValue != undefined && fkValue.val().length > 0;
-        var confirm = $toOneLookup.data('confirm') && fkValueFound;
-        var confirmMsg = $toOneLookup.data('confirm-text');
-        if (confirmMsg == undefined || !confirmMsg.length) {
-            confirmMsg = BLCAdmin.messages.defaultConfirmMessage;
-        }
-        if (confirm) {
-            var cancel = false;
-            $.confirm({
-                content: confirmMsg,
-                confirm: function() {
-                    processToOneLookupCall.call($toOneLookup);
-                },
-                cancel: function() {
-                    cancel = true;
-                }
-            });
-            if (cancel) {
-                event.preventDefault();
-                return false;
-            }
-        } else {
-            processToOneLookupCall.call($toOneLookup);
-        }
+        var mustConfirm = $lookupButton.data('confirm') && fkValueFound;
+        var confirmMsg = $lookupButton.data('confirm-text');
 
-        function processToOneLookupCall() {
-            var $container = $(this).closest('div.additional-foreign-key-container');
+        BLCAdmin.confirmProcessBeforeProceeding(mustConfirm, confirmMsg, processToOneLookupCall, [$lookupButton]);
+
+        function processToOneLookupCall(params) {
+            var $toOneLookup = params[0];
+
+            var $container = $toOneLookup.closest('div.additional-foreign-key-container');
             $container.on('valueSelected', function (event, $target, fields, link, currentUrl) {
                 var $this = $(this);
                 var displayValueProp = $this.find('input.display-value-property').val();
@@ -676,8 +659,9 @@ $(document).ready(function () {
                 }
                 var $valueField = $this.find('input.value');
                 $valueField.val(fields['id']);
+                $this.find('.display-value-none-selected').hide();
                 $this.find('span.display-value').html(displayValue);
-                $this.find('input.display-value').val(displayValue);
+                $this.find('input.display-value').val(displayValue).show();
                 $this.find('input.hidden-display-value').val(displayValue).trigger('input');
                 // Ensure that the clear button shows up after selecting a value
                 $this.find('button.clear-foreign-key').show();
@@ -709,15 +693,15 @@ $(document).ready(function () {
                 $valueField.closest('.field-group').trigger('change');
                 BLCAdmin.hideCurrentModal();
             });
-            var url = $(this).data('select-url');
+            var url = $toOneLookup.data('select-url');
             var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
-            var thisField = $(this).closest('.field-group').attr('id');
+            var thisField = $toOneLookup.closest('.field-group').attr('id');
             var handler = BLCAdmin.getDependentFieldFilterHandler(thisClass, thisField);
             if (handler != null) {
                 var $parentField = $container.closest('form').find(handler['parentFieldSelector']);
                 url = url + '&' + handler['childFieldPropertyName'] + '=' + BLCAdmin.extractFieldValue($parentField);
             }
-            if ($(this).data('dynamic-field')) {
+            if ($toOneLookup.data('dynamic-field')) {
                 url = url + '&dynamicField=true';
             }
             BLCAdmin.showLinkAsModal(url, function () {
@@ -943,12 +927,13 @@ $(document).ready(function () {
      * Clears out a previously-selected foreign key on both a form and listgrid criteria
      */
     $('body').on('click', 'button.clear-foreign-key', function (event) {
-        var $container = $(this).closest('div.additional-foreign-key-container');
         var $this = $(this);
+        var $container = $this.closest('div.additional-foreign-key-container');
 
-        // Remove the current display value
-        var emptyInput = $this.closest('.input-group').find('input:not(:visible)');
-        $this.closest('.input-group').find('input:visible').val(emptyInput.val());
+        // Update the current display value
+        $container.find('.display-value').hide();
+        $container.find('.clear-foreign-key').hide();
+        $container.find('.display-value-none-selected').show();
 
         if (typeof BLCAdmin.treeListGrid !== 'undefined') {
             BLCAdmin.treeListGrid.removeParentPathJson($container.closest('.modal-add-entity-form.enterprise-tree-add'));
@@ -956,7 +941,7 @@ $(document).ready(function () {
 
         // Remove the criteria input val
         $container.find('.value').val('').trigger('change').trigger('input');
-        $this.toggle();
+        $container.find('.hidden-display-value').val('').trigger('change').trigger('input');
 
         $container.find('.external-link-container').hide();
 

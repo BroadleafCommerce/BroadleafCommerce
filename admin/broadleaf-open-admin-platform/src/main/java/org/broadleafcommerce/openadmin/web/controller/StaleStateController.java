@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Open Admin Platform
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,28 +15,26 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.security.util;
+package org.broadleafcommerce.openadmin.web.controller;
 
+import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import org.apache.commons.lang.RandomStringUtils;
+/**
+ * Handle page requests for the HTTP status 409 error in the admin.
+ *
+ * @see StaleStateProtectionService
+ * @author Jeff Fischer
+ */
+@Controller("blStaleStateController")
+public class StaleStateController {
 
-import java.security.SecureRandom;
-import java.util.Random;
-
-public class PasswordUtils {
-
-    private static final Random RANDOM = new SecureRandom();
-    private static final String CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
-    
-    public static String generateSecurePassword(int requiredLength) {
-
-        int start = 0;
-        int end = CHARS.length();
-        boolean letters = true;
-        boolean numbers = true;
-
-        String password = RandomStringUtils.random(requiredLength, start, end, letters, numbers, CHARS.toCharArray(), RANDOM);
-
-        return password;
+    @RequestMapping(value = "/sc_conflict")
+    public String viewConflictPage(Model model) throws Exception {
+        model.addAttribute("customView", "sc_conflict");
+        return "modules/emptyContainer";
     }
+
 }

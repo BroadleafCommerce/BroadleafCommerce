@@ -53,6 +53,11 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
 
     @Override
     public IndexField readIndexFieldForField(Field field) {
+        return readIndexFieldByFieldId(field.getId());
+    }
+
+    @Override
+    public IndexField readIndexFieldByFieldId(Long fieldId) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<IndexField> criteria = builder.createQuery(IndexField.class);
 
@@ -60,11 +65,12 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
 
         criteria.select(search);
         criteria.where(
-                builder.equal(search.join("field").get("id").as(Long.class), field.getId())
+                builder.equal(search.join("field").get("id").as(Long.class), fieldId)
         );
 
         TypedQuery<IndexField> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
 
         try {
             return query.getSingleResult();
