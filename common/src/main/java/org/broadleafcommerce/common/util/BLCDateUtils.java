@@ -17,8 +17,10 @@
  */
 package org.broadleafcommerce.common.util;
 
+import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -43,4 +45,13 @@ public class BLCDateUtils {
         return dateFormat.format(date);
     }
 
+    public static String formatDateAsString(Date date) {
+        // format date list grid cells
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, Y @ hh:mma");
+        DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
+        symbols.setAmPmStrings(new String[] { "am", "pm" });
+        formatter.setDateFormatSymbols(symbols);
+
+        return formatter.format(date);
+    }
 }
