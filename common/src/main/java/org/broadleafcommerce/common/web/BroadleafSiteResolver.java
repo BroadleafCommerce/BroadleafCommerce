@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface BroadleafSiteResolver  {
 
+    public static final String SELECTED_SITE_URL_PARAM = "selectedSite";
+
     /**
      * 
      * @deprecated Use {@link #resolveSite(WebRequest)} instead

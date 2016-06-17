@@ -26,8 +26,9 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.util.DialectHelper;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
@@ -46,6 +47,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -67,9 +69,6 @@ public class SkuDaoImpl implements SkuDao {
 
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
-
-    @Resource(name = "blDialectHelper")
-    protected DialectHelper dialectHelper;
 
     @Resource(name = "blSkuDaoExtensionManager")
     protected SkuDaoExtensionManager extensionManager;
@@ -150,9 +149,6 @@ public class SkuDaoImpl implements SkuDao {
         criteria.where(sku.get("id").as(Long.class).in(
                 sandBoxHelper.mergeCloneIds(SkuImpl.class,
                         skuIds.toArray(new Long[skuIds.size()]))));
-        if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
-            criteria.distinct(true);
-        }
 
         TypedQuery<Sku> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -216,35 +212,10 @@ public class SkuDaoImpl implements SkuDao {
         return readAllActiveSkusInternal(page, pageSize, currentDate);
     }
 
-    protected List<Sku> readAllActiveSkusInternal(int page, int pageSize, Date currentDate) {
-        // Set up the criteria query that specifies we want to return Products
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Sku> criteria = builder.createQuery(Sku.class);
-
-        // The root of our search is Product
-        Root<SkuImpl> sku = criteria.from(SkuImpl.class);
-
-        // Product objects are what we want back
-        criteria.select(sku);
-
-        // Ensure the product is currently active
-        List<Predicate> restrictions = new ArrayList<Predicate>();
-
-        // Add the active start/end date restrictions
-        restrictions.add(builder.lessThan(sku.get("activeStartDate").as(Date.class), currentDate));
-        restrictions.add(builder.or(
-                builder.isNull(sku.get("activeEndDate")),
-                builder.greaterThan(sku.get("activeEndDate").as(Date.class), currentDate)));
-
-        // Add the restrictions to the criteria query
-        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-
-        int firstResult = page * pageSize;
-        TypedQuery<Sku> query = em.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-
-        return query.setFirstResult(firstResult).setMaxResults(pageSize).getResultList();
+    @Override
+    public List<Sku> readAllActiveSkus(Integer pageSize, Long lastId) {
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        return readAllActiveSkusInternal(pageSize, currentDate, lastId);
     }
 
     @Override
@@ -283,4 +254,57 @@ public class SkuDaoImpl implements SkuDao {
         return results;
     }
 
+    protected List<Sku> readAllActiveSkusInternal(int page, int pageSize, Date currentDate) {
+        CriteriaQuery<Sku> criteria = getCriteriaForActiveSkus(currentDate);
+        int firstResult = page * pageSize;
+        TypedQuery<Sku> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.setFirstResult(firstResult).setMaxResults(pageSize).getResultList();
+    }
+
+    protected List<Sku> readAllActiveSkusInternal(Integer pageSize, Date currentDate, Long lastId) {
+        CriteriaQuery<Sku> criteria = getCriteriaForActiveSkus(currentDate, lastId);
+        TypedQuery<Sku> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.setMaxResults(pageSize).getResultList();
+    }
+
+    protected CriteriaQuery<Sku> getCriteriaForActiveSkus(Date currentDate) {
+        return getCriteriaForActiveSkus(currentDate, null);
+    }
+
+    protected CriteriaQuery<Sku> getCriteriaForActiveSkus(Date currentDate, Long lastId) {
+        // Set up the criteria query that specifies we want to return Products
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Sku> criteria = builder.createQuery(Sku.class);
+
+        // The root of our search is Product
+        Root<SkuImpl> sku = criteria.from(SkuImpl.class);
+
+        // Product objects are what we want back
+        criteria.select(sku);
+
+        // Ensure the product is currently active
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+
+        // Add the active start/end date restrictions
+        restrictions.add(builder.lessThan(sku.get("activeStartDate").as(Date.class), currentDate));
+        restrictions.add(builder.or(
+                builder.isNull(sku.get("activeEndDate")),
+                builder.greaterThan(sku.get("activeEndDate").as(Date.class), currentDate)));
+        if (lastId != null) {
+            restrictions.add(builder.gt(sku.get("id").as(Long.class), lastId));
+        }
+
+        // Add the restrictions to the criteria query
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        //Add ordering so that paginated queries are consistent
+        criteria.orderBy(builder.asc(sku.get("id")));
+        return criteria;
+    }
 }
