@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 
 /**
@@ -80,4 +81,13 @@ public interface ProductCustomPersistenceHandlerExtensionHandler extends Extensi
      * @throws ServiceException
      */
     ExtensionResultStatusType endFetchState() throws ServiceException;
+
+    /**
+     * Perform any special filtering for the fetch
+     *
+     * @param cto
+     * @return
+     * @throws ServiceException
+     */
+    ExtensionResultStatusType manageAdditionalFilterMappings(CriteriaTransferObject cto) throws ServiceException;
 }
