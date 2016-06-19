@@ -175,6 +175,8 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                     ));
         }
         if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) && !hasCriteriaForId(cto)) {
+            extensionManager.getProxy().manageAdditionalFilterMappings(cto);
+
             //Add special handling for product list grid fetches
             boolean hasExplicitSort = false;
             for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
