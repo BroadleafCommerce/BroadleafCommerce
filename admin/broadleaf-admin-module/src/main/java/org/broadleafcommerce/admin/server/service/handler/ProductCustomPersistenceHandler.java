@@ -138,12 +138,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         Map<String, FieldMetadata> md = getMetadata(persistencePackage, helper);
 
-        if (!isDefaultCategoryLegacyMode()) {
-            md.remove("allParentCategoryXrefs");
-
-            BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) md.get("defaultCategory"));
-            defaultCategory.setFriendlyName("ProductImpl_Parent_Category");
-        }
+        modifyParentCategoryMetadata(md);
 
         return getResultSet(persistencePackage, helper, md);
     }
@@ -546,6 +541,15 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             return legacyModeService.isLegacyMode();
         }
         return false;
+    }
+
+    protected void modifyParentCategoryMetadata(Map<String, FieldMetadata> md) {
+        if (!isDefaultCategoryLegacyMode()) {
+            md.remove("allParentCategoryXrefs");
+
+            BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) md.get("defaultCategory"));
+            defaultCategory.setFriendlyName("ProductImpl_Parent_Category");
+        }
     }
 
     protected Category getExistingDefaultCategory(Product product) {
