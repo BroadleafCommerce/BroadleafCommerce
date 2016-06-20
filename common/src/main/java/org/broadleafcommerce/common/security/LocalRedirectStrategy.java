@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.security;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.owasp.esapi.ESAPI;
 import org.springframework.security.web.RedirectStrategy;
 
 import java.io.IOException;
@@ -60,8 +61,13 @@ public class LocalRedirectStrategy implements RedirectStrategy {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Redirecting to '" + url + "'");
         }
-
-        response.sendRedirect(redirectUrl);
+        try {
+            String securelyEncodedRedirectUrl = ESAPI.encoder().encodeForURL(redirectUrl);
+            response.sendRedirect(securelyEncodedRedirectUrl);
+        } catch(Exception e) {
+            LOG.error("Encoding Exception for target Url", e);
+            response.sendError(403);
+        }
     }
 
     /**

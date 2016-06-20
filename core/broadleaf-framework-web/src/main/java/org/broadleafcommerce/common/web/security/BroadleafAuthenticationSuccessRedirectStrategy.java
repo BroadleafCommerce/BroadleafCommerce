@@ -17,8 +17,11 @@
  */
 package org.broadleafcommerce.common.web.security;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
+import org.owasp.esapi.ESAPI;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Component;
@@ -40,7 +43,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component("blAuthenticationSuccessRedirectStrategy")
 public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectStrategy {
-    
+
+    private static final Log LOG = LogFactory.getLog(BroadleafAuthenticationFailureRedirectStrategy.class);
+
     private String redirectPath="/redirect";
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
@@ -52,7 +57,14 @@ public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectS
             }
             url = getRedirectPath();
         }
-        redirectStrategy.sendRedirect(request, response, url);
+
+        try {
+            String encodedUrl = ESAPI.encoder().encodeForURL(url);
+            redirectStrategy.sendRedirect(request, response, encodedUrl);
+        } catch(Exception e) {
+            LOG.error("Encoding Exception for target Url", e);
+            response.sendError(403);
+        }
     }
 
     public String updateLoginErrorUrlForAjax(String url) {

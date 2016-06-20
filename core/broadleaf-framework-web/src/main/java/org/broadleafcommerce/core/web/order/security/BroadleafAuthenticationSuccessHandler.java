@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.owasp.esapi.ESAPI;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -44,7 +45,13 @@ public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuth
             request.getSession().removeAttribute(SESSION_ATTR);
         }
         if (StringUtils.isNotBlank(targetUrl) && targetUrl.contains(":")) {
-            getRedirectStrategy().sendRedirect(request, response, getDefaultTargetUrl());
+            try {
+                String encodedDefaultUrl = ESAPI.encoder().encodeForURL(getDefaultTargetUrl());
+                getRedirectStrategy().sendRedirect(request, response, encodedDefaultUrl);
+            } catch(Exception e) {
+                logger.error("Encoding Exception for target Url", e);
+                response.sendError(403);
+            }
         } else {
             super.onAuthenticationSuccess(request, response, authentication);
         }

@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.security;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.util.StringUtil;
+import org.owasp.esapi.ESAPI;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
@@ -82,7 +83,15 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
             }
 
             saveException(request, exception);
-            getRedirectStrategy().sendRedirect(request, response, failureUrl);
+
+            try {
+                String encodedFailureUrl = ESAPI.encoder().encodeForURL(failureUrl);
+                getRedirectStrategy().sendRedirect(request, response, encodedFailureUrl);
+            } catch(Exception e) {
+                logger.error("Encoding Exception for target Url", e);
+                response.sendError(403);
+            }
+
         } else {
             super.onAuthenticationFailure(request, response, exception);
         }

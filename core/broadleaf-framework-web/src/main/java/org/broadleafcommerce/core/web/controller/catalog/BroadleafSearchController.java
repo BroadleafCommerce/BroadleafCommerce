@@ -18,6 +18,8 @@
 package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.UrlUtil;
@@ -32,6 +34,7 @@ import org.broadleafcommerce.core.search.redirect.service.SearchRedirectService;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
+import org.owasp.esapi.ESAPI;
 import org.springframework.ui.Model;
 
 import java.io.IOException;
@@ -55,6 +58,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author Andre Azzolini (apazzolini)
  */
 public class BroadleafSearchController extends AbstractCatalogController {
+
+    private final Log LOG = LogFactory.getLog(BroadleafSearchController.class);
 
     @Resource(name = "blSearchService")
     protected SearchService searchService;
@@ -111,7 +116,14 @@ public class BroadleafSearchController extends AbstractCatalogController {
             if (handler != null) {
                 String contextPath = request.getContextPath();
                 String url = UrlUtil.fixRedirectUrl(contextPath, handler.getUrl());
-                response.sendRedirect(url);   
+                try {
+                    String encodedUrl = ESAPI.encoder().encodeForURL(url);
+                    response.sendRedirect(encodedUrl);
+                } catch(Exception e) {
+                    LOG.error("Encoding Exception for target Url", e);
+                    response.sendError(403);
+                }
+
                 return null;
             }
 

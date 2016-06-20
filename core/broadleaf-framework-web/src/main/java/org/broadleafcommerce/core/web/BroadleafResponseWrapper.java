@@ -43,7 +43,7 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
 
     /**
      * @param arg0
-     * @see javax.servlet.http.HttpServletResponse#addCookie(javax.servlet.http.Cookie)
+     * @see org.owasp.esapi.HTTPUtilities#addCookie(HttpServletResponse, Cookie)
      */
     public void addCookie(Cookie arg0) {
         response.addCookie(arg0);
@@ -61,7 +61,7 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
     /**
      * @param arg0
      * @param arg1
-     * @see javax.servlet.http.HttpServletResponse#addHeader(java.lang.String, java.lang.String)
+     * @see org.owasp.esapi.HTTPUtilities#addHeader(HttpServletResponse, String, String)
      */
     public void addHeader(String arg0, String arg1) {
         response.addHeader(arg0, arg1);

@@ -25,6 +25,7 @@ import org.broadleafcommerce.cms.url.service.URLHandlerService;
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -87,7 +88,14 @@ public class URLHandlerFilter extends OncePerRequestFilter {
             } else if (URLRedirectType.REDIRECT_TEMP == handler.getUrlRedirectType()) {
                 String url = UrlUtil.fixRedirectUrl(contextPath, handler.getNewURL());
                 url = fixQueryString(request, url);
-                response.sendRedirect(url);             
+
+                try {
+                    String encodedUrl = ESAPI.encoder().encodeForURL(url);
+                    response.sendRedirect(encodedUrl);
+                } catch (Exception e) {
+                    logger.error("Encoding Exception for target Url", e);
+                    response.sendError(403);
+                }
             }           
         } else {
             filterChain.doFilter(request, response);
