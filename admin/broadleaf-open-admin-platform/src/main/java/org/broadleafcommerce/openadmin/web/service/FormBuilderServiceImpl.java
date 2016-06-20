@@ -154,7 +154,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     protected DataFormatProvider dataFormatProvider;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
-            VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN 
+            VisibilityEnum.HIDDEN_ALL
     };
     
     protected static final VisibilityEnum[] GRID_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
@@ -858,8 +858,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         for (Property property : properties) {
             if (property.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) property.getMetadata();
-                
-                
+
+
                 if (!ArrayUtils.contains(getFormHiddenVisibilities(), fmd.getVisibility())) {
                     // Depending on visibility, field for the particular property is not created on the form
                     String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
@@ -947,6 +947,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                     if (StringUtils.isBlank(f.getFriendlyName())) {
                         f.setFriendlyName(f.getName());
+                    }
+
+                    // If is form hidden, set visible to false
+                    if (VisibilityEnum.FORM_HIDDEN.equals(fmd.getVisibility())) {
+                        f.setIsVisible(false);
                     }
 
                     // Add the field to the appropriate FieldGroup
@@ -1120,6 +1125,36 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         
         extensionManager.getProxy().modifyPopulatedEntityForm(ef, entity);
+    }
+
+    protected void setVisibilityBasedOnShowIfFieldEquals(ClassMetadata cmd, Entity entity, EntityForm ef) {
+        for (Property p : cmd.getProperties()) {
+            FieldMetadata fmd = p.getMetadata();
+
+            if (shouldHideField(fmd, entity)) {
+                if (fmd instanceof CollectionMetadata) {
+                    ef.removeListGrid(p.getName());
+                } else {
+                    ef.findField(p.getName()).setIsVisible(false);
+                }
+            }
+        }
+    }
+
+    protected boolean shouldHideField(FieldMetadata fmd, Entity entity) {
+        if (fmd == null || fmd.getShowIfFieldEquals() == null) {
+            return false;
+        }
+
+        for (String property : fmd.getShowIfFieldEquals().keySet()) {
+            List<String> values = fmd.getShowIfFieldEquals().get(property);
+            Property entityProp = entity.findProperty(property);
+
+            if (entityProp == null || values.contains(entityProp.getValue())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -1338,7 +1373,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         
         addDeleteActionIfAllowed(ef, cmd, entity);
         setReadOnlyState(ef, cmd, entity);
-        
+
+        // check for fields that should be hidden based on annotations
+        setVisibilityBasedOnShowIfFieldEquals(cmd, entity, ef);
+
         extensionManager.getProxy().modifyDetailEntityForm(ef);
     }
     
