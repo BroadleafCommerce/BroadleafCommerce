@@ -172,22 +172,29 @@ public class PageServiceImpl implements PageService {
             }
 
             if (dtoList == null || dtoList.isEmpty()) {
-                if (pageList != null) {
-                    for(Page page : pageList) {
-                        PageDTO pageDTO = pageServiceUtility.buildPageDTO(page, secure);
-                        if (!dtoList.contains(pageDTO)) {
-                            dtoList.add(pageDTO);
-                        }
-                    }
-                }
+                createPageDTOList(pageList, secure, dtoList);
+
                 if (dtoList != null && !dtoList.isEmpty()) {
                     Collections.sort(dtoList, new BeanComparator("priority"));
                     addPageListToCache(dtoList, identifier, locale, secure);
                 }
             }
+        } else {
+            createPageDTOList(pageList, secure, dtoList);
         }
 
         return copyDTOList(dtoList);
+    }
+
+    protected void createPageDTOList(List<Page> pageList, boolean secure, List<PageDTO> dtoList) {
+        if (pageList != null) {
+            for(Page page : pageList) {
+                PageDTO pageDTO = pageServiceUtility.buildPageDTO(page, secure);
+                if (!dtoList.contains(pageDTO)) {
+                    dtoList.add(pageDTO);
+                }
+            }
+        }
     }
 
     protected List<PageDTO> getPageListFromCache(String key) {
