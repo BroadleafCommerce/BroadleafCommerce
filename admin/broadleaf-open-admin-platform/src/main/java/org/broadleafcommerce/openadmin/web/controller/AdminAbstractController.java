@@ -169,7 +169,8 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         EntityForm dynamicForm = getEntityForm(info);
 
         // Set the specialized name for these fields - we need to handle them separately
-        dynamicForm.clearFieldsMap();
+        setSpecializedNameForFields(info, dynamicForm);
+
         blankFormContainer.putDynamicForm(info.getPropertyName(), dynamicForm);
         model.addAttribute("dynamicForm", dynamicForm);
         model.addAttribute("entityForm", blankFormContainer);
