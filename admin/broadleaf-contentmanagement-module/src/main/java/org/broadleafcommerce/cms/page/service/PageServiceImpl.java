@@ -164,29 +164,43 @@ public class PageServiceImpl implements PageService {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
 
         if (context.isProductionSandBox()) {
-            String key = buildKey(identifier, locale, secure);
-            List<PageDTO> cachedList = getPageListFromCache(key);
-
-            if (cachedList != null && cachedList.size() == pageList.size()) {
-                dtoList = cachedList;
-            }
-
-            if (dtoList == null || dtoList.isEmpty()) {
-                createPageDTOList(pageList, secure, dtoList);
-
-                if (dtoList != null && !dtoList.isEmpty()) {
-                    Collections.sort(dtoList, new BeanComparator("priority"));
-                    addPageListToCache(dtoList, identifier, locale, secure);
-                }
-            }
+            dtoList = buildPageDTOListUsingCache(pageList, identifier, locale, secure);
         } else {
-            createPageDTOList(pageList, secure, dtoList);
+            // no caching actions needed if not production sandbox
+            addPageListToPageDTOList(pageList, secure, dtoList);
         }
 
         return copyDTOList(dtoList);
     }
 
-    protected void createPageDTOList(List<Page> pageList, boolean secure, List<PageDTO> dtoList) {
+    protected List<PageDTO> buildPageDTOListUsingCache(List<Page> pageList, String identifier, Locale locale, boolean secure) {
+        List<PageDTO> dtoList = getCachedPageDTOList(pageList, identifier, locale, secure);
+
+        if (dtoList == null || dtoList.isEmpty()) {
+            addPageListToPageDTOList(pageList, secure, dtoList);
+
+            if (dtoList != null && !dtoList.isEmpty()) {
+                Collections.sort(dtoList, new BeanComparator("priority"));
+                addPageListToCache(dtoList, identifier, locale, secure);
+            }
+        }
+
+        return dtoList;
+    }
+
+    protected List<PageDTO> getCachedPageDTOList(List<Page> pageList, String identifier, Locale locale, boolean secure) {
+        List<PageDTO> dtoList = new ArrayList<>();
+        String key = buildKey(identifier, locale, secure);
+        List<PageDTO> cachedList = getPageListFromCache(key);
+
+        if (cachedList != null && cachedList.size() == pageList.size()) {
+            dtoList = cachedList;
+        }
+
+        return dtoList;
+    }
+
+    protected void addPageListToPageDTOList(List<Page> pageList, boolean secure, List<PageDTO> dtoList) {
         if (pageList != null) {
             for(Page page : pageList) {
                 PageDTO pageDTO = pageServiceUtility.buildPageDTO(page, secure);
