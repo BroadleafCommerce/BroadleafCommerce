@@ -27,7 +27,9 @@ import javax.annotation.Resource;
  * Goal is to be able to use this syntax in html pages.
  * Example of trying to  resolve images in longDescription:
  *
- * <div th:utext="${#cms.fixUrl('__*{longDescription}__')}" id="description"></div>
+ * <div id="description" th:with="input=*{longDescription}">
+ *     <span th:utext="${#cms.fixUrl(input)}"></span>
+ * </div>
  *
  * @author by reginaldccole
  */
