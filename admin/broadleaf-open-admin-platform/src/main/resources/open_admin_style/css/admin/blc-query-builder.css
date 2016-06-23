@@ -324,6 +324,11 @@
 }
 
 /* filter builder styles */
+.filter-radio-label {
+    display: inline-block;
+    padding-left: 15px;
+}
+
 .query-builder-filters-container .group-conditions, .query-builder-rules-container .group-conditions {
     height: 40px;
     vertical-align: baseline;
