@@ -453,7 +453,11 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
             List<PromotableOrderItem> promotableItems = qualifiersMap.get(itemCriteria);
 
             for (PromotableOrderItem item : promotableItems) {
-                Money lineItemAmount = item.getPriceBeforeAdjustments(offer.getApplyDiscountToSalePrice()).multiply(item.getQuantity());
+                boolean shouldApplyDiscountToSalePrice = offer.getApplyDiscountToSalePrice();
+                Money priceBeforeAdjustments = item.getPriceBeforeAdjustments(shouldApplyDiscountToSalePrice);
+                int quantity = item.getQuantity();
+
+                Money lineItemAmount = priceBeforeAdjustments.multiply(quantity);
                 subtotal = subtotal.add(lineItemAmount);
                 if (subtotal.greaterThanOrEqual(qualifyingItemSubTotal)) {
                     return true;
@@ -466,9 +470,10 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
     @Override
     public boolean orderMeetsSubtotalRequirements(PromotableOrder order, Offer offer) {
-        return offer.getOrderMinSubTotal() == null
-                || offer.getOrderMinSubTotal().lessThanOrEqual(Money.ZERO)
-                || offer.getOrderMinSubTotal().lessThanOrEqual(order.getOrder().getSubTotal());
+        Money orderMinSubTotal = offer.getOrderMinSubTotal();
+        return orderMinSubTotal == null
+                || orderMinSubTotal.lessThanOrEqual(Money.ZERO)
+                || orderMinSubTotal.lessThanOrEqual(order.getOrder().getSubTotal());
     }
 
     public PromotableItemFactory getPromotableItemFactory() {
