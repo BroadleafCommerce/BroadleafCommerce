@@ -31,12 +31,14 @@ import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
 import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXref;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
+import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.joda.time.LocalDateTime;
@@ -186,7 +188,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             // If matches are found, add the candidate items to a list and store it with the itemCriteria
             // for this promotion.
             for (PromotableOrderItem item : promotableOrderItems) {
-                if (couldOrderItemMeetOfferRequirement(criteria, item)) {
+                if (couldOrderItemMeetOfferRequirement(criteria, item) || hasOrderItemAlreadyMetOfferRequirement(offer, item)) {
                     if (isQualifier) {
                         candidates.addQualifier(criteria, item);
                     } else {
@@ -225,6 +227,24 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         }
 
         return appliesToItem;
+    }
+
+    protected boolean hasOrderItemAlreadyMetOfferRequirement(Offer offer, PromotableOrderItem orderItem) {
+        List<OrderItemPriceDetail> priceDetails = orderItem.getOrderItem().getOrderItemPriceDetails();
+
+        for (OrderItemPriceDetail priceDetail : priceDetails) {
+            List<OrderItemPriceDetailAdjustment> priceDetailAdjustments = priceDetail.getOrderItemPriceDetailAdjustments();
+
+            for (OrderItemPriceDetailAdjustment priceDetailAdjustment : priceDetailAdjustments) {
+                Long appliedOfferId = priceDetailAdjustment.getOffer().getId();
+
+                if (offer.getId().equals(appliedOfferId)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
     
     /**
