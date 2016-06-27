@@ -188,7 +188,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             // If matches are found, add the candidate items to a list and store it with the itemCriteria
             // for this promotion.
             for (PromotableOrderItem item : promotableOrderItems) {
-                if (couldOrderItemMeetOfferRequirement(criteria, item) || hasOrderItemAlreadyMetOfferRequirement(offer, item)) {
+                if (couldOrderItemMeetOfferRequirement(criteria, item)) {
                     if (isQualifier) {
                         candidates.addQualifier(criteria, item);
                     } else {
@@ -228,24 +228,6 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
         return appliesToItem;
     }
-
-    protected boolean hasOrderItemAlreadyMetOfferRequirement(Offer offer, PromotableOrderItem orderItem) {
-        List<OrderItemPriceDetail> priceDetails = orderItem.getOrderItem().getOrderItemPriceDetails();
-
-        for (OrderItemPriceDetail priceDetail : priceDetails) {
-            List<OrderItemPriceDetailAdjustment> priceDetailAdjustments = priceDetail.getOrderItemPriceDetailAdjustments();
-
-            for (OrderItemPriceDetailAdjustment priceDetailAdjustment : priceDetailAdjustments) {
-                Long appliedOfferId = priceDetailAdjustment.getOffer().getId();
-
-                if (offer.getId().equals(appliedOfferId)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
     
     /**
      * Private method used by couldOfferApplyToOrder to execute the MVEL expression in the
@@ -257,11 +239,16 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      */
     public Boolean executeExpression(String expression, Map<String, Object> vars) {
         synchronized (EXPRESSION_CACHE) {
+            expression = usePriceBeforeAdjustments(expression);
             Map<String, Class<?>> contextImports = new HashMap<>();
             contextImports.put("OfferType", OfferType.class);
             contextImports.put("FulfillmentType", FulfillmentType.class);
             return MvelHelper.evaluateRule(expression, vars, EXPRESSION_CACHE, contextImports);
         }
+    }
+
+    protected String usePriceBeforeAdjustments(String expression) {
+        return expression.replace("?price.", "?getPriceBeforeAdjustments(true).");
     }
     
     /**
