@@ -32,7 +32,9 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.web.controller.*"/>
     </context:component-scan>
 
-    <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
+    <bean id="blConfiguration" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
 
     <bean id="blPersistenceManagerEventHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -95,9 +97,9 @@
     </bean>
 
     <mo:override id="blMetadataOverrides"/>
-    
-    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
-        <property name="basenames">
+
+    <bean id="blMessageSourceBaseNames" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
             <list>
                 <value>classpath:/messages/GeneratedMessagesEntityCommon</value>
                 <value>classpath:/messages/GeneratedMessagesEntityFramework</value>
@@ -107,6 +109,10 @@
                 <value>classpath:/messages/OpenAdminJavascriptMessages</value>
             </list>
         </property>
+    </bean>
+    
+    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
+        <property name="basenames" ref="blMessageSourceBaseNames"/>
     </bean>
 
     <bean id="blStringLikeRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">

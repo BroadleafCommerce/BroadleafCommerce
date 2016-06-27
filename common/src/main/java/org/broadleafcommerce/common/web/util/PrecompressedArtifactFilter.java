@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.web.util;
 
-import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer;
+import org.broadleafcommerce.common.web.extensibility.CoreContextApplicationContextInitializer;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.BufferedInputStream;
@@ -47,8 +47,8 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
     @Resource(name = "blPrecompressedArtifactFileExtensionWhitelist")
     List<String> fileExtensionWhitelist;
 
-    @Resource(name="blConfiguration")
-    RuntimeEnvironmentPropertiesConfigurer configurer;
+    @Resource(name="blCoreContextApplicationContextInitializer")
+    CoreContextApplicationContextInitializer configurer;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
@@ -205,11 +205,4 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
         this.useWhileInDefaultEnvironment = useWhileInDefaultEnvironment;
     }
 
-    public RuntimeEnvironmentPropertiesConfigurer getConfigurer() {
-        return configurer;
-    }
-
-    public void setConfigurer(RuntimeEnvironmentPropertiesConfigurer configurer) {
-        this.configurer = configurer;
-    }
 }
