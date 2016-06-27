@@ -37,7 +37,23 @@
         <property name="xssProtectionEnabled" value="${exploitProtection.xssEnabled}" />
     </bean>
 
-    <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
+    <bean id="blConfiguration" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
+
+    <!--<bean id="blOverridableProperyLocations" class="org.springframework.beans.factory.config.SetFactoryBean">-->
+        <!--<property name="sourceSet">-->
+            <!--<set>-->
+            <!--</set>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--<bean id="blProperyLocations" class="org.springframework.beans.factory.config.SetFactoryBean">-->
+        <!--<property name="sourceSet">-->
+            <!--<set>-->
+            <!--</set>-->
+        <!--</property>-->
+    <!--</bean>-->
 
     <bean id="blConfigurationManager" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager"/>
 

@@ -28,14 +28,21 @@
     </context:component-scan>
     <context:component-scan base-package="org.broadleafcommerce.common.locale"/>
 
-    <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
+    <bean id="blConfiguration" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
 
-    <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean id="blMergedPersistenceXmlLocations-cms" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath*:/META-INF/persistence-cms.xml</value>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMergedPersistenceXmlLocations-cms"/>
+        <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
     </bean>
 
     <bean id="blEntityManagerFactoryAssetStorageInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
@@ -48,7 +55,7 @@
         <property name="entityManagerFactory" ref="blEntityManagerFactoryAssetStorageInfo" />
     </bean>
 
-    <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean id="blMergedCacheConfigLocations-cms" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath:bl-cms-ehcache.xml</value>
@@ -56,12 +63,22 @@
         </property>
     </bean>
 
-    <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMergedCacheConfigLocations-cms"/>
+        <property name="targetRef" value="blMergedCacheConfigLocations"/>
+    </bean>
+
+    <bean id="blMergedEntityContexts-cms" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath:bl-cms-applicationContext-entity.xml</value>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMergedEntityContexts-cms"/>
+        <property name="targetRef" value="blMergedEntityContexts"/>
     </bean>
 
     <bean id="blSandboxItemListeners" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
@@ -85,12 +102,17 @@
         </property>
     </bean>
 
-    <bean id="blContentRuleProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean id="blContentRuleProcessors-cms" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <ref bean="blContentDefaultRuleProcessor"/>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blContentRuleProcessors-cms" />
+        <property name="targetRef" value="blContentRuleProcessors" />
     </bean>
     
     <bean id="blPageDefaultRuleProcessor" class="org.broadleafcommerce.cms.page.service.PageDefaultRuleProcessor">
@@ -103,12 +125,17 @@
         </property>
     </bean>
 
-    <bean id="blPageRuleProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean id="blPageRuleProcessors-cms" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <ref bean="blPageDefaultRuleProcessor"/>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blPageRuleProcessors-cms" />
+        <property name="targetRef" value="blPageRuleProcessors" />
     </bean>
 
     <bean id="blNamedOperationManager" class="org.broadleafcommerce.cms.file.service.operation.NamedOperationManagerImpl">
@@ -119,9 +146,9 @@
         </property>
     </bean>
 
-    <bean id="blStaticMapNamedOperationComponent" class="org.broadleafcommerce.cms.file.service.operation.StaticMapNamedOperationComponent">
-        <property name="namedOperations">
-            <map>                                          
+    <bean id="blStaticMapNamedOperations" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
                 <entry key="smallAdminThumbnail">
                     <map>
                         <entry key="resize-width-amount" value="30"/>
@@ -143,11 +170,13 @@
             </map>
         </property>
     </bean>
+
+    <bean id="blStaticMapNamedOperationComponent" class="org.broadleafcommerce.cms.file.service.operation.StaticMapNamedOperationComponent"/>
     
     <bean id="blContentDeepLinkService" class="org.broadleafcommerce.cms.web.deeplink.ContentDeepLinkServiceImpl">
         <property name="structuredContentAdminPath" value="structured-content/" />
     </bean>
-    
+
     <bean id="blCMSSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
@@ -155,6 +184,7 @@
             </list>
         </property>
     </bean>
+
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
         <property name="collectionRef" value="blCMSSiteMapGenerators" />
         <property name="targetRef" value="blSiteMapGenerators" />

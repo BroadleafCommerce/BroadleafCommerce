@@ -34,7 +34,7 @@
         <property name="xssProtectionEnabled" value="false" />
     </bean>
 
-    <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean id="blMergedEntityContexts-open-admin" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath:bl-open-admin-applicationContext-entity.xml</value>
@@ -42,12 +42,22 @@
         </property>
     </bean>
 
-    <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMergedEntityContexts-open-admin"/>
+        <property name="targetRef" value="blMergedEntityContexts"/>
+    </bean>
+
+    <bean id="blMergedPersistenceXmlLocations-open-admin" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath*:/META-INF/persistence-open-admin.xml</value>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMergedPersistenceXmlLocations-open-admin"/>
+        <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
     </bean>
 
     <bean id="blArtifactService" class="org.broadleafcommerce.openadmin.server.service.artifact.ArtifactServiceImpl">

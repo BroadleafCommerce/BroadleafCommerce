@@ -43,5 +43,5 @@
     </aop:config>
 
     <bean id="blOrderLockManager" class="org.broadleafcommerce.core.web.order.DatabaseOrderLockManager"/>
-    
+
 </beans>

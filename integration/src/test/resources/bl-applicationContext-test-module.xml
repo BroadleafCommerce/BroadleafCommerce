@@ -28,14 +28,19 @@
     <!-- This applicationContext is used to test an additional merge that comes from a 3rd party module (for instance,
         merging in an additional activity in a workflow along with any other additional ones added by
         bl-applicationContext-test.xml -->
-        
-    <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
-        <property name="activities">
+
+    <bean id="blCheckoutWorkflowActivities-it-module" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
             <list>
                 <!-- Since no order is configured, this should be thrown at the very end of the list -->
                 <bean class="org.broadleafcommerce.core.workflow.state.test.TestExampleModuleActivity" />
-            </list> 
-        </property>   
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCheckoutWorkflowActivities-it-module"/>
+        <property name="targetRef" value="blCheckoutWorkflowActivities"/>
     </bean>
     
 </beans>

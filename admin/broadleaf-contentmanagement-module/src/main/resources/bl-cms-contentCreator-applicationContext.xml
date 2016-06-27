@@ -35,7 +35,7 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.cms.admin.web.controller.*"/>
     </context:component-scan>
     
-    <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+    <bean id="blCustomPersistenceHandlers-cms" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <ref bean="blPageTemplateCustomPersistenceHandler" />
@@ -44,6 +44,11 @@
                 <ref bean="blRequestDTOCustomPersistenceHandler"/>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCustomPersistenceHandlers-cms"/>
+        <property name="targetRef" value="blCustomPersistenceHandlers"/>
     </bean>
     
     <bean id="blCMSPersistenceProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
@@ -59,7 +64,7 @@
         <property name="targetRef" value="blPersistenceProviders" />
     </bean>
 
-   <mo:override id="blMetadataOverrides">
+   <mo:override id="blMetadataOverrides-cms">
         <mo:overrideItem configurationKey="targetProduct">
             <mo:field name="defaultCategory">
                 <mo:property name="excluded" value="false"/>
@@ -97,15 +102,23 @@
         </mo:overrideItem>
     </mo:override>
 
-    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
-        <property name="useCodeAsDefaultMessage" value="${messages.useCodeAsDefaultMessage}" />
-        <property name="cacheSeconds" value="${messages.cacheSeconds}" />
-        <property name="basenames">
+    <bean id="blMessageSourceBaseNames-cms" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
             <list>
                 <value>classpath:/messages/ContentManagementMessages</value>
                 <value>classpath:/messages/GeneratedMessagesEntityCMS</value>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMessageSourceBaseNames-cms" />
+        <property name="targetRef" value="blMessageSourceBaseNames" />
+    </bean>
+
+    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
+        <property name="useCodeAsDefaultMessage" value="${messages.useCodeAsDefaultMessage}" />
+        <property name="cacheSeconds" value="${messages.cacheSeconds}" />
     </bean>
 
 </beans>

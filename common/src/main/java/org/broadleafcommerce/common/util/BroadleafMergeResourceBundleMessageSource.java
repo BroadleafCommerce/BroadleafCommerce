@@ -66,6 +66,7 @@ public class BroadleafMergeResourceBundleMessageSource extends ReloadableResourc
      * @param resourceBundleExtensionPoint
      * @see {@link ReloadableResourceBundleMessageSource#setBasenames(String...)}
      */
+    @Resource(name="blMessageSourceBaseNames")
     @Override
     public void setBasenames(String... basenames) {
         CollectionUtils.reverseArray(basenames);

@@ -32,7 +32,7 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.admin.web.controller.*"/>
     </context:component-scan>
 
-    <bean id="blFieldMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
+    <bean id="blFieldMetadataProviders-core-admin" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <ref bean="blCustomerUsernameFieldMetadataProvider"/>
@@ -40,7 +40,12 @@
         </property>
     </bean>
 
-    <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blFieldMetadataProviders-core-admin"/>
+        <property name="targetRef" value="blFieldMetadataProviders"/>
+    </bean>
+
+    <bean id="blCustomPersistenceHandlers-core-admin" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <ref bean="blCategoryCustomPersistenceHandler" />
@@ -61,7 +66,12 @@
         </property>
     </bean>
 
-    <mo:override id="blMetadataOverrides">
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCustomPersistenceHandlers-core-admin"/>
+        <property name="targetRef" value="blCustomPersistenceHandlers"/>
+    </bean>
+
+    <mo:override id="blMetadataOverrides-core-admin">
         <!-- Add required validation to some default Sku fields. These should not occur on the additionalSkus list, which
             is why these are marked required in this fashion rather than in @AdminPresentation annotations on SkuImpl -->
     
@@ -173,9 +183,9 @@
             </mo:field>
         </mo:overrideItem>
     </mo:override>
-    
-    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
-        <property name="basenames">
+
+    <bean id="blMessageSourceBaseNames-core-admin" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
             <list>
                 <value>classpath:/messages/CustomerCareMessages</value>
                 <value>classpath:/messages/MerchandisingMessages</value>
@@ -185,6 +195,11 @@
                 <value>classpath:/messages/UtilityMessages</value>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMessageSourceBaseNames-core-admin" />
+        <property name="targetRef" value="blMessageSourceBaseNames" />
     </bean>
 
     <bean id="blAdminExtendedRuleBuilderFieldServices" class="org.springframework.beans.factory.config.ListFactoryBean">
