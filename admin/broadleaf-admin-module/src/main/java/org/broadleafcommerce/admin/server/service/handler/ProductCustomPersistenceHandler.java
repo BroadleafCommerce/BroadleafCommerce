@@ -346,7 +346,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                         restrictions.add(builder.like(skuFieldPath.as(String.class), "%" + fasc.getFilterValues().get(0) + "%"));
                     } else if (field.getType().isAssignableFrom(BigDecimal.class)) {
                         BigDecimal decimalValue = new BigDecimal(fasc.getFilterValues().get(0));
-                        String filterValue = String.format("%5.5f", decimalValue);
+                        String filterValue = String.format("%.5f", decimalValue);
 
                         if (fasc.getFilterValues().size() == 1) {
                             restrictions.add(builder.equal(skuFieldPath.as(String.class), filterValue));
