@@ -20,14 +20,11 @@ package org.broadleafcommerce.core.web.catalog;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.web.catalog.extension.ProductHandlerMappingExtensionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -62,9 +59,6 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
     @Resource(name = "blCatalogService")
     private CatalogService catalogService;
 
-    @Resource(name = "blProductHandlerMappingExtensionManager")
-    protected ProductHandlerMappingExtensionManager extensionManager;
-
     protected String defaultTemplateName = "catalog/product";
 
     public static final String CURRENT_PRODUCT_ATTRIBUTE_NAME = "currentProduct";
@@ -90,16 +84,8 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
             }
 
             if (product != null) {
-                ExtensionResultHolder holder = new ExtensionResultHolder();
-                ExtensionResultStatusType result = extensionManager.getProxy().checkProductAttributes(product, holder);
-                if (ExtensionResultStatusType.HANDLED.equals(result)) {
-                    product = (Product) holder.getResult();
-                }
-
-                if (product != null) {
-                    context.getRequest().setAttribute(CURRENT_PRODUCT_ATTRIBUTE_NAME, product);
-                    return controllerName;
-                }
+                context.getRequest().setAttribute(CURRENT_PRODUCT_ATTRIBUTE_NAME, product);
+                return controllerName;
             }
         }
         return null;
