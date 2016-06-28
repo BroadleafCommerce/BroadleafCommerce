@@ -97,16 +97,18 @@ public class AdminProductController extends AdminBasicEntityController {
         }
                 
         Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
-        overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
-        boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
-        Field fullUrl = ef.findField("url");
-        if (fullUrl != null) {
-            fullUrl.withAttribute("overriddenUrl", overriddenUrl)
-                .withAttribute("sourceField", "defaultSku--name")
-                .withAttribute("toggleField", "overrideGeneratedUrl")
-                .withAttribute("prefix-selector", "#field-defaultCategory")
-                .withAttribute("prefix", defaultCategoryUrlPrefix)
-                .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
+        if (overrideGeneratedUrl != null) {
+            overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
+            boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
+            Field fullUrl = ef.findField("url");
+            if (fullUrl != null) {
+                fullUrl.withAttribute("overriddenUrl", overriddenUrl)
+                        .withAttribute("sourceField", "defaultSku--name")
+                        .withAttribute("toggleField", "overrideGeneratedUrl")
+                        .withAttribute("prefix-selector", "#field-defaultCategory")
+                        .withAttribute("prefix", defaultCategoryUrlPrefix)
+                        .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
+            }
         }
     }
     
