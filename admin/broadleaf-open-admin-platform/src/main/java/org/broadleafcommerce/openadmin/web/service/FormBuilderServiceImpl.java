@@ -1135,7 +1135,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 if (fmd instanceof CollectionMetadata) {
                     ef.removeListGrid(p.getName());
                 } else {
-                    ef.findField(p.getName()).setIsVisible(false);
+                    ef.removeField(p.getName());
                 }
             }
         }
