@@ -263,6 +263,14 @@ public class AdminPermissionImpl implements AdminPermission {
 
     @Override
     public List<AdminPermission> getAllChildPermissions() {
+        List<AdminPermission> childPermissions = new ArrayList<>();
+        for (AdminPermission permission : allChildPermissions) {
+            if (permission.isFriendly()) {
+                childPermissions.addAll(permission.getAllChildPermissions());
+            } else {
+                childPermissions.add(permission);
+            }
+        }
         return allChildPermissions;
     }
 
