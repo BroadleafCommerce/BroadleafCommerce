@@ -969,7 +969,7 @@ $(document).ready(function() {
                         valueArray.push($(val).val());
                     }
                 } else {
-                    valueArray.push($(val).text());
+                    valueArray.push($(val).val());
                 }
             });
         }
