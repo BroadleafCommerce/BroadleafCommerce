@@ -22,6 +22,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -118,6 +119,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
     @Resource(name = "blAdminUserDao")
     protected AdminUserDao adminUserDao;
 
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericEntityDao;
+
     @Resource(name = "blAdornedTargetAutoPopulateExtensionManager")
     protected AdornedTargetAutoPopulateExtensionManager adornedTargetAutoPopulateExtensionManager;
 
@@ -150,6 +154,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams, crumbs, pathVars);
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
+
+        sectionKey = checkForTypedEntitySectionKey(request, sectionKey);
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey, crumbs);
         listGrid.setSelectType(ListGrid.SelectType.NONE);
@@ -192,6 +198,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("mainActions", mainActions);
         setModelAttributes(model, sectionKey);
+        setTypedEntityModelAttributes(request, model);
     }
 
     @RequestMapping(value = "/selectize", method = RequestMethod.GET)
@@ -407,6 +414,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, firstTab == null ? "General" : firstTab.getTabName());
 
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
+
+        sectionKey = checkForTypedEntitySectionKey(request, sectionKey);
 
         if (isAddRequest(entity)) {
             modifyAddEntityForm(entityForm, pathVars);
@@ -1834,6 +1843,39 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 .withOrder(auditableField.getOrder())
                 .withOwningEntityClass(auditableField.getOwningEntityClass())
                 .withReadOnly(true);
+    }
+
+    // *****************************************
+    // Typed Entity Helper Methods
+    // *****************************************
+
+    protected void setTypedEntityModelAttributes(HttpServletRequest request, Model model) {
+        List<ClassTree> entityTypes;// Check if this is a typed entity
+        AdminSection typedEntitySection = (AdminSection) request.getAttribute("typedEntitySection");
+        if (typedEntitySection != null) {
+            // Update the friendly name for this Product Type
+            model.addAttribute("entityFriendlyName", typedEntitySection.getName());
+
+            try {
+                Class<?> implClass = genericEntityDao.getCeilingImplClass(typedEntitySection.getCeilingEntity());
+
+                // We only want one entity type in the "Add" button
+                entityTypes = new ArrayList<>();
+                ClassTree productTree = new ClassTree(implClass.getName());
+                entityTypes.add(productTree);
+                model.asMap().put("entityTypes", entityTypes);
+            } catch (Exception e) {
+                LOG.warn("Unable to get Entity Type from Admin Section", e);
+            }
+        }
+    }
+
+    protected String checkForTypedEntitySectionKey(HttpServletRequest request, String sectionKey) {
+        AdminSection typedEntitySection = (AdminSection) request.getAttribute("typedEntitySection");
+        if (typedEntitySection != null) {
+            sectionKey = typedEntitySection.getUrl().substring(1);
+        }
+        return sectionKey;
     }
 
     // *********************************
