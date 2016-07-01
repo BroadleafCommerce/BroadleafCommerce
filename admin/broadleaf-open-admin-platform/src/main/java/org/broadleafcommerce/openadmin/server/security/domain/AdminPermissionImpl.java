@@ -271,7 +271,7 @@ public class AdminPermissionImpl implements AdminPermission {
                 childPermissions.add(permission);
             }
         }
-        return allChildPermissions;
+        return childPermissions;
     }
 
     @Override
