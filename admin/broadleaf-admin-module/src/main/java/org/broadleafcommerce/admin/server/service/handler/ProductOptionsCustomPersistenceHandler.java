@@ -123,9 +123,9 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
     protected boolean needsAllowedValue(ProductOption adminInstance) {
         // validate "Use in Sku generation"
         // Check if "use in sku generation" is true and that there are allowed values set
-        if (adminInstance.getUseInSkuGeneration()
-                && productOptionDao.countAllowedValuesForProductOptionById(adminInstance.getId()) == 0) {
-            return true;
+        if (adminInstance.getUseInSkuGeneration()) {
+            Long count = productOptionDao.countAllowedValuesForProductOptionById(adminInstance.getId());
+            return count.equals(0L);
         }
         // Else either there are allowed values and/or "use in sku generation" is false
         return false;
