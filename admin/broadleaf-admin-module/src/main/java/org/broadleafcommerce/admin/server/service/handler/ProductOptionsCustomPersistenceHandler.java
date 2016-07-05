@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -38,6 +39,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * 
  *  This class is used to prevent updates to Product Options if "Use in Sku generation" is true but no "Allowed Values" 
@@ -48,6 +51,9 @@ import java.util.Map;
  */
 @Component("blProductOptionsCustomPersistenceHandler")
 public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+
+    @Resource(name="blProductOptionDao")
+    protected ProductOptionDao productOptionDao;
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
@@ -116,8 +122,9 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
      */
     protected boolean needsAllowedValue(ProductOption adminInstance) {
         // validate "Use in Sku generation"
-        // Check if "use in sku generation" is true and that there are no allowed values set
-        if (adminInstance.getUseInSkuGeneration() && adminInstance.getAllowedValues().isEmpty()) {
+        // Check if "use in sku generation" is true and that there are allowed values set
+        if (adminInstance.getUseInSkuGeneration()
+                && productOptionDao.countAllowedValuesForProductOptionById(adminInstance.getId()) == 0) {
             return true;
         }
         // Else either there are allowed values and/or "use in sku generation" is false

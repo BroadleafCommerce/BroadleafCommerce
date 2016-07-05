@@ -42,6 +42,10 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 @Repository("blProductOptionDao")
 public class ProductOptionDaoImpl implements ProductOptionDao {
@@ -104,6 +108,19 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
     @Override
     public List<AssignedProductOptionDTO> findAssignedProductOptionsByProduct(Product product) {
         return findAssignedProductOptionsByProductId(product.getId());
+    }
+
+    @Override
+    public Long countAllowedValuesForProductOptionById(Long productOptionId) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root<ProductOptionValueImpl> root = criteria.from(ProductOptionValueImpl.class);
+        criteria.select(builder.count(root));
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(builder.equal(root.get("productOption"), productOptionId));
+
+        TypedQuery<Long> query = em.createQuery(criteria);
+        return query.getSingleResult();
     }
 
 }

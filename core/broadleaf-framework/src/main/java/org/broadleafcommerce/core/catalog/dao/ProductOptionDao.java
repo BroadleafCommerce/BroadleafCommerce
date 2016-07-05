@@ -59,5 +59,5 @@ public interface ProductOptionDao {
      */
     public List<AssignedProductOptionDTO> findAssignedProductOptionsByProduct(Product product);
 
-
+    Long countAllowedValuesForProductOptionById(Long productOptionId);
 }
