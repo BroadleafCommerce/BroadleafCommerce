@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
@@ -55,6 +56,9 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    @Resource(name="blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
     
     @Override
     public List<ProductOption> readAllProductOptions() {
@@ -116,8 +120,11 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<ProductOptionValueImpl> root = criteria.from(ProductOptionValueImpl.class);
         criteria.select(builder.count(root));
+
         List<Predicate> restrictions = new ArrayList<Predicate>();
-        restrictions.add(builder.equal(root.get("productOption"), productOptionId));
+        List<Long> mergedIds = sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, productOptionId);
+        restrictions.add(root.get("productOption").in(mergedIds));
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
         TypedQuery<Long> query = em.createQuery(criteria);
         return query.getSingleResult();
