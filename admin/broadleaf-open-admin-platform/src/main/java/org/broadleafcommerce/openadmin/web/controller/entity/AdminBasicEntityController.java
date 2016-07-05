@@ -48,6 +48,7 @@ import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminUserDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
@@ -121,6 +122,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericEntityDao;
+
+    @Resource(name="blDynamicEntityDao")
+    protected DynamicEntityDao dynamicEntityDao;
 
     @Resource(name = "blAdornedTargetAutoPopulateExtensionManager")
     protected AdornedTargetAutoPopulateExtensionManager adornedTargetAutoPopulateExtensionManager;
@@ -1855,18 +1859,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         if (typedEntitySection != null) {
             // Update the friendly name for this Product Type
             model.addAttribute("entityFriendlyName", typedEntitySection.getName());
-
-            try {
-                Class<?> implClass = genericEntityDao.getCeilingImplClass(typedEntitySection.getCeilingEntity());
-
-                // We only want one entity type in the "Add" button
-                entityTypes = new ArrayList<>();
-                ClassTree productTree = new ClassTree(implClass.getName());
-                entityTypes.add(productTree);
-                model.asMap().put("entityTypes", entityTypes);
-            } catch (Exception e) {
-                LOG.warn("Unable to get Entity Type from Admin Section", e);
-            }
         }
     }
 
