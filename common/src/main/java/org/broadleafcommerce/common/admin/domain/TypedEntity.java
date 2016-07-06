@@ -17,22 +17,24 @@
  */
 package org.broadleafcommerce.common.admin.domain;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 /**
  * @author Jon Fleschler (jfleschler)
  */
-public interface TypedEntity<T> {
+public interface TypedEntity {
 
     /**
      * Returns the type of the Entity
      * @return type
      */
-    public T getType();
+    public BroadleafEnumerationType getType();
 
     /**
      * Sets the type of the Entity
      * @param type
      */
-    public void setType(T type);
+    public void setType(BroadleafEnumerationType type);
 
     /**
      * Returns the persisted type field name
