@@ -153,18 +153,18 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-envers</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>jcl-over-slf4j</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-log4j12</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
@@ -386,6 +386,10 @@
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-common-presentation</artifactId>
             <version>${broadleaf-presentation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
         </dependency>
     </dependencies>
 </project>
