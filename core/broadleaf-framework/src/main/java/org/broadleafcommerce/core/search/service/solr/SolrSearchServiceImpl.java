@@ -399,7 +399,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 //Get a list of existing collections so we don't overwrite one
                 Set<String> collectionNames = primary.getZkStateReader().getClusterState().getCollections();
                 if (collectionNames == null) {
-                    collectionNames = new HashSet<String>();
+                    collectionNames = new HashSet<>();
                 }
 
                 Aliases aliases = primary.getZkStateReader().getAliases();
@@ -435,7 +435,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 //Reload the collection names
                 collectionNames = primary.getZkStateReader().getClusterState().getCollections();
                 if (collectionNames == null) {
-                    collectionNames = new HashSet<String>();
+                    collectionNames = new HashSet<>();
                 }
 
                 //Reload these maps for the next collection.
@@ -455,17 +455,17 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                     }
 
                     new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                            .setConfigName(solrCloudConfigName).process(primary);
+                            .setConfigName(solrCloudConfigName).process(reindex);
 
-                    new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
-                            .setAliasedCollections(collectionName).process(primary);
+                    new CollectionAdminRequest.CreateAlias().setAliasName(reindex.getDefaultCollection())
+                            .setAliasedCollections(collectionName).process(reindex);
                 } else {
                     //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
                         String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
                 collectionName = collectionName.split(",")[0];
                     if (!collectionNames.contains(collectionName)) {
                         new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                                .setConfigName(solrCloudConfigName).process(primary);
+                                .setConfigName(solrCloudConfigName).process(reindex);
                     }
                 }
             } else {
@@ -799,7 +799,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     @Override
     public List<SearchFacetDTO> getCategoryFacets(Category category) {
-        List<SearchFacet> searchFacets = new ArrayList<SearchFacet>();
+        List<SearchFacet> searchFacets = new ArrayList<>();
         ExtensionResultStatusType status = extensionManager.getProxy().getCategorySearchFacets(category, searchFacets);
 
         if (Objects.equals(ExtensionResultStatusType.NOT_HANDLED, status)) {
@@ -900,7 +900,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @return the actual Product instances as a result of the search
      */
     protected List<Product> getProducts(List<SolrDocument> responseDocuments) {
-        final List<Long> productIds = new ArrayList<Long>();
+        final List<Long> productIds = new ArrayList<>();
         for (SolrDocument doc : responseDocuments) {
             productIds.add((Long) doc.getFieldValue(shs.getIndexableIdFieldName()));
         }
@@ -935,7 +935,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @return the actual Sku instances as a result of the search
      */
     protected List<Sku> getSkus(List<SolrDocument> responseDocuments) {
-        final List<Long> skuIds = new ArrayList<Long>();
+        final List<Long> skuIds = new ArrayList<>();
         for (SolrDocument doc : responseDocuments) {
             skuIds.add((Long) doc.getFieldValue(shs.getIndexableIdFieldName()));
         }
