@@ -29,6 +29,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * @author Jeff Fischer
@@ -50,7 +51,6 @@ public abstract class AbstractBroadleafConfigEnvironmentPostProcessor implements
         if (commonProp.exists()) {
             load(environment, commonProp, null);
         }
-        load(environment, commonProp, null);
         String[] profiles = environment.getActiveProfiles();
         if (profiles.length > 0) {
             for (String profile : profiles) {
@@ -66,12 +66,24 @@ public abstract class AbstractBroadleafConfigEnvironmentPostProcessor implements
 
     protected void load(ConfigurableEnvironment environment, Resource resource, String profile) {
         try {
-            PropertySource<?> propertySource = propertySourceLoader.load(resource, profile);
+            PropertySource<?> propertySource = propertySourceLoader.load(resource, null);
             if (propertySource != null) {
                 if (profile == null) {
                     environment.getPropertySources().addLast(propertySource);
                 } else {
-                    environment.getPropertySources().addFirst(propertySource);
+                    Iterator<PropertySource<?>> itr = environment.getPropertySources().iterator();
+                    boolean found = false;
+                    while (itr.hasNext()) {
+                        PropertySource<?> source = itr.next();
+                        if (source.getName().contains("common.properties")) {
+                            environment.getPropertySources().addBefore(source.getName(), propertySource);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        environment.getPropertySources().addLast(propertySource);
+                    }
                 }
             }
         } catch (IOException e) {
