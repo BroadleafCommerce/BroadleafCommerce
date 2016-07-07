@@ -96,21 +96,21 @@ public class MergeContextLoader extends ContextLoaderListener {
      * @throws BeansException if the context couldn't be initialized
      * @see ConfigurableWebApplicationContext
      */
-    @Override
-    @Deprecated
-    protected WebApplicationContext createWebApplicationContext(ServletContext servletContext, ApplicationContext parent) throws BeansException {
-        MergeXmlWebApplicationContext wac = new MergeXmlWebApplicationContext();
-        wac.setParent(parent);
-        wac.setServletContext(servletContext);
-        wac.setConfigLocation(servletContext.getInitParameter(ContextLoader.CONFIG_LOCATION_PARAM));
-        wac.setPatchLocation(servletContext.getInitParameter(PATCH_LOCATION_PARAM));
-        wac.setShutdownBean(servletContext.getInitParameter(SHUTDOWN_HOOK_BEAN));
-        wac.setShutdownMethod(servletContext.getInitParameter(SHUTDOWN_HOOK_METHOD));
-        customizeContext(servletContext, wac);
-        wac.refresh();
-
-        return wac;
-    }
+//    @Override
+//    @Deprecated
+//    protected WebApplicationContext createWebApplicationContext(ServletContext servletContext, ApplicationContext parent) throws BeansException {
+//        MergeXmlWebApplicationContext wac = new MergeXmlWebApplicationContext();
+//        wac.setParent(parent);
+//        wac.setServletContext(servletContext);
+//        wac.setConfigLocation(servletContext.getInitParameter(ContextLoader.CONFIG_LOCATION_PARAM));
+//        wac.setPatchLocation(servletContext.getInitParameter(PATCH_LOCATION_PARAM));
+//        wac.setShutdownBean(servletContext.getInitParameter(SHUTDOWN_HOOK_BEAN));
+//        wac.setShutdownMethod(servletContext.getInitParameter(SHUTDOWN_HOOK_METHOD));
+//        customizeContext(servletContext, wac);
+//        wac.refresh();
+//
+//        return wac;
+//    }
 
     /**
      * Instantiate the rootId WebApplicationContext for this loader, either the
