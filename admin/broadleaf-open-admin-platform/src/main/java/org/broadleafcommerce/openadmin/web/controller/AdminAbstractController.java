@@ -391,7 +391,15 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @return the sectionKey for this request
      */
     protected String getSectionKey(Map<String, String> pathVars) {
-        return pathVars.get("sectionKey");
+        String sectionKey = pathVars.get("sectionKey");
+
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        AdminSection typedEntitySection = (AdminSection) request.getAttribute("typedEntitySection");
+        if (typedEntitySection != null) {
+            sectionKey = typedEntitySection.getUrl().substring(1);
+        }
+
+        return sectionKey;
     }
     
     /**
