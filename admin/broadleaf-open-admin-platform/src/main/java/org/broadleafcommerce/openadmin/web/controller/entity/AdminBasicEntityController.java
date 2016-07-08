@@ -161,8 +161,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
 
-        sectionKey = checkForTypedEntitySectionKey(request, sectionKey);
-
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey, crumbs);
         listGrid.setSelectType(ListGrid.SelectType.NONE);
 
@@ -420,8 +418,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, firstTab == null ? "General" : firstTab.getTabName());
 
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
-
-        sectionKey = checkForTypedEntitySectionKey(request, sectionKey);
 
         if (isAddRequest(entity)) {
             modifyAddEntityForm(entityForm, pathVars);
@@ -1872,14 +1868,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
             // Update the friendly name for this Entity Type
             model.addAttribute("entityFriendlyName", typedEntitySection.getName());
         }
-    }
-
-    protected String checkForTypedEntitySectionKey(HttpServletRequest request, String sectionKey) {
-        AdminSection typedEntitySection = (AdminSection) request.getAttribute("typedEntitySection");
-        if (typedEntitySection != null) {
-            sectionKey = typedEntitySection.getUrl().substring(1);
-        }
-        return sectionKey;
     }
 
     // *********************************
