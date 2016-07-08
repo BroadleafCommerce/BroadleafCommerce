@@ -60,7 +60,6 @@
                     }
 
                     if (fieldGroup.length) {
-                        $(fieldGroup).find('.error').remove();
                         // Add an error indicator to the fields tab
                         // this can happen more than once because the indicator is absolute positioning
                         var tabId = '#' + fieldGroup.parents('.entityFormTab').attr("class").substring(0, 4);
