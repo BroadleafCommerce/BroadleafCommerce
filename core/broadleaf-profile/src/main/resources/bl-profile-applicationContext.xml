@@ -42,6 +42,6 @@
         </property>
     </bean>
     
-    <bean id="blPasswordEncoder" class="${password.site.encoder}"/>
+    <bean id="blPasswordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/>
     
 </beans>
