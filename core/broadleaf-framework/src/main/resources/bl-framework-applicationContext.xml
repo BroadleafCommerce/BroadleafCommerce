@@ -29,7 +29,7 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.*"/> 
     </context:component-scan>
     
-    <bean id="blPasswordEncoder" class="${password.site.encoder}"/>
+    <bean id="blPasswordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/>
     
     <!-- Bean for encrypting PCI data -->
     <bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.PassthroughEncryptionModule"/>
