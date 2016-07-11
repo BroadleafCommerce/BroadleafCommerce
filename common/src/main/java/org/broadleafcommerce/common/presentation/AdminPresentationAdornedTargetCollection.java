@@ -81,7 +81,17 @@ public @interface AdminPresentationAdornedTargetCollection {
      * @return name of the property 
      */
     String showIfProperty() default "";
-    
+
+    /**
+     * <p>Optional - only required if you want hide the field based on the supplied field's value</p>
+     *
+     * <p>If the property is defined and found to be equal to one of the values provided
+     * then this field will be excluded in the admin presentation layer</p>
+     *
+     * @return configuration of the field values
+     */
+    FieldValueConfiguration[] showIfFieldEquals() default {};
+
     /**
      * Optional - only required if you want to make the field immutable
      *

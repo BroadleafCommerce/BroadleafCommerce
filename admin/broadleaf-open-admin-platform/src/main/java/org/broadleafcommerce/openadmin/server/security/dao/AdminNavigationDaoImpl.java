@@ -19,10 +19,12 @@ package org.broadleafcommerce.openadmin.server.security.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.util.UrlPathHelper;
 
 import java.util.List;
 
@@ -32,6 +34,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -103,18 +106,21 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         
         if (!CollectionUtils.isEmpty(sections)) {
             AdminSection returnSection = sections.get(0);
+            if (sectionId == null) {
+                // if no sectionId was passed, ensure we are returning the correct section based on the request's sectionkey
+                sectionId = getSectionKey(true);
+            }
 
-            if (sectionId != null) {
-                if (!sectionId.startsWith("/")) {
-                    sectionId = "/" + sectionId;
-                }
-                for (AdminSection section : sections) {
-                    if (sectionId.equals(section.getUrl())) {
-                        returnSection = section;
-                        break;
-                    }
+            if (!sectionId.startsWith("/")) {
+                sectionId = "/" + sectionId;
+            }
+            for (AdminSection section : sections) {
+                if (sectionId.equals(section.getUrl())) {
+                    returnSection = section;
+                    break;
                 }
             }
+
             return returnSection;
         }
         
@@ -161,4 +167,24 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         return adminSection;
     }
 
+    @Override
+    public String getSectionKey(boolean withTypeKey) {
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        String originatingUri = new UrlPathHelper().getOriginatingRequestUri(request);
+        int startIndex = request.getContextPath().length();
+
+        String sectionKey = originatingUri.substring(startIndex);
+        int endIndex = sectionKey.indexOf("/", 1);
+        if (endIndex > 0) {
+            // If we want a 'typeKey', grab a new end index
+            if (withTypeKey) {
+                endIndex = sectionKey.indexOf("/", endIndex);
+            }
+            // check again to make sure there is an end index
+            if (endIndex > 0) {
+                sectionKey = sectionKey.substring(0, endIndex);
+            }
+        }
+        return sectionKey;
+    }
 }
