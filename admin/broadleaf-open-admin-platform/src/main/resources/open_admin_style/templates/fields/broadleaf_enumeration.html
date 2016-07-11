@@ -19,7 +19,7 @@
         </div>
 
         <th:block th:each="entry : *{fields['__${field.name}__'].options}" class="radio-container">
-            <div class="radio-option">
+            <div class="radio-option" th:if="*{fields['__${field.name}__'].value} == ${entry.key} and ${field.readOnly}">
                 <input th:field="*{fields['__${field.name}__'].value}" type="radio" class="radio" th:value="${entry.key}" th:disabled="${field.readOnly}"/>
                 <label th:inline="text" class="radio-label" th:classappend="${field.readOnly}? 'disabled'">
                     [[${entry.value}]]
