@@ -18,8 +18,12 @@
 package org.broadleafcommerce.core.web.controller.cart.extension;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.order.service.call.AddToCartItem;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
+
+import java.util.Map;
 
 /**
  * @author Jon Fleschler (jfleschler)
@@ -33,4 +37,13 @@ public interface BroadleafCartControllerExtensionHandler extends ExtensionHandle
      * @return
      */
     public ExtensionResultStatusType modifyOrderItemRequest(ConfigurableOrderItemRequest configurableOrderItem);
+
+    /**
+     *
+     *
+     * @param addToCartItem
+     * @param resultHolder
+     * @return
+     */
+    public ExtensionResultStatusType validateAddToCartItem(AddToCartItem addToCartItem, ExtensionResultHolder<Map> resultHolder);
 }
