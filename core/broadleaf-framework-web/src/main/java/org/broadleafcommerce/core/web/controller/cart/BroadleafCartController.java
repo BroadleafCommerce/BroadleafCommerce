@@ -54,9 +54,11 @@ import javax.servlet.http.HttpServletResponse;
  * @author Andre Azzolini (apazzolini)
  */
 public class BroadleafCartController extends AbstractCartController {
-    
+
     protected static String cartView = "cart/cart";
     protected static String cartPageRedirect = "redirect:/cart";
+    protected static String configureView = "catalog/partials/configure";
+    protected static String configurePageRedirect = "redirect:/cart/configure";
     
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
@@ -124,9 +126,9 @@ public class BroadleafCartController extends AbstractCartController {
         itemRequest.setQuantity(1);
 
         extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
-
         model.addAttribute("baseItem", itemRequest);
-        return "catalog/partials/configure";
+
+        return isAjaxRequest(request) ? getConfigureView() : getConfigurePageRedirect();
     }
 
     /**
@@ -340,7 +342,15 @@ public class BroadleafCartController extends AbstractCartController {
     public String getCartPageRedirect() {
         return cartPageRedirect;
     }
-    
+
+    public String getConfigureView() {
+        return configureView;
+    }
+
+    public String getConfigurePageRedirect() {
+        return configurePageRedirect;
+    }
+
     public Map<String, String> handleIllegalCartOpException(IllegalCartOperationException ex) {
         Map<String, String> returnMap = new HashMap<String, String>();
         returnMap.put("error", "illegalCartOperation");
