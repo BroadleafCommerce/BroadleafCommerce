@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.web.controller.cart;
 
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
@@ -26,6 +27,7 @@ import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededExc
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.AddToCartItem;
+import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
@@ -112,7 +114,21 @@ public class BroadleafCartController extends AbstractCartController {
         
         return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
     }
-    
+
+    public String configure(HttpServletRequest request, HttpServletResponse response, Model model,
+                            Long productId) {
+
+        Product product = catalogService.findProductById(productId);
+        ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
+        itemRequest.setProduct(product);
+        itemRequest.setQuantity(1);
+
+        extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
+
+        model.addAttribute("baseItem", itemRequest);
+        return "catalog/partials/configure";
+    }
+
     /**
      * Takes in an item request, adds the item to the customer's current cart, and returns.
      * 
