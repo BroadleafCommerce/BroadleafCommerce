@@ -385,6 +385,8 @@ public interface OrderService {
      */
     public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException;
 
+    void addDependentOrderItem(OrderItemRequestDTO parentOrderItemRequest, OrderItemRequestDTO dependentOrderItem);
+
     /**
      * Initiates the updateItem workflow that will attempt to update the item quantity for the specified
      * OrderItem in the given Order. The new quantity is specified in the OrderItemRequestDTO

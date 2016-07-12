@@ -603,6 +603,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public void addDependentOrderItem(OrderItemRequestDTO parentOrderItemRequest, OrderItemRequestDTO dependentOrderItem) {
+        parentOrderItemRequest.getChildOrderItems().add(dependentOrderItem);
+    }
+
+    @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
     public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
         preValidateCartOperation(findOrderById(orderId));
