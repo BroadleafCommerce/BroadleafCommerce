@@ -41,15 +41,15 @@ public class ValidationUtil {
                     sb.append(" / ");
                 }
             }
-            sb.append("; ");
+            sb.append(";\n");
         }
 
         for (String globalError : globalErrors) {
             sb.append(processMessage(globalError));
-            sb.append("; ");
+            sb.append(";\n");
         }
 
-        return "The entity has failed validation - " + sb.toString();
+        return "The entity has failed validation -\n" + sb.toString();
     }
 
     public static String processMessage(String globalError) {

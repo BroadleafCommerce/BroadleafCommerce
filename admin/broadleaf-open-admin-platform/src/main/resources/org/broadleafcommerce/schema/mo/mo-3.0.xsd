@@ -64,6 +64,7 @@
             <xsd:element ref="maintainedAdornedTargetField" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element ref="gridVisibleField" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element ref="selectizeVisibleField" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element ref="showIfFieldEquals" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:group>
 
@@ -117,6 +118,19 @@
                 </xsd:element>
             </xsd:sequence>
             <xsd:attribute name="className" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="showIfFieldEquals">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:attribute name="value" use="required"/>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="fieldName" use="required"/>
         </xsd:complexType>
     </xsd:element>
 

@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
+import org.broadleafcommerce.common.presentation.FieldValueConfiguration;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.UnspecifiedBooleanType;
@@ -52,7 +53,9 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -338,6 +341,8 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
                 fieldMetadataOverride.setSecurityLevel(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationMap.SHOWIFPROPERTY)) {
                 fieldMetadataOverride.setShowIfProperty(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationMap.SHOWIFFIELDEQUALS)) {
+                processShowIfFieldEqualsAnnotations(entry.getValue().showIfFieldEquals(), fieldMetadataOverride);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationMap.TAB)) {
                 fieldMetadataOverride.setTab(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationMap.TABORDER)) {
@@ -399,6 +404,9 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
             override.setUpdateType(map.operationTypes().updateType());
             override.setInspectType(map.operationTypes().inspectType());
             override.setShowIfProperty(map.showIfProperty());
+            if (map.showIfFieldEquals().length != 0) {
+                processShowIfFieldEqualsAnnotations(map.showIfFieldEquals(), override);
+            }
             override.setCurrencyCodeField(map.currencyCodeField());
             override.setForceFreeFormKeys(map.forceFreeFormKeys());
             override.setManyToField(map.manyToField());
@@ -424,6 +432,9 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
         }
         if (map.getShowIfProperty()!=null) {
             metadata.setShowIfProperty(map.getShowIfProperty());
+        }
+        if (map.getShowIfFieldEquals() != null) {
+            metadata.setShowIfFieldEquals(map.getShowIfFieldEquals());
         }
         metadata.setPrefix(prefix);
 
@@ -715,6 +726,15 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
         }
 
         attributes.put(field.getName(), metadata);
+    }
+
+    protected void processShowIfFieldEqualsAnnotations(FieldValueConfiguration[] configurations, FieldMetadataOverride override) {
+        if (override.getShowIfFieldEquals() == null) {
+            override.setShowIfFieldEquals(new HashMap<String, List<String>>());
+        }
+        for (FieldValueConfiguration configuration : configurations) {
+            override.getShowIfFieldEquals().put(configuration.fieldName(), Arrays.asList(configuration.fieldValues()));
+        }
     }
 
     @Override
