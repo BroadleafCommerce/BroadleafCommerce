@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
+import org.broadleafcommerce.core.web.controller.cart.extension.BroadleafCartControllerExtensionManager;
 import org.broadleafcommerce.core.web.service.UpdateCartService;
 
 import javax.annotation.Resource;
@@ -48,5 +49,8 @@ public abstract class AbstractCartController extends BroadleafAbstractController
 
     @Resource(name = "blOrderToPaymentRequestDTOService")
     protected OrderToPaymentRequestDTOService dtoTranslationService;
+
+    @Resource(name = "blCartControllerExtensionManager")
+    protected BroadleafCartControllerExtensionManager extensionManager;
 
 }
