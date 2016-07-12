@@ -18,20 +18,17 @@
 
 package org.broadleafcommerce.common.web.payment.processor;
 
+import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafFormReplacementProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafElement;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafFormReplacementDTO;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafModel;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Attribute;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.element.AbstractElementProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -70,50 +67,52 @@ import javax.annotation.Resource;
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blTransparentRedirectCreditCardFormProcessor")
-public class TransparentRedirectCreditCardFormProcessor extends AbstractElementProcessor {
+public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadleafFormReplacementProcessor {
 
     @Resource(name = "blTRCreditCardExtensionManager")
     protected TRCreditCardExtensionManager extensionManager;
 
-    public TransparentRedirectCreditCardFormProcessor() {
-        super("transparent_credit_card_form");
+    public TRCreditCardExtensionManager getExtensionManager() {
+        return extensionManager;
     }
 
+    public void setExtensionManager(TRCreditCardExtensionManager extensionManager) {
+        this.extensionManager = extensionManager;
+    }
+    
+    @Override
+    public String getName() {
+        return "transparent_credit_card_form";
+    }
+    
     @Override
     public int getPrecedence() {
         return 1;
     }
-
+    
     @Override
-    protected ProcessorResult processElement(Arguments arguments, Element element) {
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("paymentRequestDTO"));
-        PaymentRequestDTO requestDTO = (PaymentRequestDTO) expression.execute(arguments.getConfiguration(), arguments);
+    public BroadleafThymeleafFormReplacementDTO getInjectedModelAndFormAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafThymeleafContext context) {
+        PaymentRequestDTO requestDTO = (PaymentRequestDTO) context.parseExpression(rootTagAttributes.get("paymentRequestDTO"));
 
-        element.removeAttribute("paymentRequestDTO");
-
-        Map<String, Map<String,String>> formParameters = new HashMap<String, Map<String,String>>();
+        Map<String, Map<String, String>> formParameters = new HashMap<String, Map<String, String>>();
         Map<String, String> configurationSettings = new HashMap<String, String>();
 
         //Create the configuration settings map to pass into the payment module
-        Map<String, Attribute> attributeMap  = element.getAttributeMap();
-        List<String> keysToRemove = new ArrayList<String>();
-        for (String key : attributeMap.keySet()) {
-            if (key.startsWith("config-")){
+        Map<String, String> keysToKeep = new HashMap<>();
+        for (String key : rootTagAttributes.keySet()) {
+            if (key.startsWith("config-")) {
                 final int trimLength = "config-".length();
                 String configParam = key.substring(trimLength);
-                configurationSettings.put(configParam, attributeMap.get(key).getValue());
-                keysToRemove.add(key);
+                configurationSettings.put(configParam, rootTagAttributes.get(key));
+            } else {
+                keysToKeep.put(key, rootTagAttributes.get(key));
             }
         }
-
-        for (String keyToRemove : keysToRemove) {
-            element.removeAttribute(keyToRemove);
-        }
+        keysToKeep.remove("paymentRequestDTO");
 
         try {
             extensionManager.getProxy().createTransparentRedirectForm(formParameters,
-                    requestDTO, configurationSettings);
+                requestDTO, configurationSettings);
         } catch (PaymentException e) {
             throw new RuntimeException("Unable to Create the Transparent Redirect Form", e);
         }
@@ -125,39 +124,31 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractElementP
 
         //Change the action attribute on the form to the Payment Gateways Endpoint
         String actionUrl = "";
-        Map<String,String> actionValue = formParameters.get(formActionKey.toString());
-        if (actionValue != null && actionValue.size()>0) {
-            String key = (String)actionValue.keySet().toArray()[0];
+        Map<String, String> actionValue = formParameters.get(formActionKey.toString());
+        if (actionValue != null && actionValue.size() > 0) {
+            String key = (String) actionValue.keySet().toArray()[0];
             actionUrl = actionValue.get(key);
         }
-        element.setAttribute("action", actionUrl);
+        keysToKeep.put("action", actionUrl);
 
+        BroadleafThymeleafModel model = context.createModel();
         //Append any hidden fields necessary for the Transparent Redirect
         Map<String, String> hiddenFields = formParameters.get(formHiddenParamsKey.toString());
-        if (hiddenFields != null && !hiddenFields.isEmpty()) {
+        if (MapUtils.isNotEmpty(hiddenFields)) {
             for (String key : hiddenFields.keySet()) {
-                Element hiddenNode = new Element("input");
-                hiddenNode.setAttribute("type", "hidden");
-                hiddenNode.setAttribute("name", key);
-                hiddenNode.setAttribute("value", hiddenFields.get(key));
-                element.addChild(hiddenNode);
+                Map<String, String> attributes = new HashMap<>();
+                attributes.put("type", "hidden");
+                attributes.put("name", key);
+                attributes.put("value", hiddenFields.get(key));
+                BroadleafThymeleafElement input = context.createStandaloneElement("input", attributes, true);
+                model.addElement(input);
             }
         }
-
-        // Convert the <blc:transparent_credit_card_form> node to a normal <form> node
-        Element newElement = element.cloneElementNodeWithNewName(element.getParent(), "form", false);
-        newElement.setRecomputeProcessorsImmediately(true);
-        element.getParent().insertAfter(element, newElement);
-        element.getParent().removeChild(element);
-
-        return ProcessorResult.OK;
+        return new BroadleafThymeleafFormReplacementDTO(model, keysToKeep);
     }
 
-    public TRCreditCardExtensionManager getExtensionManager() {
-        return extensionManager;
-    }
-
-    public void setExtensionManager(TRCreditCardExtensionManager extensionManager) {
-        this.extensionManager = extensionManager;
+    @Override
+    public boolean reprocessModel() {
+        return true;
     }
 }

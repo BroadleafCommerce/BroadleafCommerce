@@ -41,7 +41,6 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.util.ListUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -142,7 +141,7 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
 
         if (result.equals(ExtensionResultStatusType.NOT_HANDLED)) {
             // If there is no searchable field types then we need to add a default as String
-            if (ListUtils.isEmpty(adminInstance.getFieldTypes())) {
+            if (CollectionUtils.isEmpty(adminInstance.getFieldTypes())) {
                 IndexFieldType indexFieldType = new IndexFieldTypeImpl();
                 indexFieldType.setFieldType(FieldType.TEXT);
                 indexFieldType.setIndexField(adminInstance);

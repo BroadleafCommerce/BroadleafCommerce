@@ -17,11 +17,14 @@
  */
 package org.broadleafcommerce.common.web.expression;
 
+import org.springframework.stereotype.Component;
+
 /**
  * A null implementation of {@link BroadleafVariableExpression} 
  * 
  * @author Andre Azzolini (apazzolini)
  */
+@Component("blNullBroadleafVariableExpression")
 public class NullBroadleafVariableExpression implements BroadleafVariableExpression {
 
     @Override

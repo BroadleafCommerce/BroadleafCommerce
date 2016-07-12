@@ -18,14 +18,13 @@
 package org.broadleafcommerce.openadmin.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
+import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
+import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,25 +35,26 @@ import java.util.Map;
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blAdminComponentIdProcessor")
-public class AdminComponentIdProcessor extends AbstractAttributeModifierAttrProcessor {
+public class AdminComponentIdProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public AdminComponentIdProcessor() {
-        super("component_id");
+    @Override
+    public String getName() {
+        return "component_id";
     }
-
+    
+    @Override
+    public BroadleafDialectPrefix getPrefix() {
+        return BroadleafDialectPrefix.BLC_ADMIN;
+    }
+    
     @Override
     public int getPrecedence() {
         return 10002;
     }
-
+    
     @Override
-    protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
-        Object component = expression.execute(arguments.getConfiguration(), arguments);
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafThymeleafContext context) {
+        Object component = context.parseExpression(attributeValue);
 
         String fieldName = "";
         String id = "";
@@ -77,27 +77,12 @@ public class AdminComponentIdProcessor extends AbstractAttributeModifierAttrProc
         
         Map<String, String> attrs = new HashMap<String, String>();
         attrs.put("id", id);
-        return attrs;
+        return new BroadleafAttributeModifier(attrs);
     }
-
+    
     protected String cleanCssIdString(String in) {
         in = in.replaceAll("[^a-zA-Z0-9-]", "-");
         return in;
-    }
-
-    @Override
-    protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return ModificationType.SUBSTITUTION;
-    }
-
-    @Override
-    protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return true;
-    }
-
-    @Override
-    protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
-        return false;
     }
 
 }

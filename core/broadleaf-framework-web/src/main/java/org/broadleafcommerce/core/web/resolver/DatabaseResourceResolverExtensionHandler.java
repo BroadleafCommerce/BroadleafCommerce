@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.web.resolver;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.thymeleaf.TemplateProcessingParameters;
 
 import java.io.InputStream;
 
@@ -45,7 +44,6 @@ public interface DatabaseResourceResolverExtensionHandler extends ExtensionHandl
      * @param resourceName
      * @return whether or not a resource was resolved
      */
-    public ExtensionResultStatusType resolveResource(ExtensionResultHolder erh, 
-            TemplateProcessingParameters params, String resourceName);
+    public ExtensionResultStatusType resolveResource(ExtensionResultHolder erh, String resourceName);
 
 }

@@ -17,18 +17,14 @@
  */
 package org.broadleafcommerce.openadmin.web.processor;
 
-import org.broadleafcommerce.openadmin.web.service.AdminFieldBuilderProcessorExtensionManager;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -37,32 +33,30 @@ import javax.annotation.Resource;
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blAdminFieldBuilderProcessor")
-public class AdminFieldBuilderProcessor extends AbstractLocalVariableDefinitionElementProcessor {
+public class AdminFieldBuilderProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Resource(name = "blRuleBuilderFieldServiceFactory")
     protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
 
-    @Resource(name="blAdminFieldBuilderProcessorExtensionManager")
-    protected AdminFieldBuilderProcessorExtensionManager extensionManager;
-
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public AdminFieldBuilderProcessor() {
-        super("admin_field_builder");
+    @Override
+    public String getName() {
+        return "admin_field_builder";
     }
-
+    
+    @Override
+    public BroadleafDialectPrefix getPrefix() {
+        return BroadleafDialectPrefix.BLC_ADMIN;
+    }
+    
     @Override
     public int getPrecedence() {
         return 100;
     }
 
     @Override
-    protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
         FieldWrapper fieldWrapper = new FieldWrapper();
-
-        String fieldBuilder = getAttributeByName(arguments, element, "fieldBuilder");
-        String ceilingEntity = getAttributeByName(arguments, element, "ceilingEntity");
+        String fieldBuilder = (String) context.parseExpression(tagAttributes.get("fieldBuilder"));
 
         if (fieldBuilder != null) {
             RuleBuilderFieldService ruleBuilderFieldService = ruleBuilderFieldServiceFactory.createInstance(fieldBuilder);
@@ -70,24 +64,13 @@ public class AdminFieldBuilderProcessor extends AbstractLocalVariableDefinitionE
                 fieldWrapper = ruleBuilderFieldService.buildFields();
             }
         }
-
-        if (extensionManager != null) {
-            extensionManager.getProxy().modifyRuleBuilderFields(fieldBuilder, ceilingEntity, fieldWrapper);
-        }
-
-        Map<String, Object> newVars = new HashMap<String, Object>();
-        newVars.put("fieldWrapper", fieldWrapper);
-        return newVars;
+        
+        newModelVars.put("fieldWrapper", fieldWrapper);
+    }
+    
+    public boolean addToLocal() {
+        return true;
     }
 
-    private String getAttributeByName(Arguments arguments, Element element, String attributeName) {
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
-        return (String) expression.execute(arguments.getConfiguration(), arguments);
-    }
 
-    @Override
-    protected boolean removeHostElement(Arguments arguments, Element element) {
-        return false;
-    }
 }

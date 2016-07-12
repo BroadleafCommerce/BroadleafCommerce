@@ -17,7 +17,9 @@
  */
 package org.broadleafcommerce.openadmin.web.processor;
 
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
@@ -27,8 +29,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -42,7 +44,7 @@ import javax.annotation.Resource;
  * @author elbertbautista
  */
 @Component("blAdminModuleProcessor")
-public class AdminModuleProcessor extends AbstractModelVariableModifierProcessor {
+public class AdminModuleProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
 
@@ -52,30 +54,32 @@ public class AdminModuleProcessor extends AbstractModelVariableModifierProcessor
     @Resource(name = "blAdminSecurityService")
     protected AdminSecurityService securityService;
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public AdminModuleProcessor() {
-        super("admin_module");
+    @Override
+    public String getName() {
+        return "admin_module";
     }
-
+    
+    @Override
+    public BroadleafDialectPrefix getPrefix() {
+        return BroadleafDialectPrefix.BLC_ADMIN;
+    }
+    
     @Override
     public int getPrecedence() {
         return 10001;
     }
-
+    
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        String resultVar = element.getAttributeValue("resultVar");
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+        String resultVar = tagAttributes.get("resultVar");
 
         AdminUser user = getPersistentAdminUser();
         if (user != null) {
             AdminMenu menu = adminNavigationService.buildMenu(user);
-            addToModel(arguments, resultVar, menu);
+            newModelVars.put(resultVar, menu);
         }
-
     }
-
+    
     protected AdminUser getPersistentAdminUser() {
         SecurityContext ctx = SecurityContextHolder.getContext();
         if (ctx != null) {
@@ -89,4 +93,5 @@ public class AdminModuleProcessor extends AbstractModelVariableModifierProcessor
 
         return null;
     }
+
 }

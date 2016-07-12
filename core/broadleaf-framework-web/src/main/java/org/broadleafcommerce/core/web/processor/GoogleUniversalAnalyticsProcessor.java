@@ -23,6 +23,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafTagReplacementProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafElement;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafModel;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafNonVoidElement;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -32,15 +37,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.SkuAccessor;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Value;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Macro;
-import org.thymeleaf.dom.Node;
-import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.element.AbstractElementProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.IStandardExpressionParser;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,7 +72,8 @@ import javax.servlet.http.HttpServletRequest;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor {
+@Component("blGoogleUniversalAnalyticsProcessor")
+public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagReplacementProcessor {
 
     private static final Log LOG = LogFactory.getLog(GoogleUniversalAnalyticsProcessor.class);
 
@@ -95,36 +93,30 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
     @Value("${googleAnalytics.testLocal}")
     protected boolean testLocal = false;
     
-    public GoogleUniversalAnalyticsProcessor() {
-        super("google_universal_analytics");
-    }
-    
-    public GoogleUniversalAnalyticsProcessor(String elementName) {
-        super(elementName);
+    @Override
+    public String getName() {
+        return "google_universal_analytics";
     }
     
     @Override
     public int getPrecedence() {
         return 0;
     }
-
+    
     @Override
-    protected ProcessorResult processElement(Arguments arguments, Element element) {
+    public BroadleafThymeleafModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafThymeleafContext context) {
         StringBuffer sb = new StringBuffer();
         Map<String, String> trackers = getTrackers();
         if (MapUtils.isNotEmpty(trackers)) {
-            sb.append("<script>\n");
             sb.append("(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){");
             sb.append("(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),");
             sb.append("m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)");
             sb.append("})(window,document,'script','//www.google-analytics.com/analytics.js','ga');");
             
-            String orderNumberExpression = element.getAttributeValue("ordernumber");
+            String orderNumberExpression = tagAttributes.get("ordernumber");
             String orderNumber = null;
             if (orderNumberExpression != null) {
-                final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
-                Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, orderNumberExpression);
-                orderNumber = (String) expression.execute(arguments.getConfiguration(), arguments);
+                orderNumber = (String) context.parseExpression(orderNumberExpression);
             }
             
             Order order = null;
@@ -177,22 +169,20 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
                 }
             }
             
-            sb.append("</script>");
-            
             // Add contentNode to the document
-            Node contentNode = new Macro(sb.toString());
-            element.clearChildren();
-            element.getParent().insertAfter(element, contentNode);
-            element.getParent().removeChild(element);
+            BroadleafThymeleafModel model = context.createModel();
+            BroadleafThymeleafNonVoidElement scriptTag = context.createNonVoidElement("script");
+            BroadleafThymeleafElement script = context.createTextElement(sb.toString());
+            scriptTag.addChild(script);
+            model.addElement(scriptTag);
+            return model;
         } else {
             LOG.warn("No trackers were found, not outputting Google Analytics script. Set the googleAnalytics.webPropertyId"
                     + " and/or the googleAnalytics.masterWebPropertyId system properties to output Google Analytics");
         }
-
-        // Return OK
-        return ProcessorResult.OK;
+        return null;
     }
-    
+
     /**
      * Grabs a map of trackers keyed by the tracker name with the analytics ID as the value
      */

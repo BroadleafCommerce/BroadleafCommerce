@@ -17,14 +17,13 @@
  */
 package org.broadleafcommerce.openadmin.web.processor;
 
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
+import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
+import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
-import org.thymeleaf.spring4.context.SpringWebContext;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,51 +37,36 @@ import javax.servlet.http.HttpServletRequest;
  * @author elbertbautista
  */
 @Component("blAdminSectionHrefProcessor")
-public class AdminSectionHrefProcessor extends AbstractAttributeModifierAttrProcessor {
+public class AdminSectionHrefProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public AdminSectionHrefProcessor() {
-        super("admin_section_href");
+    @Override
+    public String getName() {
+        return "admin_section_href";
     }
-
+    
+    @Override
+    public BroadleafDialectPrefix getPrefix() {
+        return BroadleafDialectPrefix.BLC_ADMIN;
+    }
+    
     @Override
     public int getPrecedence() {
         return 10002;
     }
 
     @Override
-    protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafThymeleafContext context) {
         String href = "#";
         
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
-        AdminSection section = (AdminSection) expression.execute(arguments.getConfiguration(), arguments);
+        AdminSection section = (AdminSection) context.parseExpression(attributeValue);
         if (section != null) {
-            HttpServletRequest request = ((SpringWebContext) arguments.getContext()).getHttpServletRequest();
-
+            HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
             href = request.getContextPath() + section.getUrl();
         }
         
         Map<String, String> attrs = new HashMap<String, String>();
         attrs.put("href", href);
-        return attrs;
-    }
-
-    @Override
-    protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return ModificationType.SUBSTITUTION;
-    }
-
-    @Override
-    protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return true;
-    }
-
-    @Override
-    protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
-        return false;
+        return new BroadleafAttributeModifier(attrs);
     }
 
 }

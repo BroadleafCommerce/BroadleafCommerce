@@ -19,7 +19,6 @@ package org.broadleafcommerce.common.web.expression;
 
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.common.web.processor.ConfigVariableProcessor;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 

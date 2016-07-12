@@ -15,15 +15,18 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.web.controller.catalog.BroadleafCategoryController;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,15 +65,14 @@ import javax.servlet.http.HttpServletRequest;
  * 
  * @author apazzolini
  */
-public class AddSortLinkProcessor extends AbstractAttributeModifierAttrProcessor {
-    
+@Component("blAddSortLinkProcessor")
+public class AddSortLinkProcessor extends AbstractBroadleafAttributeModifierProcessor {
+
     protected boolean allowMultipleSorts = false;
-    
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public AddSortLinkProcessor() {
-        super("addsortlink");
+
+    @Override
+    public String getName() {
+        return "addsortlink";
     }
     
     @Override
@@ -79,23 +81,19 @@ public class AddSortLinkProcessor extends AbstractAttributeModifierAttrProcessor
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
-        Map<String, String> attrs = new HashMap<String, String>();
-        
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafThymeleafContext context) {
         BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
         HttpServletRequest request = blcContext.getRequest();
-        
+
         String baseUrl = request.getRequestURL().toString();
         Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
-        
+
         String key = SearchCriteria.SORT_STRING;
-        String sortField = element.getAttributeValue(attributeName);
-        
+
         List<String[]> sortedFields = new ArrayList<String[]>();
-        
+
         String[] paramValues = params.get(key);
-        if (paramValues != null && paramValues.length > 0) {
+        if (ArrayUtils.isNotEmpty(paramValues)) {
             String sortQueries = paramValues[0];
             for (String sortQuery : sortQueries.split(",")) {
                 String[] sort = sortQuery.split(" ");
@@ -104,21 +102,21 @@ public class AddSortLinkProcessor extends AbstractAttributeModifierAttrProcessor
                 }
             }
         }
-        
+
         boolean currentlySortingOnThisField = false;
         boolean currentlyAscendingOnThisField = false;
-        
+
         for (String[] sortedField : sortedFields) {
-            if (sortField.equals(sortedField[0])) {
+            if (attributeValue.equals(sortedField[0])) {
                 currentlySortingOnThisField = true;
                 currentlyAscendingOnThisField = sortedField[1].equals("asc");
                 sortedField[1] = currentlyAscendingOnThisField ? "desc" : "asc";
             }
         }
-        
-        String sortString = sortField;
+
+        String sortString = attributeValue;
         String classString = "";
-        
+
         if (currentlySortingOnThisField) {
             classString += "active ";
             if (currentlyAscendingOnThisField) {
@@ -133,40 +131,25 @@ public class AddSortLinkProcessor extends AbstractAttributeModifierAttrProcessor
             classString += "asc ";
             params.remove(SearchCriteria.PAGE_NUMBER);
         }
-        
+
         if (allowMultipleSorts) {
             StringBuilder sortSb = new StringBuilder();
             for (String[] sortedField : sortedFields) {
                 sortSb.append(sortedField[0]).append(" ").append(sortedField[1]).append(",");
             }
-            
+
             sortString = sortSb.toString();
             if (sortString.charAt(sortString.length() - 1) == ',') {
                 sortString = sortString.substring(0, sortString.length() - 1);
             }
         }
-        
-        params.put(key, new String[] { sortString } );
-        
+
+        params.put(key, new String[] { sortString });
+
         String url = ProcessorUtils.getUrl(baseUrl, params);
-        
-        attrs.put("class", classString);
-        attrs.put("href", url);
-        return attrs;
-    }
-
-    @Override
-    protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return ModificationType.SUBSTITUTION;
-    }
-
-    @Override
-    protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return true;
-    }
-
-    @Override
-    protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
-        return false;
+        Map<String, String> newAttributes = new HashMap<>();
+        newAttributes.put("class", classString);
+        newAttributes.put("href", url);
+        return new BroadleafAttributeModifier(newAttributes);
     }
 }

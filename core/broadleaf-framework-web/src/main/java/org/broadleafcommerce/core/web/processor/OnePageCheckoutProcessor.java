@@ -15,6 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -24,6 +25,8 @@ import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -48,17 +51,12 @@ import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.joda.time.DateTime;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.springframework.stereotype.Component;
 
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -84,7 +82,8 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Elbert Bautista (elbertbautista)
  */
-public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionElementProcessor {
+@Component("blOnePageCheckoutProcessor")
+public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Resource(name = "blStateService")
     protected StateService stateService;
@@ -107,84 +106,65 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
     @Resource(name = "blOrderToPaymentRequestDTOService")
     protected OrderToPaymentRequestDTOService orderToPaymentRequestDTOService;
 
-    public OnePageCheckoutProcessor() {
-        super("one_page_checkout");
+    @Override
+    public String getName() {
+        return "one_page_checkout";
     }
-
+    
     @Override
     public int getPrecedence() {
         return 100;
     }
-
+    
     @Override
-    protected boolean removeHostElement(Arguments arguments, Element element) {
-        // TODO: This is currently required else the entire form will be removed. What should happen is that the
-        // root element should be removed (since that is the unprocessed Thymeleaf element) but all of the children elements
-        // should be hooked up to this element's parent
-        return false;
+    public boolean addToLocal() {
+        return true;
     }
 
     @Override
-    protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
-
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
         //Pre-populate the command objects
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("orderInfoForm"));
-        OrderInfoForm orderInfoForm = (OrderInfoForm) expression.execute(arguments.getConfiguration(), arguments);
+        OrderInfoForm orderInfoForm = (OrderInfoForm) context.parseExpression(tagAttributes.get("orderInfoForm"));
 
-        expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("shippingInfoForm"));
-        ShippingInfoForm shippingInfoForm = (ShippingInfoForm) expression.execute(arguments.getConfiguration(), arguments);
-        
-        expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("billingInfoForm"));
-        BillingInfoForm billingInfoForm = (BillingInfoForm) expression.execute(arguments.getConfiguration(), arguments);
+        ShippingInfoForm shippingInfoForm = (ShippingInfoForm) context.parseExpression(tagAttributes.get("shippingInfoForm"));
 
-        expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("orderInfoHelpMessage"));
-        String orderInfoHelpMessage = (String) expression.execute(arguments.getConfiguration(), arguments);
+        BillingInfoForm billingInfoForm = (BillingInfoForm) context.parseExpression(tagAttributes.get("billingInfoForm"));
 
-        expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("billingInfoHelpMessage"));
-        String billingInfoHelpMessage = (String) expression.execute(arguments.getConfiguration(), arguments);
+        String orderInfoHelpMessage = (String) context.parseExpression(tagAttributes.get("orderInfoHelpMessage"));
 
-        expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("shippingInfoHelpMessage"));
-        String shippingInfoHelpMessage = (String) expression.execute(arguments.getConfiguration(), arguments);
+        String billingInfoHelpMessage = (String) context.parseExpression(tagAttributes.get("billingInfoHelpMessage"));
 
+        String shippingInfoHelpMessage = (String) context.parseExpression(tagAttributes.get("shippingInfoHelpMessage"));
 
         prepopulateCheckoutForms(CartState.getCart(), orderInfoForm, shippingInfoForm, billingInfoForm);
-
-        Map<String, Object> localVars = new HashMap<String, Object>();
 
         //Add PaymentRequestDTO to the model in the case of errors or other cases
         Order cart = CartState.getCart();
         if (cart != null && !(cart instanceof NullOrderImpl)) {
-            localVars.put("paymentRequestDTO", orderToPaymentRequestDTOService.translateOrder(cart));
+            newModelVars.put("paymentRequestDTO", orderToPaymentRequestDTOService.translateOrder(cart));
         }
 
         //Initialize Fulfillment Group Vars
         int numShippableFulfillmentGroups = calculateNumShippableFulfillmentGroups();
-        localVars.put("numShippableFulfillmentGroups", numShippableFulfillmentGroups);
-        populateFulfillmentOptionsAndEstimationOnModel(localVars);
+        newModelVars.put("numShippableFulfillmentGroups", numShippableFulfillmentGroups);
+        populateFulfillmentOptionsAndEstimationOnModel(newModelVars);
 
         //Initialize View States
-        localVars.put("orderInfoHelpMessage", orderInfoHelpMessage);
-        localVars.put("billingInfoHelpMessage", billingInfoHelpMessage);
-        localVars.put("shippingInfoHelpMessage", shippingInfoHelpMessage);
+        newModelVars.put("orderInfoHelpMessage", orderInfoHelpMessage);
+        newModelVars.put("billingInfoHelpMessage", billingInfoHelpMessage);
+        newModelVars.put("shippingInfoHelpMessage", shippingInfoHelpMessage);
 
-        populateSectionViewStates(localVars);
+        populateSectionViewStates(newModelVars);
 
         //Helpful lists to populate dropdowns on a checkout page
-        localVars.put("states", stateService.findStates());
-        localVars.put("countries", countryService.findCountries());
-        localVars.put("expirationMonths", populateExpirationMonths());
-        localVars.put("expirationYears", populateExpirationYears());
+        newModelVars.put("states", stateService.findStates());
+        newModelVars.put("countries", countryService.findCountries());
+        newModelVars.put("expirationMonths", populateExpirationMonths());
+        newModelVars.put("expirationYears", populateExpirationYears());
 
         //Populate any Payment Processing Errors
-        populateProcessingError(localVars);
+        populateProcessingError(newModelVars);
 
-        return localVars;
     }
 
     /**
@@ -205,7 +185,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         FulfillmentGroup firstShippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
         if (firstShippableFulfillmentGroup != null) {
             //if the cart has already has fulfillment information
-            if (firstShippableFulfillmentGroup.getAddress()!=null) {
+            if (firstShippableFulfillmentGroup.getAddress() != null) {
                 shippingForm.setAddress(firstShippableFulfillmentGroup.getAddress());
             } else {
                 //check for a default address for the customer
@@ -222,7 +202,6 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
                 shippingForm.setFulfillmentOptionId(fulfillmentOption.getId());
             }
         }
-
 
         if (cart.getPayments() != null) {
             for (OrderPayment payment : cart.getPayments()) {
@@ -258,7 +237,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
         HttpServletRequest request = blcContext.getRequest();
         String processorError = request.getParameter(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR);
-        localVars.put(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR, processorError );
+        localVars.put(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR, processorError);
     }
 
     /**
@@ -268,7 +247,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
      *
      * @param localVars
      */
-    protected void populateSectionViewStates(Map<String,Object> localVars) {
+    protected void populateSectionViewStates(Map<String, Object> localVars) {
         boolean orderInfoPopulated = hasPopulatedOrderInfo(CartState.getCart());
         boolean billingPopulated = hasPopulatedBillingAddress(CartState.getCart());
         boolean shippingPopulated = hasPopulatedShippingAddress(CartState.getCart());
@@ -296,13 +275,10 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         OrderPayment unconfirmedCC = null;
         if (CartState.getCart().getPayments() != null) {
             for (OrderPayment payment : CartState.getCart().getPayments()) {
-                if (payment.isActive() &&
-                        PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType())) {
+                if (payment.isActive() && PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType())) {
                     orderContainsThirdPartyPayment = true;
                 }
-                if (payment.isActive() &&
-                        (PaymentType.CREDIT_CARD.equals(payment.getType()) &&
-                                !PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType()))) {
+                if (payment.isActive() && (PaymentType.CREDIT_CARD.equals(payment.getType()) && !PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType()))) {
                     orderContainsUnconfirmedCreditCard = true;
                     unconfirmedCC = payment;
                 }
@@ -315,8 +291,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         if (orderContainsThirdPartyPayment || orderContainsUnconfirmedCreditCard) {
             showBillingInfoSection = false;
             showAllPaymentMethods = false;
-        } else if (orderTotalAfterAppliedPayments != null
-                && orderTotalAfterAppliedPayments.isZero()) {
+        } else if (orderTotalAfterAppliedPayments != null && orderTotalAfterAppliedPayments.isZero()) {
             //If all the applied payments (e.g. gift cards) cover the entire amount
             //we don't need to show all payment method options.
             showAllPaymentMethods = false;
@@ -403,7 +378,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
             //the customer will need to re-enter their billing address to try again.
             //{@see DefaultPaymentGatewayCheckoutService where payments are invalidated on an unsuccessful transaction}
             if (CheckoutSectionViewType.PAYMENT_INFO.equals(section.getView())) {
-                if (showBillingInfoSection && !billingPopulated){
+                if (showBillingInfoSection && !billingPopulated) {
                     section.setState(CheckoutSectionStateType.INACTIVE);
                     section.setHelpMessage(billingInfoHelpMessage);
                 }
@@ -429,7 +404,6 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
 
     }
 
-
     /**
      * A helper method to retrieve all fulfillment options for the cart and estimate the cost of applying
      * fulfillment options on the first shippable fulfillment group.
@@ -439,8 +413,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
         Order cart = CartState.getCart();
 
-        if (!(cart instanceof NullOrderImpl) && cart.getFulfillmentGroups().size() > 0
-                && hasPopulatedShippingAddress(cart)) {
+        if (!(cart instanceof NullOrderImpl) && cart.getFulfillmentGroups().size() > 0 && hasPopulatedShippingAddress(cart)) {
             Set<FulfillmentOption> options = new HashSet<FulfillmentOption>();
             options.addAll(fulfillmentOptions);
             FulfillmentEstimationResponse estimateResponse = null;
@@ -450,7 +423,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
 
             }
 
-            localVars.put( "estimateResponse", estimateResponse);
+            localVars.put("estimateResponse", estimateResponse);
         }
 
         localVars.put("fulfillmentOptions", fulfillmentOptions);
@@ -478,9 +451,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         }
 
         for (OrderPayment payment : cart.getPayments()) {
-            if (payment.isActive() &&
-                    PaymentType.CREDIT_CARD.equals(payment.getType()) &&
-                    payment.getBillingAddress() != null) {
+            if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType()) && payment.getBillingAddress() != null) {
                 return true;
             }
         }
@@ -509,7 +480,6 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         return populatedShippingAddress;
     }
 
-
     /**
      * A helper method used to construct a list of Credit Card Expiration Months
      * Useful for expiration dropdown menus.
@@ -519,7 +489,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
      */
     protected List<String> populateExpirationMonths() {
         DateFormatSymbols dateFormatter;
-        if(BroadleafRequestContext.hasLocale()){
+        if (BroadleafRequestContext.hasLocale()) {
             Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale();
             dateFormatter = new DateFormatSymbols(locale);
         } else {
@@ -528,8 +498,8 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         List<String> expirationMonths = new ArrayList<String>();
         NumberFormat formatter = new DecimalFormat("00");
         String[] months = dateFormatter.getMonths();
-        for (int i=1; i<months.length; i++) {
-            expirationMonths.add(formatter.format(i) + " - " + months[i-1]);
+        for (int i = 1; i < months.length; i++) {
+            expirationMonths.add(formatter.format(i) + " - " + months[i - 1]);
         }
         return expirationMonths;
     }
@@ -543,8 +513,8 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
     protected List<String> populateExpirationYears() {
         List<String> expirationYears = new ArrayList<String>();
         DateTime dateTime = new DateTime();
-        for (int i=0; i<10; i++){
-            expirationYears.add(dateTime.plusYears(i).getYear()+"");
+        for (int i = 0; i < 10; i++) {
+            expirationYears.add(dateTime.plusYears(i).getYear() + "");
         }
         return expirationYears;
     }

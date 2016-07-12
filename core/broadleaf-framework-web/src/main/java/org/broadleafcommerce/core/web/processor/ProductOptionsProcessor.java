@@ -15,25 +15,23 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -56,53 +54,50 @@ import javax.annotation.Resource;
  * @author jfridye
  *
  */
-public class ProductOptionsProcessor extends AbstractModelVariableModifierProcessor {
-    
+@Component("blProductOptionsProcessor")
+public class ProductOptionsProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
-
-    @Resource(name = "blProductOptionsProcessorExtensionManager")
-    protected ProductOptionsProcessorExtensionManager extensionManager;
 
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
     protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
 
-    public ProductOptionsProcessor() {
-        super("product_options");
+    @Override
+    public String getName() {
+        return "product_options";
     }
-
+    
     @Override
     public int getPrecedence() {
         return 10000;
     }
-
+    
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("productId"));
-        Long productId = (Long) expression.execute(arguments.getConfiguration(), arguments);
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+        Long productId = (Long) context.parseExpression(tagAttributes.get("productId"));
         Product product = catalogService.findProductById(productId);
         if (product != null) {
-            addAllProductOptionsToModel(arguments, product);
-            addProductOptionPricingToModel(arguments, element, product);
+            addAllProductOptionsToModel(newModelVars, product);
+            addProductOptionPricingToModel(newModelVars, product);
         }
     }
-    
-    private void addProductOptionPricingToModel(Arguments arguments, Element element, Product product) {
+
+    private void addProductOptionPricingToModel(Map<String, Object> newModelVars, Product product) {
         List<Sku> skus = product.getSkus();
         List<ProductOptionPricingDTO> skuPricing = new ArrayList<ProductOptionPricingDTO>();
         for (Sku sku : skus) {
-            
+
             List<Long> productOptionValueIds = new ArrayList<Long>();
-            
+
             List<ProductOptionValue> productOptionValues = sku.getProductOptionValues();
             for (ProductOptionValue productOptionValue : productOptionValues) {
                 productOptionValueIds.add(productOptionValue.getId());
             }
-            
+
             Long[] values = new Long[productOptionValueIds.size()];
             productOptionValueIds.toArray(values);
-            
+
             ProductOptionPricingDTO dto = new ProductOptionPricingDTO();
             Money currentPrice;
             if (sku.isOnSale()) {
@@ -110,22 +105,14 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
             } else {
                 currentPrice = sku.getRetailPrice();
             }
-
-            // Check for Price Overrides
-            ExtensionResultHolder<Money> priceHolder = new ExtensionResultHolder<>();
-            priceHolder.setResult(currentPrice);
-            if (extensionManager != null) {
-                extensionManager.getProxy().modifyPriceForOverrides(arguments, element, sku, priceHolder);
-            }
-
-            dto.setPrice(formatPrice(priceHolder.getResult()));
+            dto.setPrice(formatPrice(currentPrice));
             dto.setSelectedOptions(values);
             skuPricing.add(dto);
         }
-        writeJSONToModel(arguments, "skuPricing", skuPricing);
+        writeJSONToModel(newModelVars, "skuPricing", skuPricing);
     }
-    
-    private void addAllProductOptionsToModel(Arguments arguments, Product product) {
+
+    private void addAllProductOptionsToModel(Map<String, Object> newModelVars, Product product) {
         List<ProductOption> productOptions = product.getProductOptions();
         List<ProductOptionDTO> dtos = new ArrayList<ProductOptionDTO>();
         for (ProductOption option : productOptions) {
@@ -139,10 +126,10 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
             dto.setValues(values);
             dtos.add(dto);
         }
-        writeJSONToModel(arguments, "allProductOptions", dtos);
+        writeJSONToModel(newModelVars, "allProductOptions", dtos);
     }
-    
-    private void writeJSONToModel(Arguments arguments, String modelKey, Object o) {
+
+    private void writeJSONToModel(Map<String, Object> newModelVars, String modelKey, Object o) {
         try {
             String jsonValue = JSON_CACHE.get(o);
             if (jsonValue == null) {
@@ -152,56 +139,64 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
                 jsonValue = strWriter.toString();
                 JSON_CACHE.put(o, jsonValue);
             }
-            addToModel(arguments, modelKey, jsonValue);
+            newModelVars.put(modelKey, jsonValue);
         } catch (Exception ex) {
             LOG.error("There was a problem writing the product option map to JSON", ex);
         }
     }
 
-    private String formatPrice(Money price){
-        if (price == null){
+    private String formatPrice(Money price) {
+        if (price == null) {
             return null;
         }
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.getJavaLocale() != null) {
-            return BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency()).format
-                                (price.getAmount());
+            return BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency()).format(price.getAmount());
         } else {
             // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
             return "$ " + price.getAmount().toString();
         }
     }
-    
+
     private class ProductOptionDTO {
+
         private Long id;
         private String type;
         private Map<Long, String> values;
         private String selectedValue;
+
         @SuppressWarnings("unused")
         public Long getId() {
             return id;
         }
+
         public void setId(Long id) {
             this.id = id;
         }
+
         @SuppressWarnings("unused")
         public String getType() {
             return type;
         }
+
         public void setType(String type) {
             this.type = type;
         }
+
         @SuppressWarnings("unused")
         public Map<Long, String> getValues() {
             return values;
         }
+
         public void setValues(Map<Long, String> values) {
             this.values = values;
         }
+
         @SuppressWarnings("unused")
         public String getSelectedValue() {
             return selectedValue;
         }
+
         @SuppressWarnings("unused")
         public void setSelectedValue(String selectedValue) {
             this.selectedValue = selectedValue;
@@ -209,17 +204,30 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null) return false;
-            if (!getClass().isAssignableFrom(o.getClass())) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null) {
+                return false;
+            }
+            if (!getClass().isAssignableFrom(o.getClass())) {
+                return false;
+            }
 
             ProductOptionDTO that = (ProductOptionDTO) o;
 
-            if (id != null ? !id.equals(that.id) : that.id != null) return false;
-            if (selectedValue != null ? !selectedValue.equals(that.selectedValue) : that.selectedValue != null)
+            if (id != null ? !id.equals(that.id) : that.id != null) {
                 return false;
-            if (type != null ? !type.equals(that.type) : that.type != null) return false;
-            if (values != null ? !values.equals(that.values) : that.values != null) return false;
+            }
+            if (selectedValue != null ? !selectedValue.equals(that.selectedValue) : that.selectedValue != null) {
+                return false;
+            }
+            if (type != null ? !type.equals(that.type) : that.type != null) {
+                return false;
+            }
+            if (values != null ? !values.equals(that.values) : that.values != null) {
+                return false;
+            }
 
             return true;
         }
@@ -233,35 +241,50 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
             return result;
         }
     }
-    
+
     private class ProductOptionPricingDTO {
+
         private Long[] skuOptions;
         private String price;
+
         @SuppressWarnings("unused")
         public Long[] getSelectedOptions() {
             return skuOptions;
         }
+
         public void setSelectedOptions(Long[] skuOptions) {
             this.skuOptions = skuOptions;
         }
+
         @SuppressWarnings("unused")
         public String getPrice() {
             return price;
         }
+
         public void setPrice(String price) {
             this.price = price;
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null) return false;
-            if (!getClass().isAssignableFrom(o.getClass())) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null) {
+                return false;
+            }
+            if (!getClass().isAssignableFrom(o.getClass())) {
+                return false;
+            }
 
             ProductOptionPricingDTO that = (ProductOptionPricingDTO) o;
 
-            if (price != null ? !price.equals(that.price) : that.price != null) return false;
-            if (!Arrays.equals(skuOptions, that.skuOptions)) return false;
+            if (price != null ? !price.equals(that.price) : that.price != null) {
+                return false;
+            }
+            if (!Arrays.equals(skuOptions, that.skuOptions)) {
+                return false;
+            }
 
             return true;
         }
@@ -273,5 +296,4 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
             return result;
         }
     }
-
 }

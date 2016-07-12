@@ -21,13 +21,15 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.handler.CsrfFilter;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafFormReplacementProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafElement;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafFormReplacementDTO;
+import org.broadleafcommerce.common.web.domain.BroadleafThymeleafModel;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.element.AbstractElementProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -39,7 +41,7 @@ import javax.annotation.Resource;
  * @see {@link CsrfFilter}
  */
 @Component("blFormProcessor")
-public class FormProcessor extends AbstractElementProcessor {
+public class FormProcessor extends AbstractBroadleafFormReplacementProcessor {
     
     @Resource(name = "blExploitProtectionService")
     protected ExploitProtectionService eps;
@@ -47,27 +49,26 @@ public class FormProcessor extends AbstractElementProcessor {
     @Resource(name = "blStaleStateProtectionService")
     protected StaleStateProtectionService spps;
     
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public FormProcessor() {
-        super("form");
+    @Override
+    public String getName() {
+        return "form";
     }
     
-    /**
-     * We need this replacement to execute as early as possible to allow subsequent processors to act
-     * on this element as if it were a normal form instead of a blc:form
-     */
     @Override
     public int getPrecedence() {
-        return 1;
+        return 1001;
     }
-
+    
     @Override
-    protected ProcessorResult processElement(Arguments arguments, Element element) {
+    public BroadleafThymeleafFormReplacementDTO getInjectedModelAndFormAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafThymeleafContext context) {
+        Map<String, String> formAttributes = new HashMap<>();
+        formAttributes.putAll(rootTagAttributes);
+        BroadleafThymeleafModel model = context.createModel();
+        BroadleafThymeleafFormReplacementDTO dto = new BroadleafThymeleafFormReplacementDTO();
+
         // If the form will be not be submitted with a GET, we must add the CSRF token
         // We do this instead of checking for a POST because post is default if nothing is specified
-        if (!"GET".equalsIgnoreCase(element.getAttributeValueFromNormalizedName("method"))) {
+        if (!"GET".equalsIgnoreCase(formAttributes.get("method"))) {
             try {
                 String csrfToken = eps.getCSRFToken();
                 String stateVersionToken = null;
@@ -76,43 +77,49 @@ public class FormProcessor extends AbstractElementProcessor {
                 }
 
                 //detect multipart form
-                if ("multipart/form-data".equalsIgnoreCase(element.getAttributeValueFromNormalizedName("enctype"))) {
-                    Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                            .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValueFromNormalizedName("th:action"));
-                    String action = (String) expression.execute(arguments.getConfiguration(), arguments);
+                if ("multipart/form-data".equalsIgnoreCase(formAttributes.get("enctype"))) {
                     String csrfQueryParameter = "?" + eps.getCsrfTokenParameter() + "=" + csrfToken;
                     if (stateVersionToken != null) {
                         csrfQueryParameter += "&" + spps.getStateVersionTokenParameter() + "=" + stateVersionToken;
                     }
-                    element.removeAttribute("th:action");
-                    element.setAttribute("action", action + csrfQueryParameter);
+                    
+                    // Add this into the attribute map to be used for the new <form> tag. The expression has already
+                    // been executed, don't need to treat the value as an expression
+                    String actionValue = formAttributes.get("action");
+                    actionValue += csrfQueryParameter;
+                    formAttributes.put("action", actionValue);
                 } else {
-                    Element csrfNode = new Element("input");
-                    csrfNode.setAttribute("type", "hidden");
-                    csrfNode.setAttribute("name", eps.getCsrfTokenParameter());
-                    csrfNode.setAttribute("value", csrfToken);
-                    element.addChild(csrfNode);
-                    if (stateVersionToken != null) {
-                        Element versionNode = new Element("input");
-                        versionNode.setAttribute("type", "hidden");
-                        versionNode.setAttribute("name", spps.getStateVersionTokenParameter());
-                        versionNode.setAttribute("value", stateVersionToken);
-                        element.addChild(versionNode);
-                    }
-                }
+                    
+                    Map<String, String> csrfAttributes = new HashMap<>();
+                    csrfAttributes.put("type", "hidden");
+                    csrfAttributes.put("name", eps.getCsrfTokenParameter());
+                    csrfAttributes.put("value", csrfToken);
+                    BroadleafThymeleafElement csrfTag = context.createStandaloneElement("input", csrfAttributes, true);
+                    model.addElement(csrfTag);
 
+                    if (stateVersionToken != null) {
+                        
+                        Map<String, String> stateVersionAttributes = new HashMap<>();
+                        stateVersionAttributes.put("type", "hidden");
+                        stateVersionAttributes.put("name", spps.getStateVersionTokenParameter());
+                        stateVersionAttributes.put("value", stateVersionToken);
+                        BroadleafThymeleafElement stateVersionTag = context.createStandaloneElement("input", stateVersionAttributes, true);
+                        model.addElement(stateVersionTag);
+                    }
+                    dto.setModel(model);
+                }
+                
             } catch (ServiceException e) {
                 throw new RuntimeException("Could not get a CSRF token for this session", e);
             }
         }
-        
-        // Convert the <blc:form> node to a normal <form> node
-        Element newElement = element.cloneElementNodeWithNewName(element.getParent(), "form", false);
-        newElement.setRecomputeProcessorsImmediately(true);
-        element.getParent().insertAfter(element, newElement);
-        element.getParent().removeChild(element);
-        
-        return ProcessorResult.OK;
+        dto.setFormParameters(formAttributes);
+        return dto;
+    }
+    
+    @Override
+    public boolean reprocessModel() {
+        return true;
     }
     
 }

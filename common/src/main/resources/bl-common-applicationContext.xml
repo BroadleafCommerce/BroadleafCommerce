@@ -126,18 +126,6 @@
         <constructor-arg name="moduleName" value="Conditional Field Annotation Transformation" />
     </bean>
 
-    <!-- NOTE: Remove this transformer when Thymeleaf 2.1.5 is released. See the Javadocs for org.broadleafcommerce.common.web.patch.EvaluationUtilPatch -->
-    <bean id="blEvaluationUtilPatchClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyClassTransformer">
-        <constructor-arg name="moduleName" value="EvaluationUtil Patch Transformation" />
-        <property name="xformTemplates">
-            <map>
-                <entry key="org.thymeleaf.util.EvaluationUtil"
-                       value="org.broadleafcommerce.common.web.patch.EvaluationUtilPatch"/>
-            </map>
-        </property>
-    </bean>
-    <!-- END NOTE -->
-
     <!-- to be overriden by 3rd party modules -->
     <bean id="blMergedClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -145,7 +133,6 @@
                 <ref bean="blAnnotationDirectCopyClassTransformer"/>
                 <ref bean="blEntityMarkerClassTransformer"/>
                 <ref bean="blConditionalFieldAnnotationClassTransformer"/>
-                <ref bean="blEvaluationUtilPatchClassTransformer"/>
             </list>
         </property>
     </bean>
@@ -194,19 +181,8 @@
     <bean id="blEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo" />
     <bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />
     
-    <bean id="blWebCommonClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
-        <property name="prefix" value="common_style/templates/" />
-        <property name="suffix" value=".html" />
-        <property name="templateMode" value="HTML5" />        
-        <property name="characterEncoding" value="UTF-8" />
-        <property name="cacheable" value="${cache.page.templates}"/>
-        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
-        <property name="order" value="500"/> 
-    </bean>  
-    
     <bean id="blSiteResolver" class="org.broadleafcommerce.common.web.NullBroadleafSiteResolver" />
     <bean id="blThemeResolver" class="org.broadleafcommerce.common.web.NullBroadleafThemeResolver" />
-    
     
     <!-- Resource Resolver Chains  -->
     <bean id="blSiteResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
@@ -350,47 +326,6 @@
     <bean id="blPaymentGatewayConfigurationServices" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring4.dialect.SpringStandardDialect" />
-    
-    <bean id="blVariableExpressionEvaluator" class="org.broadleafcommerce.common.web.expression.BroadleafVariableExpressionEvaluator" />
-    <bean id="blDataDrivenEnumerationProcessor" class="org.broadleafcommerce.common.web.processor.DataDrivenEnumerationProcessor" />
-    <bean id="blResourceBundleProcessor" class="org.broadleafcommerce.common.web.processor.ResourceBundleProcessor" />
-    <bean id="blConfigVariableProcessor" class="org.broadleafcommerce.common.web.processor.ConfigVariableProcessor" />
-    <bean id="blBreadcrumbProcessor" class="org.broadleafcommerce.common.breadcrumbs.processor.BreadcrumbProcessor" />
-    <bean id="blFormProcessor" class="org.broadleafcommerce.common.web.processor.FormProcessor" />
-    
-    <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
-    <!-- own dialect and add your processors there. -->
-    <bean id="blDialectProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
-        <property name="sourceSet">
-            <set>
-                <ref bean="blDataDrivenEnumerationProcessor" />
-                <ref bean="blResourceBundleProcessor" />
-                <ref bean="blConfigVariableProcessor" />
-                <ref bean="blBreadcrumbProcessor" />
-                <ref bean="blFormProcessor" />
-            </set>
-        </property>
-    </bean>
-    
-    <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
-        <property name="processors" ref="blDialectProcessors" />
-    </bean>
-    
-    <!-- This list factory bean will accept classes that implment the BroadleafVariableExpression interface. -->
-    <!-- This provides the ability to inject custom expression evaluators into Thymeleaf. -->
-    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <bean class="org.broadleafcommerce.common.web.expression.AssetURLVariableExpression" />
-                <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
-                <bean class="org.broadleafcommerce.common.web.expression.BRCVariableExpression" />                
-                <bean class="org.broadleafcommerce.common.web.expression.PropertiesVariableExpression" />
-                <bean class="org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression"/>
             </list>
         </property>
     </bean>
