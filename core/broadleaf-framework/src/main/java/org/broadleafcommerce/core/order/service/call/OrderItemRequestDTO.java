@@ -56,7 +56,8 @@ public class OrderItemRequestDTO {
     private Map<String,String> itemAttributes = new HashMap<String,String>();
     private List<OrderItemRequestDTO> childOrderItems = new ArrayList<OrderItemRequestDTO>();
     private Long parentOrderItemId;
-    
+    private Map<String,String> validationAttributes = new HashMap<String,String>();
+
     public OrderItemRequestDTO() {}
     
     public OrderItemRequestDTO(Long productId, Integer quantity) {
@@ -162,5 +163,12 @@ public class OrderItemRequestDTO {
     public void setParentOrderItemId(Long parentOrderItemId) {
         this.parentOrderItemId = parentOrderItemId;
     }
-    
+
+    public Map<String, String> getValidationAttributes() {
+        return validationAttributes;
+    }
+
+    public void setValidationAttributes(Map<String, String> validationAttributes) {
+        this.validationAttributes = validationAttributes;
+    }
 }

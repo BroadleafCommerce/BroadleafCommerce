@@ -24,13 +24,9 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     protected Product product;
-
     protected Integer minQuantity;
     protected Integer maxQuantity;
-
     protected Money displayPrice;
-
-    protected String validationKey;
 
     public Product getProduct() {
         return product;
@@ -74,13 +70,5 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     public Money getTotalPrice() {
         return getDisplayPrice().multiply(getQuantity());
-    }
-
-    public String getValidationKey() {
-        return validationKey;
-    }
-
-    public void setValidationKey(String validationKey) {
-        this.validationKey = validationKey;
     }
 }

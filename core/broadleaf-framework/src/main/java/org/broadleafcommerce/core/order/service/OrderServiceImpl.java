@@ -574,7 +574,7 @@ public class OrderServiceImpl implements OrderService {
         }
         try {
             // We only want to price on the last addition for performance reasons and only if the user asked for it.
-            int numAdditionRequests = priceOrder ? (1 + orderItemRequestDTO.getChildOrderItems().size()) : -1;
+            int numAdditionRequests = priceOrder ? (getTotalChildOrderItems(orderItemRequestDTO)) : -1;
             int currentAddition = 1;
 
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, currentAddition == numAdditionRequests);
@@ -582,24 +582,40 @@ public class OrderServiceImpl implements OrderService {
 
             List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
             orderMessages.addAll(((ActivityMessages) context).getActivityMessages());
-            
-            if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
-                for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
-                    childRequest.setParentOrderItemId(context.getSeedData().getOrderItem().getId());
-                    currentAddition++;
 
-                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
-                    ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
-                    orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
-                }
-            }
-            
+            addChildItems(orderItemRequestDTO, numAdditionRequests, currentAddition, context, orderMessages);
+
             context.getSeedData().getOrder().setOrderMessages(orderMessages);
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {
             throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
         }
 
+    }
+
+    @Override
+    public int getTotalChildOrderItems(OrderItemRequestDTO orderItemRequestDTO) {
+        int count = 1;
+        for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
+            count += getTotalChildOrderItems(childRequest);
+        }
+        return count;
+    }
+
+    @Override
+    public void addChildItems(OrderItemRequestDTO orderItemRequestDTO, int numAdditionRequests, int currentAddition, ProcessContext<CartOperationRequest> context, List<ActivityMessageDTO> orderMessages) throws WorkflowException {
+        if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
+            for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
+                childRequest.setParentOrderItemId(context.getSeedData().getOrderItem().getId());
+                currentAddition++;
+
+                CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
+                ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
+                orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
+
+                addChildItems(childRequest, numAdditionRequests, currentAddition, context, orderMessages);
+            }
+        }
     }
 
     @Override

@@ -25,15 +25,18 @@ import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededExc
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
@@ -385,7 +388,11 @@ public interface OrderService {
      */
     public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException;
 
-    void addDependentOrderItem(OrderItemRequestDTO parentOrderItemRequest, OrderItemRequestDTO dependentOrderItem);
+    public int getTotalChildOrderItems(OrderItemRequestDTO orderItemRequestDTO);
+
+    public void addChildItems(OrderItemRequestDTO orderItemRequestDTO, int numAdditionRequests, int currentAddition, ProcessContext<CartOperationRequest> context, List<ActivityMessageDTO> orderMessages) throws WorkflowException;
+
+    public void addDependentOrderItem(OrderItemRequestDTO parentOrderItemRequest, OrderItemRequestDTO dependentOrderItem);
 
     /**
      * Initiates the updateItem workflow that will attempt to update the item quantity for the specified
