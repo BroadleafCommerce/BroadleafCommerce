@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.AddToCartItem;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
@@ -117,20 +118,6 @@ public class BroadleafCartController extends AbstractCartController {
         return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
     }
 
-    public String configure(HttpServletRequest request, HttpServletResponse response, Model model,
-                            Long productId) {
-
-        Product product = catalogService.findProductById(productId);
-        ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
-        itemRequest.setProduct(product);
-        itemRequest.setQuantity(1);
-
-        extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
-        model.addAttribute("baseItem", itemRequest);
-
-        return isAjaxRequest(request) ? getConfigureView() : getConfigurePageRedirect();
-    }
-
     /**
      * Takes in an item request, adds the item to the customer's current cart, and returns.
      * 
@@ -164,6 +151,43 @@ public class BroadleafCartController extends AbstractCartController {
         cart = orderService.save(cart, true);
 
         return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
+    }
+
+    /**
+     * Takes a product id and builds out a dependant order item tree.  If it determines the order
+     * item is safe to add, it will proceed to calling the "add" method.
+     *
+     * If the method was invoked via an AJAX call, it will render the "ajax/configure" template.
+     * Otherwise, it will perform a 302 redirect to "/cart/configure"
+     *
+     * In the case that an "add" happened it will render either the "ajax/cart" or perform a 302
+     * redirect to "/cart"
+     *
+     * @param request
+     * @param response
+     * @param model
+     * @param productId
+     * @throws IOException
+     * @throws AddToCartException
+     * @throws PricingException
+     */
+    public String configure(HttpServletRequest request, HttpServletResponse response, Model model,
+                            Long productId) throws IOException, AddToCartException, PricingException {
+
+        Product product = catalogService.findProductById(productId);
+        ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
+        itemRequest.setProduct(product);
+        itemRequest.setQuantity(1);
+
+        extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
+
+        // If this item request is safe to add, go ahead and add it.
+        if (isSafeToAdd(itemRequest)) {
+            return add(request, response, model, itemRequest);
+        }
+
+        model.addAttribute("baseItem", itemRequest);
+        return isAjaxRequest(request) ? getConfigureView() : getConfigurePageRedirect();
     }
 
     /**
@@ -357,6 +381,18 @@ public class BroadleafCartController extends AbstractCartController {
         returnMap.put("exception", BLCMessageUtils.getMessage(ex.getType()));
         return returnMap;
     }
-    
 
+    protected boolean isSafeToAdd(ConfigurableOrderItemRequest itemRequest) {
+        boolean canSafelyAdd = true;
+        for (OrderItemRequestDTO child : itemRequest.getChildOrderItems()) {
+            ConfigurableOrderItemRequest configurableRequest = (ConfigurableOrderItemRequest) child;
+            Product childProduct = configurableRequest.getProduct();
+
+            int minQty = configurableRequest.getMinQuantity();
+            if (minQty == 0 || childProduct.getProductOptionXrefs().size() > 0) {
+                canSafelyAdd = false;
+            }
+        }
+        return canSafelyAdd;
+    }
 }

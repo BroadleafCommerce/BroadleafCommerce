@@ -20,36 +20,29 @@ package org.broadleafcommerce.core.order.service.call;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ConfigurableOrderItemRequest {
+public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     protected Product product;
 
-    protected Integer quantity;
     protected Integer minQuantity;
     protected Integer maxQuantity;
 
-    protected List<ConfigurableOrderItemRequest> childOrderItems = new ArrayList<ConfigurableOrderItemRequest>();
+
 
     public Product getProduct() {
         return product;
     }
 
     public void setProduct(Product product) {
+        super.setProductId(product.getId());
         this.product = product;
     }
 
     public Integer getQuantity() {
-        if (quantity == null) {
+        if (super.getQuantity() == null) {
             return minQuantity;
         }
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+        return super.getQuantity();
     }
 
     public Integer getMinQuantity() {
@@ -68,11 +61,5 @@ public class ConfigurableOrderItemRequest {
         this.maxQuantity = maxQuantity;
     }
 
-    public List<ConfigurableOrderItemRequest> getChildOrderItems() {
-        return childOrderItems;
-    }
 
-    public void setChildOrderItems(List<ConfigurableOrderItemRequest> childOrderItems) {
-        this.childOrderItems = childOrderItems;
-    }
 }
