@@ -384,16 +384,19 @@ public class BroadleafCartController extends AbstractCartController {
     }
 
     protected boolean isSafeToAdd(ConfigurableOrderItemRequest itemRequest) {
-        boolean canSafelyAdd = true;
         for (OrderItemRequestDTO child : itemRequest.getChildOrderItems()) {
             ConfigurableOrderItemRequest configurableRequest = (ConfigurableOrderItemRequest) child;
             Product childProduct = configurableRequest.getProduct();
 
+            if (childProduct == null) {
+                return false;
+            }
+
             int minQty = configurableRequest.getMinQuantity();
             if (minQty == 0 || childProduct.getProductOptionXrefs().size() > 0) {
-                canSafelyAdd = false;
+                return false;
             }
         }
-        return canSafelyAdd;
+        return true;
     }
 }

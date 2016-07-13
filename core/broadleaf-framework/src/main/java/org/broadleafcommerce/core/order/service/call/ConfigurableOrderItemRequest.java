@@ -21,9 +21,14 @@ package org.broadleafcommerce.core.order.service.call;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Product;
 
+import java.util.List;
+
 public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     protected Product product;
+    protected List<Product> productChoices;
+
+    protected Boolean isMultiSelect;
     protected Integer minQuantity;
     protected Integer maxQuantity;
     protected Money displayPrice;
@@ -35,6 +40,25 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
     public void setProduct(Product product) {
         super.setProductId(product.getId());
         this.product = product;
+    }
+
+    public List<Product> getProductChoices() {
+        return productChoices;
+    }
+
+    public void setProductChoices(List<Product> productChoices) {
+        this.productChoices = productChoices;
+    }
+
+    public Boolean getIsMultiSelect() {
+        if (isMultiSelect == null) {
+            isMultiSelect = false;
+        }
+        return isMultiSelect;
+    }
+
+    public void setIsMultiSelect(Boolean multiSelect) {
+        isMultiSelect = multiSelect;
     }
 
     public Integer getQuantity() {
