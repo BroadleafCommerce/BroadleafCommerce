@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.order.service.call;
 
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Product;
 
 public class ConfigurableOrderItemRequest extends AddToCartItem {
@@ -27,7 +28,9 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
     protected Integer minQuantity;
     protected Integer maxQuantity;
 
+    protected Money displayPrice;
 
+    protected String validationKey;
 
     public Product getProduct() {
         return product;
@@ -61,5 +64,23 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
         this.maxQuantity = maxQuantity;
     }
 
+    public Money getDisplayPrice() {
+        return displayPrice;
+    }
 
+    public void setDisplayPrice(Money displayPrice) {
+        this.displayPrice = displayPrice;
+    }
+
+    public Money getTotalPrice() {
+        return getDisplayPrice().multiply(getQuantity());
+    }
+
+    public String getValidationKey() {
+        return validationKey;
+    }
+
+    public void setValidationKey(String validationKey) {
+        this.validationKey = validationKey;
+    }
 }

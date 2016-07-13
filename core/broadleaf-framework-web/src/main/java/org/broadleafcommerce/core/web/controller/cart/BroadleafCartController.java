@@ -178,6 +178,7 @@ public class BroadleafCartController extends AbstractCartController {
         ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
         itemRequest.setProduct(product);
         itemRequest.setQuantity(1);
+        itemRequest.setDisplayPrice(product.getSalePrice());
 
         extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
 
