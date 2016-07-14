@@ -112,8 +112,15 @@ public class BroadleafCartController extends AbstractCartController {
 
         updateCartService.validateCart(cart);
 
-        cart = orderService.addItem(cart.getId(), itemRequest, false);
-        cart = orderService.save(cart,  true);
+        try {
+            extensionManager.getProxy().validateAddToCartItem(itemRequest);
+
+            cart = orderService.addItem(cart.getId(), itemRequest, false);
+            cart = orderService.save(cart,  true);
+        } catch (Exception e) {
+            // TODO: do some stuff here to show the error
+            return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
+        }
         
         return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
     }
