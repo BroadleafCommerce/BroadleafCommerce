@@ -170,21 +170,25 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     @Override
     public String getSectionKey(boolean withTypeKey) {
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-        String originatingUri = new UrlPathHelper().getOriginatingRequestUri(request);
-        int startIndex = request.getContextPath().length();
 
-        String sectionKey = originatingUri.substring(startIndex);
-        int endIndex = sectionKey.indexOf("/", 1);
-        if (endIndex > 0) {
-            // If we want a 'typeKey', grab a new end index
-            if (withTypeKey) {
-                endIndex = sectionKey.indexOf("/", endIndex);
-            }
-            // check again to make sure there is an end index
+        if (request != null) {
+            String originatingUri = new UrlPathHelper().getOriginatingRequestUri(request);
+            int startIndex = request.getContextPath().length();
+
+            String sectionKey = originatingUri.substring(startIndex);
+            int endIndex = sectionKey.indexOf("/", 1);
             if (endIndex > 0) {
-                sectionKey = sectionKey.substring(0, endIndex);
+                // If we want a 'typeKey', grab a new end index
+                if (withTypeKey) {
+                    endIndex = sectionKey.indexOf("/", endIndex);
+                }
+                // check again to make sure there is an end index
+                if (endIndex > 0) {
+                    sectionKey = sectionKey.substring(0, endIndex);
+                }
             }
+            return sectionKey;
         }
-        return sectionKey;
+        return null;
     }
 }
