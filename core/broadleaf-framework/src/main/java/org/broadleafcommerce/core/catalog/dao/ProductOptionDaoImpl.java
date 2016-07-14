@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
@@ -42,6 +43,10 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 @Repository("blProductOptionDao")
 public class ProductOptionDaoImpl implements ProductOptionDao {
@@ -51,6 +56,9 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    @Resource(name="blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
     
     @Override
     public List<ProductOption> readAllProductOptions() {
@@ -104,6 +112,22 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
     @Override
     public List<AssignedProductOptionDTO> findAssignedProductOptionsByProduct(Product product) {
         return findAssignedProductOptionsByProductId(product.getId());
+    }
+
+    @Override
+    public Long countAllowedValuesForProductOptionById(Long productOptionId) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root<ProductOptionValueImpl> root = criteria.from(ProductOptionValueImpl.class);
+        criteria.select(builder.count(root));
+
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Long> mergedIds = sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, productOptionId);
+        restrictions.add(root.get("productOption").in(mergedIds));
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        TypedQuery<Long> query = em.createQuery(criteria);
+        return query.getSingleResult();
     }
 
 }

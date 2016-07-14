@@ -97,8 +97,9 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
     }
 
     protected synchronized Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        if (FIELD_CACHE.containsKey(clazz.getName())) {
-            return FIELD_CACHE.get(clazz.getName());
+        String cacheKey = clazz.getName() + fieldName;
+        if (FIELD_CACHE.containsKey(cacheKey)) {
+            return FIELD_CACHE.get(cacheKey);
         }
 
         Field field = ReflectionUtils.findField(clazz, fieldName);
@@ -106,7 +107,7 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
             field.setAccessible(true);
         }
 
-        FIELD_CACHE.put(clazz.getName(), field);
+        FIELD_CACHE.put(cacheKey, field);
 
         return field;
     }
