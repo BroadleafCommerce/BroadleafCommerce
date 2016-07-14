@@ -351,7 +351,9 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      * @return
      */
     Money getPriceBeforeAdjustments(boolean allowSalesPrice);
-    
+
+    Money getPriceBeforeAdjustments(boolean allowSalesPrice, boolean includeChildren);
+
     /**
      * Used by the promotion engine to add offers that might apply to this orderItem.
      * @param candidateItemOffer

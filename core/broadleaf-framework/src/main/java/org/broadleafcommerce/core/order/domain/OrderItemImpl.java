@@ -470,22 +470,34 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {
+        return getPriceBeforeAdjustments(allowSalesPrice, false);
+    }
+
+    @Override
+    public Money getPriceBeforeAdjustments(boolean allowSalesPrice, boolean includeChildren) {
         boolean retailPriceOverride = false;
-        
+
         for (OrderItemPriceDetail oipd : getOrderItemPriceDetails()) {
             if (oipd.getUseSalePrice() == false) {
                 retailPriceOverride = true;
                 break;
             }
         }
-        
+
+        Money returnPrice = Money.ZERO;
+        if (includeChildren) {
+            for (OrderItem child : getChildOrderItems()) {
+                returnPrice = returnPrice.add(child.getPriceBeforeAdjustments(allowSalesPrice, true));
+            }
+        }
+
         if (allowSalesPrice && !retailPriceOverride) {
-            return getSalePrice();
+            return getSalePrice().add(returnPrice);
         } else {
-            return getRetailPrice();
+            return getRetailPrice().add(returnPrice);
         }
     }
-    
+
     @Override
     public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer) {
         getCandidateItemOffers().add(candidateItemOffer);

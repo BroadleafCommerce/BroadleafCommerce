@@ -158,7 +158,7 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
 
     @Override
     public Money getTotalAdjustedPrice() {
-        Money basePrice = orderItem.getPriceBeforeAdjustments(getUseSalePrice());
+        Money basePrice = orderItem.getPriceBeforeAdjustments(getUseSalePrice(), true);
         return basePrice.multiply(quantity).subtract(getTotalAdjustmentValue());
     }
 
