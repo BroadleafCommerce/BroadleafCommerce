@@ -613,7 +613,7 @@ public class OrderServiceImpl implements OrderService {
                 ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
                 orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
 
-                addChildItems(childRequest, numAdditionRequests, currentAddition, context, orderMessages);
+                addChildItems(childRequest, numAdditionRequests, currentAddition, childContext, orderMessages);
             }
         }
     }
