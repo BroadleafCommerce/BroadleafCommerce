@@ -651,10 +651,9 @@
                     });
                     // add back active filters
                     if (inputs.length) {
-                        for (var i in inputs) {
-                            var input = inputs[i];
+                        $(inputs).each(function (index, input) {
                             BLCAdmin.history.replaceUrlParameter(input.name, input.value);
-                        }
+                        });
                     }
                 }
 
