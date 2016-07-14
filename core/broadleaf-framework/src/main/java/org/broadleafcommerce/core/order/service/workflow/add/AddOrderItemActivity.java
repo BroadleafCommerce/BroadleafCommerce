@@ -119,7 +119,10 @@ public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperat
             OrderItem parent = orderItemService.readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
             item.setParentOrderItem(parent);
         }
-        
+
+        // Check for special pricing
+        orderItemService.priceOrderItem(item);
+
         order.getOrderItems().add(item);
         request.setOrderItem(item);
 

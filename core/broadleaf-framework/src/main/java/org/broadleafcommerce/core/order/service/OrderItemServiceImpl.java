@@ -43,6 +43,7 @@ import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequest
 import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
+import org.broadleafcommerce.core.order.service.extension.OrderItemServiceExtensionManager;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +63,9 @@ public class OrderItemServiceImpl implements OrderItemService {
     
     @Resource(name="blDynamicSkuPricingService" )
     protected DynamicSkuPricingService dynamicSkuPricingService;
+
+    @Resource(name="blOrderItemServiceExtensionManager")
+    protected OrderItemServiceExtensionManager extensionManager;
 
     @Override
     public OrderItem readOrderItemById(final Long orderItemId) {
@@ -430,4 +434,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         return orderItemRequest;
     }
 
+    @Override
+    public void priceOrderItem(OrderItem item) {
+        extensionManager.getProxy().modifyOrderItemPrices(item);
+    }
 }

@@ -76,5 +76,5 @@ public interface OrderItemService {
 
     public OrderItem createOrderItem(OrderItemRequest itemRequest);
 
-
+    public void priceOrderItem(OrderItem item);
 }
