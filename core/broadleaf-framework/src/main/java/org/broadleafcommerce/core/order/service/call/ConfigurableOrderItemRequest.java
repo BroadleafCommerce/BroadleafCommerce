@@ -63,13 +63,13 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     public Integer getQuantity() {
         if (super.getQuantity() == null) {
-            return minQuantity;
+            return getMinQuantity();
         }
         return super.getQuantity();
     }
 
     public Integer getMinQuantity() {
-        return minQuantity;
+        return minQuantity == null ? 0 : minQuantity;
     }
 
     public void setMinQuantity(Integer minQuantity) {
