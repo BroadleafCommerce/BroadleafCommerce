@@ -42,6 +42,7 @@ import javax.annotation.Resource;
 public class URLHandlerServiceImpl implements URLHandlerService {
 
     private static final Log LOG = LogFactory.getLog(URLHandlerServiceImpl.class);
+    protected static final String REGEX_SPECIAL_CHARS_PATTERN = "([\\[\\]\\.\\|\\?\\*\\+\\(\\)\\\\~`\\!@#%&\\-_+={}'\"\"<>:;, \\/])"; //other than ^ and $
 
     @Resource(name="blURLHandlerDao")
     protected URLHandlerDao urlHandlerDao;
@@ -85,14 +86,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
             List<URLHandler> urlHandlers = findAllURLHandlers();
             for (URLHandler urlHandler : urlHandlers) {
                 currentHandler = urlHandler;
-                String incomingUrl = currentHandler.getIncomingURL();
-                if (!incomingUrl.startsWith("^")) {
-                    if (incomingUrl.startsWith("/")) {
-                        incomingUrl = "^" + incomingUrl + "$";
-                    } else {
-                        incomingUrl = "^/" + incomingUrl + "$";
-                    }
-                }
+                String incomingUrl = wrapStringsWithAnchors(currentHandler.getIncomingURL());
 
                 Pattern p = urlPatternMap.get(incomingUrl);
                 if (p == null) {
@@ -122,6 +116,22 @@ public class URLHandlerServiceImpl implements URLHandlerService {
 
 
         return null;
+    }
+
+    protected String wrapStringsWithAnchors(String incomingUrl) {
+        if (!incomingUrl.startsWith("^")) {
+            if (incomingUrl.substring(0,1).matches(REGEX_SPECIAL_CHARS_PATTERN)) {
+                incomingUrl = "^" + incomingUrl;
+            } else {
+                incomingUrl = "^/" + incomingUrl;
+            }
+        }
+
+        if (!incomingUrl.endsWith("$")) {
+            incomingUrl+= "$";
+        }
+
+        return incomingUrl;
     }
 
 }
