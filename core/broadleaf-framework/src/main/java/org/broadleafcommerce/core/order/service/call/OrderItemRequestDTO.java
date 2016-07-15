@@ -17,12 +17,15 @@
  */
 package org.broadleafcommerce.core.order.service.call;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +59,7 @@ public class OrderItemRequestDTO {
     private Map<String,String> itemAttributes = new HashMap<String,String>();
     private List<OrderItemRequestDTO> childOrderItems = new ArrayList<OrderItemRequestDTO>();
     private Long parentOrderItemId;
-    private Map<String,String> validationAttributes = new HashMap<String,String>();
+    private Map<String,String> additionalAttributes = new HashMap<String,String>();
 
     public OrderItemRequestDTO() {}
     
@@ -149,6 +152,17 @@ public class OrderItemRequestDTO {
     }
 
     public List<OrderItemRequestDTO> getChildOrderItems() {
+        Collections.sort(childOrderItems, new Comparator<OrderItemRequestDTO>() {
+            @Override
+            public int compare(OrderItemRequestDTO o1, OrderItemRequestDTO o2) {
+                String o1DisplayOrder = o1.getAdditionalAttributes().get("addOnDisplayOrder");
+                String o2DisplayOrder = o2.getAdditionalAttributes().get("addOnDisplayOrder");
+                return new CompareToBuilder()
+                        .append(o1DisplayOrder, o2DisplayOrder)
+                        .toComparison();
+            }
+        });
+
         return childOrderItems;
     }
     
@@ -164,11 +178,11 @@ public class OrderItemRequestDTO {
         this.parentOrderItemId = parentOrderItemId;
     }
 
-    public Map<String, String> getValidationAttributes() {
-        return validationAttributes;
+    public Map<String, String> getAdditionalAttributes() {
+        return additionalAttributes;
     }
 
-    public void setValidationAttributes(Map<String, String> validationAttributes) {
-        this.validationAttributes = validationAttributes;
+    public void setAdditionalAttributes(Map<String, String> additionalAttributes) {
+        this.additionalAttributes = additionalAttributes;
     }
 }
