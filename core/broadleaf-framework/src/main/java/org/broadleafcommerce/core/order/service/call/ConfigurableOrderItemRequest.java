@@ -33,6 +33,8 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
     protected Integer maxQuantity;
     protected Money displayPrice;
 
+    protected Integer orderItemIndex;
+
     public Product getProduct() {
         return product;
     }
@@ -94,5 +96,13 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     public Money getTotalPrice() {
         return getDisplayPrice().multiply(getQuantity());
+    }
+
+    public Integer getOrderItemIndex() {
+        return orderItemIndex;
+    }
+
+    public void setOrderItemIndex(Integer orderItemIndex) {
+        this.orderItemIndex = orderItemIndex;
     }
 }
