@@ -58,7 +58,7 @@ public class BroadleafCartController extends AbstractCartController {
 
     protected static String cartView = "cart/cart";
     protected static String cartPageRedirect = "redirect:/cart";
-    protected static String configureView = "catalog/partials/configure";
+    protected static String configureView = "configure/partials/configure";
     protected static String configurePageRedirect = "redirect:/cart/configure";
     
     @Value("${solr.index.use.sku}")
