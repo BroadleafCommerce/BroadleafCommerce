@@ -103,7 +103,7 @@ public class BroadleafCartController extends AbstractCartController {
      * @throws PricingException
      */
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
-            AddToCartItem itemRequest) throws IOException, AddToCartException, PricingException  {
+            AddToCartItem itemRequest) throws IOException, AddToCartException, PricingException, Exception {
         Order cart = CartState.getCart();
         
         // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
@@ -113,17 +113,11 @@ public class BroadleafCartController extends AbstractCartController {
         }
 
         updateCartService.validateCart(cart);
+        extensionManager.getProxy().validateAddToCartItem(itemRequest);
 
-        try {
-            extensionManager.getProxy().validateAddToCartItem(itemRequest);
+        cart = orderService.addItem(cart.getId(), itemRequest, false);
+        cart = orderService.save(cart, true);
 
-            cart = orderService.addItem(cart.getId(), itemRequest, false);
-            cart = orderService.save(cart,  true);
-        } catch (Exception e) {
-            // TODO: do some stuff here to show the error
-            return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
-        }
-        
         return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
     }
 
@@ -181,7 +175,7 @@ public class BroadleafCartController extends AbstractCartController {
      * @throws PricingException
      */
     public String configure(HttpServletRequest request, HttpServletResponse response, Model model,
-                            Long productId) throws IOException, AddToCartException, PricingException {
+                            Long productId) throws IOException, AddToCartException, PricingException, Exception {
 
         Product product = catalogService.findProductById(productId);
         ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
