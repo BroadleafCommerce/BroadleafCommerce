@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.web.controller.cart;
 
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -195,7 +197,7 @@ public class BroadleafCartController extends AbstractCartController {
         }
 
         model.addAttribute("baseItem", itemRequest);
-        return isAjaxRequest(request) ? getConfigureView() : getConfigurePageRedirect();
+        return isAjaxRequest(request) ? getConfigureView(product) : getConfigurePageRedirect(product);
     }
 
     /**
@@ -375,11 +377,25 @@ public class BroadleafCartController extends AbstractCartController {
         return cartPageRedirect;
     }
 
-    public String getConfigureView() {
+    public String getConfigureView(Product product) {
+        ExtensionResultHolder<String> resultHolder = new ExtensionResultHolder();
+        ExtensionResultStatusType status = extensionManager.getProxy().getConfigureView(product, resultHolder);
+
+        if (ExtensionResultStatusType.HANDLED.equals(status)) {
+            return resultHolder.getResult();
+        }
+
         return configureView;
     }
 
-    public String getConfigurePageRedirect() {
+    public String getConfigurePageRedirect(Product product) {
+        ExtensionResultHolder<String> resultHolder = new ExtensionResultHolder();
+        ExtensionResultStatusType status = extensionManager.getProxy().getConfigurePageRedirect(product, resultHolder);
+
+        if (ExtensionResultStatusType.HANDLED.equals(status)) {
+            return resultHolder.getResult();
+        }
+
         return configurePageRedirect;
     }
 

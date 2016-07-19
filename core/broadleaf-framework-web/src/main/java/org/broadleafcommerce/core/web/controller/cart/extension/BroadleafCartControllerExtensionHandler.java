@@ -18,7 +18,9 @@
 package org.broadleafcommerce.core.web.controller.cart.extension;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.order.service.call.AddToCartItem;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 
@@ -42,4 +44,20 @@ public interface BroadleafCartControllerExtensionHandler extends ExtensionHandle
      * @return
      */
     public ExtensionResultStatusType validateAddToCartItem(AddToCartItem addToCartItem) throws Exception;
+
+    /**
+     *
+     *
+     * @param product
+     * @return
+     */
+    public ExtensionResultStatusType getConfigureView(Product product, ExtensionResultHolder resultHolder);
+
+    /**
+     *
+     *
+     * @param product
+     * @return
+     */
+    public ExtensionResultStatusType getConfigurePageRedirect(Product product, ExtensionResultHolder resultHolder);
 }
