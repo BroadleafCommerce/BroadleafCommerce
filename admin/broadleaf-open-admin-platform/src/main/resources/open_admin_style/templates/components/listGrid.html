@@ -147,7 +147,7 @@
 
 
                             <span th:if="${!headerField.mainEntityLink and headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}" th:remove="tag">
-                                <a class="external-link" th:href="@{${headerField.foreignKeyClass + '/' + field.value}}" th:utext="${field.displayValue}"></a>
+                                <a class="external-link" th:href="@{${headerField.foreignKeySectionPath + '/' + field.value}}" th:utext="${field.displayValue}"></a>
                             </span>
 
                             <span th:if="${field.fieldType == 'IMAGE'}">
