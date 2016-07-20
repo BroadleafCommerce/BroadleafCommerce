@@ -39,7 +39,6 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -64,9 +63,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -85,8 +82,7 @@ import javax.persistence.criteria.Root;
  */
 @Component("blProductCustomPersistenceHandler")
 public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-
-    public static final String DEFAULT_SKU = "defaultSku";
+    
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
@@ -147,93 +143,16 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao
             dynamicEntityDao, RecordHelper helper) throws ServiceException {
 
-        if (!setupNonLegacyProductCategory(cto, dynamicEntityDao)) {
-            return new DynamicResultSet(null, new Entity[0], 0);
-        }
-
-        if (eagerFetchAssociations) {
-            cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
-                    .withDirectFilterValues(new EmptyFilterValues())
-                    .withRestriction(new Restriction()
-                            .withPredicateProvider(new PredicateProvider() {
-                                @Override
-                                public Predicate buildPredicate(CriteriaBuilder builder,
-                                                                FieldPathBuilder fieldPathBuilder, From root,
-                                                                String ceilingEntity,
-                                                                String fullPropertyName, Path explicitPath,
-                                                                List directValues) {
-                                    root.fetch("defaultSku", JoinType.LEFT);
-                                    root.fetch("defaultCategory", JoinType.LEFT);
-                                    return null;
-                                }
-                            })
-                    ));
-        }
-        if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) && !hasCriteriaForId(cto)) {
-            extensionManager.getProxy().manageAdditionalFilterMappings(cto);
-
-            //Add special handling for product list grid fetches
-            boolean hasExplicitSort = false;
-            for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
-                hasExplicitSort = filter.getSortDirection() != null;
-                if (hasExplicitSort) {
-                    break;
-                }
-            }
-            if (!hasExplicitSort) {
-                FilterAndSortCriteria filter = cto.get("id");
-                filter.setNullsLast(false);
-                filter.setSortAscending(true);
-            }
-
-            // Check if we are only sorting/filtering on Sku related fields. If so, return the filtered product list.
-            List<Product> filteredProducts = filterProductsBySkuFields(cto, dynamicEntityDao, helper);
-            if (isSkuOnlyFilter(cto)) {
-                // Convert the filtered product list into a list of entities
-                PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-                Map<String, FieldMetadata> indexFieldMetadata = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
-                Entity[] entities = helper.getRecords(indexFieldMetadata, filteredProducts);
-
-                // We need to get the total number of records available because the entityList returned may not be the full set.
-                Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
-                List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, Product.class.getName(), originalProps);
-                int totalRecords = helper.getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
-
-                // Create a Dynamic Result Set from the entity list created above.
-                DynamicResultSet resultSet = new DynamicResultSet(entities, totalRecords);
-                return resultSet;
-
-            } else {
-                if (filteredProducts.size() != 0) {
-                    clearFilteredProperties(cto);
-                    addSkuFilterMapping(cto, filteredProducts);
-                }
-            }
-
-            try {
-                extensionManager.getProxy().initiateFetchState();
-                return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
-            } finally {
-                extensionManager.getProxy().endFetchState();
-            }
-        } else {
-            return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
-        }
-    }
-
-    protected Boolean hasCriteriaForId(CriteriaTransferObject cto) {
-        return cto.getCriteriaMap().containsKey("id") && !CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues());
-    }
-
-    @SuppressWarnings("unchecked")
-    protected boolean setupNonLegacyProductCategory(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao) {
+        
+        boolean legacy = parentCategoryLegacyModeService.isLegacyMode();
+        
         //the following code applies when filters are present only:
         //"legacy" means that the parent category filter still utilizes Product.defaultCategory as the field to be matched
-        //against the categories chosen in the listGrid filter. The default behavior up to this point, assumes the "legacy" mode.
+        //against the categories chosen in the listGrid filter. The default behavior up to this point, assumes the "legacy" mode. 
         //This means that one of the FilterAndSortCriterias will try to match the chosen values against "defaultCategory".
         //If "legacy" is false, we remove that FilterAndSortCriteria from the CTO, and inject a new FilterMapping in cto.additionalFilterMappings,
         //which seeks matching values in  allParentCategoryXRefs instead
-        if (!isDefaultCategoryLegacyMode()) {
+        if (!legacy) {
             FilterAndSortCriteria fsc = cto.getCriteriaMap().get("defaultCategory");
             if (fsc != null) {
                 List<String> filterValues = fsc.getFilterValues();
@@ -261,7 +180,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 productIds = sandBoxHelper.mergeCloneIds(ProductImpl.class, productIds.toArray(new Long[productIds.size()]));
 
                 if(productIds.size() == 0){
-                    return false;
+                    return new DynamicResultSet(null, new Entity[0],0);
                 }
                 if (productIds.size() <= queryLimit) {
                     FilterMapping filterMapping = new FilterMapping()
@@ -282,134 +201,54 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 } else {
                     String joined = StringUtils.join(transformedValues, ',');
                     LOG.warn(String.format("Skipping default category filtering for product fetch query since there are " +
-                            "more than " + queryLimit + " products found to belong to the selected default categories(%s). This is a " +
+                            "more than "+queryLimit+" products found to belong to the selected default categories(%s). This is a " +
                             "filter query limitation.", joined));
                 }
             }
         }
-        return true;
-    }
 
-    protected Boolean isSkuOnlyFilter(CriteriaTransferObject cto) {
-        Boolean isSkuOnly = Boolean.TRUE;
-        int skuFilters = 0;
-        for (String filterProperty : cto.getCriteriaMap().keySet()) {
-            if (!filterProperty.startsWith(DEFAULT_SKU)
-                    && !filterProperty.equals("id")
-                    && !filterProperty.equals("isLookup")) {
-                isSkuOnly = Boolean.FALSE;
-                break;
-            } else if (filterProperty.startsWith(DEFAULT_SKU)){
-                skuFilters++;
-            }
-        }
-        return isSkuOnly && (skuFilters > 0);
-    }
-
-    protected List<Product> filterProductsBySkuFields(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) {
-        // Setup the Sku query.
-        CriteriaBuilder builder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
-        CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
-        Root<SkuImpl> root = criteria.from(SkuImpl.class);
-        criteria.select(root.get("defaultProduct").as(Product.class));
-
-        // Build our list of Sku related restrictions.
-        List<Predicate> restrictions = buildSkuRestrictions(cto, helper, builder, criteria, root);
-
-        // Apply the restrictions if any.
-        if (restrictions.size() > 0) {
-            criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        if (eagerFetchAssociations) {
+            cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
+                    .withDirectFilterValues(new EmptyFilterValues())
+                    .withRestriction(new Restriction()
+                            .withPredicateProvider(new PredicateProvider() {
+                                @Override
+                                public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                FieldPathBuilder fieldPathBuilder, From root,
+                                                                String ceilingEntity,
+                                                                String fullPropertyName, Path explicitPath,
+                                                                List directValues) {
+                                    root.fetch("defaultSku", JoinType.LEFT);
+                                    root.fetch("defaultCategory", JoinType.LEFT);
+                                    return null;
+                                }
+                            })
+                    ));
         }
 
-        TypedQuery<Product> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
-        List<Product> filteredProducts = query.getResultList();
-
-        return filteredProducts;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected List<Predicate> buildSkuRestrictions(CriteriaTransferObject cto, RecordHelper helper, CriteriaBuilder builder, CriteriaQuery<Product> criteria, Root<SkuImpl> root) {
-        List<Predicate> restrictions = new ArrayList<>();
-        for (String filterProperty : cto.getCriteriaMap().keySet()) {
-            if (filterProperty.startsWith(DEFAULT_SKU)) {
-                FilterAndSortCriteria fasc = cto.getCriteriaMap().get(filterProperty);
-                String skuField = filterProperty.replace(DEFAULT_SKU + ".","");
-                Path skuFieldPath = root.get(skuField);
-                Field field = helper.getFieldManager().getField(SkuImpl.class, skuField);
-
-                // If we have filter values, create the appropriate restrictions.
-                if (fasc.getFilterValues().size() > 0) {
-                    if (field.getType().isAssignableFrom(String.class)) {
-                        restrictions.add(builder.like(skuFieldPath.as(String.class), "%" + fasc.getFilterValues().get(0) + "%"));
-                    } else if (field.getType().isAssignableFrom(BigDecimal.class)) {
-                        BigDecimal decimalValue = new BigDecimal(fasc.getFilterValues().get(0));
-                        String filterValue = String.format("%.5f", decimalValue);
-
-                        if (fasc.getFilterValues().size() == 1) {
-                            restrictions.add(builder.equal(skuFieldPath.as(String.class), filterValue));
-                        } else {
-                            BigDecimal firstValue = new BigDecimal(fasc.getFilterValues().get(0));
-                            BigDecimal secondValue = new BigDecimal(fasc.getFilterValues().get(1));
-                            restrictions.add(builder.between(skuFieldPath.as(BigDecimal.class), firstValue, secondValue));
-                        }
-                    }
-                }
-
-                // Add sorting if applicable.
-                if (fasc.getSortDirection() != null) {
-                    if (fasc.getSortAscending()) {
-                        criteria.orderBy(builder.asc(skuFieldPath));
-                    } else {
-                        criteria.orderBy(builder.desc(skuFieldPath));
-                    }
+        if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
+                (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
+            //Add special handling for product list grid fetches
+            boolean hasExplicitSort = false;
+            for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
+                hasExplicitSort = filter.getSortDirection() != null;
+                if (hasExplicitSort) {
+                    break;
                 }
             }
-        }
-        return restrictions;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void addSkuFilterMapping(CriteriaTransferObject cto, List<Product> filterValues) {
-        List<String> productIds = buildProductIdList(filterValues);
-        cto.getAdditionalFilterMappings().add(new FilterMapping()
-                .withFieldPath(new FieldPath().withTargetProperty("id"))
-                .withDirectFilterValues(productIds)
-                .withRestriction(new Restriction()
-                        .withPredicateProvider(new PredicateProvider() {
-                            @Override
-                            public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
-                                                            From root, String ceilingEntity,
-                                                            String fullPropertyName, Path explicitPath, List directValues) {
-                                return explicitPath.in(directValues);
-                            }
-                        })
-                ));
-    }
-
-    protected List<String> buildProductIdList(List<Product> filterValues) {
-        List<String> productIds = BLCCollectionUtils.collectList(filterValues, new TypedTransformer<String>() {
-            @Override
-            public String transform(Object input) {
-                // Make sure we have the actual product id.
-                Long originalId = sandBoxHelper.getOriginalId(input);
-                if (originalId != null) {
-                    return originalId.toString();
-                } else {
-                    return ((Product)input).getId().toString();
-                }
+            if (!hasExplicitSort) {
+                FilterAndSortCriteria filter = cto.get("id");
+                filter.setNullsLast(false);
+                filter.setSortAscending(true);
             }
-        });
-        return productIds;
-    }
-
-    protected void clearFilteredProperties(CriteriaTransferObject cto) {
-        for (String filterProperty : cto.getCriteriaMap().keySet()) {
-            if (filterProperty.startsWith(DEFAULT_SKU)) {
-                FilterAndSortCriteria fasc = cto.getCriteriaMap().get(filterProperty);
-                if (fasc.getFilterValues().size() > 0) {
-                    cto.getCriteriaMap().get(filterProperty).setFilterValues(Collections.<String>emptyList());
-                }
+            try {
+                extensionManager.getProxy().initiateFetchState();
+                return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+            } finally {
+                extensionManager.getProxy().endFetchState();
             }
+        } else {
+            return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
         }
     }
 
