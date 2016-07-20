@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedExcep
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.AddToCartItem;
@@ -115,10 +116,23 @@ public class BroadleafCartController extends AbstractCartController {
         updateCartService.validateCart(cart);
         extensionManager.getProxy().validateAddToCartItem(itemRequest);
 
+        // if this is an update to an existing order item, remove the old before proceeding
+        if (isUpdateRequest(request)) {
+            Long originalOrderItem = Long.parseLong(request.getParameter("originalOrderItem"));
+            if (originalOrderItem != null) {
+                cart = orderService.removeItem(cart.getId(), originalOrderItem, false);
+                cart = orderService.save(cart, true);
+            }
+        }
+
         cart = orderService.addItem(cart.getId(), itemRequest, false);
         cart = orderService.save(cart, true);
 
         return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
+    }
+
+    protected boolean isUpdateRequest(HttpServletRequest request) {
+        return request.getParameter("isUpdateRequest") != null && Boolean.parseBoolean(request.getParameter("isUpdateRequest"));
     }
 
     /**
@@ -178,10 +192,7 @@ public class BroadleafCartController extends AbstractCartController {
                             Long productId) throws IOException, AddToCartException, PricingException, Exception {
 
         Product product = catalogService.findProductById(productId);
-        ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
-        itemRequest.setProduct(product);
-        itemRequest.setQuantity(1);
-        itemRequest.setDisplayPrice(product.getSalePrice());
+        ConfigurableOrderItemRequest itemRequest = createConfigurableOrderItemRequest(product);
 
         extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
 
@@ -192,6 +203,51 @@ public class BroadleafCartController extends AbstractCartController {
 
         model.addAttribute("baseItem", itemRequest);
         return isAjaxRequest(request) ? getConfigureView(product) : getConfigurePageRedirect(product);
+    }
+
+    /**
+     * Takes an order item id and rebuilds the dependant order item tree with the current quantities and options set.
+     *
+     * If the method was invoked via an AJAX call, it will render the "ajax/configure" template.
+     * Otherwise, it will perform a 302 redirect to "/cart/configure"
+     *
+     * @param request
+     * @param response
+     * @param model
+     * @param orderItemId
+     * @throws IOException
+     * @throws AddToCartException
+     * @throws PricingException
+     */
+    public String reconfigure(HttpServletRequest request, HttpServletResponse response, Model model,
+                            Long orderItemId) throws IOException, AddToCartException, PricingException, Exception {
+
+        DiscreteOrderItem orderItem = (DiscreteOrderItem) orderItemService.readOrderItemById(orderItemId);
+
+        Long productId = orderItem.getProduct().getId();
+        Product product = catalogService.findProductById(productId);
+        ConfigurableOrderItemRequest itemRequest = createConfigurableOrderItemRequest(product);
+
+        extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
+
+        // update quantities and product options
+        itemRequest.setQuantity(orderItem.getQuantity());
+
+        extensionManager.getProxy().mergeOrderItemRequest(itemRequest, orderItem);
+
+        model.addAttribute("baseItem", itemRequest);
+        model.addAttribute("isUpdateRequest", Boolean.TRUE);
+        model.addAttribute("originalOrderItem", orderItemId);
+
+        return isAjaxRequest(request) ? getConfigureView(product) : getConfigurePageRedirect(product);
+    }
+
+    protected ConfigurableOrderItemRequest createConfigurableOrderItemRequest(Product product) {
+        ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
+        itemRequest.setProduct(product);
+        itemRequest.setQuantity(1);
+        itemRequest.setDisplayPrice(product.getSalePrice());
+        return itemRequest;
     }
 
     /**

@@ -691,7 +691,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public int getItemCount() {
         int count = 0;
         for (DiscreteOrderItem doi : getDiscreteOrderItems()) {
-            count += doi.getQuantity();
+            if (doi.getParentOrderItem() == null) {
+                count += doi.getQuantity();
+            }
         }
         return count;
     }

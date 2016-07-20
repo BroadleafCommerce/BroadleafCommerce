@@ -26,7 +26,7 @@ import java.util.List;
 public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     protected Product product;
-    protected List<Product> productChoices;
+    protected List<ConfigurableOrderItemRequest> productChoices;
 
     protected Boolean isMultiSelect;
     protected Integer minQuantity;
@@ -44,11 +44,11 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
         this.product = product;
     }
 
-    public List<Product> getProductChoices() {
+    public List<ConfigurableOrderItemRequest> getProductChoices() {
         return productChoices;
     }
 
-    public void setProductChoices(List<Product> productChoices) {
+    public void setProductChoices(List<ConfigurableOrderItemRequest> productChoices) {
         this.productChoices = productChoices;
     }
 

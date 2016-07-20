@@ -149,7 +149,7 @@ public class OrderItemServiceImpl implements OrderItemService {
                 attributeMap.put(entry.getKey(), orderItemAttribute);
             }
         }
-        
+
         return item;
     }
 
@@ -208,7 +208,11 @@ public class OrderItemServiceImpl implements OrderItemService {
         for (DiscreteOrderItemFeePrice feePrice : item.getDiscreteOrderItemFeePrices()) {
             feePrice.setDiscreteOrderItem(item);
         }
-        
+
+        if (MapUtils.isNotEmpty(itemRequest.getAdditionalAttributes())) {
+            item.setAdditionalAttributes(itemRequest.getAdditionalAttributes());
+        }
+
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
         return item;
