@@ -87,6 +87,7 @@ public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperat
             itemRequest.setRetailPriceOverride(ndr.getOverrideRetailPrice());
             itemRequest.setSalePriceOverride(ndr.getOverrideSalePrice());
             itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
+            itemRequest.setAdditionalAttributes(orderItemRequestDTO.getAdditionalAttributes());
             itemRequest.setItemName(ndr.getItemName());
             itemRequest.setOrder(order);
             item = orderItemService.createOrderItem(itemRequest);
@@ -97,6 +98,7 @@ public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperat
             itemRequest.setSku(sku);
             itemRequest.setQuantity(orderItemRequestDTO.getQuantity());
             itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
+            itemRequest.setAdditionalAttributes(orderItemRequestDTO.getAdditionalAttributes());
             itemRequest.setOrder(order);
             itemRequest.setSalePriceOverride(orderItemRequestDTO.getOverrideSalePrice());
             itemRequest.setRetailPriceOverride(orderItemRequestDTO.getOverrideRetailPrice());
