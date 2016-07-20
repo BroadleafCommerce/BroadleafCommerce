@@ -163,37 +163,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             }
         }
     }
-    
-    
+
     protected boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
-        Money qualifyingItemSubTotal = itemOffer.getOffer().getQualifyingItemSubTotal();
-        if (qualifyingItemSubTotal == null || qualifyingItemSubTotal.lessThanOrEqual(Money.ZERO)) {
-            return true;
-        }
-        Money subtotal = Money.ZERO;
-
-        for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
-            List<PromotableOrderItem> promotableItems = itemOffer.getCandidateQualifiersMap().get(itemCriteria);
-
-            for (PromotableOrderItem item : promotableItems) {
-                Money lineItemAmount = item.getPriceBeforeAdjustments(itemOffer.getOffer().getApplyDiscountToSalePrice()).multiply(item.getQuantity());
-                subtotal = subtotal.add(lineItemAmount);
-                if (subtotal.greaterThanOrEqual(qualifyingItemSubTotal)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return offerServiceUtilities.orderMeetsQualifyingSubtotalRequirements(order, itemOffer.getOffer(), itemOffer.getCandidateQualifiersMap());
     }
 
     protected boolean orderMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
-        if (itemOffer.getOffer().getOrderMinSubTotal() == null ||
-                itemOffer.getOffer().getOrderMinSubTotal().lessThanOrEqual(Money.ZERO) ||
-                itemOffer.getOffer().getOrderMinSubTotal().lessThanOrEqual(order.getOrder().getSubTotal())) {
-            return true;
-        }
-        return false;
+        return offerServiceUtilities.orderMeetsSubtotalRequirements(order, itemOffer.getOffer());
     }
 
     protected boolean isTotalitarianOfferAppliedToAnyItem(PromotableOrder order) {

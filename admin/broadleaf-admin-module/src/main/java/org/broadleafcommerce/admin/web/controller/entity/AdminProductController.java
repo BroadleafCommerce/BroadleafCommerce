@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.admin.web.controller.entity;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -28,6 +29,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -97,16 +99,18 @@ public class AdminProductController extends AdminBasicEntityController {
         }
                 
         Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
-        overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
-        boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
-        Field fullUrl = ef.findField("url");
-        if (fullUrl != null) {
-            fullUrl.withAttribute("overriddenUrl", overriddenUrl)
-                .withAttribute("sourceField", "defaultSku--name")
-                .withAttribute("toggleField", "overrideGeneratedUrl")
-                .withAttribute("prefix-selector", "#field-defaultCategory")
-                .withAttribute("prefix", defaultCategoryUrlPrefix)
-                .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
+        if (overrideGeneratedUrl != null) {
+            overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
+            boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
+            Field fullUrl = ef.findField("url");
+            if (fullUrl != null) {
+                fullUrl.withAttribute("overriddenUrl", overriddenUrl)
+                        .withAttribute("sourceField", "defaultSku--name")
+                        .withAttribute("toggleField", "overrideGeneratedUrl")
+                        .withAttribute("prefix-selector", "#field-defaultCategory")
+                        .withAttribute("prefix", defaultCategoryUrlPrefix)
+                        .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
+            }
         }
     }
     
@@ -320,17 +324,6 @@ public class AdminProductController extends AdminBasicEntityController {
             return showAddAdditionalSku(request, response, model, id, pathVars);
         } 
         return super.showAddCollectionItem(request, response, model, pathVars, id, collectionField, requestParams);
-    }
-
-    @Override
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
-                                 @PathVariable Map<String, String> pathVars,
-                                 @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
-        String result = super.viewEntityList(request, response, model, pathVars, requestParams);
-        ListGrid listGrid = (ListGrid)model.asMap().get("listGrid");
-        listGrid.findHeaderField("defaultCategory").setFilterSortDisabled(Boolean.TRUE);
-        return result;
     }
 
     @Override

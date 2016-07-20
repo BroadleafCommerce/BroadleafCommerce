@@ -23,12 +23,14 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.OfferServiceUtilities;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroupAdjustment;
@@ -218,28 +220,37 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             PromotableCandidateOrderOffer orderOffer = orderOfferIterator.next();
             
             if (promotableOrder.canApplyOrderOffer(orderOffer)) {
-                applyOrderOffer(promotableOrder, orderOffer);
-                
-                if (orderOffer.isTotalitarian() || promotableOrder.isTotalitarianItemOfferApplied()) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Totalitarian Order Offer Applied.   Comparing order and item offers for best outcome.");
+                if (orderMeetsQualifyingSubtotalRequirements(promotableOrder, orderOffer) && orderMeetsSubtotalRequirements(promotableOrder, orderOffer)) {
+                    applyOrderOffer(promotableOrder, orderOffer);
+
+                    if (orderOffer.isTotalitarian() || promotableOrder.isTotalitarianItemOfferApplied()) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Totalitarian Order Offer Applied.   Comparing order and item offers for best outcome.");
+                        }
+                        compareAndAdjustOrderAndItemOffers(promotableOrder);
+                        // We continue because this could be the first offer and marked as totalitarian, but not as good as an
+                        // item offer. There could be other order offers that are not totalitarian that also qualify.
+                        continue;
                     }
-                    compareAndAdjustOrderAndItemOffers(promotableOrder);
-                    // We continue because this could be the first offer and marked as totalitarian, but not as good as an
-                    // item offer. There could be other order offers that are not totalitarian that also qualify.
-                    continue; 
-                }
-                
-                if (!orderOffer.isCombinable()) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Non-Combinable Order Offer Applied with id=[" + orderOffer.getOffer().getId() +"].  No other order offers can be applied");
+
+                    if (!orderOffer.isCombinable()) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Non-Combinable Order Offer Applied with id=[" + orderOffer.getOffer().getId() + "].  No other order offers can be applied");
+                        }
+                        break;
                     }
-                    break;
                 }
-                    
             }
         }
         promotableOrder.getOrder().setSubTotal(promotableOrder.calculateSubtotalWithAdjustments());
+    }
+
+    protected boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, PromotableCandidateOrderOffer orderOffer) {
+        return offerServiceUtilities.orderMeetsQualifyingSubtotalRequirements(order, orderOffer.getOffer(), orderOffer.getCandidateQualifiersMap());
+    }
+
+    protected boolean orderMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateOrderOffer orderOffer) {
+        return offerServiceUtilities.orderMeetsSubtotalRequirements(order, orderOffer.getOffer());
     }
 
     /**

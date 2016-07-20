@@ -15,28 +15,36 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.security.util;
+package org.broadleafcommerce.common.admin.domain;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
 
-import org.apache.commons.lang.RandomStringUtils;
+/**
+ * @author Jon Fleschler (jfleschler)
+ */
+public interface TypedEntity {
 
-import java.security.SecureRandom;
-import java.util.Random;
+    /**
+     * Returns the type of the Entity
+     * @return type
+     */
+    public BroadleafEnumerationType getType();
 
-public class PasswordUtils {
+    /**
+     * Sets the type of the Entity
+     * @param type
+     */
+    public void setType(BroadleafEnumerationType type);
 
-    private static final Random RANDOM = new SecureRandom();
-    private static final String CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
-    
-    public static String generateSecurePassword(int requiredLength) {
+    /**
+     * Returns the persisted type field name
+     * @return fieldName
+     */
+    public String getTypeFieldName();
 
-        int start = 0;
-        int end = CHARS.length();
-        boolean letters = true;
-        boolean numbers = true;
-
-        String password = RandomStringUtils.random(requiredLength, start, end, letters, numbers, CHARS.toCharArray(), RANDOM);
-
-        return password;
-    }
+    /**
+     * Returns the default type to be used for this entity
+     * @return defaultType
+     */
+    public String getDefaultType();
 }

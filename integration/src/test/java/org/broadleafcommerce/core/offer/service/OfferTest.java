@@ -236,6 +236,43 @@ public class OfferTest extends CommonSetupBaseTest {
         assert ( order.getSubTotal().equals(new Money(238.50D) ));
     }
 
+    @Test(groups =  {"testPercentageOffOffer"}, dependsOnGroups = { "offerCreateSku1" })
+    @Transactional
+    public void testPercentOffOfferWithItemMinPriceSecondEvaluation() throws Exception {
+        Order order = orderService.createNewCartForCustomer(createCustomer());
+
+        order.addOrderItem(createDiscreteOrderItem(sku1, 10D, null, true, 1, order));
+        order.addOfferCode(createOfferUtility.createOfferCode("75 Percent Off Items Over $5.00", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 75, "orderItem.?price.getAmount()>5.00", true, true, 10));
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
+
+        // Evaluate the subtotal again to ensure that the second calculation
+        //  is based on the pre-offer price, not the reduced price
+        offerService.applyAndSaveOffersToOrder(offers, order);
+
+        assert ( order.getSubTotal().equals(new Money(2.50D) ));
+    }
+
+    @Test(groups =  {"testPercentageOffOffer"}, dependsOnGroups = { "offerCreateSku1" })
+    @Transactional
+    public void testPercentOffOfferWithItemMinPriceQuantityReduction() throws Exception {
+        Order order = orderService.createNewCartForCustomer(createCustomer());
+
+        order.addOrderItem(createDiscreteOrderItem(sku1, 3D, null, true, 2, order));
+        order.addOfferCode(createOfferUtility.createOfferCode("75 Percent Off Items Over $5.00", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 75, "orderItem.?price.getAmount()>5.00", true, true, 10));
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
+
+        // Evaluate the subtotal again with a reduced quantity to ensure that the
+        //  offer is NOT applied due to the subtotal being greater than $5.00
+        order.getOrderItems().get(0).setQuantity(1);
+        offerService.applyAndSaveOffersToOrder(offers, order);
+
+        assert ( order.getSubTotal().equals(new Money(3.00D) ));
+    }
+
     @Test(groups =  {"offerUsedForPricing"}, dependsOnGroups = { "offerCreateSku1", "offerCreateSku2" })
     @Transactional
     public void testOfferUsedForPricing() throws Exception {

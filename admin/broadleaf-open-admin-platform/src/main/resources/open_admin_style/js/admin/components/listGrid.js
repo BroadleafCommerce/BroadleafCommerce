@@ -659,8 +659,9 @@ $(document).ready(function () {
                 }
                 var $valueField = $this.find('input.value');
                 $valueField.val(fields['id']);
+                $this.find('.display-value-none-selected').hide();
                 $this.find('span.display-value').html(displayValue);
-                $this.find('input.display-value').val(displayValue);
+                $this.find('input.display-value').val(displayValue).show();
                 $this.find('input.hidden-display-value').val(displayValue).trigger('input');
                 // Ensure that the clear button shows up after selecting a value
                 $this.find('button.clear-foreign-key').show();
@@ -926,12 +927,13 @@ $(document).ready(function () {
      * Clears out a previously-selected foreign key on both a form and listgrid criteria
      */
     $('body').on('click', 'button.clear-foreign-key', function (event) {
-        var $container = $(this).closest('div.additional-foreign-key-container');
         var $this = $(this);
+        var $container = $this.closest('div.additional-foreign-key-container');
 
-        // Remove the current display value
-        var emptyInput = $this.closest('.input-group').find('input:not(:visible)');
-        $this.closest('.input-group').find('input:visible').val(emptyInput.val());
+        // Update the current display value
+        $container.find('.display-value').hide();
+        $container.find('.clear-foreign-key').hide();
+        $container.find('.display-value-none-selected').show();
 
         if (typeof BLCAdmin.treeListGrid !== 'undefined') {
             BLCAdmin.treeListGrid.removeParentPathJson($container.closest('.modal-add-entity-form.enterprise-tree-add'));
@@ -939,7 +941,7 @@ $(document).ready(function () {
 
         // Remove the criteria input val
         $container.find('.value').val('').trigger('change').trigger('input');
-        $this.toggle();
+        $container.find('.hidden-display-value').val('').trigger('change').trigger('input');
 
         $container.find('.external-link-container').hide();
 

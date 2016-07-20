@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
@@ -438,6 +439,41 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
                 qIterator.remove();
             }
         }
+    }
+
+    @Override
+    public boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> qualifiersMap) {
+        Money qualifyingItemSubTotal = offer.getQualifyingItemSubTotal();
+        if (qualifyingItemSubTotal == null || qualifyingItemSubTotal.lessThanOrEqual(Money.ZERO)) {
+            return true;
+        }
+        Money subtotal = Money.ZERO;
+
+        for (OfferItemCriteria itemCriteria : qualifiersMap.keySet()) {
+            List<PromotableOrderItem> promotableItems = qualifiersMap.get(itemCriteria);
+
+            for (PromotableOrderItem item : promotableItems) {
+                boolean shouldApplyDiscountToSalePrice = offer.getApplyDiscountToSalePrice();
+                Money priceBeforeAdjustments = item.getPriceBeforeAdjustments(shouldApplyDiscountToSalePrice);
+                int quantity = item.getQuantity();
+
+                Money lineItemAmount = priceBeforeAdjustments.multiply(quantity);
+                subtotal = subtotal.add(lineItemAmount);
+                if (subtotal.greaterThanOrEqual(qualifyingItemSubTotal)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean orderMeetsSubtotalRequirements(PromotableOrder order, Offer offer) {
+        Money orderMinSubTotal = offer.getOrderMinSubTotal();
+        return orderMinSubTotal == null
+                || orderMinSubTotal.lessThanOrEqual(Money.ZERO)
+                || orderMinSubTotal.lessThanOrEqual(order.getOrder().getSubTotal());
     }
 
     public PromotableItemFactory getPromotableItemFactory() {

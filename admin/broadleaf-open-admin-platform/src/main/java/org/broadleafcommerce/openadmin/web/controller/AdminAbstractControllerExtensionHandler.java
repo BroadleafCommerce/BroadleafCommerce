@@ -32,6 +32,7 @@ import org.springframework.util.MultiValueMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -115,4 +116,13 @@ public interface AdminAbstractControllerExtensionHandler extends ExtensionHandle
      * @return
      */
     public ExtensionResultStatusType overrideSaveEntityJsonResponse(HttpServletResponse response, boolean hasValidationErrors, String sectionKey, String id, ExtensionResultHolder<String> resultHolder);
+
+    /**
+     * Extension point for setting values on an EntityForm before the initial object is persisted.
+     *
+     * @param entityForm
+     * @param pathVars
+     * @return
+     */
+    public ExtensionResultStatusType modifyPreAddEntityForm(EntityForm entityForm, ClassMetadata cmd, Map<String, String> pathVars);
 }

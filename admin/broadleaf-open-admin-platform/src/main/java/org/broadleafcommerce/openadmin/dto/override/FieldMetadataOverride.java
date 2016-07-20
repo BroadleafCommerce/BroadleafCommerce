@@ -124,6 +124,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private Boolean optionCanEditValues;
     private Serializable[][] optionFilterValues;
     private String showIfProperty;
+    private Map<String, List<String>> showIfFieldEquals;
     private String ruleIdentifier;
     private Boolean translatable;
     private LookupType lookupType;
@@ -875,6 +876,14 @@ public class FieldMetadataOverride extends MetadataOverride {
 
     public void setShowIfProperty(String showIfProperty) {
         this.showIfProperty = showIfProperty;
+    }
+
+    public Map<String, List<String>> getShowIfFieldEquals() {
+        return showIfFieldEquals;
+    }
+
+    public void setShowIfFieldEquals(Map<String, List<String>> showIfFieldEquals) {
+        this.showIfFieldEquals = showIfFieldEquals;
     }
 
     public String getCurrencyCodeField() {

@@ -99,7 +99,7 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
      */
     protected String analytics(String webPropertyId, Order order) {
         StringBuffer sb = new StringBuffer();
-        
+
         sb.append("<script type=\"text/javascript\">");
         sb.append("var _gaq = _gaq || [];");
         sb.append("_gaq.push(['_setAccount', '" + webPropertyId + "']);");
