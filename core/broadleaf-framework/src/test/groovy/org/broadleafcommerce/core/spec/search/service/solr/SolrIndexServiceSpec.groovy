@@ -54,7 +54,7 @@ class SolrIndexServiceSpec extends Specification {
     
     def setup() {
         mockLocaleService.findAllLocales() >> new ArrayList<Locale>()
-        mockExtensionManager.getProxy() >> Mock(SolrSearchServiceExtensionHandler)
+        mockExtensionManager.getProxy() >> Mock(SolrIndexServiceExtensionHandler)
 
         service = Spy(SolrIndexServiceImpl)
         service.solrIndexDao = mockSolrIndexDao
@@ -70,7 +70,6 @@ class SolrIndexServiceSpec extends Specification {
     
     def "Test that Categories are being properly associated to skus when creating the solr index"(){
         setup:
-        mockExtensionManager.getProxy() >> Mock(SolrIndexServiceExtensionHandler)
         mockFieldDao.readFieldsByEntityType(FieldEntity.SKU) >> new ArrayList<Field>()
         
         service.buildDocument(*_) >> null
@@ -101,7 +100,6 @@ class SolrIndexServiceSpec extends Specification {
     
     def "Test that Categories are being properly associated to skus when creating the solr index for out of order skus"(){
         setup:
-        mockExtensionManager.getProxy() >> Mock(SolrIndexServiceExtensionHandler)
         mockFieldDao.readFieldsByEntityType(FieldEntity.SKU) >> new ArrayList<Field>()
         
         service.buildDocument(*_) >> null

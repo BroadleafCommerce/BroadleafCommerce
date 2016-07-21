@@ -24,7 +24,7 @@
         <span style="display: none;" id="previewurl" th:attr="data-href=@{/sandbox/preview(directPreview=true)}"></span>
 
         <!-- Dropdown button if more than one action -->
-        <div th:if="${#lists.size(mainActions) > 1 or #lists.size(entityTypes) > 1}" class="button-group">
+        <div th:if="${not #lists.isEmpty(mainActions) and (#lists.size(mainActions) > 1 or #lists.size(entityTypes) > 1)}" class="button-group">
             <img th:src="@{/img/admin/ajax-loader.gif}" class="ajax-loader" />
             <div th:with="action=${mainActions[0]}" th:remove="tag">
                 <button type="button" class="button primary large"
@@ -70,7 +70,7 @@
         </div>
 
         <!-- Otherwise normal button if one action -->
-        <div th:unless="${#lists.size(mainActions) > 1 or #lists.size(entityTypes) > 1}" th:remove="tag">
+        <div th:unless="${not #lists.isEmpty(mainActions) and (#lists.size(mainActions) > 1 or #lists.size(entityTypes) > 1)}" th:remove="tag">
             <div  th:each="action,iterStat : ${mainActions}" th:remove="tag">
                 <div th:if="${action.id == 'ADD'}" th:remove="tag">
                     <a class="button primary large"

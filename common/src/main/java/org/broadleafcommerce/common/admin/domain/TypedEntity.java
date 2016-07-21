@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Common Libraries
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,19 +15,36 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-if (!RedactorPlugins) var RedactorPlugins = {};
+package org.broadleafcommerce.common.admin.domain;
 
-(function($)
-{
-    RedactorPlugins.selectasset = function()
-    {
-        return {
-            init: function()
-            {
-                var button = this.button.addAfter('video', 'selectasset', BLCAdmin.messages.selectUploadAsset);
-                this.button.addCallback(button, BLCAdmin.asset.selectButtonClickedRedactor);
-                this.button.setAwesome('selectasset', 'fa-picture-o');
-            }
-        };
-    };
-})(jQuery);
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+/**
+ * @author Jon Fleschler (jfleschler)
+ */
+public interface TypedEntity {
+
+    /**
+     * Returns the type of the Entity
+     * @return type
+     */
+    public BroadleafEnumerationType getType();
+
+    /**
+     * Sets the type of the Entity
+     * @param type
+     */
+    public void setType(BroadleafEnumerationType type);
+
+    /**
+     * Returns the persisted type field name
+     * @return fieldName
+     */
+    public String getTypeFieldName();
+
+    /**
+     * Returns the default type to be used for this entity
+     * @return defaultType
+     */
+    public String getDefaultType();
+}

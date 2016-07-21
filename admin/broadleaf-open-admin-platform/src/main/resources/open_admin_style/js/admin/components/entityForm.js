@@ -55,6 +55,9 @@
             $.each( data.errors , function( idx, error ){
                 if (error.errorType == "field") {
                     var fieldGroup = $("#field-" + error.field);
+                    if (BLCAdmin.currentModal() !== undefined) {
+                        fieldGroup = BLCAdmin.currentModal().find("#field-" + error.field);
+                    }
 
                     if (fieldGroup.length) {
                         // Add an error indicator to the fields tab
