@@ -217,8 +217,10 @@ public interface StructuredContentService {
      * @param locale
      * @param contentType
      * @return cache key for DTOList
+     *
      * @deprecated use {@link #buildTypeKeyWithSecure(SandBox, Long, Locale, String, Boolean)}
      */
+    @Deprecated
     public String buildTypeKey(SandBox currentSandbox, Long site, Locale locale, String contentType);
 
     /**
@@ -250,8 +252,10 @@ public interface StructuredContentService {
      *
      * @param nameKey
      * @param typeKey
+     * 
      * @deprecated use {@link #removeItemFromCacheByKey(String)}
      */
+    @Deprecated
     public void removeItemFromCache(String nameKey, String typeKey);
 
     /**
