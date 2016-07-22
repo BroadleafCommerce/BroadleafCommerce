@@ -35,5 +35,6 @@ public enum VisibilityEnum {
      * actually a member of the entity. Mainly used in {@link CustomPersistenceHandler}s for psuedo-fields that are built
      * manually and you still want user input from (like selecting {@link ProductOption}s to associate to a {@link Sku}
      */
-    FORM_EXPLICITLY_SHOWN
+    FORM_EXPLICITLY_SHOWN,
+    FORM_EXPLICITLY_HIDDEN
 }
