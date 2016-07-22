@@ -17,10 +17,10 @@
  */
 package org.broadleafcommerce.openadmin.security;
 
+import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
-import org.owasp.esapi.ESAPI;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -28,12 +28,11 @@ import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @author Jeff Fischer
@@ -69,9 +68,16 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
         }
 
         clearAuthenticationAttributes(request);
-
         // Use the DefaultSavedRequest URL
         String targetUrl = savedRequest.getRedirectUrl();
+
+        try {
+            UrlUtil.validateUrl(targetUrl, request);
+        } catch (IOException e) {
+            logger.error("SECURITY FAILURE Bad redirect location: " + targetUrl, e);
+            response.sendError(403);
+            return;
+        }
 
         // Remove the sessionTimeout flag if necessary
         targetUrl = targetUrl.replace("sessionTimeout=true", "");
@@ -94,13 +100,7 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
 
         logger.debug("Redirecting to DefaultSavedRequest Url: " + targetUrl);
 
-        try {
-            String encodedTargetUrl = ESAPI.encoder().encodeForURL(targetUrl);
-            getRedirectStrategy().sendRedirect(request, response, encodedTargetUrl);
-        } catch (Exception e) {
-            logger.error("Encoding Exception for target Url", e);
-            response.sendError(403);
-        }
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
     /**

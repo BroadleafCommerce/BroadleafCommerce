@@ -18,17 +18,15 @@
 package org.broadleafcommerce.openadmin.security;
 
 import org.apache.commons.lang.StringUtils;
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.errors.EncodingException;
+import org.broadleafcommerce.common.util.UrlUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
-import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -55,14 +53,14 @@ public class BroadleafAdminLogoutSuccessHandler extends AbstractAuthenticationTa
         request.getSession().invalidate();
 
         try {
-            String encodedTargetUrl = ESAPI.encoder().encodeForURL(targetUrl);
-            getRedirectStrategy().sendRedirect(request, response, encodedTargetUrl);
-        } catch (EncodingException e) {
-            logger.error("Encoding Exception for target Url", e);
+            UrlUtil.validateUrl(targetUrl, request);
+        } catch (IOException e) {
+            logger.error("SECURITY FAILURE Bad redirect location: " + targetUrl, e);
             response.sendError(403);
+            return;
         }
 
-
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
 }

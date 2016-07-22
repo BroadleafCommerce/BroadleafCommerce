@@ -19,17 +19,16 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
-import org.owasp.esapi.ESAPI;
+import org.broadleafcommerce.common.util.UrlUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
-import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Component("blAuthenticationSuccessHandler")
 public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -39,19 +38,22 @@ public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuth
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws ServletException, IOException {
-        
         String targetUrl = request.getParameter(getTargetUrlParameter());
+
         if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
             request.getSession().removeAttribute(SESSION_ATTR);
         }
+
         if (StringUtils.isNotBlank(targetUrl) && targetUrl.contains(":")) {
             try {
-                String encodedDefaultUrl = ESAPI.encoder().encodeForURL(getDefaultTargetUrl());
-                getRedirectStrategy().sendRedirect(request, response, encodedDefaultUrl);
-            } catch(Exception e) {
-                logger.error("Encoding Exception for target Url", e);
+                UrlUtil.validateUrl(targetUrl, request);
+            } catch (IOException e) {
+                logger.error("SECURITY FAILURE Bad redirect location: " + targetUrl, e);
                 response.sendError(403);
+                return;
             }
+
+            getRedirectStrategy().sendRedirect(request, response, targetUrl);
         } else {
             super.onAuthenticationSuccess(request, response, authentication);
         }

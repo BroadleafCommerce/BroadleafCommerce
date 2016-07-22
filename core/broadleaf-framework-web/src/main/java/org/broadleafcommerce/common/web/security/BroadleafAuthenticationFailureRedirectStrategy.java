@@ -19,8 +19,8 @@ package org.broadleafcommerce.common.web.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
-import org.owasp.esapi.ESAPI;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Component;
@@ -55,12 +55,14 @@ public class BroadleafAuthenticationFailureRedirectStrategy implements RedirectS
         }
 
         try {
-            String encodedUrl = ESAPI.encoder().encodeForURL(url);
-            redirectStrategy.sendRedirect(request, response, encodedUrl);
-        } catch(Exception e) {
-            LOG.error("Encoding Exception for target Url", e);
+            UrlUtil.validateUrl(url, request);
+        }  catch (IOException e) {
+            LOG.error("SECURITY FAILURE Bad redirect location: " + url, e);
             response.sendError(403);
+            return;
         }
+
+        getRedirectStrategy().sendRedirect(request, response, url);
     }
 
     public String updateUrlForAjax(String url) {
