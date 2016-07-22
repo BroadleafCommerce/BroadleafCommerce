@@ -35,13 +35,12 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import java.io.IOException;
-
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
+import java.io.IOException;
 
 public class GoogleAnalyticsTag extends SimpleTagSupport {
     
@@ -103,7 +102,7 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
     protected String analytics(String webPropertyId, Order order) {
         StringBuffer sb = new StringBuffer();
 
-        webPropertyId = ESAPI.encoder().encodeForHTML(webPropertyId);
+        webPropertyId = ESAPI.encoder().encodeForJavaScript(webPropertyId);
         
         sb.append("<script type=\"text/javascript\">");
         sb.append("var _gaq = _gaq || [];");
