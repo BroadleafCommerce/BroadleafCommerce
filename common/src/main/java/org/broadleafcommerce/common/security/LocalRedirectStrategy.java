@@ -23,12 +23,11 @@ import org.apache.commons.logging.LogFactory;
 import org.owasp.esapi.ESAPI;
 import org.springframework.security.web.RedirectStrategy;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * This class insures that if using the successUrl or failureUrl request
@@ -56,16 +55,18 @@ public class LocalRedirectStrategy implements RedirectStrategy {
                 validateRedirectUrl(request.getContextPath(), url, request.getServerName(), request.getServerPort());
             }
         }
+
         String redirectUrl = calculateRedirectUrl(request.getContextPath(), url);
         redirectUrl = response.encodeRedirectURL(redirectUrl);
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Redirecting to '" + url + "'");
         }
+
         try {
-            String securelyEncodedRedirectUrl = ESAPI.encoder().encodeForURL(redirectUrl);
-            response.sendRedirect(securelyEncodedRedirectUrl);
+            ESAPI.httpUtilities().sendRedirect(response, redirectUrl);
         } catch(Exception e) {
-            LOG.error("Encoding Exception for target Url", e);
+            LOG.error("SECURITY FAILURE Bad redirect location: " + redirectUrl, e);
             response.sendError(403);
         }
     }

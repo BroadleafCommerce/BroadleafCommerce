@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
-import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
 import org.broadleafcommerce.core.search.redirect.service.SearchRedirectService;
@@ -37,6 +36,10 @@ import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.owasp.esapi.ESAPI;
 import org.springframework.ui.Model;
 
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,11 +48,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Handles searching the catalog for a given search term. Will apply product search criteria
@@ -116,11 +114,11 @@ public class BroadleafSearchController extends AbstractCatalogController {
             if (handler != null) {
                 String contextPath = request.getContextPath();
                 String url = UrlUtil.fixRedirectUrl(contextPath, handler.getUrl());
+
                 try {
-                    String encodedUrl = ESAPI.encoder().encodeForURL(url);
-                    response.sendRedirect(encodedUrl);
+                    ESAPI.httpUtilities().sendRedirect(response, url);
                 } catch(Exception e) {
-                    LOG.error("Encoding Exception for target Url", e);
+                    LOG.error("SECURITY FAILURE Bad redirect location: " + url, e);
                     response.sendError(403);
                 }
 

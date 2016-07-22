@@ -33,20 +33,19 @@ import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.util.DeployBehaviorUtil;
 import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.errors.EncodingException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -108,7 +107,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         
         Site site = siteResolver.resolveSite(request);
         
-        brc.setSite(site);
+        brc.setNonPersistentSite(site);
         brc.setWebRequest(request);
         if (site == null) {
             brc.setIgnoreSite(true);
@@ -146,17 +145,18 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
                 clearBroadleafSessionAttrs(request);
                 
                 StringBuffer url = hsr.getRequestURL();
+                HttpServletResponse response = ((ServletWebRequest) request).getResponse();
 
                 if (hsr.getQueryString() != null) {
                     url.append('?').append(hsr.getQueryString());
                 }
+
                 try {
                     try {
-                        String encodedURL = ESAPI.encoder().encodeForURL(url.toString());
-                        ((ServletWebRequest) request).getResponse().sendRedirect(encodedURL);
-                    } catch(EncodingException e) {
-                        LOG.error("Encoding Exception for url when reprocessing request", e);
-                        ((ServletWebRequest) request).getResponse().sendError(403);
+                        ESAPI.httpUtilities().sendRedirect(response, url.toString());
+                    } catch(Exception e) {
+                        LOG.error("SECURITY FAILURE Bad redirect location: " + url.toString(), e);
+                        response.sendError(403);
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);

@@ -30,6 +30,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -37,12 +42,6 @@ import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Responsible for setting up the site and locale used by Broadleaf Commerce components.
@@ -90,10 +89,9 @@ public class URLHandlerFilter extends OncePerRequestFilter {
                 url = fixQueryString(request, url);
 
                 try {
-                    String encodedUrl = ESAPI.encoder().encodeForURL(url);
-                    response.sendRedirect(encodedUrl);
+                    ESAPI.httpUtilities().sendRedirect(response, url);
                 } catch (Exception e) {
-                    logger.error("Encoding Exception for target Url", e);
+                    logger.error("SECURITY FAILURE Bad redirect location: " + url, e);
                     response.sendError(403);
                 }
             }           

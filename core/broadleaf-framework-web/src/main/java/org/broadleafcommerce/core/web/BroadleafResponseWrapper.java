@@ -20,15 +20,14 @@ package org.broadleafcommerce.core.web;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.errors.EncodingException;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Locale;
+import org.owasp.esapi.errors.AccessControlException;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Locale;
 
 /**
  * @author jfischer
@@ -239,11 +238,10 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
      */
     public void sendRedirect(String arg0) throws IOException {
         try {
-            String encodedUrl = ESAPI.encoder().encodeForURL(arg0);
-            response.sendRedirect(encodedUrl);
-        } catch(EncodingException e) {
-            LOG.error("Encoding Exception when encoding url", e);
-            response.sendError(403);
+            ESAPI.httpUtilities().sendRedirect(arg0);
+        } catch (AccessControlException e) {
+            LOG.error("SECURITY FAILURE Bad redirect url: " + arg0, e);
+            throw new IOException("Access Control Exception", e);
         }
     }
 
