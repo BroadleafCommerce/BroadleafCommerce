@@ -20,7 +20,6 @@ package org.broadleafcommerce.common.web.security;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
-import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
@@ -55,14 +54,6 @@ public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectS
                 request.getSession().setAttribute("BLC_REDIRECT_URL", url);
             }
             url = getRedirectPath();
-        }
-
-        try {
-            UrlUtil.validateUrl(url, request);
-        } catch (IOException e) {
-            LOG.error("SECURITY FAILURE Bad redirect location: " + url, e);
-            response.sendError(403);
-            return;
         }
 
         getRedirectStrategy().sendRedirect(request, response, url);
