@@ -19,16 +19,13 @@ package org.broadleafcommerce.common.security;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.util.StringUtil;
-import org.broadleafcommerce.common.util.UrlUtil;
-import org.owasp.esapi.ESAPI;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-
-import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
@@ -64,16 +61,8 @@ public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticati
                     failureUrl += "&successUrl=" + successUrlParam;
                 }
             }
+            
             saveException(request, exception);
-
-            try {
-                UrlUtil.validateUrl(failureUrl, request);
-            } catch (Exception e) {
-                logger.error("SECURITY FAILURE Bad redirect location: " + failureUrl, e);
-                response.sendError(403);
-                return;
-            }
-
             getRedirectStrategy().sendRedirect(request, response, failureUrl);
         } else {
             super.onAuthenticationFailure(request, response, exception);

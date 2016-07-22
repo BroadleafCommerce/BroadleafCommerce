@@ -20,8 +20,6 @@ package org.broadleafcommerce.openadmin.security;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.util.StringUtil;
-import org.broadleafcommerce.common.util.UrlUtil;
-import org.owasp.esapi.ESAPI;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
@@ -47,7 +45,7 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         String failureUrlParam = StringUtil.cleanseUrlString(request.getParameter("failureUrl"));
         String successUrlParam = StringUtil.cleanseUrlString(request.getParameter("successUrl"));
-        String failureUrl = failureUrlParam==null?null:failureUrlParam.trim();
+        String failureUrl = (failureUrlParam != null) ? failureUrlParam.trim() : null;
         Boolean sessionTimeout = (Boolean) request.getAttribute("sessionTimeout");
 
         if (StringUtils.isEmpty(failureUrl) && BooleanUtils.isNotTrue(sessionTimeout)) {
@@ -81,15 +79,6 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
             }
 
             saveException(request, exception);
-
-            try {
-                UrlUtil.validateUrl(failureUrl, request);
-            } catch (Exception e) {
-                logger.error("SECURITY FAILURE Bad redirect location: " + failureUrl, e);
-                response.sendError(403);
-                return;
-            }
-
             getRedirectStrategy().sendRedirect(request, response, failureUrl);
         } else {
             super.onAuthenticationFailure(request, response, exception);
