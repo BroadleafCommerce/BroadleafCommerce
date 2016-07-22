@@ -32,7 +32,6 @@ import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
-import org.broadleafcommerce.common.util.dao.QueryUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
@@ -135,12 +134,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         Map<String, FieldMetadata> md = getMetadata(persistencePackage, helper);
 
-        if (!isDefaultCategoryLegacyMode()) {
-            md.remove("allParentCategoryXrefs");
-
-            BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) md.get("defaultCategory"));
-            defaultCategory.setFriendlyName("ProductImpl_Parent_Category");
-        }
+        modifyParentCategoryMetadata(md);
 
         return getResultSet(persistencePackage, helper, md);
     }
@@ -148,6 +142,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao
             dynamicEntityDao, RecordHelper helper) throws ServiceException {
+
         
         boolean legacy = parentCategoryLegacyModeService.isLegacyMode();
         
@@ -230,6 +225,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                             })
                     ));
         }
+
         if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
                 (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
             //Add special handling for product list grid fetches
@@ -387,6 +383,15 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             return legacyModeService.isLegacyMode();
         }
         return false;
+    }
+
+    protected void modifyParentCategoryMetadata(Map<String, FieldMetadata> md) {
+        if (!isDefaultCategoryLegacyMode()) {
+            md.remove("allParentCategoryXrefs");
+
+            BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) md.get("defaultCategory"));
+            defaultCategory.setFriendlyName("ProductImpl_Parent_Category");
+        }
     }
 
     protected Category getExistingDefaultCategory(Product product) {

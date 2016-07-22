@@ -32,6 +32,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +86,24 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                     }
                     if (!validationConfigMap.isEmpty()) {
                         metadataBuilder.addPropertyValue("validationConfigurations", validationConfigMap);
+                    }
+                }
+
+                {
+                    List<Element> showIfFieldEqualsElements = DomUtils.getChildElementsByTagName(fieldElement, "showIfFieldEquals");
+                    Map<String, List<String>> valueConfigMap = new ManagedMap<String, List<String>>();
+                    for (Element valueElement : showIfFieldEqualsElements) {
+                        List<String> validationMap = new ArrayList<String>();
+                        List<Element> valPropElements = DomUtils.getChildElementsByTagName(valueElement, "property");
+                        for (Element valPropElement : valPropElements) {
+                            String valPropValue = valPropElement.getAttribute("value");
+                            validationMap.add(valPropValue);
+                        }
+                        String className = valueElement.getAttribute("fieldName");
+                        valueConfigMap.put(className, validationMap);
+                    }
+                    if (!valueConfigMap.isEmpty()) {
+                        metadataBuilder.addPropertyValue("showIfFieldEquals", valueConfigMap);
                     }
                 }
 

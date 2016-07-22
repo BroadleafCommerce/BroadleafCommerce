@@ -396,6 +396,23 @@
 
         /**
          * A custom pre-init query builder field handler to modify the filters object
+         * in order to support a Boolean Radio button widget in the Query Builder.
+         * @param field
+         */
+        initBooleanRadioPreInitFieldHandler : function(field) {
+            var opRef = field.operators;
+
+            if (opRef && typeof opRef === 'string' && ("blcFilterOperators_Boolean" === opRef)) {
+                field.input = 'radio';
+                field.values = {
+                    'true': 'true',
+                    'false': 'false'
+                }
+            }
+        },
+        
+        /**
+         * A custom pre-init query builder field handler to modify the filters object
          * in order to support the Selectize widget in the Query Builder.
          * @param field
          */
@@ -891,6 +908,7 @@
      */
     BLCAdmin.addInitializationHandler(function($container) {
         //Add default pre-init and post-construct handlers (e.g. selectize)
+        BLCAdmin.filterBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initBooleanRadioPreInitFieldHandler);
         BLCAdmin.filterBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initSelectizePreInitFieldHandler);
         BLCAdmin.filterBuilders.addPostConstructQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initSelectizePostConstructFieldHandler);
 
@@ -945,7 +963,13 @@ $(document).ready(function() {
         if (valueText == '') {
             valueText = el.find('.rule-value-container input');
             $.each(valueText, function(i, val) {
-                valueArray.push($(val).val());
+                if ($(val).attr('type') === 'radio') {
+                    if ($(val).is(':checked')) {
+                        valueArray.push($(val).val());
+                    }
+                } else {
+                    valueArray.push($(val).val());
+                }
             });
         }
         valueText = valueArray.join(" and ");

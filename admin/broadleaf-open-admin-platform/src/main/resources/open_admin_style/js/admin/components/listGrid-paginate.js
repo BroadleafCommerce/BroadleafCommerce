@@ -407,7 +407,7 @@
                     delta = (topIndex + botIndex) / 2;
                 }
                 delta = delta - topIndex;
-                var spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (this.getRowHeight($tbody) * delta);
+                var spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3;
                 BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
 
                 var params =  BLCAdmin.history.getUrlParameters();

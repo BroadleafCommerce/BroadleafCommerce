@@ -161,6 +161,16 @@ var BLC = (function($) {
                         options.data += "csrfToken=" + csrfToken;
                     }
                 }
+                if (options.data.indexOf('stateVersionToken') < 0) {
+                    var stateVersionToken = getStateVersionToken();
+                    if (stateVersionToken != null) {
+                        if (options.data.indexOf('=') > 0) {
+                            options.data += "&";
+                        }
+
+                        options.data += "stateVersionToken=" + stateVersionToken;
+                    }
+                }
             } else if (typeof options.data == 'object') {
                 if (options.data['csrfToken'] == null || options.data['csrfToken'] == '') {
                     var csrfToken = getCsrfToken();
@@ -168,10 +178,21 @@ var BLC = (function($) {
                         options.data['csrfToken'] = csrfToken;
                     }
                 }
+                if (options.data['stateVersionToken'] == null || options.data['stateVersionToken'] == '') {
+                    var stateVersionToken = getStateVersionToken();
+                    if (stateVersionToken != null) {
+                        options.data['stateVersionToken'] = stateVersionToken;
+                    }
+                }
             } else if (!options.data) {
+                options.data = {};
                 var csrfToken = getCsrfToken();
                 if (csrfToken) {
-                    options.data = { 'csrfToken': csrfToken }
+                    options.data['csrfToken'] = csrfToken;
+                }
+                var stateVersionToken = getStateVersionToken();
+                if (stateVersionToken) {
+                    options.data['stateVersionToken'] = stateVersionToken;
                 }
             }
         }
@@ -207,13 +228,13 @@ var BLC = (function($) {
     
     function trackAjaxAnalytics(options, data) {
         try {
-            if (typeof _gaq != 'undefined') {
-                _gaq.push(['_trackPageview', options.url]);
+            if (window.ga && ga.create) {
+                ga('send', 'pageview', options.url);
                 console.log('Tracked GA pageview: ' + options.url);
                 
                 if (options.additionalAnalyticsEvents) {
                     for (var i = 0; i < options.additionalAnalyticsEvents.length; i++) {
-                        _gaq.push(options.additionalAnalyticsEvents[i]);
+                        ga('send', options.additionalAnalyticsEvents[i]);
                         console.log('Tracked additional GA event: ' + options.additionalAnalyticsEvents[i]);
                     }
                 }
@@ -247,6 +268,15 @@ var BLC = (function($) {
         }
         
         return csrfTokenInput.val();
+    }
+
+    function getStateVersionToken() {
+        var stateVersionTokenInput = $('input[name="stateVersionToken"]');
+        if (stateVersionTokenInput.length == 0) {
+            return null;
+        }
+
+        return stateVersionTokenInput.val();
     }
     
     function defaultErrorHandler(data) {
@@ -312,6 +342,7 @@ var BLC = (function($) {
         get : get,
         post : post,
         ajax : ajax,
+        getStateVersionToken : getStateVersionToken,
         defaultErrorHandler : defaultErrorHandler,
         serializeObject : serializeObject,
         addUrlParam : addUrlParam,

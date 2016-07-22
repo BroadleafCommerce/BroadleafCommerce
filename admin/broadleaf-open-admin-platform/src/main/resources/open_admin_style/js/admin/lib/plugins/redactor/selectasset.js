@@ -26,7 +26,7 @@ if (!RedactorPlugins) var RedactorPlugins = {};
             {
                 var button = this.button.addAfter('video', 'selectasset', BLCAdmin.messages.selectUploadAsset);
                 this.button.addCallback(button, BLCAdmin.asset.selectButtonClickedRedactor);
-                this.button.setAwesome('selectasset', 'icon-picture');
+                this.button.setAwesome('selectasset', 'fa-picture-o');
             }
         };
     };

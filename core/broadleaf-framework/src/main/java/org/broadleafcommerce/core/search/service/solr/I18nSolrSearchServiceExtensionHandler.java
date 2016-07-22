@@ -90,7 +90,7 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
                 Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
                 if (locale != null) {
                     String localeCode = locale.getLocaleCode();
-                    if (!Boolean.TRUE.equals(locale.getUseCountryInSearchIndex())) {
+                    if (Boolean.FALSE.equals(locale.getUseCountryInSearchIndex())) {
                         int pos = localeCode.indexOf("_");
                         if (pos > 0) {
                             localeCode = localeCode.substring(0, pos);

@@ -22,6 +22,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -47,6 +48,7 @@ import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminUserDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
@@ -84,6 +86,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UrlPathHelper;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -117,6 +121,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
     @Resource(name = "blAdminUserDao")
     protected AdminUserDao adminUserDao;
+
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericEntityDao;
+
+    @Resource(name="blDynamicEntityDao")
+    protected DynamicEntityDao dynamicEntityDao;
 
     @Resource(name = "blAdornedTargetAutoPopulateExtensionManager")
     protected AdornedTargetAutoPopulateExtensionManager adornedTargetAutoPopulateExtensionManager;
@@ -192,6 +202,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("mainActions", mainActions);
         setModelAttributes(model, sectionKey);
+        setTypedEntityModelAttributes(request, model);
     }
 
     @RequestMapping(value = "/selectize", method = RequestMethod.GET)
@@ -418,9 +429,19 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("headerFlash", request.getParameter("headerFlash"));
         }
 
+        // Set the sectionKey again incase this is a typed entity
+        entityForm.setSectionKey(sectionKey);
+
+        // Build the current url in the cast that this is a typed entity
+        String originatingUri = new UrlPathHelper().getOriginatingRequestUri(request);
+        int startIndex = request.getContextPath().length();
+
+        // Remove the context path from servlet path
+        String currentUrl = originatingUri.substring(startIndex);
+
         model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
-        model.addAttribute("currentUrl", request.getRequestURL().toString());
+        model.addAttribute("currentUrl", currentUrl);
 
         setModelAttributes(model, sectionKey);
 
@@ -1834,6 +1855,19 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 .withOrder(auditableField.getOrder())
                 .withOwningEntityClass(auditableField.getOwningEntityClass())
                 .withReadOnly(true);
+    }
+
+    // *****************************************
+    // Typed Entity Helper Methods
+    // *****************************************
+
+    protected void setTypedEntityModelAttributes(HttpServletRequest request, Model model) {
+        // Check if this is a typed entity
+        AdminSection typedEntitySection = (AdminSection) request.getAttribute("typedEntitySection");
+        if (typedEntitySection != null) {
+            // Update the friendly name for this Entity Type
+            model.addAttribute("entityFriendlyName", typedEntitySection.getName());
+        }
     }
 
     // *********************************

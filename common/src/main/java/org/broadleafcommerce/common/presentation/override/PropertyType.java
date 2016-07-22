@@ -57,6 +57,7 @@ public class PropertyType {
         public static final String HELPTEXT = "helpText";
         public static final String HINT = "hint";
         public static final String SHOWIFPROPERTY = "showIfProperty";
+        public static final String SHOWIFFIELDEQUALS = "showIfFieldEquals";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
         public static final String RULEIDENTIFIER = "ruleIdentifier";
         public static final String READONLY = "readOnly";
@@ -96,6 +97,7 @@ public class PropertyType {
         public static final String SECURITYLEVEL = "securityLevel";
         public static final String EXCLUDED = "excluded";
         public static final String SHOWIFPROPERTY = "showIfProperty";
+        public static final String SHOWIFFIELDEQUALS = "showIfFieldEquals";
         public static final String READONLY = "readOnly";
         public static final String USESERVERSIDEINSPECTIONCACHE = "useServerSideInspectionCache";
         public static final String PARENTOBJECTPROPERTY = "parentObjectProperty";
@@ -138,6 +140,7 @@ public class PropertyType {
         public static final String CUSTOMCRITERIA = "customCriteria";
         public static final String OPERATIONTYPES = "operationTypes";
         public static final String SHOWIFPROPERTY = "showIfProperty";
+        public static final String SHOWIFFIELDEQUALS = "showIfFieldEquals";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
         public static final String GROUP = "group";
 
@@ -171,6 +174,7 @@ public class PropertyType {
         public static final String CUSTOMCRITERIA = "customCriteria";
         public static final String OPERATIONTYPES = "operationTypes";
         public static final String SHOWIFPROPERTY = "showIfProperty";
+        public static final String SHOWIFFIELDEQUALS = "showIfFieldEquals";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
         public static final String GROUP = "group";
 

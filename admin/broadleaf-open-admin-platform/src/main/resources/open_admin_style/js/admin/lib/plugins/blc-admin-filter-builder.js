@@ -159,6 +159,10 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
         //el.find('div.rule-filter-container > div > div.selectize-input').width("222px");
         //el.find('div.rule-operator-container > div > div.selectize-input').width("100px");
         el.find('div.rule-value-container').css('width', '223px');
+
+        el.find('label > input[type="radio"]').each(function(){
+            $(this).parent().addClass('filter-radio-label');
+        });
     }
 
 }, {
