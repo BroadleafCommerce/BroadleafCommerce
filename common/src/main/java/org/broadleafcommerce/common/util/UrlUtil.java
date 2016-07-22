@@ -80,7 +80,7 @@ public class UrlUtil {
         String scheme = request.getScheme() + "://";
         String relativeUrl = url.replace(scheme, "").replace(serverName, "").replace(port, "");
 
-        if (!ESAPI.validator().isValidRedirectLocation("Redirect", relativeUrl, false)) {
+        if (!"/".equals(relativeUrl) && !ESAPI.validator().isValidRedirectLocation("Redirect", relativeUrl, false)) {
             throw new IOException("Redirect failed");
         }
     }
