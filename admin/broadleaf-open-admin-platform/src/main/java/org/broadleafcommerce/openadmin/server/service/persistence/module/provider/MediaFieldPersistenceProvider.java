@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.Tuple;
@@ -108,6 +109,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         .getProperty().getUnHtmlEncodedValue(), valueType);
                 boolean persist = false;
                 boolean noPrimary = false;
+                boolean update = false;
                 Media media;
                 Boolean cleared;
                 try {
@@ -130,6 +132,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     if (newMedia == null) {
                         noPrimary = true;
                         dirty = true;
+                        update = false;
                         if (!cleared && media != null) {
                             // remove entry in sku to media map
                             populateValueRequest.getFieldManager().setFieldValue(instance,
@@ -154,17 +157,20 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     throw new IllegalArgumentException(e);
                 }
                 if (media != null) {
+                    if ('Y' == ((Status) media).getArchived()) {
+                        persist = true;
+                    }
                     populateValueRequest.getProperty().setOriginalValue(convertMediaToJson(media));
                 }
                 if (!noPrimary) {
                     dirty = establishDirtyState(newMedia, media);
-                    if (dirty) {
-                        updateMedia(populateValueRequest, newMedia, persist, media);
-                    }
+                    update = dirty;
                 }
                 if (dirty) {
-                    updateMedia(populateValueRequest, newMedia, persist, media);
-		            response = MetadataProviderResponse.HANDLED_BREAK;
+                    if (update) {
+                        updateMedia(populateValueRequest, newMedia, persist, media);
+                    }
+                    response = MetadataProviderResponse.HANDLED_BREAK;
                 }
             } else {
                 throw new UnsupportedOperationException("MediaFields only work with Media types.");
