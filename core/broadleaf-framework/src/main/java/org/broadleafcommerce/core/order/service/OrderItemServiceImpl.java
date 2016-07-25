@@ -37,6 +37,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.call.AbstractOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
@@ -49,9 +50,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -441,5 +444,27 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public void priceOrderItem(OrderItem item) {
         extensionManager.getProxy().modifyOrderItemPrices(item);
+    }
+
+    @Override
+    public Set<Product> findAllProductsInRequest(ConfigurableOrderItemRequest itemRequest) {
+        Set<Product> allProductsSet = findAllChildProductsInRequest(itemRequest.getChildOrderItems());
+        allProductsSet.add(itemRequest.getProduct());
+        return allProductsSet;
+    }
+
+    protected Set<Product> findAllChildProductsInRequest(List<OrderItemRequestDTO> childItems) {
+        Set<Product> allProductsSet = new HashSet<Product>();
+        for (OrderItemRequestDTO child : childItems) {
+            ConfigurableOrderItemRequest configChild = (ConfigurableOrderItemRequest) child;
+            Product childProduct = configChild.getProduct();
+            if (childProduct != null) {
+                allProductsSet.add(childProduct);
+            } else {
+                List<OrderItemRequestDTO> productChoices = new ArrayList<OrderItemRequestDTO>(configChild.getProductChoices());
+                allProductsSet.addAll(findAllChildProductsInRequest(productChoices));
+            }
+        }
+        return allProductsSet;
     }
 }
