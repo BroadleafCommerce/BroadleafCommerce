@@ -560,7 +560,7 @@ public class OrderServiceImpl implements OrderService {
         preValidateCartOperation(order);
         if (automaticallyMergeLikeItems) {
             OrderItem item = findMatchingItem(order, orderItemRequestDTO);
-            if (item != null) {
+            if (item != null && item.getParentOrderItem() == null) {
                 orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
                 orderItemRequestDTO.setOrderItemId(item.getId());
                 try {
