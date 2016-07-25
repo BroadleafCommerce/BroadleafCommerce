@@ -188,7 +188,7 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
             for (OrderItem item : cart.getOrderItems()) {
                 if (item instanceof SkuAccessor) {
                     Sku sku = ((SkuAccessor) item).getSku();
-                    if (sku != null && sku.getProduct() != null) {
+                    if (sku != null && sku.getProduct() != null && item.getParentOrderItem() == null) {
                         if (useSku) {
                             cartItemIdsWithoutOptions.add(sku.getId());
                         } else {
