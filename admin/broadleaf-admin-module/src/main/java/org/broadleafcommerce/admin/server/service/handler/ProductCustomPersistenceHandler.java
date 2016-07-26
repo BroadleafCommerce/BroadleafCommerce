@@ -334,8 +334,6 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             if (adminInstance instanceof ProductBundle) {
                 removeBundleFieldRestrictions((ProductBundle)adminInstance, adminProperties, entity);
             }
-            
-            validateUniqueURL(entity, adminInstance, dynamicEntityDao, helper, adminProperties);
 
             CategoryProductXref oldDefault = getCurrentDefaultXref(adminInstance);
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
@@ -358,49 +356,6 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
         }
     }
-    
-    protected void validateUniqueURL(Entity entity, Product adminInstance, DynamicEntityDao dynamicEntityDao, RecordHelper helper, 
-            Map<String, FieldMetadata> adminProperties) throws ValidationException {
-            Property url = entity.findProperty(URL);
-            if (url != null) {
-                List<Product> existingRecords = productDao.findProductByURI(url.getValue());
-
-                if (!existingRecords.isEmpty()) {
-                    if (dynamicEntityDao.getStandardEntityManager().contains(adminInstance)) {
-                        dynamicEntityDao.refresh(adminInstance);
-                    }
-
-                    compileDuplicateURLValidationError(helper, entity, adminInstance, adminProperties);
-                }
-            }
-        }
-        
-        protected void compileDuplicateURLValidationError(RecordHelper helper, Entity entity, Product adminInstance, Map<String, FieldMetadata> adminProperties) throws ValidationException {
-            Map<String, List<String>> validationErrors = new HashMap<String, List<String>>();
-            validationErrors.put("url", Arrays.asList("Product_UrlAlreadyUsed"));
-            entity.setValidationFailure(true);
-            entity.setPropertyValidationErrors(validationErrors);
-            List<Serializable> entityList = new ArrayList<Serializable>(1);
-            entityList.add(adminInstance);
-            Entity invalid = helper.getRecords(adminProperties, entityList, null, null)[0];
-            invalid.setPropertyValidationErrors(entity.getPropertyValidationErrors());
-            invalid.overridePropertyValues(entity);
-            
-            StringBuilder sb = new StringBuilder();
-            for (Map.Entry<String, List<String>> entry : invalid.getPropertyValidationErrors().entrySet()) {
-                Iterator<String> itr = entry.getValue().iterator();
-                while(itr.hasNext()) {
-                    sb.append(entry.getKey());
-                    sb.append(" : ");
-                    sb.append(itr.next());
-                    if (itr.hasNext()) {
-                        sb.append(" / ");
-                    }
-                }
-            }
-
-            throw new ValidationException(invalid, "The entity has failed validation - " + sb.toString());
-        }
 
     @Override
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
