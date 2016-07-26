@@ -176,7 +176,9 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             group = GroupName.General, order = FieldOrder.URL,
             prominent = true, gridOrder = 3, columnWidth = "260px",
             requiredOverride = RequiredOverride.REQUIRED,
-            validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
+            validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator"),
+                                         @ValidationConfiguration(validationImplementation = "blUniqueValueValidator")
+            })
     protected String url;
 
     @Column(name = "OVERRIDE_GENERATED_URL")
