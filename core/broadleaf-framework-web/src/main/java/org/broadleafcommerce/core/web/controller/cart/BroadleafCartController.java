@@ -63,10 +63,14 @@ public class BroadleafCartController extends AbstractCartController {
     protected static String cartPageRedirect = "redirect:/cart";
     protected static String configureView = "configure/partials/configure";
     protected static String configurePageRedirect = "redirect:/cart/configure";
-    
+
+    protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
+
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
-    
+
+    @Value("${automatically.add.complete.items}")
+    protected boolean automaticallyAddCompleteItems;
 
     /**
      * Renders the cart page.
@@ -114,7 +118,9 @@ public class BroadleafCartController extends AbstractCartController {
         }
 
         updateCartService.validateCart(cart);
-        extensionManager.getProxy().validateAddToCartItem(itemRequest);
+        if (extensionManager != null) {
+            extensionManager.getProxy().validateAddToCartItem(itemRequest);
+        }
 
         // if this is an update to an existing order item, remove the old before proceeding
         if (isUpdateRequest(request)) {
@@ -194,7 +200,9 @@ public class BroadleafCartController extends AbstractCartController {
         Product product = catalogService.findProductById(productId);
         ConfigurableOrderItemRequest itemRequest = createConfigurableOrderItemRequest(product);
 
-        extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
+        if (extensionManager != null) {
+            extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
+        }
 
         // If this item request is safe to add, go ahead and add it.
         if (isSafeToAdd(itemRequest)) {
@@ -202,6 +210,8 @@ public class BroadleafCartController extends AbstractCartController {
         }
 
         model.addAttribute("baseItem", itemRequest);
+        model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, orderItemService.findAllProductsInRequest(itemRequest));
+
         return isAjaxRequest(request) ? getConfigureView(product) : getConfigurePageRedirect(product);
     }
 
@@ -228,16 +238,18 @@ public class BroadleafCartController extends AbstractCartController {
         Product product = catalogService.findProductById(productId);
         ConfigurableOrderItemRequest itemRequest = createConfigurableOrderItemRequest(product);
 
-        extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
+        if (extensionManager != null) {
+            extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
+            extensionManager.getProxy().mergeOrderItemRequest(itemRequest, orderItem);
+        }
 
         // update quantities and product options
         itemRequest.setQuantity(orderItem.getQuantity());
 
-        extensionManager.getProxy().mergeOrderItemRequest(itemRequest, orderItem);
-
         model.addAttribute("baseItem", itemRequest);
         model.addAttribute("isUpdateRequest", Boolean.TRUE);
         model.addAttribute("originalOrderItem", orderItemId);
+        model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, orderItemService.findAllProductsInRequest(itemRequest));
 
         return isAjaxRequest(request) ? getConfigureView(product) : getConfigurePageRedirect(product);
     }
@@ -457,6 +469,10 @@ public class BroadleafCartController extends AbstractCartController {
     }
 
     protected boolean isSafeToAdd(ConfigurableOrderItemRequest itemRequest) {
+        if (!automaticallyAddCompleteItems) {
+            return false;
+        }
+
         boolean canSafelyAdd = true;
         for (OrderItemRequestDTO child : itemRequest.getChildOrderItems()) {
             ConfigurableOrderItemRequest configurableRequest = (ConfigurableOrderItemRequest) child;
