@@ -154,7 +154,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     protected DataFormatProvider dataFormatProvider;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
-            VisibilityEnum.HIDDEN_ALL
+            VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN
     };
     
     protected static final VisibilityEnum[] GRID_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
@@ -952,7 +952,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
 
                     // If is form hidden, set visible to false
-                    if (VisibilityEnum.FORM_HIDDEN.equals(fmd.getVisibility())) {
+                    if (VisibilityEnum.FORM_EXPLICITLY_HIDDEN.equals(fmd.getVisibility())) {
                         f.setIsVisible(false);
                     }
 
