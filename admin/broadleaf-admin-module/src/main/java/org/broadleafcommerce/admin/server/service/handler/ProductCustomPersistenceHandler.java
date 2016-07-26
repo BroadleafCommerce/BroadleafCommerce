@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
+import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
@@ -49,7 +50,9 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -62,8 +65,12 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -83,6 +90,8 @@ import javax.persistence.criteria.Root;
 @Component("blProductCustomPersistenceHandler")
 public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
+    private static final String URL = "url";
+    
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
@@ -94,6 +103,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
+    
+    @Resource(name="blProductDao")
+    protected ProductDao productDao;
 
     @Value("${product.query.limit:500}")
     protected long queryLimit;
@@ -259,7 +271,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Product adminInstance = (Product) Class.forName(entity.getType()[0]).newInstance();
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
-
+            
             if (adminInstance instanceof ProductBundle) {
                 removeBundleFieldRestrictions((ProductBundle)adminInstance, adminProperties, entity);
             }
@@ -306,7 +318,8 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);            
+            
             BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) adminProperties.get("defaultCategory"));
             defaultCategory.setFriendlyName("ProductImpl_Parent_Category");
             if (entity.findProperty("defaultCategory") != null && !StringUtils.isEmpty(entity.findProperty("defaultCategory").getValue())) {
@@ -321,6 +334,8 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             if (adminInstance instanceof ProductBundle) {
                 removeBundleFieldRestrictions((ProductBundle)adminInstance, adminProperties, entity);
             }
+            
+            validateUniqueURL(entity, adminInstance, dynamicEntityDao, helper, adminProperties);
 
             CategoryProductXref oldDefault = getCurrentDefaultXref(adminInstance);
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
@@ -343,6 +358,49 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
         }
     }
+    
+    protected void validateUniqueURL(Entity entity, Product adminInstance, DynamicEntityDao dynamicEntityDao, RecordHelper helper, 
+            Map<String, FieldMetadata> adminProperties) throws ValidationException {
+            Property url = entity.findProperty(URL);
+            if (url != null) {
+                List<Product> existingRecords = productDao.findProductByURI(url.getValue());
+
+                if (!existingRecords.isEmpty()) {
+                    if (dynamicEntityDao.getStandardEntityManager().contains(adminInstance)) {
+                        dynamicEntityDao.refresh(adminInstance);
+                    }
+
+                    compileDuplicateURLValidationError(helper, entity, adminInstance, adminProperties);
+                }
+            }
+        }
+        
+        protected void compileDuplicateURLValidationError(RecordHelper helper, Entity entity, Product adminInstance, Map<String, FieldMetadata> adminProperties) throws ValidationException {
+            Map<String, List<String>> validationErrors = new HashMap<String, List<String>>();
+            validationErrors.put("url", Arrays.asList("Product_UrlAlreadyUsed"));
+            entity.setValidationFailure(true);
+            entity.setPropertyValidationErrors(validationErrors);
+            List<Serializable> entityList = new ArrayList<Serializable>(1);
+            entityList.add(adminInstance);
+            Entity invalid = helper.getRecords(adminProperties, entityList, null, null)[0];
+            invalid.setPropertyValidationErrors(entity.getPropertyValidationErrors());
+            invalid.overridePropertyValues(entity);
+            
+            StringBuilder sb = new StringBuilder();
+            for (Map.Entry<String, List<String>> entry : invalid.getPropertyValidationErrors().entrySet()) {
+                Iterator<String> itr = entry.getValue().iterator();
+                while(itr.hasNext()) {
+                    sb.append(entry.getKey());
+                    sb.append(" : ");
+                    sb.append(itr.next());
+                    if (itr.hasNext()) {
+                        sb.append(" / ");
+                    }
+                }
+            }
+
+            throw new ValidationException(invalid, "The entity has failed validation - " + sb.toString());
+        }
 
     @Override
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
