@@ -212,7 +212,7 @@ public class BroadleafCartController extends AbstractCartController {
         model.addAttribute("baseItem", itemRequest);
         model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, orderItemService.findAllProductsInRequest(itemRequest));
 
-        return isAjaxRequest(request) ? getConfigureView(product) : getConfigurePageRedirect(product);
+        return isAjaxRequest(request) ? getConfigureView() : getConfigurePageRedirect();
     }
 
     /**
@@ -251,7 +251,7 @@ public class BroadleafCartController extends AbstractCartController {
         model.addAttribute("originalOrderItem", orderItemId);
         model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, orderItemService.findAllProductsInRequest(itemRequest));
 
-        return isAjaxRequest(request) ? getConfigureView(product) : getConfigurePageRedirect(product);
+        return isAjaxRequest(request) ? getConfigureView() : getConfigurePageRedirect();
     }
 
     protected ConfigurableOrderItemRequest createConfigurableOrderItemRequest(Product product) {
@@ -439,25 +439,11 @@ public class BroadleafCartController extends AbstractCartController {
         return cartPageRedirect;
     }
 
-    public String getConfigureView(Product product) {
-        ExtensionResultHolder<String> resultHolder = new ExtensionResultHolder();
-        ExtensionResultStatusType status = extensionManager.getProxy().getConfigureView(product, resultHolder);
-
-        if (ExtensionResultStatusType.HANDLED.equals(status)) {
-            return resultHolder.getResult();
-        }
-
+    public String getConfigureView() {
         return configureView;
     }
 
-    public String getConfigurePageRedirect(Product product) {
-        ExtensionResultHolder<String> resultHolder = new ExtensionResultHolder();
-        ExtensionResultStatusType status = extensionManager.getProxy().getConfigurePageRedirect(product, resultHolder);
-
-        if (ExtensionResultStatusType.HANDLED.equals(status)) {
-            return resultHolder.getResult();
-        }
-
+    public String getConfigurePageRedirect() {
         return configurePageRedirect;
     }
 

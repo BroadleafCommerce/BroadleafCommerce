@@ -54,20 +54,4 @@ public interface BroadleafCartControllerExtensionHandler extends ExtensionHandle
      * @return
      */
     public ExtensionResultStatusType validateAddToCartItem(AddToCartItem addToCartItem) throws Exception;
-
-    /**
-     *
-     *
-     * @param product
-     * @return
-     */
-    public ExtensionResultStatusType getConfigureView(Product product, ExtensionResultHolder resultHolder);
-
-    /**
-     *
-     *
-     * @param product
-     * @return
-     */
-    public ExtensionResultStatusType getConfigurePageRedirect(Product product, ExtensionResultHolder resultHolder);
 }
