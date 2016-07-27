@@ -23,6 +23,9 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,12 +35,13 @@ import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.structure.dao.StructuredContentDao;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplate;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldXref;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
-import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -63,6 +67,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -77,28 +82,28 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     protected static String AND = " && ";
     protected static final String FOREIGN_LOOKUP = "BLC_FOREIGN_LOOKUP";
 
-    @Resource(name="blStructuredContentDao")
+    @Resource(name = "blStructuredContentDao")
     protected StructuredContentDao structuredContentDao;
-    
-    @Resource(name="blStaticAssetService")
+
+    @Resource(name = "blStaticAssetService")
     protected StaticAssetService staticAssetService;
 
-    @Resource(name="blStaticAssetPathService")
+    @Resource(name = "blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
 
-    @Resource(name="blLocaleService")
+    @Resource(name = "blLocaleService")
     protected LocaleService localeService;
 
-    @Resource(name="blContentRuleProcessors")
+    @Resource(name = "blContentRuleProcessors")
     protected List<RuleProcessor<StructuredContentDTO>> contentRuleProcessors;
-    
-    @Resource(name="blEntityConfiguration")
+
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-    
+
     @Resource(name = "blStructuredContentServiceExtensionManager")
     protected StructuredContentServiceExtensionManager extensionManager;
 
-    @Resource(name="blStatisticsService")
+    @Resource(name = "blStatisticsService")
     protected StatisticsService statisticsService;
 
     protected Cache structuredContentCache;
@@ -127,7 +132,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     public List<StructuredContent> findContentItems(Criteria c) {
         return c.list();
     }
-    
+
     @Override
     public List<StructuredContent> findAllContentItems() {
         return structuredContentDao.findAllContentItems();
@@ -138,7 +143,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         c.setProjection(Projections.rowCount());
         return (Long) c.uniqueResult();
     }
-    
+
     /**
      * Saves the given <b>type</b> and returns the merged instance
      */
@@ -158,12 +163,13 @@ public class StructuredContentServiceImpl implements StructuredContentService {
      */
     @Override
     public List<StructuredContentDTO> buildStructuredContentDTOList(List<StructuredContent> structuredContentList, boolean secure) {
-        List<StructuredContentDTO> dtoList = new ArrayList<StructuredContentDTO>();
-        if (structuredContentList != null) {
-            for(StructuredContent sc : structuredContentList) {
-                dtoList.add(buildStructuredContentDTO(sc, secure));
-            }
+        List<StructuredContentDTO> dtoList = new ArrayList<>();
+        structuredContentList = ListUtils.emptyIfNull(structuredContentList);
+
+        for (StructuredContent sc : structuredContentList) {
+            dtoList.add(buildStructuredContentDTO(sc, secure));
         }
+
         return dtoList;
     }
 
@@ -171,26 +177,20 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     public List<StructuredContentDTO> evaluateAndPriortizeContent(List<StructuredContentDTO> structuredContentList, int count, Map<String, Object> ruleDTOs) {
         // some optimization for single item lists which don't require prioritization
         if (structuredContentList.size() == 1) {
-            if (processContentRules(structuredContentList.get(0), ruleDTOs)) {
-                return structuredContentList;
-            } else {
-                return new ArrayList<StructuredContentDTO>();
-            }
+            return processUnprioritizedContent(structuredContentList, ruleDTOs);
         }
 
-        ExtensionResultHolder resultHolder = new ExtensionResultHolder();
-        extensionManager.getProxy().modifyStructuredContentDtoList(structuredContentList, resultHolder);
-        if (resultHolder.getResult() != null) {
-            structuredContentList = (List<StructuredContentDTO>) resultHolder.getResult();
-        }
+        structuredContentList = modifyStructuredContentDtoList(structuredContentList);
 
         Iterator<StructuredContentDTO> structuredContentIterator = structuredContentList.iterator();
-        List<StructuredContentDTO> returnList = new ArrayList<StructuredContentDTO>();
-        List<StructuredContentDTO> tmpList = new ArrayList<StructuredContentDTO>();
+        List<StructuredContentDTO> returnList = new ArrayList<>();
+        List<StructuredContentDTO> tmpList = new ArrayList<>();
         Integer lastPriority = Integer.MIN_VALUE;
+
         while (structuredContentIterator.hasNext()) {
             StructuredContentDTO sc = structuredContentIterator.next();
-            if (! lastPriority.equals(sc.getPriority())) {
+
+            if (!lastPriority.equals(sc.getPriority())) {
                 // If we've moved to another priority, then shuffle all of the items
                 // with the previous priority and add them to the return list.
                 if (tmpList.size() > 1) {
@@ -229,16 +229,50 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         if (returnList.size() > count) {
             return returnList.subList(0, count);
         }
+
         return returnList;
+    }
+
+    protected List<StructuredContentDTO> processUnprioritizedContent(List<StructuredContentDTO> structuredContentList, Map<String, Object> ruleDTOs) {
+        if (processContentRules(structuredContentList.get(0), ruleDTOs)) {
+            return structuredContentList;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    protected boolean processContentRules(StructuredContentDTO sc, Map<String, Object> ruleDTOs) {
+        if (contentRuleProcessors != null) {
+            for (RuleProcessor<StructuredContentDTO> processor : contentRuleProcessors) {
+                boolean matchFound = processor.checkForMatch(sc, ruleDTOs);
+
+                if (!matchFound) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    protected List<StructuredContentDTO> modifyStructuredContentDtoList(List<StructuredContentDTO> structuredContentList) {
+        ExtensionResultHolder resultHolder = new ExtensionResultHolder();
+        extensionManager.getProxy().modifyStructuredContentDtoList(structuredContentList, resultHolder);
+
+        if (resultHolder.getResult() != null) {
+            structuredContentList = (List<StructuredContentDTO>) resultHolder.getResult();
+        }
+
+        return structuredContentList;
     }
 
     @Override
     public List<StructuredContentDTO> lookupStructuredContentItemsByType(StructuredContentType contentType, Locale locale,
-                                                             Integer count, Map<String, Object> ruleDTOs, boolean secure) {
+                                                                         Integer count, Map<String, Object> ruleDTOs, boolean secure) {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        Long site = context.getNonPersistentSite() != null ? context.getNonPersistentSite().getId() : null;
+        Long site = (context.getNonPersistentSite() != null) ? context.getNonPersistentSite().getId() : null;
         String cacheKey = buildTypeKeyWithSecure(context.getSandBox(), site, languageOnlyLocale, contentType.getName(), secure);
 
         if (context.isProductionSandBox()) {
@@ -259,13 +293,13 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     }
 
     @Override
-    public List<StructuredContentDTO> lookupStructuredContentItemsByName(StructuredContentType contentType,
-                                                            String contentName, org.broadleafcommerce.common.locale.domain.Locale locale,
-                                                            Integer count, Map<String, Object> ruleDTOs, boolean secure) {
+    public List<StructuredContentDTO> lookupStructuredContentItemsByName(StructuredContentType contentType, String contentName,
+                                                                         Locale locale, Integer count, Map<String, Object> ruleDTOs,
+                                                                         boolean secure) {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        Long site = context.getNonPersistentSite() != null ? context.getNonPersistentSite().getId() : null;
+        Long site = (context.getNonPersistentSite() != null) ? context.getNonPersistentSite().getId() : null;
         String cacheKey = buildNameKey(context.getSandBox(), site, languageOnlyLocale, contentType.getName(), contentName, secure);
 
         if (context.isProductionSandBox()) {
@@ -284,10 +318,10 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         return evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs);
     }
-    
+
     @Override
     public List<StructuredContentDTO> convertToDtos(List<StructuredContent> scs, boolean isSecure) {
-        List<StructuredContentDTO> contentDTOList = new ArrayList<StructuredContentDTO>();
+        List<StructuredContentDTO> contentDTOList = new ArrayList<>();
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         SandBox sandbox = context.getSandBox();
         boolean isProductionSandbox = context.isProductionSandBox();
@@ -307,25 +341,27 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                     addSingleStructuredContentToCache(cacheKey, dto);
                 }
             }
-            
+
             contentDTOList.add(dto);
         }
+
         return contentDTOList;
     }
 
     @Override
-    public List<StructuredContentDTO> lookupStructuredContentItemsByName(String contentName,
-                                                             org.broadleafcommerce.common.locale.domain.Locale locale,
-                                                             Integer count, Map<String, Object> ruleDTOs, boolean secure) {
+    public List<StructuredContentDTO> lookupStructuredContentItemsByName(String contentName, Locale locale, Integer count,
+                                                                         Map<String, Object> ruleDTOs, boolean secure) {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        Long site = context.getNonPersistentSite() == null?null:context.getNonPersistentSite().getId();
+        Long site = (context.getNonPersistentSite() != null) ? context.getNonPersistentSite().getId() : null;
         String cacheKey = buildNameKey(context.getSandBox(), site, languageOnlyLocale, "any", contentName, secure);
-        cacheKey = cacheKey+"-"+secure;
+        cacheKey = cacheKey + "-" + secure;
+
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);
         }
+
         if (contentDTOList == null) {
             List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByName(contentName, locale, languageOnlyLocale);
             contentDTOList = buildStructuredContentDTOList(productionContentList, secure);
@@ -356,7 +392,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         successRemoveByName = removeItemFromCacheByKey(nameKey);
 
-        if(!successRemoveByName) {
+        if (!successRemoveByName) {
             // this might be because the sandBox was null when the item was added to the cache
             nameKey = buildNameKey(null, sc);
             removeItemFromCacheByKey(nameKey);
@@ -364,7 +400,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         successRemoveByType = removeItemFromCacheByKey(typeKey);
 
-        if(!successRemoveByType) {
+        if (!successRemoveByType) {
             // this might be because the sandBox was null when the item was added to the cache
             typeKey = buildTypeKey(null, sc);
             removeItemFromCacheByKey(typeKey);
@@ -396,7 +432,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     @Override
     public Locale findLanguageOnlyLocale(Locale locale) {
-        if (locale != null ) {
+        if (locale != null) {
             Locale languageOnlyLocale = localeService.findLocaleByCode(LocaleUtil.findLanguageCode(locale));
             if (languageOnlyLocale != null) {
                 return languageOnlyLocale;
@@ -414,36 +450,40 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     }
 
     protected String buildRuleExpression(StructuredContent sc) {
-       StringBuffer ruleExpression = null;
+        StringBuffer ruleExpression = null;
         Map<String, StructuredContentRule> ruleMap = sc.getStructuredContentMatchRules();
-       if (ruleMap != null) {
-           for (String ruleKey : ruleMap.keySet()) {
+
+        if (ruleMap != null) {
+            for (String ruleKey : ruleMap.keySet()) {
                 if (ruleMap.get(ruleKey).getMatchRule() == null) {
                     continue;
                 }
-               if (ruleExpression == null) {
+                if (ruleExpression == null) {
                     ruleExpression = new StringBuffer(ruleMap.get(ruleKey).getMatchRule());
-               } else {
-                   ruleExpression.append(AND);
+                } else {
+                    ruleExpression.append(AND);
                     ruleExpression.append(ruleMap.get(ruleKey).getMatchRule());
-               }
-           }
-       }
-       if (ruleExpression != null) {
-           return ruleExpression.toString();
-       } else {
-           return null;
-       }
+                }
+            }
+        }
+        if (ruleExpression != null) {
+            return ruleExpression.toString();
+        } else {
+            return null;
+        }
     }
 
     protected List<ItemCriteriaDTO> buildItemCriteriaDTOList(StructuredContent sc) {
-        List<ItemCriteriaDTO> itemCriteriaDTOList = new ArrayList<ItemCriteriaDTO>();
-        for(StructuredContentItemCriteria criteria : sc.getQualifyingItemCriteria()) {
+        List<ItemCriteriaDTO> itemCriteriaDTOList = new ArrayList<>();
+        Set<StructuredContentItemCriteria> qualifyingItemCriteria = SetUtils.emptyIfNull(sc.getQualifyingItemCriteria());
+
+        for (StructuredContentItemCriteria criteria : qualifyingItemCriteria) {
             ItemCriteriaDTO criteriaDTO = entityConfiguration.createEntityInstance(ItemCriteriaDTO.class.getName(), ItemCriteriaDTO.class);
             criteriaDTO.setMatchRule(criteria.getMatchRule());
             criteriaDTO.setQty(criteria.getQuantity());
             itemCriteriaDTOList.add(criteriaDTO);
         }
+
         return itemCriteriaDTOList;
     }
 
@@ -452,14 +492,14 @@ public class StructuredContentServiceImpl implements StructuredContentService {
      * format the values from {@link StructuredContentDTO#getValues()} into their actual data types. For instance, if the
      * given {@link StructuredContent} has a DATE field, then this method will ensure that the resulting object in the values
      * map of the DTO is a {@link Date} rather than just a String representing a date.
-     *
+     * <p/>
      * Current support of parsing field types is:
-     *    DATE - {@link Date}
-     *    BOOLEAN - {@link Boolean}
-     *    DECIMAL - {@link BigDecimal}
-     *    INTEGER - {@link Integer}
-     *    MONEY - {@link Money}
-     *
+     * DATE - {@link Date}
+     * BOOLEAN - {@link Boolean}
+     * DECIMAL - {@link BigDecimal}
+     * INTEGER - {@link Integer}
+     * MONEY - {@link Money}
+     * <p/>
      * All other fields are treated as strings. This will also fix URL strings that have the CMS prefix (like images) by
      * prepending the standard CMS prefix with the particular environment prefix
      *
@@ -469,22 +509,24 @@ public class StructuredContentServiceImpl implements StructuredContentService {
      * @see {@link StaticAssetService#getStaticAssetEnvironmentUrlPrefix()}
      */
     protected void buildFieldValues(StructuredContent sc, StructuredContentDTO scDTO, boolean secure) {
-
         String cmsPrefix = staticAssetPathService.getStaticAssetUrlPrefix();
+        Map<String, StructuredContentFieldXref> scFieldXrefs = MapUtils.emptyIfNull(sc.getStructuredContentFieldXrefs());
 
         scDTO.getValues().put("id", sc.getId());
 
-        for (String fieldKey : sc.getStructuredContentFieldXrefs().keySet()) {
-            StructuredContentField scf = sc.getStructuredContentFieldXrefs().get(fieldKey).getStructuredContentField();
+        for (String fieldKey : scFieldXrefs.keySet()) {
+            StructuredContentField scf = scFieldXrefs.get(fieldKey).getStructuredContentField();
             String originalValue = scf.getValue();
-            if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
-                //This may either be an ASSET_LOOKUP image path or an HTML block (with multiple <img>) or a plain STRING that contains the cmsPrefix.
-                //If there is an environment prefix configured (e.g. a CDN), then we must replace the cmsPrefix with this one.
-                String fldValue = staticAssetPathService.convertAllAssetPathsInContent(originalValue, secure);
-                scDTO.getValues().put(fieldKey, fldValue);
+
+            if (hasCmsPrefix(originalValue, cmsPrefix)) {
+                buildFieldValueWithCmsPrefix(originalValue, scDTO, secure, fieldKey);
             } else {
                 FieldDefinition definition = null;
-                Iterator<FieldGroup> groupIterator = sc.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups().iterator();
+                StructuredContentType scType = sc.getStructuredContentType();
+                StructuredContentFieldTemplate scFieldTemplate = scType.getStructuredContentFieldTemplate();
+                List<FieldGroup> scFieldGroups = ListUtils.emptyIfNull(scFieldTemplate.getFieldGroups());
+                Iterator<FieldGroup> groupIterator = scFieldGroups.iterator();
+
                 while (groupIterator.hasNext() && definition == null) {
                     FieldGroup group = groupIterator.next();
                     for (FieldDefinition def : group.getFieldDefinitions()) {
@@ -528,7 +570,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                     }
                     scDTO.getValues().put(fieldKey, value);
                 } else {
-                    scDTO.getValues().put(fieldKey, sc.getStructuredContentFieldXrefs().get(fieldKey).getStructuredContentField().getValue());
+                    scDTO.getValues().put(fieldKey, scFieldXrefs.get(fieldKey).getStructuredContentField().getValue());
                 }
             }
         }
@@ -537,13 +579,26 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         extensionManager.getProxy().populateAdditionalStructuredContentFields(sc, scDTO, secure);
     }
 
+    protected boolean hasCmsPrefix(String originalValue, String cmsPrefix) {
+        return StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix);
+    }
+
+    /*
+     * This may either be an ASSET_LOOKUP image path or an HTML block (with multiple <img>) or a plain STRING that contains the cmsPrefix.
+     * If there is an environment prefix configured (e.g. a CDN), then we must replace the cmsPrefix with this one.
+     */
+    protected void buildFieldValueWithCmsPrefix(String originalValue, StructuredContentDTO scDTO, boolean secure, String fieldKey) {
+        String fldValue = staticAssetPathService.convertAllAssetPathsInContent(originalValue, secure);
+        scDTO.getValues().put(fieldKey, fldValue);
+    }
+
     /**
      * Converts a StructuredContent into a StructuredContentDTO.   If the item contains fields with
      * broadleaf cms urls, the urls are converted to utilize the domain.
-     * 
+     * <p/>
      * The StructuredContentDTO is built via the {@link EntityConfiguration}. To override the actual type that is returned,
      * include an override in an applicationContext like any other entity override.
-     * 
+     *
      * @param sc
      * @param secure
      * @return
@@ -551,37 +606,24 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     @Override
     public StructuredContentDTO buildStructuredContentDTO(StructuredContent sc, boolean secure) {
         StructuredContentDTO scDTO = entityConfiguration.createEntityInstance(StructuredContentDTO.class.getName(), StructuredContentDTO.class);
+        Set<StructuredContentItemCriteria> qualifyingItemCriteria = SetUtils.emptyIfNull(sc.getQualifyingItemCriteria());
         scDTO.setContentName(sc.getContentName());
         scDTO.setContentType(sc.getStructuredContentType().getName());
         scDTO.setId(sc.getId());
         scDTO.setPriority(sc.getPriority());
-        
+
         if (sc.getLocale() != null) {
             scDTO.setLocaleCode(sc.getLocale().getLocaleCode());
         }
 
         scDTO.setRuleExpression(buildRuleExpression(sc));
         buildFieldValues(sc, scDTO, secure);
-        
-        if (sc.getQualifyingItemCriteria() != null && sc.getQualifyingItemCriteria().size() > 0) {
+
+        if (qualifyingItemCriteria.size() > 0) {
             scDTO.setItemCriteriaDTOList(buildItemCriteriaDTOList(sc));
         }
 
         return scDTO;
-    }
-
-    protected boolean processContentRules(StructuredContentDTO sc, Map<String, Object> ruleDTOs) {
-        if (contentRuleProcessors != null) {
-            for (RuleProcessor<StructuredContentDTO> processor : contentRuleProcessors) {
-                boolean matchFound = processor.checkForMatch(sc, ruleDTOs);
-
-                if (! matchFound) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     protected String buildNameKey(SandBox sandBox, StructuredContent sc) {
@@ -684,23 +726,30 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     }
 
     protected StructuredContentDTO getSingleStructuredContentFromCache(String key) {
-        Element scElement =  getStructuredContentCache().get(key);
+        Element scElement = getStructuredContentCache().get(key);
+
         if (scElement != null) {
             statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), true);
             return (StructuredContentDTO) scElement.getValue();
         }
+
         statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), false);
+
         return null;
     }
 
     @Override
     public List<StructuredContentDTO> getStructuredContentListFromCache(String key) {
-        Element scElement =  getStructuredContentCache().get(key);
+        Element scElement = getStructuredContentCache().get(key);
+
         if (scElement != null) {
             statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), true);
-            return (List<StructuredContentDTO>) scElement.getValue();
+
+            return (List<StructuredContentDTO>) scElement.getObjectValue();
         }
+
         statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), false);
+
         return null;
     }
 
