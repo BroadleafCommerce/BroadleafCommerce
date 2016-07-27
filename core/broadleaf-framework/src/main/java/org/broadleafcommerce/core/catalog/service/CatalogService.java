@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.catalog.service;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
@@ -218,8 +217,6 @@ public interface CatalogService {
     public Sku createSku();
     
     public Product createProduct(ProductType productType);
-
-    public Category findRootCategory();
     
     public List<Category> findAllSubCategories(Category category);
 

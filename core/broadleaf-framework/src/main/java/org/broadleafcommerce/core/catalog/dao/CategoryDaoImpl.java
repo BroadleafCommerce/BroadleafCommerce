@@ -120,14 +120,6 @@ public class CategoryDaoImpl implements CategoryDao {
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         return (Category) query.getSingleResult();
     }
-    
-    @Override
-    public Category readRootCategory() {
-        Query query = em.createNamedQuery("BC_READ_ROOT_CATEGORY");
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-        return (Category) query.getSingleResult();
-    }
 
     @Override
     public List<Category> readCategoriesByName(String categoryName) {
