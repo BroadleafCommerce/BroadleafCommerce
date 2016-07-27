@@ -97,9 +97,6 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
-    
-    @Resource(name="blProductDao")
-    protected ProductDao productDao;
 
     @Value("${product.query.limit:500}")
     protected long queryLimit;
