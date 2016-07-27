@@ -44,6 +44,10 @@
      */
     var postConstructQueryBuilderFieldHandlers = [];
 
+    /**
+     * An Admin page may need to perform some function, using the returned page data, after a filter has been applied.
+     * @type {Array}
+     */
     var postApplyFilterHandlers = [];
 
     BLCAdmin.filterBuilders = {
@@ -78,6 +82,9 @@
             }
         },
 
+        /**
+         * Handlers designed to execute on the data returned after applying and making a filter request
+         */
         addPostApplyFilterHandler : function(fn) {
             postApplyFilterHandlers.push(fn);
         },
