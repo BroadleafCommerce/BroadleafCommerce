@@ -44,6 +44,8 @@
      */
     var postConstructQueryBuilderFieldHandlers = [];
 
+    var postApplyFilterHandlers = [];
+
     BLCAdmin.filterBuilders = {
 
         /**
@@ -73,6 +75,16 @@
         runPostConstructQueryBuilderFieldHandler : function(builder) {
             for (var i = 0; i < postConstructQueryBuilderFieldHandlers.length; i++) {
                 postConstructQueryBuilderFieldHandlers[i](builder);
+            }
+        },
+
+        addPostApplyFilterHandler : function(fn) {
+            postApplyFilterHandlers.push(fn);
+        },
+
+        runPostApplyFilterHandlers : function(data) {
+            for (var i = 0; i < postApplyFilterHandlers.length; i++) {
+                postApplyFilterHandlers[i](data);
             }
         },
 
@@ -688,6 +700,8 @@
                 } else {
                     BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, {isRefresh: false});
                 }
+
+                BLCAdmin.filterBuilders.runPostApplyFilterHandlers(data);
             });
 
             $('.error-container').hide();
