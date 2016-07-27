@@ -82,7 +82,7 @@ import javax.persistence.criteria.Root;
  */
 @Component("blProductCustomPersistenceHandler")
 public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-    
+
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
@@ -143,12 +143,12 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao
             dynamicEntityDao, RecordHelper helper) throws ServiceException {
 
-        
+
         boolean legacy = parentCategoryLegacyModeService.isLegacyMode();
-        
+
         //the following code applies when filters are present only:
         //"legacy" means that the parent category filter still utilizes Product.defaultCategory as the field to be matched
-        //against the categories chosen in the listGrid filter. The default behavior up to this point, assumes the "legacy" mode. 
+        //against the categories chosen in the listGrid filter. The default behavior up to this point, assumes the "legacy" mode.
         //This means that one of the FilterAndSortCriterias will try to match the chosen values against "defaultCategory".
         //If "legacy" is false, we remove that FilterAndSortCriteria from the CTO, and inject a new FilterMapping in cto.additionalFilterMappings,
         //which seeks matching values in  allParentCategoryXRefs instead
