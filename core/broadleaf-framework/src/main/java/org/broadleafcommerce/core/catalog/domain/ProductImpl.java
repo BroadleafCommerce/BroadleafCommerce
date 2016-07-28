@@ -177,7 +177,9 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             prominent = true, gridOrder = 3, columnWidth = "260px",
             requiredOverride = RequiredOverride.REQUIRED,
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator"),
-                                         @ValidationConfiguration(validationImplementation = "blUniqueValueValidator")
+                                         @ValidationConfiguration(validationImplementation = "blUniqueValueValidator", 
+                                                                  configurationItems = { @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "This URL is already in use. Please provide a unique URL.") 
+                                                                  }), 
             })
     protected String url;
 
