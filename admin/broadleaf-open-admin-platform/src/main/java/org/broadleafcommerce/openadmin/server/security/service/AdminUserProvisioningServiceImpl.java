@@ -138,8 +138,8 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
         }
 
         //Now, add all of the role relationships back.
-        if (adminRoles != null) {
-            for (AdminRole role : adminRoles) {
+        if (grantedRoles != null) {
+            for (AdminRole role : grantedRoles) {
                 roleSet.add(role);
             }
         }
