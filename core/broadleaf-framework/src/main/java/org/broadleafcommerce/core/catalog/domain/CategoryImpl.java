@@ -403,7 +403,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             sortProperty = "sequence",
             gridVisibleFields = { "name", "label", "fieldType.indexField.field.friendlyName" })
     @BatchSize(size = 50)
-    @IgnoreEnterpriseBehavior
     protected List<CategorySearchFacet> searchFacets  = new ArrayList<CategorySearchFacet>();
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryExcludedSearchFacetImpl.class, cascade = { CascadeType.ALL })
