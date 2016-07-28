@@ -10,7 +10,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>3.0.0-GA</version>
+    <version>3.0.0-GA-ETS</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -151,6 +151,10 @@
         </plugins>
     </reporting>
     <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/releases</url>
+        </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <url>http://www.broadleafcommerce.org/nexus/content/repositories/snapshots</url>
