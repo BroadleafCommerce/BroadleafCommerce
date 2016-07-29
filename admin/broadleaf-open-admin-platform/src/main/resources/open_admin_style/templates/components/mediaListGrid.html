@@ -122,20 +122,22 @@
 
                     <td th:each="headerField : ${record.listGrid.headerFields}"
                         th:if="${headerField.isVisible}"
-                        th:with="field=${record.getField(headerField.name)},action=${listGrid.activeRowActions[0]}"
+                        th:with="field=${record.getField(headerField.name)},action=${not #lists.isEmpty(listGrid.activeRowActions) ? listGrid.activeRowActions[0] : null}"
                         th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}"
                         th:class="${field.isDerived ? 'derived' : ''}">
 
                         <span th:substituteby="components/partials/listGridIcon"></span>
 
-                        <a href="#" th:if="${headerField.name == 'media.title'}"
-                           class="media-link"
-                           th:attr="data-urlpostfix=${action.urlPostfix},
-                                 data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
-                                 data-queryparams=${listGrid.sectionCrumbRepresentation},
-                                 data-link=@{${record.path}}"
-                           th:title="#{${action.displayText}}" th:text="${field.displayValue}">
-                        </a>
+                        <th:block th:if="${action}">
+                            <a href="#" th:if="${headerField.name == 'media.title'}"
+                               class="media-link"
+                               th:attr="data-urlpostfix=${action.urlPostfix},
+                                     data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                                     data-queryparams=${listGrid.sectionCrumbRepresentation},
+                                     data-link=@{${record.path}}"
+                               th:title="#{${action.displayText}}" th:text="${field.displayValue}">
+                            </a>
+                        </th:block>
 
                         <span th:unless="${headerField.name == 'media.title'
                                 or field.fieldType == 'IMAGE'}"
