@@ -414,7 +414,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             sortProperty = "sequence",
             gridVisibleFields = { "name", "label", "fieldType.indexField.field.friendlyName" })
     @BatchSize(size = 50)
-    @IgnoreEnterpriseBehavior
+    //@IgnoreEnterpriseBehavior
     protected List<CategoryExcludedSearchFacet> excludedSearchFacets = new ArrayList<CategoryExcludedSearchFacet>(10);
 
 
@@ -1082,6 +1082,37 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     public void setFulfillmentType(FulfillmentType fulfillmentType) {
         this.fulfillmentType = fulfillmentType == null ? null : fulfillmentType.getType();
     }
+    
+    protected List<CategorySearchFacet> getParentFacets(final Collection<SearchFacet> facets) {
+        List<CategorySearchFacet> parentFacets = null;
+        
+        if (getParentCategory() != null) {
+            parentFacets = getParentCategory().getCumulativeSearchFacets();
+            CollectionUtils.filter(parentFacets, new Predicate() {
+                @Override
+                public boolean evaluate(Object arg) {
+                    CategorySearchFacet csf = (CategorySearchFacet) arg;
+                    
+                    return !isExcludedSearchFacet(csf) && !facets.contains(csf.getSearchFacet());
+                }
+                
+                protected boolean isExcludedSearchFacet(CategorySearchFacet csf) {
+                    boolean isExcludedSearchFacet = false;
+                    
+                    for (CategoryExcludedSearchFacet excludedSearchFacet : getExcludedSearchFacets()) {
+                        if (excludedSearchFacet.getSearchFacet().equals(csf.getSearchFacet())) {
+                            isExcludedSearchFacet = true;
+                            break;
+                        }
+                    }
+                    
+                    return isExcludedSearchFacet;
+                }
+            });
+        }
+        
+        return parentFacets;
+    }
 
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets() {
@@ -1090,26 +1121,15 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         Collections.sort(returnCategoryFacets, facetPositionComparator);
 
         final Collection<SearchFacet> facets = CollectionUtils.collect(returnCategoryFacets, new Transformer() {
-
-            @Override
-            public Object transform(Object input) {
-                return ((CategorySearchFacet) input).getSearchFacet();
-            }
-        });
-
-        // Add in parent facets unless they are excluded
-        List<CategorySearchFacet> parentFacets = null;
-        if (getDefaultParentCategory() != null) {
-            parentFacets = getDefaultParentCategory().getCumulativeSearchFacets();
-            CollectionUtils.filter(parentFacets, new Predicate() {
                 @Override
-                public boolean evaluate(Object arg) {
-                    CategorySearchFacet csf = (CategorySearchFacet) arg;
-                    return !getExcludedSearchFacets().contains(csf.getSearchFacet())
-                            && !facets.contains(csf.getSearchFacet());
+                public Object transform(Object input) {
+                    return ((CategorySearchFacet) input).getSearchFacet();
                 }
             });
-        }
+
+        // Add in parent facets unless they are excluded
+        List<CategorySearchFacet> parentFacets = getParentFacets(facets);
+        
         if (parentFacets != null) {
             returnCategoryFacets.addAll(parentFacets);
         }
