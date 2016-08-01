@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.offer.domain;
 
 
+import org.broadleafcommerce.core.offer.service.type.OfferProrationType;
 import org.broadleafcommerce.core.offer.service.type.OfferTimeZoneType;
 
 import java.io.Serializable;
@@ -56,16 +57,27 @@ public interface AdvancedOffer extends Serializable {
     void setTieredOffer(boolean isTieredOffer);
     
     /**
-     * Sets the {@link OfferTimeZoneType} 
+     * Returns the {@link OfferTimeZoneType}
      * @return
      */
     public OfferTimeZoneType getOfferTimeZoneType();
 
     /**
-     * Returns the {@link OfferTimeZoneType}
+     * Sets the {@link OfferTimeZoneType}
      * @param offerTimeZoneType
      */
     public void setOfferTimeZoneType(OfferTimeZoneType offerTimeZoneType);
 
+    /**
+     * Returns the {@link OfferProrationType} of this offer
+     * @return
+     */
+    public OfferProrationType getOfferProrationType();
+
+    /**
+     * Sets the {@link OfferProrationType} for this offer
+     * @param offerProrationType
+     */
+    public void setOfferProrationType(OfferProrationType offerProrationType);
 
 }
