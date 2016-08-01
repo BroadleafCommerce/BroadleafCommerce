@@ -48,6 +48,8 @@ import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
+import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment;
+import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -178,6 +180,13 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @AdminPresentationCollection(friendlyName="OrderItemImpl_Adjustments", order = Presentation.FieldOrder.ADJUSTMENTS,
                     tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
+
+    @OneToMany(mappedBy = "orderItem", targetEntity = ProratedOrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL },
+            orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    @AdminPresentationCollection(friendlyName="OrderItemImpl_ProratedAdjustments", order = Presentation.FieldOrder.ADJUSTMENTS,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
+    protected List<ProratedOrderItemAdjustment> proratedOrderItemAdjustments = new ArrayList<ProratedOrderItemAdjustment>();
 
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemQualifierImpl.class, cascade = { CascadeType.ALL },
             orphanRemoval = true)
@@ -404,6 +413,19 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Override
     public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {       
         this.orderItemAdjustments = orderItemAdjustments;
+    }
+
+    @Override
+    public List<ProratedOrderItemAdjustment> getProratedOrderItemAdjustments() {
+        if (proratedOrderItemAdjustments == null) {
+            proratedOrderItemAdjustments = new ArrayList<>();
+        }
+        return proratedOrderItemAdjustments;
+    }
+
+    @Override
+    public void setProratedOrderItemAdjustments(List<ProratedOrderItemAdjustment> proratedOrderItemAdjustments) {
+        this.proratedOrderItemAdjustments = proratedOrderItemAdjustments;
     }
 
     @Override
