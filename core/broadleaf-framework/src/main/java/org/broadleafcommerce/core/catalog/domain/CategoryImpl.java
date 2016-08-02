@@ -70,6 +70,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -252,6 +253,10 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             fieldType = SupportedFieldType.HTML_BASIC,
             translatable = true)
     protected String longDescription;
+
+    @Column(name = "ROOT_DISPLAY_ORDER", precision = 10, scale = 6)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    protected BigDecimal rootDisplayOrder;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
@@ -910,6 +915,16 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Deprecated
     public void setAllParentCategories(List<Category> allParentCategories) {
         throw new UnsupportedOperationException("Not Supported - Use setAllParentCategoryXrefs()");
+    }
+
+    @Override
+    public BigDecimal getRootDisplayOrder() {
+        return rootDisplayOrder;
+    }
+
+    @Override
+    public void setRootDisplayOrder(BigDecimal rootDisplayOrder) {
+        this.rootDisplayOrder = rootDisplayOrder;
     }
 
     @Override

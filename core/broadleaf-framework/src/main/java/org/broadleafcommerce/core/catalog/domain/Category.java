@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -653,6 +654,16 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * Set all the xref entities linking this product to parent categories
      */
     public void setAllParentCategoryXrefs(List<CategoryXref> allParentCategories);
+
+    /**
+     * Retrieve the displayOrder that is used if the Category does not have any parents
+     */
+    public BigDecimal getRootDisplayOrder();
+
+    /**
+     * Set the displayOrder that is used if the Category does not have any parents
+     */
+    public void setRootDisplayOrder(BigDecimal rootDisplayOrder);
 
     /**
      * Retrieve all parent categories
