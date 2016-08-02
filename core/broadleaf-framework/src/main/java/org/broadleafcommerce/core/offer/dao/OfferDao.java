@@ -26,10 +26,13 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
+import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment;
 
 import java.util.List;
 
 public interface OfferDao {
+
+    ProratedOrderItemAdjustment save(ProratedOrderItemAdjustment adjustment);
 
     List<Offer> readAllOffers();
 

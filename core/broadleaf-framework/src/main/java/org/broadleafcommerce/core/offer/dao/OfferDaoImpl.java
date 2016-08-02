@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
+import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.ejb.HibernateEntityManager;
@@ -133,6 +134,11 @@ public class OfferDaoImpl implements OfferDao {
     @Override
     public OfferInfo save(OfferInfo offerInfo) {
         return em.merge(offerInfo);
+    }
+
+    @Override
+    public ProratedOrderItemAdjustment save(ProratedOrderItemAdjustment adjustment) {
+        return em.merge(adjustment);
     }
 
     @Override

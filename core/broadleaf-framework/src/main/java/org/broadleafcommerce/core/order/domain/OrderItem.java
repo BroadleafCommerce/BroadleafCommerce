@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import java.io.Serializable;
 import java.util.List;
@@ -133,6 +134,18 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      * @return
      */
     boolean isSalePriceOverride();
+
+    /**
+     * Returns a list of all prorated adjustments for this order item.
+     * @return
+     */
+    List<ProratedOrderItemAdjustment> getProratedOrderItemAdjustments();
+
+    /**
+     * Sets the list of prorated order item adjustments for this order item.
+     * @param proratedOrderItemAdjustments
+     */
+    void setProratedOrderItemAdjustments(List<ProratedOrderItemAdjustment> proratedOrderItemAdjustments);
 
     /**
      * @deprecated 

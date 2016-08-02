@@ -69,6 +69,7 @@
     <bean id="org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer" class="org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.offer.domain.OrderAdjustment" class="org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.offer.domain.OrderItemAdjustment" class="org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment" class="org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustmentImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.OrderItemPriceDetail" class="org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.OrderItemQualifier" class="org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl" scope="prototype"/>    
     <bean id="org.broadleafcommerce.core.order.domain.OrderAttribute" class="org.broadleafcommerce.core.order.domain.OrderAttributeImpl" scope="prototype"/>
