@@ -433,7 +433,11 @@
                     var $newTbody;
                     if ($tbody.closest('.tree-column-wrapper').length) {
                         var treeColumnParentId = $tbody.closest('.select-column').data('parentid');
-                        $newTbody = $(data).find(".select-column[data-parentid='" + treeColumnParentId + "']").find('tbody');
+                        if (treeColumnParentId === undefined) {
+                            $newTbody = $(data).find(".tree-column-wrapper .select-column").find('tbody');
+                        } else {
+                            $newTbody = $(data).find(".tree-column-wrapper .select-column[data-parentid='" + treeColumnParentId + "']").find('tbody');
+                        }
                     } else {
                         var listGridId = $tbody.closest('table').attr('id');
                         $newTbody = $(data).find('table#' + listGridId).find('tbody');
