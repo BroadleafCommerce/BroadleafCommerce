@@ -76,6 +76,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -227,6 +228,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order findOrderByOrderNumber(String orderNumber) {
         return orderDao.readOrderByOrderNumber(orderNumber);
+    }
+
+    @Override
+    public List<Order> findOrdersByDateRange(Date startDate, Date endDate) {
+        return orderDao.readOrdersByDateRange(startDate, endDate);
     }
 
     @Override

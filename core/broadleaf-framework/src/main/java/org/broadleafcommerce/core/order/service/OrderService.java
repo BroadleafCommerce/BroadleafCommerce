@@ -40,6 +40,7 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -156,7 +157,9 @@ public interface OrderService {
      * @return the requested Order
      */
     public Order findOrderByOrderNumber(String orderNumber);
-    
+
+    List<Order> findOrdersByDateRange(Date startDate, Date endDate);
+
     /**
      * Returns all OrderPayment objects that are associated with the given order
      * 
