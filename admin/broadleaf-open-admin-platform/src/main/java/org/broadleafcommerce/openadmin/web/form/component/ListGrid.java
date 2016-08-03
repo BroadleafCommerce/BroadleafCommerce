@@ -459,6 +459,10 @@ public class ListGrid {
         return null;
     }
 
+    public boolean isEmpty() {
+        return records.isEmpty();
+    }
+
     public List<ListGridRecord> getRecords() {
         return records;
     }
