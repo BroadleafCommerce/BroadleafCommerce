@@ -297,7 +297,7 @@
             var tableHalfHeight = $tbody.closest('.mCustomScrollBox').height() / 2;
             
             $spinner.css('top', (Math.floor(spinnerOffset) + tableHalfHeight - spinnerHalfSize) + 'px');
-            $spinner.css('left', tableHalfWidth + spinnerHalfSize + 'px');
+            $spinner.css('margin-left', tableHalfWidth - spinnerHalfSize + 'px');
             $spinner.css('display', 'block');
             
             var backdrop = $('<div>', {
