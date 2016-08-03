@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandid
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
@@ -87,4 +88,8 @@ public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandl
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
+    @Override
+    public ExtensionResultStatusType applyAdditionalRuleVariablesForItemEvaluation(OrderItem orderItem) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }

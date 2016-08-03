@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.util.Date;
 import java.util.List;
 
 public interface OrderDao {
@@ -61,7 +62,9 @@ public interface OrderDao {
     Order createNewCartForCustomer(Customer customer);
 
     Order readOrderByOrderNumber(String orderNumber);
-    
+
+    List<Order> readOrdersByDateRange(Date startDate, Date endDate);
+
     Order updatePrices(Order order);
 
     /**

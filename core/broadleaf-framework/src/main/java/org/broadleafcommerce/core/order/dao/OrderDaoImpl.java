@@ -39,6 +39,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
@@ -292,6 +293,22 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("orderNumber", orderNumber);
         List<Order> orders = query.getResultList();
         return orders == null || orders.isEmpty() ? null : orders.get(0);
+    }
+
+    @Override
+    public List<Order> readOrdersByDateRange(final Date startDate, final Date endDate) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        criteria.select(order);
+        criteria.where(builder.between(order.<Date>get("submitDate"), startDate, endDate));
+        criteria.orderBy(builder.desc(order.get("submitDate")));
+
+        TypedQuery<Order> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
+
+        return query.getResultList();
     }
 
     @Override
