@@ -163,6 +163,7 @@ public interface OfferAdminPresentation {
         public static final int OrderMinSubTotal = 3000;
 
         public static final int Priority = 1000;
+        public static final int Proration = 2000;
 
         public static final int CombinableWithOtherOffers = 1000;
         public static final int StackableWithOtherOffers = 2000;
