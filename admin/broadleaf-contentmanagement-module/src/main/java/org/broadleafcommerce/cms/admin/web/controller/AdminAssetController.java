@@ -114,6 +114,7 @@ public class AdminAssetController extends AdminBasicEntityController {
             @PathVariable(value="id") String id) throws Exception {
         Site currentSite = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
 
+        model.addAttribute("cmsUrlPrefix", staticAssetService.getStaticAssetUrlPrefix());
         String returnPath = super.viewEntityForm(request, response, model, pathVars, id);
 
         staticAssetExtensionManager.getProxy().removeShareOptionsForMTStandardSite(model, currentSite);
@@ -130,6 +131,10 @@ public class AdminAssetController extends AdminBasicEntityController {
             RedirectAttributes ra) throws Exception {
         String templatePath = super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
 
+        if (result.hasErrors()) {
+            model.addAttribute("cmsUrlPrefix", staticAssetService.getStaticAssetUrlPrefix());
+        }
+        
         return templatePath;
     }
 

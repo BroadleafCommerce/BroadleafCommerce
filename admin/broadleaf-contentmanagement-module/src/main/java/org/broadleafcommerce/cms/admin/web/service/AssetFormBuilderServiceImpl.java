@@ -77,6 +77,10 @@ public class AssetFormBuilderServiceImpl implements AssetFormBuilderService {
             
             // Add a hidden field for the large thumbnail path
             record.getHiddenFields().add(new Field()
+                    .withName("cmsUrlPrefix")
+                    .withValue(staticAssetUrlPrefix));
+                
+            record.getHiddenFields().add(new Field()
                 .withName("thumbnailKey")
                 .withValue("?smallAdminThumbnail"));
             
