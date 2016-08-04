@@ -922,6 +922,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         required = fmd.getRequired();
                     }
 
+                    Boolean allowNoValueEnum = fmd.getAllowNoValueEnumOption();
+                    if(allowNoValueEnum != null){
+                        f.setAllowNoValueEnumOption(allowNoValueEnum);
+                    }
+
                     f.withName(property.getName())
                          .withFieldType(fieldType)
                          .withFieldComponentRenderer(fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString())

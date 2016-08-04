@@ -80,6 +80,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private SupportedFieldType secondaryType = SupportedFieldType.INTEGER;
     private Integer length;
     private Boolean required;
+    private Boolean allowNoValueEnumOption;
     private Boolean unique;
     private Integer scale;
     private Integer precision;
@@ -925,5 +926,12 @@ public class FieldMetadataOverride extends MetadataOverride {
     public void setLazyFetch(Boolean lazyFetch) {
         this.lazyFetch = lazyFetch;
     }
-    
+
+    public Boolean getAllowNoValueEnumOption() {
+        return allowNoValueEnumOption;
+    }
+
+    public void setAllowNoValueEnumOption(Boolean allowNoValueEnumOption) {
+        this.allowNoValueEnumOption = allowNoValueEnumOption;
+    }
 }
