@@ -617,7 +617,11 @@ var BLCAdmin = (function($) {
                     minHeight: 140,
                     tabKey: true,
                     tabsAsSpaces: 4,
-                    deniedTags: []
+                    deniedTags: [],
+                    initCallback: function() {
+                        // reset the redactor contents to ensure correct rendering
+                        this.code.set(this.code.get());
+                    }
                 });
             }
 

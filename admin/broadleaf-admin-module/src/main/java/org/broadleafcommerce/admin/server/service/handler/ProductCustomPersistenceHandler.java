@@ -62,11 +62,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -76,6 +71,10 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -88,11 +87,11 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Resource(name = "blProductCustomPersistenceHandlerExtensionManager")
     protected ProductCustomPersistenceHandlerExtensionManager extensionManager;
-    
+
     @Resource(name = "blParentCategoryLegacyModeService")
     protected ParentCategoryLegacyModeService parentCategoryLegacyModeService;
 
-    @Resource(name="blSandBoxHelper")
+    @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
     @Value("${product.query.limit:500}")
@@ -179,29 +178,29 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 List<Long> productIds = query.getResultList();
                 productIds = sandBoxHelper.mergeCloneIds(ProductImpl.class, productIds.toArray(new Long[productIds.size()]));
 
-                if(productIds.size() == 0){
-                    return new DynamicResultSet(null, new Entity[0],0);
+                if (productIds.size() == 0) {
+                    return new DynamicResultSet(null, new Entity[0], 0);
                 }
                 if (productIds.size() <= queryLimit) {
                     FilterMapping filterMapping = new FilterMapping()
-                        .withFieldPath(new FieldPath().withTargetProperty("id"))
-                        .withDirectFilterValues(productIds)
-                        .withRestriction(new Restriction()
-                            .withPredicateProvider(new PredicateProvider() {
-                                   @Override
-                                   public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
-                                                                   From root, String ceilingEntity, String fullPropertyName,
-                                                                   Path explicitPath, List directValues) {
-                                       return explicitPath.in(directValues);
-                                   }
-                               }
-                            )
-                        );
+                            .withFieldPath(new FieldPath().withTargetProperty("id"))
+                            .withDirectFilterValues(productIds)
+                            .withRestriction(new Restriction()
+                                    .withPredicateProvider(new PredicateProvider() {
+                                                               @Override
+                                                               public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
+                                                                                               From root, String ceilingEntity, String fullPropertyName,
+                                                                                               Path explicitPath, List directValues) {
+                                                                   return explicitPath.in(directValues);
+                                                               }
+                                                           }
+                                    )
+                            );
                     cto.getAdditionalFilterMappings().add(filterMapping);
                 } else {
                     String joined = StringUtils.join(transformedValues, ',');
                     LOG.warn(String.format("Skipping default category filtering for product fetch query since there are " +
-                            "more than "+queryLimit+" products found to belong to the selected default categories(%s). This is a " +
+                            "more than " + queryLimit + " products found to belong to the selected default categories(%s). This is a " +
                             "filter query limitation.", joined));
                 }
             }
@@ -256,16 +255,16 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        Entity entity  = persistencePackage.getEntity();
+        Entity entity = persistencePackage.getEntity();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Product adminInstance = (Product) Class.forName(entity.getType()[0]).newInstance();
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
 
             if (adminInstance instanceof ProductBundle) {
-                removeBundleFieldRestrictions((ProductBundle)adminInstance, adminProperties, entity);
+                removeBundleFieldRestrictions((ProductBundle) adminInstance, adminProperties, entity);
             }
-            
+
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = dynamicEntityDao.merge(adminInstance);
 
@@ -309,6 +308,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+
             BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) adminProperties.get("defaultCategory"));
             defaultCategory.setFriendlyName("ProductImpl_Parent_Category");
             if (entity.findProperty("defaultCategory") != null && !StringUtils.isEmpty(entity.findProperty("defaultCategory").getValue())) {
@@ -321,7 +321,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             if (adminInstance instanceof ProductBundle) {
-                removeBundleFieldRestrictions((ProductBundle)adminInstance, adminProperties, entity);
+                removeBundleFieldRestrictions((ProductBundle) adminInstance, adminProperties, entity);
             }
 
             CategoryProductXref oldDefault = getCurrentDefaultXref(adminInstance);
@@ -365,16 +365,17 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     /**
      * If the pricing model is of type item_sum, that property should not be required
+     *
      * @param adminInstance
      * @param adminProperties
      * @param entity
      */
     protected void removeBundleFieldRestrictions(ProductBundle adminInstance, Map<String, FieldMetadata> adminProperties, Entity entity) {
         //no required validation for product bundles
-        ((BasicFieldMetadata)adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(false);
+        ((BasicFieldMetadata) adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(false);
         if (entity.getPMap().get("pricingModel") != null) {
             if (ProductBundlePricingModelType.BUNDLE.getType().equals(entity.getPMap().get("pricingModel").getValue())) {
-                ((BasicFieldMetadata)adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(true);
+                ((BasicFieldMetadata) adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(true);
             }
         }
     }
