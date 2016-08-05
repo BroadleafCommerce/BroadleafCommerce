@@ -147,7 +147,7 @@ public class FilterAndSortCriteria {
     }
 
     public void setSortAscending(Boolean sortAscending) {
-        this.sortDirection = (sortAscending) ? SortDirection.ASCENDING : SortDirection.DESCENDING;
+        this.sortDirection = (sortAscending == null || sortAscending) ? SortDirection.ASCENDING : SortDirection.DESCENDING;
     }
 
     public SortDirection getSortDirection() {
