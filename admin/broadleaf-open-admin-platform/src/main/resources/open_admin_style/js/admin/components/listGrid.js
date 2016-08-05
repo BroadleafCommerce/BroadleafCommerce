@@ -774,21 +774,9 @@ $(document).ready(function () {
                 },
                 update : function(event, ui) {
                     var url = ui.item.data('link') + '/sequence';
-
-                    if (ui.item.closest('table.list-grid-table').length && ui.item.closest('table.list-grid-table').data('listgridtype') === 'tree') {
-                        // Expected uri structure: "/admin/{section}/{child-id}/{alternate-id}/sequence"
-                        // Desired uri structure: "/admin/{section}/{parent-id}/{collection-name}/{child-id}/{alternate-id}/sequence"
-                        // Beginning: "/admin/{section}"
-                        // Middle: "/{parent-id}/{collection-name}"
-                        // End: "/{child-id}/{alternate-id}/sequence"
-                        var parentId = ui.item.closest('.listgrid-container').data('parentid');
-                        var collectionName = ui.item.closest('.tree-listgrid-container').data('collectionname');
-
-                        var thirdToLastIndex = url.lastIndexOf('/', url.lastIndexOf('/', url.lastIndexOf('/') - 1) - 1);
-                        var beginning = url.substring(0, thirdToLastIndex);
-                        var middle = "/" + parentId + "/" + collectionName;
-                        var end = url.substring(thirdToLastIndex);
-                        url = beginning + middle + end;
+                    
+                    if (BLCAdmin.treeListGrid !== undefined) {
+                        url = BLCAdmin.treeListGrid.updateSequenceUrl(ui, url);
                     }
 
                     BLC.ajax({
