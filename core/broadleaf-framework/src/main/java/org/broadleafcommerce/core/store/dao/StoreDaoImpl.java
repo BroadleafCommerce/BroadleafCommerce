@@ -17,27 +17,29 @@
  */
 package org.broadleafcommerce.core.store.dao;
 
+import org.broadleafcommerce.core.store.domain.Store;
+import org.broadleafcommerce.core.store.domain.StoreImpl;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.core.store.domain.Store;
-import org.broadleafcommerce.core.store.domain.StoreImpl;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
-
 @Repository("blStoreDao")
 public class StoreDaoImpl implements StoreDao {
 
     @PersistenceContext(unitName = "blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
+    @Override
     public Store readStoreById(Long id) {
         return em.find(StoreImpl.class, id);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Store readStoreByStoreName(final String storeName) {
         Query query = em.createNamedQuery("BC_FIND_STORE_BY_STORE_NAME");
@@ -47,6 +49,7 @@ public class StoreDaoImpl implements StoreDao {
         return (result.size() > 0) ? (Store) result.get(0) : null;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Store readStoreByStoreCode(final String storeCode) {
         Query query = em.createNamedQuery("BC_FIND_STORE_BY_STORE_NAME");
@@ -56,6 +59,7 @@ public class StoreDaoImpl implements StoreDao {
         return (result.size() > 0) ? (Store) result.get(0) : null;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Store> readAllStores() {
         Query query = em.createNamedQuery("BC_FIND_ALL_STORES");
@@ -64,6 +68,7 @@ public class StoreDaoImpl implements StoreDao {
         return query.getResultList();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Store> readAllStoresByState(final String state) {
         Query query = em.createNamedQuery("BC_FIND_ALL_STORES_BY_STATE");
