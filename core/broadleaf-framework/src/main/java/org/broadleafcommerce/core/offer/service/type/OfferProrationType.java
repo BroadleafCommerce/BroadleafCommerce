@@ -31,7 +31,7 @@ public class OfferProrationType implements Serializable, BroadleafEnumerationTyp
 
     private static final Map<String, OfferProrationType> TYPES = new LinkedHashMap<String, OfferProrationType>();
 
-    public static final OfferProrationType TARGET_ONLY = new OfferProrationType("TARGET_ONLY", "Apply discount to target");
+    public static final OfferProrationType TARGET_ONLY = new OfferProrationType("TARGET_ONLY", "Record discount to targets");
     public static final OfferProrationType TARGET_AND_QUALIFIER = new OfferProrationType("TARGET_AND_QUALIFIER", "Distribute discount between qualifiers and targets");
 
     public static OfferProrationType getInstance(final String type) {
