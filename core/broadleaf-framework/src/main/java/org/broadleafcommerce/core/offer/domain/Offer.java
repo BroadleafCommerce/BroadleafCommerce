@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -232,5 +233,13 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     public Boolean getRequiresRelatedTargetAndQualifiers();
 
     public void setRequiresRelatedTargetAndQualifiers(Boolean requiresRelatedTargetAndQualifiers);
+
+    public Boolean getHasPromotionMessage();
+
+    public void setHasPromotionMessage(Boolean hasPromotionMessage);
+
+    public List<PromotionMessage> getPromotionMessages();
+
+    public void setPromotionMessages(List<PromotionMessage> promotionMessages);
 
 }

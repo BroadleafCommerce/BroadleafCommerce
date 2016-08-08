@@ -42,9 +42,12 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionAdminPresentation;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -76,6 +79,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -328,6 +332,18 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         }
     )
     Map<String, OfferOfferRuleXref> offerMatchRules = new HashMap<String, OfferOfferRuleXref>();
+
+    @Column(name = "HAS_PROMOTION_MESSAGE")
+    @AdminPresentation(friendlyName = "OfferImpl_HasPromotionMessage",
+            group = GroupName.Marketing, defaultValue = "false")
+    protected Boolean hasPromotionMessage = false;
+
+    @OneToMany(mappedBy = "offer", targetEntity = PromotionMessageImpl.class, cascade = {CascadeType.ALL})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(friendlyName = "OfferImpl_PromotionMessages",
+            group = GroupName.Marketing,
+            addType = AddMethodType.PERSIST)
+    protected List<PromotionMessage> promotionMessages = new ArrayList<>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -703,6 +719,26 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setRequiresRelatedTargetAndQualifiers(Boolean requiresRelatedTargetAndQualifiers) {
         this.requiresRelatedTargetAndQualifiers = requiresRelatedTargetAndQualifiers;
+    }
+
+    @Override
+    public List<PromotionMessage> getPromotionMessages() {
+        return promotionMessages;
+    }
+
+    @Override
+    public void setPromotionMessages(List<PromotionMessage> promotionMessages) {
+        this.promotionMessages = promotionMessages;
+    }
+
+    @Override
+    public Boolean getHasPromotionMessage() {
+        return hasPromotionMessage == null ? Boolean.FALSE : hasPromotionMessage;
+    }
+
+    @Override
+    public void setHasPromotionMessage(Boolean hasPromotionMessage) {
+        this.hasPromotionMessage = hasPromotionMessage;
     }
 
     @Override

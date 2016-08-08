@@ -111,6 +111,8 @@
         <class>org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.PaymentLogImpl</class>
         <class>org.broadleafcommerce.core.pricing.domain.ShippingRateImpl</class>
+        <class>org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl</class>
+        <class>org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageMediaXrefImpl</class>
         <class>org.broadleafcommerce.core.store.domain.StoreImpl</class>
         <class>org.broadleafcommerce.core.store.domain.ZipCodeImpl</class>
         <class>org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl</class>

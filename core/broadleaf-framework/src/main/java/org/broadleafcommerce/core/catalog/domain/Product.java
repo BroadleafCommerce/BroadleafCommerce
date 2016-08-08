@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -813,5 +814,33 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * @return
      */
     public Money getMargin();
+
+    /**
+     * @return the flag for whether or not the Product has PromotionMessage overrides
+     */
+    public Boolean getHasPromotionMessageOverrides();
+
+    /**
+     * Sets the flag for whether or not the URL should not be generated in the admin
+     *
+     * @param hasPromotionMessage
+     */
+    public void setHasPromotionMessageOverrides(Boolean hasPromotionMessageOverrides);
+
+    /**
+     * The specified {@link PromotionMessage}s for this Product that will
+     * override the Offer's default {@link PromotionMessage}.
+     *
+     * @return the {@link PromotionMessage}s for this Product
+     * @see {@link PromotionMessage}
+     */
+    public List<PromotionMessage> getPromotionMessageOverrides();
+
+    /**
+     * Sets the list of specified {@link PromotionMessage} overrides.
+     *
+     * @param promotionMessageOverrides
+     */
+    public void setPromotionMessageOverrides(List<PromotionMessage> promotionMessageOverrides);
 
 }
