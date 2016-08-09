@@ -158,7 +158,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         // The same offer may be applied to different Order Items
         
         for (PromotableCandidateItemOffer itemOffer : itemOffers) {
-            if (orderMeetsQualifyingSubtotalRequirements(order, itemOffer) && orderMeetsSubtotalRequirements(order, itemOffer)) {
+            if (orderMeetsQualifyingSubtotalRequirements(order, itemOffer)
+                    && orderMeetsTargetSubtotalRequirements(order, itemOffer)
+                    && orderMeetsSubtotalRequirements(order, itemOffer)) {
                 applyItemOffer(order, itemOffer);
             }
         }
@@ -166,6 +168,10 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
     protected boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
         return offerServiceUtilities.orderMeetsQualifyingSubtotalRequirements(order, itemOffer.getOffer(), itemOffer.getCandidateQualifiersMap());
+    }
+
+    protected boolean orderMeetsTargetSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
+        return offerServiceUtilities.orderMeetsTargetSubtotalRequirements(order, itemOffer.getOffer(), itemOffer.getCandidateTargetsMap());
     }
 
     protected boolean orderMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {

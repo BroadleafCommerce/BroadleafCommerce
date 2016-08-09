@@ -447,10 +447,23 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
         if (qualifyingItemSubTotal == null || qualifyingItemSubTotal.lessThanOrEqual(Money.ZERO)) {
             return true;
         }
+        return orderMeetsProvidedSubtotalRequirement(offer, qualifiersMap, qualifyingItemSubTotal);
+    }
+
+    @Override
+    public boolean orderMeetsTargetSubtotalRequirements(PromotableOrder order, Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> targetsMap) {
+        Money targetMinSubTotal = offer.getTargetMinSubTotal();
+        if (targetMinSubTotal == null || targetMinSubTotal.lessThanOrEqual(Money.ZERO)) {
+            return true;
+        }
+        return orderMeetsProvidedSubtotalRequirement(offer, targetsMap, targetMinSubTotal);
+    }
+
+    protected boolean orderMeetsProvidedSubtotalRequirement(Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> promotableOrderItems, Money minSubTotal) {
         Money subtotal = Money.ZERO;
 
-        for (OfferItemCriteria itemCriteria : qualifiersMap.keySet()) {
-            List<PromotableOrderItem> promotableItems = qualifiersMap.get(itemCriteria);
+        for (OfferItemCriteria itemCriteria : promotableOrderItems.keySet()) {
+            List<PromotableOrderItem> promotableItems = promotableOrderItems.get(itemCriteria);
 
             for (PromotableOrderItem item : promotableItems) {
                 boolean shouldApplyDiscountToSalePrice = offer.getApplyDiscountToSalePrice();
@@ -459,7 +472,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
                 Money lineItemAmount = priceBeforeAdjustments.multiply(quantity);
                 subtotal = subtotal.add(lineItemAmount);
-                if (subtotal.greaterThanOrEqual(qualifyingItemSubTotal)) {
+                if (subtotal.greaterThanOrEqual(minSubTotal)) {
                     return true;
                 }
             }

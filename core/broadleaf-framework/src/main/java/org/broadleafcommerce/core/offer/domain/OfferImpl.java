@@ -248,6 +248,13 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         defaultValue = "0.00000")
     protected BigDecimal orderMinSubTotal;
 
+    @Column(name = "TARGET_MIN_TOTAL", precision=19, scale=5)
+    @AdminPresentation(friendlyName="OfferImpl_Target_Subtotal",
+            tooltip = "OfferImplMinTargetSubtotal_tooltip",
+            group = GroupName.Restrictions, order = FieldOrder.TargetMinSubTotal,
+            defaultValue = "0.00000")
+    protected BigDecimal targetMinSubTotal;
+
     @Column(name = "OFFER_ITEM_TARGET_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Target_Rule",
         group = GroupName.CombineStack,
@@ -683,6 +690,16 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setOrderMinSubTotal(Money orderMinSubTotal) {
         this.orderMinSubTotal = Money.toAmount(orderMinSubTotal);
+    }
+
+    @Override
+    public Money getTargetMinSubTotal() {
+        return targetMinSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(targetMinSubTotal, null);
+    }
+
+    @Override
+    public void setTargetMinSubTotal(Money targetMinSubTotal) {
+        this.targetMinSubTotal = Money.toAmount(targetMinSubTotal);
     }
 
     @Override
