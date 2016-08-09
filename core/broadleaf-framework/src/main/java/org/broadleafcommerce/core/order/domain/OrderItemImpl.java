@@ -28,6 +28,8 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
+import org.broadleafcommerce.common.dao.GenericEntityDaoImpl;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -295,7 +297,16 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Category getCategory() {
-        return HibernateUtils.deproxy(category);
+        Category deproxiedCategory = null;
+        GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
+        if (genericEntityDao != null && category != null) {
+            Long id = category.getId();
+            genericEntityDao.getEntityManager().detach(category);
+            deproxiedCategory = genericEntityDao.getEntityManager().find(CategoryImpl.class, id);
+        } else {
+            deproxiedCategory = HibernateUtils.deproxy(category);
+        }
+        return deproxiedCategory;
     }
 
     @Override

@@ -23,6 +23,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.dao.GenericEntityDaoImpl;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -34,6 +35,8 @@ import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.common.util.HibernateUtils;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
@@ -145,7 +148,18 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public Offer getOffer() {
-        return offer;
+        //When traversing through an Order via order.addedOfferCodes, the parent class (order) is not considered sandboxable and subsequently the Offer will not be either
+        //This code correcly finds the sandboxable version of the Offer
+        Offer deproxiedOffer = null;
+        GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
+        if (genericEntityDao != null && offer != null) {
+            Long id = offer.getId();
+            genericEntityDao.getEntityManager().detach(offer);
+            deproxiedOffer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
+        } else {
+            deproxiedOffer = HibernateUtils.deproxy(offer);
+        }
+        return deproxiedOffer;
     }
 
     @Override
