@@ -70,6 +70,7 @@ public interface PromotionMessageAdminPresentation {
     public static class FieldOrder {
         public static final int Name = 1000;
         public static final int Type = 2000;
+        public static final int OverriddenPromotionMessage = 2000;
         public static final int Message = 3000;
         public static final int Media = 4000;
 

@@ -41,6 +41,10 @@ public interface PromotionMessage extends Status, Serializable,MultiTenantClonea
 
     public void setType(String type);
 
+    public PromotionMessage getOverriddenPromotionMessage();
+
+    public void setOverriddenPromotionMessage(PromotionMessage overriddenPromotionMessage);
+
     public String getMessage();
 
     public void setMessage(String message);
