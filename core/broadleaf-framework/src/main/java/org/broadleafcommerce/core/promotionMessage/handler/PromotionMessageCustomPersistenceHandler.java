@@ -92,7 +92,7 @@ public class PromotionMessageCustomPersistenceHandler extends CustomPersistenceH
             properties.addAll(Arrays.asList(persistencePackage.getProperties()));
             Property property = new Property();
             property.setName("type");
-            property.setValue(PromotionMessageType.TARGETS_AND_QUALIFIERS.getType());
+            property.setValue(PromotionMessageType.TARGETS_OR_QUALIFIERS.getType());
             properties.add(property);
             Property[] propertyArray = new Property[properties.size()];
             properties.toArray(propertyArray);

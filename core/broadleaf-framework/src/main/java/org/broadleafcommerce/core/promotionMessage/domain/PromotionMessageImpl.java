@@ -109,7 +109,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
         group = GroupName.General, order = FieldOrder.Type,
         fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration="org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageType",
-        defaultValue = "TARGETS_AND_QUALIFIERS",
+        defaultValue = "TARGETS_OR_QUALIFIERS",
         requiredOverride = RequiredOverride.REQUIRED)
     protected String type;
 
