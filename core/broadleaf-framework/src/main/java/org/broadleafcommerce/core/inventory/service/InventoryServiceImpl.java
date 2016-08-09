@@ -55,13 +55,16 @@ public class InventoryServiceImpl implements ContextualInventoryService {
 
     @Override
     public boolean checkBasicAvailablility(Sku sku) {
-        Boolean available = sku.isAvailable();
-        if (available == null) {
-            available = true;
+        if(sku != null) {
+            Boolean available = sku.isAvailable();
+            if (available == null) {
+                available = true;
+            }
+            if (available && sku.isActive() && !InventoryType.UNAVAILABLE.equals(sku.getInventoryType())) {
+                return true;
+            }
         }
-        if (sku != null && available && sku.isActive() && !InventoryType.UNAVAILABLE.equals(sku.getInventoryType())) {
-            return true;
-        }
+
         return false;
     }
     
@@ -123,24 +126,22 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         ExtensionResultHolder<Map<Sku, Integer>> holder = new ExtensionResultHolder<Map<Sku, Integer>>();
         ExtensionResultStatusType res = extensionManager.getProxy().retrieveQuantitiesAvailable(skus, context, holder);
         if (ExtensionResultStatusType.NOT_HANDLED.equals(res)) {
-            Map<Sku, Integer> inventories = new HashMap<Sku, Integer>();
+            Map<Sku, Integer> inventories = new HashMap<>();
+
             for (Sku sku : skus) {
-                if (checkBasicAvailablility(sku)) {
-                    if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                        if (sku.getQuantityAvailable() == null) {
-                            inventories.put(sku, 0);
-                        }
-                    } else if (sku.getInventoryType() == null || InventoryType.ALWAYS_AVAILABLE.equals(sku.getInventoryType())) {
-                        inventories.put(sku, null);
+                if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+                    if (sku.getQuantityAvailable() == null) {
+                        inventories.put(sku, 0);
                     } else {
-                        Integer quantityAvailable = sku.getQuantityAvailable();
-                        inventories.put(sku, quantityAvailable);
+                        inventories.put(sku, sku.getQuantityAvailable());
                     }
+                } else if (sku.getInventoryType() == null || InventoryType.ALWAYS_AVAILABLE.equals(sku.getInventoryType())) {
+                    inventories.put(sku, null);
                 } else {
                     inventories.put(sku, 0);
                 }
             }
-    
+
             return inventories;
         } else {
             return holder.getResult();
