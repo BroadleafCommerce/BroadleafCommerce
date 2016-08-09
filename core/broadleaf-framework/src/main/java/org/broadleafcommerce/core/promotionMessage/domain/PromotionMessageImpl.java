@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
@@ -111,6 +112,13 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
         defaultValue = "TARGETS_AND_QUALIFIERS",
         requiredOverride = RequiredOverride.REQUIRED)
     protected String type;
+
+    @ManyToOne(targetEntity = PromotionMessageImpl.class, cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "OVERRIDDEN_PROMO_MSG")
+    @AdminPresentation(friendlyName = "PromotionMessageImpl_OverriddenPromotionMessage",
+            group = GroupName.General, order = FieldOrder.OverriddenPromotionMessage)
+    @AdminPresentationToOneLookup()
+    protected PromotionMessage overriddenPromotionMessage;
 
     @Column(name = "PROMOTION_MESSASGE")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_message",
@@ -216,6 +224,16 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     @Override
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public PromotionMessage getOverriddenPromotionMessage() {
+        return overriddenPromotionMessage;
+    }
+
+    @Override
+    public void setOverriddenPromotionMessage(PromotionMessage overriddenPromotionMessage) {
+        this.overriddenPromotionMessage = overriddenPromotionMessage;
     }
 
     @Override

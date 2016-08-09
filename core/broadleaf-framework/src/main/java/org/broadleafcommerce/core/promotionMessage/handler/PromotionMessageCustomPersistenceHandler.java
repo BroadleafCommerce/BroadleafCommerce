@@ -76,9 +76,9 @@ public class PromotionMessageCustomPersistenceHandler extends CustomPersistenceH
 
         if (isRequestFromOfferEntityForm(persistencePackage)) {
             md.remove("excludeFromDisplay");
+            md.remove("overriddenPromotionMessage");
         } else if (isRequestFromProductEntityForm(persistencePackage)) {
             BasicFieldMetadata type = (BasicFieldMetadata) md.get("type");
-            type.setRequired(false);
             type.setVisibility(VisibilityEnum.HIDDEN_ALL);
         }
 
