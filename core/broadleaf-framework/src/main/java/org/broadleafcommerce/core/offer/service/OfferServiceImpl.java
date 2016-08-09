@@ -512,6 +512,11 @@ public class OfferServiceImpl implements OfferService {
         }
         return offerToCodeMapping;
     }
+
+    @Override
+    public List<Offer> findActiveOffersWithPromotionMessages() {
+        return offerDao.readActiveOffersWithPromotionMessages();
+    }
     
     @Override
     @Transactional("blTransactionManager")

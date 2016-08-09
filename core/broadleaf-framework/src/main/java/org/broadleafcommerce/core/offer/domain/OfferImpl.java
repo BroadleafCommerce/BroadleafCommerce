@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -42,12 +43,12 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionAdminPresentation;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl;
+import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -79,7 +80,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -741,6 +741,20 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public List<PromotionMessage> getPromotionMessages() {
         return promotionMessages;
+    }
+
+    @Override
+    public List<PromotionMessage> getPromotionMessagesByType(PromotionMessageType desiredPromotionMessageType) {
+        List filteredPromotionMessages = new ArrayList();
+
+        for (PromotionMessage promotionMessage : getPromotionMessages()) {
+            if (StringUtils.equals(desiredPromotionMessageType.getType(), promotionMessage.getType())
+                    || StringUtils.equals(PromotionMessageType.TARGETS_OR_QUALIFIERS.getType(), promotionMessage.getType())) {
+                filteredPromotionMessages.add(promotionMessage);
+            }
+        }
+
+        return filteredPromotionMessages;
     }
 
     @Override

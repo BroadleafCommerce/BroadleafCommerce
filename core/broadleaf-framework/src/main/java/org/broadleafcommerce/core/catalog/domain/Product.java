@@ -843,4 +843,12 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      */
     public void setPromotionMessageOverrides(List<PromotionMessage> promotionMessageOverrides);
 
+    /**
+     * The specified {@link PromotionMessage}s for this Product that will
+     * override the Offer's default {@link PromotionMessage}.
+     *
+     * @return the {@link Category} Ids for this Product's parent {@link Category} hierarchy
+     * @see {@link Category}
+     */
+    public List<Long> getParentCategoryHierarchyIds();
 }

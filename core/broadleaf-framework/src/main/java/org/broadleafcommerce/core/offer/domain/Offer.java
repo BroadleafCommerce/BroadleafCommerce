@@ -24,9 +24,11 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
+import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -246,4 +248,5 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     public void setPromotionMessages(List<PromotionMessage> promotionMessages);
 
+    List<PromotionMessage> getPromotionMessagesByType(PromotionMessageType promotionMessageType);
 }

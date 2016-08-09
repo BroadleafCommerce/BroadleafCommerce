@@ -643,6 +643,22 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     }
 
     @Override
+    public List<Long> getParentCategoryHierarchyIds() {
+        List<Long> parentCategoryHierarchyIds = new ArrayList<>();
+
+        List<CategoryProductXref> parentCategoryXrefs = getAllParentCategoryXrefs();
+        for (CategoryProductXref xref : parentCategoryXrefs) {
+            Category xrefCategory = xref.getCategory();
+            List<Category> parentCategoryHierarchy = xrefCategory.getParentCategoryHierarchy(null);
+            for (Category hierarchyCategory : parentCategoryHierarchy) {
+                parentCategoryHierarchyIds.add(hierarchyCategory.getId());
+            }
+        }
+
+        return parentCategoryHierarchyIds;
+    }
+
+    @Override
     @Deprecated
     public List<Category> getAllParentCategories() {
         List<Category> parents = new ArrayList<Category>();

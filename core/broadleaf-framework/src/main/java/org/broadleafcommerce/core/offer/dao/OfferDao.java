@@ -83,5 +83,6 @@ public interface OfferDao {
      * @param currentDateResolution the milliseconds to cache the current date/time
      */
     public void setCurrentDateResolution(Long currentDateResolution);
-    
+
+    List<Offer> readActiveOffersWithPromotionMessages();
 }
