@@ -218,6 +218,10 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     public String getMarketingMessage();
 
+    public Money getTargetMinSubTotal();
+
+    public void setTargetMinSubTotal(Money targetMinSubTotal);
+
     /**
      * Returns the offer codes that can be used to retrieve this Offer. These codes would be used in situations where
      * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}

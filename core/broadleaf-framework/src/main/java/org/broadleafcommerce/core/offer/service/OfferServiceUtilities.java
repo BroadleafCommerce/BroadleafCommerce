@@ -197,6 +197,15 @@ public interface OfferServiceUtilities {
     boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> qualifiersMap);
 
     /**
+     * Determines whether or not an {@link PromotableOrder} meets the target subtotal requirement of an {@link Offer}
+     * @param order
+     * @param offer
+     * @param targetsMap
+     * @return
+     */
+    boolean orderMeetsTargetSubtotalRequirements(PromotableOrder order, Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> targetsMap);
+
+    /**
      * Determines whether or not an {@link PromotableOrder} meets the subtotal requirement of an {@link Offer}
      * @param order
      * @param offer
