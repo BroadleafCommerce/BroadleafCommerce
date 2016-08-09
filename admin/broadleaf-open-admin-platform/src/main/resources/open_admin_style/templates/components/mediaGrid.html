@@ -37,7 +37,7 @@
 
                     <div class="image-wrapper">
                         <img class="thumbnail"
-                             blc:src="@{${'/' + cmsUrlPrefix + asset.getField('media.url').getValue() + '?largeAdminThumbnail'}}"
+                             blc:src="@{${asset.getField('media.url').getValue() + '?largeAdminThumbnail'}}"
                              th:attr="data-fullurl=@{${asset.getField('media.url').getValue()}},
                              data-rowid=${asset.id},
                              data-link=@{${asset.path}},
