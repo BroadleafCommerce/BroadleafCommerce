@@ -52,7 +52,7 @@ public class PromotionMessageProcessor extends AbstractLocalVariableDefinitionEl
      * Sets the name of this processor to be used in Thymeleaf template
      */
     public PromotionMessageProcessor() {
-        super("offer-promotion-messages");
+        super("offer_promotion_messages");
     }
     
     @Override
