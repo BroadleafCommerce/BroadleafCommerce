@@ -45,6 +45,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -138,7 +139,7 @@ public class OfferCodeImpl implements OfferCode {
     protected List<Order> orders = new ArrayList<Order>();
 
     @Transient
-    protected Offer deproxiedOffer;
+    protected Offer sbClonedOffer;
     
     @Override
     public Long getId() {
@@ -152,21 +153,25 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public Offer getOffer() {
-        if (deproxiedOffer == null) {
+        //This guarantees that the offer is the correct one based on sandboxed state.  If the offer has been overridden/cloned in the local site,
+        //  then that overridden/cloned offer will be used.
+        if (sbClonedOffer == null) {
             GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
             if (genericEntityDao != null) {
                 Long id = offer.getId();
                 genericEntityDao.getEntityManager().detach(offer);
-                deproxiedOffer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
+                sbClonedOffer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
+            } else {
+                sbClonedOffer = offer;
             }
         }
-        return deproxiedOffer != null ? deproxiedOffer : offer;
+        return sbClonedOffer;
     }
 
     @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
-        deproxiedOffer = null;
+        sbClonedOffer = null;
     }
 
     @Override

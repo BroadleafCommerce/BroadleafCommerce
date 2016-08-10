@@ -46,6 +46,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
@@ -225,7 +226,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     protected OrderItem parentOrderItem;
 
     @Transient
-    protected Category deproxiedCategory;
+    protected Category sbClonedCategory;
     
     @Override
     public Money getRetailPrice() {
@@ -300,21 +301,25 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Category getCategory() {
-        if (deproxiedCategory == null) {
+        //This guarantees that the category is the correct one based on sandboxed state.  If it has been overridden/cloned in the local site,
+        //  that overridden/cloned category will be used.
+        if (sbClonedCategory == null) {
             GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
             if (genericEntityDao != null) {
                 Long id = category.getId();
                 genericEntityDao.getEntityManager().detach(category);
-                deproxiedCategory = genericEntityDao.getEntityManager().find(CategoryImpl.class, id);
+                sbClonedCategory = genericEntityDao.getEntityManager().find(CategoryImpl.class, id);
+            } else {
+                sbClonedCategory = category;
             }
         }
-        return deproxiedCategory != null ? deproxiedCategory : category;
+        return sbClonedCategory;
     }
 
     @Override
     public void setCategory(Category category) {
         this.category = category;
-        deproxiedCategory = null;
+        sbClonedCategory = null;
     }
 
     @Override
