@@ -223,6 +223,9 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @JoinColumn(name = "PARENT_ORDER_ITEM_ID")
     @Index(name="ORDERITEM_PARENT_INDEX", columnNames={"PARENT_ORDER_ITEM_ID"})
     protected OrderItem parentOrderItem;
+
+    @Transient
+    protected Category deproxiedCategory;
     
     @Override
     public Money getRetailPrice() {
@@ -297,21 +300,21 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Category getCategory() {
-        Category deproxiedCategory = null;
-        GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
-        if (genericEntityDao != null && category != null) {
-            Long id = category.getId();
-            genericEntityDao.getEntityManager().detach(category);
-            deproxiedCategory = genericEntityDao.getEntityManager().find(CategoryImpl.class, id);
-        } else {
-            deproxiedCategory = HibernateUtils.deproxy(category);
+        if (deproxiedCategory == null) {
+            GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
+            if (genericEntityDao != null) {
+                Long id = category.getId();
+                genericEntityDao.getEntityManager().detach(category);
+                deproxiedCategory = genericEntityDao.getEntityManager().find(CategoryImpl.class, id);
+            }
         }
-        return deproxiedCategory;
+        return deproxiedCategory != null ? deproxiedCategory : category;
     }
 
     @Override
     public void setCategory(Category category) {
         this.category = category;
+        deproxiedCategory = null;
     }
 
     @Override

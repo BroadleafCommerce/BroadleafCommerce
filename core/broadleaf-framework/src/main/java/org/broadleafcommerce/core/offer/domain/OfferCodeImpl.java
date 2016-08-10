@@ -63,6 +63,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "BLC_OFFER_CODE")
@@ -136,6 +137,9 @@ public class OfferCodeImpl implements OfferCode {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<Order> orders = new ArrayList<Order>();
 
+    @Transient
+    protected Offer deproxiedOffer;
+    
     @Override
     public Long getId() {
         return id;
@@ -148,23 +152,21 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public Offer getOffer() {
-        //When traversing through an Order via order.addedOfferCodes, the parent class (order) is not considered sandboxable and subsequently the Offer will not be either
-        //This code correcly finds the sandboxable version of the Offer
-        Offer deproxiedOffer = null;
-        GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
-        if (genericEntityDao != null && offer != null) {
-            Long id = offer.getId();
-            genericEntityDao.getEntityManager().detach(offer);
-            deproxiedOffer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
-        } else {
-            deproxiedOffer = HibernateUtils.deproxy(offer);
+        if (deproxiedOffer == null) {
+            GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
+            if (genericEntityDao != null) {
+                Long id = offer.getId();
+                genericEntityDao.getEntityManager().detach(offer);
+                deproxiedOffer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
+            }
         }
-        return deproxiedOffer;
+        return deproxiedOffer != null ? deproxiedOffer : offer;
     }
 
     @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
+        deproxiedOffer = null;
     }
 
     @Override
