@@ -137,6 +137,13 @@
             '#field-applyToSalePrice',
             'ORDER_ITEM'
         );
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-hasPromotionMessage',
+            '.listgrid-container#promotionMessages',
+            'true'
+        );
     });
 
     function hideOrderFields(compareValue) {

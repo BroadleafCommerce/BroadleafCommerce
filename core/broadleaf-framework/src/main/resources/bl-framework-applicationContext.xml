@@ -238,4 +238,16 @@
         <property name="collectionRef" value="blFrameworkConditionalDirectCopyTransformers"/>
         <property name="targetRef" value="blConditionalDirectCopyTransformers"/>
     </bean>
+
+    <bean id="blPromotionMessageProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
+            <set>
+                <ref bean="blPromotionMessageProcessor" />
+            </set>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blPromotionMessageProcessors" />
+        <property name="targetRef" value="blDialectProcessors" />
+    </bean>
 </beans>

@@ -41,6 +41,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
@@ -51,6 +52,9 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.common.web.Locatable;
+import org.broadleafcommerce.core.offer.domain.OfferAdminPresentation;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -319,6 +323,18 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             parentObjectProperty = "product",
             gridVisibleFields = {"name", "type", "required"})
     protected List<ProductOptionXref> productOptions = new ArrayList<ProductOptionXref>();
+
+    @Column(name = "HAS_PROMO_MSG_OVERRIDES")
+    @AdminPresentation(friendlyName = "ProductImpl_HasPromotionMessageOverrides",
+            group = GroupName.Marketing, defaultValue = "false")
+    protected Boolean hasPromotionMessageOverrides = false;
+
+    @OneToMany(mappedBy = "product", targetEntity = PromotionMessageImpl.class, cascade = {CascadeType.ALL})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(friendlyName = "ProductImpl_PromotionMessageOverrides",
+            group = GroupName.Marketing,
+            addType = AddMethodType.PERSIST)
+    protected List<PromotionMessage> promotionMessageOverrides = new ArrayList<>();
 
     @Transient
     protected Map<String, Set<String>> productOptionMap;
@@ -627,6 +643,22 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     }
 
     @Override
+    public List<Long> getParentCategoryHierarchyIds() {
+        List<Long> parentCategoryHierarchyIds = new ArrayList<>();
+
+        List<CategoryProductXref> parentCategoryXrefs = getAllParentCategoryXrefs();
+        for (CategoryProductXref xref : parentCategoryXrefs) {
+            Category xrefCategory = xref.getCategory();
+            List<Category> parentCategoryHierarchy = xrefCategory.getParentCategoryHierarchy(null);
+            for (Category hierarchyCategory : parentCategoryHierarchy) {
+                parentCategoryHierarchyIds.add(hierarchyCategory.getId());
+            }
+        }
+
+        return parentCategoryHierarchyIds;
+    }
+
+    @Override
     @Deprecated
     public List<Category> getAllParentCategories() {
         List<Category> parents = new ArrayList<Category>();
@@ -900,6 +932,24 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Override
     public void setDisplayTemplate(String displayTemplate) {
         this.displayTemplate = displayTemplate;
+    }
+
+    @Override
+    public Boolean getHasPromotionMessageOverrides() {
+        return hasPromotionMessageOverrides == null ? Boolean.FALSE : hasPromotionMessageOverrides;
+    }
+
+    @Override
+    public void setHasPromotionMessageOverrides(Boolean hasPromotionMessageOverrides) {
+        this.hasPromotionMessageOverrides = hasPromotionMessageOverrides;
+    }
+
+    public List<PromotionMessage> getPromotionMessageOverrides() {
+        return promotionMessageOverrides;
+    }
+
+    public void setPromotionMessageOverrides(List<PromotionMessage> promotionMessageOverrides) {
+        this.promotionMessageOverrides = promotionMessageOverrides;
     }
 
     @Override

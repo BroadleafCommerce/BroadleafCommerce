@@ -31,11 +31,13 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +46,13 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 @Repository("blOfferDao")
 public class OfferDaoImpl implements OfferDao {
@@ -186,5 +195,39 @@ public class OfferDaoImpl implements OfferDao {
     @Override
     public void setCurrentDateResolution(Long currentDateResolution) {
         this.currentDateResolution = currentDateResolution;
+    }
+
+    @Override
+    public List<Offer> readActiveOffersWithPromotionMessages() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Offer> criteriaQuery = builder.createQuery(Offer.class);
+        Root<OfferImpl> root = criteriaQuery.from(OfferImpl.class);
+        CriteriaQuery<Offer> select = criteriaQuery.select(root);
+
+        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
+
+        Subquery<Long> sub = criteriaQuery.subquery(Long.class);
+        Root<PromotionMessageImpl> subRoot = sub.from(PromotionMessageImpl.class);
+        sub.select(builder.count(subRoot));
+        List<Predicate> subRestrictions = new ArrayList<>();
+        Path<Object> offerIdPath = subRoot.get("offer").get("id");
+        subRestrictions.add(builder.or(
+                        builder.equal(offerIdPath, root.get("id")),
+                        builder.equal(offerIdPath, root.get("embeddableSandBoxDiscriminator").get("originalItemId"))));
+        subRestrictions.add(builder.lessThanOrEqualTo(subRoot.<Date>get("startDate"), currentDate));
+        subRestrictions.add(builder.or(
+                builder.isNull(subRoot.<Date>get("endDate")),
+                builder.greaterThanOrEqualTo(subRoot.<Date>get("endDate"), currentDate)));
+        sub.where(subRestrictions.toArray(new Predicate[subRestrictions.size()]));
+
+        List<Predicate> restrictions = new ArrayList<>();
+        restrictions.add(builder.greaterThan(sub, 0L));
+        restrictions.add(builder.lessThanOrEqualTo(root.<Date>get("startDate"), currentDate));
+        restrictions.add(builder.or(
+                builder.isNull(root.<Date>get("endDate")),
+                builder.greaterThanOrEqualTo(root.<Date>get("endDate"), currentDate)));
+        select.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        TypedQuery<Offer> query = em.createQuery(select);
+        return query.getResultList();
     }
 }

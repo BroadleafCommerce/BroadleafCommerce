@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -45,6 +46,9 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl;
+import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -335,6 +339,18 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         }
     )
     Map<String, OfferOfferRuleXref> offerMatchRules = new HashMap<String, OfferOfferRuleXref>();
+
+    @Column(name = "HAS_PROMOTION_MESSAGE")
+    @AdminPresentation(friendlyName = "OfferImpl_HasPromotionMessage",
+            group = GroupName.Marketing, defaultValue = "false")
+    protected Boolean hasPromotionMessage = false;
+
+    @OneToMany(mappedBy = "offer", targetEntity = PromotionMessageImpl.class, cascade = {CascadeType.ALL})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(friendlyName = "OfferImpl_PromotionMessages",
+            group = GroupName.Marketing,
+            addType = AddMethodType.PERSIST)
+    protected List<PromotionMessage> promotionMessages = new ArrayList<>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -720,6 +736,40 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setRequiresRelatedTargetAndQualifiers(Boolean requiresRelatedTargetAndQualifiers) {
         this.requiresRelatedTargetAndQualifiers = requiresRelatedTargetAndQualifiers;
+    }
+
+    @Override
+    public List<PromotionMessage> getPromotionMessages() {
+        return promotionMessages;
+    }
+
+    @Override
+    public List<PromotionMessage> getPromotionMessagesByType(PromotionMessageType desiredPromotionMessageType) {
+        List filteredPromotionMessages = new ArrayList();
+
+        for (PromotionMessage promotionMessage : getPromotionMessages()) {
+            if (StringUtils.equals(desiredPromotionMessageType.getType(), promotionMessage.getType())
+                    || StringUtils.equals(PromotionMessageType.TARGETS_OR_QUALIFIERS.getType(), promotionMessage.getType())) {
+                filteredPromotionMessages.add(promotionMessage);
+            }
+        }
+
+        return filteredPromotionMessages;
+    }
+
+    @Override
+    public void setPromotionMessages(List<PromotionMessage> promotionMessages) {
+        this.promotionMessages = promotionMessages;
+    }
+
+    @Override
+    public Boolean getHasPromotionMessage() {
+        return hasPromotionMessage == null ? Boolean.FALSE : hasPromotionMessage;
+    }
+
+    @Override
+    public void setHasPromotionMessage(Boolean hasPromotionMessage) {
+        this.hasPromotionMessage = hasPromotionMessage;
     }
 
     @Override

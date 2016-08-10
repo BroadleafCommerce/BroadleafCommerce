@@ -58,7 +58,12 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             }
         ),
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Marketing,
-            order = ProductAdminPresentation.TabOrder.Marketing
+            order = ProductAdminPresentation.TabOrder.Marketing,
+            groups = {
+                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Marketing,
+                    order = ProductAdminPresentation.GroupOrder.Marketing,
+                    untitled = true)
+            }
         ),
         @AdminTabPresentation(name = ProductAdminPresentation.TabName.Media,
             order = ProductAdminPresentation.TabOrder.Media
@@ -140,6 +145,8 @@ public interface ProductAdminPresentation {
         public static final String Financial = "ProductImpl_Financial";
         public static final String Miscellaneous = "ProductImpl_General_Misc";
 
+        public static final String Marketing = "ProductImpl_Marketing";
+
         public static final String ProductOptionsAdvanced = "ProductImpl_Options_Advanced";
 
         public static final String Price = "SkuImpl_Price";
@@ -162,6 +169,8 @@ public interface ProductAdminPresentation {
         public static final int ActiveDateRange = 3000;
         public static final int Financial = 4000;
         public static final int Miscellaneous = 5000;
+
+        public static final int Marketing = 1000;
 
         public static final int ProductOptionsAdvanced = 1000;
 
