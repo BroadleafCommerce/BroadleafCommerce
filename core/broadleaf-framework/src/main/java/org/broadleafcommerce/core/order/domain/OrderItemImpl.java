@@ -44,6 +44,7 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
@@ -53,6 +54,7 @@ import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.proxy.HibernateProxy;
 
 import javax.persistence.CascadeType;
 import javax.persistence.*;
@@ -226,7 +228,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     protected OrderItem parentOrderItem;
 
     @Transient
-    protected Category sbClonedCategory;
+    protected Category deproxiedCategory;
     
     @Override
     public Money getRetailPrice() {
@@ -301,25 +303,27 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Category getCategory() {
-        //This guarantees that the category is the correct one based on sandboxed state.  If it has been overridden/cloned in the local site,
-        //  that overridden/cloned category will be used.
-        if (sbClonedCategory == null) {
-            GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
-            if (genericEntityDao != null) {
-                Long id = category.getId();
-                genericEntityDao.getEntityManager().detach(category);
-                sbClonedCategory = genericEntityDao.getEntityManager().find(CategoryImpl.class, id);
+        if (deproxiedCategory == null) {
+            if (category instanceof HibernateProxy) {
+                GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
+                if (genericEntityDao != null) {
+                    Long id = category.getId();
+                    genericEntityDao.getEntityManager().detach(category);
+                    deproxiedCategory = genericEntityDao.getEntityManager().find(CategoryImpl.class, id);
+                } else {
+                    deproxiedCategory = HibernateUtils.deproxy(category);
+                }
             } else {
-                sbClonedCategory = category;
+                deproxiedCategory = category;
             }
         }
-        return sbClonedCategory;
+        return deproxiedCategory;
     }
 
     @Override
     public void setCategory(Category category) {
         this.category = category;
-        sbClonedCategory = null;
+        deproxiedCategory = null;
     }
 
     @Override
