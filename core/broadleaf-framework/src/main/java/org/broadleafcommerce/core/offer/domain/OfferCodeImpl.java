@@ -157,7 +157,7 @@ public class OfferCodeImpl implements OfferCode {
         //  then that overridden/cloned offer will be used.
         if (sbClonedOffer == null) {
             GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
-            if (genericEntityDao != null) {
+            if (genericEntityDao != null && offer != null && offer.getId() != null) {
                 Long id = offer.getId();
                 genericEntityDao.getEntityManager().detach(offer);
                 sbClonedOffer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
