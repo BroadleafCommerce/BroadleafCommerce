@@ -45,6 +45,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,6 +64,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "BLC_OFFER_CODE")
@@ -136,6 +138,9 @@ public class OfferCodeImpl implements OfferCode {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<Order> orders = new ArrayList<Order>();
 
+    @Transient
+    protected Offer sbClonedOffer;
+    
     @Override
     public Long getId() {
         return id;
@@ -148,23 +153,25 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public Offer getOffer() {
-        //When traversing through an Order via order.addedOfferCodes, the parent class (order) is not considered sandboxable and subsequently the Offer will not be either
-        //This code correcly finds the sandboxable version of the Offer
-        Offer deproxiedOffer = null;
-        GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
-        if (genericEntityDao != null && offer != null) {
-            Long id = offer.getId();
-            genericEntityDao.getEntityManager().detach(offer);
-            deproxiedOffer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
-        } else {
-            deproxiedOffer = HibernateUtils.deproxy(offer);
+        //This guarantees that the offer is the correct one based on sandboxed state.  If the offer has been overridden/cloned in the local site,
+        //  then that overridden/cloned offer will be used.
+        if (sbClonedOffer == null) {
+            GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
+            if (genericEntityDao != null && offer != null && offer.getId() != null) {
+                Long id = offer.getId();
+                genericEntityDao.getEntityManager().detach(offer);
+                sbClonedOffer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
+            } else {
+                sbClonedOffer = offer;
+            }
         }
-        return deproxiedOffer;
+        return sbClonedOffer;
     }
 
     @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
+        sbClonedOffer = null;
     }
 
     @Override

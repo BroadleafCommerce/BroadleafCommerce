@@ -44,14 +44,17 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.proxy.HibernateProxy;
 
 import javax.persistence.CascadeType;
 import javax.persistence.*;
@@ -223,6 +226,9 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @JoinColumn(name = "PARENT_ORDER_ITEM_ID")
     @Index(name="ORDERITEM_PARENT_INDEX", columnNames={"PARENT_ORDER_ITEM_ID"})
     protected OrderItem parentOrderItem;
+
+    @Transient
+    protected Category deproxiedCategory;
     
     @Override
     public Money getRetailPrice() {
@@ -297,14 +303,19 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Category getCategory() {
-        Category deproxiedCategory = null;
-        GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
-        if (genericEntityDao != null && category != null) {
-            Long id = category.getId();
-            genericEntityDao.getEntityManager().detach(category);
-            deproxiedCategory = genericEntityDao.getEntityManager().find(CategoryImpl.class, id);
-        } else {
-            deproxiedCategory = HibernateUtils.deproxy(category);
+        if (deproxiedCategory == null) {
+            if (category instanceof HibernateProxy) {
+                GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
+                if (genericEntityDao != null) {
+                    Long id = category.getId();
+                    genericEntityDao.getEntityManager().detach(category);
+                    deproxiedCategory = genericEntityDao.getEntityManager().find(CategoryImpl.class, id);
+                } else {
+                    deproxiedCategory = HibernateUtils.deproxy(category);
+                }
+            } else {
+                deproxiedCategory = category;
+            }
         }
         return deproxiedCategory;
     }
@@ -312,6 +323,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Override
     public void setCategory(Category category) {
         this.category = category;
+        deproxiedCategory = null;
     }
 
     @Override
