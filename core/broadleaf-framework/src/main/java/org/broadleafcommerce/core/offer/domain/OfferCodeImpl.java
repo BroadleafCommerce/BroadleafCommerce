@@ -161,9 +161,11 @@ public class OfferCodeImpl implements OfferCode {
                 Long id = offer.getId();
                 genericEntityDao.getEntityManager().detach(offer);
                 sbClonedOffer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
-            } else {
-                sbClonedOffer = offer;
-            }
+            } 
+        }
+        //if for some reason the cloned offer was not found, at a minimum return the original offer (so we are not returning null)
+        if (sbClonedOffer == null) {
+            sbClonedOffer = offer;
         }
         return sbClonedOffer;
     }
