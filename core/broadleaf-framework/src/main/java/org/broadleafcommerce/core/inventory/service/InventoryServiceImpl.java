@@ -56,15 +56,10 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     @Override
     public boolean checkBasicAvailablility(Sku sku) {
         if(sku != null) {
-            Boolean available = sku.isAvailable();
-            if (available == null) {
-                available = true;
-            }
-            if (available && sku.isActive() && !InventoryType.UNAVAILABLE.equals(sku.getInventoryType())) {
+            if (sku.isActive() && !InventoryType.UNAVAILABLE.equals(sku.getInventoryType())) {
                 return true;
             }
         }
-
         return false;
     }
     
@@ -129,17 +124,18 @@ public class InventoryServiceImpl implements ContextualInventoryService {
             Map<Sku, Integer> inventories = new HashMap<>();
 
             for (Sku sku : skus) {
-                if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                    if (sku.getQuantityAvailable() == null) {
-                        inventories.put(sku, 0);
-                    } else {
-                        inventories.put(sku, sku.getQuantityAvailable());
+                Integer quantityAvailable = 0;
+                if(checkBasicAvailablility(sku)) {
+                    InventoryType skuInventoryType = sku.getInventoryType();
+                    if(InventoryType.CHECK_QUANTITY.equals(skuInventoryType)) {
+                        if(sku.getQuantityAvailable() != null) {
+                            quantityAvailable = sku.getQuantityAvailable();
+                        }
+                    } else if(sku.getInventoryType() == null || InventoryType.ALWAYS_AVAILABLE.equals(skuInventoryType)) {
+                        quantityAvailable = null;
                     }
-                } else if (sku.getInventoryType() == null || InventoryType.ALWAYS_AVAILABLE.equals(sku.getInventoryType())) {
-                    inventories.put(sku, null);
-                } else {
-                    inventories.put(sku, 0);
                 }
+                inventories.put(sku, quantityAvailable);
             }
 
             return inventories;
