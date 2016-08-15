@@ -31,6 +31,9 @@ import java.util.Map.Entry;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
 
+/**
+ * Convenience methods for interacting with Java String types
+ */
 public class StringUtil {
 
     public static long getChecksum(String test) {
@@ -148,4 +151,15 @@ public class StringUtil {
 
         return sb.toString();
     }
+
+    /**
+     * Parses out non-numeric characters
+     * @param value
+     * @return
+     */
+    public static String removeNonNumerics(String value) {
+        return value.replaceAll("[^\\d.]+", "").trim();
+
+    }
+
 }

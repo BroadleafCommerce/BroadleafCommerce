@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.web.expression;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -88,7 +89,7 @@ public class BLCVariableExpression implements BroadleafVariableExpression {
      */
     public String getPrice(String amount) {
         Money price = Money.ZERO;
-        String sanitizedAmount = amount.replaceAll("[^\\d.]+", "").trim();
+        String sanitizedAmount = StringUtil.removeNonNumerics(amount);
         if(StringUtils.isEmpty(amount)) {
             Double rawValue = Double.parseDouble(sanitizedAmount);
             BigDecimal value = new BigDecimal(rawValue);
