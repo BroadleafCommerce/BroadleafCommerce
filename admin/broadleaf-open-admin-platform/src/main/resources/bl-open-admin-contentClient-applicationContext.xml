@@ -29,6 +29,8 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.server.service.artifact.upload.*"/>
     </context:component-scan>
 
+    <bean id="blAdminLogoutSuccessHandler" class="org.broadleafcommerce.openadmin.security.BroadleafAdminLogoutSuccessHandler"/>
+
     <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
         <property name="xsrfProtectionEnabled" value="true" />
         <property name="xssProtectionEnabled" value="false" />
