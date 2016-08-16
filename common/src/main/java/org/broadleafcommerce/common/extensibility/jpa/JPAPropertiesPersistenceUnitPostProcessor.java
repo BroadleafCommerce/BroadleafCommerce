@@ -23,7 +23,10 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.demo.CompositeAutoImportSql;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 
@@ -66,6 +69,9 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
 
     protected Map<String, String> persistenceUnitProperties = new HashMap<String, String>();
     protected Map<String, String> overrideProperties = new HashMap<String, String>();
+
+    @Resource(name="blCompositeAutoImportSql")
+    protected CompositeAutoImportSql compositeAutoImportSql;
 
     @Value("${blPU.hibernate.hbm2ddl.auto}")
     protected String blPUHibernateHbm2ddlAuto;
@@ -119,7 +125,14 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
         if (!blPUHibernateShow_sql.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.show_sql", blPUHibernateShow_sql);
         if (!blPUHibernateCacheUse_second_level_cache.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.cache.use_second_level_cache", blPUHibernateCacheUse_second_level_cache);
         if (!blPUHibernateCacheUse_query_cache.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.cache.use_query_cache", blPUHibernateCacheUse_query_cache);
-        if (!blPUHibernateHbm2ddlImport_files.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files", blPUHibernateHbm2ddlImport_files);
+        if (!blPUHibernateHbm2ddlImport_files.startsWith("${") && !"null".equals(blPUHibernateHbm2ddlImport_files)) {
+            persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files", blPUHibernateHbm2ddlImport_files);
+        } else {
+            String autoImportSql = compositeAutoImportSql.compileSqlFilePathList("blPU");
+            if (!StringUtils.isEmpty(autoImportSql)) {
+                persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files", autoImportSql);
+            }
+        }
         if (!blPUHibernateHbm2ddlImport_files_sql_extractor.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files_sql_extractor", blPUHibernateHbm2ddlImport_files_sql_extractor);
 
         if (!blCMSStorageHibernateHbm2ddlAuto.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.hbm2ddl.auto", blCMSStorageHibernateHbm2ddlAuto);
