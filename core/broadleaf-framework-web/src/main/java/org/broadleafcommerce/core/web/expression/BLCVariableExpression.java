@@ -18,14 +18,18 @@
 
 package org.broadleafcommerce.core.web.expression;
 
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogURLService;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 /**
  * Exposes "blc" to expressions to the Thymeleaf expression context.
@@ -75,5 +79,23 @@ public class BLCVariableExpression implements BroadleafVariableExpression {
             }
         }
         return currentUrl;
+    }
+
+    /**
+     * Returns the price at the correct scale and rounding for the default currency
+     * @see Money#defaultCurrency()
+     * @param amount
+     * @return
+     */
+    public String getPrice(String amount) {
+        Money price = Money.ZERO;
+        String sanitizedAmount = StringUtil.removeNonNumerics(amount);
+        if(StringUtils.isEmpty(amount)) {
+            Double rawValue = Double.parseDouble(sanitizedAmount);
+            BigDecimal value = new BigDecimal(rawValue);
+            price = BroadleafCurrencyUtils.getMoney(value);
+        }
+        String priceString = price.getAmount().toString();
+        return priceString;
     }
 }

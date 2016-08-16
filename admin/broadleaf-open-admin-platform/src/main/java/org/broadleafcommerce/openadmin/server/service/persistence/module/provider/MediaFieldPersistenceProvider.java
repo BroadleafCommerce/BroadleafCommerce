@@ -157,7 +157,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     throw new IllegalArgumentException(e);
                 }
                 if (media != null) {
-                    if ('Y' == ((Status) media).getArchived()) {
+                    if (media instanceof Status && 'Y' == ((Status) media).getArchived()) {
                         persist = true;
                     }
                     populateValueRequest.getProperty().setOriginalValue(convertMediaToJson(media));
