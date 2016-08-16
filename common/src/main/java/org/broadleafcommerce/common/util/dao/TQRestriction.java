@@ -101,7 +101,7 @@ public class TQRestriction {
             if (parameter != null) {
                 sb.append(' ');
                 String pname = ':' + parameterName;
-                if (operation.equals("in")) {
+                if (operation.equals("in") || operation.equals("not in")) {
                     pname = "(" + pname + ")";
                 }
                 sb.append(pname);
