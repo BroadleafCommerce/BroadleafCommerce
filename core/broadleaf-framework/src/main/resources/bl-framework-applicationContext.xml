@@ -41,14 +41,7 @@
     </bean>
     
     <bean id="blAttributeSource" class="org.broadleafcommerce.common.jmx.AnnotationJmxAttributeSource">
-        <constructor-arg>
-            <bean class="org.springframework.jndi.JndiObjectFactoryBean">
-                <property name="jndiName">
-                    <value>java:comp/env/appName</value>
-                </property>
-                <property name="defaultObject" value="broadleaf"/>
-            </bean>
-        </constructor-arg>
+        <constructor-arg ref="blJmxNamingBean"/>
     </bean>
     
     <bean id="blAssembler" class="org.broadleafcommerce.common.jmx.MetadataMBeanInfoAssembler">
