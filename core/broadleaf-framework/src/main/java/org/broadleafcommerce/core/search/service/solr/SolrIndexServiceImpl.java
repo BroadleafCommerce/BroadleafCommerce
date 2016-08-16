@@ -35,10 +35,14 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.StopWatch;
 import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.common.util.Tuple;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -114,6 +118,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Resource(name = "blSkuDao")
     protected SkuDao skuDao;
+
+    @Resource(name = "blCategoryDao")
+    protected CategoryDao categoryDao;
 
     @Resource(name = "blFieldDao")
     protected FieldDao fieldDao;
@@ -662,22 +669,18 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     /**
      * Adds the ID, category, and explicitCategory fields for the product or sku to the document
      * 
-     * @param product
      * @param sku
      * @param document
      */
     protected void attachBasicDocumentFields(Sku sku, SolrInputDocument document) {
-        boolean cacheOperationManaged = false;
+        Boolean cacheOperationManaged = false;
         Product product = sku.getProduct();
+
         try {
-            CatalogStructure cache = SolrIndexCachedOperation.getCache();
-            if (cache != null) {
-                cacheOperationManaged = true;
-            } else {
-                cache = new CatalogStructure();
-                SolrIndexCachedOperation.setCache(cache);
-                solrIndexDao.populateProductCatalogStructure(Arrays.asList(product.getId()), SolrIndexCachedOperation.getCache());
-            }
+            Tuple<CatalogStructure, Boolean> managedCache = getStructuredCache(product);
+            CatalogStructure cache = managedCache.getFirst();
+            cacheOperationManaged = managedCache.getSecond();
+
             // Add the namespace and ID fields for this product
             document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, sku));
@@ -687,18 +690,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             // The explicit categories are the ones defined by the product itself
             if (cache.getParentCategoriesByProduct().containsKey(shs.getProductId(product))) {
                 for (Long categoryId : cache.getParentCategoriesByProduct().get(shs.getProductId(product))) {
-                    document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
-
-                    String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
-                    String displayOrderKey = categoryId + "-" + shs.getProductId(product);
-                    Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
-
-                    if (document.getField(categorySortFieldName) == null) {
-                        document.addField(categorySortFieldName, displayOrder);
-                    }
-
-                    // This is the entire tree of every category defined on the product
-                    buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
+                    buildCategoryDocument(categoryId, product, document, cache);
                 }
             }
         } finally {
@@ -708,17 +700,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
     }
 
+
     protected void attachBasicDocumentFields(Product product, SolrInputDocument document) {
-        boolean cacheOperationManaged = false;
+        Boolean cacheOperationManaged = false;
         try {
-            CatalogStructure cache = SolrIndexCachedOperation.getCache();
-            if (cache != null) {
-                cacheOperationManaged = true;
-            } else {
-                cache = new CatalogStructure();
-                SolrIndexCachedOperation.setCache(cache);
-                solrIndexDao.populateProductCatalogStructure(Arrays.asList(product.getId()), SolrIndexCachedOperation.getCache());
-            }
+            Tuple<CatalogStructure, Boolean> managedCache = getStructuredCache(product);
+            CatalogStructure cache = managedCache.getFirst();
+            cacheOperationManaged = managedCache.getSecond();
             // Add the namespace and ID fields for this product
             document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
@@ -731,18 +719,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             // The explicit categories are the ones defined by the product itself
             if (cache.getParentCategoriesByProduct().containsKey(originalId)) {
                 for (Long categoryId : cache.getParentCategoriesByProduct().get(originalId)) {
-                    document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
-
-                    String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
-                    String displayOrderKey = categoryId + "-" + originalId;
-                    Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
-
-                    if (document.getField(categorySortFieldName) == null) {
-                        document.addField(categorySortFieldName, displayOrder);
-                    }
-
-                    // This is the entire tree of every category defined on the product
-                    buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
+                    buildCategoryDocument(categoryId, product, document, cache);
                 }
             }
         } finally {
@@ -750,6 +727,72 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 SolrIndexCachedOperation.clearCache();
             }
         }
+    }
+
+    /**
+     *
+     * @param categoryId
+     * @param product
+     * @param document
+     * @param cache
+     */
+    protected void buildCategoryDocument(Long categoryId, Product product, SolrInputDocument document, CatalogStructure cache) {
+        document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
+
+        String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
+        Long displayOrder = determineDisplayOrderValue(cache, categoryId, product);
+
+        if (document.getField(categorySortFieldName) == null) {
+            document.addField(categorySortFieldName, displayOrder);
+        }
+
+        // This is the entire tree of every category defined on the product
+        buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
+    }
+
+    /**
+     *
+     * @param product
+     * @return
+     */
+    protected Tuple<CatalogStructure, Boolean> getStructuredCache(Product product) {
+        CatalogStructure cache = SolrIndexCachedOperation.getCache();
+        Boolean cacheOperationManage = false;
+        if (cache != null) {
+            cacheOperationManage = true;
+        } else {
+            cache = new CatalogStructure();
+            SolrIndexCachedOperation.setCache(cache);
+            solrIndexDao.populateProductCatalogStructure(Arrays.asList(product.getId()), SolrIndexCachedOperation.getCache());
+        }
+        return new Tuple<>(cache, cacheOperationManage);
+    }
+
+    /**
+     * Utility method to first try to read display order from cache
+     * before making Database call.
+     *
+     * @param cache
+     * @param categoryId
+     * @param product
+     * @return
+     */
+    protected Long determineDisplayOrderValue(CatalogStructure cache, Long categoryId, Product product) {
+        String displayOrderKey = categoryId + "-" + shs.getProductId(product);
+        BigDecimal rawDisplayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
+
+        if(rawDisplayOrder == null) {
+            Category category = categoryDao.readCategoryById(categoryId);
+            List<CategoryProductXref> categoryProductXrefs = category.getAllProductXrefs();
+            for(CategoryProductXref xref  : categoryProductXrefs) {
+                if(product.equals(xref.getProduct())) {
+                    rawDisplayOrder = xref.getDisplayOrder();
+                }
+            }
+        }
+        Long displayOrder = convertDisplayOrderToLong(rawDisplayOrder);
+
+        return displayOrder;
     }
 
     /**
@@ -782,9 +825,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * 
      * { "en_US" : "A description",
      *   "es_ES" : "Una descripcion" }
-     * 
-     * @param product
-     * @param sku
+     *
      * @param field
      * @param fieldType
      * @param locales
@@ -919,12 +960,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      *  We multiply the BigDecimal by 1,000,000 to maintain any possible decimals in use the
      *  displayOrder value.
      *
-     * @param cache
-     * @param displayOrderKey
      * @return
      */
-    protected Long convertDisplayOrderToLong(CatalogStructure cache, String displayOrderKey) {
-        BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-        return displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
+    protected Long convertDisplayOrderToLong(BigDecimal displayOrder) {
+        if(displayOrder != null) {
+            return displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
+        }
+        return null;
     }
 }
