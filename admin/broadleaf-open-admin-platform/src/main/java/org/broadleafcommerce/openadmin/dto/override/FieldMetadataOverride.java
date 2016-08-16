@@ -80,7 +80,6 @@ public class FieldMetadataOverride extends MetadataOverride {
     private SupportedFieldType secondaryType = SupportedFieldType.INTEGER;
     private Integer length;
     private Boolean required;
-    private Boolean allowNoValueEnumOption;
     private Boolean unique;
     private Integer scale;
     private Integer precision;
@@ -113,6 +112,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private Boolean readOnly;
     private Map<String, List<Map<String, String>>> validationConfigurations;
     private Boolean requiredOverride;
+    private Boolean allowNoValueEnumOption;
     private String tooltip;
     private String helpText;
     private String hint;

@@ -196,6 +196,7 @@
             <xsd:enumeration value="optionDisplayFieldName"/>
             <xsd:enumeration value="optionHideIfEmpty"/>
             <xsd:enumeration value="requiredOverride"/>
+            <xsd:enumeration value="allowNoValueEnumOption"/>
             <xsd:enumeration value="addType"/>
             <xsd:enumeration value="removeType"/>
             <xsd:enumeration value="fetchType"/>
