@@ -257,6 +257,7 @@ public class BroadleafCartController extends AbstractCartController {
     protected ConfigurableOrderItemRequest createConfigurableOrderItemRequest(Product product) {
         ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
         itemRequest.setProduct(product);
+        itemRequest.setSkuId(product.getDefaultSku().getId());
         itemRequest.setQuantity(1);
         itemRequest.setDisplayPrice(product.getSalePrice());
         return itemRequest;
