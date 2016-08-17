@@ -613,4 +613,9 @@ public class OfferServiceImpl implements OfferService {
     public void setOrderService(OrderService orderService) {
         this.orderService = orderService;
     }
+
+    @Override
+    public Offer findOfferById(Long offerId) {
+        return offerDao.readOfferById(offerId);
+    }
 }
