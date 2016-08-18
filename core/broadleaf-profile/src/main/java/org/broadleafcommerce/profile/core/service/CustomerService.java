@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
+import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordReset;
 import org.broadleafcommerce.common.service.GenericResponse;
@@ -269,5 +270,14 @@ public interface CustomerService {
      * @return true if the unencoded password matches the encoded password, false otherwise
      */
     public boolean isPasswordValid(String rawPassword, String encodedPassword);
+
+    /**
+     * Determines if the given customer passes the MVEL customer rule
+     *
+     * @param customer
+     * @param customerRuleHolder an MVEL rule targeting Customers
+     * @return true if the customer passes the rule, false otherwise
+     */
+    public boolean customerPassesCustomerRule(Customer customer, CustomerRuleHolder customerRuleHolder);
 
 }
