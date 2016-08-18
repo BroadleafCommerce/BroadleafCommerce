@@ -98,23 +98,6 @@
 
     <mo:override id="blMetadataOverrides"/>
 
-    <bean id="blMessageSourceBaseNames" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
-        <property name="sourceList">
-            <list>
-                <value>classpath:/messages/GeneratedMessagesEntityCommon</value>
-                <value>classpath:/messages/GeneratedMessagesEntityFramework</value>
-                <value>classpath:/messages/GeneratedMessagesEntityOpenAdmin</value>
-                <value>classpath:/messages/GeneratedMessagesEntityProfile</value>
-                <value>classpath:/messages/OpenAdminMessages</value>
-                <value>classpath:/messages/OpenAdminJavascriptMessages</value>
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
-        <property name="basenames" ref="blMessageSourceBaseNames"/>
-    </bean>
-
     <bean id="blStringLikeRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
         <property name="filterValueConverter" ref="blStringLikeFilterValueConverter"/>
         <property name="predicateProvider" ref="blLikePredicateProvider"/>
