@@ -17,11 +17,12 @@
  */
 package org.broadleafcommerce.core.promotionMessage.processor;
 
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
-import org.broadleafcommerce.core.promotionMessage.service.PromotionMessageService;
+import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
+import org.broadleafcommerce.core.promotionMessage.service.PromotionMessageGenerator;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -30,8 +31,8 @@ import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -45,14 +46,14 @@ public class PromotionMessageProcessor extends AbstractLocalVariableDefinitionEl
 
     public static final String PRODUCT = "product";
 
-    @Resource(name="blPromotionMessageService")
-    protected PromotionMessageService promotionMessageService;
+    @Resource(name = "blPromotionMessageGenerators")
+    protected List<PromotionMessageGenerator> generators;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
      */
     public PromotionMessageProcessor() {
-        super("offer_promotion_messages");
+        super("promotion_messages");
     }
     
     @Override
@@ -63,10 +64,14 @@ public class PromotionMessageProcessor extends AbstractLocalVariableDefinitionEl
     @Override
     protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
         Product product = getProductFromArguments(arguments, element);
-        Set<PromotionMessage> promotionMessages = promotionMessageService.findActivePromotionMessagesForProduct(product);
+
+        Map<String, List<PromotionMessageDTO>> promotionMessages = new MultiValueMap();
+        for (PromotionMessageGenerator generator : generators) {
+            promotionMessages.putAll(generator.generatePromotionMessages(product));
+        }
 
         Map<String, Object> newVars = new HashMap<>();
-        newVars.put("promotionMessages", promotionMessages);
+        newVars.put("promotionMessageMap", promotionMessages);
         return newVars;
     }
 
