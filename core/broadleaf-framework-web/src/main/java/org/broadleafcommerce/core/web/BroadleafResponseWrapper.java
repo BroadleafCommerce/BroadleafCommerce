@@ -22,12 +22,13 @@ import org.apache.commons.logging.LogFactory;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.AccessControlException;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jfischer

@@ -18,11 +18,11 @@
 package org.broadleafcommerce.common.util;
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.owasp.esapi.ESAPI;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class UrlUtil {
     public static String generateUrlKey(String toConvert) {
