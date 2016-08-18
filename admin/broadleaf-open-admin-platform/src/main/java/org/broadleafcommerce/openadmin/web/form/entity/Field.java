@@ -42,6 +42,7 @@ public class Field {
     protected String fieldComponentRenderer;
     protected String foreignKeyDisplayValueProperty;
     protected String foreignKeyClass;
+    protected String foreignKeySectionPath;
     protected String owningEntityClass;
     protected String idOverride;
     protected Integer order;
@@ -66,6 +67,7 @@ public class Field {
     protected String tooltip;
     protected String help;
     protected String translationFieldName;
+    protected Boolean allowNoValueEnumOption = false;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     /* ************ */
@@ -114,6 +116,11 @@ public class Field {
 
     public Field withForeignKeyClass(String foreignKeyClass) {
         setForeignKeyClass(foreignKeyClass);
+        return this;
+    }
+
+    public Field withForeignKeySectionPath(String foreignKeySectionPath) {
+        setForeignKeySectionPath(foreignKeySectionPath);
         return this;
     }
 
@@ -307,6 +314,14 @@ public class Field {
         this.isConfirmEnabled = isConfirmEnabled;
     }
 
+    public Boolean getAllowNoValueEnumOption() {
+        return allowNoValueEnumOption;
+    }
+
+    public void setAllowNoValueEnumOption(Boolean allowNoValueEnumOption) {
+        this.allowNoValueEnumOption = allowNoValueEnumOption;
+    }
+
     public String getConfirmEnabledText() {
         return confirmEnabledText;
     }
@@ -441,6 +456,14 @@ public class Field {
 
     public void setForeignKeyClass(String foreignKeyClass) {
         this.foreignKeyClass = foreignKeyClass;
+    }
+
+    public String getForeignKeySectionPath() {
+        return foreignKeySectionPath;
+    }
+
+    public void setForeignKeySectionPath(String foreignKeySectionPath) {
+        this.foreignKeySectionPath = foreignKeySectionPath;
     }
 
     public String getOwningEntityClass() {

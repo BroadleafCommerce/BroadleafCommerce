@@ -721,17 +721,22 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         String crumbs = request.getParameter("sectionCrumbs");
         List<SectionCrumb> myCrumbs = validationService.getSectionCrumbs(crumbs, "blPU");
         if (currentSection != null && currentSectionId != null) {
-            SectionCrumb crumb = new SectionCrumb();
-            if (currentSection.startsWith("/")) {
-                currentSection = currentSection.substring(1, currentSection.length());
-            }
-            crumb.setSectionIdentifier(currentSection);
-            crumb.setSectionId(currentSectionId);
+            SectionCrumb crumb = createSectionCrumb(currentSection, currentSectionId);
             if (!myCrumbs.contains(crumb)) {
                 myCrumbs.add(crumb);
             }
         }
         return myCrumbs;
+    }
+
+    protected SectionCrumb createSectionCrumb(String currentSection, String currentSectionId) {
+        SectionCrumb crumb = new SectionCrumb();
+        if (currentSection.startsWith("/")) {
+            currentSection = currentSection.substring(1, currentSection.length());
+        }
+        crumb.setSectionIdentifier(currentSection);
+        crumb.setSectionId(currentSectionId);
+        return crumb;
     }
 
     /**

@@ -154,7 +154,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     protected DataFormatProvider dataFormatProvider;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
-            VisibilityEnum.HIDDEN_ALL
+            VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN
     };
     
     protected static final VisibilityEnum[] GRID_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
@@ -296,6 +296,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
           .withColumnWidth(fmd.getColumnWidth())
           .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
           .withForeignKeyClass(fmd.getForeignKeyClass())
+          .withForeignKeySectionPath(getAdminSectionPath(fmd.getForeignKeyClass()))
           .withOwningEntityClass(fmd.getOwningClass() != null ? fmd.getOwningClass() : fmd.getTargetClass());
         String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
         hf.setFieldType(fieldType);
@@ -921,6 +922,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         required = fmd.getRequired();
                     }
 
+                    Boolean allowNoValueEnum = fmd.getAllowNoValueEnumOption();
+                    if(allowNoValueEnum != null){
+                        f.setAllowNoValueEnumOption(allowNoValueEnum);
+                    }
+
                     f.withName(property.getName())
                          .withFieldType(fieldType)
                          .withFieldComponentRenderer(fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString())
@@ -928,6 +934,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withFriendlyName(fmd.getFriendlyName())
                          .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
                          .withForeignKeyClass(fmd.getForeignKeyClass())
+                         .withForeignKeySectionPath(getAdminSectionPath(fmd.getForeignKeyClass()))
                          .withOwningEntityClass(fmd.getOwningClass()!=null?fmd.getOwningClass():fmd.getInheritedFromType())
                          .withRequired(required)
                          .withReadOnly(fmd.getReadOnly())
@@ -950,7 +957,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
 
                     // If is form hidden, set visible to false
-                    if (VisibilityEnum.FORM_HIDDEN.equals(fmd.getVisibility())) {
+                    if (VisibilityEnum.FORM_EXPLICITLY_HIDDEN.equals(fmd.getVisibility())) {
                         f.setIsVisible(false);
                     }
 
@@ -967,6 +974,21 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         for (Field f : homelessFields) {
             ef.addField(cmd, f, null, null, null, null);
         }
+    }
+
+    /**
+     * This method gets the {@link AdminSection} for the given foreignKeyClass parameter. If none exists,
+     * it returns the foreignKeyClass.
+     *
+     * @param foreignKeyClass the {@link String} class name
+     * @return the admin section pathname
+     */
+    protected String getAdminSectionPath(String foreignKeyClass) {
+        if (foreignKeyClass != null) {
+            AdminSection foreignKeySection = adminNavigationService.findAdminSectionByClassAndSectionId(foreignKeyClass, null);
+            return foreignKeySection != null ? foreignKeySection.getUrl() : foreignKeyClass;
+        }
+        return null;
     }
 
     protected void setEntityFormTabsAndGroups(EntityForm ef, Map<String, TabMetadata> tabMetadataMap) {
