@@ -18,8 +18,6 @@
 package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.UrlUtil;
@@ -33,7 +31,6 @@ import org.broadleafcommerce.core.search.redirect.service.SearchRedirectService;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
-import org.owasp.esapi.ESAPI;
 import org.springframework.ui.Model;
 
 import java.io.IOException;
