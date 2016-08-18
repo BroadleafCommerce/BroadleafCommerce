@@ -26,7 +26,6 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandid
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
@@ -124,11 +123,4 @@ public interface OfferServiceExtensionHandler extends ExtensionHandler {
      */
     ExtensionResultStatusType applyAdditionalRuleVariablesForItemOfferEvaluation(PromotableOrderItem orderItem,
             HashMap<String, Object> vars);
-
-    /**
-     * Allows a module to append additional rule variables that may be needed for order item evaluation
-     * @param orderItem - the promotable order item in consideration
-     * @return
-     */
-    ExtensionResultStatusType applyAdditionalRuleVariablesForItemEvaluation(OrderItem orderItem);
 }

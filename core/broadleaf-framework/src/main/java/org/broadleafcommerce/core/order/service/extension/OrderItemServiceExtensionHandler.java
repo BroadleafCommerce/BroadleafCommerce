@@ -33,4 +33,11 @@ public interface OrderItemServiceExtensionHandler extends ExtensionHandler {
      * @return
      */
     public ExtensionResultStatusType modifyOrderItemPrices(OrderItem item);
+
+    /**
+     * Allows a module to append additional rule variables that may be needed for order item evaluation
+     * @param orderItem - the promotable order item in consideration
+     * @return
+     */
+    ExtensionResultStatusType applyAdditionalOrderItemProperties(OrderItem orderItem);
 }
