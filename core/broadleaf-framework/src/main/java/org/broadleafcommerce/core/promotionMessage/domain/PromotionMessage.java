@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.promotionMessage.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.Status;
 
 import java.io.Serializable;
@@ -37,14 +38,6 @@ public interface PromotionMessage extends Status, Serializable,MultiTenantClonea
 
     public void setName(String name);
 
-    public String getType();
-
-    public void setType(String type);
-
-    public PromotionMessage getOverriddenPromotionMessage();
-
-    public void setOverriddenPromotionMessage(PromotionMessage overriddenPromotionMessage);
-
     public String getMessage();
 
     public void setMessage(String message);
@@ -57,10 +50,6 @@ public interface PromotionMessage extends Status, Serializable,MultiTenantClonea
 
     public void setPriority(Integer priority);
 
-    public Boolean getExcludeFromDisplay();
-
-    public void setExcludeFromDisplay(Boolean excludeFromDisplay);
-
     public Date getStartDate();
 
     public void setStartDate(Date startDate);
@@ -68,5 +57,13 @@ public interface PromotionMessage extends Status, Serializable,MultiTenantClonea
     public Date getEndDate();
 
     public void setEndDate(Date endDate);
+
+    public String getMessagePlacement();
+
+    public void setMessagePlacement(String messagePlacement);
+
+    public Locale getLocale();
+
+    public void setLocale(Locale locale);
 
 }

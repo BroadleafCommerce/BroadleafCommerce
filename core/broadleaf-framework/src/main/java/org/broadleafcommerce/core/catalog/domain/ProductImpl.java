@@ -324,18 +324,6 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             gridVisibleFields = {"name", "type", "required"})
     protected List<ProductOptionXref> productOptions = new ArrayList<ProductOptionXref>();
 
-    @Column(name = "HAS_PROMO_MSG_OVERRIDES")
-    @AdminPresentation(friendlyName = "ProductImpl_HasPromotionMessageOverrides",
-            group = GroupName.Marketing, defaultValue = "false")
-    protected Boolean hasPromotionMessageOverrides = false;
-
-    @OneToMany(mappedBy = "product", targetEntity = PromotionMessageImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(friendlyName = "ProductImpl_PromotionMessageOverrides",
-            group = GroupName.Marketing,
-            addType = AddMethodType.PERSIST)
-    protected List<PromotionMessage> promotionMessageOverrides = new ArrayList<>();
-
     @Transient
     protected Map<String, Set<String>> productOptionMap;
 
@@ -932,24 +920,6 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Override
     public void setDisplayTemplate(String displayTemplate) {
         this.displayTemplate = displayTemplate;
-    }
-
-    @Override
-    public Boolean getHasPromotionMessageOverrides() {
-        return hasPromotionMessageOverrides == null ? Boolean.FALSE : hasPromotionMessageOverrides;
-    }
-
-    @Override
-    public void setHasPromotionMessageOverrides(Boolean hasPromotionMessageOverrides) {
-        this.hasPromotionMessageOverrides = hasPromotionMessageOverrides;
-    }
-
-    public List<PromotionMessage> getPromotionMessageOverrides() {
-        return promotionMessageOverrides;
-    }
-
-    public void setPromotionMessageOverrides(List<PromotionMessage> promotionMessageOverrides) {
-        this.promotionMessageOverrides = promotionMessageOverrides;
     }
 
     @Override

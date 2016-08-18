@@ -141,7 +141,7 @@
         BLCAdmin.addDependentFieldHandler(
             clazz,
             '#field-hasPromotionMessage',
-            '.listgrid-container#promotionMessages',
+            '.listgrid-container#promotionMessageXrefs',
             'true'
         );
     });

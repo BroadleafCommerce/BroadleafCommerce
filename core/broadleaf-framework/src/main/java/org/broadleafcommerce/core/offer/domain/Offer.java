@@ -244,9 +244,9 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     public void setHasPromotionMessage(Boolean hasPromotionMessage);
 
-    public List<PromotionMessage> getPromotionMessages();
+    public List<OfferPromotionMessageXref> getPromotionMessageXrefs();
 
-    public void setPromotionMessages(List<PromotionMessage> promotionMessages);
+    public void setPromotionMessageXrefs(List<OfferPromotionMessageXref> promotionMessageXrefs);
 
-    List<PromotionMessage> getPromotionMessagesByType(PromotionMessageType promotionMessageType);
+    List<PromotionMessage> getActivePromotionMessagesByType(PromotionMessageType promotionMessageType);
 }

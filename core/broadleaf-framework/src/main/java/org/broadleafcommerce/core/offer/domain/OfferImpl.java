@@ -345,12 +345,12 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             group = GroupName.Marketing, defaultValue = "false")
     protected Boolean hasPromotionMessage = false;
 
-    @OneToMany(mappedBy = "offer", targetEntity = PromotionMessageImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToMany(mappedBy = "offer", targetEntity = OfferPromotionMessageXrefImpl.class, cascade = {CascadeType.ALL})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentationCollection(friendlyName = "OfferImpl_PromotionMessages",
             group = GroupName.Marketing,
             addType = AddMethodType.PERSIST)
-    protected List<PromotionMessage> promotionMessages = new ArrayList<>();
+    protected List<OfferPromotionMessageXref> promotionMessageXrefs = new ArrayList<>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -738,18 +738,20 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         this.requiresRelatedTargetAndQualifiers = requiresRelatedTargetAndQualifiers;
     }
 
-    @Override
-    public List<PromotionMessage> getPromotionMessages() {
-        return promotionMessages;
+    public List<OfferPromotionMessageXref> getPromotionMessageXrefs() {
+        return promotionMessageXrefs;
     }
 
     @Override
-    public List<PromotionMessage> getPromotionMessagesByType(PromotionMessageType desiredPromotionMessageType) {
+    public List<PromotionMessage> getActivePromotionMessagesByType(PromotionMessageType desiredPromotionMessageType) {
         List filteredPromotionMessages = new ArrayList();
 
-        for (PromotionMessage promotionMessage : getPromotionMessages()) {
-            if (StringUtils.equals(desiredPromotionMessageType.getType(), promotionMessage.getType())
-                    || StringUtils.equals(PromotionMessageType.TARGETS_OR_QUALIFIERS.getType(), promotionMessage.getType())) {
+        for (OfferPromotionMessageXref xref : getPromotionMessageXrefs()) {
+            PromotionMessage promotionMessage = xref.getPromotionMessage();
+
+            boolean isDesiredType = StringUtils.equals(desiredPromotionMessageType.getType(), xref.getMessageType());
+            boolean typeIsTargetsOrQualifiers = StringUtils.equals(PromotionMessageType.TARGETS_OR_QUALIFIERS.getType(), xref.getMessageType());
+            if (promotionMessage.isActive() && (isDesiredType || typeIsTargetsOrQualifiers)) {
                 filteredPromotionMessages.add(promotionMessage);
             }
         }
@@ -757,9 +759,8 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         return filteredPromotionMessages;
     }
 
-    @Override
-    public void setPromotionMessages(List<PromotionMessage> promotionMessages) {
-        this.promotionMessages = promotionMessages;
+    public void setPromotionMessageXrefs(List<OfferPromotionMessageXref> promotionMessageXrefs) {
+        this.promotionMessageXrefs = promotionMessageXrefs;
     }
 
     @Override
