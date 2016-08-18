@@ -204,29 +204,15 @@ public class OfferDaoImpl implements OfferDao {
         Root<OfferImpl> root = criteriaQuery.from(OfferImpl.class);
         CriteriaQuery<Offer> select = criteriaQuery.select(root);
 
-        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
-
-        Subquery<Long> sub = criteriaQuery.subquery(Long.class);
-        Root<PromotionMessageImpl> subRoot = sub.from(PromotionMessageImpl.class);
-        sub.select(builder.count(subRoot));
-        List<Predicate> subRestrictions = new ArrayList<>();
-        Path<Object> offerIdPath = subRoot.get("offer").get("id");
-        subRestrictions.add(builder.or(
-                        builder.equal(offerIdPath, root.get("id")),
-                        builder.equal(offerIdPath, root.get("embeddableSandBoxDiscriminator").get("originalItemId"))));
-        subRestrictions.add(builder.lessThanOrEqualTo(subRoot.<Date>get("startDate"), currentDate));
-        subRestrictions.add(builder.or(
-                builder.isNull(subRoot.<Date>get("endDate")),
-                builder.greaterThanOrEqualTo(subRoot.<Date>get("endDate"), currentDate)));
-        sub.where(subRestrictions.toArray(new Predicate[subRestrictions.size()]));
-
         List<Predicate> restrictions = new ArrayList<>();
-        restrictions.add(builder.greaterThan(sub, 0L));
+        restrictions.add(builder.equal(root.get("hasPromotionMessage"), true));
+        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
         restrictions.add(builder.lessThanOrEqualTo(root.<Date>get("startDate"), currentDate));
         restrictions.add(builder.or(
                 builder.isNull(root.<Date>get("endDate")),
                 builder.greaterThanOrEqualTo(root.<Date>get("endDate"), currentDate)));
         select.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
         TypedQuery<Offer> query = em.createQuery(select);
         return query.getResultList();
     }
