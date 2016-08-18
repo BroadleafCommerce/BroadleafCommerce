@@ -27,12 +27,12 @@ import org.broadleafcommerce.common.currency.domain.BroadleafRequestedCurrencyDt
 import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.service.SandBoxService;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.util.DeployBehaviorUtil;
 import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
-import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -65,6 +65,8 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     private static final String SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "site.strict.validate.production.changes";
     public static final String SITE_DISABLE_SANDBOX_PREVIEW = "site.disable.sandbox.preview";
 
+    private static final String SANDBOX_ID_PARAM = "blSandboxId";
+
     @Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
 
@@ -85,6 +87,12 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
 
     @Resource(name = "blTimeZoneResolver")
     protected BroadleafTimeZoneResolver broadleafTimeZoneResolver;
+
+    @Resource(name = "blBaseUrlResolver")
+    protected BaseUrlResolver baseUrlResolver;
+
+    @Resource(name = "blSandBoxService")
+    protected SandBoxService sandBoxService;
     
     @Value("${thymeleaf.threadLocalCleanup.enabled}")
     protected boolean thymeleafThreadLocalCleanupEnabled = true;
@@ -148,17 +156,21 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
                 StringBuffer url = hsr.getRequestURL();
                 HttpServletResponse response = ((ServletWebRequest) request).getResponse();
 
-                if (hsr.getQueryString() != null) {
-                    url.append('?').append(hsr.getQueryString());
-                }
-
                 try {
-                    try {
-                        ESAPI.httpUtilities().sendRedirect(response, url.toString());
-                    } catch(Exception e) {
-                        LOG.error("SECURITY FAILURE Bad redirect location: " + url.toString(), e);
+                    if (!isUrlValid(url.toString())) {
+                        LOG.error("SECURITY FAILURE Bad redirect location: " + url.toString());
                         response.sendError(403);
+                        return;
                     }
+
+                    String sandboxId = hsr.getParameter(SANDBOX_ID_PARAM);
+
+                    if (isSandboxIdValid(sandboxId)) {
+                        String queryString = "?" + SANDBOX_ID_PARAM + "=" + sandboxId;
+                        url.append(queryString);
+                    }
+
+                    response.sendRedirect(url.toString());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -204,6 +216,33 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             brc.setAdminUserId(Long.parseLong(adminUserId));
         }
 
+    }
+
+    protected boolean isUrlValid(String url) {
+        boolean isValid = false;
+        String siteBaseUrl = baseUrlResolver.getSiteBaseUrl() + "/";
+
+        if (StringUtils.equals(url, siteBaseUrl)) {
+            isValid = true;
+        }
+
+        return isValid;
+    }
+
+    protected boolean isSandboxIdValid(String sandboxId) {
+        boolean isValid = false;
+
+        if (StringUtils.isNotEmpty(sandboxId)) {
+            Long id = Long.valueOf(sandboxId);
+
+            SandBox sandbox = sandBoxService.retrieveSandBoxById(id);
+
+            if (sandbox != null) {
+                isValid = true;
+            }
+        }
+
+        return isValid;
     }
 
     @Override
