@@ -38,7 +38,7 @@ public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuth
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws ServletException, IOException {
-
+        
         String targetUrl = request.getParameter(getTargetUrlParameter());
         if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
             request.getSession().removeAttribute(SESSION_ATTR);
