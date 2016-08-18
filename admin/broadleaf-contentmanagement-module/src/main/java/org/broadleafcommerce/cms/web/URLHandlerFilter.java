@@ -87,7 +87,7 @@ public class URLHandlerFilter extends OncePerRequestFilter {
             } else if (URLRedirectType.REDIRECT_TEMP == handler.getUrlRedirectType()) {
                 String url = UrlUtil.fixRedirectUrl(contextPath, handler.getNewURL());
                 url = fixQueryString(request, url);
-                response.sendRedirect(url);
+                response.sendRedirect(url);             
             }           
         } else {
             filterChain.doFilter(request, response);
