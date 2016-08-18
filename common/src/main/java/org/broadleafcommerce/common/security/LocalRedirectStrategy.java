@@ -55,10 +55,8 @@ public class LocalRedirectStrategy implements RedirectStrategy {
                 validateRedirectUrl(request.getContextPath(), url, request.getServerName(), request.getServerPort());
             }
         }
-
         String redirectUrl = calculateRedirectUrl(request.getContextPath(), url);
         redirectUrl = response.encodeRedirectURL(redirectUrl);
-
         if (LOG.isDebugEnabled()) {
             LOG.debug("Redirecting to '" + url + "'");
         }
