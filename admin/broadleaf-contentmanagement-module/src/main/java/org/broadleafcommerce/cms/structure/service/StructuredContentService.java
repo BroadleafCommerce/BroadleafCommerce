@@ -191,8 +191,6 @@ public interface StructuredContentService {
 
     List<StructuredContentDTO> evaluateAndPriortizeContent(List<StructuredContentDTO> structuredContentList, int count, Map<String, Object> ruleDTOs);
 
-    void removeStructuredContentFromCache(SandBox sandBox, StructuredContent sc);
-
     Cache getStructuredContentCache();
 
     /**
@@ -211,13 +209,63 @@ public interface StructuredContentService {
 
     public void addStructuredContentListToCache(String key, List<StructuredContentDTO> scDTOList);
 
-
+    /**
+     * Builds the cache key for DTOLists based on the SC Type.
+     *
+     * @param currentSandbox
+     * @param site
+     * @param locale
+     * @param contentType
+     * @return cache key for DTOList
+     *
+     * @deprecated use {@link #buildTypeKeyWithSecure(SandBox, Long, Locale, String, Boolean)}
+     */
+    @Deprecated
     public String buildTypeKey(SandBox currentSandbox, Long site, Locale locale, String contentType);
+
+    /**
+     * Builds the cache key for DTOLists based on the SC Type.
+     *
+     * @param currentSandbox
+     * @param site
+     * @param locale
+     * @param contentType
+     * @param secure
+     * @return cache key for DTOList
+     */
+    public String buildTypeKeyWithSecure(SandBox currentSandbox, Long site, Locale locale, String contentType, Boolean secure);
 
 
     public List<StructuredContentDTO> getStructuredContentListFromCache(String key);
 
+    /**
+     * Call to evict an item from the cache.
+     *
+     * @param sandBox
+     * @param sc
+     */
+    void removeStructuredContentFromCache(SandBox sandBox, StructuredContent sc);
+
+    /**
+     * Call to evict both secure and non-secure SC items matching
+     * the passed in keys.
+     *
+     * @param nameKey
+     * @param typeKey
+     * 
+     * @deprecated use {@link #removeItemFromCacheByKey(String)}
+     */
+    @Deprecated
     public void removeItemFromCache(String nameKey, String typeKey);
+
+    /**
+     * Call to evict both secure and non-secure SC items matching
+     * the passed in key.
+     *
+     * @param key
+     * @return
+     */
+    public boolean removeItemFromCacheByKey(String key);
 
     /**
      * Converts a list of StructuredContent objects into their corresponding {@link StructuredContentDTO}s. This method 
