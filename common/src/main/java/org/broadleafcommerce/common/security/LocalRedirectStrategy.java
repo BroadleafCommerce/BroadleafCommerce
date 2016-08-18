@@ -20,14 +20,14 @@ package org.broadleafcommerce.common.security;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.owasp.esapi.ESAPI;
 import org.springframework.security.web.RedirectStrategy;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This class insures that if using the successUrl or failureUrl request
@@ -63,12 +63,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
             LOG.debug("Redirecting to '" + url + "'");
         }
 
-        try {
-            ESAPI.httpUtilities().sendRedirect(response, redirectUrl);
-        } catch(Exception e) {
-            LOG.error("SECURITY FAILURE Bad redirect location: " + redirectUrl, e);
-            response.sendError(403);
-        }
+        response.sendRedirect(redirectUrl);
     }
 
     /**

@@ -22,10 +22,11 @@ import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
+import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
@@ -61,7 +62,6 @@ public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticati
                     failureUrl += "&successUrl=" + successUrlParam;
                 }
             }
-            
             saveException(request, exception);
             getRedirectStrategy().sendRedirect(request, response, failureUrl);
         } else {

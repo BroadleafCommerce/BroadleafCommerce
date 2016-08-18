@@ -36,10 +36,6 @@ import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.owasp.esapi.ESAPI;
 import org.springframework.ui.Model;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +45,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * Handles searching the catalog for a given search term. Will apply product search criteria
  * such as filters, sorts, and pagination if applicable
@@ -56,8 +57,6 @@ import java.util.Map.Entry;
  * @author Andre Azzolini (apazzolini)
  */
 public class BroadleafSearchController extends AbstractCatalogController {
-
-    private final Log LOG = LogFactory.getLog(BroadleafSearchController.class);
 
     @Resource(name = "blSearchService")
     protected SearchService searchService;
@@ -114,14 +113,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
             if (handler != null) {
                 String contextPath = request.getContextPath();
                 String url = UrlUtil.fixRedirectUrl(contextPath, handler.getUrl());
-
-                try {
-                    ESAPI.httpUtilities().sendRedirect(response, url);
-                } catch(Exception e) {
-                    LOG.error("SECURITY FAILURE Bad redirect location: " + url, e);
-                    response.sendError(403);
-                }
-
+                response.sendRedirect(url);
                 return null;
             }
 

@@ -26,9 +26,10 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * If the incoming request is an ajax request, the system will add the desired redirect path to the session and
@@ -42,8 +43,6 @@ import java.io.IOException;
 @Component("blAuthenticationSuccessRedirectStrategy")
 public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectStrategy {
 
-    private static final Log LOG = LogFactory.getLog(BroadleafAuthenticationFailureRedirectStrategy.class);
-
     private String redirectPath = "/redirect";
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
@@ -55,7 +54,6 @@ public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectS
             }
             url = getRedirectPath();
         }
-
         getRedirectStrategy().sendRedirect(request, response, url);
     }
 

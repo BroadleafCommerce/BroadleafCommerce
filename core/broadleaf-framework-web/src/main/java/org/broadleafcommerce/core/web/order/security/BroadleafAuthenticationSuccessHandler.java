@@ -19,16 +19,16 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
-import org.broadleafcommerce.common.util.UrlUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @Component("blAuthenticationSuccessHandler")
 public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -45,15 +45,7 @@ public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuth
         }
 
         if (StringUtils.isNotBlank(targetUrl) && targetUrl.contains(":")) {
-            try {
-                UrlUtil.validateUrl(targetUrl, request);
-            } catch (IOException e) {
-                logger.error("SECURITY FAILURE Bad redirect location: " + targetUrl, e);
-                response.sendError(403);
-                return;
-            }
-
-            getRedirectStrategy().sendRedirect(request, response, targetUrl);
+            getRedirectStrategy().sendRedirect(request, response, getDefaultTargetUrl());
         } else {
             super.onAuthenticationSuccess(request, response, authentication);
         }
