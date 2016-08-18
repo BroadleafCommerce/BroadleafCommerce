@@ -19,18 +19,39 @@ package org.broadleafcommerce.core.promotionMessage.service;
 
 
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
+import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface PromotionMessageService {
 
-        /**
-         * Gathers the set of active {@link PromotionMessage}s for the given {@link Product}.
-         *
-         * @param product
-         * @return the set of active {@link PromotionMessage}s for the given {@link Product}
-         */
-        public Set<PromotionMessage> findActivePromotionMessagesForProduct(Product product);
+    /**
+     * Gathers the set of active {@link PromotionMessage}s for the given {@link Product}.
+     *
+     * @param product
+     * @return the set of active {@link PromotionMessage}s for the given {@link Product}
+     */
+    public Map<String, List<PromotionMessageDTO>> findActivePromotionMessagesForProduct(Product product);
 
-    }
+    /**
+     * Converts {@link PromotionMessage}s to {@link PromotionMessageDTO}s.
+     *
+     * @param promotionMessages
+     * @return the converted map of {@link PromotionMessageDTO}s
+     */
+    public Map<String, List<PromotionMessageDTO>> convertPromotionMessagesToDTOs(Set<PromotionMessage> promotionMessages);
+
+    /**
+     * Converts {@link PromotionMessage}s to {@link PromotionMessageDTO}s.
+     *
+     * @param promotionMessages
+     * @param offer
+     * @return the converted map of {@link PromotionMessageDTO}s
+     */
+    public Map<String, List<PromotionMessageDTO>> convertPromotionMessagesToDTOs(Set<PromotionMessage> promotionMessages, Offer offer);
+
+}
