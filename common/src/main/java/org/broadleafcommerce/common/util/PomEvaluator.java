@@ -40,7 +40,6 @@ public class PomEvaluator {
     private static Category BROADLEAF_COMMERCIAL = new Category("Broadleaf Framework Commercial", LicenseType.APACHE2, FrameworkType.ECOMMERCE);
     private static Category APACHE_FOUNDATION = new Category("Apache 2.0", LicenseType.APACHE2, FrameworkType.GENERAL);
     private static Category JAVAX = new Category("javax", LicenseType.JAVA_EXTENSION, FrameworkType.OTHER);
-    private static Category THYMELEAF = new Category("thymeleaf", LicenseType.APACHE2, FrameworkType.UI);
     private static Category SLF4J = new Category("slfj", LicenseType.MIT, FrameworkType.LOGGING);
     private static Category LOG4J = new Category("log4j", LicenseType.APACHE2, FrameworkType.LOGGING);
     private static Category OTHER = new Category("Other", LicenseType.OTHER, FrameworkType.OTHER);
@@ -80,9 +79,6 @@ public class PomEvaluator {
         // Broadleaf
         knownLibraries.put("org.broadleafcommerce", BROADLEAF_OPEN_SOURCE);
         knownLibraries.put("com.broadleafcommerce", BROADLEAF_COMMERCIAL);
-
-        // Thymeleaf
-        knownLibraries.put("org.thymeleaf", THYMELEAF);
 
         // JavaX
         knownLibraries.put("javax.xml.bind", JAVAX);

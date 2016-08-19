@@ -7,8 +7,8 @@
             </span>
         </h3>
         <h4 class="main-count">
-            <span th:unless="${totalTreeRecords} == null" th:remove="tag" th:text="${totalTreeRecords}" />
-            <span th:if="${totalTreeRecords} == null" th:remove="tag" th:text="${listGrid.totalRecords}" />
+            <span th:unless="${totalTreeRecords} == null" th:remove="tag" th:text="${totalTreeRecords}" ></span>
+            <span th:if="${totalTreeRecords} == null" th:remove="tag" th:text="${listGrid.totalRecords}" ></span>
             <span th:inline="text" th:remove="tag">
                 [[#{#{${currentAdminSection.sectionKey}}}]]
             </span>
@@ -163,7 +163,7 @@
 
     <div id="headerFlashAlertBoxContainer" th:classappend="${headerFlash == null ? 'hidden' : ''}">
         <div id="headerFlashAlertBox" class="alert-box" th:classappend="${headerFlashAlert != null and headerFlashAlert ? 'alert' : 'success'}" th:inline="text">
-            <span class="alert-box-message">[[#{${headerFlash}}]]</span>
+            <span class="alert-box-message" th:text="${headerFlash != null} ? #{${headerFlash}} : ''"></span>
         </div>
     </div>
     <div id="headerChangeBoxContainer">

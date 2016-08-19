@@ -25,7 +25,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 /**
  * @author Andre Azzolini (apazzolini), bpolster
  */
-public interface BroadleafThymeleafViewResolverExtensionHandler extends ExtensionHandler {
+public interface BroadleafTemplateViewResolverExtensionHandler extends ExtensionHandler {
     
     /**
      * Allows an extension handler to override the view name.

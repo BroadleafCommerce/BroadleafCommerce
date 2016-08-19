@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.springframework.stereotype.Component;
@@ -52,7 +52,7 @@ public class PaginationSortLinkProcessor extends AbstractBroadleafAttributeModif
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafThymeleafContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 
         String baseUrl = request.getRequestURL().toString();

@@ -22,10 +22,10 @@ import org.broadleafcommerce.common.security.handler.CsrfFilter;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafFormReplacementProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafElement;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafFormReplacementDTO;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafModel;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateElement;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateFormReplacementDTO;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateModel;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -60,11 +60,11 @@ public class FormProcessor extends AbstractBroadleafFormReplacementProcessor {
     }
     
     @Override
-    public BroadleafThymeleafFormReplacementDTO getInjectedModelAndFormAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafThymeleafContext context) {
+    public BroadleafTemplateFormReplacementDTO getInjectedModelAndFormAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafTemplateContext context) {
         Map<String, String> formAttributes = new HashMap<>();
         formAttributes.putAll(rootTagAttributes);
-        BroadleafThymeleafModel model = context.createModel();
-        BroadleafThymeleafFormReplacementDTO dto = new BroadleafThymeleafFormReplacementDTO();
+        BroadleafTemplateModel model = context.createModel();
+        BroadleafTemplateFormReplacementDTO dto = new BroadleafTemplateFormReplacementDTO();
 
         // If the form will be not be submitted with a GET, we must add the CSRF token
         // We do this instead of checking for a POST because post is default if nothing is specified
@@ -94,7 +94,7 @@ public class FormProcessor extends AbstractBroadleafFormReplacementProcessor {
                     csrfAttributes.put("type", "hidden");
                     csrfAttributes.put("name", eps.getCsrfTokenParameter());
                     csrfAttributes.put("value", csrfToken);
-                    BroadleafThymeleafElement csrfTag = context.createStandaloneElement("input", csrfAttributes, true);
+                    BroadleafTemplateElement csrfTag = context.createStandaloneElement("input", csrfAttributes, true);
                     model.addElement(csrfTag);
 
                     if (stateVersionToken != null) {
@@ -103,7 +103,7 @@ public class FormProcessor extends AbstractBroadleafFormReplacementProcessor {
                         stateVersionAttributes.put("type", "hidden");
                         stateVersionAttributes.put("name", spps.getStateVersionTokenParameter());
                         stateVersionAttributes.put("value", stateVersionToken);
-                        BroadleafThymeleafElement stateVersionTag = context.createStandaloneElement("input", stateVersionAttributes, true);
+                        BroadleafTemplateElement stateVersionTag = context.createStandaloneElement("input", stateVersionAttributes, true);
                         model.addElement(stateVersionTag);
                     }
                     dto.setModel(model);

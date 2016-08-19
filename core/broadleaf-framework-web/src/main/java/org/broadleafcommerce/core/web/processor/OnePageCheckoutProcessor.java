@@ -26,7 +26,7 @@ import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -122,7 +122,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModi
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         //Pre-populate the command objects
         OrderInfoForm orderInfoForm = (OrderInfoForm) context.parseExpression(tagAttributes.get("orderInfoForm"));
 

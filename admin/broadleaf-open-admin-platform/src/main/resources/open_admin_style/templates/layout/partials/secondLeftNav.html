@@ -1,5 +1,5 @@
 <div id="secondary-nav">
-    <blc_admin:admin_module resultVar="adminMenu" />
+    <blc_admin:admin_module resultVar="adminMenu" ></blc_admin:admin_module>
 
     <div class="secondary-nav" th:id="${module.moduleKey}" th:each="module : ${adminMenu.adminModules}" th:inline="text"
         th:classappend="${currentAdminModule != null and currentAdminModule.id == module.id}? 'active'">

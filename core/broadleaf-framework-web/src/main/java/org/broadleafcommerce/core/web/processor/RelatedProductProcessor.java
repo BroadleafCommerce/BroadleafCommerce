@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
@@ -88,7 +88,7 @@ public class RelatedProductProcessor extends AbstractBroadleafModelVariableModif
      * Controller method for the processor that readies the service call and adds the results to the model.
      */
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         RelatedProductDTO relatedProductDTO = buildDTO(tagAttributes, tagName, context);
         List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(relatedProductDTO);
         if (useSku) {
@@ -172,7 +172,7 @@ public class RelatedProductProcessor extends AbstractBroadleafModelVariableModif
         return resultVar;
     }
 
-    private RelatedProductDTO buildDTO(Map<String, String> tagAttributes, String tagName, BroadleafThymeleafContext context) {
+    private RelatedProductDTO buildDTO(Map<String, String> tagAttributes, String tagName, BroadleafTemplateContext context) {
         RelatedProductDTO relatedProductDTO = new RelatedProductDTO();
         String productIdStr = tagAttributes.get("productId");
         String categoryIdStr = tagAttributes.get("categoryId");

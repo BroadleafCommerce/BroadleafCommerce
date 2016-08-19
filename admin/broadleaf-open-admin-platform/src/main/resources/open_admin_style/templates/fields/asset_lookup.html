@@ -2,11 +2,12 @@
      th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
 
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
-        <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+        <span th:text="#{${field.friendlyName}}"></span>
+<span th:substituteby="components/fieldTooltip" ></span>
     </label>
 
-    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
-    <a class="show-asset-freeform-url" href="#" th:text="'(' + #{Freeform_URL} + ')'" />
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" ></span>
+    <a class="show-asset-freeform-url" href="#" th:text="'(' + #{Freeform_URL} + ')'" ></a>
     <br/>
 
     <input type="hidden" class="mediaUrl mediaItem twelve" th:field="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" />
@@ -51,5 +52,5 @@
         </div>
     </div>
 
-    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" ></span>
 </div>

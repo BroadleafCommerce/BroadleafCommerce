@@ -18,7 +18,7 @@
 
 package org.broadleafcommerce.core.web.processor.extension;
 
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class HeadProcessorExtensionManager implements HeadProcessorExtensionList
     protected List<HeadProcessorExtensionListener> listeners;
 
     @Override
-    public void processAttributeValues(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void processAttributeValues(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         if (listeners == null) {
             listeners = new ArrayList<HeadProcessorExtensionListener>();
         }

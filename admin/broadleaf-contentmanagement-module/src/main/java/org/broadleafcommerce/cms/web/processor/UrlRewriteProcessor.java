@@ -23,7 +23,7 @@ import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public class UrlRewriteProcessor extends AbstractBroadleafAttributeModifierProce
         return ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
     }
 
-    protected String getFullAssetPath(String attributeValue, BroadleafThymeleafContext context) {
+    protected String getFullAssetPath(String attributeValue, BroadleafTemplateContext context) {
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         boolean secureRequest = true;
         if (request != null) {
@@ -76,7 +76,7 @@ public class UrlRewriteProcessor extends AbstractBroadleafAttributeModifierProce
         return staticAssetPathService.convertAssetPath(assetPath, null, secureRequest);
     }
 
-    protected String parsePath(String attributeValue, BroadleafThymeleafContext context) {
+    protected String parsePath(String attributeValue, BroadleafTemplateContext context) {
         String newAttributeValue = attributeValue;
         if (newAttributeValue.startsWith("/")) {
             newAttributeValue = "@{ " + newAttributeValue + " }";
@@ -85,7 +85,7 @@ public class UrlRewriteProcessor extends AbstractBroadleafAttributeModifierProce
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafThymeleafContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
         Map<String, String> newAttributes = new HashMap<>();
         newAttributes.put("src", getFullAssetPath(attributeValue, context));
         return new BroadleafAttributeModifier(newAttributes);

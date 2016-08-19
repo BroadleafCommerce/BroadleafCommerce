@@ -1,6 +1,6 @@
 <footer>
 
-    <div th:substituteby="layout/partials/preFooterContent" />
+    <div th:substituteby="layout/partials/preFooterContent" ></div>
 
     <script th:inline="text">
         //<![CDATA[
@@ -8,8 +8,8 @@
         //]]>
     </script>
 
-    <blc_admin:admin_user resultVar="adminUser" />
-    <blc:form id="js-error-handling" method="POST" />
+    <blc_admin:admin_user resultVar="adminUser" ></blc_admin:admin_user>
+    <blc:form id="js-error-handling" method="POST" ></blc:form>
     <script th:with="adminUser=${adminUser}" th:inline="javascript">
         var BLC_USER_PREFS = /*[[${adminUser.flatAdditionalFields}]]*/ {};
     </script>
@@ -59,7 +59,7 @@
                        admin/lib/plugins/jquery.autosize.js,
                        admin/lib/plugins/jqfloat.min.js,
                        admin/lib/plugins/bootstrap.js,
-                       admin/lib/plugins/jquery.datetimepicker.js" />
+                       admin/lib/plugins/jquery.datetimepicker.js" ></blc:bundle>
 
     <blc:bundle name="admin.js"
                 mapping-prefix="/js/"
@@ -95,13 +95,13 @@
                        admin/components/listGrid-paginate.js,
                        admin/components/filterbuilder.js,
                        admin/components/typeahead.js,
-                       admin/components/sessionTimer.js" />
+                       admin/components/sessionTimer.js" ></blc:bundle>
 
     <blc:bundle name="admin-init.js"
                 mapping-prefix="/js/"
-                files="admin/blc-admin-init.js" />
+                files="admin/blc-admin-init.js" ></blc:bundle>
 
 
-    <div th:substituteby="layout/partials/postFooterContent" />
+    <div th:substituteby="layout/partials/postFooterContent" ></div>
 
 </footer>

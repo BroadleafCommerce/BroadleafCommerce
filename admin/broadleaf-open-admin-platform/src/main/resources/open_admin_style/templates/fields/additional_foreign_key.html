@@ -1,20 +1,21 @@
 <div th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}" th:remove="tag">
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
-        <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+        <span th:text="#{${field.friendlyName}}"></span>
+<span th:substituteby="components/fieldTooltip" ></span>
     </label>
 
     <select class="six" th:field="*{fields['__${field.name}__'].value}" th:if="${! #maps.isEmpty(field.options)}" th:disabled="${field.readOnly}">
-        <option value="" th:text="#{Default_Select}" />
+        <option value="" th:text="#{Default_Select}" ></option>
         <option th:each="entry : *{fields['__${field.name}__'].options}"
                 th:value="${entry.key}"
-                th:text="${entry.value}" />
+                th:text="${entry.value}" ></option>
     </select>
                 
     <span th:if="${#maps.isEmpty(field.options)}" class="indented-form-value" th:inline="text">
         &lt;[[#{No_Records_Found_Enum}]]&gt;
     </span>
     
-    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" ></span>
 
 </div>
 
@@ -25,7 +26,8 @@
     <input type="hidden" class="hidden-display-value" th:field="*{fields['__${field.name}__'].displayValue}" />
 
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
-        <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+        <span th:text="#{${field.friendlyName}}"></span>
+<span th:substituteby="components/fieldTooltip" ></span>
     </label>
 
     <div class="foreign-key-value-container">
@@ -69,7 +71,7 @@
                 th:attr="data-typeahead-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/typeahead'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})}" />
         </div>
 
-        <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+        <span class="error" th:errors="*{fields['__${field.name}__'].value}" ></span>
     </div>
     
 </div>

@@ -1,5 +1,6 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
-    <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+    <span th:text="#{${field.friendlyName}}"></span>
+<span th:substituteby="components/fieldTooltip" ></span>
 </label>
 <div class="changes" th:classappend="${group.column == 0} ? 'numeric-field'">
     <input type="text" step=".01"
@@ -9,4 +10,4 @@
            th:value="${#blc.getPrice('__${field.value}__')}"/>
 </div>
 
-<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" ></span>

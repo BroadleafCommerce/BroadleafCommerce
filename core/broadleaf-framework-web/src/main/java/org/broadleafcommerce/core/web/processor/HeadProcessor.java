@@ -19,7 +19,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionListener;
 import org.springframework.stereotype.Component;
 
@@ -69,7 +69,7 @@ public class HeadProcessor extends AbstractBroadleafModelVariableModifierProcess
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         // The pageTitle attribute could be an expression that needs to be evaluated. Try to evaluate, but fall back
         // to its text value if the expression wasn't able to be processed. This will allow things like
         // pageTitle="Hello this is a string"

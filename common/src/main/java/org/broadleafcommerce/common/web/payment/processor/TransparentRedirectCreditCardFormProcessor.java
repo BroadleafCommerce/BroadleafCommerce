@@ -22,10 +22,10 @@ import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafFormReplacementProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafElement;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafFormReplacementDTO;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafModel;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateElement;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateFormReplacementDTO;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateModel;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -91,7 +91,7 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadlea
     }
     
     @Override
-    public BroadleafThymeleafFormReplacementDTO getInjectedModelAndFormAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafThymeleafContext context) {
+    public BroadleafTemplateFormReplacementDTO getInjectedModelAndFormAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafTemplateContext context) {
         PaymentRequestDTO requestDTO = (PaymentRequestDTO) context.parseExpression(rootTagAttributes.get("paymentRequestDTO"));
 
         Map<String, Map<String, String>> formParameters = new HashMap<String, Map<String, String>>();
@@ -131,7 +131,7 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadlea
         }
         keysToKeep.put("action", actionUrl);
 
-        BroadleafThymeleafModel model = context.createModel();
+        BroadleafTemplateModel model = context.createModel();
         //Append any hidden fields necessary for the Transparent Redirect
         Map<String, String> hiddenFields = formParameters.get(formHiddenParamsKey.toString());
         if (MapUtils.isNotEmpty(hiddenFields)) {
@@ -140,11 +140,11 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadlea
                 attributes.put("type", "hidden");
                 attributes.put("name", key);
                 attributes.put("value", hiddenFields.get(key));
-                BroadleafThymeleafElement input = context.createStandaloneElement("input", attributes, true);
+                BroadleafTemplateElement input = context.createStandaloneElement("input", attributes, true);
                 model.addElement(input);
             }
         }
-        return new BroadleafThymeleafFormReplacementDTO(model, keysToKeep);
+        return new BroadleafTemplateFormReplacementDTO(model, keysToKeep);
     }
 
     @Override

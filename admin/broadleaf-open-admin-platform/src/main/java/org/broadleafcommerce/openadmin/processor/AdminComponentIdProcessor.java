@@ -15,13 +15,13 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.openadmin.web.processor;
+package org.broadleafcommerce.openadmin.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
 import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Component;
@@ -53,7 +53,7 @@ public class AdminComponentIdProcessor extends AbstractBroadleafAttributeModifie
     }
     
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafThymeleafContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
         Object component = context.parseExpression(attributeValue);
 
         String fieldName = "";

@@ -2,5 +2,5 @@
     <option value="">Select an option...</option>
     <option th:each="entry : ${headerField.options}"
             th:value="${entry.key}"
-            th:text="#{${entry.value}}" />
+            th:text="#{${entry.value}}" ></option>
 </select>

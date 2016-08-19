@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.RatingService;
@@ -55,7 +55,7 @@ public class RatingsProcessor extends AbstractBroadleafModelVariableModifierProc
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         String itemId = String.valueOf(context.parseExpression(tagAttributes.get("itemId")));
         RatingSummary ratingSummary = ratingService.readRatingSummary(itemId, RatingType.PRODUCT);
         if (ratingSummary != null) {

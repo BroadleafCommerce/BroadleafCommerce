@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -91,7 +91,7 @@ public class GoogleAnalyticsProcessor extends AbstractBroadleafModelVariableModi
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         String orderNumber = tagAttributes.get("orderNumber");
         Order order = null;
         if (orderNumber != null) {

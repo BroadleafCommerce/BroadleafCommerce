@@ -21,7 +21,7 @@ package org.broadleafcommerce.cms.web.processor;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -50,7 +50,7 @@ public class HrefUrlRewriteProcessor extends UrlRewriteProcessor {
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafThymeleafContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
         String useCDN = tagAttributes.get("useCDN");
         String hrefValue = attributeValue;
         if (LINK.equals(tagName) || StringUtils.equals("true", useCDN)) {

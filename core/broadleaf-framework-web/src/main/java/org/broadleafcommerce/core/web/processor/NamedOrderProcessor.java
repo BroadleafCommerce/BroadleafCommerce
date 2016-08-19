@@ -19,7 +19,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -66,7 +66,7 @@ public class NamedOrderProcessor extends AbstractBroadleafModelVariableModifierP
     }
     
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         Customer customer = CustomerState.getCustomer();
 
         String orderVar = tagAttributes.get("orderVar");

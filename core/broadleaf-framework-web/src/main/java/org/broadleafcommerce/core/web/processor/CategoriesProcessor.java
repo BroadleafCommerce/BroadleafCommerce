@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -66,7 +66,7 @@ public class CategoriesProcessor extends AbstractBroadleafModelVariableModifierP
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         String resultVar = tagAttributes.get("resultVar");
         String parentCategory = tagAttributes.get("parentCategory");
         String unparsedMaxResults = tagAttributes.get("maxResults");

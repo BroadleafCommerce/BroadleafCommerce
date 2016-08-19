@@ -1,7 +1,8 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
-    <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+    <span th:text="#{${field.friendlyName}}"></span>
+<span th:substituteby="components/fieldTooltip" ></span>
 </label>
-<div th:substituteby="components/fieldTranslation" />
+<div th:substituteby="components/fieldTranslation" ></div>
 
 <div class="redactor-field"
      th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
@@ -22,4 +23,4 @@
 
 </div>
 
-<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" ></span>

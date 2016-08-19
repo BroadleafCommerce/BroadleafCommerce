@@ -27,20 +27,20 @@ import java.util.List;
 /**
  * @author Andre Azzolini (apazzolini)
  */
-@Service("blBroadleafThymeleafViewResolverExtensionManager")
-public class BroadleafThymeleafViewResolverExtensionManager extends ExtensionManager<BroadleafThymeleafViewResolverExtensionHandler> {
+@Service("blBroadleafTemplateViewResolverExtensionManager")
+public class BroadleafTemplateViewResolverExtensionManager extends ExtensionManager<BroadleafTemplateViewResolverExtensionHandler> {
 
-    private List<BroadleafThymeleafViewResolverExtensionHandler> EMPTY_LIST = Collections.emptyList();
+    private List<BroadleafTemplateViewResolverExtensionHandler> EMPTY_LIST = Collections.emptyList();
 
-    public BroadleafThymeleafViewResolverExtensionManager() {
-        super(BroadleafThymeleafViewResolverExtensionHandler.class);
+    public BroadleafTemplateViewResolverExtensionManager() {
+        super(BroadleafTemplateViewResolverExtensionHandler.class);
     }
 
     @Override
     /**
      * Don't use this extension manager in the admin.
      */
-    public List<BroadleafThymeleafViewResolverExtensionHandler> getHandlers() {
+    public List<BroadleafTemplateViewResolverExtensionHandler> getHandlers() {
         if (BroadleafRequestContext.getBroadleafRequestContext().getAdmin()) {
             return EMPTY_LIST;
         } else {

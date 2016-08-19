@@ -15,11 +15,11 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.openadmin.web.processor;
+package org.broadleafcommerce.openadmin.processor;
 
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
@@ -70,7 +70,7 @@ public class AdminModuleProcessor extends AbstractBroadleafModelVariableModifier
     }
     
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         String resultVar = tagAttributes.get("resultVar");
 
         AdminUser user = getPersistentAdminUser();

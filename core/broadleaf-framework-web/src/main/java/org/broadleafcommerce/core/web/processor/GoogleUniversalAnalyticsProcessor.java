@@ -24,10 +24,10 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafTagReplacementProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafElement;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafModel;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafNonVoidElement;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateElement;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateModel;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateNonVoidElement;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -104,7 +104,7 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagRepla
     }
     
     @Override
-    public BroadleafThymeleafModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafThymeleafContext context) {
+    public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         StringBuffer sb = new StringBuffer();
         Map<String, String> trackers = getTrackers();
         if (MapUtils.isNotEmpty(trackers)) {
@@ -170,9 +170,9 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagRepla
             }
             
             // Add contentNode to the document
-            BroadleafThymeleafModel model = context.createModel();
-            BroadleafThymeleafNonVoidElement scriptTag = context.createNonVoidElement("script");
-            BroadleafThymeleafElement script = context.createTextElement(sb.toString());
+            BroadleafTemplateModel model = context.createModel();
+            BroadleafTemplateNonVoidElement scriptTag = context.createNonVoidElement("script");
+            BroadleafTemplateElement script = context.createTextElement(sb.toString());
             scriptTag.addChild(script);
             model.addElement(scriptTag);
             return model;

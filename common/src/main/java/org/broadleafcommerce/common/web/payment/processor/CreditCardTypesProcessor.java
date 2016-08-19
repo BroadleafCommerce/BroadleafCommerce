@@ -21,7 +21,7 @@ package org.broadleafcommerce.common.web.payment.processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -76,7 +76,7 @@ public class CreditCardTypesProcessor extends AbstractBroadleafModelVariableModi
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         Map<String, String> creditCardTypes = new HashMap<String, String>();
 
         try {

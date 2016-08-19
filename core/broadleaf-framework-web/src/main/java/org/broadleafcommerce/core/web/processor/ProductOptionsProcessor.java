@@ -25,7 +25,7 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -74,7 +74,7 @@ public class ProductOptionsProcessor extends AbstractBroadleafModelVariableModif
     }
     
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         Long productId = (Long) context.parseExpression(tagAttributes.get("productId"));
         Product product = catalogService.findProductById(productId);
         if (product != null) {

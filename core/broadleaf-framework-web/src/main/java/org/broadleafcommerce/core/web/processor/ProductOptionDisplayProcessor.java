@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.springframework.stereotype.Component;
@@ -54,7 +54,7 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafModelVariabl
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         initServices(tagName, tagAttributes, newModelVars);
         HashMap<String, String> productOptionDisplayValues = new HashMap<String, String>();
         Object item = context.parseExpression(tagAttributes.get("orderItem"));

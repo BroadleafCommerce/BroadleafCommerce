@@ -21,7 +21,7 @@ package org.broadleafcommerce.core.web.processor;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogURLService;
@@ -64,7 +64,7 @@ public class CatalogRelativeHrefProcessor extends AbstractBroadleafAttributeModi
         return 0;
     }
 
-    protected String buildRelativeHref(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafThymeleafContext context) {
+    protected String buildRelativeHref(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
         Object result = context.parseExpression(attributeValue);
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         String currentUrl = request.getRequestURI();
@@ -82,7 +82,7 @@ public class CatalogRelativeHrefProcessor extends AbstractBroadleafAttributeModi
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafThymeleafContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
         String relativeHref = buildRelativeHref(tagName, tagAttributes, attributeName, attributeValue, context);
         Map<String, String> newAttributes = new HashMap<>();
         newAttributes.put(HREF, relativeHref);

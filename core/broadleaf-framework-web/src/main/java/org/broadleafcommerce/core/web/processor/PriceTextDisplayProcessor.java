@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafTagTextModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
 import java.text.NumberFormat;
@@ -49,7 +49,7 @@ public class PriceTextDisplayProcessor extends AbstractBroadleafTagTextModifierP
     }
 
     @Override
-    public String getTagText(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafThymeleafContext context) {
+    public String getTagText(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
         Money price = null;
 
         Object result = context.parseExpression(attributeValue);

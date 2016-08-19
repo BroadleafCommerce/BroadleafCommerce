@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.springframework.stereotype.Component;
 
@@ -50,7 +50,7 @@ public class ProductOptionValueProcessor extends AbstractBroadleafAttributeModif
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafThymeleafContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
         Map<String, String> newAttributes = new HashMap<>();
         ProductOptionValue productOptionValue = (ProductOptionValue) context.parseExpression(attributeValue);
         ProductOptionValueDTO dto = new ProductOptionValueDTO();

@@ -15,11 +15,11 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.openadmin.web.processor;
+package org.broadleafcommerce.openadmin.processor;
 
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
@@ -54,7 +54,7 @@ public class AdminFieldBuilderProcessor extends AbstractBroadleafModelVariableMo
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         FieldWrapper fieldWrapper = new FieldWrapper();
         String fieldBuilder = (String) context.parseExpression(tagAttributes.get("fieldBuilder"));
 

@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.web.processor;
 
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.expression.PropertiesVariableExpression;
 import org.springframework.stereotype.Component;
 
@@ -56,7 +56,7 @@ public class ConfigVariableProcessor extends AbstractBroadleafModelVariableModif
      * @see org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor#populateModelVariables(java.lang.String, java.util.Map, java.util.Map)
      */
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         String resultVar = tagAttributes.get("resultVar");
         if (resultVar == null) {
             resultVar = "value";

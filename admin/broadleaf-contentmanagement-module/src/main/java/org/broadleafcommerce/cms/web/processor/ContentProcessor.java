@@ -37,7 +37,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.deeplink.DeepLink;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafAssignation;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
 import com.google.common.primitives.Ints;
@@ -135,7 +135,7 @@ public class ContentProcessor extends AbstractBroadleafModelVariableModifierProc
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         String contentType = tagAttributes.get("contentType");
         String contentName = tagAttributes.get("contentName");
         String maxResultsStr = tagAttributes.get("maxResults");
@@ -178,7 +178,7 @@ public class ContentProcessor extends AbstractBroadleafModelVariableModifierProc
 
             // sort the resulting list by the configured property sorts on the tag
             if (StringUtils.isNotEmpty(sorts)) {
-                final BroadleafThymeleafContext finalContext = context;
+                final BroadleafTemplateContext finalContext = context;
                 // In order to use the context in a comparator it needs to be final
                 Collections.sort(contentItems, new Comparator<StructuredContentDTO>() {
 
@@ -268,7 +268,7 @@ public class ContentProcessor extends AbstractBroadleafModelVariableModifierProc
                                                          SandBox currentSandbox,
                                                          StructuredContentType structuredContentType,
                                                          Locale locale, String tagName, Map<String, String> tagAttributes,
-                                                         Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+                                                         Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         List<StructuredContentDTO> contentItems;
         if (structuredContentType == null) {
             contentItems = structuredContentService.lookupStructuredContentItemsByName(contentName, locale, maxResults, mvelParameters, isSecure(request));
@@ -292,7 +292,7 @@ public class ContentProcessor extends AbstractBroadleafModelVariableModifierProc
      * @param request
      * @return
      */
-    protected Map<String, Object> buildMvelParameters(HttpServletRequest request, Map<String, String> tagAttributes, BroadleafThymeleafContext context) {
+    protected Map<String, Object> buildMvelParameters(HttpServletRequest request, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         TimeZone timeZone = BroadleafRequestContext.getBroadleafRequestContext().getTimeZone();
 
         final TimeDTO timeDto;

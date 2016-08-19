@@ -22,8 +22,8 @@ import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafTagReplacementProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafModel;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateModel;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -139,7 +139,7 @@ public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProc
     }
     
     @Override
-    public BroadleafThymeleafModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafThymeleafContext context) {
+    public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         String name = tagAttributes.get("name");
         String mappingPrefix = tagAttributes.get("mapping-prefix");
         boolean async = tagAttributes.containsKey("async");
@@ -153,7 +153,7 @@ public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProc
         if (additionalBundleFiles != null) {
             files.addAll(additionalBundleFiles);
         }
-        BroadleafThymeleafModel model = context.createModel();
+        BroadleafTemplateModel model = context.createModel();
         if (getBundleEnabled()) {
             String bundleResourceName = bundlingService.resolveBundleResourceName(name, mappingPrefix, files);
             String bundleUrl = getBundleUrl(bundleResourceName);
@@ -196,7 +196,7 @@ public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProc
         return bundleUrl;
     }
     
-    protected void addElementToModel(String src, boolean async, boolean defer, BroadleafThymeleafContext context, BroadleafThymeleafModel model) {
+    protected void addElementToModel(String src, boolean async, boolean defer, BroadleafTemplateContext context, BroadleafTemplateModel model) {
         if (src.contains(";")) {
             src = src.substring(0, src.indexOf(';'));
         }

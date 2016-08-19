@@ -1,6 +1,6 @@
 <header class="site-bar">
 
-    <li th:substituteby="layout/partials/additionalHeaderMenu" />
+    <li th:substituteby="layout/partials/additionalHeaderMenu" ></li>
 
     <!--<div class="alert-box">-->
         <!--<div class="dropdown">-->
@@ -19,7 +19,7 @@
     <!--</div>-->
 
     <div class="account-info dropdown">
-        <blc_admin:admin_user resultVar="adminUser" />
+        <blc_admin:admin_user resultVar="adminUser" ></blc_admin:admin_user>
         <div class="dropdown-toggle" id="accountdrop" data-toggle="dropdown" aria-expanded="true">
             <span th:text="'Welcome ' + ${adminUser.name} + '!'"></span>
             <span class="caret"></span>

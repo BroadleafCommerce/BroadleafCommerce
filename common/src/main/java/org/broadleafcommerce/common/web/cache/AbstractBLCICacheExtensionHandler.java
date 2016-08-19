@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce CMS Module
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,37 +15,24 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
-package org.broadleafcommerce.cms.web.processor;
+package org.broadleafcommerce.common.web.cache;
 
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.web.deeplink.DeepLink;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
-
-import java.util.List;
-import java.util.Map;
 
 /**
- * Abstract implementation of {@link ContentProcessorExtensionHandler}
- * 
- * @author Andre Azzolini (apazzolini)
+ * @author Chad Harchar (charchar)
  */
-public abstract class AbstractContentProcessorExtensionHandler extends AbstractExtensionHandler implements ContentProcessorExtensionHandler {
+public abstract class AbstractBLCICacheExtensionHandler extends AbstractExtensionHandler implements BLCICacheExtensionHandler {
 
     @Override
-    public ExtensionResultStatusType addAdditionalFieldsToModel(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+    public ExtensionResultStatusType putCache(Object key, Object value, BroadleafTemplateCacheContext blciCache) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType addExtensionFieldDeepLink(List<DeepLink> links, String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+    public ExtensionResultStatusType getCache(Object key, ExtensionResultHolder<Object> erh, BroadleafTemplateCacheContext blciCache) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-
-    @Override
-    public ExtensionResultStatusType postProcessDeepLinks(List<DeepLink> links) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
 }

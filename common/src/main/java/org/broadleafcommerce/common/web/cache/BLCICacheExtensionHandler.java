@@ -15,18 +15,19 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+package org.broadleafcommerce.common.web.cache;
 
-package org.broadleafcommerce.core.web.processor.extension;
-
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
-
-import java.util.Map;
+import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
 /**
- * @author Jerry Ocanas (jocanas)
+ * @author Chad Harchar (charchar)
  */
-public interface HeadProcessorExtensionListener {
+public interface BLCICacheExtensionHandler extends ExtensionHandler {
 
-    public void processAttributeValues(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context);
+    public ExtensionResultStatusType putCache(Object key, Object value, BroadleafTemplateCacheContext blciCache);
+
+    public ExtensionResultStatusType getCache(Object key, ExtensionResultHolder<Object> erh, BroadleafTemplateCacheContext blciCache);
 
 }

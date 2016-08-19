@@ -22,7 +22,7 @@ import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
 import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -54,7 +54,7 @@ public class BreadcrumbProcessor extends AbstractBroadleafModelVariableModifierP
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         String baseUrl = getBaseUrl(tagAttributes);
         Map<String, String[]> params = getParams(tagAttributes);
         List<BreadcrumbDTO> dtos = breadcrumbService.buildBreadcrumbDTOs(baseUrl, params);

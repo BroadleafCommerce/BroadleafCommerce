@@ -25,8 +25,8 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 /**
  * @author bpolster
  */
-public abstract class AbstractBroadleafThymeleafResolverExtensionHandler extends AbstractExtensionHandler 
-        implements BroadleafThymeleafViewResolverExtensionHandler {
+public abstract class AbstractBroadleafTemplateResolverExtensionHandler extends AbstractExtensionHandler 
+        implements BroadleafTemplateViewResolverExtensionHandler {
 
     @Override
     public ExtensionResultStatusType overrideView(ExtensionResultHolder<String> erh, String originalViewName,

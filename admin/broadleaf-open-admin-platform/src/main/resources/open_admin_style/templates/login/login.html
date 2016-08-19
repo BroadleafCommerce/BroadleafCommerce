@@ -1,39 +1,41 @@
 <div>
     <div th:fragment="messages">
         <div class="alert alert-danger" th:unless="${#strings.isEmpty(param.login_error)}">
-            <div th:unless="${#strings.isEmpty(param.login_error)}" th:text="#{password.invalidCombo}" />
+            <div th:unless="${#strings.isEmpty(param.login_error)}" th:text="#{password.invalidCombo}" ></div>
         </div>
-        <div class="alert alert-danger" th:unless="${#strings.isEmpty(param.sessionTimeout)}" th:text="#{password.timeout}" />
+        <div class="alert alert-danger" th:unless="${#strings.isEmpty(param.sessionTimeout)}" th:text="#{password.timeout}" ></div>
         <div class="alert alert-success" th:unless="${#strings.isEmpty(param.messageCode)}">
-            <div th:if="${param.messageCode[0] == 'usernameSent'}" th:text="#{password.usernameSent}" />
-            <div th:if="${param.messageCode[0] == 'passwordReset'}" th:text="#{password.passwordReset}" />
+            <div th:if="${param.messageCode[0] == 'usernameSent'}" th:text="#{password.usernameSent}" ></div>
+            <div th:if="${param.messageCode[0] == 'passwordReset'}" th:text="#{password.passwordReset}" ></div>
         </div>
     </div>
 
     <blc:form method="POST" th:fragment="form" th:action="@{/login_admin_post}" action="#">
 
         <div class="field-group">
-            <label th:text="#{password.username}" />
+            <label th:text="#{password.username}" ></label>
             <input type="text" id="username" name="j_username" autofocus="autofocus" class="twelve" />
         </div>
 
         <div class="field-group">
-            <label th:text="#{password.password}" />
+            <label th:text="#{password.password}" ></label>
             <input type="password" id="password" name="j_password" class="twelve" />
         </div>
 
-        <div th:substituteby="login/termsAndConditions" />
+        <div th:substituteby="login/termsAndConditions" ></div>
 
         <div class="account-actions">
             <input type="submit" class="button primary large" th:value="#{password.signIn}"/>
 
             <ul>
-                <li><a href="#" th:href="@{/forgotUsername}" th:text="#{password.forgotUsername}" /></li>
-                <li><a href="#" th:href="@{/forgotPassword}" th:text="#{password.forgotPassword}" /></li>
+                <li><a href="#" th:href="@{/forgotUsername}" th:text="#{password.forgotUsername}" ></a>
+</li>
+                <li><a href="#" th:href="@{/forgotPassword}" th:text="#{password.forgotPassword}" ></a>
+</li>
             </ul>
         </div>
 
-   		<div th:substituteby="login/loginDialogFooter" />
+   		<div th:substituteby="login/loginDialogFooter" ></div>
   
     </blc:form>
 

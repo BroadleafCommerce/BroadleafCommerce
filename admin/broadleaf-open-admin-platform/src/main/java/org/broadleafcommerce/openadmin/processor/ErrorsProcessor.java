@@ -16,7 +16,7 @@
  * #L%
  */
 
-package org.broadleafcommerce.openadmin.web.processor;
+package org.broadleafcommerce.openadmin.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,7 +24,7 @@ import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
-import org.broadleafcommerce.common.web.domain.BroadleafThymeleafContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
@@ -79,7 +79,7 @@ public class ErrorsProcessor extends AbstractBroadleafAttributeModelVariableModi
     }
     
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, Map<String, Object> newLocalVariables, BroadleafThymeleafContext context) {
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, Map<String, Object> newLocalVariables, BroadleafTemplateContext context) {
 
         BindStatus bindStatus = context.getBindStatus(attributeValue);
 
