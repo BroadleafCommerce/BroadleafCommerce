@@ -32,12 +32,12 @@ INSERT INTO BLC_TRANSLATION (TRANSLATION_ID, ENTITY_ID, LOCALE_CODE, ENTITY_TYPE
 ---------------------------------------------------
 -- Content Item
 -- -- Spanish Banner (locale = "es")
-INSERT INTO BLC_SC (SC_ID, CREATED_BY, DATE_CREATED, DATE_UPDATED, UPDATED_BY, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (151, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'Promocion - 20% de descuento en todas las camisas', FALSE, 1, 'es', 1);
+INSERT INTO BLC_SC (SC_ID, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (151, 'Promocion - 20% de descuento en todas las camisas', FALSE, 1, 'es', 1);
 
 -- Fields
 -- -- Spanish Banner (locale = "es")
-INSERT INTO BLC_SC_FLD (SC_FLD_ID, DATE_CREATED, FLD_KEY, CREATED_BY, VALUE) VALUES (51, CURRENT_TIMESTAMP, 'imageUrl', 1, '/cmsstatic/img/banners/promocion-camisas.jpg');
-INSERT INTO BLC_SC_FLD (SC_FLD_ID, DATE_CREATED, FLD_KEY, CREATED_BY, VALUE) VALUES (52, CURRENT_TIMESTAMP, 'targetUrl', 1, '/merchandise');
+INSERT INTO BLC_SC_FLD (SC_FLD_ID, FLD_KEY, VALUE) VALUES (51, 'imageUrl', '/cmsstatic/img/banners/promocion-camisas.jpg');
+INSERT INTO BLC_SC_FLD (SC_FLD_ID, FLD_KEY, VALUE) VALUES (52, 'targetUrl', '/merchandise');
 
 -- Field XREF
 -- -- Spanish Banner (locale = "es")
@@ -47,12 +47,12 @@ INSERT INTO BLC_SC_FLD_MAP (BLC_SC_SC_FIELD_ID,SC_ID, SC_FLD_ID, MAP_KEY) VALUES
 
 -- Content Item
 -- -- Spanish Banner (locale = "fr")
-INSERT INTO BLC_SC (SC_ID, CREATED_BY, DATE_CREATED, DATE_UPDATED, UPDATED_BY, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (152, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'Promocion - 20% de descuento en todas las camisas', FALSE, 1, 'fr', 1);
+INSERT INTO BLC_SC (SC_ID, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (152, 'Promocion - 20% de descuento en todas las camisas', FALSE, 1, 'fr', 1);
 
 -- Fields
 -- -- Spanish Banner (locale = "fr")
-INSERT INTO BLC_SC_FLD (SC_FLD_ID, DATE_CREATED, FLD_KEY, CREATED_BY, VALUE) VALUES (53, CURRENT_TIMESTAMP, 'imageUrl', 1, '/cmsstatic/img/banners/shirts-speciale.jpg');
-INSERT INTO BLC_SC_FLD (SC_FLD_ID, DATE_CREATED, FLD_KEY, CREATED_BY, VALUE) VALUES (54, CURRENT_TIMESTAMP, 'targetUrl', 1, '/merchandise');
+INSERT INTO BLC_SC_FLD (SC_FLD_ID, FLD_KEY, VALUE) VALUES (53, 'imageUrl', '/cmsstatic/img/banners/shirts-speciale.jpg');
+INSERT INTO BLC_SC_FLD (SC_FLD_ID, FLD_KEY, VALUE) VALUES (54, 'targetUrl', '/merchandise');
 
 -- Field XREF
 -- -- Spanish Banner (locale = "fr")
@@ -65,10 +65,10 @@ INSERT INTO BLC_SC_FLD_MAP (BLC_SC_SC_FIELD_ID, SC_ID, SC_FLD_ID, MAP_KEY) VALUE
 ---------------------------------------------------
 -- -- Create a Home Page Snippet for loclale="es"
 -- Content Item
-INSERT INTO BLC_SC (SC_ID, CREATED_BY, DATE_CREATED, DATE_UPDATED, UPDATED_BY, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (153, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'Home Page Snippet (es) - Aficionado', FALSE, 5, 'es', 2);
+INSERT INTO BLC_SC (SC_ID, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (153, 'Home Page Snippet (es) - Aficionado', FALSE, 5, 'es', 2);
 
 -- Fields
-INSERT INTO BLC_SC_FLD (SC_FLD_ID, DATE_CREATED, FLD_KEY, CREATED_BY, VALUE) VALUES (55, CURRENT_TIMESTAMP, 'htmlContent', 1, '<h2>AFICIONADO DE SALSAS PICANTES?</h2> Haga click para unirse a nuerto programa de Cuidades Intensivos de Heat Clinic. El lugar para conseguir las mejores ofertas.');
+INSERT INTO BLC_SC_FLD (SC_FLD_ID, FLD_KEY, VALUE) VALUES (55, 'htmlContent', '<h2>AFICIONADO DE SALSAS PICANTES?</h2> Haga click para unirse a nuerto programa de Cuidades Intensivos de Heat Clinic. El lugar para conseguir las mejores ofertas.');
 
 -- Field XREF
 INSERT INTO BLC_SC_FLD_MAP (BLC_SC_SC_FIELD_ID, SC_ID, SC_FLD_ID, MAP_KEY) VALUES (-154, 153, 55, 'htmlContent');
@@ -76,10 +76,10 @@ INSERT INTO BLC_SC_FLD_MAP (BLC_SC_SC_FIELD_ID, SC_ID, SC_FLD_ID, MAP_KEY) VALUE
 
 -- -- Create a Home Page Snippet for loclale="fr"
 -- Content Item
-INSERT INTO BLC_SC (SC_ID, CREATED_BY, DATE_CREATED, DATE_UPDATED, UPDATED_BY, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (154, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'Home Page Snippet (es) - Aficionado', FALSE, 5, 'fr', 2);
+INSERT INTO BLC_SC (SC_ID, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (154, 'Home Page Snippet (es) - Aficionado', FALSE, 5, 'fr', 2);
 
 -- Fields
-INSERT INTO BLC_SC_FLD (SC_FLD_ID, DATE_CREATED, FLD_KEY, CREATED_BY, VALUE) VALUES (56, CURRENT_TIMESTAMP, 'htmlContent', 1, '<h2>AFICIONADO SAUCE PIQUANTE?</h2> Cliquez ici pour vous joindre &agrave; notre clinique de chaleur du Programme de soins fr&eacute;quents. L&#39;endroit pour obtenir toutes les offres sur le traitement des br&ucirc;lures.');
+INSERT INTO BLC_SC_FLD (SC_FLD_ID, FLD_KEY, VALUE) VALUES (56, 'htmlContent', '<h2>AFICIONADO SAUCE PIQUANTE?</h2> Cliquez ici pour vous joindre &agrave; notre clinique de chaleur du Programme de soins fr&eacute;quents. L&#39;endroit pour obtenir toutes les offres sur le traitement des br&ucirc;lures.');
 
 -- Field XREF
 INSERT INTO BLC_SC_FLD_MAP (BLC_SC_SC_FIELD_ID, SC_ID, SC_FLD_ID, MAP_KEY) VALUES (-155, 154, 56, 'htmlContent');
@@ -89,10 +89,10 @@ INSERT INTO BLC_SC_FLD_MAP (BLC_SC_SC_FIELD_ID, SC_ID, SC_FLD_ID, MAP_KEY) VALUE
 ---------------------------------------------------
 -- -- Create a Home Page Snippet for loclale="es"
 -- Content Item
-INSERT INTO BLC_SC (SC_ID, CREATED_BY, DATE_CREATED, DATE_UPDATED, UPDATED_BY, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (155, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'Home Page Featured Products Title', FALSE, 5, 'es', 3);
+INSERT INTO BLC_SC (SC_ID, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (155, 'Home Page Featured Products Title', FALSE, 5, 'es', 3);
 
 -- Fields
-INSERT INTO BLC_SC_FLD (SC_FLD_ID, DATE_CREATED, FLD_KEY, CREATED_BY, VALUE) VALUES (57, CURRENT_TIMESTAMP, 'messageText', 1, 'Las Salsas M&aacute;s vendidas de Heat Clinic');
+INSERT INTO BLC_SC_FLD (SC_FLD_ID, FLD_KEY, VALUE) VALUES (57, 'messageText', 'Las Salsas M&aacute;s vendidas de Heat Clinic');
 
 -- Field XREF
 INSERT INTO BLC_SC_FLD_MAP (BLC_SC_SC_FIELD_ID, SC_ID, SC_FLD_ID, MAP_KEY) VALUES (-156, 155, 57, 'messageText');
@@ -100,10 +100,10 @@ INSERT INTO BLC_SC_FLD_MAP (BLC_SC_SC_FIELD_ID, SC_ID, SC_FLD_ID, MAP_KEY) VALUE
 
 -- -- Create a Home Page Snippet for loclale="fr"
 -- Content Item
-INSERT INTO BLC_SC (SC_ID, CREATED_BY, DATE_CREATED, DATE_UPDATED, UPDATED_BY, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (156, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'Home Page Featured Products Title', FALSE, 5, 'fr', 3);
+INSERT INTO BLC_SC (SC_ID, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (156, 'Home Page Featured Products Title', FALSE, 5, 'fr', 3);
 
 -- Fields
-INSERT INTO BLC_SC_FLD (SC_FLD_ID, DATE_CREATED, FLD_KEY, CREATED_BY, VALUE) VALUES (58, CURRENT_TIMESTAMP, 'messageText', 1, 'La Clinique Heat Sauces Meilleures Ventes');
+INSERT INTO BLC_SC_FLD (SC_FLD_ID, FLD_KEY, VALUE) VALUES (58, 'messageText', 'La Clinique Heat Sauces Meilleures Ventes');
 
 -- Field XREF
 INSERT INTO BLC_SC_FLD_MAP (BLC_SC_SC_FIELD_ID, SC_ID, SC_FLD_ID, MAP_KEY) VALUES (-157, 156, 58, 'messageText');
