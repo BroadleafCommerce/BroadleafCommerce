@@ -17,18 +17,26 @@
  */
 package org.broadleafcommerce.core.web;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.errors.AccessControlException;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jfischer
  *
  */
 public class BroadleafResponseWrapper implements HttpServletResponse {
+
+    protected final Log LOG = LogFactory.getLog(getClass());
     
     private HttpServletResponse response;
     private int status;
@@ -43,10 +51,10 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
 
     /**
      * @param arg0
-     * @see javax.servlet.http.HttpServletResponse#addCookie(javax.servlet.http.Cookie)
+     * @see org.owasp.esapi.HTTPUtilities#addCookie(HttpServletResponse, Cookie)
      */
     public void addCookie(Cookie arg0) {
-        response.addCookie(arg0);
+        ESAPI.httpUtilities().addCookie(response, arg0);
     }
 
     /**
@@ -61,10 +69,10 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
     /**
      * @param arg0
      * @param arg1
-     * @see javax.servlet.http.HttpServletResponse#addHeader(java.lang.String, java.lang.String)
+     * @see org.owasp.esapi.HTTPUtilities#addHeader(HttpServletResponse, String, String)
      */
     public void addHeader(String arg0, String arg1) {
-        response.addHeader(arg0, arg1);
+        ESAPI.httpUtilities().addHeader(response, arg0, arg1);
     }
 
     /**
@@ -230,7 +238,12 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
      * @see javax.servlet.http.HttpServletResponse#sendRedirect(java.lang.String)
      */
     public void sendRedirect(String arg0) throws IOException {
-        response.sendRedirect(arg0);
+        try {
+            ESAPI.httpUtilities().sendRedirect(arg0);
+        } catch (AccessControlException e) {
+            LOG.error("SECURITY FAILURE Bad redirect url: " + arg0, e);
+            throw new IOException("Access Control Exception", e);
+        }
     }
 
     /**
