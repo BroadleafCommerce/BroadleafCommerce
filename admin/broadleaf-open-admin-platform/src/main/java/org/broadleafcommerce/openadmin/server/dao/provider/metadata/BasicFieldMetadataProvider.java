@@ -542,6 +542,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setRuleIdentifier(annot.ruleIdentifier());
             override.setTranslatable(annot.translatable());
             override.setDefaultValue(annot.defaultValue());
+            override.setAllowNoValueEnumOption(annot.allowNoValueEnumOption());
 
             if (annot.showIfFieldEquals().length != 0) {
                 processShowIfFieldEqualsAnnotations(annot.showIfFieldEquals(), override);
@@ -818,6 +819,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getDefaultValue() != null) {
             metadata.setDefaultValue(basicFieldMetadata.getDefaultValue());
+        }
+        if (basicFieldMetadata.getAllowNoValueEnumOption() != null) {
+            metadata.setAllowNoValueEnumOption(basicFieldMetadata.getAllowNoValueEnumOption());
         }
 
         attributes.put(field.getName(), metadata);
