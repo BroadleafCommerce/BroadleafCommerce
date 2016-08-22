@@ -71,7 +71,7 @@
         <property name="targetRef" value="blCustomPersistenceHandlers"/>
     </bean>
 
-    <mo:override id="blMetadataOverrides-core-admin">
+    <mo:override id="blMetadataOverrides">
         <!-- Add required validation to some default Sku fields. These should not occur on the additionalSkus list, which
             is why these are marked required in this fashion rather than in @AdminPresentation annotations on SkuImpl -->
     
