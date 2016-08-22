@@ -67,6 +67,7 @@ public class Field {
     protected String tooltip;
     protected String help;
     protected String translationFieldName;
+    protected Boolean allowNoValueEnumOption = false;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     /* ************ */
@@ -311,6 +312,14 @@ public class Field {
 
     public void setIsConfirmEnabled(Boolean isConfirmEnabled) {
         this.isConfirmEnabled = isConfirmEnabled;
+    }
+
+    public Boolean getAllowNoValueEnumOption() {
+        return allowNoValueEnumOption;
+    }
+
+    public void setAllowNoValueEnumOption(Boolean allowNoValueEnumOption) {
+        this.allowNoValueEnumOption = allowNoValueEnumOption;
     }
 
     public String getConfirmEnabledText() {

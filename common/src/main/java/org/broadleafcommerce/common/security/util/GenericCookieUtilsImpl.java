@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.security.util;
 
+import org.owasp.esapi.ESAPI;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
@@ -61,7 +62,7 @@ public class GenericCookieUtilsImpl implements CookieUtils {
         // the header name is Set-Cookie for both "old" and v.1 ( RFC2109 )
         // RFC2965 is not supported by browsers and the Servlet spec
         // asks for 2109.
-        response.addHeader("Set-Cookie", sb.toString());
+        ESAPI.httpUtilities().addHeader(response, "Set-Cookie", sb.toString());
     }
 
     /* (non-Javadoc)

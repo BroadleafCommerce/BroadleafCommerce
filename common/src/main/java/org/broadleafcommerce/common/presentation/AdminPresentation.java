@@ -234,6 +234,15 @@ public @interface AdminPresentation {
     boolean hideEnumerationIfEmpty() default false;
 
     /**
+     * Optional - only required if you want to allow an enum field to have "No Value Selected" as an option.
+     *  This property is <b> NOT </b> taken into consideration for fields marked as "required"
+     *
+     *
+     * @return where or not the enum value "No Value Selected" should be shown.
+     */
+    boolean allowNoValueEnumOption() default false;
+
+    /**
      * Optional - drives the component that renders the UI
      *
      * When not specified, will default to the fieldType

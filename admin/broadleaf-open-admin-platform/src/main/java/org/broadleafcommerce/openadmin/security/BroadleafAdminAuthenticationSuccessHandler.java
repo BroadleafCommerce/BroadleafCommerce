@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.security;
 
+import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
@@ -68,9 +69,16 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
         }
 
         clearAuthenticationAttributes(request);
-
         // Use the DefaultSavedRequest URL
         String targetUrl = savedRequest.getRedirectUrl();
+
+        try {
+            UrlUtil.validateUrl(targetUrl, request);
+        } catch (IOException e) {
+            logger.error("SECURITY FAILURE Bad redirect location: " + targetUrl, e);
+            response.sendError(403);
+            return;
+        }
 
         // Remove the sessionTimeout flag if necessary
         targetUrl = targetUrl.replace("sessionTimeout=true", "");
@@ -79,12 +87,12 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
         }
 
         if (targetUrl.contains(successUrlParameter)) {
-            int successUrlPosistion = targetUrl.indexOf(successUrlParameter) + successUrlParameter.length();
-            int nextParamPosistion = targetUrl.indexOf("&", successUrlPosistion);
-            if (nextParamPosistion == -1) {
-                targetUrl = targetUrl.substring(successUrlPosistion, targetUrl.length());
+            int successUrlPosition = targetUrl.indexOf(successUrlParameter) + successUrlParameter.length();
+            int nextParamPosition = targetUrl.indexOf("&", successUrlPosition);
+            if (nextParamPosition == -1) {
+                targetUrl = targetUrl.substring(successUrlPosition, targetUrl.length());
             } else {
-                targetUrl = targetUrl.substring(successUrlPosistion, nextParamPosistion);
+                targetUrl = targetUrl.substring(successUrlPosition, nextParamPosition);
             }
         }
 
@@ -92,12 +100,13 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
         targetUrl = removeLoginSegment(targetUrl);
 
         logger.debug("Redirecting to DefaultSavedRequest Url: " + targetUrl);
+
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
     /**
      * Given the instance attribute loginUri, removes the loginUri from the passed url when present
-     * @param uri
+     * @param url
      * @return String
      */
     protected String removeLoginSegment(String url) {
