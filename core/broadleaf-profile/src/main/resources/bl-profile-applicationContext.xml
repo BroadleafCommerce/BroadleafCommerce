@@ -41,7 +41,8 @@
             <list/>
         </property>
     </bean>
-    
-    <bean id="blPasswordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/>
-    
+
+    <bean id="blPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
+        <constructor-arg value="${password.site.encoder}"/>
+    </bean>
 </beans>

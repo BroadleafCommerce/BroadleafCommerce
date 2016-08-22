@@ -143,7 +143,9 @@
         </property>
     </bean>
 
-    <bean id="blAdminPasswordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/>
+    <bean id="blAdminPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
+        <constructor-arg value="${password.admin.encoder}"/>
+    </bean>
 
     <bean id="blMessageSourceBaseNames" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
