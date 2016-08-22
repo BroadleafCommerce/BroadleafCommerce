@@ -455,6 +455,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     }
 
     protected BigDecimal calculatePercent(Money itemSubTotal, Money itemSavings) {
+        if (Money.ZERO.equals(itemSubTotal)) {
+            return BigDecimal.ZERO;
+        }
         return itemSavings.getAmount().divide(itemSubTotal.getAmount(), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
     }
 

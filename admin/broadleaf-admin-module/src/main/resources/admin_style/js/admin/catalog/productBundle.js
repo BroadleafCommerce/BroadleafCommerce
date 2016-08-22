@@ -16,7 +16,7 @@
  * #L%
  */
 (function($, BLCAdmin) {
-    if (location.pathname.match("^" + BLC.servletContext + "/product/")) {
+    if (location.pathname.match("^" + BLC.servletContext + "/product")) {
 
         var className = 'org.broadleafcommerce.core.catalog.domain.Product';
 
