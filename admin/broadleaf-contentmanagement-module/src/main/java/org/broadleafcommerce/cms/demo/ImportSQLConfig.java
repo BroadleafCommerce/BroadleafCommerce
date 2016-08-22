@@ -33,11 +33,13 @@ import org.springframework.context.annotation.Configuration;
 @Conditional(DemoCondition.class)
 public class ImportSQLConfig {
 
+    public static final int BASIC_DATA_SPECIAL = AutoImportStage.PRIMARY_BASIC_DATA - 30;
+
     @Bean
     public AutoImportSql blCMSBasicData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_content_structure.sql," +
                 "config/bc/sql/demo/load_content_data.sql,config/bc/sql/demo/load_content_structure_i18n.sql," +
-                "config/bc/sql/demo/load_content_data_i18n.sql", AutoImportStage.PRIMARY_BASIC_DATA);
+                "config/bc/sql/demo/load_content_data_i18n.sql", BASIC_DATA_SPECIAL);
     }
 
     @Bean
