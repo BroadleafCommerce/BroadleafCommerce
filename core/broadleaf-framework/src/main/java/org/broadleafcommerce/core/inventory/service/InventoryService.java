@@ -79,9 +79,9 @@ public interface InventoryService {
     
     /**
      * <p>Indicates whether the given quantity is available for the particular skuId. The result will be 
-     * true if Sku.getInventoryType() == null or not Sku.getInventoryType().equals(InventoryType.ALWAYS_AVAILABLE).</p>
+     * true if Sku.getInventoryType() == null or Sku.getInventoryType().equals(InventoryType.ALWAYS_AVAILABLE).</p>
      * 
-     * <p>The result will be false if the Sku is inactive, if the Sku.getAvaialable() == false, if the quantity 
+     * <p>The result will be false if the {@link #checkBasicAvailablility(Sku)} returns false, or if the quantity
      * field is null, or if the quantity requested exceeds the quantity available.</p>
      * 
      * @param sku the {@link Sku} to see if enough quantity is available
@@ -97,11 +97,11 @@ public interface InventoryService {
      * <ol>
      *  <li>{@link Sku#getInventoryType()} is <b>null</b></li>
      *  <li>{@link Sku#getInventoryType()} is anything but {@link InventoryType#UNAVAILABLE}</b></li>
-     *  <li>The now-deprecated {@link Sku#isAvailable()} is <b>true</b> or <b>null</b></li>
+     *  <li>{@link Sku#isActive()} is is <b>true</b> or <b>null</b> </li>
+     *  <li>Does not consider the now-deprecated {@link Sku#isAvailable()}</li>
      * </ol>
-     * 
-     * <p>This will return true if {@link Sku#getInventoryType()} is {@link InventoryType#CHECK_QUANTITY}</p>
-     * @param sku the {@link Sku} whose availability is being checked
+     *
+     * * @param sku the {@link Sku} whose availability is being checked
      * @return <b>true</b> or <b>false</b> according to the rules above
      */
     public boolean checkBasicAvailablility(Sku sku);
