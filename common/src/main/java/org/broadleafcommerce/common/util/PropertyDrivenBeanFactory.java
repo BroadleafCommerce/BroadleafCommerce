@@ -20,11 +20,16 @@ package org.broadleafcommerce.common.util;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.reflect.ConstructorUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
+import org.springframework.beans.BeanUtils;
 
 /**
  * @author Jeff Fischer
  */
 public class PropertyDrivenBeanFactory {
+
+    public static Object createInstance(String className) {
+        return createInstance(className, new String[]{});
+    }
 
     public static Object createInstance(String className, String... constructorArgs) {
         try {
@@ -32,7 +37,7 @@ public class PropertyDrivenBeanFactory {
             if (!ArrayUtils.isEmpty(constructorArgs)) {
                 bean = ConstructorUtils.invokeExactConstructor(Class.forName(className), constructorArgs);
             } else {
-                bean = Class.forName(className).newInstance();
+                bean = BeanUtils.instantiateClass(Class.forName(className));
             }
             return bean;
         } catch (Exception e) {
