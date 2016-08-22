@@ -57,6 +57,9 @@ public class BroadleafThymeleafClassLoaderTemplateResolver extends ClassLoaderTe
         if (themePath != null) {
             resourceName.append(StringUtils.isEmpty(prefix)?"":prefix).append(themePath).append('/').append(templateFolder);
         }
+        if (templateFolder.endsWith("/") && unaliasedName.startsWith("/")) {
+            unaliasedName = unaliasedName.substring(1, unaliasedName.length());
+        }
         resourceName.append(unaliasedName);
         String suffix = this.getSuffix();
         if (suffix != null && ! suffix.trim().equals("")) {
