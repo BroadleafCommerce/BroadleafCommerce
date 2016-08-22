@@ -64,7 +64,7 @@
         <property name="targetRef" value="blPersistenceProviders" />
     </bean>
 
-   <mo:override id="blMetadataOverrides-cms">
+   <mo:override id="blMetadataOverrides">
         <mo:overrideItem configurationKey="targetProduct">
             <mo:field name="defaultCategory">
                 <mo:property name="excluded" value="false"/>
