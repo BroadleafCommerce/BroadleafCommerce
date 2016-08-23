@@ -134,8 +134,32 @@ public class ProcessDetailLogger {
                         "<priority value=\"warn\" />\n" +
                         "<appender-ref ref=\"console\" />\n" +
                         "</root>\n" +
-                        "</log4j:configuration>\n" +
-                        "");
+                        "</log4j:configuration>\n\n" +
+                        "A sample logback configuration looks like:\n\n" +
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<configuration>\n" +
+                        "<include resource=\"org/springframework/boot/logging/logback/defaults.xml\" />\n" +
+                        "<property name=\"LOG_FILE\" value=\"${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}\"/>\n" +
+                        "<include resource=\"org/springframework/boot/logging/logback/console-appender.xml\" />\n" +
+                        "<include resource=\"org/springframework/boot/logging/logback/file-appender.xml\" />\n" +
+                        "<root level=\"INFO\">\n" +
+                        "<appender-ref ref=\"CONSOLE\" />\n" +
+                        "<appender-ref ref=\"FILE\" />\n" +
+                        "</root>\n" +
+                        "<appender name=\"rollingDailyEnterpriseWorkflow\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" +
+                        " <file>${WORKFLOW_LOG_FILE}</file>\n" +
+                        "<rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">\n" +
+                        "<fileNamePattern>${WORKFLOW_LOG_FILE}.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>\n" +
+                        "<maxHistory>30</maxHistory>\n" +
+                        "</rollingPolicy>\n" +
+                        "<encoder>\n" +
+                        "<pattern>%relative [%thread] %-5level %logger{35} - %msg%n</pattern>\n" +
+                        "</encoder>\n" +
+                        "</appender>\n" +
+                        "<logger name=\"com.broadleafcommerce.enterprise.workflow.process.detail\" level=\"DEBUG\">\n" +
+                        "<appender-ref ref=\"rollingDailyEnterpriseWorkflow\"/>\n" +
+                        "</logger>\n" +
+                        "</configuration>\n\n");
             }
         }
     }
