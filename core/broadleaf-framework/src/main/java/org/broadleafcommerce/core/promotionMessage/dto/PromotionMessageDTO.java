@@ -19,11 +19,12 @@
 package org.broadleafcommerce.core.promotionMessage.dto;
 
 import org.broadleafcommerce.common.media.domain.Media;
-import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageMediaXref;
+import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * A Generic DTO object that represents the information to display a {@link PromotionMessage}.
@@ -38,6 +39,7 @@ public class PromotionMessageDTO implements Serializable {
     protected String messagePlacement;
     protected String localeCode;
     protected Integer priority;
+    protected Date endDate;
 
     protected Media media;
     protected CustomerRuleHolder customerRuleHolder;
@@ -47,6 +49,7 @@ public class PromotionMessageDTO implements Serializable {
         this.messagePlacement = promotionMessage.getMessagePlacement();
         this.localeCode = promotionMessage.getLocale() == null ? null : promotionMessage.getLocale().getLocaleCode();
         this.priority = promotionMessage.getPriority();
+        this.endDate = promotionMessage.getEndDate();
 
         PromotionMessageMediaXref primaryMediaXref = promotionMessage.getPromotionMessageMedia().get("primary");
         this.media = primaryMediaXref == null ? null : primaryMediaXref.getMedia();
@@ -98,5 +101,13 @@ public class PromotionMessageDTO implements Serializable {
 
     public void setCustomerRuleHolder(CustomerRuleHolder customerRuleHolder) {
         this.customerRuleHolder = customerRuleHolder;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }
