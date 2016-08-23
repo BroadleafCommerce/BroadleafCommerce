@@ -17,7 +17,9 @@
  */
 package org.broadleafcommerce.common.web.util;
 
-import org.broadleafcommerce.common.web.extensibility.CoreContextApplicationContextInitializer;
+import org.apache.commons.lang.ArrayUtils;
+import org.broadleafcommerce.bootstrap.EnvironmentKey;
+import org.springframework.core.env.Environment;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.BufferedInputStream;
@@ -47,15 +49,15 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
     @Resource(name = "blPrecompressedArtifactFileExtensionWhitelist")
     List<String> fileExtensionWhitelist;
 
-    @Resource(name="blCoreContextApplicationContextInitializer")
-    CoreContextApplicationContextInitializer configurer;
+    @Resource
+    Environment environment;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         checkOutput: {
-            if (!configurer.determineEnvironment().equals(configurer.getDefaultEnvironment()) || useWhileInDefaultEnvironment) {
+            if (!ArrayUtils.contains(environment.getActiveProfiles(), EnvironmentKey.getDefaultEnvironmentKey()) || useWhileInDefaultEnvironment) {
                 String path = getResourcePath(request);
                 String gzipPath = path + ".gz";
                 if (useGzipCompression(request, response, path, gzipPath)) {
