@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.bootstrap;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
@@ -83,6 +84,9 @@ public abstract class AbstractBroadleafConfigEnvironmentPostProcessor implements
                     }
                     if (!found) {
                         environment.getPropertySources().addLast(propertySource);
+                    }
+                    if (!ArrayUtils.contains(environment.getActiveProfiles(), profile)) {
+                        environment.addActiveProfile(profile);
                     }
                 }
             }

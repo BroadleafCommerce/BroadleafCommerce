@@ -18,15 +18,17 @@
 package org.broadleafcommerce.common.extensibility.jpa;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.bootstrap.EnvironmentKey;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.copy.NullClassTransformer;
-import org.broadleafcommerce.common.web.extensibility.CoreContextApplicationContextInitializer;
 import org.hibernate.ejb.AvailableSettings;
 import org.hibernate.ejb.instrument.InterceptFieldClassFileTransformer;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.jmx.export.MBeanExporter;
@@ -84,8 +86,8 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     @Resource(name="blAutoDDLStatusExporter")
     protected MBeanExporter mBeanExporter;
 
-    @Resource(name="blCoreContextApplicationContextInitializer")
-    CoreContextApplicationContextInitializer configurer;
+    @Resource
+    Environment environment;
     
     /**
      * This should only be used in a test context to deal with the Spring ApplicationContext refreshing between different
@@ -403,7 +405,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         String autoDDLStatus = pui.getProperties().getProperty("hibernate.hbm2ddl.auto");
         boolean isCreate = autoDDLStatus != null && (autoDDLStatus.equals("create") || autoDDLStatus.equals("create-drop"));
         boolean detectedCreate = false;
-        if (isCreate && configurer.determineEnvironment().equals(configurer.getDefaultEnvironment())) {
+        if (isCreate && ArrayUtils.contains(environment.getActiveProfiles(), EnvironmentKey.getDefaultEnvironmentKey())) {
             try {
                 if (mBeanExporter.getServer().isRegistered(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"))) {
                     Boolean response = (Boolean) mBeanExporter.getServer().invoke(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"), "getStartedWithCreate",
