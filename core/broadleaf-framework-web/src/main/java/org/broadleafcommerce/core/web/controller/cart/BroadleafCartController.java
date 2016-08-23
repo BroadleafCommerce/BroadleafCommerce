@@ -117,13 +117,13 @@ public class BroadleafCartController extends AbstractCartController {
             cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
         }
 
-        updateCartService.validateCart(cart);
-        if (extensionManager != null) {
-            extensionManager.getProxy().validateAddToCartItem(itemRequest);
-        }
-
         // if this is an update to an existing order item, remove the old before proceeding
         if (isUpdateRequest(request)) {
+            updateCartService.validateCart(cart);
+            if (extensionManager != null) {
+                extensionManager.getProxy().validateAddToCartItem(itemRequest);
+            }
+
             Long originalOrderItem = Long.parseLong(request.getParameter("originalOrderItem"));
             if (originalOrderItem != null) {
                 cart = orderService.removeItem(cart.getId(), originalOrderItem, false);
