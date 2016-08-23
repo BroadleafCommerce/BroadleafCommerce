@@ -247,7 +247,10 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @JoinColumn(name = "PARENT_ORDER_ITEM_ID")
     @Index(name="ORDERITEM_PARENT_INDEX", columnNames={"PARENT_ORDER_ITEM_ID"})
     protected OrderItem parentOrderItem;
-    
+
+    @Column(name = "HAS_VALIDATION_ERRORS")
+    protected Boolean hasValidationError;
+
     @Override
     public Money getRetailPrice() {
         if (retailPrice == null) {
@@ -703,7 +706,20 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     public void setParentOrderItem(OrderItem parentOrderItem) {
         this.parentOrderItem = parentOrderItem;
     }
-    
+
+    @Override
+    public Boolean getHasValidationError() {
+        if (hasValidationError == null) {
+            return false;
+        }
+        return hasValidationError;
+    }
+
+    @Override
+    public void setHasValidationError(Boolean hasValidationError) {
+        this.hasValidationError = hasValidationError;
+    }
+
     @Override
     public boolean isAParentOf(OrderItem candidateChild) {
         if (CollectionUtils.isNotEmpty(this.getChildOrderItems())) {

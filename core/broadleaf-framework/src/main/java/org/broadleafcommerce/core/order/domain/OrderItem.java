@@ -339,7 +339,7 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
     void finalizePrice();
 
     /**
-     * Sets the name of this order item. 
+     * Sets the name of this order item.
      * @param name
      */
     void setName(String name);
@@ -505,6 +505,18 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      * @param parentOrderItem
      */
     public void setParentOrderItem(OrderItem parentOrderItem);
+
+    /**
+     * @return whether or not this order item has an error
+     */
+    Boolean getHasValidationError();
+
+    /**
+     * Sets whether or not this order item has an error associated with it
+     *
+     * @param hasValidationError
+     */
+    void setHasValidationError(Boolean hasValidationError);
 
     /**
      * @param candidateChild
