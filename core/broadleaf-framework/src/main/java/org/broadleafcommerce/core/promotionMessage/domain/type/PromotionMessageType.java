@@ -32,8 +32,8 @@ public class PromotionMessageType implements Serializable, BroadleafEnumerationT
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, PromotionMessageType> TYPES = new LinkedHashMap<String, PromotionMessageType>();
-    public static final PromotionMessageType TARGETS_ONLY = new PromotionMessageType("TARGETS_ONLY", "Targets only", 1000);
-    public static final PromotionMessageType QUALIFIERS_ONLY = new PromotionMessageType("QUALIFIERS_ONLY", "Qualifers only", 2000);
+    public static final PromotionMessageType TARGETS = new PromotionMessageType("TARGETS", "Targets only", 1000);
+    public static final PromotionMessageType QUALIFIERS = new PromotionMessageType("QUALIFIERS", "Qualifers only", 2000);
     public static final PromotionMessageType TARGETS_OR_QUALIFIERS = new PromotionMessageType("TARGETS_OR_QUALIFIERS", "Targets or Qualifiers", 3000);
 
 
