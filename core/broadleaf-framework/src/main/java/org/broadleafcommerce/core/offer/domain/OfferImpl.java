@@ -774,6 +774,14 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     }
 
     @Override
+    public boolean hasPromotionMessageOfType(PromotionMessageType type) {
+        if (!getHasPromotionMessage()) return false;
+
+        List<PromotionMessage> promotionMessages = getActivePromotionMessagesByType(type);
+        return CollectionUtils.isNotEmpty(promotionMessages);
+    }
+
+    @Override
     public String getMainEntityName() {
         return getName();
     }
