@@ -43,7 +43,10 @@ public class DemoHsqlSingleLineSqlCommandExtractor extends SingleLineSqlCommandE
             
             // Any MySQL-specific newlines replace with special character newlines
             newCommand = newCommand.replaceAll(DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX, "' || CHAR(13) || CHAR(10) || '");
-            
+
+            //remove the double backslashes - hsql does not honor backslash as an escape character
+            newCommand = newCommand.replaceAll(DemoSqlServerSingleLineSqlCommandExtractor.DOUBLEBACKSLASHMATCH, "\\\\");
+
             newCommands[i] = newCommand;
             i++;
         }
