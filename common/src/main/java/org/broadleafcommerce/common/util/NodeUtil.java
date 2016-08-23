@@ -18,7 +18,6 @@
 
 package org.broadleafcommerce.common.util;
 
-import org.apache.log4j.Logger;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -33,8 +32,6 @@ import java.util.TreeSet;
  *
  */
 public class NodeUtil {
-
-    static Logger LOG = Logger.getLogger(NodeUtil.class.getName());
 
     private static final String TEXT_ELEMENT_NAME = "#text";
     private static final String MO_GROUP = "mo:group";
