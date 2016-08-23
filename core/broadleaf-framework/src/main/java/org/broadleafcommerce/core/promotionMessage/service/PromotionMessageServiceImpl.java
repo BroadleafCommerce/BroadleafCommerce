@@ -100,20 +100,27 @@ public class PromotionMessageServiceImpl implements PromotionMessageService {
     protected Set<PromotionMessage> findApplicableOfferTargetAndQualifierMessages(Product product, Offer offer) {
         Set<PromotionMessage> promotionMessages = new HashSet<>();
 
-        Set<OfferTargetCriteriaXref> targetItemCriteriaXrefs = offer.getTargetItemCriteriaXref();
-        for (OfferTargetCriteriaXref targetCriteriaXref : targetItemCriteriaXrefs) {
-            OfferItemCriteria criteria = targetCriteriaXref.getOfferItemCriteria();
+        boolean hasTargetPromotionMessage = offer.hasPromotionMessageOfType(PromotionMessageType.TARGETS);
+        boolean hasQualifierPromotionMessage = offer.hasPromotionMessageOfType(PromotionMessageType.QUALIFIERS);
 
-            Set<PromotionMessage> applicablePromotionMessages = findApplicablePromotionMessagesByType(product, offer, criteria, PromotionMessageType.TARGETS_ONLY);
-            promotionMessages.addAll(applicablePromotionMessages);
+        if (hasTargetPromotionMessage) {
+            Set<OfferTargetCriteriaXref> targetItemCriteriaXrefs = offer.getTargetItemCriteriaXref();
+            for (OfferTargetCriteriaXref targetCriteriaXref : targetItemCriteriaXrefs) {
+                OfferItemCriteria criteria = targetCriteriaXref.getOfferItemCriteria();
+
+                Set<PromotionMessage> applicablePromotionMessages = findApplicablePromotionMessagesByType(product, offer, criteria, PromotionMessageType.TARGETS);
+                promotionMessages.addAll(applicablePromotionMessages);
+            }
         }
 
-        Set<OfferQualifyingCriteriaXref> qualifierItemCriteriaXrefs = offer.getQualifyingItemCriteriaXref();
-        for (OfferQualifyingCriteriaXref qualifierCriteriaXref : qualifierItemCriteriaXrefs) {
-            OfferItemCriteria criteria = qualifierCriteriaXref.getOfferItemCriteria();
+        if (hasQualifierPromotionMessage) {
+            Set<OfferQualifyingCriteriaXref> qualifierItemCriteriaXrefs = offer.getQualifyingItemCriteriaXref();
+            for (OfferQualifyingCriteriaXref qualifierCriteriaXref : qualifierItemCriteriaXrefs) {
+                OfferItemCriteria criteria = qualifierCriteriaXref.getOfferItemCriteria();
 
-            Set<PromotionMessage> applicablePromotionMessages = findApplicablePromotionMessagesByType(product, offer, criteria, PromotionMessageType.QUALIFIERS_ONLY);
-            promotionMessages.addAll(applicablePromotionMessages);
+                Set<PromotionMessage> applicablePromotionMessages = findApplicablePromotionMessagesByType(product, offer, criteria, PromotionMessageType.QUALIFIERS);
+                promotionMessages.addAll(applicablePromotionMessages);
+            }
         }
 
         return promotionMessages;
