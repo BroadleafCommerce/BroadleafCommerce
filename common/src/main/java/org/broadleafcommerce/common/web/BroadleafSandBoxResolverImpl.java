@@ -115,13 +115,13 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
             }
             request.setAttribute(SANDBOX_VAR, currentSandbox, WebRequest.SCOPE_REQUEST);
         } else if (crossAppAuthService != null && !crossAppAuthService.isAuthedFromAdmin()) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Sandbox preview attempted without authentication");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sandbox preview attempted without authentication");
             }
             request.setAttribute(SANDBOX_VAR, currentSandbox, WebRequest.SCOPE_REQUEST);
         } else if (crossAppAuthService != null && crossAppAuthService.hasCsrPermission()) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Sandbox preview attempted in CSR mode");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sandbox preview attempted in CSR mode");
             }
             request.setAttribute(SANDBOX_VAR, currentSandbox, WebRequest.SCOPE_REQUEST);
         } else {
