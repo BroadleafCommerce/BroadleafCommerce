@@ -32,8 +32,9 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
     protected Integer minQuantity;
     protected Integer maxQuantity;
     protected Money displayPrice;
-
     protected Integer orderItemIndex;
+
+    protected Boolean hasConfigurationError;
 
     public Product getProduct() {
         return product;
@@ -104,5 +105,16 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     public void setOrderItemIndex(Integer orderItemIndex) {
         this.orderItemIndex = orderItemIndex;
+    }
+
+    public Boolean getHasConfigurationError() {
+        if (hasConfigurationError == null) {
+            return false;
+        }
+        return hasConfigurationError;
+    }
+
+    public void setHasConfigurationError(Boolean hasConfigurationError) {
+        this.hasConfigurationError = hasConfigurationError;
     }
 }

@@ -528,6 +528,13 @@ public class OrderItemServiceImpl implements OrderItemService {
             item.setParentOrderItem(parent);
         }
 
+        if (orderItemRequestDTO instanceof ConfigurableOrderItemRequest) {
+            ConfigurableOrderItemRequest configRequest = (ConfigurableOrderItemRequest) orderItemRequestDTO;
+            if (configRequest.getHasConfigurationError()) {
+                item.setHasValidationError(true);
+            }
+        }
+
         applyAdditionalOrderItemProperties(item);
 
         return item;
