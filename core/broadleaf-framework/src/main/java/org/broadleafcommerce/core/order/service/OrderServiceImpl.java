@@ -589,6 +589,9 @@ public class OrderServiceImpl implements OrderService {
             List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
             orderMessages.addAll(((ActivityMessages) context).getActivityMessages());
 
+            // Update the orderItemRequest incase it changed during the initial add to cart workflow
+            orderItemRequestDTO = context.getSeedData().getItemRequest();
+            numAdditionRequests = priceOrder ? (getTotalChildOrderItems(orderItemRequestDTO) - 1) : -1;
             addChildItems(orderItemRequestDTO, numAdditionRequests, currentAddition, context, orderMessages);
 
             context.getSeedData().getOrder().setOrderMessages(orderMessages);
