@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.dto.AddressDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
+import org.broadleafcommerce.common.util.BLCStringUtils;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
@@ -114,7 +115,7 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
             state = stateService.findStateByAbbreviation(dto.getAddressStateRegion());
         }
         if (state == null) {
-            LOG.warn("The given state from the response: " + dto.getAddressStateRegion() + " could not be found"
+            LOG.warn("The given state from the response: " + BLCStringUtils.sanitize(dto.getAddressStateRegion()) + " could not be found"
                     + " as a state abbreviation in BLC_STATE");
         }
         address.setState(state);
@@ -137,10 +138,10 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
             isoCountry = isoService.findISOCountryByAlpha2Code(dto.getAddressCountryCode());
         }
         if (country == null) {
-            LOG.warn("The given country from the response: " + dto.getAddressCountryCode() + " could not be found"
+            LOG.warn("The given country from the response: " + BLCStringUtils.sanitize(dto.getAddressCountryCode()) + " could not be found"
                     + " as a country abbreviation in BLC_COUNTRY");
         } else if (isoCountry == null) {
-            LOG.error("The given country from the response: " + dto.getAddressCountryCode() + " could not be found"
+            LOG.error("The given country from the response: " + BLCStringUtils.sanitize(dto.getAddressCountryCode()) + " could not be found"
                     + " as a country alpha-2 code in BLC_ISO_COUNTRY");
         }
 

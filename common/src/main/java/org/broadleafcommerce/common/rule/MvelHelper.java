@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCStringUtils;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -179,7 +180,8 @@ public class MvelHelper {
                 //Unable to execute the MVEL expression for some reason
                 //Return false, but notify about the bad expression through logs
                 if (!TEST_MODE) {
-                    LOG.info("Unable to parse and/or execute the mvel expression (" + rule + "). Reporting to the logs and returning false for the match expression", e);
+                    LOG.info("Unable to parse and/or execute the mvel expression (" + BLCStringUtils.sanitize(rule) 
+                            + "). Reporting to the logs and returning false for the match expression", e);
                 }
                 return false;
             }

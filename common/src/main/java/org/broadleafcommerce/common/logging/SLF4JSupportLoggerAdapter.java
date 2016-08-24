@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.logging;
 
+import org.broadleafcommerce.common.util.BLCStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -37,37 +38,37 @@ public class SLF4JSupportLoggerAdapter extends AbstractSupportLoggerAdapter impl
 
     @Override
     public void support(String message) {
-        mapSupportLevel(message, null);
+        mapSupportLevel(BLCStringUtils.sanitize(message), null);
     }
 
     @Override
     public void support(String message, Throwable t) {
-        mapSupportLevel(message, t);
+        mapSupportLevel(BLCStringUtils.sanitize(message), t);
     }
 
     @Override
     public void lifecycle(LifeCycleEvent lifeCycleEvent, String message) {
-        mapSupportLevel(message, null);
+        mapSupportLevel(BLCStringUtils.sanitize(message), null);
     }
 
     @Override
     public void debug(String message) {
-        LOGGER.debug(message);
+        LOGGER.debug(BLCStringUtils.sanitize(message));
     }
 
     @Override
     public void debug(String message, Throwable t) {
-        LOGGER.debug(message, t);
+        LOGGER.debug(BLCStringUtils.sanitize(message), t);
     }
 
     @Override
     public void error(String message) {
-        LOGGER.error(message);
+        LOGGER.error(BLCStringUtils.sanitize(message));
     }
 
     @Override
     public void error(String message, Throwable t) {
-        LOGGER.error(message, t);
+        LOGGER.error(BLCStringUtils.sanitize(message), t);
     }
 
     /**
@@ -76,7 +77,7 @@ public class SLF4JSupportLoggerAdapter extends AbstractSupportLoggerAdapter impl
      */
     @Override
     public void fatal(String message) {
-        LOGGER.error(message);
+        LOGGER.error(BLCStringUtils.sanitize(message));
     }
 
     /**
@@ -86,27 +87,27 @@ public class SLF4JSupportLoggerAdapter extends AbstractSupportLoggerAdapter impl
      */
     @Override
     public void fatal(String message, Throwable t) {
-        LOGGER.error(message, t);
+        LOGGER.error(BLCStringUtils.sanitize(message), t);
     }
 
     @Override
     public void info(String message) {
-        LOGGER.info(message);
+        LOGGER.info(BLCStringUtils.sanitize(message));
     }
 
     @Override
     public void info(String message, Throwable t) {
-        LOGGER.info(message, t);
+        LOGGER.info(BLCStringUtils.sanitize(message), t);
     }
 
     @Override
     public void warn(String message) {
-        LOGGER.warn(message);
+        LOGGER.warn(BLCStringUtils.sanitize(message));
     }
 
     @Override
     public void warn(String message, Throwable t) {
-        LOGGER.warn(message, t);
+        LOGGER.warn(BLCStringUtils.sanitize(message), t);
     }
 
     protected void mapSupportLevel(String message, Throwable t) {

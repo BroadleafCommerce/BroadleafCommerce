@@ -41,6 +41,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.util.BLCStringUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
@@ -556,7 +557,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             } else {
                 message += " Please mark some @AdminPresentation fields with 'prominent = true'";
             }
-            LOG.error(message);
+            LOG.error(BLCStringUtils.sanitize(message));
         }
 
         ListGrid listGrid = createListGrid(ceilingType, headerFields, type, drs, sectionKey, fmd.getOrder(), idProperty, sectionCrumbs, sortProperty);
@@ -1017,7 +1018,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 Integer.parseInt(defaultValue);
             } catch (NumberFormatException  e) {
                 String msg = buildMsgForDefValException(SupportedFieldType.INTEGER.toString(), fmd, defaultValue);
-                LOG.debug(msg);
+                LOG.debug(BLCStringUtils.sanitize(msg));
                 return null;
             }
         } else if (fieldType.equals(SupportedFieldType.DECIMAL.toString())
@@ -1026,14 +1027,14 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 BigDecimal val = new BigDecimal(defaultValue);
             } catch (NumberFormatException  e) {
                 String msg = buildMsgForDefValException(fieldType.toString(), fmd, defaultValue);
-                LOG.debug(msg);
+                LOG.debug(BLCStringUtils.sanitize(msg));
                 return null;
             }
         } else if (fieldType.equals(SupportedFieldType.BOOLEAN.toString())) {
             if (!defaultValue.toLowerCase().equals("true") && !defaultValue.toLowerCase().equals("false")
                     && !defaultValue.toUpperCase().equals("Y") && !defaultValue.toUpperCase().equals("N")) {
                 String msg = buildMsgForDefValException(SupportedFieldType.BOOLEAN.toString(), fmd, defaultValue);
-                LOG.debug(msg);
+                LOG.debug(BLCStringUtils.sanitize(msg));
                 return null;
             }
         } else if (fieldType.equals(SupportedFieldType.DATE.toString())) {
@@ -1046,7 +1047,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     defaultValue = format.format(date);
                 } catch (ParseException e) {
                     String msg = buildMsgForDefValException(SupportedFieldType.DATE.toString(), fmd, defaultValue);
-                    LOG.debug(msg);
+                    LOG.debug(BLCStringUtils.sanitize(msg));
                     return null;
                 }
             }
@@ -1296,7 +1297,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     for (Entity row : rows) {
                         Property prop = row.findProperty(displayProp);
                         if (prop == null) {
-                            LOG.warn("Could not find displayProp [" + displayProp + "] on entity [" + 
+                            LOG.warn("Could not find displayProp [" + BLCStringUtils.sanitize(displayProp) + "] on entity [" + 
                                     ef.getCeilingEntityClassname() + "]");
                         } else {
                             String displayValue = prop.getDisplayValue();

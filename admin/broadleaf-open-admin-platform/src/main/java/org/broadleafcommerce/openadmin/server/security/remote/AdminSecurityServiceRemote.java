@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
+import org.broadleafcommerce.common.util.BLCStringUtils;
 import org.broadleafcommerce.common.web.SandBoxContext;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -224,7 +225,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
             //check if the requested entity is not configured and warn
             if (!securityService.doesOperationExistForCeilingEntity(permissionType, ceilingNames[0])) {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("Detected security request for an unregistered ceiling entity (" + ceilingNames[0] + "). " +
+                    LOG.warn("Detected security request for an unregistered ceiling entity (" + BLCStringUtils.sanitize(ceilingNames[0]) + "). " +
                         "As a result, the request failed. Please make sure to configure security for any ceiling entities " +
                         "referenced via the admin. This is usually accomplished by adding records in the " +
                         "BLC_ADMIN_PERMISSION_ENTITY table. Note, depending on how the entity in question is used, you " +

@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.util.BLCStringUtils;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -79,8 +80,9 @@ public class i18nUpdateCartServiceExtensionHandler extends AbstractUpdateCartSer
             BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
             if (!brc.getLocale().getLocaleCode().matches(cart.getLocale().getLocaleCode())) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("The cart Locale [" + cart.getLocale().getLocaleCode() +
-                            "] does not match the current locale [" + brc.getLocale().getLocaleCode() + "]");
+                    String message = "The cart Locale [" + cart.getLocale().getLocaleCode() +
+                            "] does not match the current locale [" + brc.getLocale().getLocaleCode() + "]";
+                    LOG.debug(BLCStringUtils.sanitize(message));
                 }
 
                 if (getClearCartOnLocaleSwitch()) {

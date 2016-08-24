@@ -48,6 +48,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.util.BLCMapUtils;
+import org.broadleafcommerce.common.util.BLCStringUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -717,7 +718,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         if (sortFieldsSegments.length < 2) {
             StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
             msg.append("\nDefaulting to ASCending");
-            LOG.warn(msg.toString());
+            LOG.warn(BLCStringUtils.sanitize(msg.toString()));
         } else if ("desc".equals(sortFieldsSegments[1])) {
             order = ORDER.desc;
         }
@@ -820,7 +821,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         boolean isPropertyReadable = PropertyUtils.isReadable(object, components[currentPosition]);
         if (!isPropertyReadable) {
             LOG.debug(String.format("Could not find %s on %s, assuming this exists elsewhere in the class hierarchy",
-                components[currentPosition], object.getClass().getName()));
+                    BLCStringUtils.sanitize(components[currentPosition]), object.getClass().getName()));
             return null;
         }
         

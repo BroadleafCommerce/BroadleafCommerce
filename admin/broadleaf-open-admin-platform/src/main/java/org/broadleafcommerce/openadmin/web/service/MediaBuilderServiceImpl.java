@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaDto;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.BLCStringUtils;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -50,7 +51,7 @@ public class MediaBuilderServiceImpl implements MediaBuilderService {
                 om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 return (Media) om.readValue(json, type);
             } catch (Exception e) {
-                LOG.warn("Error parsing json to media " + json, e);
+                LOG.warn("Error parsing json to media " + BLCStringUtils.sanitize(json), e);
             }
         }
         return entityConfiguration.createEntityInstance(Media.class.getName(), Media.class);
