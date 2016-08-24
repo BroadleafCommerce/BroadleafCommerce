@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.order.service.workflow.update;
 
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -54,6 +55,13 @@ public class UpdateOrderItemActivity extends BaseActivity<ProcessContext<CartOpe
         if (orderItemRequestDTO.getQuantity() >= 0) {
             request.setOrderItemQuantityDelta(orderItemRequestDTO.getQuantity() - itemFromOrder.getQuantity());
             itemFromOrder.setQuantity(orderItemRequestDTO.getQuantity());
+
+            // Update any additional attributes of the passed in request
+            if (itemFromOrder instanceof DiscreteOrderItem) {
+                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) itemFromOrder;
+                discreteOrderItem.getAdditionalAttributes().putAll(orderItemRequestDTO.getAdditionalAttributes());
+            }
+
             request.setOrderItem(itemFromOrder);
         }
 
