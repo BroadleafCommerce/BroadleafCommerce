@@ -103,6 +103,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setOrder(itemRequest.getOrder());
         Map<String, String> attributes = itemRequest.getItemAttributes();
         populateProductOptionAttributes(item, attributes);
+        applyAdditionalOrderItemProperties(item);
     }
 
     protected void populateProductOptionAttributes(OrderItem item, Map<String, String> attributes) {
@@ -158,6 +159,8 @@ public class OrderItemServiceImpl implements OrderItemService {
             }
         }
 
+        applyAdditionalOrderItemProperties(item);
+
         return item;
     }
 
@@ -188,6 +191,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             itemRequest.getItemAttributes().remove(name);
         }
         populateProductOptionAttributes(item, itemRequest.getItemAttributes());
+        applyAdditionalOrderItemProperties(item);
         return item;
     }
 
@@ -223,6 +227,8 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
+        applyAdditionalOrderItemProperties(item);
+
         return item;
     }
 
@@ -236,6 +242,8 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());
+
+        applyAdditionalOrderItemProperties(item);
 
         return item;
     }
@@ -271,6 +279,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         }
 
         item.setPersonalMessage(itemRequest.getPersonalMessage());
+
+        applyAdditionalOrderItemProperties(item);
 
         return item;
     }
@@ -308,6 +318,8 @@ public class OrderItemServiceImpl implements OrderItemService {
             orderItem.setGiftWrapOrderItem(item);
         }
 
+        applyAdditionalOrderItemProperties(item);
+
         return item;
     }
 
@@ -342,6 +354,8 @@ public class OrderItemServiceImpl implements OrderItemService {
             }
             item.getDiscreteOrderItems().add(discreteOrderItem);
         }
+
+        applyAdditionalOrderItemProperties(item);
 
         return item;
     }
@@ -399,6 +413,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         if (saveItem) {
             bundleOrderItem = (BundleOrderItem) saveOrderItem(bundleOrderItem);
         }
+
+        applyAdditionalOrderItemProperties(bundleOrderItem);
 
         return bundleOrderItem;
     }
@@ -519,6 +535,8 @@ public class OrderItemServiceImpl implements OrderItemService {
             }
         }
 
+        applyAdditionalOrderItemProperties(item);
+
         return item;
     }
 
@@ -547,5 +565,9 @@ public class OrderItemServiceImpl implements OrderItemService {
             }
         }
         return allProductsSet;
+    }
+
+    protected void applyAdditionalOrderItemProperties(OrderItem orderItem) {
+        extensionManager.getProxy().applyAdditionalOrderItemProperties(orderItem);
     }
 }

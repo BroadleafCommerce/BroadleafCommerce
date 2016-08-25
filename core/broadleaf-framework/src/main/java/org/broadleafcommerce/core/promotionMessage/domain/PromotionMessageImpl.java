@@ -25,6 +25,8 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -35,13 +37,12 @@ import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -98,33 +99,15 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     @Column(name = "NAME")
     @Index(name="PROMOTION_MESSAGE_NAME_INDEX", columnNames={"PROMOTION_MESSAGE_NAME"})
     @AdminPresentation(friendlyName = "PromotionMessageImpl_Name",
-        group = GroupName.General, order = FieldOrder.Name,
+        group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Name,
         prominent = true, gridOrder = FieldOrder.Name,
         requiredOverride = RequiredOverride.REQUIRED)
     protected String name;
 
-    @Column(name = "MESSAGE_TYPE", nullable=false)
-    @Index(name="MESSAGE_TYPE_INDEX", columnNames={"MESSAGE_TYPE"})
-    @AdminPresentation(friendlyName = "PromotionMessageImpl_Type",
-        group = GroupName.General, order = FieldOrder.Type,
-        fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
-        broadleafEnumeration="org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageType",
-        defaultValue = "TARGETS_OR_QUALIFIERS",
-        requiredOverride = RequiredOverride.REQUIRED)
-    protected String type;
-
-    @ManyToOne(targetEntity = PromotionMessageImpl.class, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "OVERRIDDEN_PROMO_MSG")
-    @AdminPresentation(friendlyName = "PromotionMessageImpl_OverriddenPromotionMessage",
-            group = GroupName.General, order = FieldOrder.OverriddenPromotionMessage)
-    @AdminPresentationToOneLookup()
-    protected PromotionMessage overriddenPromotionMessage;
-
     @Column(name = "PROMOTION_MESSASGE")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_message",
-        group = GroupName.General, order = FieldOrder.Message,
-        prominent = true, gridOrder = FieldOrder.Message,
-        translatable = true)
+        group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Message,
+        prominent = true, gridOrder = FieldOrder.Message)
     protected String message;
 
     @OneToMany(mappedBy = "promotionMessage", targetEntity = PromotionMessageMediaXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -145,7 +128,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
             @AdminPresentationMapField(
                 fieldName = "primary",
                 fieldPresentation = @AdminPresentation(friendlyName = "PromotionMessageImpl_Media",
-                    group = GroupName.General, order = FieldOrder.Media,
+                    group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Media,
                     fieldType = SupportedFieldType.MEDIA)
             )
         })
@@ -153,26 +136,20 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
 
     @Column(name = "PROMOTION_MESSAGE_PRIORITY")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_Priority",
-        group = GroupName.Misc, order = FieldOrder.Priority,
+        group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.Priority,
         tooltip = "PromotionMessageImpl_Priority_Tooltip")
     protected Integer priority;
 
-    @Column(name = "EXCLUDE_FROM_DISPLAY")
-    @AdminPresentation(friendlyName = "PromotionMessageImpl_ExcludeFromDisplay",
-        group = GroupName.Misc, order = FieldOrder.ExcludeFromDisplay,
-        defaultValue = "false")
-    protected Boolean excludeFromDisplay = false;
-
     @Column(name = "START_DATE")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_StartDate",
-        group = GroupName.ActiveRange, order = FieldOrder.StartDate,
+        group = GroupName.ActiveRange, groupOrder = GroupOrder.ActiveRange, order = FieldOrder.StartDate,
         requiredOverride = RequiredOverride.REQUIRED,
         defaultValue = "today")
     protected Date startDate;
 
     @Column(name = "END_DATE")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_EndDate",
-        group = GroupName.ActiveRange, order = FieldOrder.EndDate,
+        group = GroupName.ActiveRange, groupOrder = GroupOrder.ActiveRange, order = FieldOrder.EndDate,
         validationConfigurations = {
             @ValidationConfiguration(
                 validationImplementation = "blAfterStartDateValidator",
@@ -182,15 +159,21 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
         })
     protected Date endDate;
 
-    @ManyToOne(targetEntity = OfferImpl.class, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "OFFER_ID")
-    @AdminPresentation(excluded = true)
-    protected Offer offer;
+    @Column(name = "MESSAGE_PLACEMENT")
+    @AdminPresentation(friendlyName = "PromotionMessageImpl_MessagePlacement",
+            group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.MessagePlacement,
+            fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessagePlacementType",
+            defaultValue = "ALL",
+            requiredOverride = RequiredOverride.REQUIRED)
+    protected String messagePlacement;
 
-    @ManyToOne(targetEntity = ProductImpl.class, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "PRODUCT_ID")
-    @AdminPresentation(excluded = true)
-    protected Product product;
+    @ManyToOne(targetEntity = LocaleImpl.class)
+    @JoinColumn(name = "LOCALE_CODE")
+    @AdminPresentation(friendlyName = "PromotionMessageImpl_Locale",
+            group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.Locale)
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
+    protected Locale locale;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -214,26 +197,6 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    @Override
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    @Override
-    public PromotionMessage getOverriddenPromotionMessage() {
-        return overriddenPromotionMessage;
-    }
-
-    @Override
-    public void setOverriddenPromotionMessage(PromotionMessage overriddenPromotionMessage) {
-        this.overriddenPromotionMessage = overriddenPromotionMessage;
     }
 
     @Override
@@ -269,16 +232,6 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     }
 
     @Override
-    public Boolean getExcludeFromDisplay() {
-        return excludeFromDisplay == null ? Boolean.FALSE : excludeFromDisplay;
-    }
-
-    @Override
-    public void setExcludeFromDisplay(Boolean excludeFromDisplay) {
-        this.excludeFromDisplay = excludeFromDisplay;
-    }
-
-    @Override
     public Date getStartDate() {
         if ('Y'==getArchived()) {
             return null;
@@ -299,6 +252,24 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     @Override
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String getMessagePlacement() {
+        return messagePlacement;
+    }
+
+    public void setMessagePlacement(String messageLocation) {
+        this.messagePlacement = messageLocation;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return locale;
+    }
+
+    @Override
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     @Override
@@ -364,7 +335,6 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
         cloned.setName(name);
         cloned.setMessage(message);
         cloned.setPriority(getPriority());
-        cloned.setExcludeFromDisplay(excludeFromDisplay);
         cloned.setStartDate(startDate);
         cloned.setEndDate(endDate);
         cloned.setArchived(getArchived());

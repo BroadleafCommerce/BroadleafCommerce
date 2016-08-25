@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Menu
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,20 +15,34 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.promotionMessage.service.extension;
 
-import org.broadleafcommerce.common.extension.ExtensionManager;
-import org.springframework.stereotype.Service;
+package org.broadleafcommerce.profile.core.dto;
 
+import java.io.Serializable;
 
 /**
+ * Simple container for Customer-related rules used to decouple Customers from Offers.
+ *
  * @author Chris Kittrell (ckittrell)
  */
-@Service("blPromotionMessageServiceExtensionManager")
-public class PromotionMessageServiceExtensionManager extends ExtensionManager<PromotionMessageServiceExtensionHandler> {
+public class CustomerRuleHolder implements Serializable {
 
-    public PromotionMessageServiceExtensionManager() {
-        super(PromotionMessageServiceExtensionHandler.class);
+    private static final long serialVersionUID = 1L;
+
+    protected String customerRule;
+
+    public CustomerRuleHolder() {}
+
+    public CustomerRuleHolder(String customerRule) {
+        this.customerRule = customerRule;
     }
 
+
+    public String getCustomerRule() {
+        return customerRule;
+    }
+
+    public void setCustomerRule(String customerRule) {
+        this.customerRule = customerRule;
+    }
 }

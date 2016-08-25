@@ -33,8 +33,8 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 @AdminGroupPresentation(name = PromotionMessageAdminPresentation.GroupName.General,
                         order = PromotionMessageAdminPresentation.GroupOrder.General,
                         untitled = true),
-                @AdminGroupPresentation(name = PromotionMessageAdminPresentation.GroupName.Misc,
-                        order = PromotionMessageAdminPresentation.GroupOrder.Misc,
+                @AdminGroupPresentation(name = PromotionMessageAdminPresentation.GroupName.Placement,
+                        order = PromotionMessageAdminPresentation.GroupOrder.Placement,
                         untitled = true),
                 @AdminGroupPresentation(name = PromotionMessageAdminPresentation.GroupName.ActiveRange,
                         order = PromotionMessageAdminPresentation.GroupOrder.ActiveRange,
@@ -56,26 +56,25 @@ public interface PromotionMessageAdminPresentation {
 
     public static class GroupName {
         public static final String General = "General";
-        public static final String Misc = "PromotionMessageImpl_Misc";
+        public static final String Placement = "PromotionMessageImpl_Placement";
         public static final String ActiveRange = "PromotionMessageImpl_Active_Range";
 
     }
 
     public static class GroupOrder {
         public static final int General = 1000;
-        public static final int Misc = 2000;
+        public static final int Placement = 2000;
         public static final int ActiveRange = 3000;
     }
 
     public static class FieldOrder {
         public static final int Name = 1000;
-        public static final int Type = 2000;
-        public static final int OverriddenPromotionMessage = 2000;
-        public static final int Message = 3000;
-        public static final int Media = 4000;
+        public static final int Message = 2000;
+        public static final int Media = 3000;
 
-        public static final int Priority = 1000;
-        public static final int ExcludeFromDisplay = 2000;
+        public static final int MessagePlacement = 1000;
+        public static final int Locale = 2000;
+        public static final int Priority = 3000;
 
         public static final int StartDate = 1000;
         public static final int EndDate = 2000;

@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * broadleaf-enterprise
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,27 +15,24 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.promotionMessage.service.extension;
+package org.broadleafcommerce.core.promotionMessage.service;
 
-import org.broadleafcommerce.common.extension.ExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
+import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
 
 import java.util.List;
-
+import java.util.Map;
 
 /**
+ * A {@link PromotionMessageGenerator} understands how to gather applicable {@link PromotionMessage}s
+ *  for the given {@link Product}.
+ * 
  * @author Chris Kittrell (ckittrell)
  */
-public interface PromotionMessageServiceExtensionHandler extends ExtensionHandler {
+public interface PromotionMessageGenerator {
+    
+    public Map<String, List<PromotionMessageDTO>> generatePromotionMessages(Product product);
 
-    /**
-     * Extension point to help gather Product Group data
-     * @param resultHolder
-     * @param product
-     * @return
-     */
-    ExtensionResultStatusType findProductGroupIdsForProduct(ExtensionResultHolder<List<Long>> resultHolder,
-            Product product);
 }

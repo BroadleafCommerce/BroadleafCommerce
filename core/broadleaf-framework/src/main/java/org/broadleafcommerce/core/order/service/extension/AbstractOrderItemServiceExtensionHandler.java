@@ -31,4 +31,9 @@ public abstract class AbstractOrderItemServiceExtensionHandler extends AbstractE
     public ExtensionResultStatusType modifyOrderItemPrices(OrderItem item) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
+    @Override
+    public ExtensionResultStatusType applyAdditionalOrderItemProperties(OrderItem orderItem) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }

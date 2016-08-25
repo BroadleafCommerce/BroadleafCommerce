@@ -28,7 +28,6 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandid
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
@@ -109,13 +108,6 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
         }
     };
 
-    public static final ExtensionManagerOperation applyAdditionalRuleVariablesForItemEvaluation = new ExtensionManagerOperation() {
-        @Override
-        public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OfferServiceExtensionHandler) handler).applyAdditionalRuleVariablesForItemEvaluation((OrderItem) params[0]);
-        }
-    };
-
     public OfferServiceExtensionManager() {
         super(OfferServiceExtensionHandler.class);
     }
@@ -163,11 +155,6 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
     @Override
     public ExtensionResultStatusType applyAdditionalRuleVariablesForItemOfferEvaluation(PromotableOrderItem orderItem, HashMap<String, Object> vars) {
         return execute(applyAdditionalRuleVariablesForItemOfferEvaluation, orderItem, vars);
-    }
-
-    @Override
-    public ExtensionResultStatusType applyAdditionalRuleVariablesForItemEvaluation(OrderItem orderItem) {
-        return execute(applyAdditionalRuleVariablesForItemEvaluation, orderItem);
     }
 
     @Override

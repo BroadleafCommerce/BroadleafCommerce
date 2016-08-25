@@ -24,20 +24,22 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * An extendible enumeration of promotion message types.
+ * An extendible enumeration of promotion message location types.
  *
  */
-public class PromotionMessageType implements Serializable, BroadleafEnumerationType, Comparable<PromotionMessageType> {
+public class PromotionMessagePlacementType implements Serializable, BroadleafEnumerationType, Comparable<PromotionMessagePlacementType> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PromotionMessageType> TYPES = new LinkedHashMap<String, PromotionMessageType>();
-    public static final PromotionMessageType TARGETS = new PromotionMessageType("TARGETS", "Targets only", 1000);
-    public static final PromotionMessageType QUALIFIERS = new PromotionMessageType("QUALIFIERS", "Qualifers only", 2000);
-    public static final PromotionMessageType TARGETS_OR_QUALIFIERS = new PromotionMessageType("TARGETS_OR_QUALIFIERS", "Targets or Qualifiers", 3000);
+    private static final Map<String, PromotionMessagePlacementType> TYPES = new LinkedHashMap<String, PromotionMessagePlacementType>();
+    public static final PromotionMessagePlacementType PRODUCT_DETAIL = new PromotionMessagePlacementType("PRODUCT_DETAIL", "Product Detail", 1000);
+    public static final PromotionMessagePlacementType BROWSE = new PromotionMessagePlacementType("BROWSE", "Browse", 2000);
+    public static final PromotionMessagePlacementType SEARCH_RESULTS = new PromotionMessagePlacementType("SEARCH_RESULTS", "Search Results", 3000);
+    public static final PromotionMessagePlacementType CART = new PromotionMessagePlacementType("CART", "Cart", 4000);
+    public static final PromotionMessagePlacementType ALL = new PromotionMessagePlacementType("ALL", "All of the above", 5000);
 
 
-    public static PromotionMessageType getInstance(final String type) {
+    public static PromotionMessagePlacementType getInstance(final String type) {
         return TYPES.get(type);
     }
 
@@ -45,11 +47,11 @@ public class PromotionMessageType implements Serializable, BroadleafEnumerationT
     private String friendlyType;
     private int order;
 
-    public PromotionMessageType() {
+    public PromotionMessagePlacementType() {
         //do nothing
     }
 
-    public PromotionMessageType(final String type, final String friendlyType, int order) {
+    public PromotionMessagePlacementType(final String type, final String friendlyType, int order) {
         this.friendlyType = friendlyType;
         setType(type);
         setOrder(order);
@@ -94,7 +96,7 @@ public class PromotionMessageType implements Serializable, BroadleafEnumerationT
             return false;
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
-        PromotionMessageType other = (PromotionMessageType) obj;
+        PromotionMessagePlacementType other = (PromotionMessagePlacementType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;
@@ -104,7 +106,7 @@ public class PromotionMessageType implements Serializable, BroadleafEnumerationT
     }
     
     @Override
-    public int compareTo(PromotionMessageType arg0) {
+    public int compareTo(PromotionMessagePlacementType arg0) {
         return this.order - arg0.order;
     }
 
