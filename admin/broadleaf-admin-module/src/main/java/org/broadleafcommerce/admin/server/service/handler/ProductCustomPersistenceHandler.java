@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
+import org.broadleafcommerce.common.util.ModulePresentUtil;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
@@ -62,6 +63,11 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -71,10 +77,6 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -352,13 +354,24 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            if (extensionManager != null) {
-                extensionManager.getProxy().manageRemove(persistencePackage, adminInstance);
+
+            if(ModulePresentUtil.isPresent("Enterprise")) {
+                enterpriseRemove(persistencePackage, adminInstance, helper);
+            } else {
+                catalogService.removeProduct(adminInstance);
             }
-            helper.getCompatibleModule(OperationType.BASIC).remove(persistencePackage);
+
         } catch (ClassNotFoundException e) {
             throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
         }
+    }
+
+    protected void enterpriseRemove(PersistencePackage persistencePackage, Product adminInstance, RecordHelper helper) throws ServiceException {
+            if (extensionManager != null) {
+                extensionManager.getProxy().manageRemove(persistencePackage, adminInstance);
+            }
+
+            helper.getCompatibleModule(OperationType.BASIC).remove(persistencePackage);
     }
 
     /**
