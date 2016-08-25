@@ -89,5 +89,5 @@ public interface OrderItemService {
 
     public Set<Product> findAllProductsInRequest(ConfigurableOrderItemRequest itemRequest);
 
-    void applyAdditionalOrderItemProperties(OrderItem orderItem);
+    public void applyAdditionalOrderItemProperties(OrderItem orderItem);
 }
