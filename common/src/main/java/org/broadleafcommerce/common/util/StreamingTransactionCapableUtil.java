@@ -58,8 +58,8 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
 
     @PostConstruct
     public void init() {
-        if (transactionManager instanceof JpaTransactionManager) {
-            em = ((JpaTransactionManager) transactionManager).getEntityManagerFactory().createEntityManager();
+        if (getTransactionManager() instanceof JpaTransactionManager) {
+            em = ((JpaTransactionManager) getTransactionManager()).getEntityManagerFactory().createEntityManager();
         }
     }
 
@@ -204,7 +204,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
 
     protected <G extends Throwable> void endTransaction(TransactionStatus status, boolean error, Class<G> exceptionType) throws G {
         try {
-            TransactionUtils.finalizeTransaction(status, transactionManager, error);
+            TransactionUtils.finalizeTransaction(status, getTransactionManager(), error);
         } catch (Throwable e) {
             ExceptionHelper.processException(exceptionType, RuntimeException.class, e);
         }
@@ -214,7 +214,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
         TransactionStatus status;
         try {
             status = TransactionUtils.createTransaction(propagationBehavior, isolationLevel,
-                    transactionManager, false);
+                    getTransactionManager(), false);
         } catch (RuntimeException e) {
             LOG.error("Could not start transaction", e);
             throw e;
