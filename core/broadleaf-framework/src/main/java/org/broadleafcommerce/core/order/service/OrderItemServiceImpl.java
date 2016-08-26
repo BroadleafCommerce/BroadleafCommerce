@@ -567,7 +567,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         return allProductsSet;
     }
 
-    protected void applyAdditionalOrderItemProperties(OrderItem orderItem) {
+    @Override
+    public void applyAdditionalOrderItemProperties(OrderItem orderItem) {
         extensionManager.getProxy().applyAdditionalOrderItemProperties(orderItem);
     }
 }

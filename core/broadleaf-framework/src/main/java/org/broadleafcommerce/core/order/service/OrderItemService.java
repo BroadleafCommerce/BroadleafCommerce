@@ -88,4 +88,6 @@ public interface OrderItemService {
     public void priceOrderItem(OrderItem item);
 
     public Set<Product> findAllProductsInRequest(ConfigurableOrderItemRequest itemRequest);
+
+    public void applyAdditionalOrderItemProperties(OrderItem orderItem);
 }
