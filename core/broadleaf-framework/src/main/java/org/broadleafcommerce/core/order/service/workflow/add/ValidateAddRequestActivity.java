@@ -183,7 +183,9 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                 } else if (productOption.getProductOptionValidationStrategyType() == null || productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank()) {
                         productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
                 }
-                if((productOption.getProductOptionValidationStrategyType() != null && productOption.getProductOptionValidationStrategyType().getRank() > ProductOptionValidationStrategyType.ADD_ITEM.getRank()))
+                if(productOption.getProductOptionValidationStrategyType() != null &&
+                  !productOption.getProductOptionValidationStrategyType().equals(ProductOptionValidationStrategyType.NONE) &&
+                  productOption.getProductOptionValidationStrategyType().getRank() > ProductOptionValidationStrategyType.ADD_ITEM.getRank() )
                 {
                     //we need to validate however, we will not error out since this message is 
                     try {
