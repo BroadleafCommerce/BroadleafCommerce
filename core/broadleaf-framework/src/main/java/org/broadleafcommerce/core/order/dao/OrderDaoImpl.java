@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -52,6 +53,8 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 @Repository("blOrderDao")
@@ -305,6 +308,49 @@ public class OrderDaoImpl implements OrderDao {
         criteria.orderBy(builder.desc(order.get("submitDate")));
 
         TypedQuery<Order> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Order> readOrdersForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        criteria.select(order);
+
+        List<Predicate> restrictions = new ArrayList<>();
+        restrictions.add(builder.between(order.<Date>get("submitDate"), startDate, endDate));
+        restrictions.add(order.get("customer").get("id").in(customerIds));
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        criteria.orderBy(builder.desc(order.get("customer")), builder.asc(order.get("submitDate")));
+
+        TypedQuery<Order> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<OrderItem> readOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<OrderItem> criteria = builder.createQuery(OrderItem.class);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        Join<Order, OrderItem> orderItems = order.join("orderItems");
+        criteria.select(orderItems);
+
+        List<Predicate> restrictions = new ArrayList<>();
+        restrictions.add(builder.between(order.<Date>get("submitDate"), startDate, endDate));
+        restrictions.add(order.get("customer").get("id").in(customerIds));
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        criteria.orderBy(builder.desc(order.get("customer")), builder.asc(order.get("submitDate")));
+
+        TypedQuery<OrderItem> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
 
