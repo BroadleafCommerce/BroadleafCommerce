@@ -68,8 +68,6 @@ public interface OrderDao {
 
     List<Order> readOrdersForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
 
-    List<OrderItem> readOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
-
     Order updatePrices(Order order);
 
     /**

@@ -162,8 +162,6 @@ public interface OrderService {
 
     List<Order> findOrdersForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
 
-    List<OrderItem> readOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
-
     /**
      * Returns all OrderPayment objects that are associated with the given order
      * 

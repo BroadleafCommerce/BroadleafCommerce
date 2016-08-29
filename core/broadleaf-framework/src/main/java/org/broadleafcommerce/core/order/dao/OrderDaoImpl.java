@@ -336,28 +336,6 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<OrderItem> readOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate) {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<OrderItem> criteria = builder.createQuery(OrderItem.class);
-        Root<OrderImpl> order = criteria.from(OrderImpl.class);
-        Join<Order, OrderItem> orderItems = order.join("orderItems");
-        criteria.select(orderItems);
-
-        List<Predicate> restrictions = new ArrayList<>();
-        restrictions.add(builder.between(order.<Date>get("submitDate"), startDate, endDate));
-        restrictions.add(order.get("customer").get("id").in(customerIds));
-        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-
-        criteria.orderBy(builder.desc(order.get("customer")), builder.asc(order.get("submitDate")));
-
-        TypedQuery<OrderItem> query = em.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
-
-        return query.getResultList();
-    }
-
-    @Override
     @Transactional("blTransactionManager")
     public Order updatePrices(Order order) {
         order = em.merge(order);

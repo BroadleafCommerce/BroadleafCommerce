@@ -241,11 +241,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderItem> readOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate) {
-        return orderDao.readOrderItemsForCustomersInDateRange(customerIds, startDate, endDate);
-    }
-
-    @Override
     public List<OrderPayment> findPaymentsForOrder(Order order) {
         return paymentDao.readPaymentsForOrder(order);
     }

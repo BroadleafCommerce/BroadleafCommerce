@@ -34,6 +34,7 @@ import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemReque
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -90,4 +91,6 @@ public interface OrderItemService {
     public Set<Product> findAllProductsInRequest(ConfigurableOrderItemRequest itemRequest);
 
     public void applyAdditionalOrderItemProperties(OrderItem orderItem);
+
+    public List<OrderItem> findOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
 }
