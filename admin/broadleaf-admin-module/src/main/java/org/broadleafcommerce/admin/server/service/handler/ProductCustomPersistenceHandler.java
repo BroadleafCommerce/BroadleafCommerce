@@ -135,6 +135,8 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
         modifyParentCategoryMetadata(md);
 
+        extensionManager.getProxy().manageInspect(md);
+
         return getResultSet(persistencePackage, helper, md);
     }
 
