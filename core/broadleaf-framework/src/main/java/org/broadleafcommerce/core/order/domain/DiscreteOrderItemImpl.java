@@ -20,12 +20,15 @@ package org.broadleafcommerce.core.order.domain;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
+import org.broadleafcommerce.common.dao.GenericEntityDaoImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.HibernateUtils;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -39,6 +42,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -59,6 +63,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -118,9 +123,29 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
 
+    @Transient
+    protected Sku deproxiedSku;
+
+    @Transient
+    protected Product deproxiedProduct;
+
     @Override
     public Sku getSku() {
-        return HibernateUtils.deproxy(sku);
+        if (deproxiedSku == null) {
+            if (sku instanceof HibernateProxy) {
+                GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
+                if (genericEntityDao != null) {
+                    Long id = sku.getId();
+                    genericEntityDao.getEntityManager().detach(sku);
+                    deproxiedSku = genericEntityDao.getEntityManager().find(SkuImpl.class, id);
+                } else {
+                    deproxiedSku = HibernateUtils.deproxy(sku);
+                }
+            } else {
+                deproxiedSku = sku;
+            }
+        }
+        return deproxiedSku;
     }
 
     @Override
@@ -143,7 +168,21 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public Product getProduct() {
-        return HibernateUtils.deproxy(product);
+        if (deproxiedProduct == null) {
+            if (product instanceof HibernateProxy) {
+                GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
+                if (genericEntityDao != null) {
+                    Long id = product.getId();
+                    genericEntityDao.getEntityManager().detach(product);
+                    deproxiedProduct = genericEntityDao.getEntityManager().find(ProductImpl.class, id);
+                } else {
+                    deproxiedProduct = HibernateUtils.deproxy(product);
+                }
+            } else {
+                deproxiedProduct = product;
+            }
+        }
+        return deproxiedProduct;
     }
 
     @Override
