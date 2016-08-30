@@ -86,7 +86,10 @@
             if ($fieldGroupListGridWrapperHeader.length) {
                 var $totalRecords = $fieldGroupListGridWrapperHeader.find('.listgrid-total-records');
                 var totalRecordsText = totalRecords == 1 ? '(' + totalRecords + ' Record)' : '(' + totalRecords + ' Records)';
-                $totalRecords.html(totalRecordsText);
+
+                if (totalRecords != 0 || $totalRecords.html().indexOf('Fetch') < 0) {
+                    $totalRecords.html(totalRecordsText);
+                }
 
                 if (totalRecords !== 0 || $listGridContainer.hasClass('filtered')) {
                     $fieldGroupListGridWrapperHeader.removeClass('hidden-body');
