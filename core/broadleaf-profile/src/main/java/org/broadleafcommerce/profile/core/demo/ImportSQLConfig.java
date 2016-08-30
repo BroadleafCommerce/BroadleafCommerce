@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.demo.AutoImportPersistenceUnit;
 import org.broadleafcommerce.common.demo.AutoImportSql;
 import org.broadleafcommerce.common.demo.AutoImportStage;
 import org.broadleafcommerce.common.demo.DemoCondition;
+import org.broadleafcommerce.common.demo.ImportCondition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -29,15 +30,17 @@ import org.springframework.context.annotation.Configuration;
  * @author Jeff Fischer
  */
 @Configuration("blProfileData")
-@Conditional(DemoCondition.class)
+@Conditional(ImportCondition.class)
 public class ImportSQLConfig {
 
     @Bean
+    @Conditional(DemoCondition.class)
     public AutoImportSql blProfileBasicData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_code_tables.sql", AutoImportStage.PRIMARY_BASIC_DATA);
     }
 
     @Bean
+    @Conditional(DemoCondition.class)
     public AutoImportSql blProfileSequenceData() {
         return new AutoImportSql(AutoImportPersistenceUnit.ALL,"config/bc/sql/demo/load_profile_table_sequences.sql", AutoImportStage.ALL_TABLE_SEQUENCE);
     }

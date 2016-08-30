@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.demo.AutoImportPersistenceUnit;
 import org.broadleafcommerce.common.demo.AutoImportSql;
 import org.broadleafcommerce.common.demo.AutoImportStage;
 import org.broadleafcommerce.common.demo.DemoCondition;
+import org.broadleafcommerce.common.demo.ImportCondition;
 import org.broadleafcommerce.common.demo.MTCondition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -30,12 +31,13 @@ import org.springframework.context.annotation.Configuration;
  * @author Jeff Fischer
  */
 @Configuration("blCMSData")
-@Conditional(DemoCondition.class)
+@Conditional(ImportCondition.class)
 public class ImportSQLConfig {
 
     public static final int BASIC_DATA_SPECIAL = AutoImportStage.PRIMARY_BASIC_DATA - 30;
 
     @Bean
+    @Conditional(DemoCondition.class)
     public AutoImportSql blCMSBasicData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_content_structure.sql," +
                 "config/bc/sql/demo/load_content_data.sql,config/bc/sql/demo/load_content_structure_i18n.sql," +
@@ -43,12 +45,13 @@ public class ImportSQLConfig {
     }
 
     @Bean
+    @Conditional(DemoCondition.class)
     public AutoImportSql blCMSSequenceData() {
         return new AutoImportSql(AutoImportPersistenceUnit.ALL,"config/bc/sql/demo/load_cms_table_sequences.sql", AutoImportStage.ALL_TABLE_SEQUENCE);
     }
 
     @Bean
-    @Conditional(MTCondition.class)
+    @Conditional({MTCondition.class, DemoCondition.class})
     public AutoImportSql blCMSLateData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/fix_static_asset_data.sql", AutoImportStage.PRIMARY_LATE);
     }
