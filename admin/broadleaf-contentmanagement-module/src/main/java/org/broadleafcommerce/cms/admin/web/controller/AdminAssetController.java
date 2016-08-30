@@ -130,9 +130,11 @@ public class AdminAssetController extends AdminBasicEntityController {
             @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result,
             RedirectAttributes ra) throws Exception {
         String templatePath = super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
+
         if (result.hasErrors()) {
             model.addAttribute("cmsUrlPrefix", staticAssetService.getStaticAssetUrlPrefix());
         }
+        
         return templatePath;
     }
 

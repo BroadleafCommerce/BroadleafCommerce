@@ -22,9 +22,10 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * Extends the Spring DefaultRedirectStrategy with support for ajax redirects.
@@ -40,7 +41,7 @@ import java.io.IOException;
  */
 @Component("blAuthenticationFailureRedirectStrategy")
 public class BroadleafAuthenticationFailureRedirectStrategy implements RedirectStrategy {
-    
+
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override

@@ -46,7 +46,7 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         String failureUrlParam = StringUtil.cleanseUrlString(request.getParameter("failureUrl"));
         String successUrlParam = StringUtil.cleanseUrlString(request.getParameter("successUrl"));
-        String failureUrl = failureUrlParam==null?null:failureUrlParam.trim();
+        String failureUrl = (failureUrlParam != null) ? failureUrlParam.trim() : null;
         Boolean sessionTimeout = (Boolean) request.getAttribute("sessionTimeout");
 
         if (StringUtils.isEmpty(failureUrl) && BooleanUtils.isNotTrue(sessionTimeout)) {
@@ -77,8 +77,6 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
                 } else {
                     failureUrl += "&" + successUrlParam;
                 }
-            } else {
-            	
             }
 
             saveException(request, exception);

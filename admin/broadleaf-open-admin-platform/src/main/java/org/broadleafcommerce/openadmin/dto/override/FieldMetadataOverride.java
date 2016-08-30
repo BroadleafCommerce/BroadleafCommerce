@@ -112,6 +112,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private Boolean readOnly;
     private Map<String, List<Map<String, String>>> validationConfigurations;
     private Boolean requiredOverride;
+    private Boolean allowNoValueEnumOption;
     private String tooltip;
     private String helpText;
     private String hint;
@@ -925,5 +926,12 @@ public class FieldMetadataOverride extends MetadataOverride {
     public void setLazyFetch(Boolean lazyFetch) {
         this.lazyFetch = lazyFetch;
     }
-    
+
+    public Boolean getAllowNoValueEnumOption() {
+        return allowNoValueEnumOption;
+    }
+
+    public void setAllowNoValueEnumOption(Boolean allowNoValueEnumOption) {
+        this.allowNoValueEnumOption = allowNoValueEnumOption;
+    }
 }

@@ -20,6 +20,7 @@ package org.broadleafcommerce.profile.web.core.security;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
@@ -61,6 +62,9 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
     
     @Resource(name = "blCustomerMergeExtensionManager")
     protected CustomerMergeExtensionManager customerMergeExtensionManager;
+
+    @Resource(name = "blAnonymousCustomerExtensionManager")
+    protected AnonymousCustomerExtensionManager anonymousCustomerExtensionManager;
 
     protected ApplicationEventPublisher eventPublisher;
 
@@ -285,6 +289,14 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      * @see {@link #getAnonymousCustomerIdSessionAttributeName()}
      */
     public Customer getAnonymousCustomer(WebRequest request) {
+        if (anonymousCustomerExtensionManager != null) {
+            ExtensionResultHolder<Customer> resultHolder = new ExtensionResultHolder<Customer>();
+            anonymousCustomerExtensionManager.getProxy().getAnonymousCustomer(resultHolder, request);
+            if (resultHolder.getResult() != null) {
+                return resultHolder.getResult();
+            }
+        }
+
         if (BLCRequestUtils.isOKtoUseSession(request)) {
             Customer anonymousCustomer = (Customer) request.getAttribute(getAnonymousCustomerSessionAttributeName(),
                     WebRequest.SCOPE_GLOBAL_SESSION);

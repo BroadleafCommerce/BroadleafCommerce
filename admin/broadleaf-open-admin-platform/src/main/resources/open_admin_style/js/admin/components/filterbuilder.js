@@ -44,6 +44,12 @@
      */
     var postConstructQueryBuilderFieldHandlers = [];
 
+    /**
+     * An Admin page may need to perform some function, using the returned page data, after a filter has been applied.
+     * @type {Array}
+     */
+    var postApplyFilterHandlers = [];
+
     BLCAdmin.filterBuilders = {
 
         /**
@@ -73,6 +79,19 @@
         runPostConstructQueryBuilderFieldHandler : function(builder) {
             for (var i = 0; i < postConstructQueryBuilderFieldHandlers.length; i++) {
                 postConstructQueryBuilderFieldHandlers[i](builder);
+            }
+        },
+
+        /**
+         * Handlers designed to execute on the data returned after applying and making a filter request
+         */
+        addPostApplyFilterHandler : function(fn) {
+            postApplyFilterHandlers.push(fn);
+        },
+
+        runPostApplyFilterHandlers : function(data) {
+            for (var i = 0; i < postApplyFilterHandlers.length; i++) {
+                postApplyFilterHandlers[i](data);
             }
         },
 
@@ -651,9 +670,10 @@
                     });
                     // add back active filters
                     if (inputs.length) {
-                        $(inputs).each(function (index, input) {
+                        for (var i in inputs) {
+                            var input = inputs[i];
                             BLCAdmin.history.replaceUrlParameter(input.name, input.value);
-                        });
+                        }
                     }
                 }
 
@@ -688,6 +708,8 @@
                 } else {
                     BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, {isRefresh: false});
                 }
+
+                BLCAdmin.filterBuilders.runPostApplyFilterHandlers(data);
             });
 
             $('.error-container').hide();
