@@ -50,6 +50,7 @@ public abstract class FieldMetadata implements Serializable {
     @Deprecated
     private Integer groupOrder;
     private Boolean lazyFetch;
+    private Boolean manualFetch;
     
     //temporary fields
     private Boolean childrenExcluded;
@@ -122,6 +123,7 @@ public abstract class FieldMetadata implements Serializable {
         metadata.showIfFieldEquals = showIfFieldEquals;
         metadata.currencyCodeField = currencyCodeField;
         metadata.lazyFetch = lazyFetch;
+        metadata.manualFetch = manualFetch;
         for (Map.Entry<String, Object> entry : additionalMetadata.entrySet()) {
             metadata.additionalMetadata.put(entry.getKey(), entry.getValue());
         }
@@ -274,6 +276,17 @@ public abstract class FieldMetadata implements Serializable {
 
     public void setLazyFetch(Boolean lazyFetch) {
         this.lazyFetch = lazyFetch;
+    }
+
+    public boolean getManualFetch() {
+        if (manualFetch == null) {
+            return false;
+        }
+        return manualFetch;
+    }
+
+    public void setManualFetch(boolean manualFetch) {
+        this.manualFetch = manualFetch;
     }
 
     public abstract FieldMetadata cloneFieldMetadata();
