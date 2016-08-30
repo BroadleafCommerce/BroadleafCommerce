@@ -56,7 +56,6 @@ public class DefaultListGridActions {
     public static final ListGridAction MANUAL_FETCH = new ListGridAction(ListGridAction.MANUAL_FETCH)
         .withForListGridReadOnly(true)
         .withButtonClass("sub-list-grid-fetch")
-        .withIconClass("fa fa-plus")
         .withDisplayText("Fetch");
 
     // Actions for row-level
