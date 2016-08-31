@@ -56,6 +56,10 @@ public class TranslationConsiderationContext {
         TranslationConsiderationContext.translationConsiderationContext.get().service = translationService;
     }
 
+    public static void removeTranslationConsiderationContext() {
+        ThreadLocalManager.remove(translationConsiderationContext);
+    }
+
     protected Boolean enabled = false;
     protected TranslationService service;
 }
