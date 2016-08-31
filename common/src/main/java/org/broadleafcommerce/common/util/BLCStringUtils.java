@@ -20,13 +20,15 @@ package org.broadleafcommerce.common.util;
 import org.owasp.esapi.ESAPI;
 
 /**
+ * Utility class for sanitizing a String to neutralize any possible malicious content. This is used primarily to protect log
+ * messages by encoding for any possible forgery or injection attempts.
+ *
  * @author Chad Harchar (charchar)
  */
 public class BLCStringUtils {
 
     /**
-     * Given an Object of type Integer or Long, converts the Object instance to a Long.  This will throw a ClassCastException
-     * if the past parameter is not either an Integer or a Long.
+     * Given a String value, encode the String and return using ESAPI encodeForHTML functionality.
      *
      * @param string
      * @return String
