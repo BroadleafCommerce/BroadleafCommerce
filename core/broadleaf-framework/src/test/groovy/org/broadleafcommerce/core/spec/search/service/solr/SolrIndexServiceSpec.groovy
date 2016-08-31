@@ -56,7 +56,7 @@ class SolrIndexServiceSpec extends Specification {
     
     def setup() {
         mockLocaleService.findAllLocales() >> new ArrayList<Locale>()
-        mockExtensionManager.getProxy() >> Mock(SolrSearchServiceExtensionHandler)
+        mockExtensionManager.getProxy() >> Mock(SolrIndexServiceExtensionHandler)
 
         service = Spy(SolrIndexServiceImpl)
         service.solrIndexDao = mockSolrIndexDao
