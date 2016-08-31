@@ -86,7 +86,10 @@
             if ($fieldGroupListGridWrapperHeader.length) {
                 var $totalRecords = $fieldGroupListGridWrapperHeader.find('.listgrid-total-records');
                 var totalRecordsText = totalRecords == 1 ? '(' + totalRecords + ' Record)' : '(' + totalRecords + ' Records)';
-                $totalRecords.html(totalRecordsText);
+
+                if (totalRecords != 0 || $totalRecords.html().indexOf('Fetch') < 0) {
+                    $totalRecords.html(totalRecordsText);
+                }
 
                 if (totalRecords !== 0 || $listGridContainer.hasClass('filtered')) {
                     $fieldGroupListGridWrapperHeader.removeClass('hidden-body');
@@ -711,11 +714,17 @@ $(document).ready(function () {
         }
     });
 
+    /**
+     * Handle "add" clicks on listgrids
+     */
     $('body').on('click', 'button.sub-list-grid-add, a.sub-list-grid-add', function () {
         BLCAdmin.showLinkAsModal($(this).attr('data-actionurl'));
         return false;
     });
 
+    /**
+     * Handle empty "add" clicks on listgrids
+     */
     $('body').on('click', 'button.sub-list-grid-add-empty, a.sub-list-grid-add-empty', function () {
         var link = $(this).attr('data-actionurl');
         link = link.substring(0, link.indexOf("/add")) + "/addEmpty" + link.substring(link.indexOf("/add") + 4, link.length);
@@ -730,6 +739,37 @@ $(document).ready(function () {
                 link += "&isPostAdd=true";
             }
             BLCAdmin.showLinkAsModal(link);
+        });
+        return false;
+    });
+
+    /**
+     * Handle "fetch" click on listgrids
+     */
+    $('body').on('click', 'button.sub-list-grid-fetch', function () {
+        var $button = $(this);
+        var url = $button.attr('data-actionurl');
+        var $tbody = $button.closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
+
+        // Create the loading icon
+        var loadingSpinner = $('<i>', {
+            "class" : 'fa-pulse fa fa-spinner',
+            "style" : 'float: none; width: ' + $button.width() + 'px;'
+        });
+        $button.html(loadingSpinner);
+
+        BLC.ajax({
+            url: url,
+            type: "GET"
+        }, function(data) {
+            $button.html("Refresh");
+            if ($tbody.data('listgridtype') == 'asset_grid') {
+                BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.asset-listgrid div.listgrid-header-wrapper'), null, {isRefresh: false});
+            } else if ($tbody.data('listgridtype') == 'tree') {
+                BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.tree-search-wrapper div.listgrid-header-wrapper'), null, {isRefresh: false});
+            } else {
+                BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, {isRefresh: false});
+            }
         });
         return false;
     });
