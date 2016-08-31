@@ -22,7 +22,10 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+
+import java.util.Map;
 
 /**
  * Extension handler for {@link org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler}
@@ -54,6 +57,14 @@ public interface ProductCustomPersistenceHandlerExtensionHandler extends Extensi
      * @return
      */
     ExtensionResultStatusType manageRemove(PersistencePackage persistencePackage, Product product) throws ServiceException;
+
+    /**
+     * Perform any special metadata handling for the inspect
+     *
+     * @param metadata
+     * @return
+     */
+    ExtensionResultStatusType manageInspect(Map<String, FieldMetadata> metadata) throws ServiceException;
 
     /**
      * Perform any special handling for field on the product
