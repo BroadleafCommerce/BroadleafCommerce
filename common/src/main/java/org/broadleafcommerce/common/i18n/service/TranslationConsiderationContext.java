@@ -29,6 +29,10 @@ import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 public class TranslationConsiderationContext {
 
     private static final ThreadLocal<TranslationConsiderationContext> translationConsiderationContext = ThreadLocalManager.createThreadLocal(TranslationConsiderationContext.class);
+
+    public static TranslationConsiderationContext getTranslationConsiderationContext() {
+        return translationConsiderationContext.get();
+    }
     
     public static boolean hasTranslation() {
         return isTranslationConsiderationContextEnabled() != null
