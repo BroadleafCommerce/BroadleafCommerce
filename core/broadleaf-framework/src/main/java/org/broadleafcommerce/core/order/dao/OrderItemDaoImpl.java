@@ -19,6 +19,8 @@ package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
@@ -27,12 +29,23 @@ import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 @Repository("blOrderItemDao")
 public class OrderItemDaoImpl implements OrderItemDao {
@@ -108,5 +121,27 @@ public class OrderItemDaoImpl implements OrderItemDao {
         detail.setUseSalePrice(item.getIsOnSale());
         item.getOrderItemPriceDetails().add(detail);
         return detail;
+    }
+
+    @Override
+    public List<OrderItem> readOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<OrderItem> criteria = builder.createQuery(OrderItem.class);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        Join<Order, OrderItem> orderItems = order.join("orderItems");
+        criteria.select(orderItems);
+
+        List<Predicate> restrictions = new ArrayList<>();
+        restrictions.add(builder.between(order.<Date>get("submitDate"), startDate, endDate));
+        restrictions.add(order.get("customer").get("id").in(customerIds));
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        criteria.orderBy(builder.desc(order.get("customer")), builder.asc(order.get("submitDate")));
+
+        TypedQuery<OrderItem> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
+
+        return query.getResultList();
     }
 }
