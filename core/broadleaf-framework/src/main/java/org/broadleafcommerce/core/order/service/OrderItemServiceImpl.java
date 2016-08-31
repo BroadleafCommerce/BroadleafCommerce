@@ -571,4 +571,24 @@ public class OrderItemServiceImpl implements OrderItemService {
     public void applyAdditionalOrderItemProperties(OrderItem orderItem) {
         extensionManager.getProxy().applyAdditionalOrderItemProperties(orderItem);
     }
+
+    @Override
+    public ConfigurableOrderItemRequest createConfigurableOrderItemRequestFromProduct(Product product) {
+        ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
+        itemRequest.setProduct(product);
+        itemRequest.setSkuId(product.getDefaultSku().getId());
+        itemRequest.setQuantity(1);
+        itemRequest.setDisplayPrice(product.getSalePrice());
+        return itemRequest;
+    }
+
+    @Override
+    public void modifyOrderItemRequest(ConfigurableOrderItemRequest itemRequest) {
+        extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
+    }
+
+    @Override
+    public void mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem) {
+        extensionManager.getProxy().mergeOrderItemRequest(itemRequest, orderItem);
+    }
 }
