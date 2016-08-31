@@ -31,10 +31,11 @@ public class TranslationConsiderationContext {
     private static final ThreadLocal<TranslationConsiderationContext> translationConsiderationContext = ThreadLocalManager.createThreadLocal(TranslationConsiderationContext.class);
     
     public static boolean hasTranslation() {
-        return getTranslationConsiderationContext() != null && getTranslationConsiderationContext() && getTranslationService() != null;
+        return isTranslationConsiderationContextEnabled() != null
+                && isTranslationConsiderationContextEnabled() && getTranslationService() != null;
     }
     
-    public static Boolean getTranslationConsiderationContext() {
+    public static Boolean isTranslationConsiderationContextEnabled() {
         Boolean val = TranslationConsiderationContext.translationConsiderationContext.get().enabled;
         return val == null ? false : val;
     }
