@@ -642,7 +642,12 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             if (price != null) {
                 returnValue = convertToMoney(price).multiply(quantity);
             } else {
-                return getSalePrice().multiply(quantity);
+                returnValue = getSalePrice().multiply(quantity);
+
+                for (OrderItem child : getChildOrderItems()) {
+                    Money childPrice = child.getTotalPrice();
+                    returnValue = returnValue.add(childPrice);
+                }
             }
         }
 
