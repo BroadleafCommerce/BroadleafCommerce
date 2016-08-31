@@ -198,11 +198,9 @@ public class BroadleafCartController extends AbstractCartController {
                             Long productId) throws IOException, AddToCartException, PricingException, Exception {
 
         Product product = catalogService.findProductById(productId);
-        ConfigurableOrderItemRequest itemRequest = createConfigurableOrderItemRequest(product);
+        ConfigurableOrderItemRequest itemRequest = orderItemService.createConfigurableOrderItemRequestFromProduct(product);
 
-        if (extensionManager != null) {
-            extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
-        }
+        orderItemService.modifyOrderItemRequest(itemRequest);
 
         // If this item request is safe to add, go ahead and add it.
         if (isSafeToAdd(itemRequest)) {
@@ -236,12 +234,10 @@ public class BroadleafCartController extends AbstractCartController {
 
         Long productId = orderItem.getProduct().getId();
         Product product = catalogService.findProductById(productId);
-        ConfigurableOrderItemRequest itemRequest = createConfigurableOrderItemRequest(product);
+        ConfigurableOrderItemRequest itemRequest = orderItemService.createConfigurableOrderItemRequestFromProduct(product);
 
-        if (extensionManager != null) {
-            extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
-            extensionManager.getProxy().mergeOrderItemRequest(itemRequest, orderItem);
-        }
+        orderItemService.modifyOrderItemRequest(itemRequest);
+        orderItemService.mergeOrderItemRequest(itemRequest, orderItem);
 
         // update quantities and product options
         itemRequest.setQuantity(orderItem.getQuantity());
@@ -252,15 +248,6 @@ public class BroadleafCartController extends AbstractCartController {
         model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, orderItemService.findAllProductsInRequest(itemRequest));
 
         return isAjaxRequest(request) ? getConfigureView() : getConfigurePageRedirect();
-    }
-
-    protected ConfigurableOrderItemRequest createConfigurableOrderItemRequest(Product product) {
-        ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
-        itemRequest.setProduct(product);
-        itemRequest.setSkuId(product.getDefaultSku().getId());
-        itemRequest.setQuantity(1);
-        itemRequest.setDisplayPrice(product.getSalePrice());
-        return itemRequest;
     }
 
     /**

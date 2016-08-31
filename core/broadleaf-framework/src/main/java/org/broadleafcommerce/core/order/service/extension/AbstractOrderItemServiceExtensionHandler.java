@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.order.service.extension;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 
 /**
  * @author Jon Fleschler (jfleschler)
@@ -34,6 +35,16 @@ public abstract class AbstractOrderItemServiceExtensionHandler extends AbstractE
 
     @Override
     public ExtensionResultStatusType applyAdditionalOrderItemProperties(OrderItem orderItem) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType modifyOrderItemRequest(ConfigurableOrderItemRequest configurableOrderItem) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 }

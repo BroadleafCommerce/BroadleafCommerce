@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.order.service.extension;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 
 /**
  * @author Jon Fleschler (jfleschler)
@@ -40,4 +41,23 @@ public interface OrderItemServiceExtensionHandler extends ExtensionHandler {
      * @return
      */
     ExtensionResultStatusType applyAdditionalOrderItemProperties(OrderItem orderItem);
+
+
+    /**
+     *
+     *
+     * @param configurableOrderItem
+     * @return
+     */
+    public ExtensionResultStatusType modifyOrderItemRequest(ConfigurableOrderItemRequest configurableOrderItem);
+
+    /**
+     *
+     *
+     * @param itemRequest
+     * @param orderItem
+     * @return
+     */
+    public ExtensionResultStatusType mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem);
+
 }

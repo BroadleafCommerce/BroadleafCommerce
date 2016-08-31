@@ -31,11 +31,8 @@ import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
-import org.springframework.ui.Model;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 public interface OrderItemService {
@@ -90,4 +87,10 @@ public interface OrderItemService {
     public Set<Product> findAllProductsInRequest(ConfigurableOrderItemRequest itemRequest);
 
     public void applyAdditionalOrderItemProperties(OrderItem orderItem);
+
+    public ConfigurableOrderItemRequest createConfigurableOrderItemRequestFromProduct(Product product);
+
+    public void modifyOrderItemRequest(ConfigurableOrderItemRequest itemRequest);
+
+    public void mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem);
 }
