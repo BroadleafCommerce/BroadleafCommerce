@@ -40,7 +40,7 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
     public Boolean validate(ProductOption productOption, String value) {
         if (requiresValidation(productOption) && !validateRegex(productOption.getValidationString(), value)) {
             String message = StringUtil.sanitize(productOption.getErrorMessage()) + ". Value [" + StringUtil.sanitize(value)
-                    + "] does not match regex string [" + StringUtil.sanitize(productOption.getValidationString()) + "]";
+                    + "] does not match regex string [" + productOption.getValidationString() + "]";
             LOG.error(message);
             String exceptionMessage = productOption.getAttributeName() + " " + productOption.getErrorMessage()
                     + ". Value [" + value + "] does not match regex string ["
