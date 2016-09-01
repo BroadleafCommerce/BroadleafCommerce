@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededExc
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.AddToCartItem;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
@@ -96,7 +97,7 @@ public class BroadleafCartController extends AbstractCartController {
      * @throws PricingException
      */
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
-            AddToCartItem itemRequest) throws IOException, AddToCartException, PricingException  {
+            OrderItemRequestDTO itemRequest) throws IOException, AddToCartException, PricingException  {
         Order cart = CartState.getCart();
         
         // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
@@ -117,7 +118,7 @@ public class BroadleafCartController extends AbstractCartController {
      * Takes in an item request, adds the item to the customer's current cart, and returns.
      * 
      * Calls the addWithOverrides method on the orderService which will honor the override
-     * prices on the AddToCartItem request object.
+     * prices on the OrderItemRequestDTO request object.
      * 
      * Implementors must secure this method to avoid accidentally exposing the ability for 
      * malicious clients to override prices by hacking the post parameters.
@@ -131,7 +132,7 @@ public class BroadleafCartController extends AbstractCartController {
      * @throws PricingException
      */
     public String addWithPriceOverride(HttpServletRequest request, HttpServletResponse response, Model model,
-            AddToCartItem itemRequest) throws IOException, AddToCartException, PricingException {
+            OrderItemRequestDTO itemRequest) throws IOException, AddToCartException, PricingException {
         Order cart = CartState.getCart();
 
         // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
@@ -165,7 +166,7 @@ public class BroadleafCartController extends AbstractCartController {
      * @throws RemoveFromCartException 
      */
     public String updateQuantity(HttpServletRequest request, HttpServletResponse response, Model model,
-            AddToCartItem itemRequest) throws IOException, UpdateCartException, PricingException, RemoveFromCartException {
+            OrderItemRequestDTO itemRequest) throws IOException, UpdateCartException, PricingException, RemoveFromCartException {
         Order cart = CartState.getCart();
 
         cart = orderService.updateItemQuantity(cart.getId(), itemRequest, true);
@@ -201,7 +202,7 @@ public class BroadleafCartController extends AbstractCartController {
      * @throws RemoveFromCartException 
      */
     public String remove(HttpServletRequest request, HttpServletResponse response, Model model,
-            AddToCartItem itemRequest) throws IOException, PricingException, RemoveFromCartException {
+            OrderItemRequestDTO itemRequest) throws IOException, PricingException, RemoveFromCartException {
         Order cart = CartState.getCart();
         
         cart = orderService.removeItem(cart.getId(), itemRequest.getOrderItemId(), false);

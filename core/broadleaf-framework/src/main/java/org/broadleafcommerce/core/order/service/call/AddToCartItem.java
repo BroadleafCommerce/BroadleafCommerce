@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.order.service.call;
 
-
+@Deprecated
 public class AddToCartItem extends OrderItemRequestDTO {
     
 }
