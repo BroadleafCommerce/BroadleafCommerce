@@ -35,6 +35,7 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
     protected Integer orderItemIndex;
 
     protected Boolean hasConfigurationError;
+    protected Boolean discountsAllowed;
 
     public Product getProduct() {
         return product;
@@ -95,10 +96,6 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
         this.displayPrice = displayPrice;
     }
 
-    public Money getTotalPrice() {
-        return getDisplayPrice().multiply(getQuantity());
-    }
-
     public Integer getOrderItemIndex() {
         return orderItemIndex;
     }
@@ -116,5 +113,16 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     public void setHasConfigurationError(Boolean hasConfigurationError) {
         this.hasConfigurationError = hasConfigurationError;
+    }
+
+    public Boolean getDiscountsAllowed() {
+        if (discountsAllowed == null) {
+            return false;
+        }
+        return discountsAllowed;
+    }
+
+    public void setDiscountsAllowed(Boolean discountsAllowed) {
+        this.discountsAllowed = discountsAllowed;
     }
 }
