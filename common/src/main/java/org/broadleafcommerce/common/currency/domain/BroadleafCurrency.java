@@ -26,6 +26,8 @@ import java.io.Serializable;
 public interface BroadleafCurrency extends Serializable {
 
     public String getCurrencyCode();
+    
+    public java.util.Currency getJavaCurrency();
 
     public void setCurrencyCode(String code);
 

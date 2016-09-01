@@ -39,6 +39,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -541,6 +542,16 @@ public class EntityForm {
         List<EntityFormAction> clonedActions = new ArrayList<EntityFormAction>(actions);
         Collections.reverse(clonedActions);
         return Collections.unmodifiableList(clonedActions);
+    }
+
+    public EntityFormAction findActionById(String id) {
+        for (EntityFormAction action : getActions()) {
+            if (Objects.equals(action.getId(), id)) {
+                return action;
+            }
+        }
+
+        return null;
     }
 
     public FieldGroup collapseToOneFieldGroup() {

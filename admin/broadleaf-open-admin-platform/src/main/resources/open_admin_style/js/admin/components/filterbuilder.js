@@ -44,6 +44,12 @@
      */
     var postConstructQueryBuilderFieldHandlers = [];
 
+    /**
+     * An Admin page may need to perform some function, using the returned page data, after a filter has been applied.
+     * @type {Array}
+     */
+    var postApplyFilterHandlers = [];
+
     BLCAdmin.filterBuilders = {
 
         /**
@@ -73,6 +79,19 @@
         runPostConstructQueryBuilderFieldHandler : function(builder) {
             for (var i = 0; i < postConstructQueryBuilderFieldHandlers.length; i++) {
                 postConstructQueryBuilderFieldHandlers[i](builder);
+            }
+        },
+
+        /**
+         * Handlers designed to execute on the data returned after applying and making a filter request
+         */
+        addPostApplyFilterHandler : function(fn) {
+            postApplyFilterHandlers.push(fn);
+        },
+
+        runPostApplyFilterHandlers : function(data) {
+            for (var i = 0; i < postApplyFilterHandlers.length; i++) {
+                postApplyFilterHandlers[i](data);
             }
         },
 
@@ -396,6 +415,23 @@
 
         /**
          * A custom pre-init query builder field handler to modify the filters object
+         * in order to support a Boolean Radio button widget in the Query Builder.
+         * @param field
+         */
+        initBooleanRadioPreInitFieldHandler : function(field) {
+            var opRef = field.operators;
+
+            if (opRef && typeof opRef === 'string' && ("blcFilterOperators_Boolean" === opRef)) {
+                field.input = 'radio';
+                field.values = {
+                    'true': 'true',
+                    'false': 'false'
+                }
+            }
+        },
+        
+        /**
+         * A custom pre-init query builder field handler to modify the filters object
          * in order to support the Selectize widget in the Query Builder.
          * @param field
          */
@@ -614,24 +650,16 @@
 
             // Convert JSON to request params
             var filters = JSON.parse($('#' + hiddenId).val());
-            var inputs = [];
+            var inputs = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
 
-            if (filters.data.length > 0) {
-                var rules = filters.data[0].rules;
-                $(rules).each(function (i, e) {
-                    if (e.value != '[]') {
-                        var input = {'name': e.id, 'value': BLCAdmin.filterBuilders.formatInput(e.value, e.operator)};
-                        inputs.push(input);
-                    }
-                });
-            } else {
+            if (filters.data.length <= 0) {
                 $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
             }
 
             BLC.ajax({
                 url: $($filterFields[0]).data('action'),
                 type: "GET",
-                data: $.param(inputs)
+                data: inputs
             }, function(data) {
                 if ($tbody.data('listgridtype') == 'main') {
                     // clear all url params
@@ -642,9 +670,10 @@
                     });
                     // add back active filters
                     if (inputs.length) {
-                        $(inputs).each(function (index, input) {
+                        for (var i in inputs) {
+                            var input = inputs[i];
                             BLCAdmin.history.replaceUrlParameter(input.name, input.value);
-                        });
+                        }
                     }
                 }
 
@@ -679,6 +708,8 @@
                 } else {
                     BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, {isRefresh: false});
                 }
+
+                BLCAdmin.filterBuilders.runPostApplyFilterHandlers(data);
             });
 
             $('.error-container').hide();
@@ -871,6 +902,25 @@
                     filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
                 }
             }
+        },
+
+
+        getFiltersAsURLParams: function(hiddenId) {
+            // Convert JSON to request params
+            var filters = JSON.parse($('#' + hiddenId).val());
+            var inputs = [];
+
+            if (filters.data.length > 0) {
+                var rules = filters.data[0].rules;
+                $(rules).each(function (i, e) {
+                    if (e.value != '[]') {
+                        var input = {'name': e.id, 'value': BLCAdmin.filterBuilders.formatInput(e.value, e.operator)};
+                        inputs.push(input);
+                    }
+                });
+            }
+
+            return $.param(inputs);
         }
     };
 
@@ -880,6 +930,7 @@
      */
     BLCAdmin.addInitializationHandler(function($container) {
         //Add default pre-init and post-construct handlers (e.g. selectize)
+        BLCAdmin.filterBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initBooleanRadioPreInitFieldHandler);
         BLCAdmin.filterBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initSelectizePreInitFieldHandler);
         BLCAdmin.filterBuilders.addPostConstructQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initSelectizePostConstructFieldHandler);
 
@@ -934,7 +985,13 @@ $(document).ready(function() {
         if (valueText == '') {
             valueText = el.find('.rule-value-container input');
             $.each(valueText, function(i, val) {
-                valueArray.push($(val).val());
+                if ($(val).attr('type') === 'radio') {
+                    if ($(val).is(':checked')) {
+                        valueArray.push($(val).val());
+                    }
+                } else {
+                    valueArray.push($(val).val());
+                }
             });
         }
         valueText = valueArray.join(" and ");

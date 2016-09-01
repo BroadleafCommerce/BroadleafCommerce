@@ -23,9 +23,11 @@ import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.broadleafcommerce.openadmin.exception.EntityNotFoundException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.RequestWrapper;
 
 
 public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolver {
@@ -58,10 +60,11 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
         } else {
             // If the exception is "Entity not found" redirect to main listgrid view
             if (ex.getClass().equals(EntityNotFoundException.class)) {
-                String servletPath = request.getServletPath();
+                String originatingUri = new UrlPathHelper().getOriginatingRequestUri(request);
+                int startIndex = request.getContextPath().length();
 
                 // Remove erroneous entity Id from servletPath
-                servletPath = servletPath.substring(0, servletPath.lastIndexOf('/'));
+                String servletPath = originatingUri.substring(startIndex, originatingUri.lastIndexOf('/'));
                 return new ModelAndView("redirect:" + servletPath);
             }
             return super.resolveException(request, response, handler, ex);

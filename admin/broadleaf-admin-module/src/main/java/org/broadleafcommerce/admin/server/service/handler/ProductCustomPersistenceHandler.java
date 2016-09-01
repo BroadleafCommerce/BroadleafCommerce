@@ -32,7 +32,6 @@ import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
-import org.broadleafcommerce.common.util.dao.QueryUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
@@ -63,11 +62,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -77,23 +71,27 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
  */
 @Component("blProductCustomPersistenceHandler")
 public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-    
+
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
     @Resource(name = "blProductCustomPersistenceHandlerExtensionManager")
     protected ProductCustomPersistenceHandlerExtensionManager extensionManager;
-    
+
     @Resource(name = "blParentCategoryLegacyModeService")
     protected ParentCategoryLegacyModeService parentCategoryLegacyModeService;
 
-    @Resource(name="blSandBoxHelper")
+    @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
     @Value("${product.query.limit:500}")
@@ -135,12 +133,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         Map<String, FieldMetadata> md = getMetadata(persistencePackage, helper);
 
-        if (!isDefaultCategoryLegacyMode()) {
-            md.remove("allParentCategoryXrefs");
-
-            BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) md.get("defaultCategory"));
-            defaultCategory.setFriendlyName("ProductImpl_Parent_Category");
-        }
+        modifyParentCategoryMetadata(md);
 
         return getResultSet(persistencePackage, helper, md);
     }
@@ -148,12 +141,13 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao
             dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        
+
+
         boolean legacy = parentCategoryLegacyModeService.isLegacyMode();
-        
+
         //the following code applies when filters are present only:
         //"legacy" means that the parent category filter still utilizes Product.defaultCategory as the field to be matched
-        //against the categories chosen in the listGrid filter. The default behavior up to this point, assumes the "legacy" mode. 
+        //against the categories chosen in the listGrid filter. The default behavior up to this point, assumes the "legacy" mode.
         //This means that one of the FilterAndSortCriterias will try to match the chosen values against "defaultCategory".
         //If "legacy" is false, we remove that FilterAndSortCriteria from the CTO, and inject a new FilterMapping in cto.additionalFilterMappings,
         //which seeks matching values in  allParentCategoryXRefs instead
@@ -184,29 +178,29 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 List<Long> productIds = query.getResultList();
                 productIds = sandBoxHelper.mergeCloneIds(ProductImpl.class, productIds.toArray(new Long[productIds.size()]));
 
-                if(productIds.size() == 0){
-                    return new DynamicResultSet(null, new Entity[0],0);
+                if (productIds.size() == 0) {
+                    return new DynamicResultSet(null, new Entity[0], 0);
                 }
                 if (productIds.size() <= queryLimit) {
                     FilterMapping filterMapping = new FilterMapping()
-                        .withFieldPath(new FieldPath().withTargetProperty("id"))
-                        .withDirectFilterValues(productIds)
-                        .withRestriction(new Restriction()
-                            .withPredicateProvider(new PredicateProvider() {
-                                   @Override
-                                   public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
-                                                                   From root, String ceilingEntity, String fullPropertyName,
-                                                                   Path explicitPath, List directValues) {
-                                       return explicitPath.in(directValues);
-                                   }
-                               }
-                            )
-                        );
+                            .withFieldPath(new FieldPath().withTargetProperty("id"))
+                            .withDirectFilterValues(productIds)
+                            .withRestriction(new Restriction()
+                                    .withPredicateProvider(new PredicateProvider() {
+                                                               @Override
+                                                               public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
+                                                                                               From root, String ceilingEntity, String fullPropertyName,
+                                                                                               Path explicitPath, List directValues) {
+                                                                   return explicitPath.in(directValues);
+                                                               }
+                                                           }
+                                    )
+                            );
                     cto.getAdditionalFilterMappings().add(filterMapping);
                 } else {
                     String joined = StringUtils.join(transformedValues, ',');
                     LOG.warn(String.format("Skipping default category filtering for product fetch query since there are " +
-                            "more than "+queryLimit+" products found to belong to the selected default categories(%s). This is a " +
+                            "more than " + queryLimit + " products found to belong to the selected default categories(%s). This is a " +
                             "filter query limitation.", joined));
                 }
             }
@@ -230,6 +224,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                             })
                     ));
         }
+
         if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
                 (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
             //Add special handling for product list grid fetches
@@ -258,16 +253,16 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        Entity entity  = persistencePackage.getEntity();
+        Entity entity = persistencePackage.getEntity();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Product adminInstance = (Product) Class.forName(entity.getType()[0]).newInstance();
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
 
             if (adminInstance instanceof ProductBundle) {
-                removeBundleFieldRestrictions((ProductBundle)adminInstance, adminProperties, entity);
+                removeBundleFieldRestrictions((ProductBundle) adminInstance, adminProperties, entity);
             }
-            
+
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = dynamicEntityDao.merge(adminInstance);
 
@@ -311,6 +306,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+
             BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) adminProperties.get("defaultCategory"));
             defaultCategory.setFriendlyName("ProductImpl_Parent_Category");
             if (entity.findProperty("defaultCategory") != null && !StringUtils.isEmpty(entity.findProperty("defaultCategory").getValue())) {
@@ -323,7 +319,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             if (adminInstance instanceof ProductBundle) {
-                removeBundleFieldRestrictions((ProductBundle)adminInstance, adminProperties, entity);
+                removeBundleFieldRestrictions((ProductBundle) adminInstance, adminProperties, entity);
             }
 
             CategoryProductXref oldDefault = getCurrentDefaultXref(adminInstance);
@@ -367,16 +363,17 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     /**
      * If the pricing model is of type item_sum, that property should not be required
+     *
      * @param adminInstance
      * @param adminProperties
      * @param entity
      */
     protected void removeBundleFieldRestrictions(ProductBundle adminInstance, Map<String, FieldMetadata> adminProperties, Entity entity) {
         //no required validation for product bundles
-        ((BasicFieldMetadata)adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(false);
+        ((BasicFieldMetadata) adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(false);
         if (entity.getPMap().get("pricingModel") != null) {
             if (ProductBundlePricingModelType.BUNDLE.getType().equals(entity.getPMap().get("pricingModel").getValue())) {
-                ((BasicFieldMetadata)adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(true);
+                ((BasicFieldMetadata) adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(true);
             }
         }
     }
@@ -387,6 +384,15 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             return legacyModeService.isLegacyMode();
         }
         return false;
+    }
+
+    protected void modifyParentCategoryMetadata(Map<String, FieldMetadata> md) {
+        if (!isDefaultCategoryLegacyMode()) {
+            md.remove("allParentCategoryXrefs");
+
+            BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) md.get("defaultCategory"));
+            defaultCategory.setFriendlyName("ProductImpl_Parent_Category");
+        }
     }
 
     protected Category getExistingDefaultCategory(Product product) {

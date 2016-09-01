@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Utility methods for common currency operations
- * 
+ *
  * @author Phillip Verheyden
  * @see {@link BroadleafCurrency}
  */
@@ -46,17 +46,21 @@ public class BroadleafCurrencyUtils {
         if (amount == null) {
             return null;
         }
-        
+
         if (currency != null) {
             return new Money(amount, currency.getCurrencyCode());
         } else {
-            return new Money(amount);
+            return new Money(amount, Money.defaultCurrency());
         }
+    }
+
+    public static Money getMoney(BigDecimal amount) {
+        return getMoney(amount, null);
     }
 
     public static Money getMoney(BroadleafCurrency currency) {
         if (currency != null) {
-            return new Money(0,currency.getCurrencyCode());
+            return new Money(0, currency.getCurrencyCode());
         } else {
             return new Money();
         }
@@ -75,7 +79,8 @@ public class BroadleafCurrencyUtils {
 
     /**
      * Returns the unit amount (e.g. .01 for US and all other 2 decimal currencies)
-     * @param currency
+     *
+     * @param difference
      * @return
      */
     public static Money getUnitAmount(Money difference) {
@@ -91,7 +96,8 @@ public class BroadleafCurrencyUtils {
 
     /**
      * Returns the unit amount (e.g. .01 for US and all other 2 decimal currencies)
-     * @param currency
+     *
+     * @param blCurrency
      * @return
      */
     public static Money getUnitAmount(BroadleafCurrency blCurrency) {
@@ -104,7 +110,9 @@ public class BroadleafCurrencyUtils {
     /**
      * Returns the remainder amount if the passed in totalAmount was divided by the
      * quantity taking into account the normal unit of the currency (e.g. .01 for US).
-     * @param currency
+     *
+     * @param totalAmount
+     * @param quantity
      * @return
      */
     public static int calculateRemainder(Money totalAmount, int quantity) {
@@ -124,7 +132,7 @@ public class BroadleafCurrencyUtils {
      * Provides a cached approach for creating NumberFormat instances. More performant
      * than creating a new one each time.
      *
-     * @param locale the Locale
+     * @param locale   the Locale
      * @param currency the Currency
      * @return either a new NumberFormat instance, or one taken from the cache
      */

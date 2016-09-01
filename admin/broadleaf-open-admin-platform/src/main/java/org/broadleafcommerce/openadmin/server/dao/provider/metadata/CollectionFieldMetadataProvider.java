@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
+import org.broadleafcommerce.common.presentation.FieldValueConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -51,7 +52,9 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -304,6 +307,8 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                 fieldMetadataOverride.setSecurityLevel(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SHOWIFPROPERTY)) {
                 fieldMetadataOverride.setShowIfProperty(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SHOWIFFIELDEQUALS)) {
+                processShowIfFieldEqualsAnnotations(entry.getValue().showIfFieldEquals(), fieldMetadataOverride);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SORTASCENDING)) {
                 fieldMetadataOverride.setSortAscending(StringUtils.isEmpty(stringValue) ? entry.getValue()
                             .booleanOverrideValue() :
@@ -355,6 +360,9 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             override.setUpdateType(annotColl.operationTypes().updateType());
             override.setInspectType(annotColl.operationTypes().inspectType());
             override.setShowIfProperty(annotColl.showIfProperty());
+            if (annotColl.showIfFieldEquals().length != 0) {
+                processShowIfFieldEqualsAnnotations(annotColl.showIfFieldEquals(), override);
+            }
             override.setCurrencyCodeField(annotColl.currencyCodeField());
             override.setLazyFetch(annotColl.lazyFetch());
             return override;
@@ -388,7 +396,9 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         if (collectionMetadata.getShowIfProperty()!=null) {
             metadata.setShowIfProperty(collectionMetadata.getShowIfProperty());
         }
-
+        if (collectionMetadata.getShowIfFieldEquals() != null) {
+            metadata.setShowIfFieldEquals(collectionMetadata.getShowIfFieldEquals());
+        }
         org.broadleafcommerce.openadmin.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.dto.OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
         if (collectionMetadata.getAddType() != null) {
             dtoOperationTypes.setAddType(collectionMetadata.getAddType());
@@ -560,6 +570,15 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         }
 
         attributes.put(field.getName(), metadata);
+    }
+
+    protected void processShowIfFieldEqualsAnnotations(FieldValueConfiguration[] configurations, FieldMetadataOverride override) {
+        if (override.getShowIfFieldEquals() == null) {
+            override.setShowIfFieldEquals(new HashMap<String, List<String>>());
+        }
+        for (FieldValueConfiguration configuration : configurations) {
+            override.getShowIfFieldEquals().put(configuration.fieldName(), Arrays.asList(configuration.fieldValues()));
+        }
     }
 
     @Override

@@ -70,6 +70,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected Boolean readOnly;
     protected Map<String, List<Map<String, String>>> validationConfigurations = new HashMap<String, List<Map<String, String>>>(5);
     protected Boolean requiredOverride;
+    protected Boolean allowNoValueEnumOption;
     protected String tooltip;
     protected String helpText;
     protected String hint;
@@ -564,6 +565,14 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.isFilter = isFilter;
     }
 
+    public Boolean getAllowNoValueEnumOption() {
+        return allowNoValueEnumOption;
+    }
+
+    public void setAllowNoValueEnumOption(Boolean allowNoValueEnumOption) {
+        this.allowNoValueEnumOption = allowNoValueEnumOption;
+    }
+
     @Override
     public FieldMetadata cloneFieldMetadata() {
         BasicFieldMetadata metadata = new BasicFieldMetadata();
@@ -571,6 +580,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.secondaryType = secondaryType;
         metadata.length = length;
         metadata.required = required;
+        metadata.allowNoValueEnumOption = allowNoValueEnumOption;
         metadata.unique = unique;
         metadata.scale = scale;
         metadata.precision = precision;
@@ -774,6 +784,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (required != null ? !required.equals(metadata.required) : metadata.required != null) {
             return false;
         }
+        if (allowNoValueEnumOption != null ? !allowNoValueEnumOption.equals(metadata.allowNoValueEnumOption) : metadata.allowNoValueEnumOption != null) {
+            return false;
+        }
         if (requiredOverride != null ? !requiredOverride.equals(metadata.requiredOverride) : metadata.requiredOverride != null) {
             return false;
         }
@@ -858,6 +871,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (readOnly != null ? readOnly.hashCode() : 0);
         result = 31 * result + (validationConfigurations != null ? validationConfigurations.hashCode() : 0);
         result = 31 * result + (requiredOverride != null ? requiredOverride.hashCode() : 0);
+        result = 31 * result + (allowNoValueEnumOption != null ? allowNoValueEnumOption.hashCode() : 0);
         result = 31 * result + (tooltip != null ? tooltip.hashCode() : 0);
         result = 31 * result + (helpText != null ? helpText.hashCode() : 0);
         result = 31 * result + (hint != null ? hint.hashCode() : 0);

@@ -59,8 +59,11 @@ public class MaxGreaterThanMinValidator extends ValidationConfigurationBasedProp
         }
 
         try {
-            min = (BigDecimal) fm.getFieldValue(instance, otherField);
-            max = (BigDecimal) fm.getFieldValue(instance, propertyName);
+            Object minObj = fm.getFieldValue(instance, otherField);
+            if (minObj != null) {
+                min = new BigDecimal(minObj.toString());
+            }
+            max = new BigDecimal(fm.getFieldValue(instance, propertyName).toString());
         } catch (IllegalAccessException | FieldNotAvailableException e) {
             valid = false;
             message = e.getMessage();

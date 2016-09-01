@@ -22,6 +22,7 @@ import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,6 +58,7 @@ public abstract class FieldMetadata implements Serializable {
     private String prefix;
     private String fieldName;
     private String showIfProperty;
+    private Map<String, List<String>> showIfFieldEquals;
     private String currencyCodeField;
 
     //Additional metadata not supported as first class
@@ -117,6 +119,7 @@ public abstract class FieldMetadata implements Serializable {
         metadata.childrenExcluded = childrenExcluded;
         metadata.fieldName = fieldName;
         metadata.showIfProperty = showIfProperty;
+        metadata.showIfFieldEquals = showIfFieldEquals;
         metadata.currencyCodeField = currencyCodeField;
         metadata.lazyFetch = lazyFetch;
         for (Map.Entry<String, Object> entry : additionalMetadata.entrySet()) {
@@ -131,6 +134,14 @@ public abstract class FieldMetadata implements Serializable {
 
     public void setShowIfProperty(String showIfProperty) {
         this.showIfProperty = showIfProperty;
+    }
+
+    public Map<String, List<String>> getShowIfFieldEquals() {
+        return showIfFieldEquals;
+    }
+
+    public void setShowIfFieldEquals(Map<String, List<String>> showIfFieldEquals) {
+        this.showIfFieldEquals = showIfFieldEquals;
     }
 
     public String getCurrencyCodeField() {
@@ -302,6 +313,8 @@ public abstract class FieldMetadata implements Serializable {
             return false;
         if (showIfProperty != null ? !showIfProperty.equals(that.showIfProperty) : that.showIfProperty != null)
             return false;
+        if (showIfFieldEquals != null ? !showIfFieldEquals.equals(that.showIfFieldEquals) : that.showIfFieldEquals != null)
+            return false;
         if (tab != null ? !tab.equals(that.tab) : that.tab != null) return false;
         if (tabOrder != null ? !tabOrder.equals(that.tabOrder) : that.tabOrder != null) return false;
         if (group != null ? !group.equals(that.group) : that.group != null) return false;
@@ -330,6 +343,7 @@ public abstract class FieldMetadata implements Serializable {
         result = 31 * result + (prefix != null ? prefix.hashCode() : 0);
         result = 31 * result + (fieldName != null ? fieldName.hashCode() : 0);
         result = 31 * result + (showIfProperty != null ? showIfProperty.hashCode() : 0);
+        result = 31 * result + (showIfFieldEquals != null ? showIfFieldEquals.hashCode() : 0);
         result = 31 * result + (currencyCodeField != null ? currencyCodeField.hashCode() : 0);
         result = 31 * result + (additionalMetadata != null ? additionalMetadata.hashCode() : 0);
         return result;

@@ -25,7 +25,6 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
-import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
 import org.broadleafcommerce.core.search.redirect.service.SearchRedirectService;
@@ -111,7 +110,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
             if (handler != null) {
                 String contextPath = request.getContextPath();
                 String url = UrlUtil.fixRedirectUrl(contextPath, handler.getUrl());
-                response.sendRedirect(url);   
+                response.sendRedirect(url);
                 return null;
             }
 

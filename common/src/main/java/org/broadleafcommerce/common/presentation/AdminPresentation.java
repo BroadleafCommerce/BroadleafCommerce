@@ -234,6 +234,15 @@ public @interface AdminPresentation {
     boolean hideEnumerationIfEmpty() default false;
 
     /**
+     * Optional - only required if you want to allow an enum field to have "No Value Selected" as an option.
+     *  This property is <b> NOT </b> taken into consideration for fields marked as "required"
+     *
+     *
+     * @return where or not the enum value "No Value Selected" should be shown.
+     */
+    boolean allowNoValueEnumOption() default false;
+
+    /**
      * Optional - drives the component that renders the UI
      *
      * When not specified, will default to the fieldType
@@ -327,7 +336,17 @@ public @interface AdminPresentation {
      * @return name of the property 
      */
     String showIfProperty() default "";
-    
+
+    /**
+     * <p>Optional - only required if you want hide the field based on the supplied field's value</p>
+     *
+     * <p>If the property is defined and found to be equal to one of the values provided
+     * then this field will be excluded in the admin presentation layer</p>
+     *
+     * @return configuration of the field values
+     */
+    FieldValueConfiguration[] showIfFieldEquals() default {};
+
     /**
      * Optional - If you have FieldType set to SupportedFieldType.MONEY,
      * then you can specify a money currency property field.

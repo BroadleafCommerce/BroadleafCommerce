@@ -25,6 +25,9 @@ import org.springframework.security.web.util.AntPathRequestMatcher;
 import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.web.filter.GenericFilterBean;
 
+import java.io.IOException;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -32,8 +35,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Checks the validity of the CSRF token on every POST request.
@@ -43,9 +44,10 @@ import java.util.List;
  * This allows you to use wildcard matching as well, for example {@code /**} or {@code **}
  *
  * @see org.springframework.security.web.util.AntPathRequestMatcher
- *
+ * @deprecated Use {@link SecurityFilter} instead
  * @author Andre Azzolini (apazzolini)
  */
+@Deprecated
 public class CsrfFilter extends GenericFilterBean {
     protected static final Log LOG = LogFactory.getLog(CsrfFilter.class);
     

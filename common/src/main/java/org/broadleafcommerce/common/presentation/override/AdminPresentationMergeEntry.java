@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.presentation.override;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
 import org.broadleafcommerce.common.presentation.OptionFilterParam;
+import org.broadleafcommerce.common.presentation.FieldValueConfiguration;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 
@@ -186,4 +187,12 @@ public @interface AdminPresentationMergeEntry {
      * @return the map key configuration
      */
     AdminPresentationMapKey[] keys() default {};
+
+    /**
+     * Property for overriding the showIfFieldEquals annotation for a given field.
+     * {@link FieldValueConfiguration}
+     *
+     * @return the field value configurations
+     */
+    FieldValueConfiguration[] showIfFieldEquals() default {};
 }

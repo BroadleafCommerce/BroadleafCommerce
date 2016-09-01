@@ -112,6 +112,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private Boolean readOnly;
     private Map<String, List<Map<String, String>>> validationConfigurations;
     private Boolean requiredOverride;
+    private Boolean allowNoValueEnumOption;
     private String tooltip;
     private String helpText;
     private String hint;
@@ -124,6 +125,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private Boolean optionCanEditValues;
     private Serializable[][] optionFilterValues;
     private String showIfProperty;
+    private Map<String, List<String>> showIfFieldEquals;
     private String ruleIdentifier;
     private Boolean translatable;
     private LookupType lookupType;
@@ -877,6 +879,14 @@ public class FieldMetadataOverride extends MetadataOverride {
         this.showIfProperty = showIfProperty;
     }
 
+    public Map<String, List<String>> getShowIfFieldEquals() {
+        return showIfFieldEquals;
+    }
+
+    public void setShowIfFieldEquals(Map<String, List<String>> showIfFieldEquals) {
+        this.showIfFieldEquals = showIfFieldEquals;
+    }
+
     public String getCurrencyCodeField() {
         return currencyCodeField;
     }
@@ -916,5 +926,12 @@ public class FieldMetadataOverride extends MetadataOverride {
     public void setLazyFetch(Boolean lazyFetch) {
         this.lazyFetch = lazyFetch;
     }
-    
+
+    public Boolean getAllowNoValueEnumOption() {
+        return allowNoValueEnumOption;
+    }
+
+    public void setAllowNoValueEnumOption(Boolean allowNoValueEnumOption) {
+        this.allowNoValueEnumOption = allowNoValueEnumOption;
+    }
 }

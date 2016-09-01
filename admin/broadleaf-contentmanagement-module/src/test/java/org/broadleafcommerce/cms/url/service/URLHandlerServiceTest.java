@@ -45,6 +45,7 @@ public class URLHandlerServiceTest extends TestCase {
         handlerList.add(createHandler("/simple_url", "/NewSimpleUrl"));
         handlerList.add(createHandler("^/simple_regex$", "/NewSimpleRegex"));
         handlerList.add(createHandler("/blogs/(.*)/(.*)$", "/newblogs/$2/$1"));
+        handlerList.add(createHandler("(.*)/shirts-tops(.*)", "$1/shirts$2"));
         return handlerList;
     }
 
@@ -94,6 +95,14 @@ public class URLHandlerServiceTest extends TestCase {
         URLHandler h = handlerService.checkForMatches("/blogs/first/second");
         assertTrue(h != null);
         assertTrue(h.getNewURL().equals("/newblogs/second/first"));
+    }
+
+    @Test
+    public void testRegExStartsWithSpecialRegExChar() {
+        URLHandler h = handlerService.checkForMatches("/merchandise/shirts-tops/mens");
+        String expectedNewURL = "/merchandise/shirts/mens";
+        assertTrue(h != null);
+        assertTrue(expectedNewURL.equals(h.getNewURL()));
     }
 
 }

@@ -45,7 +45,7 @@
         </div>
     </div>
     <div th:if="${listGrid.selectType} == 'selectize'"
-         th:id="${listGrid.subCollectionFieldName}">
+         class="field-group" th:id="${listGrid.subCollectionFieldName}">
         <div th:include="components/selectizeLabelBar" th:with="listGrid=${listGrid}" th:remove="tag"></div>
         <div th:include="components/selectizeCollection" th:with="listGrid=${listGrid}" th:remove="tag"></div>
     </div>

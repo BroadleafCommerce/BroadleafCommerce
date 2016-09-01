@@ -163,36 +163,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             }
         }
     }
-    
-    
+
     protected boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
-        if (itemOffer.getOffer().getQualifyingItemSubTotal() == null || itemOffer.getOffer().getQualifyingItemSubTotal().lessThanOrEqual(Money.ZERO)) {
-            return true;
-        }
-
-        for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
-            List<PromotableOrderItem> promotableItems = itemOffer.getCandidateQualifiersMap().get(itemCriteria);
-
-            Money subtotal = Money.ZERO;
-            for (PromotableOrderItem item : promotableItems) {
-                Money lineItemAmount = item.getPriceBeforeAdjustments(itemOffer.getOffer().getApplyDiscountToSalePrice()).multiply(item.getQuantity());
-                subtotal = subtotal.add(lineItemAmount);
-                if (subtotal.greaterThanOrEqual(itemOffer.getOffer().getQualifyingItemSubTotal())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return offerServiceUtilities.orderMeetsQualifyingSubtotalRequirements(order, itemOffer.getOffer(), itemOffer.getCandidateQualifiersMap());
     }
 
     protected boolean orderMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
-        if (itemOffer.getOffer().getOrderMinSubTotal() == null ||
-                itemOffer.getOffer().getOrderMinSubTotal().lessThanOrEqual(Money.ZERO) ||
-                itemOffer.getOffer().getOrderMinSubTotal().lessThanOrEqual(order.getOrder().getSubTotal())) {
-            return true;
-        }
-        return false;
+        return offerServiceUtilities.orderMeetsSubtotalRequirements(order, itemOffer.getOffer());
     }
 
     protected boolean isTotalitarianOfferAppliedToAnyItem(PromotableOrder order) {
@@ -483,7 +460,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 effectedItemsSubtotal = effectedItemsSubtotal.add(qualifierDetail.getPrice().multiply(qualifierQuantity));
             }
         }
-        
+
         return calculatePercent(effectedItemsSubtotal, itemSavings);
     }
 
@@ -638,13 +615,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
     protected void removeDuplicatePermutations(List<List<PromotableCandidateItemOffer>> permutations) {
         Set<List<Long>> offerIdListSet = new HashSet<>();
-        
+
         Iterator<List<PromotableCandidateItemOffer>> permutationsIterator = permutations.iterator();
-        
+
         while (permutationsIterator.hasNext()) {
             List<PromotableCandidateItemOffer> offerList = permutationsIterator.next();
             List<Long> offerIdList = convertToIdList(offerList);
-            
+
             if (!offerIdListSet.add(offerIdList)) {
                 permutationsIterator.remove();
             }
@@ -656,7 +633,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         for (PromotableCandidateItemOffer offer : offerList) {
             idList.add(offer.getOffer().getId());
         }
-        
+
         return idList;
     }
 

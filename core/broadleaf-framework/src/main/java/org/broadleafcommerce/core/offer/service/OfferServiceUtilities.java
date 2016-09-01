@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.broadleafcommerce.core.order.domain.dto.OrderItemHolder;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -185,4 +186,21 @@ public interface OfferServiceUtilities {
      */
     void removeUnmatchedQualifiers(Map<Long, ? extends OrderItemQualifier> unmatchedQualifiersMap,
             Iterator<? extends OrderItemQualifier> qIterator);
+
+    /**
+     * Determines whether or not an {@link PromotableOrder} meets the qualifying subtotal requirement of an {@link Offer}
+     * @param order
+     * @param offer
+     * @param qualifiersMap
+     * @return boolean
+     */
+    boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> qualifiersMap);
+
+    /**
+     * Determines whether or not an {@link PromotableOrder} meets the subtotal requirement of an {@link Offer}
+     * @param order
+     * @param offer
+     * @return boolean
+     */
+    boolean orderMeetsSubtotalRequirements(PromotableOrder order, Offer offer);
 }

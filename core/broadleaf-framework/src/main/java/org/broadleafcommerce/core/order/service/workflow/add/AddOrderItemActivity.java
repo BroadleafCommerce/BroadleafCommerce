@@ -86,6 +86,7 @@ public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperat
             itemRequest.setQuantity(ndr.getQuantity());
             itemRequest.setRetailPriceOverride(ndr.getOverrideRetailPrice());
             itemRequest.setSalePriceOverride(ndr.getOverrideSalePrice());
+            itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
             itemRequest.setItemName(ndr.getItemName());
             itemRequest.setOrder(order);
             item = orderItemService.createOrderItem(itemRequest);

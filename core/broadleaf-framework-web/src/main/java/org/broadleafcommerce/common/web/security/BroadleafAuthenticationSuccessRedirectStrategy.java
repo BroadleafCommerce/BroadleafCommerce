@@ -29,19 +29,19 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** 
+/**
  * If the incoming request is an ajax request, the system will add the desired redirect path to the session and
  * then redirect to the path configured for the redirectPath property.
- * 
+ *
  * It is assumed that the redirectPath will be picked up by the BroadleafRedirectController.
- * 
+ *
  * @author bpolster
- * 
+ *
  */
 @Component("blAuthenticationSuccessRedirectStrategy")
 public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectStrategy {
-    
-    private String redirectPath="/redirect";
+
+    private String redirectPath = "/redirect";
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
@@ -52,7 +52,7 @@ public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectS
             }
             url = getRedirectPath();
         }
-        redirectStrategy.sendRedirect(request, response, url);
+        getRedirectStrategy().sendRedirect(request, response, url);
     }
 
     public String updateLoginErrorUrlForAjax(String url) {

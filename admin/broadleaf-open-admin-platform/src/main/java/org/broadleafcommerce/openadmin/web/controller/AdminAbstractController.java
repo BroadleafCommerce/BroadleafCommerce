@@ -169,7 +169,8 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         EntityForm dynamicForm = getEntityForm(info);
 
         // Set the specialized name for these fields - we need to handle them separately
-        dynamicForm.clearFieldsMap();
+        setSpecializedNameForFields(info, dynamicForm);
+
         blankFormContainer.putDynamicForm(info.getPropertyName(), dynamicForm);
         model.addAttribute("dynamicForm", dynamicForm);
         model.addAttribute("entityForm", blankFormContainer);
@@ -390,7 +391,15 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @return the sectionKey for this request
      */
     protected String getSectionKey(Map<String, String> pathVars) {
-        return pathVars.get("sectionKey");
+        String sectionKey = pathVars.get("sectionKey");
+
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        AdminSection typedEntitySection = (AdminSection) request.getAttribute("typedEntitySection");
+        if (typedEntitySection != null) {
+            sectionKey = typedEntitySection.getUrl().substring(1);
+        }
+
+        return sectionKey;
     }
     
     /**
@@ -712,17 +721,22 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         String crumbs = request.getParameter("sectionCrumbs");
         List<SectionCrumb> myCrumbs = validationService.getSectionCrumbs(crumbs, "blPU");
         if (currentSection != null && currentSectionId != null) {
-            SectionCrumb crumb = new SectionCrumb();
-            if (currentSection.startsWith("/")) {
-                currentSection = currentSection.substring(1, currentSection.length());
-            }
-            crumb.setSectionIdentifier(currentSection);
-            crumb.setSectionId(currentSectionId);
+            SectionCrumb crumb = createSectionCrumb(currentSection, currentSectionId);
             if (!myCrumbs.contains(crumb)) {
                 myCrumbs.add(crumb);
             }
         }
         return myCrumbs;
+    }
+
+    protected SectionCrumb createSectionCrumb(String currentSection, String currentSectionId) {
+        SectionCrumb crumb = new SectionCrumb();
+        if (currentSection.startsWith("/")) {
+            currentSection = currentSection.substring(1, currentSection.length());
+        }
+        crumb.setSectionIdentifier(currentSection);
+        crumb.setSectionId(currentSectionId);
+        return crumb;
     }
 
     /**

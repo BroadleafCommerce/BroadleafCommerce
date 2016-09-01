@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.OptionFilterParam;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
+import org.broadleafcommerce.common.presentation.FieldValueConfiguration;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.LookupType;
@@ -62,6 +63,7 @@ import org.springframework.util.CollectionUtils;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -415,6 +417,8 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 fieldMetadataOverride.setHint(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.SHOWIFPROPERTY)) {
                 fieldMetadataOverride.setShowIfProperty(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.SHOWIFFIELDEQUALS)) {
+                processShowIfFieldEqualsAnnotations(entry.getValue().showIfFieldEquals(), fieldMetadataOverride);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.CURRENCYCODEFIELD)) {
                 fieldMetadataOverride.setCurrencyCodeField(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.RULEIDENTIFIER)) {
@@ -538,7 +542,11 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setRuleIdentifier(annot.ruleIdentifier());
             override.setTranslatable(annot.translatable());
             override.setDefaultValue(annot.defaultValue());
+            override.setAllowNoValueEnumOption(annot.allowNoValueEnumOption());
 
+            if (annot.showIfFieldEquals().length != 0) {
+                processShowIfFieldEqualsAnnotations(annot.showIfFieldEquals(), override);
+            }
             if (annot.validationConfigurations().length != 0) {
                 processValidationAnnotations(annot.validationConfigurations(), override);
             }
@@ -602,6 +610,15 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             configItems.add(itemMap);
             
             override.getValidationConfigurations().put(configuration.validationImplementation(), configItems);
+        }
+    }
+
+    protected void processShowIfFieldEqualsAnnotations(FieldValueConfiguration[] configurations, FieldMetadataOverride override) {
+        if (override.getShowIfFieldEquals() == null) {
+            override.setShowIfFieldEquals(new HashMap<String, List<String>>());
+        }
+        for (FieldValueConfiguration configuration : configurations) {
+            override.getShowIfFieldEquals().put(configuration.fieldName(), Arrays.asList(configuration.fieldValues()));
         }
     }
 
@@ -721,6 +738,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (basicFieldMetadata.getShowIfProperty() != null) {
             metadata.setShowIfProperty(basicFieldMetadata.getShowIfProperty());
         }
+        if (basicFieldMetadata.getShowIfFieldEquals() != null) {
+            metadata.setShowIfFieldEquals(basicFieldMetadata.getShowIfFieldEquals());
+        }
         if (basicFieldMetadata.getCurrencyCodeField() != null) {
             metadata.setCurrencyCodeField(basicFieldMetadata.getCurrencyCodeField());
         }
@@ -799,6 +819,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getDefaultValue() != null) {
             metadata.setDefaultValue(basicFieldMetadata.getDefaultValue());
+        }
+        if (basicFieldMetadata.getAllowNoValueEnumOption() != null) {
+            metadata.setAllowNoValueEnumOption(basicFieldMetadata.getAllowNoValueEnumOption());
         }
 
         attributes.put(field.getName(), metadata);
