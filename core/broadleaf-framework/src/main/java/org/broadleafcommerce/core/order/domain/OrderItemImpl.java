@@ -628,6 +628,10 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             }
         }
 
+        for (OrderItem child : childOrderItems) {
+            totalAdjustmentValue = totalAdjustmentValue.add(child.getTotalAdjustmentValue()).multiply(quantity);
+        }
+
         return totalAdjustmentValue;
     }
 
