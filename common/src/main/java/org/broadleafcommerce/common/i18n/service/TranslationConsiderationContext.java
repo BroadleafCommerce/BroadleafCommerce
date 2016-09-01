@@ -29,12 +29,17 @@ import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 public class TranslationConsiderationContext {
 
     private static final ThreadLocal<TranslationConsiderationContext> translationConsiderationContext = ThreadLocalManager.createThreadLocal(TranslationConsiderationContext.class);
-    
-    public static boolean hasTranslation() {
-        return getTranslationConsiderationContext() != null && getTranslationConsiderationContext() && getTranslationService() != null;
+
+    public static TranslationConsiderationContext getTranslationConsiderationContext() {
+        return translationConsiderationContext.get();
     }
     
-    public static Boolean getTranslationConsiderationContext() {
+    public static boolean hasTranslation() {
+        return isTranslationConsiderationContextEnabled() != null
+                && isTranslationConsiderationContextEnabled() && getTranslationService() != null;
+    }
+    
+    public static Boolean isTranslationConsiderationContextEnabled() {
         Boolean val = TranslationConsiderationContext.translationConsiderationContext.get().enabled;
         return val == null ? false : val;
     }
@@ -49,6 +54,10 @@ public class TranslationConsiderationContext {
     
     public static void setTranslationService(TranslationService translationService) {
         TranslationConsiderationContext.translationConsiderationContext.get().service = translationService;
+    }
+
+    public static void removeTranslationConsiderationContext() {
+        ThreadLocalManager.remove(translationConsiderationContext);
     }
 
     protected Boolean enabled = false;
