@@ -533,6 +533,9 @@ public class OrderItemServiceImpl implements OrderItemService {
             if (configRequest.getHasConfigurationError()) {
                 item.setHasValidationError(true);
             }
+            if (!configRequest.getDiscountsAllowed()) {
+                item.setDiscountingAllowed(false);
+            }
         }
 
         applyAdditionalOrderItemProperties(item);
@@ -579,6 +582,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         itemRequest.setSkuId(product.getDefaultSku().getId());
         itemRequest.setQuantity(1);
         itemRequest.setDisplayPrice(product.getSalePrice());
+        itemRequest.setDiscountsAllowed(product.getDefaultSku().isDiscountable());
         return itemRequest;
     }
 
