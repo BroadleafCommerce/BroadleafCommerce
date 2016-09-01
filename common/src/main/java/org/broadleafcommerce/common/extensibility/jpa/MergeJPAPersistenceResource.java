@@ -23,7 +23,7 @@ import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeManagerSetupException;
-import org.broadleafcommerce.common.util.BLCStringUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.ByteArrayResource;
@@ -82,7 +82,7 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
             configResource = new ByteArrayResource(baos.toByteArray());
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Merged config: \n" + BLCStringUtils.sanitize(serialize(configResource)));
+                LOG.debug("Merged config: \n" + StringUtil.sanitize(serialize(configResource)));
             }
         } catch (MergeException e) {
             throw new FatalBeanException("Unable to merge source and patch locations", e);

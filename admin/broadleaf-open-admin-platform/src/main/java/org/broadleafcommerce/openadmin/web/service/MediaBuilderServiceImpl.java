@@ -20,9 +20,8 @@ package org.broadleafcommerce.openadmin.web.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.media.domain.Media;
-import org.broadleafcommerce.common.media.domain.MediaDto;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.util.BLCStringUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -51,7 +50,7 @@ public class MediaBuilderServiceImpl implements MediaBuilderService {
                 om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 return (Media) om.readValue(json, type);
             } catch (Exception e) {
-                LOG.warn("Error parsing json to media " + BLCStringUtils.sanitize(json), e);
+                LOG.warn("Error parsing json to media " + StringUtil.sanitize(json), e);
             }
         }
         return entityConfiguration.createEntityInstance(Media.class.getName(), Media.class);
@@ -67,7 +66,7 @@ public class MediaBuilderServiceImpl implements MediaBuilderService {
                     Media mediaField = entityConfiguration.createEntityInstance(Media.class.getName(), Media.class);
                     field.set(media, mediaField);
                 } catch (IllegalAccessException e) {
-                    LOG.warn("Error initializing media field " + field.getName() + " on " + media.getClass().getName(), e);
+                    LOG.warn("Error initializing media field " + StringUtil.sanitize(field.getName()) + " on " + media.getClass().getName(), e);
                 }
             }
         }

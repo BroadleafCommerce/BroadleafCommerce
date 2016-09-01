@@ -112,8 +112,8 @@ public class BLCFieldUtils {
                 myClass = getClassForField(helper, propertyName, null, myEntities);
             }
             if (myClass == null) {
-                String message = String.format("Unable to find the field (%s) anywhere in the inheritance hierarchy for (%s)", propertyName, clazz.getName());
-                LOG.debug(BLCStringUtils.sanitize(message));
+                String message = String.format("Unable to find the field (%s) anywhere in the inheritance hierarchy for (%s)", StringUtil.sanitize(propertyName), StringUtil.sanitize(clazz.getName()));
+                LOG.debug(message);
                 return null;
             }
             field = getSingleField(myClass, propertyName);
@@ -154,11 +154,11 @@ public class BLCFieldUtils {
             }
         }
         if (matchedClasses.size() > 1) {
-            String message = "Found the property (" + token + ") in more than one class of an inheritance hierarchy. " +
+            String message = "Found the property (" + StringUtil.sanitize(token) + ") in more than one class of an inheritance hierarchy. " +
                     "This may lead to unwanted behavior, as the system does not know which class was intended. Do not " +
                     "use the same property name in different levels of the inheritance hierarchy. Defaulting to the " +
-                    "first class found (" + matchedClasses.get(0).getName() + ")";
-            LOG.warn(BLCStringUtils.sanitize(message));
+                    "first class found (" + StringUtil.sanitize(matchedClasses.get(0).getName()) + ")";
+            LOG.warn(message);
         }
         if (matchedClasses.isEmpty()) {
             //probably an artificial field (i.e. passwordConfirm on AdminUserImpl)

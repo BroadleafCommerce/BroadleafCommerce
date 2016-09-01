@@ -37,8 +37,8 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.BLCStringUtils;
 import org.broadleafcommerce.common.util.FormatUtil;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.ValidationUtil;
 import org.broadleafcommerce.common.util.dao.TQJoin;
 import org.broadleafcommerce.common.util.dao.TQOrder;
@@ -314,13 +314,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 if (!property.getName().contains(FieldManager.MAPFIELDSEPARATOR) && !property.getName().startsWith("__")) {
                     Field field = fieldManager.getField(instance.getClass(), property.getName());
                     if (field == null) {
-                        LOG.debug("Unable to find a bean property for the reported property: " + BLCStringUtils.sanitize(property.getName()) + ". Ignoring property.");
+                        LOG.debug("Unable to find a bean property for the reported property: " + StringUtil.sanitize(property.getName()) + ". Ignoring property.");
                         continue;
                     }
                     returnType = field.getType();
                 } else {
                     if (metadata == null) {
-                        LOG.debug("Unable to find a metadata property for the reported property: " + BLCStringUtils.sanitize(property.getName()) + ". Ignoring property.");
+                        LOG.debug("Unable to find a metadata property for the reported property: " + StringUtil.sanitize(property.getName()) + ". Ignoring property.");
                         continue;
                     }
                     returnType = getMapFieldType(instance, fieldManager, property);
@@ -671,7 +671,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             }
                             propertyItem.setValue(strVal);
                         } catch (NoSuchMethodException e) {
-                            LOG.debug("Unable to find a specified property in the entity: " + BLCStringUtils.sanitize(property));
+                            LOG.debug("Unable to find a specified property in the entity: " + StringUtil.sanitize(property));
                             //do nothing - this property is simply not in the bean
                         }
                     }
@@ -1339,8 +1339,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         }
                     }
                     LOG.warn(String.format("Unable to filter the embedded collection (%s) on an additional property (%s)",
-                            BLCStringUtils.sanitize(expression),
-                            BLCStringUtils.sanitize(mappingProperty)));
+                            StringUtil.sanitize(expression),
+                            StringUtil.sanitize(mappingProperty)));
                 }
             }
         }

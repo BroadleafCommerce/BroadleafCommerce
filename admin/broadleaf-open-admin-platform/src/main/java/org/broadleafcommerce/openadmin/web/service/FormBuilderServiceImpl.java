@@ -41,7 +41,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
-import org.broadleafcommerce.common.util.BLCStringUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
@@ -547,7 +547,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         
         if (CollectionUtils.isEmpty(headerFields)) {
             String message = "There are no listgrid header fields configured for the class " + ceilingType + " and property '" +
-            	field.getName() + "'.";
+                    StringUtil.sanitize(field.getName()) + "'.";
             if (selectize && (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM)) {
                 message += " Please configure 'selectizeVisibleField' in your @AdminPresentationAdornedTargetCollection configuration";
             } else if (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM) {
@@ -557,7 +557,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             } else {
                 message += " Please mark some @AdminPresentation fields with 'prominent = true'";
             }
-            LOG.error(BLCStringUtils.sanitize(message));
+            LOG.error(message);
         }
 
         ListGrid listGrid = createListGrid(ceilingType, headerFields, type, drs, sectionKey, fmd.getOrder(), idProperty, sectionCrumbs, sortProperty);
@@ -1018,7 +1018,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 Integer.parseInt(defaultValue);
             } catch (NumberFormatException  e) {
                 String msg = buildMsgForDefValException(SupportedFieldType.INTEGER.toString(), fmd, defaultValue);
-                LOG.debug(BLCStringUtils.sanitize(msg));
+                LOG.debug(msg);
                 return null;
             }
         } else if (fieldType.equals(SupportedFieldType.DECIMAL.toString())
@@ -1027,14 +1027,14 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 BigDecimal val = new BigDecimal(defaultValue);
             } catch (NumberFormatException  e) {
                 String msg = buildMsgForDefValException(fieldType.toString(), fmd, defaultValue);
-                LOG.debug(BLCStringUtils.sanitize(msg));
+                LOG.debug(msg);
                 return null;
             }
         } else if (fieldType.equals(SupportedFieldType.BOOLEAN.toString())) {
             if (!defaultValue.toLowerCase().equals("true") && !defaultValue.toLowerCase().equals("false")
                     && !defaultValue.toUpperCase().equals("Y") && !defaultValue.toUpperCase().equals("N")) {
                 String msg = buildMsgForDefValException(SupportedFieldType.BOOLEAN.toString(), fmd, defaultValue);
-                LOG.debug(BLCStringUtils.sanitize(msg));
+                LOG.debug(msg);
                 return null;
             }
         } else if (fieldType.equals(SupportedFieldType.DATE.toString())) {
@@ -1047,7 +1047,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     defaultValue = format.format(date);
                 } catch (ParseException e) {
                     String msg = buildMsgForDefValException(SupportedFieldType.DATE.toString(), fmd, defaultValue);
-                    LOG.debug(BLCStringUtils.sanitize(msg));
+                    LOG.debug(msg);
                     return null;
                 }
             }
@@ -1056,8 +1056,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     private String buildMsgForDefValException(String type, BasicFieldMetadata fmd, String defaultValue) {
-        return fmd.getTargetClass() + " : " + fmd.getName() + " - Failed to parse " + type +
-                    " from DefaultValue [ " + defaultValue + " ]";
+        return StringUtil.sanitize(fmd.getTargetClass()) + " : " + StringUtil.sanitize(fmd.getName()) + " - Failed to parse " 
+                + StringUtil.sanitize(type) + " from DefaultValue [ " + StringUtil.sanitize(defaultValue) + " ]";
     }
 
     @Override
@@ -1297,7 +1297,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     for (Entity row : rows) {
                         Property prop = row.findProperty(displayProp);
                         if (prop == null) {
-                            LOG.warn("Could not find displayProp [" + BLCStringUtils.sanitize(displayProp) + "] on entity [" + 
+                            LOG.warn("Could not find displayProp [" + StringUtil.sanitize(displayProp) + "] on entity [" + 
                                     ef.getCeilingEntityClassname() + "]");
                         } else {
                             String displayValue = prop.getDisplayValue();

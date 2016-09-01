@@ -28,8 +28,8 @@ import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordUtils;
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.util.BLCStringUtils;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminPermissionDao;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminRoleDao;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminUserDao;
@@ -394,7 +394,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         if (! response.getHasErrors()) {
             if (! user.getId().equals(fpst.getAdminUserId())) {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("Password reset attempt tried with mismatched user and token " + user.getId() + ", " + BLCStringUtils.sanitize(token));
+                    LOG.warn("Password reset attempt tried with mismatched user and token " + user.getId() + ", " + StringUtil.sanitize(token));
                 }
                 response.addErrorCode("invalidToken");
             }

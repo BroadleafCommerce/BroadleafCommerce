@@ -29,7 +29,7 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.time.FixedTimeSource;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
-import org.broadleafcommerce.common.util.BLCStringUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -230,7 +230,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                 overrideTime = readDateFromRequest(request);
             } else if (sandboxDateTimeParam != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Setting date/time using " + BLCStringUtils.sanitize(sandboxDateTimeParam));
+                    LOG.debug("Setting date/time using " + StringUtil.sanitize(sandboxDateTimeParam));
                 }
                 overrideTime = CONTENT_DATE_FORMATTER.parse(sandboxDateTimeParam);
             }
@@ -243,7 +243,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                 overrideTime = (Date) request.getAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Setting date-time for sandbox mode to " + overrideTime + " for sandboxDateTimeParam = " + BLCStringUtils.sanitize(sandboxDateTimeParam));
+                    LOG.debug("Setting date-time for sandbox mode to " + overrideTime + " for sandboxDateTimeParam = " + StringUtil.sanitize(sandboxDateTimeParam));
                 }
                 request.setAttribute(SANDBOX_DATE_TIME_VAR, overrideTime, WebRequest.SCOPE_GLOBAL_SESSION);
             }
@@ -274,7 +274,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         String dateString = date + " " + hours + ":" + minutes + " " + ampm;
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Setting date/time using " + BLCStringUtils.sanitize(dateString));
+            LOG.debug("Setting date/time using " + StringUtil.sanitize(dateString));
         }
 
         Date parsedDate = CONTENT_DATE_PARSE_FORMAT.parse(dateString);

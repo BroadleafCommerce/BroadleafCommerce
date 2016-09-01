@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.rule.AbstractRuleProcessor;
-import org.broadleafcommerce.common.util.BLCStringUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -53,12 +53,12 @@ public class PageDefaultRuleProcessor extends AbstractRuleProcessor<PageDTO> {
 
         if (ruleExpression != null) {
             if (LOG.isTraceEnabled())  {
-                LOG.trace("Processing content rule for page with id " + page.getId() +".   Value = " + BLCStringUtils.sanitize(ruleExpression));
+                LOG.trace("Processing content rule for page with id " + page.getId() +".   Value = " + StringUtil.sanitize(ruleExpression));
             }
             boolean result = executeExpression(ruleExpression, vars);
             if (! result) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Page failed to pass rule and will not be included for Page with id " + page.getId() +".   Value = " + BLCStringUtils.sanitize(ruleExpression));
+                    LOG.debug("Page failed to pass rule and will not be included for Page with id " + page.getId() +".   Value = " + StringUtil.sanitize(ruleExpression));
                 }
             }
 

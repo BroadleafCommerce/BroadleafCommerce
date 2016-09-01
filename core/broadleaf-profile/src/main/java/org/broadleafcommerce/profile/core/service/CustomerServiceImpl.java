@@ -29,7 +29,7 @@ import org.broadleafcommerce.common.security.util.PasswordReset;
 import org.broadleafcommerce.common.security.util.PasswordUtils;
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.util.BLCStringUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.dao.CustomerForgotPasswordSecurityTokenDao;
@@ -622,7 +622,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (! response.getHasErrors()) {
             if (! customer.getId().equals(fpst.getCustomerId())) {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("Password reset attempt tried with mismatched customer and token " + customer.getId() + ", " + BLCStringUtils.sanitize(token));
+                    LOG.warn("Password reset attempt tried with mismatched customer and token " + customer.getId() + ", " + StringUtil.sanitize(token));
                 }
                 response.addErrorCode("invalidToken");
             }

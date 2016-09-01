@@ -48,7 +48,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.util.BLCMapUtils;
-import org.broadleafcommerce.common.util.BLCStringUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -84,8 +84,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -716,9 +714,10 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     protected ORDER getSortOrder(String[] sortFieldsSegments, String sortQuery) {
         ORDER order = ORDER.asc;
         if (sortFieldsSegments.length < 2) {
-            StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
+            StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + StringUtil.sanitize(sortQuery) 
+                    + ", but no sorting tokens could be extracted.");
             msg.append("\nDefaulting to ASCending");
-            LOG.warn(BLCStringUtils.sanitize(msg.toString()));
+            LOG.warn(msg.toString());
         } else if ("desc".equals(sortFieldsSegments[1])) {
             order = ORDER.desc;
         }
@@ -821,7 +820,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         boolean isPropertyReadable = PropertyUtils.isReadable(object, components[currentPosition]);
         if (!isPropertyReadable) {
             LOG.debug(String.format("Could not find %s on %s, assuming this exists elsewhere in the class hierarchy",
-                    BLCStringUtils.sanitize(components[currentPosition]), object.getClass().getName()));
+                    StringUtil.sanitize(components[currentPosition]), object.getClass().getName()));
             return null;
         }
         

@@ -19,9 +19,8 @@ package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.util.BLCStringUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
-import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
 import org.broadleafcommerce.core.order.service.exception.ProductOptionValidationException;
 import org.springframework.stereotype.Service;
@@ -40,9 +39,9 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
     @Override
     public Boolean validate(ProductOption productOption, String value) {
         if (requiresValidation(productOption) && !validateRegex(productOption.getValidationString(), value)) {
-            String message = productOption.getErrorMessage() + ". Value [" + value + "] does not match regex string ["
-                    + productOption.getValidationString() + "]";
-            LOG.error(BLCStringUtils.sanitize(message));
+            String message = StringUtil.sanitize(productOption.getErrorMessage()) + ". Value [" + StringUtil.sanitize(value)
+                    + "] does not match regex string [" + StringUtil.sanitize(productOption.getValidationString()) + "]";
+            LOG.error(message);
             String exceptionMessage = productOption.getAttributeName() + " " + productOption.getErrorMessage()
                     + ". Value [" + value + "] does not match regex string ["
                     + productOption.getValidationString() + "]";

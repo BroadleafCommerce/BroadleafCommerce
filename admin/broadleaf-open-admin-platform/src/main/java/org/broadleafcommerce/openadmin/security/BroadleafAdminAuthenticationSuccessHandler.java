@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.security;
 
-import org.broadleafcommerce.common.util.BLCStringUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -76,7 +76,7 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
         try {
             UrlUtil.validateUrl(targetUrl, request);
         } catch (IOException e) {
-            logger.error("SECURITY FAILURE Bad redirect location: " + BLCStringUtils.sanitize(targetUrl), e);
+            logger.error("SECURITY FAILURE Bad redirect location: " + StringUtil.sanitize(targetUrl), e);
             response.sendError(403);
             return;
         }
@@ -100,7 +100,7 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
         // Remove the login URI so we don't continuously redirect to the login page
         targetUrl = removeLoginSegment(targetUrl);
 
-        logger.debug("Redirecting to DefaultSavedRequest Url: " + BLCStringUtils.sanitize(targetUrl));
+        logger.debug("Redirecting to DefaultSavedRequest Url: " + StringUtil.sanitize(targetUrl));
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }

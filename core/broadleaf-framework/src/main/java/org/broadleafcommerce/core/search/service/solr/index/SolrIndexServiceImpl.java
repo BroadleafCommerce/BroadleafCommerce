@@ -32,8 +32,8 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
-import org.broadleafcommerce.common.util.BLCStringUtils;
 import org.broadleafcommerce.common.util.StopWatch;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -303,8 +303,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Override
     public void deleteAllNamespaceDocuments(SolrClient server) throws ServiceException {
         try {
-            String deleteQuery = shs.getNamespaceFieldName() + ":(\"" + solrConfiguration.getNamespace() + "\")";
-            LOG.debug("Deleting by query: " + BLCStringUtils.sanitize(deleteQuery));
+            String deleteQuery = StringUtil.sanitize(shs.getNamespaceFieldName()) + ":(\"" 
+                    + StringUtil.sanitize(solrConfiguration.getNamespace()) + "\")";
+            LOG.debug("Deleting by query: " + deleteQuery);
             server.deleteByQuery(deleteQuery);
 
             //Explicitly do a hard commit here since we just deleted the entire index
