@@ -355,7 +355,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
-            if(ModulePresentUtil.isPresent("Enterprise")) {
+            if(ModulePresentUtil.isPresent(ModulePresentUtil.BroadleafModuleEnum.ENTERPRISE)) {
                 enterpriseRemove(persistencePackage, adminInstance, helper);
             } else {
                 catalogService.removeProduct(adminInstance);
