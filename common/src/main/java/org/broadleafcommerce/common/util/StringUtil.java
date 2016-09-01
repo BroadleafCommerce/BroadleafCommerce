@@ -175,7 +175,7 @@ public class StringUtil {
      */
     public static String sanitize(String string) {
         if (string == null) {
-            return null;
+            return "NULL";
         }
         String sanitized = string.replace('\n', '_').replace('\r', '_');
         return ESAPI.encoder().encodeForHTML(sanitized);
