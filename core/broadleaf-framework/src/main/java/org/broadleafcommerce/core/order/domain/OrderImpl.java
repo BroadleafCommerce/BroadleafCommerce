@@ -522,7 +522,18 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         }
         return discreteOrderItems;
     }
-    
+
+    @Override
+    public List<OrderItem> getNonDiscreteOrderItems() {
+        List<OrderItem> nonDiscreteOrderItems = new ArrayList<OrderItem>();
+        for (OrderItem orderItem : orderItems) {
+            if (!SkuAccessor.class.isAssignableFrom(orderItem.getClass())) {
+                nonDiscreteOrderItems.add(orderItem);
+            }
+        }
+        return nonDiscreteOrderItems;
+    }
+
     @Override
     public boolean containsSku(Sku sku) {
         for (OrderItem orderItem : getOrderItems()) {
@@ -692,6 +703,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         int count = 0;
         for (DiscreteOrderItem doi : getDiscreteOrderItems()) {
             count += doi.getQuantity();
+        }
+        for (OrderItem oi : getNonDiscreteOrderItems()) {
+            count += oi.getQuantity();
         }
         return count;
     }

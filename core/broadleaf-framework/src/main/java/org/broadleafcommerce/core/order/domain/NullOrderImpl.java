@@ -222,6 +222,11 @@ public class NullOrderImpl implements Order {
     }
 
     @Override
+    public List<OrderItem> getNonDiscreteOrderItems() {
+        return null;
+    }
+
+    @Override
     public boolean containsSku(Sku sku) {
         return false;
     }
