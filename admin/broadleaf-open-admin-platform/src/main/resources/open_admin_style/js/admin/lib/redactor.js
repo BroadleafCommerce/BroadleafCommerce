@@ -1976,8 +1976,11 @@
                     // unconvert dollar sign only in script tags, and unconvert `<!-- -->` back to `<![[ ]]>`
                     html = html.replace(/(<script)(.*?[^>]?)>([\w\W]*?)(<\/script>)/gi,
                         function(match, scriptOpen, tagAttributes, content, scriptClose, offset, string) {
-                            content = content.replace(/&#36;/g, '\$').replace(/(<!)(--)/g, '$1').replace(/(--)(>)/, '$2');
-
+                            content = content.replace(/&#36;/g, '\$')
+                                             .replace(/&lt;/g, '<')
+                                             .replace(/&gt;/g, '>')
+                                             .replace(/(<!)(--)/g, '$1')
+                                             .replace(/(--)(>)/g, '$2');
                             return scriptOpen + tagAttributes + '>' + content + scriptClose;
                     });
                     /* END BLC MODIFICATION */
