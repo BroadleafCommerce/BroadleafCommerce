@@ -1972,6 +1972,16 @@
                     // reconvert script tag
                     html = html.replace(/<pre class="redactor-script-tag" style="display: none;"(.*?[^>]?)>([\w\W]*?)<\/pre>/gi, '<script$1>$2</script>');
 
+                    /* START BLC MODIFICATION */
+                    // unconvert dollar sign only in script tags, and unconvert `<!-- -->` back to `<![[ ]]>`
+                    html = html.replace(/(<script)(.*?[^>]?)>([\w\W]*?)(<\/script>)/gi,
+                        function(match, scriptOpen, tagAttributes, content, scriptClose, offset, string) {
+                            content = content.replace(/&#36;/g, '\$').replace(/(<!)(--)/g, '$1').replace(/(--)(>)/, '$2');
+
+                            return scriptOpen + tagAttributes + '>' + content + scriptClose;
+                    });
+                    /* END BLC MODIFICATION */
+
                     // restore form tag
                     html = this.clean.restoreFormTags(html);
 
