@@ -581,7 +581,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         itemRequest.setProduct(product);
         itemRequest.setSkuId(product.getDefaultSku().getId());
         itemRequest.setQuantity(1);
-        itemRequest.setDisplayPrice(product.getSalePrice());
+        itemRequest.setDisplayPrice(product.getDefaultSku().getSalePrice());
         itemRequest.setDiscountsAllowed(product.getDefaultSku().isDiscountable());
         return itemRequest;
     }

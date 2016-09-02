@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -166,12 +167,18 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
     protected Money getChildOrderItemsTotalAdjustedPrice() {
         Money returnPrice = Money.ZERO;
         for (OrderItem child : orderItem.getChildOrderItems()) {
-            for (OrderItemPriceDetail oipd : child.getOrderItemPriceDetails()) {
-                Money childBase = child.getPriceBeforeAdjustments(oipd.getUseSalePrice(), true);
-                childBase = childBase
-                        .multiply(oipd.getQuantity())
-                        .subtract(oipd.getTotalAdjustmentValue());
+            if (CollectionUtils.isNotEmpty(child.getOrderItemPriceDetails())) {
+                for (OrderItemPriceDetail oipd : child.getOrderItemPriceDetails()) {
+                    Money childBase = child.getPriceBeforeAdjustments(oipd.getUseSalePrice(), true);
+                    childBase = childBase
+                            .multiply(oipd.getQuantity())
+                            .subtract(oipd.getTotalAdjustmentValue());
 
+                    returnPrice = returnPrice.add(childBase);
+                }
+            } else {
+                Money childBase = child.getPriceBeforeAdjustments(true, true);
+                childBase = childBase.multiply(child.getQuantity());
                 returnPrice = returnPrice.add(childBase);
             }
         }
