@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.inventory.service.ContextualInventoryService;
 import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException;
@@ -95,7 +96,7 @@ public class DecrementInventoryRollbackHandler implements RollbackHandler<Checko
                     throw rfe;
                 } catch (RuntimeException ex) {
                     LOG.error("An unexpected error occured in the error handler of the checkout workflow trying to compensate for inventory. This happend for order ID: " +
-                            orderId + ". This should be corrected manually!", ex);
+                            StringUtil.sanitize(orderId) + ". This should be corrected manually!", ex);
                     RollbackFailureException rfe = new RollbackFailureException("An unexpected error occured in the error handler of the checkout workflow " +
                             "trying to compensate for inventory. This happend for order ID: " +
                             orderId + ". This should be corrected manually!", ex);

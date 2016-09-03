@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.rule;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +26,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.FormatUtil;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
@@ -179,7 +179,8 @@ public class MvelHelper {
                 //Unable to execute the MVEL expression for some reason
                 //Return false, but notify about the bad expression through logs
                 if (!TEST_MODE) {
-                    LOG.info("Unable to parse and/or execute the mvel expression (" + rule + "). Reporting to the logs and returning false for the match expression", e);
+                    LOG.info("Unable to parse and/or execute the mvel expression (" + StringUtil.sanitize(rule) 
+                            + "). Reporting to the logs and returning false for the match expression", e);
                 }
                 return false;
             }
