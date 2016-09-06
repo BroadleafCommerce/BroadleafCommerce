@@ -20,6 +20,8 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.core.offer.service.type.OfferProrationType;
 import org.broadleafcommerce.core.offer.service.type.OfferTimeZoneType;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
+import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageType;
 
 import java.io.Serializable;
 import java.util.List;
@@ -79,5 +81,41 @@ public interface AdvancedOffer extends Serializable {
      * @param offerProrationType
      */
     public void setOfferProrationType(OfferProrationType offerProrationType);
+
+    /**
+     * Returns whether or not this offer has a {@link PromotionMessage}
+     * @return
+     */
+    public Boolean getHasPromotionMessage();
+
+    /**
+     * Sets whether or not this offer has a {@link PromotionMessage}
+     * @param hasPromotionMessage
+     */
+    public void setHasPromotionMessage(Boolean hasPromotionMessage);
+
+    /**
+     * Returns whether or not this offer has a {@link PromotionMessage} of a particular type
+     * @return
+     */
+    public boolean hasPromotionMessageOfType(PromotionMessageType type);
+
+    /**
+     * Returns the {@link AdvancedOfferPromotionMessageXref}s of this offer
+     * @return
+     */
+    public List<AdvancedOfferPromotionMessageXref> getPromotionMessageXrefs();
+
+    /**
+     * Sets the {@link AdvancedOfferPromotionMessageXref}s for this offer
+     * @param promotionMessageXrefs
+     */
+    public void setPromotionMessageXrefs(List<AdvancedOfferPromotionMessageXref> promotionMessageXrefs);
+
+    /**
+     * Returns the active {@link PromotionMessage}s for this offer by {@link PromotionMessageType}
+     * @return
+     */
+    public List<PromotionMessage> getActivePromotionMessagesByType(PromotionMessageType promotionMessageType);
 
 }

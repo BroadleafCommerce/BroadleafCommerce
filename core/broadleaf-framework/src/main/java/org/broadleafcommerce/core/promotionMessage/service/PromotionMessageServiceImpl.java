@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.offer.domain.AdvancedOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
@@ -100,8 +101,9 @@ public class PromotionMessageServiceImpl implements PromotionMessageService {
     protected Set<PromotionMessage> findApplicableOfferTargetAndQualifierMessages(Product product, Offer offer) {
         Set<PromotionMessage> promotionMessages = new HashSet<>();
 
-        boolean hasTargetPromotionMessage = offer.hasPromotionMessageOfType(PromotionMessageType.TARGETS);
-        boolean hasQualifierPromotionMessage = offer.hasPromotionMessageOfType(PromotionMessageType.QUALIFIERS);
+        AdvancedOffer advancedOffer = (AdvancedOffer) offer;
+        boolean hasTargetPromotionMessage = advancedOffer.hasPromotionMessageOfType(PromotionMessageType.TARGETS);
+        boolean hasQualifierPromotionMessage = advancedOffer.hasPromotionMessageOfType(PromotionMessageType.QUALIFIERS);
 
         if (hasTargetPromotionMessage) {
             Set<OfferTargetCriteriaXref> targetItemCriteriaXrefs = offer.getTargetItemCriteriaXref();
@@ -132,7 +134,8 @@ public class PromotionMessageServiceImpl implements PromotionMessageService {
 
         String matchRule = criteria.getMatchRule();
         if (productPassesMatchRule(product, matchRule)) {
-            promotionMessages.addAll(offer.getActivePromotionMessagesByType(promotionMessageType));
+            AdvancedOffer advancedOffer = (AdvancedOffer) offer;
+            promotionMessages.addAll(advancedOffer.getActivePromotionMessagesByType(promotionMessageType));
         }
 
         return promotionMessages;

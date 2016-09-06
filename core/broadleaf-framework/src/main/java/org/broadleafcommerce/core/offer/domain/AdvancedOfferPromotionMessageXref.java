@@ -24,16 +24,16 @@ import java.io.Serializable;
 /**
  * @author Chris Kittrell (ckittrell)
  */
-public interface OfferPromotionMessageXref extends Serializable {
+public interface AdvancedOfferPromotionMessageXref extends Serializable {
 
     /**
-     * Id of this OfferPromotionMessageXref
+     * Id of this AdvancedOfferPromotionMessageXref
      * @return
      */
     Long getId();
 
     /**
-     * Sets the id of this OfferPromotionMessageXref
+     * Sets the id of this AdvancedOfferPromotionMessageXref
      * @param id
      */
     void setId(Long id);

@@ -28,7 +28,6 @@ import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageT
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -239,16 +238,4 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     public Boolean getRequiresRelatedTargetAndQualifiers();
 
     public void setRequiresRelatedTargetAndQualifiers(Boolean requiresRelatedTargetAndQualifiers);
-
-    public Boolean getHasPromotionMessage();
-
-    public void setHasPromotionMessage(Boolean hasPromotionMessage);
-
-    public List<OfferPromotionMessageXref> getPromotionMessageXrefs();
-
-    public void setPromotionMessageXrefs(List<OfferPromotionMessageXref> promotionMessageXrefs);
-
-    public List<PromotionMessage> getActivePromotionMessagesByType(PromotionMessageType promotionMessageType);
-
-    public boolean hasPromotionMessageOfType(PromotionMessageType type);
 }

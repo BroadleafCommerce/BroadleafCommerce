@@ -47,7 +47,6 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
-import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl;
 import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -339,18 +338,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         }
     )
     Map<String, OfferOfferRuleXref> offerMatchRules = new HashMap<String, OfferOfferRuleXref>();
-
-    @Column(name = "HAS_PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName = "OfferImpl_HasPromotionMessage",
-            group = GroupName.Marketing, defaultValue = "false")
-    protected Boolean hasPromotionMessage = false;
-
-    @OneToMany(mappedBy = "offer", targetEntity = OfferPromotionMessageXrefImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
-    @AdminPresentationCollection(friendlyName = "OfferImpl_PromotionMessages",
-            group = GroupName.Marketing,
-            addType = AddMethodType.PERSIST)
-    protected List<OfferPromotionMessageXref> promotionMessageXrefs = new ArrayList<>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -736,49 +723,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setRequiresRelatedTargetAndQualifiers(Boolean requiresRelatedTargetAndQualifiers) {
         this.requiresRelatedTargetAndQualifiers = requiresRelatedTargetAndQualifiers;
-    }
-
-    public List<OfferPromotionMessageXref> getPromotionMessageXrefs() {
-        return promotionMessageXrefs;
-    }
-
-    @Override
-    public List<PromotionMessage> getActivePromotionMessagesByType(PromotionMessageType desiredPromotionMessageType) {
-        List filteredPromotionMessages = new ArrayList();
-
-        for (OfferPromotionMessageXref xref : getPromotionMessageXrefs()) {
-            PromotionMessage promotionMessage = xref.getPromotionMessage();
-
-            boolean isDesiredType = StringUtils.equals(desiredPromotionMessageType.getType(), xref.getMessageType());
-            boolean typeIsTargetsOrQualifiers = StringUtils.equals(PromotionMessageType.TARGETS_OR_QUALIFIERS.getType(), xref.getMessageType());
-            if (promotionMessage.isActive() && (isDesiredType || typeIsTargetsOrQualifiers)) {
-                filteredPromotionMessages.add(promotionMessage);
-            }
-        }
-
-        return filteredPromotionMessages;
-    }
-
-    public void setPromotionMessageXrefs(List<OfferPromotionMessageXref> promotionMessageXrefs) {
-        this.promotionMessageXrefs = promotionMessageXrefs;
-    }
-
-    @Override
-    public Boolean getHasPromotionMessage() {
-        return hasPromotionMessage == null ? Boolean.FALSE : hasPromotionMessage;
-    }
-
-    @Override
-    public void setHasPromotionMessage(Boolean hasPromotionMessage) {
-        this.hasPromotionMessage = hasPromotionMessage;
-    }
-
-    @Override
-    public boolean hasPromotionMessageOfType(PromotionMessageType type) {
-        if (!getHasPromotionMessage()) return false;
-
-        List<PromotionMessage> promotionMessages = getActivePromotionMessagesByType(type);
-        return CollectionUtils.isNotEmpty(promotionMessages);
     }
 
     @Override
