@@ -168,12 +168,13 @@ var BLC = (function($) {
                 }
             } else if (!options.data) {
                 var csrfToken = getCsrfToken();
+                options.data = {};
                 if (csrfToken) {
-                    options.data = { 'csrfToken': csrfToken }
+                    options.data['csrfToken'] = csrfToken;
                 }
                 var stateVersionToken = getStateVersionToken();
                 if (stateVersionToken) {
-                    options.data = { 'stateVersionToken': stateVersionToken }
+                    options.data['stateVersionToken'] = stateVersionToken;
                 }
             }
         }
