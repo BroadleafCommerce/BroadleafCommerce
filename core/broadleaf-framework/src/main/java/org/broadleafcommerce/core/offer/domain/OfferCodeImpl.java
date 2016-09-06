@@ -23,6 +23,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.dao.GenericEntityDaoImpl;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -35,8 +36,6 @@ import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.util.HibernateUtils;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
@@ -45,7 +44,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -159,7 +157,6 @@ public class OfferCodeImpl implements OfferCode {
             GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
             if (genericEntityDao != null && offer != null && offer.getId() != null) {
                 Long id = offer.getId();
-                genericEntityDao.getEntityManager().detach(offer);
                 sbClonedOffer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
             } 
         }
