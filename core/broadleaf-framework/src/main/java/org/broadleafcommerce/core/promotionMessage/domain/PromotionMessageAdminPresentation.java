@@ -31,15 +31,23 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             order = PromotionMessageAdminPresentation.TabOrder.General,
             groups = {
                 @AdminGroupPresentation(name = PromotionMessageAdminPresentation.GroupName.General,
-                        order = PromotionMessageAdminPresentation.GroupOrder.General,
-                        untitled = true),
+                    order = PromotionMessageAdminPresentation.GroupOrder.General,
+                    untitled = true),
                 @AdminGroupPresentation(name = PromotionMessageAdminPresentation.GroupName.Placement,
-                        order = PromotionMessageAdminPresentation.GroupOrder.Placement,
-                        untitled = true),
+                    order = PromotionMessageAdminPresentation.GroupOrder.Placement,
+                    untitled = true),
                 @AdminGroupPresentation(name = PromotionMessageAdminPresentation.GroupName.ActiveRange,
-                        order = PromotionMessageAdminPresentation.GroupOrder.ActiveRange,
-                        tooltip = "PromotionMessageImpl_Offer_Active_Range_Tooltip",
-                        column = 1)
+                    order = PromotionMessageAdminPresentation.GroupOrder.ActiveRange,
+                    tooltip = "PromotionMessageImpl_Offer_Active_Range_Tooltip",
+                    column = 1)
+            }
+        ),
+        @AdminTabPresentation(name = PromotionMessageAdminPresentation.TabName.Media,
+            order = PromotionMessageAdminPresentation.TabOrder.Media,
+            groups = {
+                @AdminGroupPresentation(name = PromotionMessageAdminPresentation.GroupName.Media,
+                    order = PromotionMessageAdminPresentation.GroupOrder.Media,
+                    untitled = true)
             }
         )
     }
@@ -48,16 +56,19 @@ public interface PromotionMessageAdminPresentation {
 
     public static class TabName {
         public static final String General = "General";
+        public static final String Media = "PromotionMessageImpl_Media";
     }
 
     public static class TabOrder {
         public static final int General = 1000;
+        public static final int Media = 2000;
     }
 
     public static class GroupName {
         public static final String General = "General";
         public static final String Placement = "PromotionMessageImpl_Placement";
         public static final String ActiveRange = "PromotionMessageImpl_Active_Range";
+        public static final String Media = "PromotionMessageImpl_Media";
 
     }
 
@@ -65,6 +76,7 @@ public interface PromotionMessageAdminPresentation {
         public static final int General = 1000;
         public static final int Placement = 2000;
         public static final int ActiveRange = 3000;
+        public static final int Media = 4000;
     }
 
     public static class FieldOrder {

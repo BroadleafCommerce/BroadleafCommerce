@@ -19,11 +19,11 @@ package org.broadleafcommerce.core.promotionMessage.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.Status;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * @author Chris Kittrell (ckittrell)
@@ -42,9 +42,9 @@ public interface PromotionMessage extends Status, Serializable,MultiTenantClonea
 
     public void setMessage(String message);
 
-    public Map<String, PromotionMessageMediaXref> getPromotionMessageMedia();
+    public Media getPromotionMessageMedia();
 
-    public void setPromotionMessageMedia(Map<String, PromotionMessageMediaXref> promotionMessageMedia);
+    public void setPromotionMessageMedia(Media promotionMessageMedia);
 
     public int getPriority();
 

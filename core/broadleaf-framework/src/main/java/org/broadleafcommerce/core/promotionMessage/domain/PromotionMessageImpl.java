@@ -19,31 +19,32 @@ package org.broadleafcommerce.core.promotionMessage.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.broadleafcommerce.cms.file.domain.StaticAssetAdminPresentation;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
-import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -52,8 +53,6 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -65,15 +64,54 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "BLC_PROMOTION_MESSAGE")
 @Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @SQLDelete(sql="UPDATE BLC_PROMOTION_MESSAGE SET ARCHIVED = 'Y' WHERE PROMOTION_MESSAGE_ID = ?")
+@AdminPresentationMergeOverrides({
+    @AdminPresentationMergeOverride(name = "promotionMessageMedia.url", mergeEntries = {
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = PromotionMessageAdminPresentation.TabName.Media),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = PromotionMessageAdminPresentation.TabOrder.Media),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = PromotionMessageAdminPresentation.GroupName.Media),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "PromotionMessageImpl_Media"),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "NOT_REQUIRED"),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false)
+    }),
+    @AdminPresentationMergeOverride(name = "promotionMessageMedia.title", mergeEntries = {
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = PromotionMessageAdminPresentation.TabName.Media),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = PromotionMessageAdminPresentation.TabOrder.Media),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = PromotionMessageAdminPresentation.GroupName.Media),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false)
+    }),
+    @AdminPresentationMergeOverride(name = "promotionMessageMedia.altText", mergeEntries = {
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = PromotionMessageAdminPresentation.TabName.Media),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = PromotionMessageAdminPresentation.TabOrder.Media),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = PromotionMessageAdminPresentation.GroupName.Media),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false)
+    }),
+    @AdminPresentationMergeOverride(name = "promotionMessageMedia.tags", mergeEntries = {
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = PromotionMessageAdminPresentation.TabName.Media),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = PromotionMessageAdminPresentation.TabOrder.Media),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = PromotionMessageAdminPresentation.GroupName.Media),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false)
+    }),
+    @AdminPresentationMergeOverride(name = "promotionMessageMedia.auditable.createdBy", mergeEntries = {
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+    }),
+    @AdminPresentationMergeOverride(name = "promotionMessageMedia.auditable.updatedBy", mergeEntries = {
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+    }),
+    @AdminPresentationMergeOverride(name = "promotionMessageMedia.auditable.dateCreated", mergeEntries = {
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+    }),
+    @AdminPresentationMergeOverride(name = "promotionMessageMedia.auditable.dateUpdated", mergeEntries = {
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+    })
+})
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
@@ -99,6 +137,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     @Column(name = "NAME")
     @Index(name="PROMOTION_MESSAGE_NAME_INDEX", columnNames={"PROMOTION_MESSAGE_NAME"})
     @AdminPresentation(friendlyName = "PromotionMessageImpl_Name",
+        tab = TabName.General, tabOrder = TabOrder.General,
         group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Name,
         prominent = true, gridOrder = FieldOrder.Name,
         requiredOverride = RequiredOverride.REQUIRED)
@@ -106,42 +145,26 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
 
     @Column(name = "PROMOTION_MESSASGE")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_message",
+        tab = TabName.General, tabOrder = TabOrder.General,
         group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Message,
         prominent = true, gridOrder = FieldOrder.Message)
     protected String message;
 
-    @OneToMany(mappedBy = "promotionMessage", targetEntity = PromotionMessageMediaXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @MapKey(name = "key")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
-    @BatchSize(size = 50)
-    @AdminPresentationMap(
-            excluded = true,
-            mediaField = "media.url",
-            toOneTargetProperty = "media",
-            toOneParentProperty = "promotionMessage",
-            keys = {
-                    @AdminPresentationMapKey(keyName = "primary", friendlyKeyName = "mediaPrimary")
-            }
-    )
-    @AdminPresentationMapFields(
-        mapDisplayFields = {
-            @AdminPresentationMapField(
-                fieldName = "primary",
-                fieldPresentation = @AdminPresentation(friendlyName = "PromotionMessageImpl_Media",
-                    group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Media,
-                    fieldType = SupportedFieldType.MEDIA)
-            )
-        })
-    protected Map<String, PromotionMessageMediaXref> promotionMessageMedia = new HashMap<>();
+    @ManyToOne(targetEntity = MediaImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "MEDIA_ID")
+    @ClonePolicy
+    protected Media promotionMessageMedia;
 
     @Column(name = "PROMOTION_MESSAGE_PRIORITY")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_Priority",
+        tab = TabName.General, tabOrder = TabOrder.General,
         group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.Priority,
         tooltip = "PromotionMessageImpl_Priority_Tooltip")
     protected Integer priority;
 
     @Column(name = "START_DATE")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_StartDate",
+        tab = TabName.General, tabOrder = TabOrder.General,
         group = GroupName.ActiveRange, groupOrder = GroupOrder.ActiveRange, order = FieldOrder.StartDate,
         requiredOverride = RequiredOverride.REQUIRED,
         defaultValue = "today")
@@ -149,6 +172,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
 
     @Column(name = "END_DATE")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_EndDate",
+        tab = TabName.General, tabOrder = TabOrder.General,
         group = GroupName.ActiveRange, groupOrder = GroupOrder.ActiveRange, order = FieldOrder.EndDate,
         validationConfigurations = {
             @ValidationConfiguration(
@@ -161,17 +185,19 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
 
     @Column(name = "MESSAGE_PLACEMENT")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_MessagePlacement",
-            group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.MessagePlacement,
-            fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration="org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessagePlacementType",
-            defaultValue = "ALL",
-            requiredOverride = RequiredOverride.REQUIRED)
+        tab = TabName.General, tabOrder = TabOrder.General,
+        group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.MessagePlacement,
+        fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
+        broadleafEnumeration="org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessagePlacementType",
+        defaultValue = "ALL",
+        requiredOverride = RequiredOverride.REQUIRED)
     protected String messagePlacement;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_Locale",
-            group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.Locale)
+        tab = TabName.General, tabOrder = TabOrder.General,
+        group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.Locale)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
     protected Locale locale;
 
@@ -210,12 +236,12 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     }
 
     @Override
-    public Map<String, PromotionMessageMediaXref> getPromotionMessageMedia() {
+    public Media getPromotionMessageMedia() {
         return promotionMessageMedia;
     }
 
     @Override
-    public void setPromotionMessageMedia(Map<String, PromotionMessageMediaXref> promotionMessageMedia) {
+    public void setPromotionMessageMedia(Media promotionMessageMedia) {
         this.promotionMessageMedia = promotionMessageMedia;
     }
 
@@ -338,10 +364,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
         cloned.setStartDate(startDate);
         cloned.setEndDate(endDate);
         cloned.setArchived(getArchived());
-        for(Map.Entry<String, PromotionMessageMediaXref> entry : promotionMessageMedia.entrySet()){
-            PromotionMessageMediaXrefImpl clonedEntry = ((PromotionMessageMediaXrefImpl)entry.getValue()).createOrRetrieveCopyInstance(context).getClone();
-            cloned.getPromotionMessageMedia().put(entry.getKey(),clonedEntry);
-        }
+        cloned.setPromotionMessageMedia(getPromotionMessageMedia());
 
         return  createResponse;
     }
