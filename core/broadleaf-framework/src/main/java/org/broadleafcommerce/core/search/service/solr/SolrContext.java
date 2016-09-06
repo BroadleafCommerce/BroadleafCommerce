@@ -21,8 +21,20 @@ package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.request.CollectionAdminRequest;
+import org.apache.solr.common.cloud.Aliases;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl;
+import org.springframework.util.CollectionUtils;
+import org.thymeleaf.util.MapUtils;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * <p>
@@ -41,6 +53,12 @@ public class SolrContext {
     protected static SolrClient adminServer = null;
     protected static SolrClient primaryServer = null;
     protected static SolrClient reindexServer = null;
+    protected static String siteAliasBase = null;
+    protected static String siteCollectionBase = null;
+    protected static boolean siteCollections = false;
+    protected static int solrCloudNumShards = 2;
+    protected static String solrCloudConfigName = null;
+
 
     /**
      * Sets the primary SolrClient instance to communicate with Solr.  This is typically one of the following:
@@ -68,7 +86,7 @@ public class SolrContext {
                 
                 if (CloudSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
                     //Make sure that the primary and reindex servers are not using the same default collection name
-                    if (cs.getDefaultCollection().equals(((CloudSolrClient) reindexServer).getDefaultCollection())) {
+                    if (Objects.equals(cs.getDefaultCollection(), ((CloudSolrClient) reindexServer).getDefaultCollection())) {
                         throw new IllegalStateException("Primary and Reindex servers cannot have the same defaultCollection: "
                                 + cs.getDefaultCollection());
                     }
@@ -106,7 +124,7 @@ public class SolrContext {
 
                 if (CloudSolrClient.class.isAssignableFrom(primaryServer.getClass())) {
                     //Make sure that the primary and reindex servers are not using the same default collection name
-                    if (cs.getDefaultCollection().equals(((CloudSolrClient) primaryServer).getDefaultCollection())) {
+                    if (Objects.equals(cs.getDefaultCollection(), ((CloudSolrClient) primaryServer).getDefaultCollection())) {
                         throw new IllegalStateException("Primary and Reindex servers cannot have the same defaultCollection: "
                                 + cs.getDefaultCollection());
                     }
@@ -162,14 +180,206 @@ public class SolrContext {
      * @return the primary Solr server
      */
     public static SolrClient getServer() {
+        if (isSiteCollections() && isSolrCloudMode()) {
+            return getSiteServer();
+        }
+
         return primaryServer;
+    }
+
+    /**
+     * @return the site specific server
+     */
+    public static SolrClient getSiteServer() {
+        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+        Site site = ctx.getNonPersistentSite();
+
+        CloudSolrClient client = (CloudSolrClient) primaryServer;
+
+        client.connect();
+
+        String aliasName = getSiteAliasName(site);
+
+        if (aliasName != null) {
+            //Get a list of existing collections so we don't overwrite one
+            Set<String> collectionNames = client.getZkStateReader().getClusterState().getCollections();
+            Aliases aliases = client.getZkStateReader().getAliases();
+            Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
+
+            String collectionName = getSiteCollectionName(site);
+
+            if (!CollectionUtils.contains(collectionNames.iterator(), collectionName)) {
+                try {
+                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(getSolrCloudNumShards())
+                            .setMaxShardsPerNode(2).setConfigName(getSolrCloudConfigName()).process(client);
+                } catch (SolrServerException e) {
+                    throw ExceptionHelper.refineException(e);
+                } catch (IOException e) {
+                    throw ExceptionHelper.refineException(e);
+                }
+            }
+
+            if (MapUtils.isEmpty(aliasCollectionMap) || !MapUtils.containsKey(aliasCollectionMap, aliasName)) {
+                try {
+                    new CollectionAdminRequest.CreateAlias().setAliasName(aliasName)
+                            .setAliasedCollections(collectionName).process(client);
+                } catch (SolrServerException e) {
+                    throw ExceptionHelper.refineException(e);
+                } catch (IOException e) {
+                    throw ExceptionHelper.refineException(e);
+                }
+            }
+
+        }
+
+        return client;
     }
 
     /**
      * @return the primary server if {@link #isSingleCoreMode()}, else the reindex server
      */
     public static SolrClient getReindexServer() {
+        if (isSiteCollections() && isSolrCloudMode()) {
+            return getSiteReindexServer();
+        }
+
         return isSingleCoreMode() ? primaryServer : reindexServer;
+    }
+
+    public static SolrClient getSiteReindexServer() {
+        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+        Site site = ctx.getNonPersistentSite();
+
+        CloudSolrClient client = (CloudSolrClient) reindexServer;
+
+        client.connect();
+
+        String aliasName = getSiteReindexAliasName(site);
+
+        if (aliasName != null) {
+            //Get a list of existing collections so we don't overwrite one
+            Set<String> collectionNames = client.getZkStateReader().getClusterState().getCollections();
+            Aliases aliases = client.getZkStateReader().getAliases();
+            Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
+
+            String collectionName = getSiteReindexCollectionName(site);
+
+            if (!CollectionUtils.contains(collectionNames.iterator(), collectionName)) {
+                try {
+                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(getSolrCloudNumShards())
+                            .setMaxShardsPerNode(2).setConfigName(getSolrCloudConfigName()).process(client);
+                } catch (SolrServerException e) {
+                    throw ExceptionHelper.refineException(e);
+                } catch (IOException e) {
+                    throw ExceptionHelper.refineException(e);
+                }
+            }
+
+            if (MapUtils.isEmpty(aliasCollectionMap) || !MapUtils.containsKey(aliasCollectionMap, aliasName)) {
+                try {
+                    new CollectionAdminRequest.CreateAlias().setAliasName(aliasName)
+                            .setAliasedCollections(collectionName).process(client);
+                } catch (SolrServerException e) {
+                    throw ExceptionHelper.refineException(e);
+                } catch (IOException e) {
+                    throw ExceptionHelper.refineException(e);
+                }
+            }
+
+        }
+
+        return client;
+    }
+
+    /**
+     * @param site the Site
+     * @return the alias name for the given Site
+     */
+    protected static String getSiteAliasName(Site site) {
+        if (site == null) {
+            return null;
+        }
+
+        return getSiteAliasBase() + site.getId();
+    }
+
+    /**
+     * @param site the Site
+     * @return the collection name for the given Site
+     */
+    protected static String getSiteCollectionName(Site site) {
+        if (site == null) {
+            return null;
+        }
+
+        return getSiteCollectionBase() + site.getId();
+    }
+
+    /**
+     * @param site the Site
+     * @return the reindex alias name for the given Site
+     */
+    protected static String getSiteReindexAliasName(Site site) {
+        if (site == null) {
+            return null;
+        }
+
+        return getSiteAliasName(site) + "R";
+    }
+
+    /**
+     * @param site the Site
+     * @return the reindex collection name for the given Site
+     */
+    protected static String getSiteReindexCollectionName(Site site) {
+        if (site == null) {
+            return null;
+        }
+
+        return getSiteCollectionName(site) + "R";
+    }
+
+    protected static String getSiteAliasBase() {
+        return siteAliasBase;
+    }
+
+    protected static String getSiteCollectionBase() {
+        return siteCollectionBase;
+    }
+
+    /**
+     * @return whether to index a separate collection per site
+     */
+    public static boolean isSiteCollections() {
+        return siteCollections;
+    }
+
+    public static int getSolrCloudNumShards() {
+        return solrCloudNumShards;
+    }
+
+    public static String getSolrCloudConfigName() {
+        return solrCloudConfigName;
+    }
+
+    public static void setSiteAliasBase(String siteAliasBase) {
+        SolrContext.siteAliasBase = siteAliasBase;
+    }
+
+    public static void setSiteCollectionBase(String siteCollectionBase) {
+        SolrContext.siteCollectionBase = siteCollectionBase;
+    }
+
+    public static void setSiteCollections(boolean siteCollections) {
+        SolrContext.siteCollections = siteCollections;
+    }
+
+    public static void setSolrCloudNumShards(int solrCloudNumShards) {
+        SolrContext.solrCloudNumShards = solrCloudNumShards;
+    }
+
+    public static void setSolrCloudConfigName(String solrCloudConfigName) {
+        SolrContext.solrCloudConfigName = solrCloudConfigName;
     }
 
     /**
@@ -187,6 +397,7 @@ public class SolrContext {
      * @return
      */
     public static boolean isSolrCloudMode() {
-        return CloudSolrClient.class.isAssignableFrom(getServer().getClass());
+        return CloudSolrClient.class.isAssignableFrom(primaryServer.getClass());
     }
+
 }

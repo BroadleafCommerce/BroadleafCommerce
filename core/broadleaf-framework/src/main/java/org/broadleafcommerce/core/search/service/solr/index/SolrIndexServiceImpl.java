@@ -784,4 +784,29 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         return displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
     }
+
+    @Override
+    public void deleteByQuery(String deleteQuery) throws SolrServerException, IOException {
+        String docType = (useSku) ? FieldEntity.SKU.getType() : FieldEntity.PRODUCT.getType();
+        String childDeleteQuery = "{!child of=" + shs.getTypeFieldName() + ":" + docType + "} " + deleteQuery;
+        SolrContext.getServer().deleteByQuery(childDeleteQuery);
+        SolrContext.getServer().deleteByQuery(deleteQuery);
+
+        logDeleteQuery(childDeleteQuery);
+        logDeleteQuery(deleteQuery);
+    }
+
+    @Override
+    public void addDocuments(Collection<SolrInputDocument> documents) throws IOException, SolrServerException {
+        SolrContext.getServer().add(documents);
+        logDocuments(documents);
+    }
+
+    @Override
+    public void logDeleteQuery(String deleteQuery) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Delete query: " + deleteQuery);
+        }
+    }
+
 }
