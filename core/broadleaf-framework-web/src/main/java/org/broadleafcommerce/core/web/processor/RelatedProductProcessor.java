@@ -19,6 +19,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -28,6 +29,7 @@ import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -59,6 +61,7 @@ import javax.annotation.Resource;
  * @author bpolster
  */
 @Component("blRelatedProductProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class RelatedProductProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Value("${solr.index.use.sku}")

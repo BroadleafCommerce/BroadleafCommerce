@@ -20,10 +20,12 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component("blProductOptionValueProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class ProductOptionValueProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     private static final Log LOG = LogFactory.getLog(ProductOptionValueProcessor.class);

@@ -21,11 +21,13 @@ package org.broadleafcommerce.common.web.payment.processor;
 import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafFormReplacementProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateElement;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateFormReplacementDTO;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateModel;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -67,6 +69,7 @@ import javax.annotation.Resource;
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blTransparentRedirectCreditCardFormProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadleafFormReplacementProcessor {
 
     @Resource(name = "blTRCreditCardExtensionManager")

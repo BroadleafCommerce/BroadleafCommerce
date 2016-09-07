@@ -21,9 +21,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafTagReplacementProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateModel;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -119,6 +121,7 @@ import javax.annotation.Resource;
  * @see {@link ResourceBundlingService}
  */
 @Component("blResourceBundleProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProcessor {
     
     @Resource(name = "blResourceBundlingService")

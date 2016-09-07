@@ -19,6 +19,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
@@ -27,6 +28,7 @@ import org.broadleafcommerce.core.rating.service.RatingService;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -39,6 +41,7 @@ import javax.annotation.Resource;
  * @author jfridye
  */
 @Component("blRatingsProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class RatingsProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Resource(name = "blRatingService")

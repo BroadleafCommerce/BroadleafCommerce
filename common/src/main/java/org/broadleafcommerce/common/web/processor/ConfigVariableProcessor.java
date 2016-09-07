@@ -18,9 +18,11 @@
 package org.broadleafcommerce.common.web.processor;
 
 import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.expression.PropertiesVariableExpression;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -40,6 +42,7 @@ import java.util.Map;
  * @see {@link PropertiesVariableExpression}
  */
 @Component("blConfigVariableProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class ConfigVariableProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Override

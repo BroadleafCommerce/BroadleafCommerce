@@ -22,6 +22,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -36,6 +37,7 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -62,6 +64,7 @@ import javax.annotation.Resource;
  */
 @Deprecated
 @Component("blGoogleAnalyticsProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class GoogleAnalyticsProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Resource(name = "blOrderService")

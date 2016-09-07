@@ -20,8 +20,10 @@ package org.broadleafcommerce.common.web.payment.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -53,6 +55,7 @@ import javax.annotation.Resource;
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blCreditCardTypesProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class CreditCardTypesProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     protected static final Log LOG = LogFactory.getLog(CreditCardTypesProcessor.class);

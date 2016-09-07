@@ -20,11 +20,13 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -39,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Joseph Fridye (jfridye)
  */
 @Component("blPaginationSortLinkProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class PaginationSortLinkProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     @Override

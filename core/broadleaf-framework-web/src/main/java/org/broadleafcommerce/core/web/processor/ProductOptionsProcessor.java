@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -31,6 +32,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,6 +57,7 @@ import javax.annotation.Resource;
  *
  */
 @Component("blProductOptionsProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class ProductOptionsProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Resource(name = "blCatalogService")

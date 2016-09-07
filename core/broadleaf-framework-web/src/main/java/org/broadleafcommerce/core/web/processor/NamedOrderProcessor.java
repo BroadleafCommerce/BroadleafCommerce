@@ -18,6 +18,7 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
@@ -25,6 +26,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -50,6 +52,7 @@ import javax.annotation.Resource;
  * @author elbertbautista
  */
 @Component("blNamedOrderProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class NamedOrderProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Resource(name = "blOrderService")

@@ -18,12 +18,14 @@
 package org.broadleafcommerce.openadmin.processor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
 import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -35,6 +37,7 @@ import java.util.Map;
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blAdminComponentIdProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class AdminComponentIdProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     @Override

@@ -19,6 +19,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
@@ -26,6 +27,7 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -42,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author apazzolini
  */
 @Component("blRemoveFacetValuesLinkProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class RemoveFacetValuesLinkProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     @Resource(name = "blSearchFacetDTOService")

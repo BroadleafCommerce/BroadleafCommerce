@@ -21,8 +21,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
 import org.broadleafcommerce.common.enumeration.service.DataDrivenEnumerationService;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -47,6 +49,7 @@ import javax.annotation.Resource;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blDataDrivenEnumerationProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class DataDrivenEnumerationProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Resource(name = "blDataDrivenEnumerationService")

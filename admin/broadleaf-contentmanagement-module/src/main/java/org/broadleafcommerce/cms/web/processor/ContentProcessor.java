@@ -34,10 +34,12 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.deeplink.DeepLink;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafAssignation;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import com.google.common.primitives.Ints;
@@ -92,6 +94,7 @@ import javax.servlet.http.HttpServletRequest;
  * </ul>
  */
 @Component("blContentProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class ContentProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     protected final Log LOG = LogFactory.getLog(getClass());

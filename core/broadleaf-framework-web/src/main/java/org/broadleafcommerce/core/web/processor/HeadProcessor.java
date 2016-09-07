@@ -18,9 +18,11 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionListener;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -56,6 +58,7 @@ import javax.annotation.Resource;
  */
 @Deprecated
 @Component("blHeadProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class HeadProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Resource(name = "blHeadProcessorExtensionManager")

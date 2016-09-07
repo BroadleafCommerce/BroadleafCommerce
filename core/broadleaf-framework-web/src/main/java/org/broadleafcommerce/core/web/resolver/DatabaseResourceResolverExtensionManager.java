@@ -18,6 +18,8 @@
 package org.broadleafcommerce.core.web.resolver;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
  * @author Andre Azzolini (apazzolini), bpolster
  */
 @Service("blDatabaseResourceResolverExtensionManager")
+@Conditional(TemplatingExistCondition.class)
 public class DatabaseResourceResolverExtensionManager extends ExtensionManager<DatabaseResourceResolverExtensionHandler> {
 
     public DatabaseResourceResolverExtensionManager() {

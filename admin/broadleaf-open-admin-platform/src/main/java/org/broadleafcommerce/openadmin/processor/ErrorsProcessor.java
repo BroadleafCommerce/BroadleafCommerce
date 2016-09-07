@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
@@ -30,6 +31,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -53,6 +55,7 @@ import java.util.Map;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blErrorsProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class ErrorsProcessor extends AbstractBroadleafAttributeModelVariableModifierProcessor {
 
     protected static final Log LOG = LogFactory.getLog(ErrorsProcessor.class);

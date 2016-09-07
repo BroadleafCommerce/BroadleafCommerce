@@ -19,10 +19,12 @@
 package org.broadleafcommerce.core.web.expression;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogURLService;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -40,6 +42,7 @@ import javax.annotation.Resource;
  * @author bpolster
  */
 @Component("blBLCVariableExpression")
+@Conditional(TemplatingExistCondition.class)
 public class BLCVariableExpression implements BroadleafVariableExpression {
     
     @Override

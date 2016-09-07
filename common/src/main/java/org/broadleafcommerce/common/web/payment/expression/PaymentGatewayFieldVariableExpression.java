@@ -18,11 +18,15 @@
 
 package org.broadleafcommerce.common.web.payment.expression;
 
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * <p>A Thymeleaf Variable Expression implementation for Payment Gateway Specific fields.
@@ -48,6 +52,8 @@ import java.util.Map;
  *
  * @author Elbert Bautista (elbertbautista)
  */
+@Component("blpaymentGatewayFieldVariableExpression")
+@Conditional(TemplatingExistCondition.class)
 public class PaymentGatewayFieldVariableExpression implements BroadleafVariableExpression {
 
     @Resource(name = "blPaymentGatewayFieldExtensionManager")

@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
@@ -27,6 +28,7 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -43,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author apazzolini
  */
 @Component("blToggleFacetLinkProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class ToggleFacetLinkProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     @Resource(name = "blSearchFacetDTOService")

@@ -21,11 +21,13 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -47,6 +49,7 @@ import javax.annotation.Resource;
  * @author apazzolini
  */
 @Component("blCategoriesProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class CategoriesProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Resource(name = "blCatalogService")

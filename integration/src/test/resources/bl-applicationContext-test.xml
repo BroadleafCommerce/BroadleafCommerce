@@ -37,14 +37,6 @@
     <context:component-scan base-package="org.broadleafcommerce.profile.web.controller" />
     <context:component-scan base-package="org.broadleafcommerce.profile.web.core.service.login" />
     
-    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
-            </list>
-        </property>
-    </bean>
-
     <bean id="blDefaultErrorHandler" class="org.broadleafcommerce.core.workflow.SilentErrorHandler"/>
 
     <bean id="blTestRollbackHandler" class="org.broadleafcommerce.core.workflow.state.test.TestRollbackHandler"/>

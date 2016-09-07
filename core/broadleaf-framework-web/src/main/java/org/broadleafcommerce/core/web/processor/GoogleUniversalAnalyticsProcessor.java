@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafTagReplacementProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateElement;
@@ -37,6 +38,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.SkuAccessor;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -73,6 +75,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blGoogleUniversalAnalyticsProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagReplacementProcessor {
 
     private static final Log LOG = LogFactory.getLog(GoogleUniversalAnalyticsProcessor.class);

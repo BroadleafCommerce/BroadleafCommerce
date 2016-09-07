@@ -21,11 +21,13 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.handler.CsrfFilter;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafFormReplacementProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateElement;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateFormReplacementDTO;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateModel;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -41,6 +43,7 @@ import javax.annotation.Resource;
  * @see {@link CsrfFilter}
  */
 @Component("blFormProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class FormProcessor extends AbstractBroadleafFormReplacementProcessor {
     
     @Resource(name = "blExploitProtectionService")

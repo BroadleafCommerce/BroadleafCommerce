@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
@@ -51,6 +52,7 @@ import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.joda.time.DateTime;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.text.DateFormatSymbols;
@@ -83,6 +85,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blOnePageCheckoutProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Resource(name = "blStateService")

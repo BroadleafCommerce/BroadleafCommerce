@@ -20,8 +20,10 @@ package org.broadleafcommerce.cms.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -36,6 +38,7 @@ import javax.annotation.Resource;
  * @author bpolster
  */
 @Component("blHrefUrlRewriteProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class HrefUrlRewriteProcessor extends UrlRewriteProcessor {
 
     @Resource(name = "blStaticAssetPathService")

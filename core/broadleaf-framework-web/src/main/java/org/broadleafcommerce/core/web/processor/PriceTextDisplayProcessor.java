@@ -20,8 +20,10 @@ package org.broadleafcommerce.core.web.processor;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafTagTextModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.text.NumberFormat;
@@ -36,6 +38,7 @@ import java.util.Map;
  * @author apazzolini
  */
 @Component("blPriceTextDisplayProcessor")
+@Conditional(TemplatingExistCondition.class)
 public class PriceTextDisplayProcessor extends AbstractBroadleafTagTextModifierProcessor {
 
     @Override

@@ -18,7 +18,9 @@
 
 package org.broadleafcommerce.core.web.processor.extension;
 
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import java.util.Map;
  * @author Jerry Ocanas (jocanas)
  */
 @Component("blHeadProcessorExtensionManager")
+@Conditional(TemplatingExistCondition.class)
 public class HeadProcessorExtensionManager implements HeadProcessorExtensionListener {
 
     protected List<HeadProcessorExtensionListener> listeners;
