@@ -34,6 +34,7 @@ import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemReque
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 public interface OrderItemService {
@@ -94,4 +95,6 @@ public interface OrderItemService {
     public void modifyOrderItemRequest(ConfigurableOrderItemRequest itemRequest);
 
     public void mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem);
+
+    public List<OrderItem> findOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
 }

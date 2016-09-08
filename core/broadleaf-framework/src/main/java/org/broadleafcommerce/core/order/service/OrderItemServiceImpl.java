@@ -596,4 +596,8 @@ public class OrderItemServiceImpl implements OrderItemService {
     public void mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem) {
         extensionManager.getProxy().mergeOrderItemRequest(itemRequest, orderItem);
     }
+
+    public List<OrderItem> findOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate) {
+        return orderItemDao.readOrderItemsForCustomersInDateRange(customerIds, startDate, endDate);
+    }
 }
