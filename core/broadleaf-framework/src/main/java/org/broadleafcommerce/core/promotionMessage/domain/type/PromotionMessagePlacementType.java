@@ -36,7 +36,7 @@ public class PromotionMessagePlacementType implements Serializable, BroadleafEnu
     public static final PromotionMessagePlacementType BROWSE = new PromotionMessagePlacementType("BROWSE", "Browse", 2000);
     public static final PromotionMessagePlacementType SEARCH_RESULTS = new PromotionMessagePlacementType("SEARCH_RESULTS", "Search Results", 3000);
     public static final PromotionMessagePlacementType CART = new PromotionMessagePlacementType("CART", "Cart", 4000);
-    public static final PromotionMessagePlacementType ALL = new PromotionMessagePlacementType("ALL", "All of the above", 5000);
+    public static final PromotionMessagePlacementType EVERYWHERE = new PromotionMessagePlacementType("EVERYWHERE", "Everywhere", 5000);
 
 
     public static PromotionMessagePlacementType getInstance(final String type) {

@@ -15,10 +15,9 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.promotionMessage.service;
+package org.broadleafcommerce.core.promotionMessage.dto.service;
 
 
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
 import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
@@ -27,15 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public interface PromotionMessageService {
-
-    /**
-     * Gathers the set of active {@link PromotionMessage}s for the given {@link Product}.
-     *
-     * @param product
-     * @return the set of active {@link PromotionMessage}s for the given {@link Product}
-     */
-    public Map<String, List<PromotionMessageDTO>> findActivePromotionMessagesForProduct(Product product);
+public interface PromotionMessageDTOService {
 
     /**
      * Converts {@link PromotionMessage}s to {@link PromotionMessageDTO}s.

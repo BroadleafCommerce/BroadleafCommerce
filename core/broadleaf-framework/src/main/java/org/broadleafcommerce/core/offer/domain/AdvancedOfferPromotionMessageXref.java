@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * broadleaf-enterprise
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,31 +15,62 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.promotionMessage.domain;
+package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
 
 import java.io.Serializable;
 
 /**
  * @author Chris Kittrell (ckittrell)
  */
-public interface PromotionMessageMediaXref extends Serializable {
+public interface AdvancedOfferPromotionMessageXref extends Serializable {
 
+    /**
+     * Id of this AdvancedOfferPromotionMessageXref
+     * @return
+     */
     Long getId();
 
+    /**
+     * Sets the id of this AdvancedOfferPromotionMessageXref
+     * @param id
+     */
     void setId(Long id);
 
+    /**
+     * Gets the Offer
+     * @return
+     */
+    Offer getOffer();
+
+    /**
+     * Sets the Offer
+     * @param offer
+     */
+    void setOffer(Offer offer);
+
+    /**
+     * Gets the PromotionMessage
+     * @return
+     */
     PromotionMessage getPromotionMessage();
 
+    /**
+     * Sets the PromotionMessage
+     * @param promotionMessage
+     */
     void setPromotionMessage(PromotionMessage promotionMessage);
 
-    Media getMedia();
+    /**
+     * Gets the PromotionMessage type
+     * @return
+     */
+    public String getMessageType();
 
-    void setMedia(Media media);
-
-    String getKey();
-
-    void setKey(String key);
-
+    /**
+     * Sets the PromotionMessage type
+     * @param messageType
+     */
+    public void setMessageType(String messageType);
 }

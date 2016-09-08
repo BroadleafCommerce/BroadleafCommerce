@@ -114,7 +114,7 @@
         var $form = $container.closest('form.offer-form');
         BLCAdmin.offer.initializeOfferFormFields($form);
         BLCAdmin.offer.initValueFieldStyle($form);
-    })
+    });
     
     $.each(['org.broadleafcommerce.core.offer.domain.Offer'], function(idx, clazz) {
 
@@ -124,12 +124,6 @@
             '#field-offerMatchRules---TIME',
             'true'
         );
-        BLCAdmin.addDependentFieldHandler(
-            clazz,
-            '#field-showAdvancedVisibilityOptions',
-            '#field-embeddableAdvancedOffer--offerTimeZoneType',
-            'true'
-        );
 
         BLCAdmin.addDependentFieldHandler(
             clazz,
@@ -137,13 +131,7 @@
             '#field-applyToSalePrice',
             'ORDER_ITEM'
         );
-
-        BLCAdmin.addDependentFieldHandler(
-            clazz,
-            '#field-hasPromotionMessage',
-            '.listgrid-container#promotionMessageXrefs',
-            'true'
-        );
+        
     });
 
     function hideOrderFields(compareValue) {

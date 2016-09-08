@@ -216,13 +216,6 @@ public interface OfferService {
      */
     public Map<Offer, OfferCode> getOffersRetrievedFromCodes(Order order);
 
-    /**
-     * Gathers a list of {@link Offer}s that have {@link org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage}s.
-     *
-     * @return a list of {@link Offer}s that have {@link org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage}s
-     */
-    public List<Offer> findActiveOffersWithPromotionMessages();
-
     public OrderService getOrderService();
 
     public void setOrderService(OrderService orderService);

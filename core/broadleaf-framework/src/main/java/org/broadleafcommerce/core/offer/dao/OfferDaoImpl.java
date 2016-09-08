@@ -196,24 +196,4 @@ public class OfferDaoImpl implements OfferDao {
     public void setCurrentDateResolution(Long currentDateResolution) {
         this.currentDateResolution = currentDateResolution;
     }
-
-    @Override
-    public List<Offer> readActiveOffersWithPromotionMessages() {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Offer> criteriaQuery = builder.createQuery(Offer.class);
-        Root<OfferImpl> root = criteriaQuery.from(OfferImpl.class);
-        CriteriaQuery<Offer> select = criteriaQuery.select(root);
-
-        List<Predicate> restrictions = new ArrayList<>();
-        restrictions.add(builder.equal(root.get("hasPromotionMessage"), true));
-        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
-        restrictions.add(builder.lessThanOrEqualTo(root.<Date>get("startDate"), currentDate));
-        restrictions.add(builder.or(
-                builder.isNull(root.<Date>get("endDate")),
-                builder.greaterThanOrEqualTo(root.<Date>get("endDate"), currentDate)));
-        select.where(restrictions.toArray(new Predicate[restrictions.size()]));
-
-        TypedQuery<Offer> query = em.createQuery(select);
-        return query.getResultList();
-    }
 }
