@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -53,7 +54,7 @@ public class LocaleDaoImpl implements LocaleDao {
         List<Locale> localeList = (List<Locale>) query.getResultList();
         if (localeList.size() >= 1) {
             if (localeList.size() > 1) {
-                LOG.warn("Locale code " + localeCode + " exists for more than one locale");
+                LOG.warn("Locale code " + StringUtil.sanitize(localeCode) + " exists for more than one locale");
             }
             return localeList.get(0);
         }
