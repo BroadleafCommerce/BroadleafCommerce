@@ -41,6 +41,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
@@ -546,7 +547,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         
         if (CollectionUtils.isEmpty(headerFields)) {
             String message = "There are no listgrid header fields configured for the class " + ceilingType + " and property '" +
-            	field.getName() + "'.";
+                    StringUtil.sanitize(field.getName()) + "'.";
             if (selectize && (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM)) {
                 message += " Please configure 'selectizeVisibleField' in your @AdminPresentationAdornedTargetCollection configuration";
             } else if (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM) {
@@ -621,6 +622,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
 
+        if (fmd.getManualFetch()) {
+            listGrid.setManualFetch(true);
+            listGrid.getToolbarActions().add(DefaultListGridActions.MANUAL_FETCH);
+        }
         if (isMedia) {
             listGrid.setListGridType(ListGrid.Type.ASSET_GRID);
             listGrid.setSelectType(ListGrid.SelectType.NONE);
@@ -1055,8 +1060,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     private String buildMsgForDefValException(String type, BasicFieldMetadata fmd, String defaultValue) {
-        return fmd.getTargetClass() + " : " + fmd.getName() + " - Failed to parse " + type +
-                    " from DefaultValue [ " + defaultValue + " ]";
+        return StringUtil.sanitize(fmd.getTargetClass()) + " : " + StringUtil.sanitize(fmd.getName()) + " - Failed to parse " 
+                + StringUtil.sanitize(type) + " from DefaultValue [ " + StringUtil.sanitize(defaultValue) + " ]";
     }
 
     @Override
@@ -1296,7 +1301,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     for (Entity row : rows) {
                         Property prop = row.findProperty(displayProp);
                         if (prop == null) {
-                            LOG.warn("Could not find displayProp [" + displayProp + "] on entity [" + 
+                            LOG.warn("Could not find displayProp [" + StringUtil.sanitize(displayProp) + "] on entity [" + 
                                     ef.getCeilingEntityClassname() + "]");
                         } else {
                             String displayValue = prop.getDisplayValue();

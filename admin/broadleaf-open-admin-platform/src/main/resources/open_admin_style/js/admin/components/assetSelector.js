@@ -137,7 +137,7 @@ $(document).ready(function() {
             $this.find('img.thumbnail').parent().attr("href", fields['adminDisplayAssetUrl']);
             $this.find('img.thumbnail').removeClass('placeholder-image');
 
-            var mediaItem = $this.find('input.mediaItem');
+            var mediaItem = $this.find('input.mediaItem:not(.mediaUrl)');
             if (mediaItem.length > 0) {
                 var mediaJson = mediaItem.val() == "" || mediaItem.val() == "null" ? {} : jQuery.parseJSON(mediaItem.val());
                 mediaJson.url = fields['assetUrl'];

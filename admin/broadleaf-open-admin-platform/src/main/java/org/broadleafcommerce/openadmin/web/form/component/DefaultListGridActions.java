@@ -53,6 +53,11 @@ public class DefaultListGridActions {
         .withIconClass("fa fa-plus")
         .withDisplayText("Add Child");
 
+    public static final ListGridAction MANUAL_FETCH = new ListGridAction(ListGridAction.MANUAL_FETCH)
+        .withForListGridReadOnly(true)
+        .withButtonClass("sub-list-grid-fetch")
+        .withDisplayText("Fetch");
+
     // Actions for row-level
     public static final ListGridAction REMOVE = new ListGridAction(ListGridAction.REMOVE)
         .withButtonClass("sub-list-grid-remove")

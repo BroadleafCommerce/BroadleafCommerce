@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.security;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler;
@@ -42,7 +43,7 @@ public class BroadleafAdminLogoutSuccessHandler extends AbstractAuthenticationTa
         String targetUrl = determineTargetUrl(request, response);
 
         if (response.isCommitted()) {
-            logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
+            logger.debug("Response has already been committed. Unable to redirect to " + StringUtil.sanitize(targetUrl));
             return;
         }
 
@@ -56,7 +57,7 @@ public class BroadleafAdminLogoutSuccessHandler extends AbstractAuthenticationTa
         try {
             UrlUtil.validateUrl(targetUrl, request);
         } catch (IOException e) {
-            logger.error("SECURITY FAILURE Bad redirect location: " + targetUrl, e);
+            logger.error("SECURITY FAILURE Bad redirect location: " + StringUtil.sanitize(targetUrl), e);
             response.sendError(403);
             return;
         }

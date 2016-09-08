@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.persistence;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -76,7 +77,7 @@ public class EntityConfiguration implements ApplicationContextAware {
             entityMap.put(beanId, clazz);
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Returning class (" + clazz.getName() + ") configured with bean id (" + beanId + ')');
+            LOG.debug("Returning class (" + clazz.getName() + ") configured with bean id (" + StringUtil.sanitize(beanId) + ')');
         }
         return clazz;
     }

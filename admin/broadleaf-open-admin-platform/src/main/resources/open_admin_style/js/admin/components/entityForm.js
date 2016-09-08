@@ -231,6 +231,11 @@
 
             if (shouldShow) {
                 $field.removeClass('hidden');
+
+                if ($field.hasClass('listgrid-container')) {
+                    var $tbody = $field.find('.listgrid-body-wrapper tbody');
+                    BLCAdmin.listGrid.paginate.updateGridSize($tbody);
+                }
             }
 
             hideGroupIfFieldsAreHidden($field);

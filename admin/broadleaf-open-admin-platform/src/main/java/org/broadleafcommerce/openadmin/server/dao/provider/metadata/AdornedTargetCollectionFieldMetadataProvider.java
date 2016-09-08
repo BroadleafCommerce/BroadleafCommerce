@@ -397,6 +397,7 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
             override.setCurrencyCodeField(adornedTargetCollection.currencyCodeField());
             override.setAdornedTargetAddMethodType(adornedTargetCollection.addType());
             override.setLazyFetch(adornedTargetCollection.lazyFetch());
+            override.setManualFetch(adornedTargetCollection.manualFetch());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationAdornedTargetCollection annotation not found on field.");
@@ -608,6 +609,9 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
 
         if (adornedTargetCollectionMetadata.getLazyFetch() != null) {
             metadata.setLazyFetch(adornedTargetCollectionMetadata.getLazyFetch());
+        }
+        if (adornedTargetCollectionMetadata.getManualFetch() != null) {
+            metadata.setManualFetch(adornedTargetCollectionMetadata.getManualFetch());
         }
         if (adornedTargetCollectionMetadata.getFriendlyName() != null) {
             metadata.setFriendlyName(adornedTargetCollectionMetadata.getFriendlyName());

@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -64,6 +65,8 @@ public interface OrderDao {
     Order readOrderByOrderNumber(String orderNumber);
 
     List<Order> readOrdersByDateRange(Date startDate, Date endDate);
+
+    List<Order> readOrdersForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
 
     Order updatePrices(Order order);
 

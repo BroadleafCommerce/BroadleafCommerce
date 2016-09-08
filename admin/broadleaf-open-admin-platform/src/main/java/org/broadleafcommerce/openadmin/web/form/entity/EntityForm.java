@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
@@ -136,8 +137,8 @@ public class EntityForm {
             Map<String, Field> dynamicFormFields = entry.getValue().getFields();
             for (Entry<String, Field> dynamicField : dynamicFormFields.entrySet()) {
                 if (fields.containsKey(dynamicField.getKey())) {
-                    LOG.info("Excluding dynamic field " + dynamicField.getKey() + " as there is already an occurrence in" +
-                            " this entityForm");
+                    LOG.info("Excluding dynamic field " + StringUtil.sanitize(dynamicField.getKey()) + 
+                            " as there is already an occurrence in this entityForm");
                 } else {
                     fields.put(dynamicField.getKey(), dynamicField.getValue());
                 }

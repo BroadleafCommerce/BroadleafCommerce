@@ -42,6 +42,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private String addFriendlyName;
     private String securityLevel;
     private Boolean lazyFetch;
+    private Boolean manualFetch;
 
     public Boolean getExcluded() {
         return excluded;
@@ -925,6 +926,14 @@ public class FieldMetadataOverride extends MetadataOverride {
 
     public void setLazyFetch(Boolean lazyFetch) {
         this.lazyFetch = lazyFetch;
+    }
+
+    public Boolean getManualFetch() {
+        return manualFetch;
+    }
+
+    public void setManualFetch(Boolean manualFetch) {
+        this.manualFetch = manualFetch;
     }
 
     public Boolean getAllowNoValueEnumOption() {

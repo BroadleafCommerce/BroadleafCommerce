@@ -28,6 +28,7 @@ import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.ImageArtifactProcessor;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.ImageMetadata;
@@ -103,7 +104,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         if (pos > 0) {
             return fileName.substring(pos + 1, fileName.length()).toLowerCase();
         } else {
-            LOG.warn("No extension provided for asset : " + fileName);
+            LOG.warn("No extension provided for asset : " + StringUtil.sanitize(fileName));
             return null;
         }
     }
@@ -153,7 +154,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             int pos = fileName.indexOf(":");
             if (pos > 0) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Removing protocol from URL name" + fileName);
+                    LOG.trace("Removing protocol from URL name" + StringUtil.sanitize(fileName));
                 }
                 fileName = fileName.substring(pos + 1);
             }
