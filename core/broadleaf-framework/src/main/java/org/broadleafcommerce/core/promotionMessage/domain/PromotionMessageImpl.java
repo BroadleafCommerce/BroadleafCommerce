@@ -189,7 +189,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
         group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.MessagePlacement,
         fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration="org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessagePlacementType",
-        defaultValue = "ALL",
+        defaultValue = "EVERYWHERE",
         requiredOverride = RequiredOverride.REQUIRED)
     protected String messagePlacement;
 
