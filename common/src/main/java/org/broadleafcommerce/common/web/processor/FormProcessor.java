@@ -22,11 +22,11 @@ import org.broadleafcommerce.common.security.handler.CsrfFilter;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafFormReplacementProcessor;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateElement;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateFormReplacementDTO;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateModel;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateModelModifierDTO;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -44,7 +44,7 @@ import javax.annotation.Resource;
  */
 @Component("blFormProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class FormProcessor extends AbstractBroadleafFormReplacementProcessor {
+public class FormProcessor extends AbstractBroadleafModelModifierProcessor {
     
     @Resource(name = "blExploitProtectionService")
     protected ExploitProtectionService eps;
@@ -63,11 +63,11 @@ public class FormProcessor extends AbstractBroadleafFormReplacementProcessor {
     }
     
     @Override
-    public BroadleafTemplateFormReplacementDTO getInjectedModelAndFormAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafTemplateContext context) {
+    public BroadleafTemplateModelModifierDTO getInjectedModelAndTagAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafTemplateContext context) {
         Map<String, String> formAttributes = new HashMap<>();
         formAttributes.putAll(rootTagAttributes);
         BroadleafTemplateModel model = context.createModel();
-        BroadleafTemplateFormReplacementDTO dto = new BroadleafTemplateFormReplacementDTO();
+        BroadleafTemplateModelModifierDTO dto = new BroadleafTemplateModelModifierDTO();
 
         // If the form will be not be submitted with a GET, we must add the CSRF token
         // We do this instead of checking for a POST because post is default if nothing is specified
@@ -117,6 +117,7 @@ public class FormProcessor extends AbstractBroadleafFormReplacementProcessor {
             }
         }
         dto.setFormParameters(formAttributes);
+        dto.setTagName("form");
         return dto;
     }
     

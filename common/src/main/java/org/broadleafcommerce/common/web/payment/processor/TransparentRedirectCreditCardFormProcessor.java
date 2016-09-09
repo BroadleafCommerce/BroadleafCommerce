@@ -22,11 +22,11 @@ import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafFormReplacementProcessor;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateElement;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateFormReplacementDTO;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateModel;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateModelModifierDTO;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -70,7 +70,7 @@ import javax.annotation.Resource;
  */
 @Component("blTransparentRedirectCreditCardFormProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadleafFormReplacementProcessor {
+public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadleafModelModifierProcessor {
 
     @Resource(name = "blTRCreditCardExtensionManager")
     protected TRCreditCardExtensionManager extensionManager;
@@ -94,7 +94,7 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadlea
     }
     
     @Override
-    public BroadleafTemplateFormReplacementDTO getInjectedModelAndFormAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafTemplateContext context) {
+    public BroadleafTemplateModelModifierDTO getInjectedModelAndTagAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafTemplateContext context) {
         PaymentRequestDTO requestDTO = (PaymentRequestDTO) context.parseExpression(rootTagAttributes.get("paymentRequestDTO"));
 
         Map<String, Map<String, String>> formParameters = new HashMap<String, Map<String, String>>();
@@ -147,7 +147,7 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadlea
                 model.addElement(input);
             }
         }
-        return new BroadleafTemplateFormReplacementDTO(model, keysToKeep);
+        return new BroadleafTemplateModelModifierDTO(model, keysToKeep, "form");
     }
 
     @Override
