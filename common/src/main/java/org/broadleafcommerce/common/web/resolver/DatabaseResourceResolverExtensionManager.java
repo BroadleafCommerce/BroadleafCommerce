@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.web.resolver;
+package org.broadleafcommerce.common.web.resolver;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
