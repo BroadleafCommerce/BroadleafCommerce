@@ -47,7 +47,7 @@ public class AdminFieldBuilderProcessor extends AbstractBroadleafModelVariableMo
     }
     
     @Override
-    public BroadleafDialectPrefix getPrefix() {
+    public String getPrefix() {
         return BroadleafDialectPrefix.BLC_ADMIN;
     }
     

@@ -55,7 +55,7 @@ public class AdminUserProcessor extends AbstractBroadleafModelVariableModifierPr
     }
     
     @Override
-    public BroadleafDialectPrefix getPrefix() {
+    public String getPrefix() {
         return BroadleafDialectPrefix.BLC_ADMIN;
     }
     

@@ -72,7 +72,7 @@ public class ErrorsProcessor extends AbstractBroadleafAttributeModelVariableModi
     }
     
     @Override
-    public BroadleafDialectPrefix getPrefix() {
+    public String getPrefix() {
         return BroadleafDialectPrefix.BLC_ADMIN;
     }
     

@@ -48,7 +48,7 @@ public class AdminSectionHrefProcessor extends AbstractBroadleafAttributeModifie
     }
     
     @Override
-    public BroadleafDialectPrefix getPrefix() {
+    public String getPrefix() {
         return BroadleafDialectPrefix.BLC_ADMIN;
     }
     
