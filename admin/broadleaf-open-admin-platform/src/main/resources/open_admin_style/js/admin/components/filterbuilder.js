@@ -920,7 +920,7 @@
                 });
             }
 
-            return $.param(inputs);
+            return inputs;
         }
     };
 
