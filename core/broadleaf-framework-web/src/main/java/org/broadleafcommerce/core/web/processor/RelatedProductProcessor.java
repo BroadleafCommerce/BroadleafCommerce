@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -204,7 +205,7 @@ public class RelatedProductProcessor extends AbstractBroadleafModelVariableModif
             if (quantityObj instanceof String) {
                 quantity = Integer.parseInt((String) quantityObj);
             } else {
-                quantity = ((BigDecimal) quantityObj).intValue();
+                quantity = ((BigInteger) quantityObj).intValue();
             }
             relatedProductDTO.setQuantity(quantity);
         }
