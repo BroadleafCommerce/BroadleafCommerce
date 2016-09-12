@@ -183,7 +183,7 @@
                                         -Xmx1024m
                                         -XX:MaxPermSize=512m -Xdebug
                                         -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083
-                                        -javaagent:${jrebel.path}
+                                        -agentpath:${jrebel.path}
                                         -Drebel.log.stdout=true
                                         ${surefire.argLine}
                                     </argLine>
@@ -196,7 +196,7 @@
                                         -Xmx1024m
                                         -XX:MaxPermSize=512m -Xdebug
                                         -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083
-                                        -javaagent:${jrebel.path}
+                                        -agentpath:${jrebel.path}
                                         -Drebel.log.stdout=true
                                         ${surefire.argLine}
                                     </argLine>
