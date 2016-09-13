@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
@@ -166,42 +167,15 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     
     protected Sku findMatchingSku(Product product, Map<String, String> attributeValues, ActivityMessages messages) {
         Map<String, String> attributeValuesForSku = new HashMap<String,String>();
-        // Verify that required product-option values were set.
+        
+        //Verify that required product-option values were set
+        boolean hasProductOptions = product != null && product.getProductOptionXrefs() != null && product.getProductOptionXrefs().size() > 0;
 
-        if (product != null && product.getProductOptions() != null && product.getProductOptions().size() > 0) {
-            for (ProductOption productOption : product.getProductOptions()) {
-                if (productOption.getRequired() && (productOption.getProductOptionValidationStrategyType() == null ||
-                        productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank())) {
-                    if (StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
-                        throw new RequiredAttributeNotProvidedException("Unable to add to product ("+ product.getId() +") cart. Required attribute was not provided: " + productOption.getAttributeName());
-                    } else if (productOption.getUseInSkuGeneration()) {
-                        attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
-                    }
-                }
-                if (!productOption.getRequired() && StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
-                    //if the product option is not required, and user has not set the optional value, then we dont need to validate
-                } else if (productOption.getProductOptionValidationStrategyType() == null || productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank()) {
-                        productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
-                }
-                if(productOption.getProductOptionValidationStrategyType() != null &&
-                  !productOption.getProductOptionValidationStrategyType().equals(ProductOptionValidationStrategyType.NONE) &&
-                  productOption.getProductOptionValidationStrategyType().getRank() > ProductOptionValidationStrategyType.ADD_ITEM.getRank() )
-                {
-                    //we need to validate however, we will not error out since this message is 
-                    try {
-                        productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
-                    } catch (ProductOptionValidationException e) {
-                        ActivityMessageDTO msg = new ActivityMessageDTO(MessageType.PRODUCT_OPTION.getType(), 1, e.getMessage());
-                        msg.setErrorCode(productOption.getErrorCode());
-                        messages.getActivityMessages().add(msg);
-                    }
-                    
-                }
-            }
+        if (hasProductOptions) {
+            checkProductOptions(product, attributeValues, attributeValuesForSku, messages);
             
-
-            if (product !=null && product.getSkus() != null) {
-                for (Sku sku : product.getSkus()) {
+            if (product.getAdditionalSkus() != null) {
+                for (Sku sku : product.getAdditionalSkus()) {
                    if (checkSkuForMatch(sku, attributeValuesForSku)) {
                        return sku;
                    }
@@ -210,6 +184,42 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         }
 
         return null;
+    }
+    
+    protected void checkProductOptions(Product product, Map<String, String> attributeValues, Map<String, String> attributeValuesForSku, ActivityMessages messages) {
+        for (ProductOptionXref productOptionXref : product.getProductOptionXrefs()) {
+            ProductOption productOption = productOptionXref.getProductOption();
+            
+            //TODO getProductOptionValidationStrategyType rank comparison requires clarification
+            boolean rankLessThanAdd = productOption.getProductOptionValidationStrategyType() == null ||
+                                     (productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank());
+            String attributeValue = attributeValues.get(productOption.getAttributeName());
+            //Validation only necessary if the product option is required or the user has set an optional value
+            boolean validateNecessary = productOption.getRequired() || !StringUtils.isEmpty(attributeValue);
+            
+            if (rankLessThanAdd) {
+                if (productOption.getRequired()) {
+                    if (StringUtils.isEmpty(attributeValue)) {
+                        throw new RequiredAttributeNotProvidedException("Unable to add to product ("+ product.getId() +") cart. Required attribute was not provided: " + productOption.getAttributeName());
+                    } else if (productOption.getUseInSkuGeneration()) {
+                        attributeValuesForSku.put(productOption.getAttributeName(), attributeValue);
+                    }
+                } 
+                if (validateNecessary) {
+                    productOptionValidationService.validate(productOption, attributeValue);
+                }
+            } else if (!productOption.getProductOptionValidationStrategyType().equals(ProductOptionValidationStrategyType.NONE)) {
+                //TODO comment requires clarification
+                //if the validation strategy isn't none, we need to validate, however we will not error out since this message is 
+                try {
+                    productOptionValidationService.validate(productOption, attributeValue);
+                } catch (ProductOptionValidationException e) {
+                    ActivityMessageDTO msg = new ActivityMessageDTO(MessageType.PRODUCT_OPTION.getType(), 1, e.getMessage());
+                    msg.setErrorCode(productOption.getErrorCode());
+                    messages.getActivityMessages().add(msg);
+                }
+            }
+        }
     }
 
     protected boolean checkSkuForMatch(Sku sku, Map<String,String> attributeValues) {
