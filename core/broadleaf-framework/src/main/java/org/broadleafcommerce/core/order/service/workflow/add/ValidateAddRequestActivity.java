@@ -190,14 +190,13 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         for (ProductOptionXref productOptionXref : product.getProductOptionXrefs()) {
             ProductOption productOption = productOptionXref.getProductOption();
             
-            //TODO getProductOptionValidationStrategyType rank comparison requires clarification
-            boolean rankLessThanAdd = productOption.getProductOptionValidationStrategyType() == null ||
-                                     (productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank());
+            boolean notTypeAdd = productOption.getProductOptionValidationStrategyType() == null ||
+                                     (!ProductOptionValidationStrategyType.ADD_ITEM.getRank().equals(productOption.getProductOptionValidationStrategyType().getRank()));
             String attributeValue = attributeValues.get(productOption.getAttributeName());
             //Validation only necessary if the product option is required or the user has set an optional value
             boolean validateNecessary = productOption.getRequired() || !StringUtils.isEmpty(attributeValue);
             
-            if (rankLessThanAdd) {
+            if (notTypeAdd) {
                 if (productOption.getRequired()) {
                     if (StringUtils.isEmpty(attributeValue)) {
                         throw new RequiredAttributeNotProvidedException("Unable to add to product ("+ product.getId() +") cart. Required attribute was not provided: " + productOption.getAttributeName());
@@ -209,8 +208,8 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                     productOptionValidationService.validate(productOption, attributeValue);
                 }
             } else if (!productOption.getProductOptionValidationStrategyType().equals(ProductOptionValidationStrategyType.NONE)) {
-                //TODO comment requires clarification
-                //if the validation strategy isn't none, we need to validate, however we will not error out since this message is 
+                //if the validation strategy isn't none, we need to validate but not error out
+                //there may be multiple product option validation errors, and we want to find them all
                 try {
                     productOptionValidationService.validate(productOption, attributeValue);
                 } catch (ProductOptionValidationException e) {
