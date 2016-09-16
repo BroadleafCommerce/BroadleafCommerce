@@ -17,8 +17,7 @@
  */
 package org.broadleafcommerce.core.web.controller.cart;
 
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -124,9 +123,9 @@ public class BroadleafCartController extends AbstractCartController {
                 extensionManager.getProxy().validateAddToCartItem(itemRequest);
             }
 
-            Long originalOrderItem = Long.parseLong(request.getParameter("originalOrderItem"));
-            if (originalOrderItem != null) {
-                cart = orderService.removeItem(cart.getId(), originalOrderItem, false);
+            String originalOrderItem = request.getParameter("originalOrderItem");
+            if (StringUtils.isNotEmpty(originalOrderItem)) {
+                cart = orderService.removeItem(cart.getId(), Long.parseLong(originalOrderItem), false);
                 cart = orderService.save(cart, true);
             }
         }
@@ -208,6 +207,7 @@ public class BroadleafCartController extends AbstractCartController {
         }
 
         model.addAttribute("baseItem", itemRequest);
+        model.addAttribute("isUpdateRequest", Boolean.TRUE);
         model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, orderItemService.findAllProductsInRequest(itemRequest));
 
         return isAjaxRequest(request) ? getConfigureView() : getConfigurePageRedirect();
