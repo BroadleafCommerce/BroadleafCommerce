@@ -34,7 +34,6 @@ import java.util.List;
 public class SelectizeCollectionUtils {
 
     public static Collection intersection(final Iterable a, final Iterable b) {
-        if (a == null || b == null) return CollectionUtils.emptyCollection();
         Collection response;
         if (!IterableUtils.isEmpty(a) && (a instanceof ArrayList) && !IterableUtils.isEmpty(b) && (b instanceof ArrayList)) {
             //TODO this is a bit of a hack to allow the intersection of two collections of different types. This is primarily
@@ -48,6 +47,9 @@ public class SelectizeCollectionUtils {
                 response = CollectionUtils.intersection(a, b);
             }
         } else {
+            if (a == null || b == null) {
+                return CollectionUtils.emptyCollection();
+            }
             response = CollectionUtils.intersection(a, b);
         }
         return response;
@@ -65,7 +67,6 @@ public class SelectizeCollectionUtils {
     }
 
     public static Collection<String> intersection(final String a, final Iterable<String> b) {
-        if (a == null || b == null) return CollectionUtils.emptyCollection();
         List<String> temp = new ArrayList<>();
         temp.add(a);
         return CollectionUtils.intersection(temp, b);
