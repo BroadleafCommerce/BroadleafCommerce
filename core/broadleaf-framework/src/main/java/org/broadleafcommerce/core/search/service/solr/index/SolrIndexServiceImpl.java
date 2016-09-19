@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -34,6 +33,7 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.StopWatch;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -66,9 +66,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -79,6 +78,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.annotation.Resource;
 
 
@@ -303,7 +303,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Override
     public void deleteAllNamespaceDocuments(SolrClient server) throws ServiceException {
         try {
-            String deleteQuery = shs.getNamespaceFieldName() + ":(\"" + solrConfiguration.getNamespace() + "\")";
+            String deleteQuery = StringUtil.sanitize(shs.getNamespaceFieldName()) + ":(\"" 
+                    + StringUtil.sanitize(solrConfiguration.getNamespace()) + "\")";
             LOG.debug("Deleting by query: " + deleteQuery);
             server.deleteByQuery(deleteQuery);
 
