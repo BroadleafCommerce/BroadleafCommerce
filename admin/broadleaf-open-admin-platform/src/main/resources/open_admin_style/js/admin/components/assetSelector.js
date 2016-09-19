@@ -165,32 +165,33 @@ $(document).ready(function() {
 
     $('body').on('click', 'button.clear-asset-selector', function(event) {
         //Get the media container
-        var $container = $(this).closest('div.asset-selector-container');
         var $this = $(this);
+        var $container = $this.closest('div.asset-selector-container');
 
         //Set media value to null so that when the request is sent the entry in the map for primary is deleted
-        var mediaUrl = $container.find('input.mediaUrl');
-        var mediaItem = $container.find('input.mediaItem');
-        if (mediaUrl.length > 0) {
+        var $mediaUrl = $container.find('input.mediaUrl');
+        var $mediaItem = $container.find('input.mediaItem');
+        if ($mediaUrl.length > 0) {
             // Fields using mediaUrl require a blank value
-            mediaUrl.val('').trigger('change').trigger('input');
+            $mediaUrl.val('').trigger('change').trigger('input');
         } else {
             // Other entities require a null value
-            mediaItem.val('null').trigger('change').trigger('input');
+            $mediaItem.val('null').trigger('change').trigger('input');
         }
 
         //Set placeholder image and hide clear button since there's nothing to clear
         var src = $container.find('img.placeholder').attr('src');
-        $container.find('img.thumbnail').removeAttr('data-fullurl');
-        $container.find('img.thumbnail').attr('src', src);
-        $container.find('img.thumbnail').addClass('placeholder-image');
+        var $thumbnail = $container.find('img.thumbnail');
+        $thumbnail.removeAttr('data-fullurl');
+        $thumbnail.attr('src', src);
+        $thumbnail.addClass('placeholder-image');
         $this.hide();
 
-        $container.find('.media-image-container .media-actions').css('display', 'block');
+        var $mediaImageContainer = $container.find('.media-image-container');
+        $mediaImageContainer.find('.media-actions').css('display', 'block');
 
-        positionMediaButtons($container.find('.media-image-container'));
-        $container.find('div.asset-url').html('No media selected.')
-
+        positionMediaButtons($mediaImageContainer);
+        $container.find('div.asset-url').html('No media selected.');
     });
 
     // When we detect that a user has selected a file from his file system, we will trigger an event
