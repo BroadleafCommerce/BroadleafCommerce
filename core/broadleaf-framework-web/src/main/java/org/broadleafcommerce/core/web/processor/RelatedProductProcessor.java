@@ -204,8 +204,10 @@ public class RelatedProductProcessor extends AbstractBroadleafModelVariableModif
             int quantity = 0;
             if (quantityObj instanceof String) {
                 quantity = Integer.parseInt((String) quantityObj);
-            } else {
+            } else if (quantityObj instanceof BigInteger){
                 quantity = ((BigInteger) quantityObj).intValue();
+            } else {
+                quantity = ((BigDecimal) quantityObj).intValue();
             }
             relatedProductDTO.setQuantity(quantity);
         }
