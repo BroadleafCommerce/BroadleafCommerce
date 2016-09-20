@@ -529,6 +529,10 @@ public class OrderItemServiceImpl implements OrderItemService {
             item.setParentOrderItem(parent);
         }
 
+        if (orderItemRequestDTO.getHasConfigurationError()) {
+            item.setHasValidationError(true);
+        }
+
         if (orderItemRequestDTO instanceof ConfigurableOrderItemRequest) {
             ConfigurableOrderItemRequest configRequest = (ConfigurableOrderItemRequest) orderItemRequestDTO;
             if (configRequest.getHasConfigurationError()) {
@@ -582,7 +586,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         itemRequest.setProduct(product);
         itemRequest.setSkuId(product.getDefaultSku().getId());
         itemRequest.setQuantity(1);
-        itemRequest.setDisplayPrice(product.getDefaultSku().getSalePrice());
+        itemRequest.setDisplayPrice(product.getDefaultSku().getPrice());
         itemRequest.setDiscountsAllowed(product.getDefaultSku().isDiscountable());
         return itemRequest;
     }
