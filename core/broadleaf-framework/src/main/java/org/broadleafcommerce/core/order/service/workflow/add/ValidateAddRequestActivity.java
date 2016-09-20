@@ -93,9 +93,16 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                 throw new IllegalArgumentException("Product was specified but no matching product was found for productId " + orderItemRequestDTO.getProductId());
             }
         }
-        
-        Sku sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(), (ActivityMessages) context);
-        
+
+        Sku sku;
+        try {
+            sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(), (ActivityMessages) context);
+        } catch (RequiredAttributeNotProvidedException e) {
+            // Mark the request as a configuration error and proceed with the add.
+            orderItemRequestDTO.setHasConfigurationError(Boolean.TRUE);
+            return context;
+        }
+
         // If we couldn't find a sku, then we're unable to add to cart.
         if (sku == null && !(orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO)) {
             StringBuilder sb = new StringBuilder();
@@ -141,7 +148,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         return context;
     }
     
-    protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) {
+    protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
         Sku sku = null;
         
         //If sku browsing is enabled, product option data will not be available.
@@ -164,7 +171,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         return sku;
     }
     
-    protected Sku findMatchingSku(Product product, Map<String, String> attributeValues, ActivityMessages messages) {
+    protected Sku findMatchingSku(Product product, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
         Map<String, String> attributeValuesForSku = new HashMap<String,String>();
         // Verify that required product-option values were set.
 
