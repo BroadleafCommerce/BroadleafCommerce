@@ -652,6 +652,10 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             }
         }
 
+        for (OrderItem child : childOrderItems) {
+            totalAdjustmentValue = totalAdjustmentValue.add(child.getTotalAdjustmentValue()).multiply(quantity);
+        }
+
         return totalAdjustmentValue;
     }
 
@@ -663,10 +667,19 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 returnValue = returnValue.add(oipd.getTotalAdjustedPrice());
             }
         } else {
-            if (price != null) {
-                returnValue = convertToMoney(price).multiply(quantity);
+            if (shouldSumChildren()) {
+                returnValue = getSalePrice().multiply(quantity);
+
+                for (OrderItem child : getChildOrderItems()) {
+                    Money childPrice = child.getTotalPrice().multiply(quantity);
+                    returnValue = returnValue.add(childPrice);
+                }
             } else {
-                return getSalePrice().multiply(quantity);
+                if (price != null) {
+                    returnValue = convertToMoney(price).multiply(quantity);
+                } else {
+                    returnValue = getSalePrice().multiply(quantity);
+                }
             }
         }
 
@@ -773,6 +786,16 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             return getOrder().getCurrency().getCurrencyCode();
         }
         return null;
+    }
+
+    protected boolean shouldSumChildren() {
+        for (OrderItem child : childOrderItems) {
+            if (child.getTotalPrice().greaterThan(BigDecimal.ZERO)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {

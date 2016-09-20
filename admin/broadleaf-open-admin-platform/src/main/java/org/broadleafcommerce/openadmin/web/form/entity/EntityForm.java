@@ -643,6 +643,9 @@ public class EntityForm {
     }
 
     public String getSectionKey() {
+        if (sectionKey == null) {
+            return null;
+        }
         return sectionKey.charAt(0) == '/' ? sectionKey : '/' + sectionKey;
     }
 

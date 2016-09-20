@@ -19,25 +19,13 @@ package org.broadleafcommerce.core.web.controller.cart.extension;
 
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.AddToCartItem;
-import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 
 /**
  * @author Jon Fleschler (jfleschler)
  */
 public abstract class AbstractCartControllerExtensionHandler extends AbstractExtensionHandler
         implements BroadleafCartControllerExtensionHandler {
-
-    @Override
-    public ExtensionResultStatusType modifyOrderItemRequest(ConfigurableOrderItemRequest configurableOrderItem) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
 
     @Override
     public ExtensionResultStatusType validateAddToCartItem(AddToCartItem addToCartItem) throws Exception {

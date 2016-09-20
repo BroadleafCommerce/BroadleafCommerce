@@ -534,6 +534,9 @@ public class OrderItemServiceImpl implements OrderItemService {
             if (configRequest.getHasConfigurationError()) {
                 item.setHasValidationError(true);
             }
+            if (!configRequest.getDiscountsAllowed()) {
+                item.setDiscountingAllowed(false);
+            }
         }
 
         applyAdditionalOrderItemProperties(item);
@@ -574,6 +577,26 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
+    public ConfigurableOrderItemRequest createConfigurableOrderItemRequestFromProduct(Product product) {
+        ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
+        itemRequest.setProduct(product);
+        itemRequest.setSkuId(product.getDefaultSku().getId());
+        itemRequest.setQuantity(1);
+        itemRequest.setDisplayPrice(product.getDefaultSku().getSalePrice());
+        itemRequest.setDiscountsAllowed(product.getDefaultSku().isDiscountable());
+        return itemRequest;
+    }
+
+    @Override
+    public void modifyOrderItemRequest(ConfigurableOrderItemRequest itemRequest) {
+        extensionManager.getProxy().modifyOrderItemRequest(itemRequest);
+    }
+
+    @Override
+    public void mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem) {
+        extensionManager.getProxy().mergeOrderItemRequest(itemRequest, orderItem);
+    }
+
     public List<OrderItem> findOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate) {
         return orderItemDao.readOrderItemsForCustomersInDateRange(customerIds, startDate, endDate);
     }

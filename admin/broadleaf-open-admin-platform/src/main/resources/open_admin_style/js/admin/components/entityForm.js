@@ -352,7 +352,11 @@ $(document).ready(function() {
 
      		event.preventDefault();
 
-     	}
+     	} else {
+            $('div.' + href + 'Tab .listgrid-container').find('.listgrid-header-wrapper table').each(function() {
+                BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
+            });
+        }
      });
 
 
