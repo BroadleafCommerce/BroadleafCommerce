@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.offer.service.processor;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +26,7 @@ import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -37,6 +39,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.joda.time.LocalDateTime;
@@ -63,7 +66,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
     private static final Log LOG = LogFactory.getLog(AbstractBaseProcessor.class);
     private static final Map EXPRESSION_CACHE = new LRUMap(1000);
-    
+
     @Resource(name = "blOfferTimeZoneProcessor")
     protected OfferTimeZoneProcessor offerTimeZoneProcessor;
     
@@ -191,6 +194,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                         candidates.addQualifier(criteria, item);
                     } else {
                         candidates.addTarget(criteria, item);
+                        applyOfferToChildOrderItems(offer, candidates, criteria, promotableOrderItems, item);
                     }
                     matchedQuantity += item.getQuantity();
                 }
@@ -204,7 +208,29 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             candidates.setMatchedTarget(matchFound);
         }
     }
-    
+
+    protected void applyOfferToChildOrderItems(Offer offer, CandidatePromotionItems candidates, OfferItemCriteria criteria, List<PromotableOrderItem> promotableOrderItems, PromotableOrderItem item) {
+        if (offer.getApplyToChildItems()) {
+            final List<OrderItem> childItems = item.getOrderItem().getChildOrderItems();
+            if (CollectionUtils.isEmpty(childItems)) {
+                return;
+            }
+
+            List<PromotableOrderItem> filteredItems = new ArrayList<>();
+            filteredItems.addAll(promotableOrderItems);
+            CollectionUtils.filter(filteredItems, new TypedPredicate<PromotableOrderItem>() {
+                @Override
+                public boolean eval(PromotableOrderItem promotableOrderItem) {
+                    return childItems.contains(promotableOrderItem.getOrderItem());
+                }
+            });
+
+            for (PromotableOrderItem promotableOrderItem : filteredItems) {
+                candidates.addTarget(criteria, promotableOrderItem);
+            }
+        }
+    }
+
     protected boolean couldOrderItemMeetOfferRequirement(OfferItemCriteria criteria, PromotableOrderItem orderItem) {
         boolean appliesToItem = false;
 
