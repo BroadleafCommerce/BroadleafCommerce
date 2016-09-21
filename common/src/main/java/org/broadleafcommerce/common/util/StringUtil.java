@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
+import org.owasp.esapi.ESAPI;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -162,4 +163,21 @@ public class StringUtil {
 
     }
 
+    /**
+     * Utility method for sanitizing a String to neutralize any possible malicious content. This is used primarily to protect log
+     * messages by encoding for any possible forgery or injection attempts.
+     * 
+     * Given an Object of type Integer or Long, converts the Object instance to a Long.  This will throw a ClassCastException
+     * if the past parameter is not either an Integer or a Long.
+     *
+     * @param string
+     * @return String
+     */
+    public static String sanitize(String string) {
+        if (string == null) {
+            return "NULL";
+        }
+        String sanitized = string.replace('\n', '_').replace('\r', '_');
+        return ESAPI.encoder().encodeForHTML(sanitized);
+    }
 }

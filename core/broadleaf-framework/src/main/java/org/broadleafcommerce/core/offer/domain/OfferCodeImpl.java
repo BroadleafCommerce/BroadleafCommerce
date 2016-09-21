@@ -21,6 +21,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
+import org.broadleafcommerce.common.dao.GenericEntityDaoImpl;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -58,6 +60,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "BLC_OFFER_CODE")
@@ -131,6 +134,9 @@ public class OfferCodeImpl implements OfferCode {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<Order> orders = new ArrayList<Order>();
 
+    @Transient
+    protected Offer sbClonedOffer;
+    
     @Override
     public Long getId() {
         return id;
@@ -143,12 +149,26 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public Offer getOffer() {
-        return offer;
+        //This guarantees that the offer is the correct one based on sandboxed state.  If the offer has been overridden/cloned in the local site,
+        //  then that overridden/cloned offer will be used.
+        if (sbClonedOffer == null) {
+            GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
+            if (genericEntityDao != null && offer != null && offer.getId() != null) {
+                Long id = offer.getId();
+                sbClonedOffer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
+            } 
+        }
+        //if for some reason the cloned offer was not found, at a minimum return the original offer (so we are not returning null)
+        if (sbClonedOffer == null) {
+            sbClonedOffer = offer;
+        }
+        return sbClonedOffer;
     }
 
     @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
+        sbClonedOffer = null;
     }
 
     @Override
