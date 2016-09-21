@@ -60,6 +60,7 @@ public class OrderItemRequestDTO {
     private List<OrderItemRequestDTO> childOrderItems = new ArrayList<OrderItemRequestDTO>();
     private Long parentOrderItemId;
     private Map<String,String> additionalAttributes = new HashMap<String,String>();
+    private Boolean hasConfigurationError;
 
     public OrderItemRequestDTO() {}
     
@@ -184,5 +185,16 @@ public class OrderItemRequestDTO {
 
     public void setAdditionalAttributes(Map<String, String> additionalAttributes) {
         this.additionalAttributes = additionalAttributes;
+    }
+
+    public Boolean getHasConfigurationError() {
+        if (hasConfigurationError == null) {
+            return false;
+        }
+        return hasConfigurationError;
+    }
+
+    public void setHasConfigurationError(Boolean hasConfigurationError) {
+        this.hasConfigurationError = hasConfigurationError;
     }
 }
