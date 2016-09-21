@@ -23,8 +23,7 @@ import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
-import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageType;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -86,6 +85,18 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     public OfferItemRestrictionRuleType getOfferItemTargetRuleType();
 
     public void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType);
+
+    /**
+     * Returns whether or not this offer should apply to an {@link OrderItem}s child order items
+     * @return applyToChildItems
+     */
+    Boolean getApplyToChildItems();
+
+    /**
+     * Sets whether or not this offer should apply to an {@link OrderItem}s child order items
+     * @param applyToChildItems
+     */
+    void setApplyToChildItems(boolean applyToChildItems);
 
     /**
      * Returns false if this offer is not combinable with other offers of the same type.
