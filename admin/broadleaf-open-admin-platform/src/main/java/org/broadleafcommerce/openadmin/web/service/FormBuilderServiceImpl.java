@@ -1196,7 +1196,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         } else {
             keyField = new Field().withName("key")
                                 .withFieldType(SupportedFieldType.STRING.toString())
-                                .withFriendlyName(mapStructure.getKeyPropertyFriendlyName()");
+                                .withFriendlyName(mapStructure.getKeyPropertyFriendlyName());
         }
         keyField.setRequired(true);
         ef.addMapKeyField(keyField);
