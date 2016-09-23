@@ -304,7 +304,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             Property p2 = cmd.getPMap().get("key");
             BasicFieldMetadata keyMd = (BasicFieldMetadata) p2.getMetadata();
-            keyMd.setFriendlyName("Key");
+            keyMd.setFriendlyName(p2.getMetadata().getFriendlyName());
             Field hf = createHeaderField(p2, keyMd);
             headerFields.add(hf);
             
@@ -1175,7 +1175,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ComboField temp = new ComboField();
             temp.withName("key")
                     .withFieldType("combo_field")
-                    .withFriendlyName("Key");
+                    .withFriendlyName(mapStructure.getKeyPropertyFriendlyName());
             if (mapMd.getKeys() != null) {
                 // The keys can be explicitly set in the annotation...
                 temp.setOptions(mapMd.getKeys());
@@ -1196,7 +1196,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         } else {
             keyField = new Field().withName("key")
                                 .withFieldType(SupportedFieldType.STRING.toString())
-                                .withFriendlyName("Key");
+                                .withFriendlyName(mapStructure.getKeyPropertyFriendlyName());
         }
         keyField.setRequired(true);
         ef.addMapKeyField(keyField);
