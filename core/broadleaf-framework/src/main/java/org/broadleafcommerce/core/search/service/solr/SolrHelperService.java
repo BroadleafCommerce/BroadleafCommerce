@@ -379,6 +379,16 @@ public interface SolrHelperService {
      * Notifies solr about which facets you want it to determine results and counts for.
      * @param query
      * @param namedFacetMap
+     *
+     * @deprecated use {@link SolrHelperService#attachFacets(SolrQuery, Map, SearchCriteria)}
+     */
+    @Deprecated
+    public void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap);
+
+    /**
+     * Notifies solr about which facets you want it to determine results and counts for.
+     * @param query
+     * @param namedFacetMap
      * @param searchCriteria
      */
     public void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, SearchCriteria searchCriteria);

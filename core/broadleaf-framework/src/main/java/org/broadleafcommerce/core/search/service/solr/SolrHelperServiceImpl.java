@@ -609,6 +609,13 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         }
     }
 
+
+    @Override
+    @Deprecated
+    public void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap) {
+        attachFacets(query, namedFacetMap, null);
+    }
+
     @Override
     public void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, SearchCriteria searchCriteria) {
         query.setFacet(true);
