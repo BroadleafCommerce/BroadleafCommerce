@@ -26,6 +26,7 @@ import org.broadleafcommerce.admin.server.service.extension.ProductCustomPersist
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
@@ -62,6 +63,11 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -71,10 +77,6 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -186,47 +188,47 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                             .withFieldPath(new FieldPath().withTargetProperty("id"))
                             .withDirectFilterValues(productIds)
                             .withRestriction(new Restriction()
-                                    .withPredicateProvider(new PredicateProvider() {
-                                                               @Override
-                                                               public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
-                                                                                               From root, String ceilingEntity, String fullPropertyName,
-                                                                                               Path explicitPath, List directValues) {
-                                                                   return explicitPath.in(directValues);
-                                                               }
-                                                           }
-                                    )
+                                                     .withPredicateProvider(new PredicateProvider() {
+                                                                                @Override
+                                                                                public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
+                                                                                                                From root, String ceilingEntity, String fullPropertyName,
+                                                                                                                Path explicitPath, List directValues) {
+                                                                                    return explicitPath.in(directValues);
+                                                                                }
+                                                                            }
+                                                     )
                             );
                     cto.getAdditionalFilterMappings().add(filterMapping);
                 } else {
                     String joined = StringUtils.join(transformedValues, ',');
                     LOG.warn(String.format("Skipping default category filtering for product fetch query since there are " +
-                            "more than " + queryLimit + " products found to belong to the selected default categories(%s). This is a " +
-                            "filter query limitation.", joined));
+                                           "more than " + queryLimit + " products found to belong to the selected default categories(%s). This is a " +
+                                           "filter query limitation.", joined));
                 }
             }
         }
 
         if (eagerFetchAssociations) {
             cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
-                    .withDirectFilterValues(new EmptyFilterValues())
-                    .withRestriction(new Restriction()
-                            .withPredicateProvider(new PredicateProvider() {
-                                @Override
-                                public Predicate buildPredicate(CriteriaBuilder builder,
-                                                                FieldPathBuilder fieldPathBuilder, From root,
-                                                                String ceilingEntity,
-                                                                String fullPropertyName, Path explicitPath,
-                                                                List directValues) {
-                                    root.fetch("defaultSku", JoinType.LEFT);
-                                    root.fetch("defaultCategory", JoinType.LEFT);
-                                    return null;
-                                }
-                            })
-                    ));
+                                                                  .withDirectFilterValues(new EmptyFilterValues())
+                                                                  .withRestriction(new Restriction()
+                                                                                           .withPredicateProvider(new PredicateProvider() {
+                                                                                               @Override
+                                                                                               public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                                                                               FieldPathBuilder fieldPathBuilder, From root,
+                                                                                                                               String ceilingEntity,
+                                                                                                                               String fullPropertyName, Path explicitPath,
+                                                                                                                               List directValues) {
+                                                                                                   root.fetch("defaultSku", JoinType.LEFT);
+                                                                                                   root.fetch("defaultCategory", JoinType.LEFT);
+                                                                                                   return null;
+                                                                                               }
+                                                                                           })
+                                                                  ));
         }
 
         if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
-                (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
+            (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
             //Add special handling for product list grid fetches
             boolean hasExplicitSort = false;
             for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
@@ -348,17 +350,26 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
         try {
-            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
-            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            if (extensionManager != null) {
-                extensionManager.getProxy().manageRemove(persistencePackage, adminInstance);
-            }
-            helper.getCompatibleModule(OperationType.BASIC).remove(persistencePackage);
+            Product adminInstance = getAdminInstance(persistencePackage, dynamicEntityDao, helper, entity);
+            removeProduct(persistencePackage, adminInstance, helper);
         } catch (ClassNotFoundException e) {
             throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
         }
+    }
+
+    protected Product getAdminInstance(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper,
+                                       Entity entity) throws ClassNotFoundException {
+        PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+        Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+        Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+        String type = entity.getType()[0];
+        Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(type), primaryKey);
+
+        return adminInstance;
+    }
+
+    protected void removeProduct(PersistencePackage persistencePackage, Product adminInstance, RecordHelper helper) throws ServiceException {
+        catalogService.removeProduct(adminInstance);
     }
 
     /**

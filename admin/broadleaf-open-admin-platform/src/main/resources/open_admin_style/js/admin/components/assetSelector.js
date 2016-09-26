@@ -66,7 +66,7 @@
                 currentRedactor = null;
             });
         },
-
+        
         /**
          * Handle the response of a form submit for asset
          */
@@ -75,28 +75,28 @@
             var $container = $(this).closest('div.uploadFileFormContainer');
             $container.find('img.imagePreview').attr('src', json.assetLarge);
             $container.find('div.uploadMessage').hide();
-
+            
             // Note that although we trigger this event on every asset selector container div, only one
             // will have an active event listener for this trigger.
             $('div.asset-selector-container').trigger('assetInfoSelected', json);
         },
-
+        
         iframeOnLoadRedactor : function() {
             var json = $.parseJSON($(this).contents().text());
             $('textarea.redactor').trigger('assetInfoSelected', json);
         }
     };
-
+    
 })(jQuery, BLCAdmin);
 
 $(document).ready(function() {
-
+    
     $('body').on('click', 'a.show-asset-freeform-url', function(event) {
         event.preventDefault();
-
+        
         var enabled = $(this).data('enabled') == true;
         var $container = $(this).closest('div.asset-selector-container');
-
+        
         if (enabled) {
             $container.find('img.thumbnail').show();
             $container.find('button.show-asset-selector').show();
@@ -106,71 +106,104 @@ $(document).ready(function() {
             $container.find('button.show-asset-selector').hide();
             $container.find('input.mediaUrl').attr('type', 'text');
         }
-
+        
         $(this).data('enabled', !enabled);
     });
-
-    $('body').on('listGrid-asset-rowSelected', function(event, link, fields, currentUrl) {
+    
+    $('body').on('listGrid-asset-rowSelected', function(event, $target, link, fields, currentUrl) {
         var json = {
             'assetUrl' : fields['cmsUrlPrefix'] + fields['fullUrl'],
             'adminDisplayAssetUrl' : fields['servletContext'] + fields['cmsUrlPrefix'] + fields['fullUrl']
-        }
-
+        };
+        
         $('div.asset-selector-container').trigger('assetInfoSelected', json);
         $('textarea.redactor').trigger('assetInfoSelected', json);
     });
-
+            
     /**
      * This handler will fire when the choose image button is clicked
-     *
+     * 
      * It is responsible for binding a assetInfoSelected handler for this field as well as launching
      * a image selection modal that will be used to select the image / media item.
      */
     $('body').on('click', 'button.show-asset-selector', function(event) {
         var $container = $(this).closest('div.asset-selector-container');
-
+        
         $container.on('assetInfoSelected', function(event, fields) {
             var $this = $(this);
-
-            $this.find('img.thumbnail').attr("src", fields['adminDisplayAssetUrl'] + '?largeAdminThumbnail');
+                           
+            $this.find('img.thumbnail').attr("src", fields['adminDisplayAssetUrl']);
             $this.find('img.thumbnail').data("fullurl", fields['adminDisplayAssetUrl']);
             $this.find('img.thumbnail').parent().attr("href", fields['adminDisplayAssetUrl']);
             $this.find('img.thumbnail').removeClass('placeholder-image');
-
+            
             var mediaItem = $this.find('input.mediaItem');
             if (mediaItem.length > 0) {
-                var mediaJson = mediaItem.val() == "" || mediaItem.val() == "null" ? {} : jQuery.parseJSON(mediaItem.val());
-                mediaJson.url = fields['assetUrl'];
-                mediaItem.val(JSON.stringify(mediaJson));
-            } else {
-                $this.find('input.mediaUrl').val(fields['assetUrl']);
+                var mediaUrl = $this.find('input.mediaUrl');
+                if (mediaUrl.length > 0) {
+                    mediaUrl.val(fields['assetUrl']).trigger('input');
+                } else {
+                    var mediaJson = mediaItem.val() == "" || mediaItem.val() == "null" ? {} : jQuery.parseJSON(mediaItem.val());
+                    mediaJson.url = fields['assetUrl'];
+                    mediaItem.val(JSON.stringify(mediaJson)).trigger('input');
+                }
             }
             $container.find('button.clear-asset-selector').show();
+            $container.find('.media-image-container .media-actions').css('display', '');
+
+            $container.find('div.asset-url').html(fields['assetUrl']);
+
             BLCAdmin.hideCurrentModal();
         });
-
+        
         BLCAdmin.showLinkAsModal($(this).data('select-url'), function() {
             $('div.asset-selector-container').unbind('assetInfoSelected');
         });
-
+        
         return false;
+    });
+
+    $('body').on('click', 'button.clear-asset-selector', function(event) {
+        //Get the media container
+        var $this = $(this);
+        var $container = $this.closest('div.asset-selector-container');
+
+        //Set media value to null so that when the request is sent the entry in the map for primary is deleted
+        var $mediaUrl = $container.find('input.mediaUrl');
+        var $mediaItem = $container.find('input.mediaItem');
+        if ($mediaUrl.length > 0) {
+            // Fields using mediaUrl require a blank value
+            $mediaUrl.val('').trigger('change').trigger('input');
+        } else {
+            // Other entities require a null value
+            $mediaItem.val('null').trigger('change').trigger('input');
+        }
+
+        //Set placeholder image and hide clear button since there's nothing to clear
+        var src = $container.find('img.placeholder').attr('src');
+        var $thumbnail = $container.find('img.thumbnail');
+        $thumbnail.removeAttr('data-fullurl');
+        $thumbnail.attr('src', src);
+        $thumbnail.addClass('placeholder-image');
+        $this.hide();
+
+        var $mediaImageContainer = $container.find('.media-image-container');
+        $mediaImageContainer.find('.media-actions').css('display', 'block');
+
+        positionMediaButtons($mediaImageContainer);
+        $container.find('div.asset-url').html('No media selected.');
     });
 
     // When we detect that a user has selected a file from his file system, we will trigger an event
     $('body').on('change', 'input.ajaxUploadFile[type="file"]', function() {
         BLCAdmin.asset.assetSelected($(this));
-    });
-
-    // Invisibly proxy a click on our button to the hidden input with type="file" to trigger the
+    }); 
+    
+    // Invisibly proxy a click on our button to the hidden input with type="file" to trigger the 
     // file system browse dialog
     $('body').on('click', 'button.uploadButton', function() {
         $(this).closest('form.uploadFileForm').find('input[type="file"]').click();
-
-    });
-
-    // On the asset list view, the upload button triggers this form
-    $('body').on('click', 'button.upload-asset', function(event) {
-        $('#assetUploadFile').click();
+        
     });
 
     // When we detect that a user has selected a file from his file system, we will trigger an event
@@ -178,10 +211,36 @@ $(document).ready(function() {
         // TODO: Show a div with "loading" message
         $('#assetUploadForm').submit();
     });
-
+    
     // Workaround for upload button on Internet Explorer < 11
     if(window.navigator.userAgent.indexOf('MSIE ') > 0) {
         $('button.upload-asset').addClass('hidden');
         $('#assetUploadForm').removeClass('hidden');
+    }
+
+    $('body').on('mouseover', '.media-image-container', function() {
+        positionMediaButtons(this);
+    });
+
+    // On the asset list view, the upload button triggers this form
+       $('body').on('click', 'button.upload-asset', function(event) {
+               $('#assetUploadFile').click();
+    });
+
+    function positionMediaButtons(container) {
+        var center = $(container).width() / 2;
+        var spacing = 15;
+
+        // clear goes on the right
+        var clearBtn = $(container).find('.media-actions button.clear-asset-selector');
+        clearBtn.css('left', parseInt(center + spacing) + 'px');
+
+        // lookup goes on the left unless clear is hidden
+        var lookupBtn = $(container).find('.media-actions button.show-asset-selector');
+        if (clearBtn.css('display') != 'none') {
+            lookupBtn.css('left', parseInt(center - spacing - 50) + 'px');
+        } else {
+            lookupBtn.css('left', parseInt(center - 25) + 'px');
+        }
     }
 });

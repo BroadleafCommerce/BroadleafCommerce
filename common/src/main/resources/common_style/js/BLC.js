@@ -187,6 +187,7 @@ var BLC = (function($) {
             } else if (!options.data) {
                 options.data = {};
                 var csrfToken = getCsrfToken();
+                options.data = {};
                 if (csrfToken) {
                     options.data['csrfToken'] = csrfToken;
                 }
