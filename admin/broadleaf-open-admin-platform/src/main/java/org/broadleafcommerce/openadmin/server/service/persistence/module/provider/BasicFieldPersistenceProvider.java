@@ -355,7 +355,8 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     if (origDispVal != null) {
                         prop.setOriginalDisplayValue(String.valueOf(origDispVal));
                         Session session = populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().unwrap(Session.class);
-                        prop.setOriginalValue(String.valueOf(session.getIdentifier(foreignInstance)));
+                        String originalValueFromSession = String.valueOf(session.getIdentifier(origInstanceValue));
+                        prop.setOriginalValue(originalValueFromSession);
                     }
 
                     if (Collection.class.isAssignableFrom(populateValueRequest.getReturnType())) {
