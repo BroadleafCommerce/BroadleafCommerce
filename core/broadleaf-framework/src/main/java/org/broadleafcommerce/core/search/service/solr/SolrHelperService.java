@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
@@ -42,8 +41,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-
-import javax.jms.IllegalStateException;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -380,11 +377,21 @@ public interface SolrHelperService {
 
     /**
      * Notifies solr about which facets you want it to determine results and counts for.
-     * 
      * @param query
      * @param namedFacetMap
+     *
+     * @deprecated use {@link SolrHelperService#attachFacets(SolrQuery, Map, SearchCriteria)}
      */
+    @Deprecated
     public void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap);
+
+    /**
+     * Notifies solr about which facets you want it to determine results and counts for.
+     * @param query
+     * @param namedFacetMap
+     * @param searchCriteria
+     */
+    public void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, SearchCriteria searchCriteria);
 
     /**
      * Returns a fully composed solr field string. Given indexField = a, tag = ex, and a non-null range,
