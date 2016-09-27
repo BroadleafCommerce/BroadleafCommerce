@@ -81,9 +81,6 @@ public class MVELToDataWrapperTranslator {
                         dataDTO.setPk(id);
                         dataDTO.setQuantity(qty);
                         dataWrapper.getData().add(dataDTO);
-                        throw new MVELTranslationException(MVELTranslationException.SUB_GROUP_DETECTED,
-                                "MVEL phrase is not compatible with sub-groups. Please re-structure the rule to use " +
-                                        "single groups, product groups and/or customer segments.");
                     }
                 }
             }

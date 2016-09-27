@@ -34,7 +34,6 @@ public class MVELTranslationException extends TranslatableException {
     public static final int INCOMPATIBLE_DECIMAL_VALUE = 105;
     public static final int INCOMPATIBLE_INTEGER_VALUE = 106;
     public static final int INCOMPATIBLE_RULE = 107;
-    public static final int SUB_GROUP_DETECTED = 108;
 
     public MVELTranslationException(int code, String message) {
         super(code, message);

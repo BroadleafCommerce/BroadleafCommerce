@@ -94,7 +94,7 @@
 
         <div class="query-builder-rules-container"
             th:classappend="${(field.required ? 'required-query-builder' : '')
-                              + (field.dataWrapper.error != null ? ' rule-data-error' : '')}"
+                              + (field.dataWrapper.error != null ? 'rule-data-error' : '')}"
             th:style="${(field.displayType == 'MODAL') ? 'display: none;' : ''}"
             th:id="${field.name}"
             th:attr="data-itemsthatsatisfytext=${#messages.msgOrNull(field.fieldBuilder + '_ItemsThatSatisfyText')}"></div>
@@ -112,7 +112,7 @@
             th:if="${field.dataWrapper.error != null}"
             th:classappend="${field.required ? 'required-query-builder' : ''}"
             th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}">
-                <textarea disabled="disabled" th:text="${field.dataWrapper.rawMvel}"></textarea>
+                <textarea disabled="disabled" style="width: 98%;" th:text="${field.dataWrapper.rawMvel}"></textarea>
         </div>
 
         <!--/* For: All display types - raw data needed to construct the query builder */-->
