@@ -197,7 +197,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Column(name = "OVERRIDE_GENERATED_URL")
     @AdminPresentation(friendlyName = "ProductImpl_Override_Generated_Url",
-            group = GroupName.General, order = FieldOrder.URL + 10)
+            group = GroupName.General, order = FieldOrder.URL + 10, defaultValue = "false")
     protected Boolean overrideGeneratedUrl = false;
 
     @Column(name = "URL_KEY")
