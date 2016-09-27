@@ -102,7 +102,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="ORDERITEM_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     @NotFound(action = NotFoundAction.IGNORE)
@@ -111,7 +111,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @AdminPresentationToOneLookup()
     protected Category category;
 
-    @ManyToOne(targetEntity = OrderImpl.class)
+    @ManyToOne(targetEntity = OrderImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "ORDER_ID")
     @Index(name="ORDERITEM_ORDER_INDEX", columnNames={"ORDER_ID"})
     @AdminPresentation(excluded = true)
@@ -153,7 +153,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Index(name="ORDERITEM_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
     protected PersonalMessage personalMessage;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = GiftWrapOrderItemImpl.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = GiftWrapOrderItemImpl.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "GIFT_WRAP_ITEM_ID", nullable = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @Index(name="ORDERITEM_GIFT_INDEX", columnNames={"GIFT_WRAP_ITEM_ID"})
@@ -222,7 +222,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<OrderItem> childOrderItems = new ArrayList<OrderItem>();
 
-    @ManyToOne(targetEntity = OrderItemImpl.class)
+    @ManyToOne(targetEntity = OrderItemImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "PARENT_ORDER_ITEM_ID")
     @Index(name="ORDERITEM_PARENT_INDEX", columnNames={"PARENT_ORDER_ITEM_ID"})
     protected OrderItem parentOrderItem;

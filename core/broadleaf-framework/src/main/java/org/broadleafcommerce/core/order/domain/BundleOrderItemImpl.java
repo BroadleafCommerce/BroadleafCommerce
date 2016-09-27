@@ -84,7 +84,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @AdminPresentation(friendlyName = "BundleOrderItemImpl_Base_Sale_Price", order=2, group = "BundleOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "SKU_ID")
     @NotFound(action = NotFoundAction.IGNORE)
     @AdminPresentation(friendlyName = "BundleOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
@@ -93,7 +93,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductBundleImpl.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductBundleImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "PRODUCT_BUNDLE_ID")
     @AdminPresentation(friendlyName = "BundleOrderItemImpl_Product", order=Presentation.FieldOrder.PRODUCT,
             group = OrderItemImpl.Presentation.Group.Name.Catalog,

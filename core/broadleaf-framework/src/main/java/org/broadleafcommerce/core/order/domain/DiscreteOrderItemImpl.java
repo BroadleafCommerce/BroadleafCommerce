@@ -30,7 +30,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.HibernateUtils;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -86,7 +85,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             group = "DiscreteOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, optional=false, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "SKU_ID", nullable = false)
     @Index(name="DISCRETE_SKU_INDEX", columnNames={"SKU_ID"})
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
@@ -94,7 +93,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     @NotFound(action = NotFoundAction.IGNORE)
@@ -103,12 +102,12 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @AdminPresentationToOneLookup()
     protected Product product;
 
-    @ManyToOne(targetEntity = BundleOrderItemImpl.class)
+    @ManyToOne(targetEntity = BundleOrderItemImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "BUNDLE_ORDER_ITEM_ID")
     @AdminPresentation(excluded = true)
     protected BundleOrderItem bundleOrderItem;
 
-    @ManyToOne(targetEntity = SkuBundleItemImpl.class)
+    @ManyToOne(targetEntity = SkuBundleItemImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "SKU_BUNDLE_ITEM_ID")
     @AdminPresentation(excluded = true)
     protected SkuBundleItem skuBundleItem;

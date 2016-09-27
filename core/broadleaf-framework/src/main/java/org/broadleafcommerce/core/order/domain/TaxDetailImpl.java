@@ -34,6 +34,7 @@ import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -95,12 +96,12 @@ public class TaxDetailImpl implements TaxDetail {
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Name", order = 7, group = "TaxDetailImpl_Tax_Detail")
     protected String taxName;
 
-    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(friendlyName = "TaxDetailImpl_Currency_Code", order = 1, group = "FixedPriceFulfillmentOptionImpl_Details", prominent = true)
     protected BroadleafCurrency currency;
 
-    @ManyToOne(targetEntity = AbstractModuleConfiguration.class)
+    @ManyToOne(targetEntity = AbstractModuleConfiguration.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "MODULE_CONFIG_ID")
     protected ModuleConfiguration moduleConfiguation;
 

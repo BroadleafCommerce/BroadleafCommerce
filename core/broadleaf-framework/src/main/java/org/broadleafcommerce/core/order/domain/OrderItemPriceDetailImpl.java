@@ -81,7 +81,7 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
     @AdminPresentation(friendlyName = "OrderItemPriceDetailImpl_Id", group = "OrderItemPriceDetailImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderItemImpl.class)
+    @ManyToOne(targetEntity = OrderItemImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "ORDER_ITEM_ID")
     @AdminPresentation(excluded = true)
     protected OrderItem orderItem;

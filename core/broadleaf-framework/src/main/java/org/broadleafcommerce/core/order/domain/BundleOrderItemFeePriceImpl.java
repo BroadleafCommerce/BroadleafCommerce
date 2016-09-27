@@ -36,6 +36,7 @@ import org.hibernate.annotations.Parameter;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -77,7 +78,7 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
     @Column(name = "BUND_ITEM_FEE_PRICE_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = BundleOrderItemImpl.class, optional = false)
+    @ManyToOne(targetEntity = BundleOrderItemImpl.class, optional = false, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "BUND_ORDER_ITEM_ID")
     protected BundleOrderItem bundleOrderItem;
 

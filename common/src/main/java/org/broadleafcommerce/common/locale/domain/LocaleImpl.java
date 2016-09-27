@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -74,7 +75,7 @@ public class LocaleImpl implements Locale, AdminMainEntity {
         prominent = true, gridOrder = 3)
     protected Boolean defaultFlag = false;
 
-    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(friendlyName = "LocaleImpl_Currency", order = 4, 
         group = "LocaleImpl_Details", 

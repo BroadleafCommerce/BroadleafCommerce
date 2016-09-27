@@ -70,7 +70,7 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
     @AdminPresentation(friendlyName = "OrderItemAttributeImpl_Attribute_Value", order=2, group = "OrderItemAttributeImpl_Description", prominent=true)
     protected String value;
     
-    @ManyToOne(targetEntity = OrderItemImpl.class, optional=false)
+    @ManyToOne(targetEntity = OrderItemImpl.class, optional=false, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected OrderItem orderItem;
 

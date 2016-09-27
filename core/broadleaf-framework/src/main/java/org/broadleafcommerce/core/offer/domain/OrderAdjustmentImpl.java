@@ -41,6 +41,7 @@ import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -80,13 +81,13 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
     @Column(name = "ORDER_ADJUSTMENT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderImpl.class)
+    @ManyToOne(targetEntity = OrderImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "ORDER_ID")
     @Index(name="ORDERADJUST_ORDER_INDEX", columnNames={"ORDER_ID"})
     @AdminPresentation(excluded = true)
     protected Order order;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "OFFER_ID")
     @Index(name="ORDERADJUST_OFFER_INDEX", columnNames={"OFFER_ID"})
     @AdminPresentation(friendlyName = "OrderAdjustmentImpl_Offer", order=1000,

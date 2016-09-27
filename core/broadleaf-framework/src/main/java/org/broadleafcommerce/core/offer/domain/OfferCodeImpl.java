@@ -132,7 +132,7 @@ public class OfferCodeImpl implements OfferCode {
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
     
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy="addedOfferCodes", targetEntity = OrderImpl.class)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy="addedOfferCodes", targetEntity = OrderImpl.class, cascade = {CascadeType.REFRESH})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<Order> orders = new ArrayList<Order>();
 

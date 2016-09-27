@@ -148,7 +148,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             gridOrder = 2000)
     protected String name;
 
-    @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
+    @ManyToOne(targetEntity = CustomerImpl.class, optional=false, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     @Index(name="ORDER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     @AdminPresentation(friendlyName = "OrderImpl_Customer", group = Presentation.Group.Name.General,
@@ -228,7 +228,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
                 order = Presentation.FieldOrder.ADJUSTMENTS)
     protected List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OfferCodeImpl.class)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OfferCodeImpl.class, cascade = {CascadeType.REFRESH})
     @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", joinColumns = @JoinColumn(name = "ORDER_ID",
             referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_CODE_ID",
             referencedColumnName = "OFFER_CODE_ID"))
@@ -243,7 +243,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<CandidateOrderOffer> candidateOrderOffers = new ArrayList<CandidateOrderOffer>();
 
-    @OneToMany(mappedBy = "order", targetEntity = OrderPaymentImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToMany(mappedBy = "order", targetEntity = OrderPaymentImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Payments",
                 tab = Presentation.Tab.Name.Payment, tabOrder = Presentation.Tab.Order.Payment)
@@ -269,12 +269,12 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     )
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
     
-    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(excluded = true)
     protected BroadleafCurrency currency;
 
-    @ManyToOne(targetEntity = LocaleImpl.class)
+    @ManyToOne(targetEntity = LocaleImpl.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(excluded = true)
     protected Locale locale;
