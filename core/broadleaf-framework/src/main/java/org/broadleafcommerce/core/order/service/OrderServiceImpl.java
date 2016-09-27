@@ -600,7 +600,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
     public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
-        preValidateCartOperation(findOrderById(orderId));
+        Order order = findOrderById(orderId);
+        preValidateCartOperation(order);
         preValidateUpdateQuantityOperation(findOrderById(orderId), orderItemRequestDTO);
         if (orderItemRequestDTO.getQuantity() == 0) {
             return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
@@ -936,5 +937,15 @@ public class OrderServiceImpl implements OrderService {
         } else if (erh.getThrowable() != null) {
             throw new RuntimeException(erh.getThrowable());
         }
+    }
+
+    @Override
+    public void refresh(Order order) {
+        orderDao.refresh(order);
+    }
+
+    @Override
+    public boolean requiresRefresh(Order order) {
+        return orderDao.requiresRefresh(order);
     }
 }

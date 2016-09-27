@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
@@ -253,6 +254,11 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public void refresh(Order order) {
+        em.refresh(order);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public Order readNamedOrderForCustomer(final Customer customer, final String name) {
         final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
@@ -304,6 +310,22 @@ public class OrderDaoImpl implements OrderDao {
             order = save(order);
         }
         return order;
+    }
+
+    @Override
+    public boolean requiresRefresh(Order order) {
+        boolean requiresRefresh = false;
+
+        TypedQuery<Order> query = new TypedQueryBuilder<Order>(Order.class, "order")
+                .addRestriction("order.id", "=", order.getId())
+                .addRestriction("order.auditable.dateUpdated", ">", order.getAuditable().getDateUpdated())
+                .toQuery(em);
+
+        if (query.getSingleResult() != null) {
+            requiresRefresh = true;
+        }
+
+        return requiresRefresh;
     }
 
     @Override

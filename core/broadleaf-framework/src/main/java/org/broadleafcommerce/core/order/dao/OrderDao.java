@@ -60,11 +60,15 @@ public interface OrderDao {
 
     Order create();
 
+    void refresh(Order order);
+
     Order createNewCartForCustomer(Customer customer);
 
     Order readOrderByOrderNumber(String orderNumber);
     
     Order updatePrices(Order order);
+
+    boolean requiresRefresh(Order order);
 
     /**
      * This method will attempt to update the {@link OrderLock} object table for the given order to mark it as

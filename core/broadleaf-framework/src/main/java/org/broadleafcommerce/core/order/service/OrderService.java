@@ -584,4 +584,8 @@ public interface OrderService {
      * @return whether or not the lock was released
      */
     public boolean releaseLock(Order order);
+
+    void refresh(Order order);
+
+    boolean requiresRefresh(Order order);
 }
