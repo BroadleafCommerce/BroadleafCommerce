@@ -74,9 +74,27 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     @Value("${singleFulfillmentGroup.fgItem.sync.qty:false}")
     private boolean singleFulfillmentGroupSyncFGItemQty;
 
+    /**
+     * Gets the cached order.
+     * <p>
+     * If singleFulfillmentGroupSyncFGItemQty is true, it will also refresh the order
+     * to ensure it is the up-to-date.
+     *
+     * @param order
+     * @return latest version of the order
+     */
+    protected Order getLatestVersionOfOrder(Order order) {
+
+        if (singleFulfillmentGroupSyncFGItemQty && orderService.requiresRefresh(order)) {
+            orderService.refresh(order);
+        }
+
+        return order;
+    }
+
     @Override
     public CartOperationRequest onItemAdded(CartOperationRequest request) throws PricingException {
-        Order order = request.getOrder();
+        Order order = getLatestVersionOfOrder(request.getOrder());
         OrderItem orderItem = request.getOrderItem();
         Map<FulfillmentType, FulfillmentGroup> fulfillmentGroups = new HashMap<FulfillmentType, FulfillmentGroup>();
         FulfillmentGroup nullFulfillmentTypeGroup = null;
@@ -221,7 +239,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     
     @Override
     public CartOperationRequest onItemUpdated(CartOperationRequest request) throws PricingException {
-        Order order = request.getOrder();
+        Order order = getLatestVersionOfOrder(request.getOrder());
         OrderItem orderItem = request.getOrderItem();
         Integer orderItemQuantityDelta = request.getOrderItemQuantityDelta();
         
@@ -297,7 +315,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 
     @Override
     public CartOperationRequest onItemRemoved(CartOperationRequest request) {
-        Order order = request.getOrder();
+        Order order = getLatestVersionOfOrder(request.getOrder());
         OrderItem orderItem = request.getOrderItem();
         
         if (orderItem instanceof BundleOrderItem) {
