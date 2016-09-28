@@ -51,7 +51,7 @@ public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements 
                 if (metadata != null) {
                     Map<String, Object> attributes = metadata.getAnnotationAttributes(Merge.class.getName());
                     if (!MapUtils.isEmpty(attributes)) {
-                        boolean isEarly = !MapUtils.getBooleanValue(attributes,"lateStage");
+                        boolean isEarly = MapUtils.getBooleanValue(attributes,"early");
                         BeanDefinitionBuilder builder = BeanDefinitionBuilder
                             .genericBeanDefinition(isEarly?EarlyStageMergeBeanPostProcessor.class:LateStageMergeBeanPostProcessor.class)
                             .setScope(BeanDefinition.SCOPE_SINGLETON)
