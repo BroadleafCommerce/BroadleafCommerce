@@ -22,6 +22,7 @@ package org.broadleafcommerce.openadmin.web.form.component;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -42,6 +43,8 @@ public class ListGridRecord {
     protected String errorKey;
     protected String errorMessage;
     protected ListGridRecordIcon icon;
+    protected Boolean isReadOnly = false;
+    protected Entity entity;
 
     /**
      * Convenience map keyed by the field name. Used to guarantee field ordering with header fields within a ListGrid
@@ -164,6 +167,22 @@ public class ListGridRecord {
 
     public void setDirty(Boolean isDirty) {
         this.isDirty = isDirty;
+    }
+
+    public Boolean getReadOnly() {
+        return isReadOnly == null ? false : isReadOnly;
+    }
+
+    public void setReadOnly(Boolean readOnly) {
+        isReadOnly = readOnly;
+    }
+
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
     }
 
     public Boolean getIsError() {
