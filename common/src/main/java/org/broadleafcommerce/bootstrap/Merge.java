@@ -35,8 +35,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Merges may be declared for a single member, collection or map. Targets may be collections or maps. Please note,
  * if the target is a map, the source element must be a MapFactoryBean. However, if the target is a collection, the source
  * map be a single bean, a ListFactoryBean, or a SetFactoryBean.
- * </p>
- * Deletes from a target may be performed (instead of addition) by declaring the {@link #removeFromTarget()} parameter.
  *
  * @author Jeff Fischer
  */
@@ -75,12 +73,5 @@ public @interface Merge {
      * entity load time weaving. The default is false.
      */
     boolean early() default false;
-
-    /**
-     * Whether or not the source item should be attempted to be removed from the target
-     * collection or map. This offers an opportunity to delete a member from a target collection, rather than add to it.
-     * The default is false.
-     */
-    boolean removeFromTarget() default false;
 
 }
