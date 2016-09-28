@@ -71,7 +71,7 @@ public @interface Merge {
 
     /**
      * Whether or not this merge should take place early, before entityManagerFactory configuration. This is useful if the merge
-     * should take place before entity processing. Usually declared as false in conjunction with merges that impact
+     * should take place before entity processing. Usually declared as true in conjunction with merges that impact
      * entity load time weaving. The default is false.
      */
     boolean early() default false;
