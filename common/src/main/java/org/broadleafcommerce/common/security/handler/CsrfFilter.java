@@ -21,8 +21,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
-import org.springframework.security.web.util.AntPathRequestMatcher;
-import org.springframework.security.web.util.RequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
@@ -43,7 +43,7 @@ import javax.servlet.http.HttpServletResponse;
  * ({@code servletPath + pathInfo}) of an {@code HttpServletRequest}.
  * This allows you to use wildcard matching as well, for example {@code /**} or {@code **}
  *
- * @see org.springframework.security.web.util.AntPathRequestMatcher
+ * @see AntPathRequestMatcher
  * @deprecated Use {@link SecurityFilter} instead
  * @author Andre Azzolini (apazzolini)
  */
