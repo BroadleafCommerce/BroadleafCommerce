@@ -70,11 +70,11 @@ public @interface Merge {
     Class<MergeBeanStatusProvider> statusProvider() default MergeBeanStatusProvider.class;
 
     /**
-     * Whether or not this merge should take place after entityManagerFactory configuration. This is useful if the merge
+     * Whether or not this merge should take place early, before entityManagerFactory configuration. This is useful if the merge
      * should take place before entity processing. Usually declared as false in conjunction with merges that impact
-     * entity load time weaving. The default is true.
+     * entity load time weaving. The default is false.
      */
-    boolean lateStage() default true;
+    boolean early() default false;
 
     /**
      * Whether or not the source item should be attempted to be removed from the target
