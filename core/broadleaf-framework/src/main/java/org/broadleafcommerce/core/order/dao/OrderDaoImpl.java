@@ -316,12 +316,11 @@ public class OrderDaoImpl implements OrderDao {
     public boolean requiresRefresh(Order order) {
         boolean requiresRefresh = false;
 
-        TypedQuery<Order> query = new TypedQueryBuilder<Order>(Order.class, "order")
-                .addRestriction("order.id", "=", order.getId())
-                .addRestriction("order.auditable.dateUpdated", ">", order.getAuditable().getDateUpdated())
-                .toQuery(em);
+        Query query = em.createNamedQuery("BC_READ_ORDER_BY_ID_IF_MORE_RECENT");
+        query.setParameter("orderId", order.getId());
+        query.setParameter("dateUpdated", order.getAuditable().getDateUpdated());
 
-        if (query.getSingleResult() != null) {
+        if (CollectionUtils.isNotEmpty(query.getResultList())) {
             requiresRefresh = true;
         }
 

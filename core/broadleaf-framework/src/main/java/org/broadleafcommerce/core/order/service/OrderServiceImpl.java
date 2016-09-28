@@ -150,6 +150,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Value("${pricing.retry.wait.interval.for.lock.failure}")
     protected long pricingRetryWaitIntervalForLockFailure = 500L;
+
+    @Value("${singleFulfillmentGroup.fgItem.sync.qty:false}")
+    protected boolean singleFulfillmentGroupSyncFGItemQty;
     
     /* Fields */
     protected boolean moveNamedOrderItems = true;
@@ -947,5 +950,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean requiresRefresh(Order order) {
         return orderDao.requiresRefresh(order);
+    }
+
+    @Override
+    public Order getLatestVersionOfOrder(Order order) {
+
+        if (singleFulfillmentGroupSyncFGItemQty && requiresRefresh(order)) {
+            refresh(order);
+        }
+
+        return order;
     }
 }

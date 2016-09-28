@@ -68,33 +68,15 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     
     @Resource(name = "blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fgItemDao;
-    
-    protected boolean removeEmptyFulfillmentGroups = true;
 
     @Value("${singleFulfillmentGroup.fgItem.sync.qty:false}")
-    private boolean singleFulfillmentGroupSyncFGItemQty;
+    protected boolean singleFulfillmentGroupSyncFGItemQty;
 
-    /**
-     * Gets the cached order.
-     * <p>
-     * If singleFulfillmentGroupSyncFGItemQty is true, it will also refresh the order
-     * to ensure it is the up-to-date.
-     *
-     * @param order
-     * @return latest version of the order
-     */
-    protected Order getLatestVersionOfOrder(Order order) {
-
-        if (singleFulfillmentGroupSyncFGItemQty && orderService.requiresRefresh(order)) {
-            orderService.refresh(order);
-        }
-
-        return order;
-    }
+    protected boolean removeEmptyFulfillmentGroups = true;
 
     @Override
     public CartOperationRequest onItemAdded(CartOperationRequest request) throws PricingException {
-        Order order = getLatestVersionOfOrder(request.getOrder());
+        Order order = orderService.getLatestVersionOfOrder(request.getOrder());
         OrderItem orderItem = request.getOrderItem();
         Map<FulfillmentType, FulfillmentGroup> fulfillmentGroups = new HashMap<FulfillmentType, FulfillmentGroup>();
         FulfillmentGroup nullFulfillmentTypeGroup = null;
@@ -239,7 +221,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     
     @Override
     public CartOperationRequest onItemUpdated(CartOperationRequest request) throws PricingException {
-        Order order = getLatestVersionOfOrder(request.getOrder());
+        Order order = orderService.getLatestVersionOfOrder(request.getOrder());
         OrderItem orderItem = request.getOrderItem();
         Integer orderItemQuantityDelta = request.getOrderItemQuantityDelta();
         
@@ -315,7 +297,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 
     @Override
     public CartOperationRequest onItemRemoved(CartOperationRequest request) {
-        Order order = getLatestVersionOfOrder(request.getOrder());
+        Order order = orderService.getLatestVersionOfOrder(request.getOrder());
         OrderItem orderItem = request.getOrderItem();
         
         if (orderItem instanceof BundleOrderItem) {

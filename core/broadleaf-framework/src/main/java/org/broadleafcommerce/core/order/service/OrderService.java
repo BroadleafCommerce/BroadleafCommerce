@@ -588,4 +588,15 @@ public interface OrderService {
     void refresh(Order order);
 
     boolean requiresRefresh(Order order);
+
+    /**
+     * Gets the cached order.
+     * <p>
+     * If singleFulfillmentGroup.fgItem.sync.qty is true, it will also refresh the order
+     * to ensure it is the up-to-date.
+     *
+     * @param order
+     * @return latest version of the order
+     */
+    Order getLatestVersionOfOrder(Order order);
 }
