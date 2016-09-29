@@ -1,18 +1,39 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 /**
- * A request to modify an {@link EntityForm} instance. Contains supporting objects useful during the modification process.
+ * A request to modify an {@link EntityForm}, or {@link ListGrid} instance. Contains supporting objects useful during the modification process.
  *
- * @see EntityFormModifier#modify(EntityFormModifierRequest)
+ * @see EntityFormModifier#modifyEntityForm(EntityFormModifierRequest)
  * @author Jeff Fischer
  */
 public class EntityFormModifierRequest {
 
     protected EntityForm entityForm;
+    protected ListGrid listGrid;
     protected EntityFormModifierData<EntityFormModifierDataPoint> configuration;
     protected AdminUser currentUser;
     protected Entity entity;
@@ -20,6 +41,11 @@ public class EntityFormModifierRequest {
 
     public EntityFormModifierRequest withEntityForm(EntityForm entityForm) {
         setEntityForm(entityForm);
+        return this;
+    }
+
+    public EntityFormModifierRequest withListGrid(ListGrid listGrid) {
+        setListGrid(listGrid);
         return this;
     }
 
@@ -82,5 +108,13 @@ public class EntityFormModifierRequest {
 
     public void setRowLevelSecurityService(RowLevelSecurityService rowLevelSecurityService) {
         this.rowLevelSecurityService = rowLevelSecurityService;
+    }
+
+    public ListGrid getListGrid() {
+        return listGrid;
+    }
+
+    public void setListGrid(ListGrid listGrid) {
+        this.listGrid = listGrid;
     }
 }

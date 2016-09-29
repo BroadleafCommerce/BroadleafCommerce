@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 /**
@@ -35,7 +36,15 @@ public interface EntityFormModifier {
      * @see EntityFormModifierRequest
      * @param request the EntityForm, and other supporting objects
      */
-    void modify(EntityFormModifierRequest request);
+    void modifyEntityForm(EntityFormModifierRequest request);
+
+    /**
+     * Modify the {@link ListGrid} in the request. The request contains other relevant information that should be
+     * useful during the modification.
+     *
+     * @param request The ListGrid, and other supporting objects
+     */
+    void modifyListGrid(EntityFormModifierRequest request);
 
     /**
      * Whether or not this EntityFormModifier is qualified to modify based on the modifierType.

@@ -402,6 +402,22 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
 
+        //If someone has replaced RowLevelSecurityService, check here to make sure the replacement implements the expected interface
+        if (rowLevelSecurityService instanceof ExceptionAwareRowLevelSecurityProvider) {
+            EntityFormModifierConfiguration entityFormModifierConfiguration = ((ExceptionAwareRowLevelSecurityProvider) rowLevelSecurityService).getUpdateDenialExceptions();
+            for (EntityFormModifierData<EntityFormModifierDataPoint> data : entityFormModifierConfiguration.getData()) {
+                for (EntityFormModifier modifier : entityFormModifierConfiguration.getModifier()) {
+                    if (modifier.isQualified(data.getModifierType())) {
+                        modifier.modifyListGrid(new EntityFormModifierRequest()
+                                .withListGrid(listGrid)
+                                .withConfiguration(data)
+                                .withCurrentUser(adminRemoteSecurityService.getPersistentAdminUser())
+                                .withRowLevelSecurityService(rowLevelSecurityService));
+                    }
+                }
+            }
+        }
+
         return listGrid;
     }
 
@@ -1030,7 +1046,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 for (EntityFormModifierData<EntityFormModifierDataPoint> data : entityFormModifierConfiguration.getData()) {
                     for (EntityFormModifier modifier : entityFormModifierConfiguration.getModifier()) {
                         if (modifier.isQualified(data.getModifierType())) {
-                            modifier.modify(new EntityFormModifierRequest()
+                            modifier.modifyEntityForm(new EntityFormModifierRequest()
                                     .withEntityForm(entityForm)
                                     .withConfiguration(data)
                                     .withCurrentUser(adminRemoteSecurityService.getPersistentAdminUser())
