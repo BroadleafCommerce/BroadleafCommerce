@@ -313,10 +313,18 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         if (getStatus() != null) {
             cloned.setStatus(getStatus());
         }
+        cloneTaxDetails(context, cloned);
         cloned.setTotalItemAmount(totalItemAmount == null ? null : new Money(totalItemAmount));
         cloned.setTotalItemTaxableAmount(totalItemTaxableAmount == null ? null : new Money(totalItemTaxableAmount));
         cloned.setTotalTax(totalTax == null ? null : new Money(totalTax));
         return createResponse;
+    }
+
+    protected void cloneTaxDetails(MultiTenantCopyContext context, FulfillmentGroupItem cloned) throws CloneNotSupportedException {
+        for (TaxDetail taxDetail : getTaxes()) {
+            TaxDetail clonedTaxDetail = taxDetail.createOrRetrieveCopyInstance(context).getClone();
+            cloned.getTaxes().add(clonedTaxDetail);
+        }
     }
 
     @Override
