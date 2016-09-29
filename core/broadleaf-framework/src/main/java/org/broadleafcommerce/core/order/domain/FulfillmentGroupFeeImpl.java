@@ -82,7 +82,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     @Column(name = "FULFILLMENT_GROUP_FEE_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = FulfillmentGroupImpl.class, optional = false, cascade = {CascadeType.REFRESH})
+    @ManyToOne(targetEntity = FulfillmentGroupImpl.class, optional = false)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
     protected FulfillmentGroup fulfillmentGroup;
 

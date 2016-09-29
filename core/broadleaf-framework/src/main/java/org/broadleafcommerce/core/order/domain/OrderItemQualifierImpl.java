@@ -28,7 +28,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -61,11 +60,11 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
     @Column(name = "ITEM_OFFER_QUALIFIER_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderItemImpl.class, cascade = {CascadeType.REFRESH})
+    @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected OrderItem orderItem;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = {CascadeType.REFRESH})
+    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
 

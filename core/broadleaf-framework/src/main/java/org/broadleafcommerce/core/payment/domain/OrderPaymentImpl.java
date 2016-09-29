@@ -118,13 +118,13 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @Column(name = "ORDER_PAYMENT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderImpl.class, optional = true, cascade = {CascadeType.REFRESH})
+    @ManyToOne(targetEntity = OrderImpl.class, optional = true)
     @JoinColumn(name = "ORDER_ID", nullable = true)
     @Index(name="ORDERPAYMENT_ORDER_INDEX", columnNames={"ORDER_ID"})
     @AdminPresentation(excluded = true)
     protected Order order;
 
-    @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+    @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "ADDRESS_ID")
     @Index(name="ORDERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address billingAddress;

@@ -31,7 +31,6 @@ import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -63,12 +62,12 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
     @Column(name = "CANDIDATE_ORDER_OFFER_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderImpl.class, cascade = {CascadeType.REFRESH})
+    @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
     @Index(name="CANDIDATE_ORDER_INDEX", columnNames={"ORDER_ID"})
     protected Order order;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = {CascadeType.REFRESH})
+    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     @Index(name="CANDIDATE_ORDEROFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;

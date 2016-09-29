@@ -118,7 +118,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
             prominent = true, gridOrder = 3000)
     protected String lastName;
 
-    @ManyToOne(targetEntity = ChallengeQuestionImpl.class, cascade = {CascadeType.REFRESH})
+    @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnNames = { "CHALLENGE_QUESTION_ID" })
     @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question", order = 4000,
@@ -151,7 +151,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected Boolean deactivated = false;
 
-    @ManyToOne(targetEntity = LocaleImpl.class, cascade = {CascadeType.REFRESH})
+    @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale", order = 4000,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,

@@ -32,7 +32,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -85,7 +84,7 @@ public class OrderAttributeImpl implements OrderAttribute {
     @AdminPresentation(friendlyName = "OrderAttributeImpl_Attribute_Value", order=2000, prominent=true)
     protected String value;
     
-    @ManyToOne(targetEntity = OrderImpl.class, optional=false, cascade = {CascadeType.REFRESH})
+    @ManyToOne(targetEntity = OrderImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ID")
     protected Order order;
 
