@@ -19,13 +19,6 @@
  */
 package org.broadleafcommerce.core.order.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,6 +76,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -151,8 +151,8 @@ public class OrderServiceImpl implements OrderService {
     @Value("${pricing.retry.wait.interval.for.lock.failure}")
     protected long pricingRetryWaitIntervalForLockFailure = 500L;
 
-    @Value("${singleFulfillmentGroup.fgItem.sync.qty:false}")
-    protected boolean singleFulfillmentGroupSyncFGItemQty;
+    @Value("${order.outOfSyncCache.refresh:false}")
+    protected boolean refreshOutOfSyncCachedOrder;
     
     /* Fields */
     protected boolean moveNamedOrderItems = true;
@@ -789,7 +789,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * Returns true if the two items attributes exactly match.
-     * @param item1
+     * @param item1Attributes
      * @param item2
      * @return
      */
@@ -955,7 +955,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order getLatestVersionOfOrder(Order order) {
 
-        if (singleFulfillmentGroupSyncFGItemQty && requiresRefresh(order)) {
+        if (refreshOutOfSyncCachedOrder && requiresRefresh(order)) {
             refresh(order);
         }
 
