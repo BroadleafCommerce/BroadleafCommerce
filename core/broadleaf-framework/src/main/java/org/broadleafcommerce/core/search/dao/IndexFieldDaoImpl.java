@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -37,6 +38,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
@@ -127,6 +129,30 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
         criteria.where(
                 builder.equal(root.get("indexField").get("field").get("abbreviation").as(String.class), abbreviation)
         );
+
+        TypedQuery<IndexFieldType> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<IndexFieldType> getIndexFieldTypesByAbbreviationOrPropertyName(String name) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<IndexFieldType> criteria = builder.createQuery(IndexFieldType.class);
+
+        Root<IndexFieldTypeImpl> root = criteria.from(IndexFieldTypeImpl.class);
+
+        criteria.select(root);
+        List<Predicate> restrictions = new ArrayList<>();
+        restrictions.add(builder.or(
+                builder.equal(root.get("indexField").get("field").get("abbreviation").as(String.class), name),
+                builder.equal(root.get("indexField").get("field").get("propertyName").as(String.class), name)));
+        restrictions.add(builder.or(
+                builder.isNull(root.get("archiveStatus").get("archived")),
+                builder.equal(root.get("archiveStatus").get("archived"), 'N')));
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
         TypedQuery<IndexFieldType> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);

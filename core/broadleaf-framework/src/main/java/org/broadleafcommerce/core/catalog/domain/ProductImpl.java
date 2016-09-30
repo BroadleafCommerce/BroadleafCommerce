@@ -327,6 +327,9 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Transient
     protected Map<String, Set<String>> productOptionMap;
 
+    @Transient
+    protected List<String> allParentCategoryIds;
+
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
@@ -644,6 +647,19 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         }
 
         return parentCategoryHierarchyIds;
+    }
+
+    @Override
+    public List<String> getAllParentCategoryIds() {
+        List<String> parentIds = new ArrayList<>();
+
+        for (CategoryProductXref xref : allParentCategoryXrefs) {
+            String parentId = String.valueOf(xref.getCategory().getId());
+            parentIds.add(parentId);
+        }
+
+        allParentCategoryIds = parentIds;
+        return parentIds;
     }
 
     @Override
