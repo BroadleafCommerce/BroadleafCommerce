@@ -645,4 +645,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     public void destroy() throws Exception {
         solrConfiguration.destroy();
     }
+
+    @Override
+    public boolean isActive() {
+        return solrConfiguration != null;
+    }
 }
