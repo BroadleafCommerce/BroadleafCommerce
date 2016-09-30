@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -109,42 +110,44 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
                                  ShippingInfoForm shippingForm, BindingResult result) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
 
-        if (shippingForm.isUseBillingAddress()){
-            copyBillingAddressToShippingAddress(cart, shippingForm);
-        }
+        if (! (cart instanceof NullOrderImpl)) {
+            if (shippingForm.isUseBillingAddress()){
+                copyBillingAddressToShippingAddress(cart, shippingForm);
+            }
 
-        addressService.populateAddressISOCountrySub(shippingForm.getAddress());
-        shippingInfoFormValidator.validate(shippingForm, result);
-        if (result.hasErrors()) {
-            return getCheckoutView();
-        }
+            addressService.populateAddressISOCountrySub(shippingForm.getAddress());
+            shippingInfoFormValidator.validate(shippingForm, result);
+            if (result.hasErrors()) {
+                return getCheckoutView();
+            }
 
-        if ((shippingForm.getAddress().getPhonePrimary() != null) &&
-                (StringUtils.isEmpty(shippingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
-            shippingForm.getAddress().setPhonePrimary(null);
-        }
-        if ((shippingForm.getAddress().getPhoneSecondary() != null) &&
-                (StringUtils.isEmpty(shippingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
-            shippingForm.getAddress().setPhoneSecondary(null);
-        }
-        if ((shippingForm.getAddress().getPhoneFax() != null) &&
-                (StringUtils.isEmpty(shippingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
-            shippingForm.getAddress().setPhoneFax(null);
-        }
+            if ((shippingForm.getAddress().getPhonePrimary() != null) &&
+                    (StringUtils.isEmpty(shippingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
+                shippingForm.getAddress().setPhonePrimary(null);
+            }
+            if ((shippingForm.getAddress().getPhoneSecondary() != null) &&
+                    (StringUtils.isEmpty(shippingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+                shippingForm.getAddress().setPhoneSecondary(null);
+            }
+            if ((shippingForm.getAddress().getPhoneFax() != null) &&
+                    (StringUtils.isEmpty(shippingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
+                shippingForm.getAddress().setPhoneFax(null);
+            }
 
-        FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
-        if (shippableFulfillmentGroup != null) {
-            shippableFulfillmentGroup.setAddress(shippingForm.getAddress());
-            shippableFulfillmentGroup.setPersonalMessage(shippingForm.getPersonalMessage());
-            shippableFulfillmentGroup.setDeliveryInstruction(shippingForm.getDeliveryMessage());
-            FulfillmentOption fulfillmentOption = fulfillmentOptionService.readFulfillmentOptionById(shippingForm.getFulfillmentOptionId());
-            shippableFulfillmentGroup.setFulfillmentOption(fulfillmentOption);
+            FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
+            if (shippableFulfillmentGroup != null) {
+                shippableFulfillmentGroup.setAddress(shippingForm.getAddress());
+                shippableFulfillmentGroup.setPersonalMessage(shippingForm.getPersonalMessage());
+                shippableFulfillmentGroup.setDeliveryInstruction(shippingForm.getDeliveryMessage());
+                FulfillmentOption fulfillmentOption = fulfillmentOptionService.readFulfillmentOptionById(shippingForm.getFulfillmentOptionId());
+                shippableFulfillmentGroup.setFulfillmentOption(fulfillmentOption);
 
-            cart = orderService.save(cart, true);
+                cart = orderService.save(cart, true);
+            }
+
+            //Add module specific logic
+            checkoutControllerExtensionManager.getProxy().performAdditionalShippingAction();
         }
-
-        //Add module specific logic
-        checkoutControllerExtensionManager.getProxy().performAdditionalShippingAction();
 
         if (isAjaxRequest(request)) {
             //Add module specific model variables
