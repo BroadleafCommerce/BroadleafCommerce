@@ -760,6 +760,13 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     public void setAllParentCategoryXrefs(List<CategoryProductXref> allParentCategories);
 
     /**
+     * Returns all parent {@link Category} ids this product is associated with.
+     *
+     * @return the all parent category ids for this product
+     */
+    public List<String> getAllParentCategoryIds();
+
+    /**
      * Returns all parent {@link Category}(s) this product is associated with.
      *
      * @deprecated Use getAllParentCategoryXrefs() instead.
