@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.AccessControlException;
 
@@ -241,7 +242,7 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
         try {
             ESAPI.httpUtilities().sendRedirect(arg0);
         } catch (AccessControlException e) {
-            LOG.error("SECURITY FAILURE Bad redirect url: " + arg0, e);
+            LOG.error("SECURITY FAILURE Bad redirect url: " + StringUtil.sanitize(arg0), e);
             throw new IOException("Access Control Exception", e);
         }
     }

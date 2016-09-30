@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -228,7 +229,8 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         String message = requestParams.getFirst("message");
 
         // Log the error
-        LOG.error("[JS] - (" + url + ":" + lineNumber + ") - " + message);
+        LOG.error("[JS] - (" + StringUtil.sanitize(url) + ":" + StringUtil.sanitize(lineNumber) + ") - " 
+                + StringUtil.sanitize(message));
 
         // Return an errorLogged message to the client
         return (new JsonResponse(response))
