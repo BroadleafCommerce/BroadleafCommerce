@@ -135,10 +135,10 @@ public class PageDaoImpl implements PageDao {
         // Add the active start/end date restrictions
         restrictions.add(builder.or(
                 builder.isNull(pageRoot.get("activeStartDate")),
-                builder.lessThan(pageRoot.get("activeStartDate").as(Date.class), currentDate)));
+                builder.lessThanOrEqualTo(pageRoot.get("activeStartDate").as(Date.class), currentDate)));
         restrictions.add(builder.or(
                 builder.isNull(pageRoot.get("activeEndDate")),
-                builder.greaterThan(pageRoot.get("activeEndDate").as(Date.class), currentDate)));
+                builder.greaterThanOrEqualTo(pageRoot.get("activeEndDate").as(Date.class), currentDate)));
         // Ensure the page is currently active
         restrictions.add(builder.or(
                 builder.isNull(pageRoot.get("offlineFlag")),
