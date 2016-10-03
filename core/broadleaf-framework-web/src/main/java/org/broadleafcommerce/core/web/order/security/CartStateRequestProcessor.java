@@ -135,6 +135,8 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
             }
         }
 
+        orderService.getLatestVersionOfOrder(cart);
+
         request.setAttribute(cartRequestAttributeName, cart, WebRequest.SCOPE_REQUEST);
 
         // Setup cart for content rule processing

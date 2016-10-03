@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdap
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderLock;
@@ -255,7 +256,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public void refresh(Order order) {
-        em.refresh(order);
+        if (order != null && !(order instanceof NullOrderImpl)) {
+            em.refresh(order);
+        }
     }
 
     @Override
@@ -315,13 +318,13 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public boolean requiresRefresh(Order order) {
         boolean requiresRefresh = false;
+        if (order != null && !(order instanceof NullOrderImpl)) {
+            Query query = em.createNamedQuery("BC_READ_ORDER_BY_ID_IF_MORE_RECENT");
+            query.setParameter("orderId", order.getId());
+            query.setParameter("dateUpdated", order.getAuditable().getDateUpdated());
 
-        Query query = em.createNamedQuery("BC_READ_ORDER_BY_ID_IF_MORE_RECENT");
-        query.setParameter("orderId", order.getId());
-        query.setParameter("dateUpdated", order.getAuditable().getDateUpdated());
-
-        if (CollectionUtils.isNotEmpty(query.getResultList())) {
-            requiresRefresh = true;
+            Long result = (Long) query.getSingleResult();
+            requiresRefresh = result > 0;
         }
 
         return requiresRefresh;
