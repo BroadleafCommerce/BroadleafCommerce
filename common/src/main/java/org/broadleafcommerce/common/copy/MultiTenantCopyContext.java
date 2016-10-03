@@ -21,6 +21,8 @@ package org.broadleafcommerce.common.copy;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.site.domain.Catalog;
@@ -200,29 +202,36 @@ public class MultiTenantCopyContext {
             response = (G) previousClone;
             alreadyPopulate = true;
         } else {
-            try {
-                response = (G) instanceClass.newInstance();
-            } catch (InstantiationException e) {
-                throw ExceptionHelper.refineException(e);
-            } catch (IllegalAccessException e) {
-                throw ExceptionHelper.refineException(e);
-            }
-            checkCloneable(response);
-            alreadyPopulate = false;
-            currentEquivalentMap.put(System.identityHashCode(response), instanceClass.getName() + "_" + originalId);
-            currentCloneMap.put(System.identityHashCode(response), response);
-            try {
-                for (Field field : getAllFields(instanceClass)) {
-                    if (field.getType().getAnnotation(Embeddable.class) != null && MultiTenantCloneable.class.isAssignableFrom(field.getType())) {
-                        field.setAccessible(true);
-                        Object embeddable = field.get(instance);
-                        if (embeddable != null) {
-                            field.set(response, ((MultiTenantCloneable) embeddable).createOrRetrieveCopyInstance(this).getClone());
+            boolean shouldClone = checkCloneStatus(instance);
+            if (!shouldClone) {
+                response = (G) instance;
+                alreadyPopulate = true;
+            } else {
+                try {
+                    response = (G) instanceClass.newInstance();
+                } catch (InstantiationException e) {
+                    throw ExceptionHelper.refineException(e);
+                } catch (IllegalAccessException e) {
+                    throw ExceptionHelper.refineException(e);
+                }
+                checkCloneable(response);
+                alreadyPopulate = false;
+                currentEquivalentMap.put(System.identityHashCode(response), instanceClass.getName() + "_" + originalId);
+                currentCloneMap.put(System.identityHashCode(response), response);
+                try {
+                    for (Field field : getAllFields(instanceClass)) {
+                        if (field.getType().getAnnotation(Embeddable.class) != null && MultiTenantCloneable.class.isAssignableFrom(field.getType())) {
+                            field.setAccessible(true);
+                            Object embeddable = field.get(instance);
+                            if (embeddable != null) {
+                                field.set(response, ((MultiTenantCloneable) embeddable).createOrRetrieveCopyInstance
+                                        (this).getClone());
+                            }
                         }
                     }
+                } catch (IllegalAccessException e) {
+                    throw ExceptionHelper.refineException(e);
                 }
-            } catch (IllegalAccessException e) {
-                throw ExceptionHelper.refineException(e);
             }
         }
         context.setCurrentCatalog(getFromCatalog());
@@ -260,5 +269,18 @@ public class MultiTenantCopyContext {
         }
 
         return allFields;
+    }
+
+    protected boolean checkCloneStatus(Object instance) {
+        boolean shouldClone = true;
+        ExtensionResultHolder<Boolean> shouldCloneHolder = new ExtensionResultHolder<Boolean>();
+        if (extensionManager != null) {
+            ExtensionResultStatusType status = extensionManager.getProxy().shouldClone(this, instance,
+                    shouldCloneHolder);
+            if (ExtensionResultStatusType.NOT_HANDLED != status) {
+                shouldClone = shouldCloneHolder.getResult();
+            }
+        }
+        return shouldClone;
     }
 }
