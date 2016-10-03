@@ -33,7 +33,6 @@ import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.SkuAccessor;
-import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.processor.extension.UncacheableDataProcessorExtensionManager;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -84,9 +83,6 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
 
     @Resource(name = "blExploitProtectionService")
     protected ExploitProtectionService eps;
-
-    @Resource(name = "blOrderService")
-    protected OrderService orderService;
 
     @Resource(name = "blUncacheableDataProcessorExtensionManager")
     protected UncacheableDataProcessorExtensionManager extensionManager;
@@ -183,7 +179,7 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
     }
 
     protected void addCartData(Map<String, Object> attrMap) {
-        Order cart = orderService.reloadOrder(CartState.getCart());
+        Order cart = CartState.getCart();
         int cartQty = 0;
         List<Long> cartItemIdsWithOptions = new ArrayList<Long>();
         List<Long> cartItemIdsWithoutOptions = new ArrayList<Long>();
