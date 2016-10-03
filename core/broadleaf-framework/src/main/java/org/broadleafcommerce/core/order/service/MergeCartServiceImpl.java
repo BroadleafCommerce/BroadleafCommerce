@@ -132,8 +132,6 @@ public class MergeCartServiceImpl implements MergeCartService {
         Order customerCart = orderService.findCartForCustomer(customer);
 
         if (customerCart != null) {
-            orderService.refresh(customerCart);
-
             List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
 
             for (OrderItem orderItem : customerCart.getOrderItems()) {
