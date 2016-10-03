@@ -255,7 +255,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public void refresh(Order order) {
-        em.refresh(order);
+        if (order != null) {
+            em.refresh(order);
+        }
     }
 
     @Override
@@ -316,12 +318,14 @@ public class OrderDaoImpl implements OrderDao {
     public boolean requiresRefresh(Order order) {
         boolean requiresRefresh = false;
 
-        Query query = em.createNamedQuery("BC_READ_ORDER_BY_ID_IF_MORE_RECENT");
-        query.setParameter("orderId", order.getId());
-        query.setParameter("dateUpdated", order.getAuditable().getDateUpdated());
+        if (order != null) {
+            Query query = em.createNamedQuery("BC_READ_ORDER_BY_ID_IF_MORE_RECENT");
+            query.setParameter("orderId", order.getId());
+            query.setParameter("dateUpdated", order.getAuditable().getDateUpdated());
 
-        if (CollectionUtils.isNotEmpty(query.getResultList())) {
-            requiresRefresh = true;
+            if (CollectionUtils.isNotEmpty(query.getResultList())) {
+                requiresRefresh = true;
+            }
         }
 
         return requiresRefresh;
