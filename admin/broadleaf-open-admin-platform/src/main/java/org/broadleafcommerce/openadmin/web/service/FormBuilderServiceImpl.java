@@ -56,6 +56,12 @@ import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
+import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifier;
+import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierData;
+import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierDataPoint;
+import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierRequest;
+import org.broadleafcommerce.openadmin.server.security.service.ExceptionAwareRowLevelSecurityProvider;
+import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierConfiguration;
 import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
@@ -304,7 +310,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             Property p2 = cmd.getPMap().get("key");
             BasicFieldMetadata keyMd = (BasicFieldMetadata) p2.getMetadata();
-            keyMd.setFriendlyName("Key");
+            keyMd.setFriendlyName(p2.getMetadata().getFriendlyName());
             Field hf = createHeaderField(p2, keyMd);
             headerFields.add(hf);
             
@@ -396,6 +402,22 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
 
+        //If someone has replaced RowLevelSecurityService, check here to make sure the replacement implements the expected interface
+        if (rowLevelSecurityService instanceof ExceptionAwareRowLevelSecurityProvider) {
+            EntityFormModifierConfiguration entityFormModifierConfiguration = ((ExceptionAwareRowLevelSecurityProvider) rowLevelSecurityService).getUpdateDenialExceptions();
+            for (EntityFormModifierData<EntityFormModifierDataPoint> data : entityFormModifierConfiguration.getData()) {
+                for (EntityFormModifier modifier : entityFormModifierConfiguration.getModifier()) {
+                    if (modifier.isQualified(data.getModifierType())) {
+                        modifier.modifyListGrid(new EntityFormModifierRequest()
+                                .withListGrid(listGrid)
+                                .withConfiguration(data)
+                                .withCurrentUser(adminRemoteSecurityService.getPersistentAdminUser())
+                                .withRowLevelSecurityService(rowLevelSecurityService));
+                    }
+                }
+            }
+        }
+
         return listGrid;
     }
 
@@ -427,6 +449,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ListGridRecord record = new ListGridRecord();
             record.setListGrid(listGrid);
             record.setDirty(e.isDirty());
+            record.setEntity(e);
 
             if (e.findProperty("hasError") != null) {
                 Boolean hasError = Boolean.parseBoolean(e.findProperty("hasError").getValue());
@@ -1018,6 +1041,22 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         if (readOnly) {
             entityForm.setReadOnly();
+            //If someone has replaced RowLevelSecurityService, check here to make sure the replacement implements the expected interface
+            if (rowLevelSecurityService instanceof ExceptionAwareRowLevelSecurityProvider) {
+                EntityFormModifierConfiguration entityFormModifierConfiguration = ((ExceptionAwareRowLevelSecurityProvider) rowLevelSecurityService).getUpdateDenialExceptions();
+                for (EntityFormModifierData<EntityFormModifierDataPoint> data : entityFormModifierConfiguration.getData()) {
+                    for (EntityFormModifier modifier : entityFormModifierConfiguration.getModifier()) {
+                        if (modifier.isQualified(data.getModifierType())) {
+                            modifier.modifyEntityForm(new EntityFormModifierRequest()
+                                    .withEntityForm(entityForm)
+                                    .withConfiguration(data)
+                                    .withCurrentUser(adminRemoteSecurityService.getPersistentAdminUser())
+                                    .withEntity(entity)
+                                    .withRowLevelSecurityService(rowLevelSecurityService));
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -1176,7 +1215,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ComboField temp = new ComboField();
             temp.withName("key")
                     .withFieldType("combo_field")
-                    .withFriendlyName("Key");
+                    .withFriendlyName(mapStructure.getKeyPropertyFriendlyName());
             if (mapMd.getKeys() != null) {
                 // The keys can be explicitly set in the annotation...
                 temp.setOptions(mapMd.getKeys());
@@ -1197,7 +1236,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         } else {
             keyField = new Field().withName("key")
                                 .withFieldType(SupportedFieldType.STRING.toString())
-                                .withFriendlyName("Key");
+                                .withFriendlyName(mapStructure.getKeyPropertyFriendlyName());
         }
         keyField.setRequired(true);
         ef.addMapKeyField(keyField);
