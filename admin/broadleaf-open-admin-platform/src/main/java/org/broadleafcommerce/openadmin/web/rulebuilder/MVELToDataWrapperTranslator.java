@@ -45,6 +45,10 @@ public class MVELToDataWrapperTranslator {
 
     private static final Log LOG = LogFactory.getLog(MVELToDataWrapperTranslator.class);
 
+    public static final String SUB_GROUP_MESSAGE = "MVEL phrase is not compatible with nested expressions. " +
+            "Please use the rule builder to re-structure the rule.  Use top-level expressions, " +
+            "product groups and/or customer segments.";
+
     protected GroupingTranslator groupingTranslator = new GroupingTranslator();
     protected PhraseTranslator phraseTranslator = new PhraseTranslator();
 
@@ -81,6 +85,9 @@ public class MVELToDataWrapperTranslator {
                         dataDTO.setPk(id);
                         dataDTO.setQuantity(qty);
                         dataWrapper.getData().add(dataDTO);
+                        if (group.getSubGroups().size() > 0) {
+                            throw new MVELTranslationException(MVELTranslationException.SUB_GROUP_DETECTED, SUB_GROUP_MESSAGE);
+                        }
                     }
                 }
             }
@@ -133,9 +140,9 @@ public class MVELToDataWrapperTranslator {
         Expression expression = phraseTranslator.createExpression(phrase);
         FieldDTO field = fieldService.getField(expression.getField());
         if (field == null) {
-            throw new MVELTranslationException(MVELTranslationException.SPECIFIED_FIELD_NOT_FOUND, "MVEL phrase is not compatible with the RuleBuilderFieldService " +
-                    "associated with the current rules builder. Unable to find the field " +
-                    "specified: ("+expression.getField()+")");
+            throw new MVELTranslationException(MVELTranslationException.SPECIFIED_FIELD_NOT_FOUND, "MVEL phrase is not " +
+                    "compatible with the RuleBuilderFieldService associated with the current rules builder. " +
+                    "Unable to find the field specified: ("+expression.getField()+")");
         }
         SupportedFieldType type = fieldService.getSupportedFieldType(expression.getField());
         ExpressionDTO expressionDTO = createExpressionDTO(expression);
