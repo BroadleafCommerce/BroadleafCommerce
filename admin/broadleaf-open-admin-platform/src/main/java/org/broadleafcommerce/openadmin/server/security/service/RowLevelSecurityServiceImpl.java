@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -44,7 +45,7 @@ import javax.persistence.criteria.Root;
  * @author Jeff Fischer
  */
 @Service("blRowLevelSecurityService")
-public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
+public class RowLevelSecurityServiceImpl implements RowLevelSecurityService, ExceptionAwareRowLevelSecurityProvider {
     
     private static final Log LOG = LogFactory.getLog(RowLevelSecurityServiceImpl.class);
     
@@ -82,6 +83,25 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
             }
         }
         return true;
+    }
+
+    @Override
+    public EntityFormModifierConfiguration getUpdateDenialExceptions() {
+        EntityFormModifierConfiguration sum = new EntityFormModifierConfiguration();
+        for (RowLevelSecurityProvider provider : getProviders()) {
+            if (provider instanceof ExceptionAwareRowLevelSecurityProvider) {
+                EntityFormModifierConfiguration response = ((ExceptionAwareRowLevelSecurityProvider) provider).getUpdateDenialExceptions();
+                if (response != null) {
+                    if (!CollectionUtils.isEmpty(response.getModifier())) {
+                        sum.getModifier().addAll(response.getModifier());
+                    }
+                    if (!CollectionUtils.isEmpty(response.getData())) {
+                        sum.getData().addAll(response.getData());
+                    }
+                }
+            }
+        }
+        return sum;
     }
 
     @Override
