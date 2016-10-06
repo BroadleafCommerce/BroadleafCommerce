@@ -619,8 +619,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void addChildItems(OrderItemRequestDTO orderItemRequestDTO, int numAdditionRequests, int currentAddition, ProcessContext<CartOperationRequest> context, List<ActivityMessageDTO> orderMessages) throws WorkflowException {
         if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
+            Long parentOrderItemId = context.getSeedData().getOrderItem().getId();
             for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
-                childRequest.setParentOrderItemId(context.getSeedData().getOrderItem().getId());
+                childRequest.setParentOrderItemId(parentOrderItemId);
                 currentAddition++;
 
                 CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);

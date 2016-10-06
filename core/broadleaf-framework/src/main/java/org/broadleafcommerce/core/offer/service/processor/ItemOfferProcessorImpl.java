@@ -406,8 +406,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 quantity = ((Integer) o).intValue();
             }
         }
-
-        return itemOffer.calculateSavingsForOrderItem(item, quantity);
+        boolean isAddOnOrderItem = offerServiceUtilities.isAddOnOrderItem(item.getOrderItem());
+        Boolean offerCanApplyToChildOrderItems = itemOffer.getOffer().getApplyToChildItems();
+        if (isAddOnOrderItem && !offerCanApplyToChildOrderItems) {
+            return Money.ZERO;
+        } else {
+            return itemOffer.calculateSavingsForOrderItem(item, quantity);
+        }
     }
 
     /**
@@ -586,7 +591,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
     }
 
-    protected void determineBestPermutation(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order) {
+    protected List<PromotableCandidateItemOffer> determineBestPermutation(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order) {
         List<List<PromotableCandidateItemOffer>> permutations = buildItemOfferPermutations(itemOffers);
         removeDuplicatePermutations(permutations);
         List<PromotableCandidateItemOffer> bestOfferList = null;
@@ -619,7 +624,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             offer.resetUses();
         }
 
-        applyAllItemOffers(bestOfferList, order);
+        return bestOfferList;
     }
 
     protected void removeDuplicatePermutations(List<List<PromotableCandidateItemOffer>> permutations) {
@@ -664,11 +669,10 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             Collections.sort(qualifiedItemOffers, ItemOfferComparator.INSTANCE);
             
             if (qualifiedItemOffers.size() > 1) {
-                determineBestPermutation(qualifiedItemOffers, order);
-            } else {
-                applyAllItemOffers(qualifiedItemOffers, order);
-
+                qualifiedItemOffers = determineBestPermutation(qualifiedItemOffers, order);
             }
+
+            applyAllItemOffers(qualifiedItemOffers, order);
         }
         chooseSaleOrRetailAdjustments(order);
         if (extensionManager != null) {

@@ -197,7 +197,14 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             group = GroupName.Advanced,
             defaultValue = "true")
     protected Boolean applyToSalePrice = true;
-    
+
+    @Column(name = "APPLY_TO_CHILD_ITEMS")
+    @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Child_Items",
+            tooltip = "OfferImpl_Apply_To_Child_Items_tooltip",
+            group = GroupName.Advanced,
+            defaultValue = "false")
+    protected Boolean applyToChildItems = false;
+
     /**
      * Determines if other offers of the same type can be combined with this offer. 
      */
@@ -484,7 +491,17 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public void setApplyDiscountToSalePrice(boolean applyToSalePrice) {
-        this.applyToSalePrice=applyToSalePrice;
+        this.applyToSalePrice = applyToSalePrice;
+    }
+
+    @Override
+    public Boolean getApplyToChildItems() {
+        return applyToChildItems == null ? false : applyToChildItems;
+    }
+
+    @Override
+    public void setApplyToChildItems(boolean applyToChildItems) {
+        this.applyToChildItems = applyToChildItems;
     }
 
     /**

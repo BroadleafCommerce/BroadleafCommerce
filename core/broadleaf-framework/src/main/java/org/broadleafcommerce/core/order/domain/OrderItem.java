@@ -524,4 +524,9 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      */
     public boolean isAParentOf(OrderItem candidateChild);
 
+    /**
+     * @return true if the OrderItem has a parent
+     */
+    public boolean isChildOrderItem();
+
 }
