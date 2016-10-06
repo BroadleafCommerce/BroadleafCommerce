@@ -2,7 +2,7 @@
     <div th:if="${entityFriendlyName}" th:remove="tag" blc_admin:admin_section_href="${currentAdminSection}" >
         <h3>
             <span class="filter-text" style="display: none;">Filtered </span>
-            <span th:inline="text">
+            <span th:inline="text" class="admin-section">
                 [[#{#{${currentAdminSection.sectionKey}}}]]
             </span>
         </h3>
