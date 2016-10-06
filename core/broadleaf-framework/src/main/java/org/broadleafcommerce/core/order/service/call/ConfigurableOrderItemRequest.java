@@ -34,6 +34,7 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
     protected Money displayPrice;
     protected Integer orderItemIndex;
 
+    protected Boolean hasOverridenPrice;
     protected Boolean hasConfigurationError;
     protected Boolean discountsAllowed;
 
@@ -102,6 +103,17 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     public void setOrderItemIndex(Integer orderItemIndex) {
         this.orderItemIndex = orderItemIndex;
+    }
+
+    public Boolean getHasOverridenPrice() {
+        if (hasOverridenPrice == null) {
+            return false;
+        }
+        return hasOverridenPrice;
+    }
+
+    public void setHasOverridenPrice(Boolean hasOverridenPrice) {
+        this.hasOverridenPrice = hasOverridenPrice;
     }
 
     public Boolean getHasConfigurationError() {
