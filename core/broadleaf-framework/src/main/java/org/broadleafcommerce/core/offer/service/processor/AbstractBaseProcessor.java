@@ -194,7 +194,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                         candidates.addQualifier(criteria, item);
                     } else {
                         candidates.addTarget(criteria, item);
-                        applyOfferToChildOrderItems(offer, candidates, criteria, promotableOrderItems, item);
+                        addChildOrderItemsToCandidates(offer, candidates, criteria, promotableOrderItems, item);
                     }
                     matchedQuantity += item.getQuantity();
                 }
@@ -209,7 +209,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         }
     }
 
-    protected void applyOfferToChildOrderItems(Offer offer, CandidatePromotionItems candidates, OfferItemCriteria criteria, List<PromotableOrderItem> promotableOrderItems, PromotableOrderItem item) {
+    protected void addChildOrderItemsToCandidates(Offer offer, CandidatePromotionItems candidates, OfferItemCriteria criteria, List<PromotableOrderItem> promotableOrderItems, PromotableOrderItem item) {
         if (offer.getApplyToChildItems()) {
             final List<OrderItem> childItems = item.getOrderItem().getChildOrderItems();
             if (CollectionUtils.isEmpty(childItems)) {
