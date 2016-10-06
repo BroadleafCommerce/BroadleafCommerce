@@ -776,6 +776,11 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
+    public boolean isChildOrderItem() {
+        return getParentOrderItem() != null;
+    }
+
+    @Override
     public String getMainEntityName() {
         return getName();
     }
