@@ -29,10 +29,11 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+
+import javax.annotation.Resource;
 
 public class CartTest extends OrderBaseTest {
     
@@ -40,7 +41,7 @@ public class CartTest extends OrderBaseTest {
     private MergeCartService mergeCartService;
     
     protected boolean cartContainsOnlyTheseItems(Order cart, List<OrderItem> orderItems) {
-        List<OrderItem> cartOrderItems = new ArrayList<OrderItem>(cart.getOrderItems());
+        List<OrderItem> cartOrderItems = new ArrayList<>(cart.getOrderItems());
         
         for (OrderItem item : orderItems) {
             ListIterator<OrderItem> it = cartOrderItems.listIterator();
@@ -86,7 +87,7 @@ public class CartTest extends OrderBaseTest {
     @Transactional
     public void testMoveAllItemsToCartFromNamedOrder() throws RemoveFromCartException, AddToCartException {
         Order namedOrder = setUpNamedOrder();
-        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        List<OrderItem> namedOrderItems = new ArrayList<>();
         namedOrderItems.addAll(namedOrder.getOrderItems());
         Order cart = orderService.createNewCartForCustomer(namedOrder.getCustomer());
         cart = orderService.addAllItemsFromNamedOrder(namedOrder, true);
@@ -98,7 +99,7 @@ public class CartTest extends OrderBaseTest {
     @Transactional
     public void testAddAllItemsToCartFromNamedOrder() throws RemoveFromCartException, AddToCartException {
         Order namedOrder = setUpNamedOrder();
-        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        List<OrderItem> namedOrderItems = new ArrayList<>();
         namedOrderItems.addAll(namedOrder.getOrderItems());
         Order cart = orderService.createNewCartForCustomer(namedOrder.getCustomer());
         orderService.setMoveNamedOrderItems(false);
@@ -111,7 +112,7 @@ public class CartTest extends OrderBaseTest {
     @Transactional
     public void testAddAllItemsToCartFromNamedOrderWithoutExistingCart() throws RemoveFromCartException, AddToCartException {
         Order namedOrder = setUpNamedOrder();
-        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        List<OrderItem> namedOrderItems = new ArrayList<>();
         namedOrderItems.addAll(namedOrder.getOrderItems());
         orderService.setMoveNamedOrderItems(false);
         Order cart = orderService.addAllItemsFromNamedOrder(namedOrder, true);
@@ -123,9 +124,9 @@ public class CartTest extends OrderBaseTest {
     @Transactional
     public void testAddItemToCartFromNamedOrder() throws RemoveFromCartException, AddToCartException {
         Order namedOrder = setUpNamedOrder();
-        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        List<OrderItem> namedOrderItems = new ArrayList<>();
         namedOrderItems.addAll(namedOrder.getOrderItems());
-        List<OrderItem> movedOrderItems = new ArrayList<OrderItem>();
+        List<OrderItem> movedOrderItems = new ArrayList<>();
         movedOrderItems.add(namedOrderItems.get(0));
         Order cart = orderService.createNewCartForCustomer(namedOrder.getCustomer());
         orderService.setMoveNamedOrderItems(false);
@@ -138,9 +139,9 @@ public class CartTest extends OrderBaseTest {
     @Transactional
     public void testMoveItemToCartFromNamedOrder() throws RemoveFromCartException, AddToCartException {
         Order namedOrder = setUpNamedOrder();
-        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        List<OrderItem> namedOrderItems = new ArrayList<>();
         namedOrderItems.addAll(namedOrder.getOrderItems());
-        List<OrderItem> movedOrderItems = new ArrayList<OrderItem>();
+        List<OrderItem> movedOrderItems = new ArrayList<>();
         movedOrderItems.add(namedOrderItems.get(0));
         Order cart = orderService.createNewCartForCustomer(namedOrder.getCustomer());
         cart = orderService.addItemFromNamedOrder(namedOrder, movedOrderItems.get(0), true);
@@ -155,9 +156,9 @@ public class CartTest extends OrderBaseTest {
     @Transactional
     public void testMoveItemToCartFromNamedOrderWithoutExistingCart() throws RemoveFromCartException, AddToCartException {
         Order namedOrder = setUpNamedOrder();
-        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        List<OrderItem> namedOrderItems = new ArrayList<>();
         namedOrderItems.addAll(namedOrder.getOrderItems());
-        List<OrderItem> movedOrderItems = new ArrayList<OrderItem>();
+        List<OrderItem> movedOrderItems = new ArrayList<>();
         movedOrderItems.add(namedOrderItems.get(0));
         Order cart = orderService.addItemFromNamedOrder(namedOrder, movedOrderItems.get(0), true);
         List<Order> customerNamedOrders = orderService.findOrdersForCustomer(namedOrder.getCustomer(), OrderStatus.NAMED);
@@ -225,116 +226,5 @@ public class CartTest extends OrderBaseTest {
         assert response.getOrder().getId().equals(customerCart.getId());
         assert response.isMerged() == false;
     }
-    
-    /*
-    @Transactional
-    @Test(groups = { "testMergeCartLegacy" }) 
-    public void testMergeToExistingCart() throws PricingException {
-        //sets up anonymous cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
-        Order anonymousCart = setUpAnonymousCartWithInactiveSku();
-        Customer customer = customerService.saveCustomer(createNamedCustomer());
-        
-        //sets up existing cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
-        initializeExistingCartWithInactiveSkuAndInactiveBundle(customer);
-        MergeCartResponse response = cartService.mergeCart(customer, anonymousCart);
-        
-        assert response.getAddedItems().size() == 2;
-        assert response.getOrder().getOrderItems().size() == 4;
-        assert response.isMerged();
-        assert response.getRemovedItems().size() == 4;
-    }
-
-    @Transactional
-    @Test(groups = { "testMergeCartLegacy" })
-    public void testMergeToExistingCartWithGiftWrapOrderItems() throws PricingException {
-        //sets up anonymous cart with two DiscreteOrderItems, and a GiftWrapOrderItem
-        Order anonymousCart = setUpAnonymousCartWithGiftWrap();
-        Customer customer = customerService.saveCustomer(createNamedCustomer());
-
-        //sets up existing cart with two active DiscreteOrderItems
-        initializeExistingCart(customer);
-        MergeCartResponse response = cartService.mergeCart(customer, anonymousCart);
-
-        assert response.getAddedItems().size() == 3;
-        assert response.getOrder().getOrderItems().size() == 5;
-        assert response.isMerged();
-        assert response.getRemovedItems().size() == 0;
-
-        //sets up anonymous cart with a DiscreteOrderItem, inactive DiscreteOrderItem and inactive GiftWrapOrderItem (due to inactive wrapped item)
-        anonymousCart = setUpAnonymousCartWithInactiveGiftWrap();
-        customer = customerService.saveCustomer(createNamedCustomer());
-
-        //sets up existing cart with two active DiscreteOrderItems
-        initializeExistingCart(customer);
-        response = cartService.mergeCart(customer, anonymousCart);
-
-        assert response.getAddedItems().size() == 1;
-        assert response.getOrder().getOrderItems().size() == 3;
-        assert response.isMerged();
-        assert response.getRemovedItems().size() == 2;
-
-        //sets up anonymous cart with a DiscreteOrderItem, inactive DiscreteOrderItem and inactive GiftWrapOrderItem (due to inactive wrapped item) inside a BundleOrderItem
-        anonymousCart = setUpAnonymousCartWithInactiveBundleGiftWrap();
-        customer = customerService.saveCustomer(createNamedCustomer());
-
-        //sets up existing cart with two active DiscreteOrderItems
-        initializeExistingCart(customer);
-        response = cartService.mergeCart(customer, anonymousCart);
-
-        assert response.getAddedItems().size() == 0;
-        assert response.getOrder().getOrderItems().size() == 2;
-        assert response.isMerged();
-        assert response.getRemovedItems().size() == 1;
-
-        //sets up anonymous cart with active DiscreteOrderItems, and active GiftWrapOrderItem inside a BundleOrderItem
-        anonymousCart = setUpAnonymousCartWithBundleGiftWrap();
-        customer = customerService.saveCustomer(createNamedCustomer());
-
-        //sets up existing cart with two active DiscreteOrderItems
-        initializeExistingCart(customer);
-        response = cartService.mergeCart(customer, anonymousCart);
-
-        assert response.getAddedItems().size() == 1;
-        assert response.getOrder().getOrderItems().size() == 3;
-        assert response.isMerged();
-        assert response.getRemovedItems().size() == 0;
-
-        //sets up anonymous cart with active DiscreteOrderItems, and active GiftWrapOrderItem inside a BundleOrderItem. Active OrderItems are also in the root of the order and the bundled GiftWrapOrderItem wraps the root OrderItems
-        anonymousCart = setUpAnonymousCartWithBundleGiftWrapReferringToRootItems();
-        customer = customerService.saveCustomer(createNamedCustomer());
-
-        //sets up existing cart with two active DiscreteOrderItems
-        initializeExistingCart(customer);
-        response = cartService.mergeCart(customer, anonymousCart);
-
-        assert response.getAddedItems().size() == 3;
-        assert response.getOrder().getOrderItems().size() == 5;
-        assert response.isMerged();
-        assert response.getRemovedItems().size() == 0;
-
-        //sets up anonymous cart with two BundleOrderItems, one of which has a GiftWrapOrderItem. The GiftWrapOrderItem wraps the DiscreteOrderItems from the other bundle, which makes its bundle inactive.
-        anonymousCart = setUpAnonymousCartWithBundleGiftWrapReferringItemsInAnotherBundle();
-        customer = customerService.saveCustomer(createNamedCustomer());
-
-        //sets up existing cart with two active DiscreteOrderItems
-        initializeExistingCart(customer);
-        response = cartService.mergeCart(customer, anonymousCart);
-
-        assert response.getAddedItems().size() == 1;
-        assert response.getOrder().getOrderItems().size() == 3;
-        assert response.isMerged();
-        assert response.getRemovedItems().size() == 1;
-    }
-    */
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
 }

@@ -47,6 +47,9 @@ public class SelectizeCollectionUtils {
                 response = CollectionUtils.intersection(a, b);
             }
         } else {
+            if (a == null || b == null) {
+                return CollectionUtils.emptyCollection();
+            }
             response = CollectionUtils.intersection(a, b);
         }
         return response;

@@ -210,9 +210,14 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getPropertyNameForIndexField(IndexField field, FieldType fieldType, String prefix) {
+        String fieldName = field.getField().getAbbreviation();
+        if (StringUtils.isEmpty(fieldName)) {
+            fieldName = field.getField().getPropertyName();
+        }
+
         return new StringBuilder()
                 .append(prefix)
-                .append(field.getField().getAbbreviation()).append("_").append(fieldType.getType())
+                .append(fieldName).append("_").append(fieldType.getType())
                 .toString();
     }
 
@@ -609,13 +614,20 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         }
     }
 
+
     @Override
+    @Deprecated
     public void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap) {
+        attachFacets(query, namedFacetMap, null);
+    }
+
+    @Override
+    public void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, SearchCriteria searchCriteria) {
         query.setFacet(true);
         for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
             SearchFacetDTO dto = entry.getValue();
 
-            ExtensionResultStatusType status = searchExtensionManager.getProxy().attachFacet(query, entry.getKey(), dto);
+            ExtensionResultStatusType status = searchExtensionManager.getProxy().attachFacet(query, entry.getKey(), dto, searchCriteria);
 
             if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
                 // Clone the list - we don't want to remove these facets from the DB
@@ -625,7 +637,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     searchExtensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
                 }
 
-                if (facetRanges != null && facetRanges.size() > 0) {
+                if (CollectionUtils.isNotEmpty(facetRanges)) {
                     for (SearchFacetRange range : facetRanges) {
                         query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
                     }

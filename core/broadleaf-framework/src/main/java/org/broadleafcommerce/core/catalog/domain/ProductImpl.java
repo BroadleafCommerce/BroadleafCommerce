@@ -147,7 +147,6 @@ import java.util.Set;
                 @AdminPresentationMergeOverride(name = "defaultSku.auditable.updatedBy", mergeEntries =
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true))
         })
-@SQLDelete(sql = "UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
@@ -202,7 +201,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Column(name = "OVERRIDE_GENERATED_URL")
     @AdminPresentation(friendlyName = "ProductImpl_Override_Generated_Url",
-            group = GroupName.General, order = FieldOrder.URL + 10)
+            group = GroupName.General, order = FieldOrder.URL + 10, defaultValue = "false")
     protected Boolean overrideGeneratedUrl = false;
 
     @Column(name = "URL_KEY")
@@ -326,6 +325,9 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Transient
     protected Map<String, Set<String>> productOptionMap;
+
+    @Transient
+    protected List<String> allParentCategoryIds;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -644,6 +646,19 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         }
 
         return parentCategoryHierarchyIds;
+    }
+
+    @Override
+    public List<String> getAllParentCategoryIds() {
+        List<String> parentIds = new ArrayList<>();
+
+        for (CategoryProductXref xref : allParentCategoryXrefs) {
+            String parentId = String.valueOf(xref.getCategory().getId());
+            parentIds.add(parentId);
+        }
+
+        allParentCategoryIds = parentIds;
+        return parentIds;
     }
 
     @Override

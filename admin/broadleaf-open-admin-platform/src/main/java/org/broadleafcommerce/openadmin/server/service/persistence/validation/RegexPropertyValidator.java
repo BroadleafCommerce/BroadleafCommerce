@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -71,7 +72,8 @@ public class RegexPropertyValidator extends ValidationConfigurationBasedProperty
         try {
             return new PropertyValidationResult(value.matches(expression), validationConfiguration.get(ConfigurationItem.ERROR_MESSAGE));
         } catch (PatternSyntaxException e) {
-            String message = "Invalid regular expression pattern '" + expression + "' for " + propertyName;
+            String message = "Invalid regular expression pattern '" + StringUtil.sanitize(expression) + "' for " 
+                    + StringUtil.sanitize(propertyName);
             LOG.error(message, e);
             return new PropertyValidationResult(suceedForInvalidRegex, "Invalid regular expression pattern for " + propertyName);
         }

@@ -137,4 +137,11 @@ public interface SearchService {
      */
     public List<SearchFacetDTO> getCategoryFacets(Category category);
 
+    /**
+     * Determines whether or not the necessary configuration is in place
+     *
+     * @return whether or not the necessary configuration is in place
+     */
+    public boolean isActive();
+
 }
