@@ -28,13 +28,13 @@ import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferMarkTargets;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemContainer;
@@ -260,11 +260,30 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
                         }
 
                     }
+                    OrderItem orderItem = itemPriceDetail.getPromotableOrderItem().getOrderItem();
+                    Boolean offerCanApplyToChildOrderItems = itemOffer.getOffer().getApplyToChildItems();
+                    if (isAddOnOrderItem(orderItem) && !offerCanApplyToChildOrderItems) {
+                        break;
+                    }
                     applyOrderItemAdjustment(itemOffer, itemPriceDetail);
                     break;
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isAddOnOrderItem(OrderItem orderItem) {
+        if (DiscreteOrderItem.class.isAssignableFrom(orderItem.getClass())) {
+            DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
+
+            Map<String, String> attributes = discreteOrderItem.getAdditionalAttributes();
+            boolean isAddOnOrderItem = attributes.containsKey("addOnXrefId");
+            boolean isChildOrderItem = discreteOrderItem.isChildOrderItem();
+
+            return isChildOrderItem && isAddOnOrderItem;
+        }
+        return false;
     }
 
     /**
