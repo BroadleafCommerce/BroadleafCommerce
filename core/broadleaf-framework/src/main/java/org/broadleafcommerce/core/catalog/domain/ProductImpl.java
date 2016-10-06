@@ -502,7 +502,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Override
     public List<Sku> getAllSellableSkus() {
-        boolean includeDefaultSku = getCanSellWithoutOptions();
+        boolean includeDefaultSku = getCanSellWithoutOptions() || getAdditionalSkus().isEmpty();
         return getAllSkus(includeDefaultSku);
     }
 
