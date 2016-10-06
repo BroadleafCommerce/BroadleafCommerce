@@ -29,14 +29,15 @@ import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementPro
 import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
+ * Processor used to show the Offers that are being actively applied to the given {@link OrderItem}.
+ *  This is mostly intended to be utilized in the context of the Cart.
+ *
  * @author Jon Fleschler (jfleschler)
  */
 @Service("blOfferMessageProcessor")
