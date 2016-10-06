@@ -276,6 +276,14 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     public List<Sku> getAllSkus();
 
     /**
+     * Returns all skus that are sellable.  If the product `canSellWithoutOptions` is true, the `defaultSku` is
+     * included in the list. Otherwise, the `defaultSku` is ignored.
+     *
+     * @return all the sellable Skus associated to this Product
+     */
+    public List<Sku> getAllSellableSkus();
+
+    /**
      * Gets the media for this product. This serves as a pass-through to
      * the {@link getDefaultSku()} media
      * 
