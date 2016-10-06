@@ -409,7 +409,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         boolean isAddOnOrderItem = offerServiceUtilities.isAddOnOrderItem(item.getOrderItem());
         Boolean offerCanApplyToChildOrderItems = itemOffer.getOffer().getApplyToChildItems();
         if (isAddOnOrderItem && !offerCanApplyToChildOrderItems) {
-            return new Money(0);
+            return Money.ZERO;
         } else {
             return itemOffer.calculateSavingsForOrderItem(item, quantity);
         }
