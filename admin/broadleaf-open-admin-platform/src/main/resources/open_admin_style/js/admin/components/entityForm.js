@@ -234,7 +234,9 @@
 
                 if ($field.hasClass('listgrid-container')) {
                     var $tbody = $field.find('.listgrid-body-wrapper tbody');
-                    BLCAdmin.listGrid.paginate.updateGridSize($tbody);
+                    if ($tbody.length) {
+                        BLCAdmin.listGrid.paginate.updateGridSize($tbody);
+                    }
                 }
             }
 
