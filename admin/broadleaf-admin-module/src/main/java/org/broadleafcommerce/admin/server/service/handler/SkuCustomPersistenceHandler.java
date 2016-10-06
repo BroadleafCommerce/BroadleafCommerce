@@ -446,34 +446,38 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             int totalRecords = helper.getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
             
             //Now fill out the relevant properties for the product options for the Skus that were returned
-            for (int i = 0; i < records.size(); i++) {
-                Sku sku = (Sku) records.get(i);
-                Entity entity = payload[i];
-
-                List<ProductOptionValue> optionValues = BLCCollectionUtils.collectList(sku.getProductOptionValueXrefs(), new TypedTransformer<ProductOptionValue>() {
-                    @Override
-                    public ProductOptionValue transform(Object input) {
-                        return ((SkuProductOptionValueXref) input).getProductOptionValue();
-                    }
-                });
-
-                for (ProductOptionValue value : optionValues) {
-                    Property optionProperty = new Property();
-                    optionProperty.setName(PRODUCT_OPTION_FIELD_PREFIX + value.getProductOption().getId());
-                    optionProperty.setValue(value.getId().toString());
-                    entity.addProperty(optionProperty);
-                }
-
-                if (CollectionUtils.isNotEmpty(optionValues)) {
-                    entity.addProperty(getConsolidatedOptionProperty(optionValues));
-                } else {
-                    entity.addProperty(getBlankConsolidatedOptionProperty());
-                }
-            }
+            updateSkuFieldsForFetch(records, payload);
 
             return new DynamicResultSet(payload, totalRecords);
         } catch (Exception e) {
             throw new ServiceException("Unable to perform fetch for entity: " + ceilingEntityFullyQualifiedClassname, e);
+        }
+    }
+
+    protected void updateSkuFieldsForFetch(List<Serializable> records, Entity[] payload) {
+        for (int i = 0; i < records.size(); i++) {
+            Sku sku = (Sku) records.get(i);
+            Entity entity = payload[i];
+
+            List<ProductOptionValue> optionValues = BLCCollectionUtils.collectList(sku.getProductOptionValueXrefs(), new TypedTransformer<ProductOptionValue>() {
+                @Override
+                public ProductOptionValue transform(Object input) {
+                    return ((SkuProductOptionValueXref) input).getProductOptionValue();
+                }
+            });
+
+            for (ProductOptionValue value : optionValues) {
+                Property optionProperty = new Property();
+                optionProperty.setName(PRODUCT_OPTION_FIELD_PREFIX + value.getProductOption().getId());
+                optionProperty.setValue(value.getId().toString());
+                entity.addProperty(optionProperty);
+            }
+
+            if (CollectionUtils.isNotEmpty(optionValues)) {
+                entity.addProperty(getConsolidatedOptionProperty(optionValues));
+            } else {
+                entity.addProperty(getBlankConsolidatedOptionProperty());
+            }
         }
     }
 
