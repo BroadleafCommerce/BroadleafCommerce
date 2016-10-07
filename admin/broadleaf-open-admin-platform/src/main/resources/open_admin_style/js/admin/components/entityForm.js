@@ -544,6 +544,15 @@ $(document).ready(function() {
                     BLCAdmin.initializeModalButtons($(BLCAdmin.currentModal()));
                     BLCAdmin.initializeFields();
 
+                    // For each error field, make sure that its tab signifies that it contains an error
+                    $newForm.find('.has-error').each(function(index, el) {
+                        var tabId = '#' + $(el).parents('.entityFormTab').attr("class").substring(0, 4);
+                        var $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
+                        if ($tabWithError.find('.tab-error-indicator').length == 0) {
+                            $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
+                        }
+                    });
+
                     var $actions = BLCAdmin.currentModal().find('.entity-form-actions');
                     $actions.find('button').show();
                     $actions.find('img.ajax-loader').hide();
