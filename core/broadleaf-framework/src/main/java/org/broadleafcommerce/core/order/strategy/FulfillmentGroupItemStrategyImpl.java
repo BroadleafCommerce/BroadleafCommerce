@@ -69,14 +69,11 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     @Resource(name = "blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fgItemDao;
 
-    @Value("${order.outOfSyncCache.refresh:false}")
-    protected boolean refreshOutOfSyncCachedOrder;
-
     protected boolean removeEmptyFulfillmentGroups = true;
 
     @Override
     public CartOperationRequest onItemAdded(CartOperationRequest request) throws PricingException {
-        Order order = orderService.getLatestVersionOfOrder(request.getOrder());
+        Order order = request.getOrder();
         OrderItem orderItem = request.getOrderItem();
         Map<FulfillmentType, FulfillmentGroup> fulfillmentGroups = new HashMap<FulfillmentType, FulfillmentGroup>();
         FulfillmentGroup nullFulfillmentTypeGroup = null;
@@ -221,7 +218,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     
     @Override
     public CartOperationRequest onItemUpdated(CartOperationRequest request) throws PricingException {
-        Order order = orderService.getLatestVersionOfOrder(request.getOrder());
+        Order order = request.getOrder();
         OrderItem orderItem = request.getOrderItem();
         Integer orderItemQuantityDelta = request.getOrderItemQuantityDelta();
         
@@ -297,7 +294,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 
     @Override
     public CartOperationRequest onItemRemoved(CartOperationRequest request) {
-        Order order = orderService.getLatestVersionOfOrder(request.getOrder());
+        Order order = request.getOrder();
         OrderItem orderItem = request.getOrderItem();
         
         if (orderItem instanceof BundleOrderItem) {
