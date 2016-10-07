@@ -68,8 +68,6 @@ public interface OrderDao {
     
     Order updatePrices(Order order);
 
-    boolean requiresRefresh(Order order);
-
     /**
      * This method will attempt to update the {@link OrderLock} object table for the given order to mark it as
      * locked, provided the OrderLock record for the given order was not already locked. It will return true or

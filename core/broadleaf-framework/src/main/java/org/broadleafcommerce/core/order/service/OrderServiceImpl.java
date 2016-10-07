@@ -23,6 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
@@ -150,9 +151,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Value("${pricing.retry.wait.interval.for.lock.failure}")
     protected long pricingRetryWaitIntervalForLockFailure = 500L;
-
-    @Value("${order.outOfSyncCache.refresh:false}")
-    protected boolean refreshOutOfSyncCachedOrder;
     
     /* Fields */
     protected boolean moveNamedOrderItems = true;
@@ -948,17 +946,22 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean requiresRefresh(Order order) {
-        return orderDao.requiresRefresh(order);
+    public Order findCartForCustomerWithEnhancements(Customer customer) {
+        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
+        ExtensionResultStatusType resultStatusType = extensionManager.findCartForCustomerWithEnhancements(customer, erh);
+        if (ExtensionResultStatusType.NOT_HANDLED != resultStatusType) {
+            return erh.getResult();
+        }
+        return findCartForCustomer(customer);
     }
 
     @Override
-    public Order getLatestVersionOfOrder(Order order) {
-
-        if (refreshOutOfSyncCachedOrder && requiresRefresh(order)) {
-            refresh(order);
+    public Order findCartForCustomerWithEnhancements(Customer customer, Order candidateOrder) {
+        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
+        ExtensionResultStatusType resultStatusType = extensionManager.findCartForCustomerWithEnhancements(customer, candidateOrder, erh);
+        if (ExtensionResultStatusType.NOT_HANDLED != resultStatusType) {
+            return erh.getResult();
         }
-
-        return order;
+        return candidateOrder;
     }
 }

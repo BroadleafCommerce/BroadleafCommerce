@@ -570,7 +570,6 @@ public interface OrderService {
      */
     public Order reloadOrder(Order order);
 
-
     /**
      * @see OrderDao#acquireLock(Order)
      * @param order
@@ -587,16 +586,22 @@ public interface OrderService {
 
     void refresh(Order order);
 
-    boolean requiresRefresh(Order order);
+    /**
+     * Retrieve an enhanced version of the cart for the customer. Enhanced carts are generally provided by commercial Broadleaf
+     * modules.
+     *
+     * @param customer the user for whom the enhanced cart is retrieved
+     * @return the enhanced cart, or the basic cart if no enhancement is available
+     */
+    Order findCartForCustomerWithEnhancements(Customer customer);
 
     /**
-     * Gets the cached order.
-     * <p>
-     * If singleFulfillmentGroup.fgItem.sync.qty is true, it will also refresh the order
-     * to ensure it is the up-to-date.
+     * For the customer, use the candidateOrder as the source of enhancement for generating an enhanced cart. Enhanced carts
+     * are generally provided by commercial Broadleaf modules.
      *
-     * @param order
-     * @return latest version of the order
+     * @param customer the user for whom the enhanced cart is generated
+     * @param candidateOrder the source of enhancement
+     * @return the enhanced cart, or the untouched candidateOrder if no enhancement is available
      */
-    Order getLatestVersionOfOrder(Order order);
+    Order findCartForCustomerWithEnhancements(Customer customer, Order candidateOrder);
 }

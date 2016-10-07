@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
-import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -313,21 +312,6 @@ public class OrderDaoImpl implements OrderDao {
             order = save(order);
         }
         return order;
-    }
-
-    @Override
-    public boolean requiresRefresh(Order order) {
-        boolean requiresRefresh = false;
-        if (order != null && !(order instanceof NullOrderImpl)) {
-            Query query = em.createNamedQuery("BC_READ_ORDER_BY_ID_IF_MORE_RECENT");
-            query.setParameter("orderId", order.getId());
-            query.setParameter("dateUpdated", order.getAuditable().getDateUpdated());
-
-            Long result = (Long) query.getSingleResult();
-            requiresRefresh = result > 0;
-        }
-
-        return requiresRefresh;
     }
 
     @Override
