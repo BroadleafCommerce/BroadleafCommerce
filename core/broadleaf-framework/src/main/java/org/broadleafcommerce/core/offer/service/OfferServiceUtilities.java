@@ -131,6 +131,14 @@ public interface OfferServiceUtilities {
      */
     void applyAdjustmentsForItemPriceDetails(PromotableCandidateItemOffer itemOffer,
             List<PromotableOrderItemPriceDetail> itemPriceDetails);
+
+    /**
+     * Determines whether or not the {@link OrderItem} was added by a Product Add-On
+     *
+     * @param orderItem
+     * @return
+     */
+    boolean isAddOnOrderItem(OrderItem orderItem);
       
     /**
      * Used by applyAdjustments to create an OrderItemAdjustment from a CandidateOrderOffer

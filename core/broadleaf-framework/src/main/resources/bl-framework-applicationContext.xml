@@ -246,15 +246,16 @@
         </property>
     </bean>
 
-    <bean id="blPromotionMessageProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
+    <bean id="blMessageProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
         <property name="sourceSet">
             <set>
                 <ref bean="blPromotionMessageProcessor" />
+                <ref bean="blOfferMessageProcessor" />
             </set>
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blPromotionMessageProcessors" />
+        <property name="collectionRef" value="blMessageProcessors" />
         <property name="targetRef" value="blDialectProcessors" />
     </bean>
 
