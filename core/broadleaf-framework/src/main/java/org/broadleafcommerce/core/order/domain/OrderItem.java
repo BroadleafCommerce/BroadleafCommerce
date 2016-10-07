@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import java.io.Serializable;
 import java.util.List;
@@ -133,6 +134,18 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      * @return
      */
     boolean isSalePriceOverride();
+
+    /**
+     * Returns a list of all prorated adjustments for this order item.
+     * @return
+     */
+    List<ProratedOrderItemAdjustment> getProratedOrderItemAdjustments();
+
+    /**
+     * Sets the list of prorated order item adjustments for this order item.
+     * @param proratedOrderItemAdjustments
+     */
+    void setProratedOrderItemAdjustments(List<ProratedOrderItemAdjustment> proratedOrderItemAdjustments);
 
     /**
      * @deprecated 
@@ -326,7 +339,7 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
     void finalizePrice();
 
     /**
-     * Sets the name of this order item. 
+     * Sets the name of this order item.
      * @param name
      */
     void setName(String name);
@@ -351,7 +364,9 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      * @return
      */
     Money getPriceBeforeAdjustments(boolean allowSalesPrice);
-    
+
+    Money getPriceBeforeAdjustments(boolean allowSalesPrice, boolean includeChildren);
+
     /**
      * Used by the promotion engine to add offers that might apply to this orderItem.
      * @param candidateItemOffer
@@ -492,9 +507,26 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
     public void setParentOrderItem(OrderItem parentOrderItem);
 
     /**
+     * @return whether or not this order item has an error
+     */
+    Boolean getHasValidationError();
+
+    /**
+     * Sets whether or not this order item has an error associated with it
+     *
+     * @param hasValidationError
+     */
+    void setHasValidationError(Boolean hasValidationError);
+
+    /**
      * @param candidateChild
      * @return true if the candidateChild is a child of the hierarchy starting from this OrderItem
      */
     public boolean isAParentOf(OrderItem candidateChild);
+
+    /**
+     * @return true if the OrderItem has a parent
+     */
+    public boolean isChildOrderItem();
 
 }

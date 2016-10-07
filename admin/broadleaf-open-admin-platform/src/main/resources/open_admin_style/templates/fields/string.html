@@ -15,6 +15,6 @@
               th:disabled="${field.readOnly}"
               th:field="*{fields['__${field.name}__'].value}"
               th:placeholder="${field.hint}"
-              cols="30" rows="10"></textarea>
+              cols="30" rows="3"></textarea>
 </div>
 <span class="error" th:errors="*{fields['__${field.name}__'].value}"></span>

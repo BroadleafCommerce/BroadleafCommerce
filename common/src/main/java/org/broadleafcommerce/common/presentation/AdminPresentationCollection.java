@@ -245,8 +245,16 @@ public @interface AdminPresentationCollection {
      *
      * @return whether or not the field should be fetched
      */
-   
     boolean lazyFetch() default true;
+
+    /**
+     * <p>Optional - fields are manually fetched by default</p>
+     *
+     * <p>Specify true if this field should be fetched manually</p>
+     *
+     * @return whether or not the field should be fetched manually
+     */
+    boolean manualFetch() default false;
 
     /**
      * Used to map the collection to a group defined in AdminPresentationClass using AdminGroupPresentation.

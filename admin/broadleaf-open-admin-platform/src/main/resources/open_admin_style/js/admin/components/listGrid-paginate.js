@@ -727,6 +727,7 @@
 
             // after all the heights have been calculated, update the table footer with the correct record shown count
             BLCAdmin.listGrid.paginate.updateTableFooter($wrapper.find('tbody'));
+            BLCAdmin.listGrid.updateGridTitleBarSize($table.closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
         },
         
         computeActualMaxHeight : function($tbody, desiredMaxHeight) {

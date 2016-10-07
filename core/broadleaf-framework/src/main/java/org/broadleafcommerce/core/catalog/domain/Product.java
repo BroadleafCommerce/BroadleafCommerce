@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -759,6 +760,13 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     public void setAllParentCategoryXrefs(List<CategoryProductXref> allParentCategories);
 
     /**
+     * Returns all parent {@link Category} ids this product is associated with.
+     *
+     * @return the all parent category ids for this product
+     */
+    public List<String> getAllParentCategoryIds();
+
+    /**
      * Returns all parent {@link Category}(s) this product is associated with.
      *
      * @deprecated Use getAllParentCategoryXrefs() instead.
@@ -814,4 +822,12 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      */
     public Money getMargin();
 
+    /**
+     * The specified {@link PromotionMessage}s for this Product that will
+     * override the Offer's default {@link PromotionMessage}.
+     *
+     * @return the {@link Category} Ids for this Product's parent {@link Category} hierarchy
+     * @see {@link Category}
+     */
+    public List<Long> getParentCategoryHierarchyIds();
 }

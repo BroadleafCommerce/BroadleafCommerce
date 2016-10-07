@@ -239,6 +239,26 @@
         <property name="targetRef" value="blConditionalDirectCopyTransformers"/>
     </bean>
 
+    <bean id="blPromotionMessageGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blMessageProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
+            <set>
+                <ref bean="blPromotionMessageProcessor" />
+                <ref bean="blOfferMessageProcessor" />
+            </set>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMessageProcessors" />
+        <property name="targetRef" value="blDialectProcessors" />
+    </bean>
+
     <!-- Replace StoreImpl column OPEN with STORE_OPEN to be SQL Server compatible. This can be removed in 5.1. -->
 
     <bean id="blStoreOpenConditionalFieldAnnotationTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalFieldAnnotationCopyTransformMemberDTO">

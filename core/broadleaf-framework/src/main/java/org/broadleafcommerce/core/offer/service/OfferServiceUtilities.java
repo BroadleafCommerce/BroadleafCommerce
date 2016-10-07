@@ -131,6 +131,14 @@ public interface OfferServiceUtilities {
      */
     void applyAdjustmentsForItemPriceDetails(PromotableCandidateItemOffer itemOffer,
             List<PromotableOrderItemPriceDetail> itemPriceDetails);
+
+    /**
+     * Determines whether or not the {@link OrderItem} was added by a Product Add-On
+     *
+     * @param orderItem
+     * @return
+     */
+    boolean isAddOnOrderItem(OrderItem orderItem);
       
     /**
      * Used by applyAdjustments to create an OrderItemAdjustment from a CandidateOrderOffer
@@ -195,6 +203,15 @@ public interface OfferServiceUtilities {
      * @return boolean
      */
     boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> qualifiersMap);
+
+    /**
+     * Determines whether or not an {@link PromotableOrder} meets the target subtotal requirement of an {@link Offer}
+     * @param order
+     * @param offer
+     * @param targetsMap
+     * @return
+     */
+    boolean orderMeetsTargetSubtotalRequirements(PromotableOrder order, Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> targetsMap);
 
     /**
      * Determines whether or not an {@link PromotableOrder} meets the subtotal requirement of an {@link Offer}

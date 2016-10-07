@@ -628,6 +628,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
 
+        if (fmd.getManualFetch()) {
+            listGrid.setManualFetch(true);
+            listGrid.getToolbarActions().add(DefaultListGridActions.MANUAL_FETCH);
+        }
         if (isMedia) {
             listGrid.setListGridType(ListGrid.Type.ASSET_GRID);
             listGrid.setSelectType(ListGrid.SelectType.NONE);

@@ -221,4 +221,6 @@ public interface OfferService {
     public void setOrderService(OrderService orderService);
 
     public Boolean deleteOfferCode(OfferCode code);
+
+    public Offer findOfferById(Long offerId);
 }

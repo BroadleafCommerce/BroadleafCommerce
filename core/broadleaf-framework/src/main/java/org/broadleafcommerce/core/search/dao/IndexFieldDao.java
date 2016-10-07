@@ -64,5 +64,7 @@ public interface IndexFieldDao {
 
     List<IndexFieldType> getIndexFieldTypesByAbbreviation(String abbreviation);
 
+    List<IndexFieldType> getIndexFieldTypesByAbbreviationOrPropertyName(String name);
+
     List<IndexFieldType> getIndexFieldTypes(FieldType facetFieldType);
 }

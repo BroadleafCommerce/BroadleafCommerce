@@ -29,7 +29,6 @@ import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -823,12 +822,12 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
-    public List<Category> buildParentCategoryPath(List<Category> currentPath) {
-        return buildParentCategoryPath(currentPath, false);
+    public List<Category> getParentCategoryHierarchy(List<Category> currentPath) {
+        return getParentCategoryHierarchy(currentPath, false);
     }
 
     @Override
-    public List<Category> buildParentCategoryPath(List<Category> currentPath, Boolean firstParent) {
+    public List<Category> getParentCategoryHierarchy(List<Category> currentPath, Boolean firstParent) {
         // If firstParent is null, default it to false
         if (firstParent == null) {
             firstParent = false;
@@ -862,7 +861,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         for (Category category : myParentCategories) {
             if (!currentPath.contains(category)) {
                 currentPath.add(0, category);
-                category.buildParentCategoryPath(currentPath, firstParent);
+                category.getParentCategoryHierarchy(currentPath, firstParent);
             }
         }
 

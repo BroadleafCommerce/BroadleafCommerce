@@ -231,6 +231,11 @@
 
             if (shouldShow) {
                 $field.removeClass('hidden');
+
+                if ($field.hasClass('listgrid-container')) {
+                    var $tbody = $field.find('.listgrid-body-wrapper tbody');
+                    BLCAdmin.listGrid.paginate.updateGridSize($tbody);
+                }
             }
 
             hideGroupIfFieldsAreHidden($field);
@@ -347,7 +352,11 @@ $(document).ready(function() {
 
      		event.preventDefault();
 
-     	}
+     	} else {
+            $('div.' + href + 'Tab .listgrid-container').find('.listgrid-header-wrapper table').each(function() {
+                BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
+            });
+        }
      });
 
 

@@ -613,7 +613,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
     @Override
     public boolean isTaxExempt() {
-        return isTaxExempt != false &&  StringUtils.isNotEmpty(taxExemptionCode);
+        return isTaxExempt != null && isTaxExempt != false &&  StringUtils.isNotEmpty(taxExemptionCode);
     }
 
 }

@@ -125,6 +125,12 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
     public boolean hasSalePrice();
 
     /**
+     * Returns the value that the user set in the `salePrice` property.
+     * @return
+     */
+    Money getOriginalSalePrice();
+
+    /**
      * Returns the Retail Price of the Sku.  The Retail Price is the MSRP of the sku. If {@link SkuPricingConsiderationContext}
      * is set, this uses the DynamicSkuPricingService to calculate what this should actually be rather than use the property
      * itself.

@@ -537,10 +537,17 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         return getSalePrice() != null;
     }
 
-
     @Override
     public void setSalePrice(Money salePrice) {
         this.salePrice = Money.toAmount(salePrice);
+    }
+
+    @Override
+    public Money getOriginalSalePrice() {
+        if (salePrice != null) {
+            return new Money(salePrice, getCurrency());
+        }
+        return null;
     }
 
     @Override
