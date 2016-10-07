@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.payment.PaymentType;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -155,8 +156,7 @@ public class OrderServiceImpl implements OrderService {
     protected boolean moveNamedOrderItems = true;
     protected boolean deleteEmptyNamedOrders = true;
 
-    @Value("${automatically.merge.like.items}")
-    protected boolean automaticallyMergeLikeItems;
+    protected Boolean automaticallyMergeLikeItems;
 
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
@@ -553,7 +553,7 @@ public class OrderServiceImpl implements OrderService {
     public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
         Order order = findOrderById(orderId);
         preValidateCartOperation(order);
-        if (automaticallyMergeLikeItems) {
+        if (getAutomaticallyMergeLikeItems()) {
             OrderItem item = findMatchingItem(order, orderItemRequestDTO);
             if (item != null) {
                 orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
@@ -682,7 +682,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean getAutomaticallyMergeLikeItems() {
-        return automaticallyMergeLikeItems;
+        
+        if (automaticallyMergeLikeItems != null) {
+            return automaticallyMergeLikeItems;
+        }
+
+        return BLCSystemProperty.resolveBooleanSystemProperty("automatically.merge.like.items", true);
     }
 
     @Override
