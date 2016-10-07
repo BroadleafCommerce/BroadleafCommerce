@@ -32,12 +32,6 @@
         <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
         WHERE order.orderNumber = :orderNumber</query>
     </named-query>
-
-    <named-query name="BC_READ_ORDER_BY_ID_IF_MORE_RECENT" >
-        <query>SELECT COUNT(*) FROM org.broadleafcommerce.core.order.domain.Order order
-            WHERE order.id = :orderId
-            AND order.auditable.dateUpdated > :dateUpdated</query>
-    </named-query>
     
     <named-query name="BC_READ_ORDERS_BY_CUSTOMER_ID_AND_STATUS">
         <query>
