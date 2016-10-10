@@ -30,11 +30,9 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.TypedTransformer;
-import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
@@ -69,7 +67,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
-import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -446,7 +443,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             int totalRecords = helper.getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
             
             //Now fill out the relevant properties for the product options for the Skus that were returned
-            updateSkuFieldsForFetch(records, payload);
+            updateProductOptionFieldsForFetch(records, payload);
 
             return new DynamicResultSet(payload, totalRecords);
         } catch (Exception e) {
@@ -454,7 +451,14 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
     }
 
-    protected void updateSkuFieldsForFetch(List<Serializable> records, Entity[] payload) {
+    /**
+     * Sets the {@link ProductOptionValue}s of the given {@link Sku}s in a list format for display in a ListGrid context.
+     *
+     * @param records
+     * @param payload
+     * @return
+     */
+    public void updateProductOptionFieldsForFetch(List<Serializable> records, Entity[] payload) {
         for (int i = 0; i < records.size(); i++) {
             Sku sku = (Sku) records.get(i);
             Entity entity = payload[i];
