@@ -61,8 +61,8 @@ public class AdminFieldBuilderProcessor extends AbstractLocalVariableDefinitionE
     protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
         FieldWrapper fieldWrapper = new FieldWrapper();
 
-        String fieldBuilder = getAttributeNamed(arguments, element, "fieldBuilder");
-        String ceilingEntity = getAttributeNamed(arguments, element, "ceilingEntity");
+        String fieldBuilder = getAttributeByName(arguments, element, "fieldBuilder");
+        String ceilingEntity = getAttributeByName(arguments, element, "ceilingEntity");
 
         if (fieldBuilder != null) {
             RuleBuilderFieldService ruleBuilderFieldService = ruleBuilderFieldServiceFactory.createInstance(fieldBuilder);
@@ -80,7 +80,7 @@ public class AdminFieldBuilderProcessor extends AbstractLocalVariableDefinitionE
         return newVars;
     }
 
-    private String getAttributeNamed(Arguments arguments, Element element, String attributeName) {
+    private String getAttributeByName(Arguments arguments, Element element, String attributeName) {
         Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
                 .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
         return (String) expression.execute(arguments.getConfiguration(), arguments);
