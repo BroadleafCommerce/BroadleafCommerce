@@ -624,6 +624,11 @@ public class OrderServiceImpl implements OrderService {
                 childRequest.setParentOrderItemId(parentOrderItemId);
                 currentAddition++;
 
+                // Make sure the quantity is valid
+                if (childRequest.getQuantity() == 0) {
+                    continue;
+                }
+
                 CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
                 ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
                 orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
