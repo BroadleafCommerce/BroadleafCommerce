@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.web.processor;
 
+import org.broadleafcommerce.openadmin.web.service.AdminFieldBuilderProcessorExtensionManager;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
@@ -41,6 +42,9 @@ public class AdminFieldBuilderProcessor extends AbstractLocalVariableDefinitionE
     @Resource(name = "blRuleBuilderFieldServiceFactory")
     protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
 
+    @Resource(name="blAdminFieldBuilderProcessorExtensionManager")
+    protected AdminFieldBuilderProcessorExtensionManager extensionManager;
+
     /**
      * Sets the name of this processor to be used in Thymeleaf template
      */
@@ -56,10 +60,9 @@ public class AdminFieldBuilderProcessor extends AbstractLocalVariableDefinitionE
     @Override
     protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
         FieldWrapper fieldWrapper = new FieldWrapper();
-        
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("fieldBuilder"));
-        String fieldBuilder = (String) expression.execute(arguments.getConfiguration(), arguments);
+
+        String fieldBuilder = getAttributeByName(arguments, element, "fieldBuilder");
+        String ceilingEntity = getAttributeByName(arguments, element, "ceilingEntity");
 
         if (fieldBuilder != null) {
             RuleBuilderFieldService ruleBuilderFieldService = ruleBuilderFieldServiceFactory.createInstance(fieldBuilder);
@@ -67,10 +70,20 @@ public class AdminFieldBuilderProcessor extends AbstractLocalVariableDefinitionE
                 fieldWrapper = ruleBuilderFieldService.buildFields();
             }
         }
-        
+
+        if (extensionManager != null) {
+            extensionManager.getProxy().modifyRuleBuilderFields(fieldBuilder, ceilingEntity, fieldWrapper);
+        }
+
         Map<String, Object> newVars = new HashMap<String, Object>();
         newVars.put("fieldWrapper", fieldWrapper);
         return newVars;
+    }
+
+    private String getAttributeByName(Arguments arguments, Element element, String attributeName) {
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
+        return (String) expression.execute(arguments.getConfiguration(), arguments);
     }
 
     @Override
