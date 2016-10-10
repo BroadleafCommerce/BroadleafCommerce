@@ -624,11 +624,13 @@ public class OrderServiceImpl implements OrderService {
                 childRequest.setParentOrderItemId(parentOrderItemId);
                 currentAddition++;
 
-                CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
-                ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
-                orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
+                if (childRequest.getQuantity() > 0) {
+                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
+                    ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
+                    orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
 
-                addChildItems(childRequest, numAdditionRequests, currentAddition, childContext, orderMessages);
+                    addChildItems(childRequest, numAdditionRequests, currentAddition, childContext, orderMessages);
+                }
             }
         }
     }
