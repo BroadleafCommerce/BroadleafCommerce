@@ -497,8 +497,20 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Override
     public List<Sku> getAllSkus() {
+        return getAllSkus(true);
+    }
+
+    @Override
+    public List<Sku> getAllSellableSkus() {
+        boolean includeDefaultSku = getCanSellWithoutOptions() || getAdditionalSkus().isEmpty();
+        return getAllSkus(includeDefaultSku);
+    }
+
+    protected List<Sku> getAllSkus(boolean includeDefaultSku) {
         List<Sku> allSkus = new ArrayList<Sku>();
-        allSkus.add(getDefaultSku());
+        if (includeDefaultSku) {
+            allSkus.add(getDefaultSku());
+        }
         for (Sku additionalSku : additionalSkus) {
             if (!additionalSku.getId().equals(getDefaultSku().getId())) {
                 allSkus.add(additionalSku);

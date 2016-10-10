@@ -275,7 +275,7 @@ public class SolrConfiguration implements InitializingBean {
      */
     public SolrClient getServer() {
         if (isSiteCollections() && isSolrCloudMode()) {
-            
+            return getSiteServer();
         }
         return primaryServer;
     }
@@ -284,6 +284,10 @@ public class SolrConfiguration implements InitializingBean {
      * @return the primary server if {@link #isSingleCoreMode()}, else the reindex server
      */
     public SolrClient getReindexServer() {
+        if (isSiteCollections() && isSolrCloudMode()) {
+            return getSiteReindexServer();
+        }
+        
         return isSingleCoreMode() ? primaryServer : reindexServer;
     }
 
@@ -295,7 +299,7 @@ public class SolrConfiguration implements InitializingBean {
     }
     
     public boolean isSolrCloudMode() {
-        return CloudSolrClient.class.isAssignableFrom(getServer().getClass());
+        return CloudSolrClient.class.isAssignableFrom(primaryServer.getClass());
     }
 
     /**

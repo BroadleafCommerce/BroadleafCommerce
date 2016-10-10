@@ -21,6 +21,7 @@ import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
@@ -60,6 +61,9 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
+    @Resource(name = "blProductOptionsProcessorExtensionManager")
+    protected ProductOptionsProcessorExtensionManager extensionManager;
+
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
     protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
 
@@ -80,11 +84,11 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
         Product product = catalogService.findProductById(productId);
         if (product != null) {
             addAllProductOptionsToModel(arguments, product);
-            addProductOptionPricingToModel(arguments, product);
+            addProductOptionPricingToModel(arguments, element, product);
         }
     }
     
-    private void addProductOptionPricingToModel(Arguments arguments, Product product) {
+    private void addProductOptionPricingToModel(Arguments arguments, Element element, Product product) {
         List<Sku> skus = product.getSkus();
         List<ProductOptionPricingDTO> skuPricing = new ArrayList<ProductOptionPricingDTO>();
         for (Sku sku : skus) {
@@ -106,7 +110,15 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
             } else {
                 currentPrice = sku.getRetailPrice();
             }
-            dto.setPrice(formatPrice(currentPrice));
+
+            // Check for Price Overrides
+            ExtensionResultHolder<Money> priceHolder = new ExtensionResultHolder<>();
+            priceHolder.setResult(currentPrice);
+            if (extensionManager != null) {
+                extensionManager.getProxy().modifyPriceForOverrides(arguments, element, sku, priceHolder);
+            }
+
+            dto.setPrice(formatPrice(priceHolder.getResult()));
             dto.setSelectedOptions(values);
             skuPricing.add(dto);
         }
