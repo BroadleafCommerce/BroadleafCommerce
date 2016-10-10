@@ -28,7 +28,10 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 public interface AdminFieldBuilderProcessorExtensionHandler extends ExtensionHandler {
 
     /**
+     * Takes the current field builder type, the ceiling entity and the field wrapper to perform any special logic.
+     * Such actions include adding or removing fields from the fieldWrapper.
      *
+     * @param fieldBuilder
      * @param ceilingEntity
      * @param fieldWrapper
      * @return
