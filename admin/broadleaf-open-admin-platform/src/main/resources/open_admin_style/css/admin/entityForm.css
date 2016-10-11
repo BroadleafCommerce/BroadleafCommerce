@@ -24,6 +24,9 @@
 .entityFormTab.active {
     display:block;
 }
+.entity-form-actions .admin-section {
+    display: inherit;
+}
 .entity-form-actions .ajax-loader {
     float: left;
     margin: 30px 10px;

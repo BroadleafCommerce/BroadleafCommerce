@@ -19,9 +19,13 @@ package org.broadleafcommerce.core.offer.handler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAdminPresentation;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
@@ -43,6 +47,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -168,7 +173,9 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                 value = value.indexOf(".") < 0 ? value : value.replaceAll("0*$", "").replaceAll("\\.$", "");
                 discountValue.setValue(value + "%");
             } else if (discountType.getValue().equals("AMOUNT_OFF")) {
-                NumberFormat nf = NumberFormat.getCurrencyInstance();
+                Locale locale =  BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+                BroadleafCurrency currency =  BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency();
+                NumberFormat nf = BroadleafCurrencyUtils.getNumberFormatFromCache(locale.getJavaLocale(), currency.getJavaCurrency());
                 discountValue.setValue(nf.format(new BigDecimal(value)));
             } else if (discountType.getValue().equals("")) {
                 discountValue.setValue("");

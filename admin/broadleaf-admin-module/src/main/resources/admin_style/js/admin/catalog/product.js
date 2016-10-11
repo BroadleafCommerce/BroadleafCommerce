@@ -30,6 +30,16 @@
         }
 
     };
+
+    $.each(['org.broadleafcommerce.core.catalog.domain.Product'], function(idx, clazz) {
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-hasPromotionMessageOverrides',
+            '.listgrid-container#promotionMessageOverrides',
+            'true'
+        );
+    });
     
 })(jQuery, BLCAdmin);
 

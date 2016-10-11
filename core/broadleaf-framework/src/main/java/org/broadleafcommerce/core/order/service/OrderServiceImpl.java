@@ -76,6 +76,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -227,6 +228,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order findOrderByOrderNumber(String orderNumber) {
         return orderDao.readOrderByOrderNumber(orderNumber);
+    }
+
+    @Override
+    public List<Order> findOrdersByDateRange(Date startDate, Date endDate) {
+        return orderDao.readOrdersByDateRange(startDate, endDate);
+    }
+
+    @Override
+    public List<Order> findOrdersForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate) {
+        return orderDao.readOrdersForCustomersInDateRange(customerIds, startDate, endDate);
     }
 
     @Override
@@ -560,7 +571,7 @@ public class OrderServiceImpl implements OrderService {
         preValidateCartOperation(order);
         if (automaticallyMergeLikeItems) {
             OrderItem item = findMatchingItem(order, orderItemRequestDTO);
-            if (item != null) {
+            if (item != null && item.getParentOrderItem() == null) {
                 orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
                 orderItemRequestDTO.setOrderItemId(item.getId());
                 try {
@@ -574,7 +585,7 @@ public class OrderServiceImpl implements OrderService {
         }
         try {
             // We only want to price on the last addition for performance reasons and only if the user asked for it.
-            int numAdditionRequests = priceOrder ? (1 + orderItemRequestDTO.getChildOrderItems().size()) : -1;
+            int numAdditionRequests = priceOrder ? (getTotalChildOrderItems(orderItemRequestDTO)) : -1;
             int currentAddition = 1;
 
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, currentAddition == numAdditionRequests);
@@ -582,24 +593,51 @@ public class OrderServiceImpl implements OrderService {
 
             List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
             orderMessages.addAll(((ActivityMessages) context).getActivityMessages());
-            
-            if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
-                for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
-                    childRequest.setParentOrderItemId(context.getSeedData().getOrderItem().getId());
-                    currentAddition++;
 
-                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
-                    ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
-                    orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
-                }
-            }
-            
+            // Update the orderItemRequest incase it changed during the initial add to cart workflow
+            orderItemRequestDTO = context.getSeedData().getItemRequest();
+            numAdditionRequests = priceOrder ? (getTotalChildOrderItems(orderItemRequestDTO) - 1) : -1;
+            addChildItems(orderItemRequestDTO, numAdditionRequests, currentAddition, context, orderMessages);
+
             context.getSeedData().getOrder().setOrderMessages(orderMessages);
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {
             throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
         }
 
+    }
+
+    @Override
+    public int getTotalChildOrderItems(OrderItemRequestDTO orderItemRequestDTO) {
+        int count = 1;
+        for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
+            count += getTotalChildOrderItems(childRequest);
+        }
+        return count;
+    }
+
+    @Override
+    public void addChildItems(OrderItemRequestDTO orderItemRequestDTO, int numAdditionRequests, int currentAddition, ProcessContext<CartOperationRequest> context, List<ActivityMessageDTO> orderMessages) throws WorkflowException {
+        if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
+            Long parentOrderItemId = context.getSeedData().getOrderItem().getId();
+            for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
+                childRequest.setParentOrderItemId(parentOrderItemId);
+                currentAddition++;
+
+                if (childRequest.getQuantity() > 0) {
+                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
+                    ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
+                    orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
+
+                    addChildItems(childRequest, numAdditionRequests, currentAddition, childContext, orderMessages);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void addDependentOrderItem(OrderItemRequestDTO parentOrderItemRequest, OrderItemRequestDTO dependentOrderItem) {
+        parentOrderItemRequest.getChildOrderItems().add(dependentOrderItem);
     }
 
     @Override

@@ -384,7 +384,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         try {
             sandBoxHelper.ignoreCloneCache(true);
             extensionManager.getProxy().startBatchEvent(indexables);
-            Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
+            Collection<SolrInputDocument> documents = new ArrayList<>();
             List<Locale> locales = getAllLocales();
 
             List<Long> productIds = BLCCollectionUtils.collectList(indexables, new TypedTransformer<Long>() {
@@ -453,7 +453,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public List<Sku> filterIndexableSkus(List<Sku> skus) {
-        ArrayList<Sku> skusToIndex = new ArrayList<Sku>();
+        ArrayList<Sku> skusToIndex = new ArrayList<>();
 
         if (CollectionUtils.isNotEmpty(skus)) {
             for (Sku sku : skus) {
@@ -660,7 +660,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String propertyName = field.getPropertyName();
-        Map<String, Object> values = new HashMap<String, Object>();
+        Map<String, Object> values = new HashMap<>();
 
         ExtensionResultStatusType extensionResult = ExtensionResultStatusType.NOT_HANDLED;
         if (extensionManager != null) {
@@ -791,4 +791,29 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         return displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
     }
+
+    @Override
+    public void deleteByQuery(String deleteQuery) throws SolrServerException, IOException {
+        String docType = (useSku) ? FieldEntity.SKU.getType() : FieldEntity.PRODUCT.getType();
+        String childDeleteQuery = "{!child of=" + shs.getTypeFieldName() + ":" + docType + "} " + deleteQuery;
+        solrConfiguration.getServer().deleteByQuery(childDeleteQuery);
+        solrConfiguration.getServer().deleteByQuery(deleteQuery);
+
+        logDeleteQuery(childDeleteQuery);
+        logDeleteQuery(deleteQuery);
+    }
+
+    @Override
+    public void addDocuments(Collection<SolrInputDocument> documents) throws IOException, SolrServerException {
+        solrConfiguration.getServer().add(documents);
+        logDocuments(documents);
+    }
+
+    @Override
+    public void logDeleteQuery(String deleteQuery) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Delete query: " + deleteQuery);
+        }
+    }
+
 }

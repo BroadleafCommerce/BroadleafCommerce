@@ -897,11 +897,11 @@ var BLCAdmin = (function($) {
             }
 
             $field.find('select').val(value);
-            if (!$field.find('.additional-foreign-key-container')) {
+            if (!$field.find('.additional-foreign-key-container').length) {
                 $field.find('input[type="text"]').val(value);
             }
             
-            if (value == null && $field.find('button.clear-foreign-key')) {
+            if (value == null && $field.find('button.clear-foreign-key').length) {
                 $field.find('button.clear-foreign-key').click();
             }
             $field.trigger('change');
@@ -1003,7 +1003,7 @@ var BLCAdmin = (function($) {
                 BLCAdmin.addDependentFieldHandler(className, parentFieldSelector, '#' + childFieldName, function(val) {
                     return val != null && val != "";
                 }, { 
-                    'clearChildData' : true
+                    clearChildData : true
                 });
             }
         },

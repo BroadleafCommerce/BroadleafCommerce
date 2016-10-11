@@ -407,10 +407,12 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 updateTabInfo(collectionMetadata, cmd, tabName, tabOrder);
 
                 if (collectionMetadata.getLazyFetch() != null && collectionMetadata.getLazyFetch()
-                        && tabName.toUpperCase().startsWith(currentTabName.toUpperCase())) {
+                        && tabName.toUpperCase().startsWith(currentTabName.toUpperCase())
+                        && !collectionMetadata.getManualFetch()) {
                     PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
                     map.put(p.getName(), response2.getDynamicResultSet());
-                } else if (collectionMetadata.getLazyFetch() != null && !collectionMetadata.getLazyFetch()) {
+                } else if (collectionMetadata.getLazyFetch() != null && !collectionMetadata.getLazyFetch()
+                        && !collectionMetadata.getManualFetch()) {
                     PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
                     map.put(p.getName(), response2.getDynamicResultSet());
                 } else {

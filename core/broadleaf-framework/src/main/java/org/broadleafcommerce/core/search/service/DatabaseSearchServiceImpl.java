@@ -302,4 +302,9 @@ public class DatabaseSearchServiceImpl implements SearchService {
         throw new UnsupportedOperationException("Indexes are not supported by this implementation");
     }
 
+    @Override
+    public boolean isActive() {
+        return true;
+    }
+
 }

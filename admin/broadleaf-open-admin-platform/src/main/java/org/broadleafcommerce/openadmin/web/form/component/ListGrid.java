@@ -79,6 +79,8 @@ public class ListGrid {
 
     protected String selectizeUrl;
 
+    protected Boolean manualFetch;
+
     // The section url that maps to this particular list grid
     protected String sectionKey;
 
@@ -594,7 +596,18 @@ public class ListGrid {
     public void setSelectizeUrl(String selectizeUrl) {
         this.selectizeUrl = selectizeUrl;
     }
-    
+
+    public Boolean getManualFetch() {
+        if (manualFetch == null) {
+            return false;
+        }
+        return manualFetch;
+    }
+
+    public void setManualFetch(Boolean manualFetch) {
+        this.manualFetch = manualFetch;
+    }
+
     public String getExternalEntitySectionKey() {
         return externalEntitySectionKey;
     }

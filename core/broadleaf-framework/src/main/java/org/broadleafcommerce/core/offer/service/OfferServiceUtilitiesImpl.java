@@ -28,13 +28,13 @@ import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferMarkTargets;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemContainer;
@@ -260,11 +260,30 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
                         }
 
                     }
+                    OrderItem orderItem = itemPriceDetail.getPromotableOrderItem().getOrderItem();
+                    Boolean offerCanApplyToChildOrderItems = itemOffer.getOffer().getApplyToChildItems();
+                    if (isAddOnOrderItem(orderItem) && !offerCanApplyToChildOrderItems) {
+                        break;
+                    }
                     applyOrderItemAdjustment(itemOffer, itemPriceDetail);
                     break;
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isAddOnOrderItem(OrderItem orderItem) {
+        if (DiscreteOrderItem.class.isAssignableFrom(orderItem.getClass())) {
+            DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
+
+            Map<String, String> attributes = discreteOrderItem.getAdditionalAttributes();
+            boolean isAddOnOrderItem = attributes.containsKey("addOnXrefId");
+            boolean isChildOrderItem = discreteOrderItem.isChildOrderItem();
+
+            return isChildOrderItem && isAddOnOrderItem;
+        }
+        return false;
     }
 
     /**
@@ -447,10 +466,23 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
         if (qualifyingItemSubTotal == null || qualifyingItemSubTotal.lessThanOrEqual(Money.ZERO)) {
             return true;
         }
+        return orderMeetsProvidedSubtotalRequirement(offer, qualifiersMap, qualifyingItemSubTotal);
+    }
+
+    @Override
+    public boolean orderMeetsTargetSubtotalRequirements(PromotableOrder order, Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> targetsMap) {
+        Money targetMinSubTotal = offer.getTargetMinSubTotal();
+        if (targetMinSubTotal == null || targetMinSubTotal.lessThanOrEqual(Money.ZERO)) {
+            return true;
+        }
+        return orderMeetsProvidedSubtotalRequirement(offer, targetsMap, targetMinSubTotal);
+    }
+
+    protected boolean orderMeetsProvidedSubtotalRequirement(Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> promotableOrderItems, Money minSubTotal) {
         Money subtotal = Money.ZERO;
 
-        for (OfferItemCriteria itemCriteria : qualifiersMap.keySet()) {
-            List<PromotableOrderItem> promotableItems = qualifiersMap.get(itemCriteria);
+        for (OfferItemCriteria itemCriteria : promotableOrderItems.keySet()) {
+            List<PromotableOrderItem> promotableItems = promotableOrderItems.get(itemCriteria);
 
             for (PromotableOrderItem item : promotableItems) {
                 boolean shouldApplyDiscountToSalePrice = offer.getApplyDiscountToSalePrice();
@@ -459,7 +491,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
                 Money lineItemAmount = priceBeforeAdjustments.multiply(quantity);
                 subtotal = subtotal.add(lineItemAmount);
-                if (subtotal.greaterThanOrEqual(qualifyingItemSubTotal)) {
+                if (subtotal.greaterThanOrEqual(minSubTotal)) {
                     return true;
                 }
             }

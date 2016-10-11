@@ -231,6 +231,13 @@
 
             if (shouldShow) {
                 $field.removeClass('hidden');
+
+                if ($field.hasClass('listgrid-container')) {
+                    var $tbody = $field.find('.listgrid-body-wrapper tbody');
+                    if ($tbody.length) {
+                        BLCAdmin.listGrid.paginate.updateGridSize($tbody);
+                    }
+                }
             }
 
             hideGroupIfFieldsAreHidden($field);
@@ -347,7 +354,11 @@ $(document).ready(function() {
 
      		event.preventDefault();
 
-     	}
+     	} else {
+            $('div.' + href + 'Tab .listgrid-container').find('.listgrid-header-wrapper table').each(function() {
+                BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
+            });
+        }
      });
 
 
@@ -532,6 +543,15 @@ $(document).ready(function() {
                     BLCAdmin.initializeModalTabs($(BLCAdmin.currentModal()));
                     BLCAdmin.initializeModalButtons($(BLCAdmin.currentModal()));
                     BLCAdmin.initializeFields();
+
+                    // For each error field, make sure that its tab signifies that it contains an error
+                    $newForm.find('.has-error').each(function(index, el) {
+                        var tabId = '#' + $(el).parents('.entityFormTab').attr("class").substring(0, 4);
+                        var $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
+                        if ($tabWithError.find('.tab-error-indicator').length == 0) {
+                            $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
+                        }
+                    });
 
                     var $actions = BLCAdmin.currentModal().find('.entity-form-actions');
                     $actions.find('button').show();

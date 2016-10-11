@@ -473,7 +473,7 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * @param currentHierarchy
      * @return the full hierarchy
      */
-    public List<Category> buildParentCategoryPath(List<Category> currentHierarchy);
+    public List<Category> getParentCategoryHierarchy(List<Category> currentHierarchy);
 
     /**
      * Build the full category hierarchy by walking up the default category tree and the all parent
@@ -483,7 +483,7 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * @param firstParent determines if ONLY the first parent category should be returned per hierarchy tier
      * @return the full hierarchy
      */
-    public List<Category> buildParentCategoryPath(List<Category> currentHierarchy, Boolean firstParent);
+    public List<Category> getParentCategoryHierarchy(List<Category> currentHierarchy, Boolean firstParent);
 
     /**
      * Gets the attributes for this {@link Category}. In smaller sites, using these attributes might be preferred to

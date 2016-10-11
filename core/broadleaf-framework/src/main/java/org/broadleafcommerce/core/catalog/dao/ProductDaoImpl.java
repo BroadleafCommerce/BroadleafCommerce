@@ -214,13 +214,15 @@ public class ProductDaoImpl implements ProductDao {
         
         // We only want results that match the search query
         List<Predicate> restrictions = new ArrayList<Predicate>();
-        String lq = query.toLowerCase();
-        restrictions.add(
-            builder.or(
-                builder.like(builder.lower(sku.get("name").as(String.class)), '%' + lq + '%'),
-                builder.like(builder.lower(sku.get("longDescription").as(String.class)), '%' + lq + '%')
-            )
-        );
+        if (query != null) {
+            String lq = query.toLowerCase();
+            restrictions.add(
+                    builder.or(
+                            builder.like(builder.lower(sku.get("name").as(String.class)), '%' + lq + '%'),
+                            builder.like(builder.lower(sku.get("longDescription").as(String.class)), '%' + lq + '%')
+                    )
+            );
+        }
                 
         attachSearchCriteria(searchCriteria, product, sku, restrictions);
         

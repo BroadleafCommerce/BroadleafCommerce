@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
@@ -42,7 +41,6 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -95,9 +93,16 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                 throw new IllegalArgumentException("Product was specified but no matching product was found for productId " + orderItemRequestDTO.getProductId());
             }
         }
-        
-        Sku sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(), (ActivityMessages) context);
-        
+
+        Sku sku;
+        try {
+            sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(), (ActivityMessages) context);
+        } catch (RequiredAttributeNotProvidedException e) {
+            // Mark the request as a configuration error and proceed with the add.
+            orderItemRequestDTO.setHasConfigurationError(Boolean.TRUE);
+            return context;
+        }
+
         // If we couldn't find a sku, then we're unable to add to cart.
         if (sku == null && !(orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO)) {
             StringBuilder sb = new StringBuilder();
@@ -143,7 +148,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         return context;
     }
     
-    protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) {
+    protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
         Sku sku = null;
         
         //If sku browsing is enabled, product option data will not be available.
@@ -159,21 +164,49 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         if (sku == null && product != null) {
             // Set to the default sku
             if (product.getAdditionalSkus() != null && product.getAdditionalSkus().size() > 0 && !product.getCanSellWithoutOptions()) {
-                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku", null);
+                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku", null, product.getId().toString());
             }
             sku = product.getDefaultSku();
         }
         return sku;
     }
     
-    protected Sku findMatchingSku(Product product, Map<String, String> attributeValues, ActivityMessages messages) {
+    protected Sku findMatchingSku(Product product, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
         Map<String, String> attributeValuesForSku = new HashMap<String,String>();
-        
-        if (hasProductOptions(product)) {
-            checkProductOptions(product, attributeValues, attributeValuesForSku, messages);
+        // Verify that required product-option values were set.
+
+        if (product != null && product.getProductOptions() != null && product.getProductOptions().size() > 0) {
+            for (ProductOption productOption : product.getProductOptions()) {
+                if (productOption.getRequired() && (productOption.getProductOptionValidationStrategyType() == null ||
+                        productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank())) {
+                    if (StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
+                        throw new RequiredAttributeNotProvidedException("Unable to add to product ("+ product.getId() +") cart. Required attribute was not provided: " + productOption.getAttributeName(), null, product.getId().toString());
+                    } else if (productOption.getUseInSkuGeneration()) {
+                        attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
+                    }
+                }
+                if (!productOption.getRequired() && StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
+                    //if the product option is not required, and user has not set the optional value, then we dont need to validate
+                } else if (productOption.getProductOptionValidationStrategyType() == null || productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank()) {
+                        productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
+                }
+                if((productOption.getProductOptionValidationStrategyType() != null && productOption.getProductOptionValidationStrategyType().getRank() > ProductOptionValidationStrategyType.ADD_ITEM.getRank()))
+                {
+                    //we need to validate however, we will not error out since this message is 
+                    try {
+                        productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
+                    } catch (ProductOptionValidationException e) {
+                        ActivityMessageDTO msg = new ActivityMessageDTO(MessageType.PRODUCT_OPTION.getType(), 1, e.getMessage());
+                        msg.setErrorCode(productOption.getErrorCode());
+                        messages.getActivityMessages().add(msg);
+                    }
+                    
+                }
+            }
             
-            if (product.getAdditionalSkus() != null) {
-                for (Sku sku : product.getAdditionalSkus()) {
+
+            if (product !=null && product.getSkus() != null) {
+                for (Sku sku : product.getSkus()) {
                    if (checkSkuForMatch(sku, attributeValuesForSku)) {
                        return sku;
                    }
@@ -182,80 +215,6 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         }
 
         return null;
-    }
-
-    protected boolean hasProductOptions(Product product) {
-        boolean hasProductOptions = product != null;
-
-        if (hasProductOptions) {
-            List<ProductOptionXref> xrefs = product.getProductOptionXrefs();
-            hasProductOptions = xrefs != null && xrefs.size() > 0;
-        }
-
-        return hasProductOptions;
-    }
-    
-    protected void checkProductOptions(Product product, Map<String, String> attributeValues, Map<String, String> attributeValuesForSku,
-                                       ActivityMessages messages) {
-        for (ProductOptionXref productOptionXref : product.getProductOptionXrefs()) {
-            ProductOption productOption = productOptionXref.getProductOption();
-            String attributeValue = attributeValues.get(productOption.getAttributeName());
-
-            if (!isTypeAdd(productOption)) {
-                validateWithException(productOption, attributeValue, product, attributeValuesForSku);
-            } else if (!isTypeNone(productOption)) {
-                //if the validation strategy isn't none, we need to validate but not error out
-                //there may be multiple product option validation errors, and we want to find them all
-                validateWithoutException(productOption, attributeValue, messages);
-            }
-        }
-    }
-
-    protected boolean isTypeAdd(ProductOption productOption) {
-        ProductOptionValidationStrategyType type = productOption.getProductOptionValidationStrategyType();
-        Integer addItem = ProductOptionValidationStrategyType.ADD_ITEM.getRank();
-
-        return type != null && type.getRank().equals(addItem);
-    }
-
-    protected void validateWithException(ProductOption productOption, String attributeValue, Product product,
-                                         Map<String, String> attributeValuesForSku) {
-        if (productOption.getRequired()) {
-            if (StringUtils.isEmpty(attributeValue)) {
-                throw new RequiredAttributeNotProvidedException("Unable to add to product ("
-                                                                + product.getId()
-                                                                + ") cart. Required attribute was not provided: "
-                                                                + productOption.getAttributeName());
-            } else if (productOption.getUseInSkuGeneration()) {
-                attributeValuesForSku.put(productOption.getAttributeName(), attributeValue);
-            }
-        }
-
-        if (isValidateRequired(productOption, attributeValue)) {
-            productOptionValidationService.validate(productOption, attributeValue);
-        }
-    }
-
-    //Validation only necessary if the product option is required or the user has set an optional value
-    protected boolean isValidateRequired(ProductOption productOption, String attributeValue) {
-        return productOption.getRequired() || !StringUtils.isEmpty(attributeValue);
-    }
-
-    protected boolean isTypeNone(ProductOption productOption) {
-        ProductOptionValidationStrategyType type = productOption.getProductOptionValidationStrategyType();
-
-        return ProductOptionValidationStrategyType.NONE.equals(type);
-    }
-
-    protected void validateWithoutException(ProductOption productOption, String attributeValue, ActivityMessages messages) {
-        try {
-            productOptionValidationService.validate(productOption, attributeValue);
-        } catch (ProductOptionValidationException e) {
-            String type = MessageType.PRODUCT_OPTION.getType();
-            ActivityMessageDTO msg = new ActivityMessageDTO(type, 1, e.getMessage());
-            msg.setErrorCode(productOption.getErrorCode());
-            messages.getActivityMessages().add(msg);
-        }
     }
 
     protected boolean checkSkuForMatch(Sku sku, Map<String,String> attributeValues) {
