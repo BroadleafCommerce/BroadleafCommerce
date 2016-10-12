@@ -105,8 +105,8 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
         Customer customer = CustomerState.getCustomer();
 
         if (customer == null) {
-            LOG.warn("No customer was found on the current request, no cart will be added to the current request. Ensure that the"
-                    + " blCustomerStateFilter occurs prior to the blCartStateFilter");
+            LOG.warn("No customer was found on the current request, no cart will be added to the current request. "
+                    + "Ensure that the blCustomerStateFilter occurs prior to the blCartStateFilter");
             return;
         }
 
@@ -126,7 +126,6 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
             } else if (cart == null) {
                 cart = orderService.findCartForCustomerWithEnhancements(customer);
             }
-            cart = mergeCart(customer, request);
 
             if (cart == null) {
                 cart = orderService.getNullOrder();
