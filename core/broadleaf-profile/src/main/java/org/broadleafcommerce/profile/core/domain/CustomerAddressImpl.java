@@ -92,7 +92,7 @@ public class CustomerAddressImpl implements CustomerAddress {
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = AddressImpl.class, optional=false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = AddressImpl.class, optional=false)
     @JoinColumn(name = "ADDRESS_ID")
     @Index(name="CUSTOMERADDRESS_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address address;

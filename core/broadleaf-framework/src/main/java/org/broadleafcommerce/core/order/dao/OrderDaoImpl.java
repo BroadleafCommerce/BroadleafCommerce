@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderLock;
@@ -250,6 +251,13 @@ public class OrderDaoImpl implements OrderDao {
         final Order order = ((Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.Order"));
 
         return order;
+    }
+
+    @Override
+    public void refresh(Order order) {
+        if (order != null && !(order instanceof NullOrderImpl)) {
+            em.refresh(order);
+        }
     }
 
     @Override

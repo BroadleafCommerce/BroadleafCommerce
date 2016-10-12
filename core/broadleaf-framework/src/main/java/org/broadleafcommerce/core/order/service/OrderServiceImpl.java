@@ -19,17 +19,11 @@
  */
 package org.broadleafcommerce.core.order.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
@@ -83,6 +77,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -600,7 +601,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
     public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
-        preValidateCartOperation(findOrderById(orderId));
+        Order order = findOrderById(orderId);
+        preValidateCartOperation(order);
         preValidateUpdateQuantityOperation(findOrderById(orderId), orderItemRequestDTO);
         if (orderItemRequestDTO.getQuantity() == 0) {
             return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
@@ -785,7 +787,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * Returns true if the two items attributes exactly match.
-     * @param item1
+     * @param item1Attributes
      * @param item2
      * @return
      */
@@ -936,5 +938,30 @@ public class OrderServiceImpl implements OrderService {
         } else if (erh.getThrowable() != null) {
             throw new RuntimeException(erh.getThrowable());
         }
+    }
+
+    @Override
+    public void refresh(Order order) {
+        orderDao.refresh(order);
+    }
+
+    @Override
+    public Order findCartForCustomerWithEnhancements(Customer customer) {
+        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
+        ExtensionResultStatusType resultStatusType = extensionManager.findCartForCustomerWithEnhancements(customer, erh);
+        if (ExtensionResultStatusType.NOT_HANDLED != resultStatusType) {
+            return erh.getResult();
+        }
+        return findCartForCustomer(customer);
+    }
+
+    @Override
+    public Order findCartForCustomerWithEnhancements(Customer customer, Order candidateOrder) {
+        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
+        ExtensionResultStatusType resultStatusType = extensionManager.findCartForCustomerWithEnhancements(customer, candidateOrder, erh);
+        if (ExtensionResultStatusType.NOT_HANDLED != resultStatusType) {
+            return erh.getResult();
+        }
+        return candidateOrder;
     }
 }

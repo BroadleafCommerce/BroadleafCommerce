@@ -94,7 +94,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     protected FulfillmentGroup fulfillmentGroup;
 
     //this needs to stay OrderItem in order to provide backwards compatibility for those implementations that place a BundleOrderItem
-    @ManyToOne(targetEntity = OrderItemImpl.class, optional=false)
+    @ManyToOne(targetEntity = OrderItemImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "ORDER_ITEM_ID")
     @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Order_Item", prominent = true, order = 1000, gridOrder = 1000)
     @AdminPresentationToOneLookup()
