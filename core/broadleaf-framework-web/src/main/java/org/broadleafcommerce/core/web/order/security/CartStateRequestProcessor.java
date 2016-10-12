@@ -122,9 +122,6 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
                 cart = orderService.findCartForCustomerWithEnhancements(customer);
             }
             cart = mergeCart(customer, request);
-        } else if (cart == null) {
-            cart = orderService.findCartForCustomer(customer);
-        }
 
         if (cart == null) {
             cart = orderService.getNullOrder();
