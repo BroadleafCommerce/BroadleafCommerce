@@ -108,9 +108,18 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
 
         Order cart = getOverrideCart(request);
 
-        if (cart == null && mergeCartNeeded(customer, request)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Merge cart required, calling mergeCart " + customer.getId());
+        Order cart;
+        if (erh.getResult() != null) {
+            cart = orderService.findCartForCustomerWithEnhancements(customer, erh.getResult());
+        } else {
+            cart = getOverrideCart(request);
+            if (cart == null && mergeCartNeeded(customer, request)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Merge cart required, calling mergeCart " + customer.getId());
+                }
+                cart = mergeCart(customer, request);
+            } else if (cart == null) {
+                cart = orderService.findCartForCustomerWithEnhancements(customer);
             }
             cart = mergeCart(customer, request);
         } else if (cart == null) {

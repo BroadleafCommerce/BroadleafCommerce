@@ -570,7 +570,6 @@ public interface OrderService {
      */
     public Order reloadOrder(Order order);
 
-
     /**
      * @see OrderDao#acquireLock(Order)
      * @param order
@@ -584,4 +583,25 @@ public interface OrderService {
      * @return whether or not the lock was released
      */
     public boolean releaseLock(Order order);
+
+    void refresh(Order order);
+
+    /**
+     * Retrieve an enhanced version of the cart for the customer. Enhanced carts are generally provided by commercial Broadleaf
+     * modules.
+     *
+     * @param customer the user for whom the enhanced cart is retrieved
+     * @return the enhanced cart, or the basic cart if no enhancement is available
+     */
+    Order findCartForCustomerWithEnhancements(Customer customer);
+
+    /**
+     * For the customer, use the candidateOrder as the source of enhancement for generating an enhanced cart. Enhanced carts
+     * are generally provided by commercial Broadleaf modules.
+     *
+     * @param customer the user for whom the enhanced cart is generated
+     * @param candidateOrder the source of enhancement
+     * @return the enhanced cart, or the untouched candidateOrder if no enhancement is available
+     */
+    Order findCartForCustomerWithEnhancements(Customer customer, Order candidateOrder);
 }
