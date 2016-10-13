@@ -97,7 +97,15 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     
     private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
     
-    protected static final Map<String,Map<String, FieldMetadata>> METADATA_CACHE = new LRUMap<String, Map<String, FieldMetadata>>(1000);
+    protected static final Map<String,Map<String, FieldMetadata>> METADATA_CACHE = new LRUMap<>(1000);
+    
+    /**
+     * Lifetime cache for the existence of DynamicEntityDaoImpl that just stores how many properties we have cached in METADATA_CACHE over the lifetime
+     * of the application. This should survive evictions from METADATA_CACHE because it is for the purpose of diagnosing when we store different property
+     * counts in METADATA_CACHE as a result of cache eviction
+     */
+    protected static final Map<String, Integer> METADATA_CACHE_SIZES = new HashMap<>();
+    
     /*
      * This is the same as POLYMORPHIC_ENTITY_CACHE, except that it does not contain classes that are abstract or have been marked for exclusion 
      * from polymorphism
@@ -127,7 +135,13 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     @Value("${cache.entity.dao.metadata.ttl}")
     protected int cacheEntityMetaDataTtl;
-
+    
+    /**
+     * Whether or not we should use {@link #METADATA_CACHE_SIZES} in the normal runtime of the application
+     */
+    @Value("${validate.metadata.cache.sizes:false}")
+    protected boolean validateMetadataCacheSizes;
+    
     protected long lastCacheFlushTime = System.currentTimeMillis();
 
     protected ApplicationContext applicationContext;
@@ -210,6 +224,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 METADATA_CACHE.clear();
                 DynamicDaoHelperImpl.POLYMORPHIC_ENTITY_CACHE.clear();
                 DynamicDaoHelperImpl.POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.clear();
+                LOG.trace("Metadata cache evicted");
                 return true; // cache is empty
             } else {
                 return true;
@@ -340,7 +355,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 ""
             );
         } else {
-            Map<String, FieldMetadata> mergedProperties = new HashMap<String, FieldMetadata>();
+            Map<String, FieldMetadata> mergedProperties = new HashMap<>();
             Class<?> targetClass;
             try {
                 targetClass = Class.forName(entityName);
@@ -433,7 +448,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             false
         );
 
-        final List<String> removeKeys = new ArrayList<String>();
+        final List<String> removeKeys = new ArrayList<>();
  
         for (final String key : mergedProperties.keySet()) {
             if (mergedProperties.get(key).getExcluded() != null && mergedProperties.get(key).getExcluded()) {
@@ -448,7 +463,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         // Allow field metadata providers to contribute additional fields here. These latestage handlers take place
         // after any cached lookups occur, and are ideal for adding in dynamic properties that are not globally cacheable
         // like properties gleaned from reflection typically are.
-        Set<String> keys = new HashSet<String>(mergedProperties.keySet());
+        Set<String> keys = new HashSet<>(mergedProperties.keySet());
         for (Class<?> targetClass : entities) {
             for (String key : keys) {
                 LateStageAddMetadataRequest amr = new LateStageAddMetadataRequest(key, null, targetClass, this, "");
@@ -490,7 +505,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         PropertyBuilder propertyBuilder = new PropertyBuilder() {
             @Override
             public Map<String, FieldMetadata> execute(Boolean overridePopulateManyToOne) {
-                Map<String, FieldMetadata> mergedProperties = new HashMap<String, FieldMetadata>();
+                Map<String, FieldMetadata> mergedProperties = new HashMap<>();
                 Boolean classAnnotatedPopulateManyToOneFields;
                 if (overridePopulateManyToOne != null) {
                     classAnnotatedPopulateManyToOneFields = overridePopulateManyToOne;
@@ -595,8 +610,9 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         return buffer.toString();
     }
 
-    protected String getCacheKey(ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, Class<?> clazz, String configurationKey, Boolean isParentExcluded) {
+    protected String getCacheKey(String ceilingEntityFullyQualifiedClassname, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, Class<?> clazz, String configurationKey, Boolean isParentExcluded) {
         StringBuilder sb = new StringBuilder(150);
+        sb.append(ceilingEntityFullyQualifiedClassname);
         sb.append(clazz.hashCode());
         sb.append(foreignField==null?"":foreignField.toString());
         sb.append(configurationKey);
@@ -613,7 +629,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         }
         sb.append(mergedPropertyType);
         sb.append(populateManyToOneFields);
-
+        
         String digest;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -624,7 +640,12 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             throw new RuntimeException(e);
         }
 
-        return pad(digest, 32, '0');
+        String key = pad(digest, 32, '0');
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created cache key: " + key + " from the following string: " + sb.toString());
+        }
+        return key;
     }
 
     protected void buildPropertiesFromPolymorphicEntities(
@@ -644,7 +665,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         Boolean isParentExcluded
     ) {
         for (Class<?> clazz : entities) {
-            String cacheKey = getCacheKey(foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, clazz, configurationKey, isParentExcluded);
+            String cacheKey = getCacheKey(ceilingEntityFullyQualifiedClassname, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, clazz, configurationKey, isParentExcluded);
 
             Map<String, FieldMetadata> cacheData = null;
             synchronized(DynamicDaoHelperImpl.LOCK_OBJECT) {
@@ -685,11 +706,32 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                         }
                     }
                     METADATA_CACHE.put(cacheKey, props);
+                    
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Added " + props.size() + " to the metadata cache with key " + cacheKey + " for the class " + ceilingEntityFullyQualifiedClassname);
+                    }
+                    
+                    if (validateMetadataCacheSizes) {
+                        Integer previousSize = METADATA_CACHE_SIZES.get(cacheKey);
+                        Integer currentSize = props.size();
+                        if (previousSize == null) {
+                            METADATA_CACHE_SIZES.put(cacheKey, currentSize);
+                        } else if (!currentSize.equals(previousSize)) {
+                            String msg = "Attempted to store " + currentSize + " properties in the cache for the key " + cacheKey + " but we had previously stored " + previousSize + " properties";
+                            LOG.error(msg);
+                            throw new RuntimeException(msg);
+                        }
+                    }
+                    
                     cacheData = props;
+                } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Read " + cacheData.size() + " from the metada cache with key " + cacheKey + " for the class " + ceilingEntityFullyQualifiedClassname);
+                    }
                 }
             }
             //clone the metadata before passing to the system
-            Map<String, FieldMetadata> clonedCache = new HashMap<String, FieldMetadata>(cacheData.size());
+            Map<String, FieldMetadata> clonedCache = new HashMap<>(cacheData.size());
             for (Map.Entry<String, FieldMetadata> entry : cacheData.entrySet()) {
                 clonedCache.put(entry.getKey(), entry.getValue().cloneFieldMetadata());
             }
@@ -723,7 +765,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         Class<?> parentClass,
         MergedPropertyType mergedPropertyType
     ) {
-        Map<String, FieldMetadata> fields = new HashMap<String, FieldMetadata>();
+        Map<String, FieldMetadata> fields = new HashMap<>();
         BasicFieldMetadata presentationAttribute = new BasicFieldMetadata();
         presentationAttribute.setFriendlyName(friendlyPropertyName);
         if (String.class.isAssignableFrom(targetClass)) {
@@ -813,7 +855,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         }
 
         Map idMetadata = getIdMetadata(targetClass);
-        Map<String, FieldMetadata> fields = new HashMap<String, FieldMetadata>();
+        Map<String, FieldMetadata> fields = new HashMap<>();
         String idProperty = (String) idMetadata.get("name");
         List<String> propertyNames = getPropertyNames(targetClass);
         propertyNames.add(idProperty);
@@ -823,7 +865,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
         PersistentClass persistentClass = getPersistentClass(targetClass.getName());
         Iterator testIter = persistentClass.getPropertyIterator();
-        List<Property> propertyList = new ArrayList<Property>();
+        List<Property> propertyList = new ArrayList<>();
 
         //check the properties for problems
         while(testIter.hasNext()) {
@@ -930,7 +972,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 return o1.compareTo(o2);
             }
         };
-        List<String> presentationKeyList = new ArrayList<String>(presentationAttributes.keySet());
+        List<String> presentationKeyList = new ArrayList<>(presentationAttributes.keySet());
         Collections.sort(presentationKeyList);
 
         for (String propertyName : propertyNames) {
@@ -1185,7 +1227,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         Boolean isParentExcluded
     ) {
         Class<?>[] polymorphicEntities = getAllPolymorphicEntitiesFromCeiling(returnedClass);
-        List<Class<?>> clonedParentClasses = new ArrayList<Class<?>>();
+        List<Class<?>> clonedParentClasses = new ArrayList<>();
         for (Class<?> parentClass : parentClasses) {
             clonedParentClasses.add(parentClass);
         }
@@ -1209,7 +1251,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             newMetadata.setInheritedFromType(targetClass.getName());
             newMetadata.setAvailableToTypes(new String[]{targetClass.getName()});
         }
-        Map<String, FieldMetadata> convertedFields = new HashMap<String, FieldMetadata>(newFields.size());
+        Map<String, FieldMetadata> convertedFields = new HashMap<>(newFields.size());
         for (Map.Entry<String, FieldMetadata> key : newFields.entrySet()) {
             convertedFields.put(propertyName + '.' + key.getKey(), key.getValue());
             if (key.getValue() instanceof BasicFieldMetadata) {
@@ -1282,11 +1324,11 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             property = persistentClass.getProperty(prefix + propertyName);
         }
         Iterator componentPropertyIterator = ((org.hibernate.mapping.Component) property.getValue()).getPropertyIterator();
-        List<Property> componentPropertyList = new ArrayList<Property>();
+        List<Property> componentPropertyList = new ArrayList<>();
         while(componentPropertyIterator.hasNext()) {
             componentPropertyList.add((Property) componentPropertyIterator.next());
         }
-        Map<String, FieldMetadata> newFields = new HashMap<String, FieldMetadata>();
+        Map<String, FieldMetadata> newFields = new HashMap<>();
         buildProperties(
             targetClass,
             foreignField,
@@ -1309,7 +1351,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             isParentExcluded,
             true
         );
-        Map<String, FieldMetadata> convertedFields = new HashMap<String, FieldMetadata>();
+        Map<String, FieldMetadata> convertedFields = new HashMap<>();
         for (String key : newFields.keySet()) {
             convertedFields.put(propertyName + "." + key, newFields.get(key));
         }
