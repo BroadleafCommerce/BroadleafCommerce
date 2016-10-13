@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
+import org.broadleafcommerce.common.site.service.type.PropagationModeType;
+
 import java.io.Serializable;
 
 /**
@@ -39,5 +41,9 @@ public interface SiteCatalogXref extends Serializable {
     Long getId();
 
     void setId(Long id);
+
+    PropagationModeType getPropagationMode();
+
+    void setPropagationMode(PropagationModeType mode);
 
 }

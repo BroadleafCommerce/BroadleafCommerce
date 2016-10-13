@@ -17,10 +17,12 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
+import org.broadleafcommerce.common.site.service.type.PropagationModeType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.springframework.transaction.annotation.Propagation;
 
 import java.io.Serializable;
 
@@ -69,6 +71,9 @@ public class SiteCatalogXrefImpl implements SiteCatalogXref {
     @JoinColumn(name = "CATALOG_ID")
     protected Catalog catalog = new CatalogImpl();
 
+    @Column(name = "PROPAGATION_MODE")
+    protected String propagationMode;
+
     @Override
     public Long getId() {
         return id;
@@ -97,6 +102,17 @@ public class SiteCatalogXrefImpl implements SiteCatalogXref {
     @Override
     public void setCatalog(Catalog catalog) {
         this.catalog = catalog;
+    }
+
+    @Override
+    public void setPropagationMode(PropagationModeType mode) {
+        this.propagationMode = mode.getType();
+    }
+
+    @Override
+    public PropagationModeType getPropagationMode() {
+        //return this.propagationMode==null?null:PropagationModeType.getInstance(this.propagationMode);
+        return PropagationModeType.SANDBOX;
     }
     
 }
