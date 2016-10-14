@@ -136,9 +136,20 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
                 xmlTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
                 DOMSource source = new DOMSource(document);
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(statusFile, false), "UTF-8"));
-                StreamResult result = new StreamResult(writer);
-                xmlTransformer.transform(source, result);
+                BufferedWriter writer = null;
+                try {
+                    writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(statusFile, false), "UTF-8"));
+                    StreamResult result = new StreamResult(writer);
+                    xmlTransformer.transform(source, result);
+                } finally {
+                    if (writer != null) {
+                        try {
+                            writer.close();
+                        } catch (IOException ioException) {
+                            //do nothing
+                        }
+                    }
+                }
             }
         } catch (ParserConfigurationException e) {
             throw ExceptionHelper.refineException(e);
