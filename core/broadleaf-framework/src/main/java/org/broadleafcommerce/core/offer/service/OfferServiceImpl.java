@@ -149,6 +149,23 @@ public class OfferServiceImpl implements OfferService {
         return offerCodeDao.readOfferCodeByCode(code);
     }
 
+    @Override
+    public List<Offer> lookupAllOffersByCode(String code) {
+        List<Offer> offers = new ArrayList<Offer>();
+        List<OfferCode> offerCodes = offerCodeDao.readAllOfferCodesByCode(code);
+        for (OfferCode offerCode : offerCodes) {
+            if (offerCode != null) {
+                offers.add(offerCode.getOffer());
+            }
+        }
+        return offers;
+    }
+
+    @Override
+    public List<OfferCode> lookupAllOfferCodesByCode(String code){
+        return offerCodeDao.readAllOfferCodesByCode(code);
+    }
+
     /**
      * Creates a list of offers that applies to this order.  All offers that are assigned to the customer,
      * entered during checkout, or has a delivery type of automatic are added to the list.  The same offer
@@ -172,6 +189,7 @@ public class OfferServiceImpl implements OfferService {
             if (!offers.contains(orderOfferCode.getOffer())) {
                 offers.add(orderOfferCode.getOffer());
             }
+            extensionManager.getProxy().addAdditionalOffersForCode(offers, orderOfferCode);
         }
         List<Offer> globalOffers = lookupAutomaticDeliveryOffers();
         for (Offer globalOffer : globalOffers) {
@@ -508,6 +526,13 @@ public class OfferServiceImpl implements OfferService {
         for (OfferCode code : codes) {
             if (appliedOffers.contains(code.getOffer())) {
                 offerToCodeMapping.put(code.getOffer(), code);
+            }
+
+            List<Offer> additionalOffersToBeApplied = new ArrayList<Offer>();
+
+            extensionManager.getProxy().addAdditionalOffersForCode(additionalOffersToBeApplied, code);
+            for (Offer additionalOfferToBeApplied : additionalOffersToBeApplied) {
+                offerToCodeMapping.put(additionalOfferToBeApplied, code);
             }
         }
         return offerToCodeMapping;

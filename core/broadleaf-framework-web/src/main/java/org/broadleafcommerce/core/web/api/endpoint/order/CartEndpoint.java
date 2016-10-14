@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.web.api.endpoint.order;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -46,6 +47,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.MultiValueMap;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -282,15 +284,17 @@ public abstract class CartEndpoint extends BaseEndpoint {
                     .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
         }
 
-        OfferCode offerCode = offerService.lookupOfferCodeByCode(promoCode);
+        List<OfferCode> offerCodes = offerService.lookupAllOfferCodesByCode(promoCode);
 
-        if (offerCode == null) {
+        if (CollectionUtils.isEmpty(offerCodes)) {
             throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                     .addMessage(BroadleafWebServicesException.PROMO_CODE_INVALID, promoCode);
         }
 
         try {
-            cart = orderService.addOfferCode(cart, offerCode, priceOrder);
+            for (OfferCode offerCode : offerCodes) {
+                cart = orderService.addOfferCode(cart, offerCode, priceOrder);
+            }
             OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
             wrapper.wrapDetails(cart, request);
 
@@ -325,14 +329,17 @@ public abstract class CartEndpoint extends BaseEndpoint {
                     .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
         }
 
-        OfferCode offerCode = offerService.lookupOfferCodeByCode(promoCode);
-        if (offerCode == null) {
+        List<OfferCode> offerCodes = offerService.lookupAllOfferCodesByCode(promoCode);
+        
+        if (CollectionUtils.isEmpty(offerCodes)) {
             throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                     .addMessage(BroadleafWebServicesException.PROMO_CODE_INVALID, promoCode);
         }
 
         try {
-            cart = orderService.removeOfferCode(cart, offerCode, priceOrder);
+            for (OfferCode offerCode : offerCodes) {
+                cart = orderService.removeOfferCode(cart, offerCode, priceOrder);
+            }
             OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
             wrapper.wrapDetails(cart, request);
 
@@ -341,7 +348,6 @@ public abstract class CartEndpoint extends BaseEndpoint {
             throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, e)
                     .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
         }
-
     }
 
     public OrderWrapper removeAllOfferCodes(HttpServletRequest request,

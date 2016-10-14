@@ -46,6 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -359,25 +360,27 @@ public class BroadleafCartController extends AbstractCartController {
         String exception = "";
         
         if (cart != null && !(cart instanceof NullOrderImpl)) {
-            OfferCode offerCode = offerService.lookupOfferCodeByCode(customerOffer);
-            if (offerCode != null) {
-                try {
-                    orderService.addOfferCode(cart, offerCode, false);
-                    promoAdded = true;
-                    cart = orderService.save(cart, true);
-                } catch (OfferException e) {
-                    if (e instanceof OfferMaxUseExceededException) {
-                        exception = "Use Limit Exceeded";
-                    } else if (e instanceof OfferExpiredException) {
-                        exception = "Offer Has Expired";
-                    } else if (e instanceof OfferAlreadyAddedException) {
-                        exception = "Offer Has Already Been Added";
-                    } else {
-                        exception = "An Unknown Offer Error Has Occured";
+            List<OfferCode> offerCodes = offerService.lookupAllOfferCodesByCode(customerOffer);
+            for (OfferCode offerCode : offerCodes) {
+                if (offerCode != null) {
+                    try {
+                        orderService.addOfferCode(cart, offerCode, false);
+                        promoAdded = true;
+                        cart = orderService.save(cart, true);
+                    } catch (OfferException e) {
+                        if (e instanceof OfferMaxUseExceededException) {
+                            exception = "Use Limit Exceeded";
+                        } else if (e instanceof OfferExpiredException) {
+                            exception = "Offer Has Expired";
+                        } else if (e instanceof OfferAlreadyAddedException) {
+                            exception = "Offer Has Already Been Added";
+                        } else {
+                            exception = "An Unknown Offer Error Has Occured";
+                        }
                     }
+                } else {
+                    exception = "Invalid Code";
                 }
-            } else {
-                exception = "Invalid Code";
             }
         } else {
             exception = "Invalid Cart";
