@@ -228,33 +228,33 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                                                                                            })
                                                                   ));
         }
+        //TODO 2204 re-enact these conditional items when we establish how to handle non-accepted parent catalog items
 
-        if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
-                (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
+//        if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
+//            (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
             extensionManager.getProxy().manageAdditionalFilterMappings(cto);
-
-            //Add special handling for product list grid fetches
-            boolean hasExplicitSort = false;
-            for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
-                hasExplicitSort = filter.getSortDirection() != null;
-                if (hasExplicitSort) {
-                    break;
-                }
-            }
-            if (!hasExplicitSort) {
-                FilterAndSortCriteria filter = cto.get("id");
-                filter.setNullsLast(false);
-                filter.setSortAscending(true);
-            }
-            try {
-                extensionManager.getProxy().initiateFetchState();
-                return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
-            } finally {
-                extensionManager.getProxy().endFetchState();
-            }
-        } else {
+//            //Add special handling for product list grid fetches
+//            boolean hasExplicitSort = false;
+//            for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
+//                hasExplicitSort = filter.getSortDirection() != null;
+//                if (hasExplicitSort) {
+//                    break;
+//                }
+//            }
+//            if (!hasExplicitSort) {
+//                FilterAndSortCriteria filter = cto.get("id");
+//                filter.setNullsLast(false);
+//                filter.setSortAscending(true);
+//            }
+//            try {
+//                extensionManager.getProxy().initiateFetchState();
+//                return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+//            } finally {
+//                extensionManager.getProxy().endFetchState();
+//            }
+//        } else {
             return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
-        }
+//        }
     }
 
     @Override
