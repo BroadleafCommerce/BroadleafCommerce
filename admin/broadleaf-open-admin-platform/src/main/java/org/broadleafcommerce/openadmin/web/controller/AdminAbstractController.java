@@ -448,7 +448,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                     }
                 }
 
-                FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), collapsedValues);
+                FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), collapsedValues, Integer.MIN_VALUE);
                 fasMap.put(entry.getKey(),fasCriteria);
             }
         }
@@ -466,6 +466,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                     propertyCriteria.setSortAscending(sortAscending);
                 } else {
                     propertyCriteria = new FilterAndSortCriteria(sortProperties.get(i));
+                    propertyCriteria.setOrder(Integer.MIN_VALUE);
                     propertyCriteria.setSortAscending(sortAscending);
                     fasMap.put(sortProperties.get(i),propertyCriteria);
                 }

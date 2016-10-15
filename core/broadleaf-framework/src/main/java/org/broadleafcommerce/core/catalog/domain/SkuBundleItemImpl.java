@@ -44,6 +44,7 @@ import java.math.BigDecimal;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -95,11 +96,11 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
         fieldType = SupportedFieldType.MONEY)
     protected BigDecimal itemSalePrice;
 
-    @ManyToOne(targetEntity = ProductBundleImpl.class, optional = false, cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductBundleImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_BUNDLE_ID", referencedColumnName = "PRODUCT_ID")
     protected ProductBundle bundle;
 
-    @ManyToOne(targetEntity = SkuImpl.class, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, optional = false)
     @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID")
     @AdminPresentation(friendlyName = "Sku",
         group = GroupName.General, order = FieldOrder.SKU,

@@ -82,4 +82,7 @@ public interface PageDao {
 
     public void detachPage(Page page);
 
+    public Long getCurrentDateResolution();
+
+    public void setCurrentDateResolution(Long currentDateResolution);
 }

@@ -28,7 +28,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.RequestScope;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +44,7 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
 
     protected static MergeClassPathXMLApplicationContext mergeContext = null;
 
-    protected static List<String> moduleContexts = new ArrayList<String>();
+    protected static List<String> moduleContexts = new ArrayList<>();
 
     public static MergeClassPathXMLApplicationContext getContext() {
         try {
@@ -53,7 +52,7 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
                 // Note that as of 2.2.0, this array will no longer include "bl-applicationContext-test", as we want that to
                 // be the very last context loaded.
                 String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
-                List<String> allContexts = new ArrayList<String>(Arrays.asList(contexts));
+                List<String> allContexts = new ArrayList<>(Arrays.asList(contexts));
 
                 // We need the content applicationContexts and admin applicationContexts
                 allContexts.add("bl-open-admin-contentClient-applicationContext.xml");
@@ -66,11 +65,6 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
                 // Lastly, we want the test applicationContext
                 allContexts.add("bl-applicationContext-test.xml");
 
-                // If we're running in legacy test mode, we need that one too
-                if (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Dlegacy=true")) {
-                    allContexts.add("bl-applicationContext-test-legacy.xml");
-                }
-                
                 String[] strArray = new String[allContexts.size()];
                 mergeContext = new MergeClassPathXMLApplicationContext(allContexts.toArray(strArray), new String[]{});
                 
