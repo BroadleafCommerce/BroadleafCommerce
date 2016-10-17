@@ -80,6 +80,8 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     @Resource(name = "blStaticAssetMultiTenantExtensionManager")
     protected StaticAssetMultiTenantExtensionManager staticAssetExtensionManager;
 
+    @Value("${should.accept.non.image.asset:false}")
+    protected boolean shouldAcceptNonImageAsset;
 
     private final Random random = new Random();
     private final String FILE_NAME_CHARS = "0123456789abcdef";
@@ -214,7 +216,14 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             ((ImageStaticAsset) newAsset).setHeight(metadata.getHeight());
         } catch (Exception e) {
             //must not be an image stream
-            newAsset = new StaticAssetImpl();
+            LOG.warn("unable to convert asset:"+fileName+" into Image");
+            LOG.debug(e);
+            if(getShouldAcceptNonImageAsset()) {
+                newAsset = new StaticAssetImpl();
+            }
+            else {
+                throw new RuntimeException("Selected Asset/File was not valid image.");
+            }
         }
         if (storeAssetsOnFileSystem) {
             newAsset.setStorageType(StorageType.FILESYSTEM);
@@ -320,4 +329,11 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         return staticAssetPathService.convertAssetPath(assetPath, contextPath, secureRequest);
     }
 
+    public boolean getShouldAcceptNonImageAsset() {
+        return shouldAcceptNonImageAsset;
+    }
+
+    public void setShouldAcceptNonImageAsset(boolean shouldAcceptNonImageAsset) {
+        this.shouldAcceptNonImageAsset = shouldAcceptNonImageAsset;
+    }
 }
