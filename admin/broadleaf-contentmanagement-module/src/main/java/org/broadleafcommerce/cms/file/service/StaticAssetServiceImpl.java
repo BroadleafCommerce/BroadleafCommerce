@@ -80,7 +80,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     @Resource(name = "blStaticAssetMultiTenantExtensionManager")
     protected StaticAssetMultiTenantExtensionManager staticAssetExtensionManager;
 
-    @Value("${should.accept.non.image.asset:false}")
+    @Value("${should.accept.non.image.asset:true}")
     protected boolean shouldAcceptNonImageAsset;
 
     private final Random random = new Random();
@@ -207,8 +207,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
                 fullUrl = getCountUrl(fullUrl, count, false);
             }
         }
-
-
+        
         try {
             ImageMetadata metadata = imageArtifactProcessor.getImageMetadata(inputStream);
             newAsset = new ImageStaticAssetImpl();
@@ -219,7 +218,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             LOG.warn("unable to convert asset:"+fileName+" into Image");
             LOG.debug(e);
             if(getShouldAcceptNonImageAsset()) {
-                newAsset = new StaticAssetImpl();
+                newAsset =  createNonImageAsset(inputStream, fileName, properties);
             }
             else {
                 throw new RuntimeException("Selected Asset/File was not valid image.");
@@ -239,7 +238,19 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
         return staticAssetDao.addOrUpdateStaticAsset(newAsset, false);
     }
-    
+
+    /**
+     * Hook-point for implementors to add custom business logic for handling files that are non-images
+     *
+     * @param inputStream
+     * @param fileName
+     * @param properties
+     * @return
+     */
+    protected StaticAsset createNonImageAsset(InputStream inputStream, String fileName, Map<String, String> properties) {
+        return new StaticAssetImpl();
+    }
+
     /**
      * Gets the count URL based on the original fullUrl. If requested in legacy format this will return URLs like:
      * 
