@@ -177,7 +177,7 @@ public class SolrConfiguration implements InitializingBean {
                 }
             }
             
-            if (BroadleafCloudSolrClient.class.isAssignableFrom(primaryServer.getClass())) {
+            if (BroadleafCloudSolrClient.class.isAssignableFrom(server.getClass())) {
                 ((BroadleafCloudSolrClient) server).setReindexClient(false);
                 ((BroadleafCloudSolrClient) server).setSolrConfig(this);
             }
