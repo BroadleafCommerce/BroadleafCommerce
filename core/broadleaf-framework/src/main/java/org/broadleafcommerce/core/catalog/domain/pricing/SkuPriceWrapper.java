@@ -1,6 +1,7 @@
 package org.broadleafcommerce.core.catalog.domain.pricing;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 
 import java.io.Serializable;
 
@@ -12,6 +13,10 @@ public class SkuPriceWrapper implements Serializable {
     private static final long serialVersionUID = 1L;
 
     protected Sku targetSku;
+
+    public SkuPriceWrapper() {
+        this.targetSku = new SkuImpl();
+    }
 
     public SkuPriceWrapper(Sku sku) {
         this.targetSku = sku;
