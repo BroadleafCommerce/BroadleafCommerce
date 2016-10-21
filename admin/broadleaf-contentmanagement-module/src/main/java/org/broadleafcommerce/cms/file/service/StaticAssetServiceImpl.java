@@ -215,9 +215,10 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             ((ImageStaticAsset) newAsset).setHeight(metadata.getHeight());
         } catch (Exception e) {
             //must not be an image stream
-            LOG.warn("unable to convert asset:"+fileName+" into Image");
+            LOG.warn("unable to convert asset:" + fileName + " into Image");
             LOG.debug(e);
-            if(getShouldAcceptNonImageAsset()) {
+            
+            if (getShouldAcceptNonImageAsset()) {
                 newAsset =  createNonImageAsset(inputStream, fileName, properties);
             }
             else {
@@ -344,7 +345,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         return shouldAcceptNonImageAsset;
     }
 
-    public void setShouldAcceptNonImageAsset(boolean shouldAcceptNonImageAsset) {
-        this.shouldAcceptNonImageAsset = shouldAcceptNonImageAsset;
+    public void setShouldAcceptNonImageAsset(boolean accept) {
+        shouldAcceptNonImageAsset = accept;
     }
 }
