@@ -1050,6 +1050,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     return null;
                 }
             }
+        } else if (defaultValue != null && StringUtils.isEmpty(defaultValue)) {
+            // we return an single-space string as the default value instead of empty strings to ensure compatibility
+            // with Oracle DB which converts empty strings to null on insert or updates
+            return " ";
         }
         return defaultValue;
     }
