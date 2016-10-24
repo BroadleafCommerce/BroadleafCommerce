@@ -813,16 +813,28 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     public boolean hasRetailPrice();
 
     /**
-     * added just for convenience, references to defaultSku.retailPrice 
+     * Convenience method, references to defaultSku.retailPrice
      * @return
      */
     public Money getRetailPrice();
 
     /**
-     * added just for convenience, references defaultSku.retailPrice 
+     * Convenience method, references defaultSku.salePrice
      * @return
      */
     public Money getSalePrice();
+
+    /**
+     * Convenience method, references defaultSku.originalSalePrice
+     * @return
+     */
+    public Money getOriginalSalePrice();
+
+    /**
+     * Convenience method, references defaultSku.onSale
+     * @return
+     */
+    public boolean isOnSale();
 
     /**
      * added just for convenience, references defaultSku.margin
