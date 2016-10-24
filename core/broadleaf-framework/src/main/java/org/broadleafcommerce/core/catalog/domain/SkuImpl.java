@@ -545,14 +545,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     }
 
     @Override
-    public Money getOriginalSalePrice() {
-        if (salePrice != null) {
-            return new Money(salePrice, getCurrency());
-        }
-        return null;
-    }
-
-    @Override
     public Money getRetailPrice() {
         return getRetailPriceInternal();
     }

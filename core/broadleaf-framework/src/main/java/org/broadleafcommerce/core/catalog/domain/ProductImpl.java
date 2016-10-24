@@ -469,15 +469,6 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     }
 
     @Override
-    public Money getOriginalSalePrice() {
-        if (defaultSku == null) {
-            return null;
-        } else {
-            return defaultSku.getOriginalSalePrice();
-        }
-    }
-
-    @Override
     public boolean isOnSale() {
         return defaultSku.isOnSale();
     }

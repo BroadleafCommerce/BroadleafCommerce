@@ -825,12 +825,6 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     public Money getSalePrice();
 
     /**
-     * Convenience method, references defaultSku.originalSalePrice
-     * @return
-     */
-    public Money getOriginalSalePrice();
-
-    /**
      * Convenience method, references defaultSku.onSale
      * @return
      */
