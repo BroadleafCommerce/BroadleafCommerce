@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
@@ -146,7 +147,9 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
             } else {
                 DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(sku, salePrice);
                 Sku proxy = (Sku) Proxy.newProxyInstance(sku.getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(sku.getClass()), handler);
-                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+
+                SkuPriceWrapper wrapper = new SkuPriceWrapper(proxy);
+                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(wrapper, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
                 returnPrice = dynamicPrices.getSalePrice();
             }
         } else {

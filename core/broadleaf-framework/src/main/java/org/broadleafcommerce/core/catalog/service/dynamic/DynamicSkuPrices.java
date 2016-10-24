@@ -33,6 +33,7 @@ public class DynamicSkuPrices implements Serializable {
     protected Money retailPrice;
     protected Money salePrice;
     protected Money priceAdjustment;
+    protected Boolean didOverride;
 
     public Money getRetailPrice() {
         return retailPrice;
@@ -88,4 +89,14 @@ public class DynamicSkuPrices implements Serializable {
         return getSalePrice();
     }
 
+    public Boolean getDidOverride() {
+        if (didOverride == null) {
+            return false;
+        }
+        return didOverride;
+    }
+
+    public void setDidOverride(Boolean didOverride) {
+        this.didOverride = didOverride;
+    }
 }

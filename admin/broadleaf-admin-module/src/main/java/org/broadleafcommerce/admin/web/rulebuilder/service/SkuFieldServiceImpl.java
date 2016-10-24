@@ -18,6 +18,7 @@
 package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.admin.web.controller.entity.AdminCategoryController;
+import org.broadleafcommerce.admin.web.controller.entity.AdminProductController;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
@@ -40,7 +41,8 @@ public class SkuFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_skuName")
                 .name("name")
-                .operators("blcOperators_Text")
+                .operators("blcOperators_Selectize")
+                .selectizeSectionKey(AdminProductController.SECTION_KEY)
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());

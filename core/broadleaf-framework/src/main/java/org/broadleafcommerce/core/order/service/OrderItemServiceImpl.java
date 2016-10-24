@@ -24,9 +24,11 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
+import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.order.dao.OrderItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -254,7 +256,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.EXTERNALLY_PRICED);
         populateDiscreteOrderItem(item, itemRequest);
 
-        DynamicSkuPrices prices = dynamicSkuPricingService.getSkuPrices(itemRequest.getSku(), skuPricingConsiderations);
+        SkuPriceWrapper wrapper = new SkuPriceWrapper(itemRequest.getSku());
+        DynamicSkuPrices prices = dynamicSkuPricingService.getSkuPrices(wrapper, skuPricingConsiderations);
         item.setBundleOrderItem(itemRequest.getBundleOrderItem());
         item.setBaseRetailPrice(prices.getRetailPrice());
         item.setBaseSalePrice(prices.getSalePrice());

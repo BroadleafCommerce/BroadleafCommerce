@@ -515,6 +515,7 @@
                     loadThrottle: 100,
                     preload: true,
                     hideSelected: true,
+                    dropdownParent: 'body',
                     closeAfterSelect: true,
                     placeholder: field.label + " +",
                     onInitialize: function () {
