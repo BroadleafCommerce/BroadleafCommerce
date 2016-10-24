@@ -45,6 +45,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+
+/**
+ * @deprecated instead, use the ProductType Module's Product Add-Ons to build and configure bundles
+ */
+@Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_BUNDLE")
