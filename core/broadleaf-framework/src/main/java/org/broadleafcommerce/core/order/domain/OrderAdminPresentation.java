@@ -27,13 +27,17 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
  */
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderImpl_baseOrder",
         tabs = {
-                @AdminTabPresentation(name = OrderAdminPresentation.TabName.OrderItems,
-                        order = OrderAdminPresentation.TabOrder.OrderItems,
+
+                @AdminTabPresentation(name = OrderAdminPresentation.TabName.General,
+                        order = OrderAdminPresentation.TabOrder.General,
                         groups = {
                                 @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.General,
                                         order = OrderAdminPresentation.GroupOrder.General,
                                         untitled = true)
                         }
+                ),
+                @AdminTabPresentation(name = OrderAdminPresentation.TabName.OrderItems,
+                        order = OrderAdminPresentation.TabOrder.OrderItems
                 ),
                 @AdminTabPresentation(name = OrderAdminPresentation.TabName.FulfillmentGroups,
                         order = OrderAdminPresentation.TabOrder.FulfillmentGroups
@@ -49,6 +53,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 
 public interface OrderAdminPresentation {
     public static class TabName {
+        public static final String General = "General";
         public static final String OrderItems = "OrderImpl_Order_Items_Tab";
         public static final String FulfillmentGroups = "OrderImpl_Fulfillment_Groups_Tab";
         public static final String Payment = "OrderImpl_Payment_Tab";
@@ -56,6 +61,7 @@ public interface OrderAdminPresentation {
     }
 
     public static class TabOrder {
+        public static final int General = 1000;
         public static final int OrderItems = 2000;
         public static final int FulfillmentGroups = 3000;
         public static final int Payment = 4000;
