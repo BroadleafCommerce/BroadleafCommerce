@@ -49,7 +49,7 @@ public class PromotionMessageDTO implements Serializable {
         this.localeCode = promotionMessage.getLocale() == null ? null : promotionMessage.getLocale().getLocaleCode();
         this.priority = promotionMessage.getPriority();
         this.endDate = promotionMessage.getEndDate();
-        this.media = promotionMessage.getPromotionMessageMedia();
+        this.media = promotionMessage.getMedia();
     }
 
     public String getMessage() {

@@ -42,9 +42,9 @@ public interface PromotionMessage extends Status, Serializable,MultiTenantClonea
 
     public void setMessage(String message);
 
-    public Media getPromotionMessageMedia();
+    public Media getMedia();
 
-    public void setPromotionMessageMedia(Media promotionMessageMedia);
+    public void setMedia(Media media);
 
     public int getPriority();
 
