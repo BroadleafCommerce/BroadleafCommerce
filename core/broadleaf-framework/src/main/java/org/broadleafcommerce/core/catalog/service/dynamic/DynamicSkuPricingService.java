@@ -53,6 +53,11 @@ public interface DynamicSkuPricingService {
     @SuppressWarnings("rawtypes")
     public DynamicSkuPrices getSkuPrices(SkuPriceWrapper skuWrapper, HashMap skuPricingConsiderations);
 
+    @Nonnull
+    @SuppressWarnings("rawtypes")
+    @Deprecated
+    public DynamicSkuPrices getSkuPrices(Sku sku, HashMap skuPricingConsiderations);
+
     /**
      * Used for t
      * 
