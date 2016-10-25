@@ -33,20 +33,34 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                         groups = {
                                 @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.General,
                                         order = OrderAdminPresentation.GroupOrder.General,
+                                        untitled = true),
+                                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.OrderItems,
+                                        order = OrderAdminPresentation.GroupOrder.OrderItems)
+                        }
+                ),
+                @AdminTabPresentation(name = OrderAdminPresentation.TabName.FulfillmentGroups,
+                        order = OrderAdminPresentation.TabOrder.FulfillmentGroups,
+                        groups = {
+                                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.FulfillmentGroups,
+                                        order = OrderAdminPresentation.GroupOrder.FulfillmentGroups,
                                         untitled = true)
                         }
                 ),
-                @AdminTabPresentation(name = OrderAdminPresentation.TabName.OrderItems,
-                        order = OrderAdminPresentation.TabOrder.OrderItems
-                ),
-                @AdminTabPresentation(name = OrderAdminPresentation.TabName.FulfillmentGroups,
-                        order = OrderAdminPresentation.TabOrder.FulfillmentGroups
-                ),
                 @AdminTabPresentation(name = OrderAdminPresentation.TabName.Payment,
-                        order = OrderAdminPresentation.TabOrder.Payment
+                        order = OrderAdminPresentation.TabOrder.Payment,
+                        groups = {
+                                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.Payment,
+                                        order = OrderAdminPresentation.GroupOrder.Payment,
+                                        untitled = true)
+                        }
                 ),
                 @AdminTabPresentation(name = OrderAdminPresentation.TabName.Advanced,
-                        order = OrderAdminPresentation.TabOrder.Advanced
+                        order = OrderAdminPresentation.TabOrder.Advanced,
+                        groups = {
+                                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.Advanced,
+                                        order = OrderAdminPresentation.GroupOrder.Advanced,
+                                        untitled = true)
+                        }
                 )
         }
 )
@@ -54,7 +68,6 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 public interface OrderAdminPresentation {
     public static class TabName {
         public static final String General = "General";
-        public static final String OrderItems = "OrderImpl_Order_Items_Tab";
         public static final String FulfillmentGroups = "OrderImpl_Fulfillment_Groups_Tab";
         public static final String Payment = "OrderImpl_Payment_Tab";
         public static final String Advanced = "OrderImpl_Advanced_Tab";
@@ -62,18 +75,26 @@ public interface OrderAdminPresentation {
 
     public static class TabOrder {
         public static final int General = 1000;
-        public static final int OrderItems = 2000;
-        public static final int FulfillmentGroups = 3000;
-        public static final int Payment = 4000;
-        public static final int Advanced = 5000;
+        public static final int FulfillmentGroups = 2000;
+        public static final int Payment = 3000;
+        public static final int Advanced = 4000;
     }
     
     public static class GroupName {
         public static final String General = "General";
+        public static final String OrderItems = "OrderImpl_Order_Items";
+        public static final String FulfillmentGroups = "OrderImpl_Fulfillment_Groups";
+        public static final String Payment = "OrderImpl_Payment";
+        public static final String Advanced = "OrderImpl_Advanced";
     }
 
     public static class GroupOrder {
         public static final int General = 1000;
+        public static final int OrderItems = 2000;
+
+        public static final int FulfillmentGroups = 1000;
+        public static final int Payment = 1000;
+        public static final int Advanced = 1000;
     }
 
     public static class FieldOrder {

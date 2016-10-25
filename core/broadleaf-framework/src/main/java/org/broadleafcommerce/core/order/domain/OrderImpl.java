@@ -207,7 +207,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Order_Items",
-            tab = TabName.OrderItems)
+            group = GroupName.OrderItems)
     protected List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
     @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = {CascadeType.ALL})
