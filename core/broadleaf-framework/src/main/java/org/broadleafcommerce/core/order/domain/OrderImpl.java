@@ -213,14 +213,14 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Fulfillment_Groups",
-                tab = TabName.FulfillmentGroups)
+                group = GroupName.FulfillmentGroups)
     protected List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
 
     @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = { CascadeType.ALL },
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Adjustments",
-                tab = TabName.Advanced,
+                group = GroupName.Advanced,
                 order = FieldOrder.ADJUSTMENTS)
     protected List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
@@ -230,7 +230,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             referencedColumnName = "OFFER_CODE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Offer_Codes",
-                tab = TabName.Advanced,
+                group = GroupName.Advanced,
                 manyToField = "orders", order = FieldOrder.OFFERCODES)
     protected List<OfferCode> addedOfferCodes = new ArrayList<OfferCode>();
 
@@ -242,7 +242,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @OneToMany(mappedBy = "order", targetEntity = OrderPaymentImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Payments",
-                tab = TabName.Payment)
+                group = GroupName.Payment)
     protected List<OrderPayment> payments = new ArrayList<OrderPayment>();
 
     @ManyToMany(targetEntity=OfferInfoImpl.class)
@@ -261,7 +261,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="name")
     @AdminPresentationMap(friendlyName = "OrderImpl_Attributes",
-        forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderImpl_Attributes_Key_Name", tab = TabName.Advanced
+        forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderImpl_Attributes_Key_Name", group = GroupName.Advanced
     )
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
     
