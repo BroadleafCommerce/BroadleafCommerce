@@ -51,6 +51,7 @@ public interface CrossAppAuthService {
      */
     public boolean isAuthedFromAdmin();
 
+
     /**
      * @return the id of the currently authenticated admin user. Returns null if there is no currently authenticated user
      */
@@ -60,5 +61,10 @@ public interface CrossAppAuthService {
      * @return whether or not the user is currently authenticated from the admin and also has the CSR role
      */
     public boolean hasCsrPermission();
+
+    /**
+     * @return whether or not the user is currently authenticated from the admin and also has the CSR Quote role
+     */
+    boolean hasQuotePermission();
 
 }
