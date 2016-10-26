@@ -751,4 +751,27 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         return null;
     }
 
+    @Override
+    public List<StructuredContentDTO> getStructuredContentItemsByContentName(String contentName, Locale locale, boolean secure) {
+        List<StructuredContentDTO> contentDTOList = null;
+        Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        Long site = (context.getNonPersistentSite() != null) ? context.getNonPersistentSite().getId() : null;
+        String cacheKey = buildNameKey(context.getSandBox(), site, languageOnlyLocale, "any", contentName, secure);
+        cacheKey = cacheKey + "-" + secure;
+
+        if (context.isProductionSandBox()) {
+            contentDTOList = getStructuredContentListFromCache(cacheKey);
+        }
+
+        if (contentDTOList == null) {
+            List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByName(contentName, locale, languageOnlyLocale);
+            contentDTOList = buildStructuredContentDTOList(productionContentList, secure);
+            if (context.isProductionSandBox()) {
+                addStructuredContentListToCache(cacheKey, contentDTOList);
+            }
+        }
+
+        return contentDTOList;
+    }
 }
