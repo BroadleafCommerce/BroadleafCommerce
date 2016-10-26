@@ -530,6 +530,7 @@ var BLCAdmin = (function($) {
 
                 // create the datetimepicker with the desired display format
                 $self.datetimepicker({
+                    formatTime: "g:ia",
                     format: "l, F d, Y \@ g:ia",
                     onClose: function(current_time, $input) {
                         if (current_time) {
