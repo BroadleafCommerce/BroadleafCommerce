@@ -579,6 +579,10 @@
                     },
                     onItemAdd: function(value, $item) {
                         $item.closest('.selectize-input').find('input').blur();
+                    },
+                    onItemRemove: function (value, $item) {
+                        this.addOption({id: value, label: $item.html()});
+                        this.refreshOptions(true);
                     }
                 };
                 field.valueSetter = function(rule, value) {
