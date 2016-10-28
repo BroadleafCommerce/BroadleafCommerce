@@ -23,11 +23,12 @@ import org.broadleafcommerce.common.persistence.Status;
 
 import java.io.Serializable;
 import java.util.List;
+import java.lang.Comparable;
 
 /**
  * @author Jeff Fischer
  */
-public interface Catalog extends Status, Serializable {
+public interface Catalog extends Status, Serializable, Comparable<Catalog> {
 
     Long getId();
 
@@ -46,5 +47,8 @@ public interface Catalog extends Status, Serializable {
     public List<SiteCatalogXref> getSiteXrefs();
 
     public void setSiteXrefs(List<SiteCatalogXref> siteXrefs);
+
+    @Override
+    public int compareTo(Catalog other);
 
 }
