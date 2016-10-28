@@ -490,7 +490,7 @@ var BLCAdmin = (function($) {
                 var tabId = '#' + $container.attr("class").substring(0, 4);
 
                 var $tabWithError = $('a[href=' + tabId + ']');
-                if (BLCAdmin.currentModal().length) {
+                if (BLCAdmin.currentModal() !== undefined) {
                     $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
                 }
 
