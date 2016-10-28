@@ -529,4 +529,16 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      */
     public boolean isChildOrderItem();
 
+    /**
+     * @return the list of messages that should be displayed in the cart
+     */
+    List<String> getCartMessages();
+
+    /**
+     * Sets the list of messages that should be displayed in the cart
+     *
+     * @param cartMessage
+     */
+    void setCartMessages(List<String> cartMessages);
+
 }
