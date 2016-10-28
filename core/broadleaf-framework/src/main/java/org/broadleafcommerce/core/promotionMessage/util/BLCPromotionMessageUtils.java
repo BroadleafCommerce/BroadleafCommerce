@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.promotionMessage.util;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
@@ -24,6 +25,8 @@ import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageP
 import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +49,48 @@ public class BLCPromotionMessageUtils {
             public String transform(Object input) {
                 PromotionMessage promotionMessage = (PromotionMessage) input;
                 return promotionMessage.getMessage();
+            }
+        });
+    }
+
+    /**
+     * Given a list of {@link PromotionMessageDTO}s, gather their message properties.
+     *
+     * @param promotionMessages
+     * @return messages
+     */
+    public static List<String> gatherMessagesFromDTOs(List<PromotionMessageDTO> promotionMessages) {
+        return BLCCollectionUtils.collectList(promotionMessages, new TypedTransformer<String>() {
+            @Override
+            public String transform(Object input) {
+                PromotionMessage promotionMessage = (PromotionMessage) input;
+                return promotionMessage.getMessage();
+            }
+        });
+    }
+
+    /**
+     * Given a map of {@link PromotionMessagePlacementType}s to {@link PromotionMessageDTO}s, sort based on priority
+     *
+     * @param promotionMessages
+     */
+    public static void sortMessagesByPriority(Map<String, List<PromotionMessageDTO>> promotionMessages) {
+        for (String key : promotionMessages.keySet()) {
+            List<PromotionMessageDTO> messages = promotionMessages.get(key);
+            sortMessagesByPriority(messages);
+        }
+    }
+
+    /**
+     * Given a list of {@link PromotionMessageDTO}s, sort based on priority
+     *
+     * @param promotionMessages
+     */
+    public static void sortMessagesByPriority(List<PromotionMessageDTO> promotionMessages) {
+        Collections.sort(promotionMessages, new Comparator<PromotionMessageDTO>() {
+            @Override
+            public int compare(PromotionMessageDTO o1, PromotionMessageDTO o2) {
+                return ObjectUtils.compare(o1.getPriority(), o2.getPriority(), true);
             }
         });
     }

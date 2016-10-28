@@ -96,8 +96,13 @@ public class CartMessageOrderItemServiceExtensionHandler extends AbstractOrderSe
 
             for (PromotionMessageGenerator generator : generators) {
                 Map<String, List<PromotionMessageDTO>> promotionMessages = generator.generatePromotionMessages(product);
-                List<String> messages = BLCPromotionMessageUtils.gatherMessagesByPlacementType(promotionMessages, PromotionMessagePlacementType.CART);
-                cartMessages.addAll(messages);
+                List<PromotionMessageDTO> messageDTOs = new ArrayList<>();
+                messageDTOs.addAll(promotionMessages.get(PromotionMessagePlacementType.CART.getType()));
+                messageDTOs.addAll(promotionMessages.get(PromotionMessagePlacementType.EVERYWHERE.getType()));
+
+                BLCPromotionMessageUtils.sortMessagesByPriority(messageDTOs);
+
+                cartMessages.addAll(BLCPromotionMessageUtils.gatherMessagesFromDTOs(messageDTOs));
             }
         }
 
