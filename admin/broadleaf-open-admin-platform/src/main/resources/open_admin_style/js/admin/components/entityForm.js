@@ -567,7 +567,7 @@ $(document).ready(function() {
                         $('.asset-grid-container').replaceWith($assetGrid);
                         $('.asset-listgrid').replaceWith($assetListGrid);
 
-                        $('.listgrid-container').each(function (index, container) {
+                        $assetGrid.find('.listgrid-container').each(function (index, container) {
                             BLCAdmin.listGrid.initialize($(container));
                         });
                         BLCAdmin.hideCurrentModal();
