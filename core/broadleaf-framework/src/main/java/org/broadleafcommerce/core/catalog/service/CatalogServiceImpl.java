@@ -360,6 +360,11 @@ public class CatalogServiceImpl implements CatalogService {
                 return (Category) holder.getResult();
             }
         }
+        return findOriginalCategoryByURI(uri);
+    }
+
+    @Override
+    public Category findOriginalCategoryByURI(String uri) {
         return categoryDao.findCategoryByURI(uri);
     }
 
