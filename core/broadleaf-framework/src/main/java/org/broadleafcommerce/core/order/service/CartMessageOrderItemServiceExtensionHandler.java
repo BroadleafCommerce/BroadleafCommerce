@@ -97,8 +97,8 @@ public class CartMessageOrderItemServiceExtensionHandler extends AbstractOrderSe
             for (PromotionMessageGenerator generator : generators) {
                 Map<String, List<PromotionMessageDTO>> promotionMessages = generator.generatePromotionMessages(product);
                 List<PromotionMessageDTO> messageDTOs = new ArrayList<>();
-                messageDTOs.addAll(promotionMessages.get(PromotionMessagePlacementType.CART.getType()));
-                messageDTOs.addAll(promotionMessages.get(PromotionMessagePlacementType.EVERYWHERE.getType()));
+                addPromotionMessagesForType(messageDTOs, promotionMessages.get(PromotionMessagePlacementType.CART.getType()));
+                addPromotionMessagesForType(messageDTOs, promotionMessages.get(PromotionMessagePlacementType.EVERYWHERE.getType()));
 
                 BLCPromotionMessageUtils.sortMessagesByPriority(messageDTOs);
 
@@ -107,6 +107,12 @@ public class CartMessageOrderItemServiceExtensionHandler extends AbstractOrderSe
         }
 
         return cartMessages;
+    }
+
+    protected void addPromotionMessagesForType(List<PromotionMessageDTO> messageDTOs, List<PromotionMessageDTO> messages) {
+        if (CollectionUtils.isNotEmpty(messages)) {
+            messageDTOs.addAll(messages);
+        }
     }
 
     @Override
