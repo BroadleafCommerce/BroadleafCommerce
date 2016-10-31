@@ -119,6 +119,14 @@ public class BLCPromotionMessageUtils {
         });
     }
 
+    /**
+     * Given a map of {@link PromotionMessagePlacementType}s to {@link PromotionMessageDTO}s and a list
+     * of {@link PromotionMessagePlacementType}s, filter the map into a list.
+     *
+     * @param promotionMessages
+     * @param placementTypes
+     * @return a list of filtered message DTOs
+     */
     public static List<PromotionMessageDTO> filterPromotionMessageDTOsByTypes(Map<String, List<PromotionMessageDTO>> promotionMessages,
             List<String> placementTypes) {
         List<PromotionMessageDTO> filteredPromotionMessages = new ArrayList<>();
