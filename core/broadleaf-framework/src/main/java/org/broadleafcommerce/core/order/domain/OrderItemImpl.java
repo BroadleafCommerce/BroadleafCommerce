@@ -57,6 +57,7 @@ import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NotFound;
@@ -72,7 +73,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -256,6 +259,13 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Column(name = "HAS_VALIDATION_ERRORS")
     protected Boolean hasValidationError;
+
+    @ElementCollection
+    @CollectionTable(name="BLC_ORDER_ITEM_CART_MESSAGE", joinColumns=@JoinColumn(name="ORDER_ITEM_ID"))
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+    @Column(name = "CART_MESSAGE")
+    protected List<String> cartMessages;
 
     @Transient
     protected Category deproxiedCategory;
@@ -758,6 +768,16 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
+    public List<String> getCartMessages() {
+        return cartMessages;
+    }
+
+    @Override
+    public void setCartMessages(List<String> cartMessage) {
+        this.cartMessages = cartMessage;
+    }
+
+    @Override
     public boolean isAParentOf(OrderItem candidateChild) {
         if (CollectionUtils.isNotEmpty(this.getChildOrderItems())) {
             for (OrderItem child : this.getChildOrderItems()) {
@@ -987,7 +1007,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             return createResponse;
         }
         OrderItem cloned = createResponse.getClone();
-        cloned.setOrder(order.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setOrder(order == null ? null : order.createOrRetrieveCopyInstance(context).getClone());
         cloned.setCategory(category);
         cloned.setName(name);
         cloned.setOrderItemType(convertOrderItemType(orderItemType));

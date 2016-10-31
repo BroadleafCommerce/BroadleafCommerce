@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.core.offer.service.type.OfferProrationType;
 import org.broadleafcommerce.core.offer.service.type.OfferTimeZoneType;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
+import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessagePlacementType;
 import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageType;
 
 import java.io.Serializable;
@@ -114,8 +115,17 @@ public interface AdvancedOffer extends Serializable {
 
     /**
      * Returns the active {@link PromotionMessage}s for this offer by {@link PromotionMessageType}
-     * @return
+     *
+     * @return filtered {@link PromotionMessage}s
      */
-    public List<PromotionMessage> getActivePromotionMessagesByType(PromotionMessageType promotionMessageType);
+    List<PromotionMessage> getActivePromotionMessagesByType(PromotionMessageType promotionMessageType);
+
+    /**
+     * Returns the active {@link PromotionMessage}s for this offer by {@link PromotionMessageType}
+     *  and {@link PromotionMessagePlacementType}
+     *
+     * @return filtered {@link PromotionMessage}s
+     */
+    List<PromotionMessage> getActivePromotionMessagesByTypeAndPlacement(PromotionMessageType promotionMessageType, PromotionMessagePlacementType placementType);
 
 }
