@@ -102,16 +102,16 @@ public class PromotionMessageProcessor extends AbstractLocalVariableDefinitionEl
 
         for (String placement : placementString.split(",")) {
             placement = placement.trim();
-            if (isValidPlacementType(requestedPlacement, placement)) {
+            if (isValidPlacementType(placement)) {
                 requestedPlacement.add(placement);
             }
         }
         return requestedPlacement;
     }
 
-    protected boolean isValidPlacementType(List<String> requestedPlacement, String placement) {
+    protected boolean isValidPlacementType(String placement) {
         try {
-            PromotionMessagePlacementType type = PromotionMessagePlacementType.getInstance(placement);
+            PromotionMessagePlacementType.getInstance(placement);
         } catch (Exception e) {
             LOG.error("Unrecognized Promotion Message Placement Type", e);
             return false;
