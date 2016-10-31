@@ -76,17 +76,11 @@ public class PromotionMessageProcessor extends AbstractLocalVariableDefinitionEl
             promotionMessages.putAll(generator.generatePromotionMessages(product));
         }
 
-        List<PromotionMessageDTO> filteredPromotionMessages = new ArrayList<>();
-        for (String type : promotionMessages.keySet()) {
-            if (placementTypes.contains(type)) {
-                filteredPromotionMessages.addAll(promotionMessages.get(type));
-            }
-        }
-
-        BLCPromotionMessageUtils.sortMessagesByPriority(filteredPromotionMessages);
+        List<PromotionMessageDTO> filteredMessages = BLCPromotionMessageUtils.filterPromotionMessageDTOsByTypes(promotionMessages, placementTypes);
+        BLCPromotionMessageUtils.sortMessagesByPriority(filteredMessages);
 
         Map<String, Object> newVars = new HashMap<>();
-        newVars.put("promotionMessages", filteredPromotionMessages);
+        newVars.put("promotionMessages", filteredMessages);
         return newVars;
     }
 

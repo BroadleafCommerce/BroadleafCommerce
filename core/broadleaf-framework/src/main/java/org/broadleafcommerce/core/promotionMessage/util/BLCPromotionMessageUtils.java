@@ -118,4 +118,16 @@ public class BLCPromotionMessageUtils {
             }
         });
     }
+
+    public static List<PromotionMessageDTO> filterPromotionMessageDTOsByTypes(Map<String, List<PromotionMessageDTO>> promotionMessages,
+            List<String> placementTypes) {
+        List<PromotionMessageDTO> filteredPromotionMessages = new ArrayList<>();
+
+        for (String type : promotionMessages.keySet()) {
+            if (placementTypes.contains(type)) {
+                filteredPromotionMessages.addAll(promotionMessages.get(type));
+            }
+        }
+        return filteredPromotionMessages;
+    }
 }
