@@ -444,6 +444,15 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Override
     public Money getRetailPrice() {
+        return getRetailPriceInternal();
+    }
+
+    @Override
+    public Money getSalePrice() {
+        return getSalePriceInternal();
+    }
+
+    protected Money getRetailPriceInternal() {
         if (defaultSku == null) {
             return null;
         } else {
@@ -451,9 +460,17 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         }
     }
 
+    protected Money getSalePriceInternal() {
+        if (defaultSku == null) {
+            return null;
+        } else {
+            return defaultSku.getSalePrice();
+        }
+    }
+
     @Override
-    public Money getSalePrice() {
-        return getRetailPrice();
+    public boolean isOnSale() {
+        return defaultSku.isOnSale();
     }
 
     @Override

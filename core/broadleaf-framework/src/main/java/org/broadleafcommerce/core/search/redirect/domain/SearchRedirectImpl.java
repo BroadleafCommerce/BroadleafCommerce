@@ -24,7 +24,9 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
@@ -102,7 +104,16 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
     @Index(name="SEARCH_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 4000, group = GroupName.Dates, tooltip = "skuEndDateTooltip", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 4000, group = GroupName.Dates,
+            tooltip = "skuEndDateTooltip",
+            groupOrder = 1,
+            validationConfigurations = {
+                    @ValidationConfiguration(
+                            validationImplementation = "blAfterStartDateValidator",
+                            configurationItems = {
+                                    @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
+                            })
+            })
     protected Date activeEndDate;
     
     @Override

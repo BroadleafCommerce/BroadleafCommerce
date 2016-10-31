@@ -37,9 +37,13 @@ import java.util.List;
  * </p>
  * 
  * @author Phillip Verheyden
- * 
+ *
  * @see SkuBundleItem
+ *
+ * @deprecated instead, use the ProductType Module's Product Add-Ons to build and configure bundles
+ *
  */
+@Deprecated
 public interface ProductBundle extends Product, Serializable {
 
     /**

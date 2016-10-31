@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.promotionMessage.processor;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -30,6 +31,8 @@ import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementPro
 import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,9 +73,23 @@ public class PromotionMessageProcessor extends AbstractLocalVariableDefinitionEl
             promotionMessages.putAll(generator.generatePromotionMessages(product));
         }
 
+        sortMessagesByPriority(promotionMessages);
+
         Map<String, Object> newVars = new HashMap<>();
         newVars.put("promotionMessageMap", promotionMessages);
         return newVars;
+    }
+
+    protected void sortMessagesByPriority(Map<String, List<PromotionMessageDTO>> promotionMessages) {
+        for (String key : promotionMessages.keySet()) {
+            List<PromotionMessageDTO> messages = promotionMessages.get(key);
+            Collections.sort(messages, new Comparator<PromotionMessageDTO>() {
+                @Override
+                public int compare(PromotionMessageDTO o1, PromotionMessageDTO o2) {
+                    return ObjectUtils.compare(o1.getPriority(), o2.getPriority(), true);
+                }
+            });
+        }
     }
 
     protected Product getProductFromArguments(Arguments arguments, Element element) {

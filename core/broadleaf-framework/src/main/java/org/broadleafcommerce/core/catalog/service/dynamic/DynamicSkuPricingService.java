@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
+import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -44,12 +45,17 @@ public interface DynamicSkuPricingService {
      * While this method should return a {@link DynamicSkuPrices} (and not just null) the members of the result can all
      * be null; they do not have to be set
      * 
-     * @param sku
+     * @param skuWrapper
      * @param skuPricingConsiderations
      * @return
      */
     @Nonnull
     @SuppressWarnings("rawtypes")
+    public DynamicSkuPrices getSkuPrices(SkuPriceWrapper skuWrapper, HashMap skuPricingConsiderations);
+
+    @Nonnull
+    @SuppressWarnings("rawtypes")
+    @Deprecated
     public DynamicSkuPrices getSkuPrices(Sku sku, HashMap skuPricingConsiderations);
 
     /**
