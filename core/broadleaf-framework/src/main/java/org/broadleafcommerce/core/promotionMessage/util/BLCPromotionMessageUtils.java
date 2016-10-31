@@ -63,7 +63,7 @@ public class BLCPromotionMessageUtils {
         return BLCCollectionUtils.collectList(promotionMessages, new TypedTransformer<String>() {
             @Override
             public String transform(Object input) {
-                PromotionMessage promotionMessage = (PromotionMessage) input;
+                PromotionMessageDTO promotionMessage = (PromotionMessageDTO) input;
                 return promotionMessage.getMessage();
             }
         });
