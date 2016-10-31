@@ -26,7 +26,6 @@ import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
 import org.broadleafcommerce.core.promotionMessage.service.PromotionMessageGenerator;
 import org.broadleafcommerce.core.promotionMessage.util.BLCPromotionMessageUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
@@ -103,22 +102,21 @@ public class PromotionMessageProcessor extends AbstractLocalVariableDefinitionEl
 
         for (String placement : placementString.split(",")) {
             placement = placement.trim();
-            if (testPlacementType(requestedPlacement, placement)) {
+            if (isValidPlacementType(requestedPlacement, placement)) {
                 requestedPlacement.add(placement);
             }
         }
         return requestedPlacement;
     }
 
-    protected Boolean testPlacementType(List<String> requestedPlacement, String placement) {
+    protected boolean isValidPlacementType(List<String> requestedPlacement, String placement) {
         try {
             PromotionMessagePlacementType type = PromotionMessagePlacementType.getInstance(placement);
-            requestedPlacement.add(type.getType());
         } catch (Exception e) {
             LOG.error("Unrecognized Promotion Message Placement Type", e);
-            return Boolean.FALSE;
+            return false;
         }
-        return Boolean.TRUE;
+        return true;
     }
 
     @Override
