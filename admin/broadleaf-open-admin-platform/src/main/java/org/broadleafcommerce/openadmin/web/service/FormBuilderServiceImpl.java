@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.openadmin.web.service;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
@@ -64,11 +61,11 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifier;
+import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierConfiguration;
 import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierData;
 import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierDataPoint;
 import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierRequest;
 import org.broadleafcommerce.openadmin.server.security.service.ExceptionAwareRowLevelSecurityProvider;
-import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierConfiguration;
 import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
@@ -98,10 +95,10 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.servlet.http.HttpServletRequest;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -118,6 +115,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -172,12 +174,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     public ListGrid buildMainListGrid(DynamicResultSet drs, ClassMetadata cmd, String sectionKey, List<SectionCrumb> sectionCrumbs)
             throws ServiceException {
 
-        List<Field> headerFields = new ArrayList<Field>();
+        List<Field> headerFields = new ArrayList<>();
         ListGrid.Type type = ListGrid.Type.MAIN;
         String idProperty = "id";
 
         FieldWrapper wrapper = new FieldWrapper();
-        ArrayList<FieldDTO> defaultWrapperFields = new ArrayList<FieldDTO>();
+        ArrayList<FieldDTO> defaultWrapperFields = new ArrayList<>();
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
@@ -262,7 +264,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             fieldDTO.setInput("select");
             fieldDTO.setType("string");
             String[][] enumerationValues = fmd.getEnumerationValues ();
-            Map<String, String> enumMap = new HashMap<String, String>();
+            Map<String, String> enumMap = new HashMap<>();
             for (int i = 0; i < enumerationValues.length; i++) {
                 enumMap.put(enumerationValues[i][0], enumerationValues[i][1]);
             }
@@ -323,7 +325,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         ClassMetadata cmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 
-        List<Field> headerFields = new ArrayList<Field>();
+        List<Field> headerFields = new ArrayList<>();
         ListGrid.Type type = null;
         boolean editable = false;
         boolean sortable = false;
@@ -337,7 +339,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         boolean isLookup = false;
         String sortProperty = null;
         FieldWrapper wrapper = new FieldWrapper();
-        ArrayList<FieldDTO> defaultWrapperFields = new ArrayList<FieldDTO>();
+        ArrayList<FieldDTO> defaultWrapperFields = new ArrayList<>();
 
 
         String idProperty = "id";
@@ -684,7 +686,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         Map<String, Object> result = new HashMap<>();
         List<Map<String, String>> options = new ArrayList<>();
 
-        List<Field> headerFields = new ArrayList<Field>();
+        List<Field> headerFields = new ArrayList<>();
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
@@ -947,7 +949,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
 
                     Boolean allowNoValueEnum = fmd.getAllowNoValueEnumOption();
-                    if(allowNoValueEnum != null){
+                    if (allowNoValueEnum != null){
                         f.setAllowNoValueEnumOption(allowNoValueEnum);
                     }
 
@@ -1316,7 +1318,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     String displayProp = fmd.getLookupDisplayProperty();
                     
                     // Build the options map
-                    Map<String, String> options = new HashMap<String, String>();
+                    Map<String, String> options = new HashMap<>();
                     for (Entity row : rows) {
                         Property prop = row.findProperty(displayProp);
                         if (prop == null) {
@@ -1635,7 +1637,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .withAdornedList(adornedList);
         ClassMetadata collectionMetadata = adminEntityService.getClassMetadata(request).getDynamicResultSet().getClassMetaData();
 
-        List<Property> entityFormProperties = new ArrayList<Property>();
+        List<Property> entityFormProperties = new ArrayList<>();
         if (isViewCollectionItem) {
             Collections.addAll(entityFormProperties, collectionMetadata.getProperties());
         } else {
@@ -1730,11 +1732,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         List<Property> mapFormProperties;
         if (mapMd.isSimpleValue()) {
             ef.setIdProperty("key");
-            mapFormProperties = new ArrayList<Property>();
+            mapFormProperties = new ArrayList<>();
             Property valueProp = cmd.getPMap().get("value");
             mapFormProperties.add(valueProp);
         } else {
-            mapFormProperties = new ArrayList<Property>(Arrays.asList(cmd.getProperties()));
+            mapFormProperties = new ArrayList<>(Arrays.asList(cmd.getProperties()));
             CollectionUtils.filter(mapFormProperties, new Predicate() {
                 @Override
                 public boolean evaluate(Object object) {
