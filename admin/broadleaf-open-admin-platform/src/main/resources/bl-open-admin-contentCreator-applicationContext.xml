@@ -65,7 +65,7 @@
             <map>
                 <entry key="sandbox" value="prodEntityManager"/>
                 <entry key="stage" value="prodEntityManager"/>
-                <entry key="prod" value="prodEntityManager"/>
+                <entry key="production" value="prodEntityManager"/>
             </map>
         </property>
     </bean>
@@ -78,7 +78,6 @@
                 <ref bean="blSystemPropertyCustomPersistenceHandler" />
                 <ref bean="blTranslationCustomPersistenceHandler" />
                 <ref bean="blOfferCustomPersistenceHandler" />
-                <ref bean="blPromotionMessageCustomPersistenceHandler" />
             </list>
         </property>
     </bean>
