@@ -78,7 +78,6 @@
                 <ref bean="blSystemPropertyCustomPersistenceHandler" />
                 <ref bean="blTranslationCustomPersistenceHandler" />
                 <ref bean="blOfferCustomPersistenceHandler" />
-                <ref bean="blPromotionMessageCustomPersistenceHandler" />
             </list>
         </property>
     </bean>
