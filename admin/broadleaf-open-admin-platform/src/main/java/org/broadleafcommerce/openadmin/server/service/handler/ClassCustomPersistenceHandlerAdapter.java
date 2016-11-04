@@ -51,12 +51,16 @@ public class ClassCustomPersistenceHandlerAdapter extends CustomPersistenceHandl
     }
 
     protected boolean classIsAssignableFrom(PersistencePackage pkg) {
-        String ceilingEntityFullyQualifiedClassname = pkg.getCeilingEntityFullyQualifiedClassname();
-        Class ceilingEntityClass = getClassForName(ceilingEntityFullyQualifiedClassname);
-        for (Class<?> clazz : handledClasses) {
-            if (clazz.isAssignableFrom(ceilingEntityClass)) {
-                return true;
+        try {
+            String ceilingEntityFullyQualifiedClassname = pkg.getCeilingEntityFullyQualifiedClassname();
+            Class ceilingEntityClass = Class.forName(ceilingEntityFullyQualifiedClassname);
+            for (Class<?> clazz : handledClasses) {
+                if (clazz.isAssignableFrom(ceilingEntityClass)) {
+                    return true;
+                }
             }
+        } catch (ClassNotFoundException e) {
+            // do nothing
         }
 
         return false;
