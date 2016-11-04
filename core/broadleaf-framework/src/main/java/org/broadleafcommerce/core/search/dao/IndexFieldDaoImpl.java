@@ -93,7 +93,7 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
 
         TypedQuery<IndexField> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
 
         return query.getResultList();
     }
@@ -113,7 +113,7 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
 
         TypedQuery<IndexField> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
 
         return query.getResultList();
     }
@@ -132,7 +132,7 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
 
         TypedQuery<IndexFieldType> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
 
         return query.getResultList();
     }
@@ -175,7 +175,7 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
 
         TypedQuery<IndexFieldType> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
 
         return query.getResultList();
     }
