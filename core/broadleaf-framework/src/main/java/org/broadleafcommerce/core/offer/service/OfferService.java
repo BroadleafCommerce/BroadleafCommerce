@@ -237,4 +237,12 @@ public interface OfferService {
     public Boolean deleteOfferCode(OfferCode code);
 
     public Offer findOfferById(Long offerId);
+
+    /**
+     * For enterprise installations, this will refresh any Offers that were not gathered in the correct sandbox state.
+     *
+     * @param offer
+     * @return the refreshed Offer
+     */
+    Offer refreshOffer(Offer offer);
 }
