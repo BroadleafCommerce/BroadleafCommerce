@@ -17,16 +17,14 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
-import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.util.BLCMoneyFormatUtils;
 import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafTagTextModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
-import java.text.NumberFormat;
 import java.util.Map;
 
 /**
@@ -62,18 +60,7 @@ public class PriceTextDisplayProcessor extends AbstractBroadleafTagTextModifierP
             price = new Money(((Number)result).doubleValue());
         }
 
-        if (price == null) {
-            return "Not Available";
-        }
-
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (brc.getJavaLocale() != null) {
-            NumberFormat formatter = BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency());
-            return formatter.format(price.getAmount());
-        } else {
-            // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
-            return "$ " + price.getAmount().toString();
-        }
+        return BLCMoneyFormatUtils.formatPrice(price);
     }
 
 }

@@ -24,9 +24,7 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
-import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;

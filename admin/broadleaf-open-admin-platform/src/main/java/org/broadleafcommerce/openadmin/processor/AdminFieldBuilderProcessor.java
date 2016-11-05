@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
+import org.broadleafcommerce.openadmin.web.service.AdminFieldBuilderProcessorExtensionManager;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +41,9 @@ public class AdminFieldBuilderProcessor extends AbstractBroadleafModelVariableMo
 
     @Resource(name = "blRuleBuilderFieldServiceFactory")
     protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
+    
+    @Resource(name="blAdminFieldBuilderProcessorExtensionManager")
+    protected AdminFieldBuilderProcessorExtensionManager extensionManager;
 
     @Override
     public String getName() {
@@ -59,7 +63,8 @@ public class AdminFieldBuilderProcessor extends AbstractBroadleafModelVariableMo
     @Override
     public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         FieldWrapper fieldWrapper = new FieldWrapper();
-        String fieldBuilder = (String) context.parseExpression(tagAttributes.get("fieldBuilder"));
+        String fieldBuilder = context.parseExpression(tagAttributes.get("fieldBuilder"));
+        String ceilingEntity = context.parseExpression(tagAttributes.get("ceilingEntity"));
 
         if (fieldBuilder != null) {
             RuleBuilderFieldService ruleBuilderFieldService = ruleBuilderFieldServiceFactory.createInstance(fieldBuilder);
@@ -68,9 +73,14 @@ public class AdminFieldBuilderProcessor extends AbstractBroadleafModelVariableMo
             }
         }
         
+        if (extensionManager != null) {
+            extensionManager.getProxy().modifyRuleBuilderFields(fieldBuilder, ceilingEntity, fieldWrapper);
+        }
+        
         newModelVars.put("fieldWrapper", fieldWrapper);
     }
     
+    @Override
     public boolean addToLocal() {
         return true;
     }

@@ -115,7 +115,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
     }
     
     protected String buildContentMap(BroadleafTemplateContext context) {
-        Map<String, Object> attrMap = new HashMap<String, Object>();
+        Map<String, Object> attrMap = new HashMap<>();
         addCartData(attrMap);
         addCustomerData(attrMap);
         addProductInventoryData(attrMap, context);
@@ -130,11 +130,11 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
     }
 
     protected void addProductInventoryData(Map<String, Object> attrMap, BroadleafTemplateContext context) {
-        List<Long> outOfStockProducts = new ArrayList<Long>();
-        List<Long> outOfStockSkus = new ArrayList<Long>();
+        List<Long> outOfStockProducts = new ArrayList<>();
+        List<Long> outOfStockSkus = new ArrayList<>();
 
-        Set<Product> allProducts = new HashSet<Product>();
-        Set<Sku> allSkus = new HashSet<Sku>();
+        Set<Product> allProducts = new HashSet<>();
+        Set<Sku> allSkus = new HashSet<>();
         Set<Product> products = (Set<Product>) context.getVariable("blcAllDisplayedProducts");
         Set<Sku> skus = (Set<Sku>) context.getVariable("blcAllDisplayedSkus");
         if (!CollectionUtils.isEmpty(products)) {
@@ -173,8 +173,8 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
     protected void addCartData(Map<String, Object> attrMap) {
         Order cart = CartState.getCart();
         int cartQty = 0;
-        List<Long> cartItemIdsWithOptions = new ArrayList<Long>();
-        List<Long> cartItemIdsWithoutOptions = new ArrayList<Long>();
+        List<Long> cartItemIdsWithOptions = new ArrayList<>();
+        List<Long> cartItemIdsWithoutOptions = new ArrayList<>();
 
         if (cart != null && cart.getOrderItems() != null) {
             cartQty = cart.getItemCount();
@@ -182,7 +182,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
             for (OrderItem item : cart.getOrderItems()) {
                 if (item instanceof SkuAccessor) {
                     Sku sku = ((SkuAccessor) item).getSku();
-                    if (sku != null && sku.getProduct() != null) {
+                    if (sku != null && sku.getProduct() != null && item.getParentOrderItem() == null) {
                         if (useSku) {
                             cartItemIdsWithoutOptions.add(sku.getId());
                         } else {
