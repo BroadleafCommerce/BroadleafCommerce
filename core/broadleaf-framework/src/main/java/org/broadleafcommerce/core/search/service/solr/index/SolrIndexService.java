@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -249,5 +250,11 @@ public interface SolrIndexService {
      * @param locales
      */
     public void attachIndexableDocumentFields(SolrInputDocument document, Indexable indexable, List<IndexField> fields, List<Locale> locales);
+
+    void deleteByQuery(String deleteQuery) throws SolrServerException, IOException;
+
+    void addDocuments(Collection<SolrInputDocument> documents) throws IOException, SolrServerException;
+
+    void logDeleteQuery(String deleteQuery);
 }
 

@@ -17,25 +17,6 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.jms.IllegalStateException;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -45,14 +26,35 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.impl.LBHttpSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CoreContainer;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+
+import javax.jms.IllegalStateException;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * <p>
@@ -83,8 +85,16 @@ public class SolrConfiguration implements InitializingBean {
     protected Integer solrCloudNumShards = null;
 
     protected String solrHomePath = null;
+    
+    @Value("${solr.index.site.collections:false}")
+    protected boolean siteCollections;
 
+    @Value("${solr.index.site.alias.name:site}")
+    protected String siteAliasBase;
 
+    @Value("${solr.index.site.collection.name:blcSite}")
+    protected String siteCollectionBase;
+    
     public String getPrimaryName() {
         return primaryName;
     }
@@ -160,11 +170,16 @@ public class SolrConfiguration implements InitializingBean {
                 
                 if (CloudSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
                     //Make sure that the primary and reindex servers are not using the same default collection name
-                    if (cs.getDefaultCollection().equals(((CloudSolrClient) reindexServer).getDefaultCollection())) {
+                    if (Objects.equals(cs.getDefaultCollection(), ((CloudSolrClient) reindexServer).getDefaultCollection())) {
                         throw new IllegalStateException("Primary and Reindex servers cannot have the same defaultCollection: "
                                 + cs.getDefaultCollection());
                     }
                 }
+            }
+            
+            if (BroadleafCloudSolrClient.class.isAssignableFrom(server.getClass())) {
+                ((BroadleafCloudSolrClient) server).setReindexClient(false);
+                ((BroadleafCloudSolrClient) server).setSolrConfig(this);
             }
         }
 
@@ -199,11 +214,15 @@ public class SolrConfiguration implements InitializingBean {
 
                 if (CloudSolrClient.class.isAssignableFrom(primaryServer.getClass())) {
                     //Make sure that the primary and reindex servers are not using the same default collection name
-                    if (cs.getDefaultCollection().equals(((CloudSolrClient) primaryServer).getDefaultCollection())) {
+                    if (Objects.equals(cs.getDefaultCollection(), ((CloudSolrClient) primaryServer).getDefaultCollection())) {
                         throw new IllegalStateException("Primary and Reindex servers cannot have the same defaultCollection: "
                                 + cs.getDefaultCollection());
                     }
                 }
+            }
+            if (BroadleafCloudSolrClient.class.isAssignableFrom(server.getClass())) {
+                ((BroadleafCloudSolrClient) server).setReindexClient(true);
+                ((BroadleafCloudSolrClient) server).setSolrConfig(this);
             }
         }
         reindexServer = server;
@@ -255,6 +274,9 @@ public class SolrConfiguration implements InitializingBean {
      * @return the primary Solr server
      */
     public SolrClient getServer() {
+        if (isSiteCollections() && isSolrCloudMode()) {
+            return getSiteServer();
+        }
         return primaryServer;
     }
 
@@ -262,6 +284,10 @@ public class SolrConfiguration implements InitializingBean {
      * @return the primary server if {@link #isSingleCoreMode()}, else the reindex server
      */
     public SolrClient getReindexServer() {
+        if (isSiteCollections() && isSolrCloudMode()) {
+            return getSiteReindexServer();
+        }
+        
         return isSingleCoreMode() ? primaryServer : reindexServer;
     }
 
@@ -270,6 +296,10 @@ public class SolrConfiguration implements InitializingBean {
      */
     public boolean isSingleCoreMode() {
         return reindexServer == null;
+    }
+    
+    public boolean isSolrCloudMode() {
+        return CloudSolrClient.class.isAssignableFrom(primaryServer.getClass());
     }
 
     /**
@@ -605,7 +635,13 @@ public class SolrConfiguration implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws SolrServerException, IOException, IllegalStateException {
-        if (CloudSolrClient.class.isAssignableFrom(getServer().getClass())) {
+        if (isSolrCloudMode()) {
+            
+            if (isSiteCollections()) {
+                LOG.info("Solr configuration is using collection-per-site, assuming collections will be created on the fly");
+                return;
+            }
+            
             //We want to use the Solr APIs to make sure the correct collections are set up.
             CloudSolrClient primary = (CloudSolrClient) primaryServer;
             CloudSolrClient reindex = (CloudSolrClient) reindexServer;
@@ -651,7 +687,7 @@ public class SolrConfiguration implements InitializingBean {
 
             //Get a list of existing collections so we don't overwrite one
             NamedList<Object> listResponse = new CollectionAdminRequest.List().process(primary).getResponse();
-            List<String> collectionNames = listResponse.get("collections") == null ? collectionNames = new ArrayList<String>() : (List<String>) listResponse.get("collections");
+            List<String> collectionNames = listResponse.get("collections") == null ? collectionNames = new ArrayList<>() : (List<String>) listResponse.get("collections");
 
             Aliases aliases = primary.getZkStateReader().getAliases();
             Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
@@ -685,7 +721,7 @@ public class SolrConfiguration implements InitializingBean {
 
             //Reload the collection names
             listResponse = new CollectionAdminRequest.List().process(primary).getResponse();
-            collectionNames = listResponse.get("collections") == null ? collectionNames = new ArrayList<String>() : (List<String>) listResponse.get("collections");
+            collectionNames = listResponse.get("collections") == null ? collectionNames = new ArrayList<>() : (List<String>) listResponse.get("collections");
 
             //Reload these maps for the next collection.
             aliases = primary.getZkStateReader().getAliases();
@@ -718,6 +754,151 @@ public class SolrConfiguration implements InitializingBean {
                 }
             }
         }
+    }
+    
+    
+    public SolrClient getSiteServer() {
+        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+        Site site = ctx.getNonPersistentSite();
+
+        CloudSolrClient client = (CloudSolrClient) primaryServer;
+        client.connect();
+        
+        String aliasName = getSiteAliasName(site);
+        if (aliasName != null) {
+            String collectionName = getSiteCollectionName(site);
+
+            createCollectionIfNotExist(client, collectionName);
+            createAliasIfNotExist(client, collectionName, collectionName);
+        }
+
+        return client;
+    }
+    
+    public SolrClient getSiteReindexServer() {
+        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+        Site site = ctx.getNonPersistentSite();
+
+        CloudSolrClient client = (CloudSolrClient) primaryServer;
+        client.connect();
+        
+        String aliasName = getSiteReindexAliasName(site);
+        if (aliasName != null) {
+            String collectionName = getSiteReindexCollectionName(site);
+
+            createCollectionIfNotExist(client, collectionName);
+            createAliasIfNotExist(client, collectionName, collectionName);
+        }
+
+        return client;
+    }
+    
+    protected void createCollectionIfNotExist(CloudSolrClient client, String collectionName) {
+        Set<String> collectionNames = client.getZkStateReader().getClusterState().getCollections();
+        if (!collectionNames.contains(collectionName)) {
+            try {
+                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(getSolrCloudNumShards())
+                        .setMaxShardsPerNode(getSolrCloudNumShards()).setConfigName(getSolrCloudConfigName()).process(client);
+            } catch (SolrServerException e) {
+                throw ExceptionHelper.refineException(e);
+            } catch (IOException e) {
+                throw ExceptionHelper.refineException(e);
+            }
+        }
+    }
+    
+    protected void createAliasIfNotExist(CloudSolrClient client, String collectionName, String aliasName) {
+        Aliases aliases = client.getZkStateReader().getAliases();
+        Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
+        if (!aliasCollectionMap.containsKey(aliasName)) {
+            try {
+                new CollectionAdminRequest.CreateAlias().setAliasName(aliasName)
+                        .setAliasedCollections(collectionName).process(client);
+            } catch (SolrServerException e) {
+                throw ExceptionHelper.refineException(e);
+            } catch (IOException e) {
+                throw ExceptionHelper.refineException(e);
+            }
+        }
+    }
+    
+    /**
+     * @param site the Site
+     * @return the alias name for the given Site
+     */
+    protected String getSiteAliasName(Site site) {
+        if (site == null) {
+            return null;
+        }
+
+        return getSiteAliasBase() + site.getId();
+    }
+
+    /**
+     * @param site the Site
+     * @return the collection name for the given Site
+     */
+    protected String getSiteCollectionName(Site site) {
+        if (site == null) {
+            return null;
+        }
+
+        return getSiteCollectionBase() + site.getId();
+    }
+
+    /**
+     * @param site the Site
+     * @return the reindex alias name for the given Site
+     */
+    protected String getSiteReindexAliasName(Site site) {
+        if (site == null) {
+            return null;
+        }
+
+        return getSiteAliasName(site) + "R";
+    }
+
+    /**
+     * @param site the Site
+     * @return the reindex collection name for the given Site
+     */
+    protected String getSiteReindexCollectionName(Site site) {
+        if (site == null) {
+            return null;
+        }
+
+        return getSiteCollectionName(site) + "R";
+    }
+
+    protected String getSiteAliasBase() {
+        return siteAliasBase;
+    }
+
+    protected String getSiteCollectionBase() {
+        return siteCollectionBase;
+    }
+
+    /**
+     * @return whether to index a separate collection per site
+     */
+    public boolean isSiteCollections() {
+        return siteCollections;
+    }
+
+    public void setSiteAliasBase(String siteAliasBase) {
+        this.siteAliasBase = siteAliasBase;
+    }
+
+    public void setSiteCollectionBase(String siteCollectionBase) {
+        this.siteCollectionBase = siteCollectionBase;
+    }
+
+    public void setSiteCollections(boolean siteCollections) {
+        this.siteCollections = siteCollections;
+    }
+
+    public void setSolrCloudNumShards(int solrCloudNumShards) {
+        this.solrCloudNumShards = solrCloudNumShards;
     }
 
     protected String determineCoreName(HttpSolrClient httpSolrClient) {

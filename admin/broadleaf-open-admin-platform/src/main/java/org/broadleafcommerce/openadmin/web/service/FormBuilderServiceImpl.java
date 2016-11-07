@@ -41,6 +41,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
@@ -62,6 +63,12 @@ import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
+import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifier;
+import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierData;
+import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierDataPoint;
+import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierRequest;
+import org.broadleafcommerce.openadmin.server.security.service.ExceptionAwareRowLevelSecurityProvider;
+import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifierConfiguration;
 import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
@@ -473,7 +480,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             Property p2 = cmd.getPMap().get("key");
             BasicFieldMetadata keyMd = (BasicFieldMetadata) p2.getMetadata();
-            keyMd.setFriendlyName("Key");
+            keyMd.setFriendlyName(p2.getMetadata().getFriendlyName());
             Field hf = createHeaderField(p2, keyMd);
             headerFields.add(hf);
             wrapper.getFields().add(constructFieldDTOFromFieldData(hf, keyMd));
@@ -546,7 +553,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         
         if (CollectionUtils.isEmpty(headerFields)) {
             String message = "There are no listgrid header fields configured for the class " + ceilingType + " and property '" +
-            	field.getName() + "'.";
+                    StringUtil.sanitize(field.getName()) + "'.";
             if (selectize && (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM)) {
                 message += " Please configure 'selectizeVisibleField' in your @AdminPresentationAdornedTargetCollection configuration";
             } else if (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM) {
@@ -627,6 +634,22 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
 
         extensionManager.getProxy().modifyListGrid(listGrid.getClassName(), listGrid);
+
+        //If someone has replaced RowLevelSecurityService, check here to make sure the replacement implements the expected interface
+        if (rowLevelSecurityService instanceof ExceptionAwareRowLevelSecurityProvider) {
+            EntityFormModifierConfiguration entityFormModifierConfiguration = ((ExceptionAwareRowLevelSecurityProvider) rowLevelSecurityService).getUpdateDenialExceptions();
+            for (EntityFormModifierData<EntityFormModifierDataPoint> data : entityFormModifierConfiguration.getData()) {
+                for (EntityFormModifier modifier : entityFormModifierConfiguration.getModifier()) {
+                    if (modifier.isQualified(data.getModifierType())) {
+                        modifier.modifyListGrid(new EntityFormModifierRequest()
+                                .withListGrid(listGrid)
+                                .withConfiguration(data)
+                                .withCurrentUser(adminRemoteSecurityService.getPersistentAdminUser())
+                                .withRowLevelSecurityService(rowLevelSecurityService));
+                    }
+                }
+            }
+        }
         return listGrid;
     }
 
@@ -769,6 +792,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ListGridRecord record = new ListGridRecord();
             record.setListGrid(listGrid);
             record.setDirty(e.isDirty());
+            record.setEntity(e);
             if (StringUtils.isNotBlank(sortPropery) && e.findProperty(sortPropery) != null) {
                 Property sort = e.findProperty(sortPropery);
                 record.setDisplayOrder(sort.getValue());
@@ -1059,8 +1083,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     private String buildMsgForDefValException(String type, BasicFieldMetadata fmd, String defaultValue) {
-        return fmd.getTargetClass() + " : " + fmd.getName() + " - Failed to parse " + type +
-                    " from DefaultValue [ " + defaultValue + " ]";
+        return StringUtil.sanitize(fmd.getTargetClass()) + " : " + StringUtil.sanitize(fmd.getName()) + " - Failed to parse " 
+                + StringUtil.sanitize(type) + " from DefaultValue [ " + StringUtil.sanitize(defaultValue) + " ]";
     }
 
     @Override
@@ -1300,7 +1324,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     for (Entity row : rows) {
                         Property prop = row.findProperty(displayProp);
                         if (prop == null) {
-                            LOG.warn("Could not find displayProp [" + displayProp + "] on entity [" + 
+                            LOG.warn("Could not find displayProp [" + StringUtil.sanitize(displayProp) + "] on entity [" + 
                                     ef.getCeilingEntityClassname() + "]");
                         } else {
                             String displayValue = prop.getDisplayValue();
@@ -1504,6 +1528,22 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         if (readOnly) {
             entityForm.setReadOnly();
+            //If someone has replaced RowLevelSecurityService, check here to make sure the replacement implements the expected interface
+            if (rowLevelSecurityService instanceof ExceptionAwareRowLevelSecurityProvider) {
+                EntityFormModifierConfiguration entityFormModifierConfiguration = ((ExceptionAwareRowLevelSecurityProvider) rowLevelSecurityService).getUpdateDenialExceptions();
+                for (EntityFormModifierData<EntityFormModifierDataPoint> data : entityFormModifierConfiguration.getData()) {
+                    for (EntityFormModifier modifier : entityFormModifierConfiguration.getModifier()) {
+                        if (modifier.isQualified(data.getModifierType())) {
+                            modifier.modifyEntityForm(new EntityFormModifierRequest()
+                                    .withEntityForm(entityForm)
+                                    .withConfiguration(data)
+                                    .withCurrentUser(adminRemoteSecurityService.getPersistentAdminUser())
+                                    .withEntity(entity)
+                                    .withRowLevelSecurityService(rowLevelSecurityService));
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -1664,7 +1704,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ComboField temp = new ComboField();
             temp.withName("key")
                     .withFieldType("combo_field")
-                    .withFriendlyName("Key");
+                    .withFriendlyName(mapStructure.getKeyPropertyFriendlyName());
             if (mapMd.getKeys() != null) {
                 // The keys can be explicitly set in the annotation...
                 temp.setOptions(mapMd.getKeys());
@@ -1685,7 +1725,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         } else {
             keyField = new Field().withName("key")
                                 .withFieldType(SupportedFieldType.STRING.toString())
-                                .withFriendlyName("Key");
+                                .withFriendlyName(mapStructure.getKeyPropertyFriendlyName());
         }
         keyField.setRequired(true);
         ef.addMapKeyField(cmd, keyField);

@@ -28,13 +28,12 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.util.dao.TQRestriction;
-import org.broadleafcommerce.common.util.dao.TQRestriction.Mode;
-import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
+import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -46,6 +45,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
@@ -55,6 +55,7 @@ import javax.persistence.criteria.Root;
 public class PageDaoImpl implements PageDao {
 
     private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
+
     {
         DUMMY_SANDBOX.setId(-1l);
     }
@@ -62,8 +63,13 @@ public class PageDaoImpl implements PageDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    protected Long currentDateResolution = 10 * 60 * 1000L;
+
+    protected Date cachedDate = SystemTime.asDate();
+
 
     @Override
     public Page readPageById(Long id) {
@@ -90,7 +96,7 @@ public class PageDaoImpl implements PageDao {
     public PageTemplate readPageTemplateById(Long id) {
         return em.find(PageTemplateImpl.class, id);
     }
-    
+
 
     @Override
     public PageTemplate savePageTemplate(PageTemplate template) {
@@ -117,18 +123,34 @@ public class PageDaoImpl implements PageDao {
 
     @Override
     public List<Page> findPageByURI(String uri) {
-        TypedQuery<Page> q = new TypedQueryBuilder<Page>(Page.class, "p")
-            .addRestriction("p.fullUrl", "=", uri)
-            .addRestriction(new TQRestriction(Mode.OR)
-                .addChildRestriction(new TQRestriction("p.activeStartDate", "IS NULL"))
-                .addChildRestriction(new TQRestriction("p.activeStartDate", "<=", SystemTime.asDate())))
-            .addRestriction(new TQRestriction(Mode.OR)
-                .addChildRestriction(new TQRestriction("p.activeEndDate", "IS NULL"))
-                .addChildRestriction(new TQRestriction("p.activeEndDate", ">=", SystemTime.asDate())))
-            .addRestriction(new TQRestriction(Mode.OR)
-                .addChildRestriction(new TQRestriction("p.offlineFlag", "IS NULL"))
-                .addChildRestriction(new TQRestriction("p.offlineFlag", "=", false)))
-            .toQuery(em);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Page> criteriaQuery = builder.createQuery(Page.class);
+        Root pageRoot = criteriaQuery.from(PageImpl.class);
+        criteriaQuery.select(pageRoot);
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(builder.equal(pageRoot.get("fullUrl"), uri));
+
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
+
+        // Add the active start/end date restrictions
+        restrictions.add(builder.or(
+                builder.isNull(pageRoot.get("activeStartDate")),
+                builder.lessThanOrEqualTo(pageRoot.get("activeStartDate").as(Date.class), currentDate)));
+        restrictions.add(builder.or(
+                builder.isNull(pageRoot.get("activeEndDate")),
+                builder.greaterThanOrEqualTo(pageRoot.get("activeEndDate").as(Date.class), currentDate)));
+        // Ensure the page is currently active
+        restrictions.add(builder.or(
+                builder.isNull(pageRoot.get("offlineFlag")),
+                builder.isFalse(pageRoot.get("offlineFlag"))));
+
+        // Add the restrictions to the criteria query
+        criteriaQuery.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        TypedQuery<Page> q = em.createQuery(criteriaQuery);
+        q.setHint(QueryHints.HINT_CACHEABLE, true);
+        q.setHint(QueryHints.HINT_CACHE_REGION, "query.Cms");
+
         List<Page> pages = q.getResultList();
         return pages;
     }
@@ -137,17 +159,18 @@ public class PageDaoImpl implements PageDao {
     public List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri) {
         Query query;
 
-        if (languageOnlyLocale == null)  {
+        if (languageOnlyLocale == null) {
             languageOnlyLocale = fullLocale;
         }
         query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
         query.setParameter("fullLocale", fullLocale);
         query.setParameter("languageOnlyLocale", languageOnlyLocale);
         query.setParameter("uri", uri);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return query.getResultList();
     }
-    
+
     @Override
     public List<Page> readAllPages() {
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -157,12 +180,14 @@ public class PageDaoImpl implements PageDao {
         criteria.select(page);
 
         try {
-            return em.createQuery(criteria).getResultList();
+            Query query = em.createQuery(criteria);
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+            return query.getResultList();
         } catch (NoResultException e) {
             return new ArrayList<Page>();
         }
     }
-    
+
     @Override
     public List<Page> readOnlineAndIncludedPages(int limit, int offset, String sortBy) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -176,7 +201,7 @@ public class PageDaoImpl implements PageDao {
         TypedQuery<Page> query = em.createQuery(criteria);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
-
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
 
@@ -189,7 +214,9 @@ public class PageDaoImpl implements PageDao {
         criteria.select(template);
 
         try {
-            return em.createQuery(criteria).getResultList();
+            Query query = em.createQuery(criteria);
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+            return query.getResultList();
         } catch (NoResultException e) {
             return new ArrayList<PageTemplate>();
         }
@@ -203,6 +230,14 @@ public class PageDaoImpl implements PageDao {
     @Override
     public void detachPage(Page page) {
         em.detach(page);
+    }
+
+    public Long getCurrentDateResolution() {
+        return currentDateResolution;
+    }
+
+    public void setCurrentDateResolution(Long currentDateResolution) {
+        this.currentDateResolution = currentDateResolution;
     }
 
 }

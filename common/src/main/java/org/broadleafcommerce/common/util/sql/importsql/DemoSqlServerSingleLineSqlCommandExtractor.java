@@ -39,6 +39,7 @@ public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCom
     private static final String BOOLEANTRUEMATCH = "(?i)(true)";
     private static final String BOOLEANFALSEMATCH = "(?i)(false)";
     private static final String TIMESTAMPMATCH = "(?i)(current_date)";
+    public static final String DOUBLEBACKSLASHMATCH = "(\\\\\\\\)";
     public static final String TRUE = "'TRUE'";
     public static final String FALSE = "'FALSE'";
     public static final String CURRENT_TIMESTAMP = "CURRENT_TIMESTAMP";
@@ -86,7 +87,10 @@ public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCom
         //try matches for updates
         statement = statement.replaceAll("[=]\\s*" + BOOLEANTRUEMATCH, "=" + TRUE);
         statement = statement.replaceAll("[=]\\s*" + BOOLEANFALSEMATCH, "=" + FALSE);
-        
+
+        //remove the double backslashes - sql server does not honor backslash as an escape character
+        statement = statement.replaceAll(DOUBLEBACKSLASHMATCH, "\\\\");
+
         return statement;
     }
 }

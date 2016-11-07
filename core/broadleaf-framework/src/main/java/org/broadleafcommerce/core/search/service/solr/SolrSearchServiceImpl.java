@@ -194,8 +194,12 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 .setRows(searchCriteria.getPageSize())
                 .setStart((start) * searchCriteria.getPageSize());
 
-        //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "primaryName"
-        solrQuery.setParam("collection", solrConfiguration.getPrimaryName()); //This should be ignored if not using SolrCloud
+        //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "PRIMARY"
+        if (solrConfiguration.isSiteCollections()) {
+            solrQuery.setParam("collection", solrConfiguration.getSiteAliasName(BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite()));
+        } else {
+            solrQuery.setParam("collection", solrConfiguration.getPrimaryName()); //This should be ignored if not using SolrCloud
+        }
 
         solrQuery.setFields(shs.getIndexableIdFieldName());
         if (filterQueries != null) {
@@ -214,7 +218,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // Attach additional restrictions
         attachSortClause(solrQuery, searchCriteria, defaultSort);
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
-        attachFacets(solrQuery, namedFacetMap);
+        attachFacets(solrQuery, namedFacetMap, searchCriteria);
         
         modifySolrQuery(solrQuery, searchCriteria.getQuery(), facets, searchCriteria, defaultSort);
 
@@ -401,7 +405,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     @Override
     public List<SearchFacetDTO> getCategoryFacets(Category category) {
-        List<SearchFacet> searchFacets = new ArrayList<SearchFacet>();
+        List<SearchFacet> searchFacets = new ArrayList<>();
         ExtensionResultStatusType status = extensionManager.getProxy().getCategorySearchFacets(category, searchFacets);
 
         if (Objects.equals(ExtensionResultStatusType.NOT_HANDLED, status)) {
@@ -449,12 +453,12 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * Notifies solr about which facets you want it to determine results and counts for
-     * 
      * @param query
      * @param namedFacetMap
+     * @param searchCriteria
      */
-    protected void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap) {
-        shs.attachFacets(query, namedFacetMap);
+    protected void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, SearchCriteria searchCriteria) {
+        shs.attachFacets(query, namedFacetMap, searchCriteria);
     }
 
     /**
@@ -502,7 +506,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return the actual Product instances as a result of the search
      */
     protected List<Product> getProducts(List<SolrDocument> responseDocuments) {
-        final List<Long> productIds = new ArrayList<Long>();
+        final List<Long> productIds = new ArrayList<>();
         for (SolrDocument doc : responseDocuments) {
             productIds.add((Long) doc.getFieldValue(shs.getIndexableIdFieldName()));
         }
@@ -537,7 +541,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return the actual Sku instances as a result of the search
      */
     protected List<Sku> getSkus(List<SolrDocument> responseDocuments) {
-        final List<Long> skuIds = new ArrayList<Long>();
+        final List<Long> skuIds = new ArrayList<>();
         for (SolrDocument doc : responseDocuments) {
             skuIds.add((Long) doc.getFieldValue(shs.getIndexableIdFieldName()));
         }

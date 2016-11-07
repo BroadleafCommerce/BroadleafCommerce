@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.util.DeployBehaviorUtil;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -158,7 +159,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
 
                 try {
                     if (!isUrlValid(url.toString())) {
-                        LOG.error("SECURITY FAILURE Bad redirect location: " + url.toString());
+                        LOG.error("SECURITY FAILURE Bad redirect location: " + StringUtil.sanitize(url.toString()));
                         response.sendError(403);
                         return;
                     }

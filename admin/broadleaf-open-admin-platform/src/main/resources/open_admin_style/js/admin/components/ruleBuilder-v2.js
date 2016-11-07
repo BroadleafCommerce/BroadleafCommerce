@@ -578,6 +578,10 @@
                     },
                     onItemAdd: function(value, $item) {
                         $item.closest('.selectize-input').find('input').blur();
+                    },
+                    onItemRemove: function (value, $item) {
+                        this.addOption({id: value, label: $item.html()});
+                        this.refreshOptions(true);
                     }
                 };
                 field.valueSetter = function(rule, value) {
@@ -1093,6 +1097,9 @@ $(document).ready(function() {
         var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
         BLCAdmin.ruleBuilders.setJSONValueOnField(ruleBuilder);
         BLCAdmin.hideCurrentModal();
+        if(BLCAdmin.entityForm.status) {
+            BLCAdmin.entityForm.status.updateEntityFormChangeMap(hiddenId,'',ruleBuilder.data);
+        }
     });
 
     /**  **/
@@ -1100,6 +1107,9 @@ $(document).ready(function() {
         var hiddenId = $($(this)).data('hiddenid');
         var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
         BLCAdmin.ruleBuilders.clearField(ruleBuilder);
+        if(BLCAdmin.entityForm.status) {
+            BLCAdmin.entityForm.status.updateEntityFormChangeMap(hiddenId,ruleBuilder.data,null);
+        }
     });
 
     /**

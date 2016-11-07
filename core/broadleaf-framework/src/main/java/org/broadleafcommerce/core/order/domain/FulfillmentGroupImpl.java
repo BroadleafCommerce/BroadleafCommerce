@@ -775,6 +775,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
         cloned.setIsShippingPriceTaxable(isShippingPriceTaxable == null ? null : isShippingPriceTaxable);
         cloned.setMerchandiseTotal(merchandiseTotal == null ? null : new Money(merchandiseTotal));
         cloned.setRetailFulfillmentPrice(fulfillmentPrice == null ? null : new Money(fulfillmentPrice));
+        cloneTaxDetails(context, cloned);
         cloned.setTotalItemTax(totalItemTax == null ? null : new Money(totalItemTax));
         cloned.setTotalFulfillmentGroupTax(totalFulfillmentGroupTax == null ? null : new Money(totalFulfillmentGroupTax));
         cloned.setTotalFeeTax(totalFeeTax == null ? null : new Money(totalFeeTax));
@@ -791,6 +792,13 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
             cloned.getFulfillmentGroupItems().add(fulfillmentGroupItem);
         }
         return  createResponse;
+    }
+
+    protected void cloneTaxDetails(MultiTenantCopyContext context, FulfillmentGroup cloned) throws CloneNotSupportedException {
+        for (TaxDetail taxDetail : getTaxes()) {
+            TaxDetail clonedTaxDetail = taxDetail.createOrRetrieveCopyInstance(context).getClone();
+            cloned.getTaxes().add(clonedTaxDetail);
+        }
     }
 
     @Override

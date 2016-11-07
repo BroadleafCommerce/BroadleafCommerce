@@ -634,7 +634,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         Long siteId = (site != null) ? site.getId() : null;
         Locale locale = findLanguageOnlyLocale(sc.getLocale());
         String contentType = sc.getStructuredContentType().getName();
-        String contentName = sc.getContentName();
+        String contentName = sc.getContentName() + "-" + sc.getId();
 
         return buildNameKey(sandBox, siteId, locale, contentType, contentName, secure);
     }

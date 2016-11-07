@@ -28,6 +28,7 @@ import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.ImageArtifactProcessor;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.ImageMetadata;
@@ -79,6 +80,8 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     @Resource(name = "blStaticAssetMultiTenantExtensionManager")
     protected StaticAssetMultiTenantExtensionManager staticAssetExtensionManager;
 
+    @Value("${should.accept.non.image.asset:true}")
+    protected boolean shouldAcceptNonImageAsset;
 
     private final Random random = new Random();
     private final String FILE_NAME_CHARS = "0123456789abcdef";
@@ -103,7 +106,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         if (pos > 0) {
             return fileName.substring(pos + 1, fileName.length()).toLowerCase();
         } else {
-            LOG.warn("No extension provided for asset : " + fileName);
+            LOG.warn("No extension provided for asset : " + StringUtil.sanitize(fileName));
             return null;
         }
     }
@@ -153,7 +156,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             int pos = fileName.indexOf(":");
             if (pos > 0) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Removing protocol from URL name" + fileName);
+                    LOG.trace("Removing protocol from URL name" + StringUtil.sanitize(fileName));
                 }
                 fileName = fileName.substring(pos + 1);
             }
@@ -204,8 +207,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
                 fullUrl = getCountUrl(fullUrl, count, false);
             }
         }
-
-
+        
         try {
             ImageMetadata metadata = imageArtifactProcessor.getImageMetadata(inputStream);
             newAsset = new ImageStaticAssetImpl();
@@ -213,7 +215,15 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             ((ImageStaticAsset) newAsset).setHeight(metadata.getHeight());
         } catch (Exception e) {
             //must not be an image stream
-            newAsset = new StaticAssetImpl();
+            LOG.warn("unable to convert asset:" + fileName + " into Image");
+            LOG.debug(e);
+            
+            if (getShouldAcceptNonImageAsset()) {
+                newAsset =  createNonImageAsset(inputStream, fileName, properties);
+            }
+            else {
+                throw new RuntimeException("Selected Asset/File was not valid image.");
+            }
         }
         if (storeAssetsOnFileSystem) {
             newAsset.setStorageType(StorageType.FILESYSTEM);
@@ -229,7 +239,19 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
         return staticAssetDao.addOrUpdateStaticAsset(newAsset, false);
     }
-    
+
+    /**
+     * Hook-point for implementors to add custom business logic for handling files that are non-images
+     *
+     * @param inputStream
+     * @param fileName
+     * @param properties
+     * @return
+     */
+    protected StaticAsset createNonImageAsset(InputStream inputStream, String fileName, Map<String, String> properties) {
+        return new StaticAssetImpl();
+    }
+
     /**
      * Gets the count URL based on the original fullUrl. If requested in legacy format this will return URLs like:
      * 
@@ -319,4 +341,11 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         return staticAssetPathService.convertAssetPath(assetPath, contextPath, secureRequest);
     }
 
+    public boolean getShouldAcceptNonImageAsset() {
+        return shouldAcceptNonImageAsset;
+    }
+
+    public void setShouldAcceptNonImageAsset(boolean accept) {
+        shouldAcceptNonImageAsset = accept;
+    }
 }
