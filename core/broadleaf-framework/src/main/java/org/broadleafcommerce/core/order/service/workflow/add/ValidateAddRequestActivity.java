@@ -22,6 +22,8 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -38,6 +40,7 @@ import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequest
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
+import org.broadleafcommerce.core.order.service.workflow.add.extension.ValidateAddRequestActivityExtensionManager;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
@@ -66,8 +69,25 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
 
+    @Resource(name = "blValidateAddRequestActivityExtensionManager")
+    protected ValidateAddRequestActivityExtensionManager extensionManager;
+
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
+        ExtensionResultHolder<Exception> resultHolder = new ExtensionResultHolder<>();
+        resultHolder.setResult(null);
+        ExtensionResultStatusType result = extensionManager.getProxy().validate(context, resultHolder);
+
+        if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+            if (resultHolder.getResult() != null) {
+                throw resultHolder.getResult();
+            }
+        }
+
+        return validate(context);
+    }
+
+    protected ProcessContext<CartOperationRequest> validate(ProcessContext<CartOperationRequest> context) {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         Integer orderItemQuantity = orderItemRequestDTO.getQuantity();
