@@ -21,9 +21,9 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.util.BLCMoneyFormatUtils;
 import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
@@ -60,11 +60,14 @@ import javax.annotation.Resource;
 @Conditional(TemplatingExistCondition.class)
 public class ProductOptionsProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
-    @Resource(name = "blCatalogService")
-    protected CatalogService catalogService;
-
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
     protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
+    
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
+    
+    @Resource(name = "blProductOptionsProcessorExtensionManager")
+    protected ProductOptionsProcessorExtensionManager extensionManager;
 
     @Override
     public String getName() {
@@ -82,16 +85,16 @@ public class ProductOptionsProcessor extends AbstractBroadleafModelVariableModif
         Product product = catalogService.findProductById(productId);
         if (product != null) {
             addAllProductOptionsToModel(newModelVars, product);
-            addProductOptionPricingToModel(newModelVars, product);
+            addProductOptionPricingToModel(newModelVars, product, context, tagAttributes);
         }
     }
 
-    private void addProductOptionPricingToModel(Map<String, Object> newModelVars, Product product) {
+    protected void addProductOptionPricingToModel(Map<String, Object> newModelVars, Product product, BroadleafTemplateContext context, Map<String, String> tagAttributes) {
         List<Sku> skus = product.getSkus();
-        List<ProductOptionPricingDTO> skuPricing = new ArrayList<ProductOptionPricingDTO>();
+        List<ProductOptionPricingDTO> skuPricing = new ArrayList<>();
         for (Sku sku : skus) {
 
-            List<Long> productOptionValueIds = new ArrayList<Long>();
+            List<Long> productOptionValueIds = new ArrayList<>();
 
             List<ProductOptionValue> productOptionValues = sku.getProductOptionValues();
             for (ProductOptionValue productOptionValue : productOptionValues) {
@@ -108,21 +111,29 @@ public class ProductOptionsProcessor extends AbstractBroadleafModelVariableModif
             } else {
                 currentPrice = sku.getRetailPrice();
             }
-            dto.setPrice(formatPrice(currentPrice));
+            
+            // Check for Price Overrides
+            ExtensionResultHolder<Money> priceHolder = new ExtensionResultHolder<>();
+            priceHolder.setResult(currentPrice);
+            if (extensionManager != null) {
+                extensionManager.getProxy().modifyPriceForOverrides(sku, priceHolder, context, tagAttributes);
+            }
+            
+            dto.setPrice(BLCMoneyFormatUtils.formatPrice(currentPrice));
             dto.setSelectedOptions(values);
             skuPricing.add(dto);
         }
         writeJSONToModel(newModelVars, "skuPricing", skuPricing);
     }
 
-    private void addAllProductOptionsToModel(Map<String, Object> newModelVars, Product product) {
+    protected void addAllProductOptionsToModel(Map<String, Object> newModelVars, Product product) {
         List<ProductOption> productOptions = product.getProductOptions();
-        List<ProductOptionDTO> dtos = new ArrayList<ProductOptionDTO>();
+        List<ProductOptionDTO> dtos = new ArrayList<>();
         for (ProductOption option : productOptions) {
             ProductOptionDTO dto = new ProductOptionDTO();
             dto.setId(option.getId());
             dto.setType(option.getType().getType());
-            Map<Long, String> values = new HashMap<Long, String>();
+            Map<Long, String> values = new HashMap<>();
             for (ProductOptionValue value : option.getAllowedValues()) {
                 values.put(value.getId(), value.getAttributeValue());
             }
@@ -132,7 +143,7 @@ public class ProductOptionsProcessor extends AbstractBroadleafModelVariableModif
         writeJSONToModel(newModelVars, "allProductOptions", dtos);
     }
 
-    private void writeJSONToModel(Map<String, Object> newModelVars, String modelKey, Object o) {
+    protected void writeJSONToModel(Map<String, Object> newModelVars, String modelKey, Object o) {
         try {
             String jsonValue = JSON_CACHE.get(o);
             if (jsonValue == null) {
@@ -148,20 +159,7 @@ public class ProductOptionsProcessor extends AbstractBroadleafModelVariableModif
         }
     }
 
-    private String formatPrice(Money price) {
-        if (price == null) {
-            return null;
-        }
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (brc.getJavaLocale() != null) {
-            return BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency()).format(price.getAmount());
-        } else {
-            // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
-            return "$ " + price.getAmount().toString();
-        }
-    }
-
-    private class ProductOptionDTO {
+    protected class ProductOptionDTO {
 
         private Long id;
         private String type;
@@ -245,7 +243,7 @@ public class ProductOptionsProcessor extends AbstractBroadleafModelVariableModif
         }
     }
 
-    private class ProductOptionPricingDTO {
+    protected class ProductOptionPricingDTO {
 
         private Long[] skuOptions;
         private String price;

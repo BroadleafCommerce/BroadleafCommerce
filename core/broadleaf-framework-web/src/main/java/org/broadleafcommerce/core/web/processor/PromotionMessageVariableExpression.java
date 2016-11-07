@@ -15,25 +15,23 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.promotionMessage.processor;
+package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessagePlacementType;
 import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
 import org.broadleafcommerce.core.promotionMessage.service.PromotionMessageGenerator;
 import org.broadleafcommerce.core.promotionMessage.util.BLCPromotionMessageUtils;
+import org.broadleafcommerce.core.web.expression.BLCVariableExpression;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,10 +40,10 @@ import javax.annotation.Resource;
 /**
  * @author Chris Kittrell (ckittrell)
  */
-@Service("blPromotionMessageProcessor")
-public class PromotionMessageProcessor extends AbstractLocalVariableDefinitionElementProcessor {
+@Service("blPromotionMessageVariableExpression")
+public class PromotionMessageVariableExpression extends BLCVariableExpression {
 
-    private static final Log LOG = LogFactory.getLog(PromotionMessageProcessor.class);
+    private static final Log LOG = LogFactory.getLog(PromotionMessageVariableExpression.class);
 
     public static final String PRODUCT = "product";
     public static final String PLACEMENT = "placement";
@@ -53,68 +51,61 @@ public class PromotionMessageProcessor extends AbstractLocalVariableDefinitionEl
     @Resource(name = "blPromotionMessageGenerators")
     protected List<PromotionMessageGenerator> generators;
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public PromotionMessageProcessor() {
-        super("promotion_messages");
+    @Override
+    public String getName() {
+        return "promotion_messages";
     }
     
-    @Override
-    public int getPrecedence() {
-        return 1000;
-    }
-
-    @Override
-    protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
-        Product product = getProductFromArguments(arguments, element);
-        List<String> placementTypes = getPlacementFromArguments(element);
-        placementTypes.add(PromotionMessagePlacementType.EVERYWHERE.getType());
-
+    public List<PromotionMessageDTO> getProductPromotionMessages(Product product, String... placements) {
+        List<String> filteredPlacements = filterInvalidPlacements(placements);
+        if (!filteredPlacements.contains(PromotionMessagePlacementType.EVERYWHERE.getType())) {
+            filteredPlacements.add(PromotionMessagePlacementType.EVERYWHERE.getType());
+        }
+        
         Map<String, List<PromotionMessageDTO>> promotionMessages = new MultiValueMap();
         for (PromotionMessageGenerator generator : generators) {
             promotionMessages.putAll(generator.generatePromotionMessages(product));
         }
 
-        List<PromotionMessageDTO> filteredMessages = BLCPromotionMessageUtils.filterPromotionMessageDTOsByTypes(promotionMessages, placementTypes);
+        List<PromotionMessageDTO> filteredMessages = BLCPromotionMessageUtils.filterPromotionMessageDTOsByTypes(promotionMessages, filteredPlacements);
         BLCPromotionMessageUtils.sortMessagesByPriority(filteredMessages);
 
-        Map<String, Object> newVars = new HashMap<>();
-        newVars.put("promotionMessages", filteredMessages);
-        return newVars;
+        return filteredMessages;
     }
-
-    protected Product getProductFromArguments(Arguments arguments, Element element) {
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(PRODUCT));
-        return (Product) expression.execute(arguments.getConfiguration(), arguments);
+    
+    public List<String> getItemPromotionMessages(OrderItem orderItem) {
+        List<String> appliedOfferNames = getAppliedOfferNamesForOrderItem(orderItem);
+        for (OrderItem child : orderItem.getChildOrderItems()) {
+            appliedOfferNames.addAll(getAppliedOfferNamesForOrderItem(child));
+        }
+        return appliedOfferNames;
     }
-
-    protected List<String> getPlacementFromArguments(Element element) {
-        String placementString = element.getAttributeValue(PLACEMENT);
+    
+    protected List<String> getAppliedOfferNamesForOrderItem(OrderItem orderItem) {
+        List<String> appliedOfferNames = new ArrayList<>();
+        for (OrderItemPriceDetail oipd : orderItem.getOrderItemPriceDetails()) {
+            for (OrderItemPriceDetailAdjustment adjustment : oipd.getOrderItemPriceDetailAdjustments()) {
+                appliedOfferNames.add(adjustment.getOfferName());
+            }
+        }
+        return appliedOfferNames;
+    }
+    
+    protected List<String> filterInvalidPlacements(String[] placements) {
         List<String> requestedPlacement = new ArrayList<>();
-
-        for (String placement : placementString.split(",")) {
+        for (String placement : placements) {
             placement = placement.trim();
             if (isValidPlacementType(placement)) {
                 requestedPlacement.add(placement);
+            } else {
+                LOG.warn("Stripping out invalid promotion message placement " + placement + ". See PromotionMessagePlacementType for valid placements");
             }
         }
         return requestedPlacement;
     }
 
     protected boolean isValidPlacementType(String placement) {
-        try {
-            PromotionMessagePlacementType.getInstance(placement);
-        } catch (Exception e) {
-            LOG.error("Unrecognized Promotion Message Placement Type", e);
-            return false;
-        }
-        return true;
+        return PromotionMessagePlacementType.getInstance(placement) != null;
     }
 
-    @Override
-    protected boolean removeHostElement(Arguments arguments, Element element) {
-        return false;
-    }
 }
