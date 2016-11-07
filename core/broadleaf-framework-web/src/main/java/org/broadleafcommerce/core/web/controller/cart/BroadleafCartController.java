@@ -366,7 +366,6 @@ public class BroadleafCartController extends AbstractCartController {
                     try {
                         orderService.addOfferCode(cart, offerCode, false);
                         promoAdded = true;
-                        cart = orderService.save(cart, true);
                     } catch (OfferException e) {
                         if (e instanceof OfferMaxUseExceededException) {
                             exception = "Use Limit Exceeded";
@@ -382,6 +381,7 @@ public class BroadleafCartController extends AbstractCartController {
                     exception = "Invalid Code";
                 }
             }
+            cart = orderService.save(cart, true);
         } else {
             exception = "Invalid Cart";
         }
