@@ -48,8 +48,6 @@ import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.hibernate.CacheMode;
-import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -290,18 +288,6 @@ public class OfferServiceImpl implements OfferService {
             }
         }
         return orderOfferCodes;
-    }
-
-    @Override
-    public Offer refreshOffer(Offer offer) {
-        try {
-            Long id = offer.getId();
-            genericEntityDao.getEntityManager().unwrap(Session.class).setCacheMode(CacheMode.REFRESH);
-            offer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
-        } finally {
-            genericEntityDao.getEntityManager().unwrap(Session.class).setCacheMode(CacheMode.NORMAL);
-        }
-        return offer;
     }
 
     /*
