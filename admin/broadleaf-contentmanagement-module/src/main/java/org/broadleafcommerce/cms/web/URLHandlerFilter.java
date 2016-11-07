@@ -56,6 +56,9 @@ public class URLHandlerFilter extends OncePerRequestFilter {
     @Resource(name = "blURLHandlerService")
     private URLHandlerService urlHandlerService;
 
+    @Resource(name = "blURLHandlerFilterExtensionManager")
+    private URLHandlerFilterExtensionManager extensionManager;
+
     @Value("${request.uri.encoding}")
     public String charEncoding;
 
@@ -88,7 +91,8 @@ public class URLHandlerFilter extends OncePerRequestFilter {
                 String url = UrlUtil.fixRedirectUrl(contextPath, handler.getNewURL());
                 url = fixQueryString(request, url);
                 response.sendRedirect(url);             
-            }           
+            }
+            extensionManager.getProxy().processPostRedirect();
         } else {
             filterChain.doFilter(request, response);
         }
