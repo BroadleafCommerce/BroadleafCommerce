@@ -15,11 +15,12 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.web.processor;
+package org.broadleafcommerce.core.web.expression;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -28,7 +29,7 @@ import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageP
 import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
 import org.broadleafcommerce.core.promotionMessage.service.PromotionMessageGenerator;
 import org.broadleafcommerce.core.promotionMessage.util.BLCPromotionMessageUtils;
-import org.broadleafcommerce.core.web.expression.BLCVariableExpression;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ import javax.annotation.Resource;
  * @author Chris Kittrell (ckittrell)
  */
 @Service("blPromotionMessageVariableExpression")
+@Conditional(TemplatingExistCondition.class)
 public class PromotionMessageVariableExpression extends BLCVariableExpression {
 
     private static final Log LOG = LogFactory.getLog(PromotionMessageVariableExpression.class);
