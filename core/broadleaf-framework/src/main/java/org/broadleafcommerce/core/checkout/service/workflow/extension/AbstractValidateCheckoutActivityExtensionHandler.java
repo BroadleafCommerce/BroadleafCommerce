@@ -15,25 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.order.service.workflow.add.extension;
+package org.broadleafcommerce.core.checkout.service.workflow.extension;
 
-import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
+import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 
 /**
  * @author Nick Crum ncrum
  */
-public interface ValidateAddRequestActivityExtensionHandler extends ExtensionHandler {
+public class AbstractValidateCheckoutActivityExtensionHandler extends AbstractExtensionHandler
+        implements ValidateCheckoutActivityExtensionHandler {
 
-    /**
-     * This extension allows for one to validate an add request without having to override or extend
-     * {@link org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity}.
-     *
-     * @param request
-     * @param resultHolder
-     * @return
-     */
-    public ExtensionResultStatusType validate(CartOperationRequest request, ExtensionResultHolder<Exception> resultHolder);
+    @Override
+    public ExtensionResultStatusType validateCheckout(CheckoutSeed request, ExtensionResultHolder<Exception> resultHolder) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }
