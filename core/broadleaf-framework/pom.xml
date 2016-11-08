@@ -177,8 +177,8 @@
             <artifactId>spring-core</artifactId>
         </dependency>
         <dependency>
-            <artifactId>com.broadleafcommerce</artifactId>
-            <groupId>broadleaf-offer</groupId>
+            <groupId>com.broadleafcommerce</groupId>
+            <artifactId>broadleaf-offer</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
