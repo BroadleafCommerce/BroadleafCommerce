@@ -9,11 +9,11 @@
     </parent>
 
     <groupId>com.broadleafcommerce</groupId>
-    <artifactId>broadleaf-offer</artifactId>
+    <artifactId>broadleaf-micro-common</artifactId>
     <version>5.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>BroadleafCommerce Offer</name>
-    <description>BroadleafCommerce Offer Module</description>
+    <name>BroadleafCommerce Micro Common</name>
+    <description>A very targeted set of classes that modules share </description>
     <url>http://www.broadleafcommerce.org</url>
 
     <properties>
@@ -87,11 +87,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.broadleafcommerce</groupId>
-            <artifactId>broadleaf-micro-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
@@ -101,10 +96,5 @@
             <version>3.4</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.mvel</groupId>
-            <artifactId>mvel2</artifactId>
-            <version>2.2.1.Final</version>
-        </dependency>
     </dependencies>
 </project>
