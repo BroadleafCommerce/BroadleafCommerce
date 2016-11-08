@@ -36,11 +36,11 @@ import java.util.List;
 public class GlobalValidationResult {
     
     protected boolean valid;
-    protected List<String> errorMessages = new ArrayList<String>();
+    protected List<String> errorMessages = new ArrayList<>();
     
     public GlobalValidationResult(boolean valid, String errorMessage) {
         setValid(valid);
-        setErrorMessage(errorMessage);
+        addErrorMessage(errorMessage);
     }
     
     public GlobalValidationResult(boolean valid) {
@@ -87,7 +87,7 @@ public class GlobalValidationResult {
      */
     @Deprecated
     public void setErrorMessage(String errorMessage) {
-        errorMessages.add(errorMessage);
+        addErrorMessage(errorMessage);
     }
     
     /**
