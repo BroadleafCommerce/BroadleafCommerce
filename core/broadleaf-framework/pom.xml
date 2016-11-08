@@ -178,7 +178,7 @@
         </dependency>
         <dependency>
             <groupId>com.broadleafcommerce</groupId>
-            <artifactId>broadleaf-offer</artifactId>
+            <artifactId>broadleaf-order</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
