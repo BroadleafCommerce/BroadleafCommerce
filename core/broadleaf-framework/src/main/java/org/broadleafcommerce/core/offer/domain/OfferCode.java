@@ -87,4 +87,8 @@ public interface OfferCode extends Status, Serializable, MultiTenantCloneable<Of
     @Deprecated
     public void setUses(int uses);
 
+    public List<Order> getOrders();
+
+    public void setOrders(List<Order> orders);
+
 }
