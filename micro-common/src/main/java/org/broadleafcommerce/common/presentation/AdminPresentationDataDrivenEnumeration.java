@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.presentation;
 
-import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -41,7 +39,7 @@ public @interface AdminPresentationDataDrivenEnumeration {
      *
      * @return the entity class representing the data to populate a dropdown field in the admin tool
      */
-    Class<?> optionListEntity() default DataDrivenEnumerationValueImpl.class;
+    Class<?> optionListEntity();
 
     /**
      * <p>Optional - only required if it is desirable to filter the list of items returned from the query for the optionListEntity. This is useful if you
