@@ -18,8 +18,6 @@
 package org.broadleafcommerce.admin.server.service.persistence.module.provider;
 
 import org.broadleafcommerce.common.admin.domain.TypedEntity;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.DefaultFieldPersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -29,12 +27,10 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 /**
- * This field persistence provider manages the default CategoryProductXref reference for a Product instance through
- * the "defaultCategory" pseudo field.
+ * This field persistence provider manages the type field for {@link TypedEntity}s and ensures that they are always
+ * marked as dirty when they change, regardless of PreAdd state.
  *
  * @author Jon Fleschler (jfleschler)
  */
