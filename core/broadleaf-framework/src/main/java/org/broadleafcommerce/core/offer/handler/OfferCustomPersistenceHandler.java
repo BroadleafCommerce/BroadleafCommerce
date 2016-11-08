@@ -40,14 +40,13 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.handler.ClassCustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -56,7 +55,7 @@ import java.util.Objects;
  * Created by Jon on 11/23/15.
  */
 @Component("blOfferCustomPersistenceHandler")
-public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(OfferCustomPersistenceHandler.class);
 
@@ -67,24 +66,23 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     protected static final String STACKABLE = "stackableWithOtherOffers";
     protected static final String OFFER_ITEM_TARGET_RULE_TYPE = "offerItemTargetRuleType";
 
-    private Boolean isAssignableFromOffer(PersistencePackage persistencePackage) {
-        Class ceilingEntityClass = getClassForName(persistencePackage.getCeilingEntityFullyQualifiedClassname());
-        return ceilingEntityClass != null && Offer.class.isAssignableFrom(ceilingEntityClass);
+    public OfferCustomPersistenceHandler() {
+        super(Offer.class);
     }
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
-       return isAssignableFromOffer(persistencePackage);
+       return classIsAssignableFrom(persistencePackage) && isBasicOperation(persistencePackage);
     }
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
-        return isAssignableFromOffer(persistencePackage);
+        return classIsAssignableFrom(persistencePackage) && isBasicOperation(persistencePackage);
     }
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        return isAssignableFromOffer(persistencePackage);
+        return classIsAssignableFrom(persistencePackage) && isBasicOperation(persistencePackage);
     }
 
     @Override

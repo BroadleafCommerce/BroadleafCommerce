@@ -123,4 +123,13 @@ public interface OfferServiceExtensionHandler extends ExtensionHandler {
      */
     ExtensionResultStatusType applyAdditionalRuleVariablesForItemOfferEvaluation(PromotableOrderItem orderItem,
             HashMap<String, Object> vars);
+
+    /**
+     * Allows module extensions to add additional offers for a given offer code.
+     * @param offers
+     * @param offerCode
+     * @return
+     */
+    ExtensionResultStatusType addAdditionalOffersForCode(List<Offer> offers, OfferCode offerCode);
+
 }

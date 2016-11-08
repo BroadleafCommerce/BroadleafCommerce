@@ -108,6 +108,13 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
         }
     };
 
+    public static final ExtensionManagerOperation addAdditionalOffersForCode = new ExtensionManagerOperation() {
+        @Override
+        public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
+            return ((OfferServiceExtensionHandler) handler).addAdditionalOffersForCode((List<Offer>) params[0], (OfferCode) params[1]);
+        }
+    };
+
     public OfferServiceExtensionManager() {
         super(OfferServiceExtensionHandler.class);
     }
@@ -155,6 +162,11 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
     @Override
     public ExtensionResultStatusType applyAdditionalRuleVariablesForItemOfferEvaluation(PromotableOrderItem orderItem, HashMap<String, Object> vars) {
         return execute(applyAdditionalRuleVariablesForItemOfferEvaluation, orderItem, vars);
+    }
+
+    @Override
+    public ExtensionResultStatusType addAdditionalOffersForCode(List<Offer> offers, OfferCode offerCode) {
+        return execute(addAdditionalOffersForCode, offers, offerCode);
     }
 
     @Override

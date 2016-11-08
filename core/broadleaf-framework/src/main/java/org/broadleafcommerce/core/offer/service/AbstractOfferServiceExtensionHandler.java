@@ -86,4 +86,9 @@ public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandl
     public ExtensionResultStatusType applyAdditionalRuleVariablesForItemOfferEvaluation(PromotableOrderItem orderItem, HashMap<String, Object> vars) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
+    @Override
+    public ExtensionResultStatusType addAdditionalOffersForCode(List<Offer> offers, OfferCode offerCode) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }

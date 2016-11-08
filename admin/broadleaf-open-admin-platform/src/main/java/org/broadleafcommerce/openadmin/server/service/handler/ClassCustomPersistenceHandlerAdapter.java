@@ -50,6 +50,22 @@ public class ClassCustomPersistenceHandlerAdapter extends CustomPersistenceHandl
         return false;
     }
 
+    protected boolean classIsAssignableFrom(PersistencePackage pkg) {
+        try {
+            String ceilingEntityFullyQualifiedClassname = pkg.getCeilingEntityFullyQualifiedClassname();
+            Class ceilingEntityClass = Class.forName(ceilingEntityFullyQualifiedClassname);
+            for (Class<?> clazz : handledClasses) {
+                if (clazz.isAssignableFrom(ceilingEntityClass)) {
+                    return true;
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            // do nothing
+        }
+
+        return false;
+    }
+
     protected boolean isBasicOperation(PersistencePackage pkg) {
         return pkg.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.BASIC);
     }

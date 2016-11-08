@@ -105,6 +105,20 @@ public interface OfferService {
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
     /**
+     * Lookup all offers by code.
+     * @param code the code
+     * @return the list of offers
+     */
+    List<Offer> lookupAllOffersByCode(String code);
+
+    /**
+     * Lookup all OfferCodes by code.
+     * @param code the code
+     * @return the list of offer codes
+     */
+    List<OfferCode> lookupAllOfferCodesByCode(String code);
+
+    /**
      * Create a list of offers that applies to this order
      * @param order
      * @return
