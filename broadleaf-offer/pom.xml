@@ -12,8 +12,8 @@
     <artifactId>broadleaf-offer</artifactId>
     <version>5.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>BroadleafCommerce Framework</name>
-    <description>BroadleafCommerce Framework</description>
+    <name>BroadleafCommerce Offer</name>
+    <description>BroadleafCommerce Offer Module</description>
     <url>http://www.broadleafcommerce.org</url>
 
     <properties>

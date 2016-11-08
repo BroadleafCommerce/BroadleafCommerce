@@ -308,6 +308,7 @@
         </plugins>
     </build>
     <modules>
+        <module>broadleaf-offer</module>
         <module>common</module>
         <module>core</module>
         <module>integration</module>
