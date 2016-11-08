@@ -39,7 +39,7 @@ public @interface AdminPresentationDataDrivenEnumeration {
      *
      * @return the entity class representing the data to populate a dropdown field in the admin tool
      */
-    Class<?> optionListEntity();
+    Class<?> optionListEntity() default DefaultEnumerationValueClass.class;// default DataDrivenEnumerationValueImpl.class;
 
     /**
      * <p>Optional - only required if it is desirable to filter the list of items returned from the query for the optionListEntity. This is useful if you
@@ -91,4 +91,8 @@ public @interface AdminPresentationDataDrivenEnumeration {
      * @return whether or not to show the field if empty
      */
     boolean optionHideIfEmpty() default false;
+    
+    public static class DefaultEnumerationValueClass {
+        
+    }
 }
