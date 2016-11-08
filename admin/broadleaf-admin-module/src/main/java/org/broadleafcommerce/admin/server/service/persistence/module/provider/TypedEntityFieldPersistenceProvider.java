@@ -57,12 +57,13 @@ public class TypedEntityFieldPersistenceProvider extends DefaultFieldPersistence
         return false;
     }
 
+    @Override
     protected boolean checkDirtyState(PopulateValueRequest request, Object instance, Object checkValue) throws Exception {
         return isFieldDirty(request, instance, checkValue);
     }
 
     @Override
     public int getOrder() {
-            return Ordered.HIGHEST_PRECEDENCE;
-        }
+        return Ordered.LOWEST_PRECEDENCE - 1000;
+    }
 }
