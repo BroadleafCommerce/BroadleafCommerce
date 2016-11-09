@@ -27,6 +27,7 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * This field persistence provider manages the type field for {@link TypedEntity}s and ensures that they are always
@@ -51,7 +52,7 @@ public class TypedEntityFieldPersistenceProvider extends DefaultFieldPersistence
         Property property = populateValueRequest.getProperty();
         if (TypedEntity.class.isAssignableFrom(instance.getClass())) {
             String typeFieldName = ((TypedEntity) instance).getTypeFieldName();
-            return property.getName().equals(typeFieldName);
+            return Objects.equals(property.getName(), typeFieldName);
         }
 
         return false;
