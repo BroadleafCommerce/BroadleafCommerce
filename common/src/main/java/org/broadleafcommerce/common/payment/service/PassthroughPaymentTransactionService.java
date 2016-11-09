@@ -46,4 +46,13 @@ public class PassthroughPaymentTransactionService extends AbstractPaymentGateway
         return response;
     }
 
+    @Override
+    public PaymentResponseDTO refund(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
+        PaymentResponseDTO response = new PaymentResponseDTO(paymentRequestDTO.getPaymentType(), PaymentGatewayType.PASSTHROUGH)
+                .paymentTransactionType(PaymentTransactionType.REFUND)
+                .amount(new Money(paymentRequestDTO.getTransactionTotal()))
+                .successful(true);
+        return response;
+    }
+
 }

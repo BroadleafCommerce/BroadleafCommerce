@@ -80,7 +80,7 @@ public class PassthroughPaymentConfigurationImpl extends AbstractPaymentGatewayC
 
     @Override
     public boolean handlesRefund() {
-        return false;
+        return true;
     }
 
     @Override
