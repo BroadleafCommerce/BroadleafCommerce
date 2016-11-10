@@ -485,6 +485,7 @@ $(document).ready(function () {
         return $(event.target).is('a.external-link');
     }
 
+    var ACTION_PADDING = 35;
     $('body').on({
         mouseenter: function () {
             var $tr = $(this);
@@ -492,13 +493,30 @@ $(document).ready(function () {
             if ($tr.has('a.sub-list-grid-reorder') && $tr.find('a.sub-list-grid-reorder').css('visibility') === 'hidden') {
                 $tr.find('a.sub-list-grid-reorder').css({visibility: 'visible'});
             }
-            if ($tr.has('.workflow-action') && $tr.find('.workflow-action').css('visibility') === 'hidden') {
-                $tr.find('.workflow-action').css({visibility: 'visible'});
+
+            var $workflowAction = $tr.find('.workflow-action');
+            if ($workflowAction.length && $workflowAction.css('visibility') === 'hidden') {
+                var $columnText = $tr.find('.column-text');
+                var textWidth = $columnText.width();
+                $workflowAction.css({visibility: 'visible'});
+
+                textWidth -= ($workflowAction.width() + ACTION_PADDING);
+                $columnText.width(textWidth + "px");
             }
         },
         mouseleave: function () {
             $(this).find('a.sub-list-grid-reorder').css({visibility: 'hidden'});
             $(this).find('.workflow-action').css({visibility: 'hidden'});
+
+            var $tr = $(this);
+            var $workflowAction = $tr.find('.workflow-action');
+            if ($workflowAction.length) {
+                var $columnText = $tr.find('.column-text');
+                var textWidth = $columnText.width();
+
+                textWidth += ($workflowAction.width() + ACTION_PADDING);
+                $columnText.width(textWidth + "px");
+            }
         }
     }, '.list-grid-table tbody tr');
 
