@@ -257,6 +257,18 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected BigDecimal rootDisplayOrder;
 
+    @Column(name = "META_TITLE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_MetaTitle",
+            group = GroupName.Miscellaneous, order = 3000,
+            tooltip = "CategoryImpl_Category_MetaTitle_Tooltip")
+    protected String metaTitle;
+
+    @Column(name = "META_DESC")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_MetaDescription",
+            group = GroupName.Miscellaneous, order = 4000,
+            tooltip = "CategoryImpl_Category_MetaDescription_Tooltip")
+    protected String metaDescription;
+
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
@@ -608,6 +620,26 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Override
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
+    }
+
+    @Override
+    public String getMetaTitle() {
+        return metaTitle;
+    }
+
+    @Override
+    public void setMetaTitle(String metaTitle) {
+        this.metaTitle = metaTitle;
+    }
+
+    @Override
+    public String getMetaDescription() {
+        return metaDescription;
+    }
+
+    @Override
+    public void setMetaDescription(String metaDescription) {
+        this.metaDescription = metaDescription;
     }
 
     @Override

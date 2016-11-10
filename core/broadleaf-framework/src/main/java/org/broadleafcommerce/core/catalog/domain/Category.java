@@ -347,6 +347,34 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
     public void setLongDescription(@Nullable String longDescription);
 
     /**
+     * Gets the meta data title of the category
+     *
+     * @return
+     */
+    String getMetaTitle();
+
+    /**
+     * Sets the meta data title of the category
+     *
+     * @param metaTitle
+     */
+    void setMetaTitle(String metaTitle);
+
+    /**
+     * Gets the meta data description of the category
+     *
+     * @return
+     */
+    String getMetaDescription();
+
+    /**
+     * Sets the meta data description of the category
+     *
+     * @param metaDescription
+     */
+    void setMetaDescription(String metaDescription);
+
+    /**
      * Gets the featured products. Featured products are a special list
      * of products you would like to showcase for this category.
      * 
