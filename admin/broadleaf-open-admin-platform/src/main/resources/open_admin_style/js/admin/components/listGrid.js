@@ -486,6 +486,20 @@ $(document).ready(function () {
     }
 
     var ACTION_PADDING = 35;
+
+    function modifyTextColumnWidth($tr, $workflowAction, removeSpacing) {
+        var $columnText = $tr.find('.column-text');
+        var textWidth = $columnText.width();
+        var actionWidth = $workflowAction.width() + ACTION_PADDING;
+
+        if (removeSpacing) {
+            textWidth -= actionWidth;
+        } else {
+            textWidth += actionWidth;
+        }
+        $columnText.width(textWidth + "px");
+    }
+
     $('body').on({
         mouseenter: function () {
             var $tr = $(this);
@@ -496,12 +510,9 @@ $(document).ready(function () {
 
             var $workflowAction = $tr.find('.workflow-action');
             if ($workflowAction.length && $workflowAction.css('visibility') === 'hidden') {
-                var $columnText = $tr.find('.column-text');
-                var textWidth = $columnText.width();
                 $workflowAction.css({visibility: 'visible'});
 
-                textWidth -= ($workflowAction.width() + ACTION_PADDING);
-                $columnText.width(textWidth + "px");
+                modifyTextColumnWidth($tr, $workflowAction, true);
             }
         },
         mouseleave: function () {
@@ -511,11 +522,7 @@ $(document).ready(function () {
             var $tr = $(this);
             var $workflowAction = $tr.find('.workflow-action');
             if ($workflowAction.length) {
-                var $columnText = $tr.find('.column-text');
-                var textWidth = $columnText.width();
-
-                textWidth += ($workflowAction.width() + ACTION_PADDING);
-                $columnText.width(textWidth + "px");
+                modifyTextColumnWidth($tr, $workflowAction, false);
             }
         }
     }, '.list-grid-table tbody tr');
