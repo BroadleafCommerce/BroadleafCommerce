@@ -267,7 +267,7 @@ tr {
     white-space: nowrap;
     vertical-align: middle;
     position: relative;
-    height: 20px;
+    height: 40px;
     line-height: 24px;
 }
 .table tbody > tr > td > a.list-grid-primary-field {
