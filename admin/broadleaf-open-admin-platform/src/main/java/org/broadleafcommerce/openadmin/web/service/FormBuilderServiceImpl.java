@@ -453,7 +453,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             } else {
                 for (String fieldName : atcmd.getGridVisibleFields()) {
                     Property p = cmd.getPMap().get(fieldName);
-                    if (p != null){
+                    if (p != null) {
                         BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
 
                         Field hf = createHeaderField(p, md);
@@ -604,7 +604,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (readOnly) {
             listGrid.getRowActions().add(DefaultListGridActions.VIEW);
         }
-        if (sortable){
+        if (sortable) {
             listGrid.setCanFilterAndSort(false);
             listGrid.setIsSortable(true);
         }
@@ -949,7 +949,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
 
                     Boolean allowNoValueEnum = fmd.getAllowNoValueEnumOption();
-                    if (allowNoValueEnum != null){
+                    if (allowNoValueEnum != null) {
                         f.setAllowNoValueEnumOption(allowNoValueEnum);
                     }
 
@@ -1253,7 +1253,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             MediaField mf = (MediaField) field;
                             Class<MediaDto> type = entityConfiguration.lookupEntityClass(MediaDto.class.getName(), MediaDto.class);
                             mf.setMedia(mediaBuilderService.convertJsonToMedia(entityProp.getUnHtmlEncodedValue(), type));
-                        } else if (!SupportedFieldType.PASSWORD_CONFIRM.equals(basicFM.getExplicitFieldType())){
+                        } else if (!SupportedFieldType.PASSWORD_CONFIRM.equals(basicFM.getExplicitFieldType())) {
                             field.setValue(entityProp.getValue());
                             field.setDisplayValue(entityProp.getDisplayValue());
                         }
