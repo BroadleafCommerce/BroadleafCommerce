@@ -1,6 +1,6 @@
 <footer>
 
-    <div th:substituteby="layout/partials/preFooterContent" ></div>
+    <div th:replace="layout/partials/preFooterContent" ></div>
 
     <script th:inline="text">
         //<![CDATA[
@@ -102,6 +102,6 @@
                 files="admin/blc-admin-init.js" ></blc:bundle>
 
 
-    <div th:substituteby="layout/partials/postFooterContent" ></div>
+    <div th:replace="layout/partials/postFooterContent" ></div>
 
 </footer>

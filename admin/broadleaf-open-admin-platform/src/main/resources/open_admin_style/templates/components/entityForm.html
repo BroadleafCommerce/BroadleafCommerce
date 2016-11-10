@@ -66,7 +66,7 @@
                          th:inline="text">
 
                         <div th:if="${tab.customTemplate != null}" th:remove="tag">
-                            <div th:substituteBy="${tab.customTemplate}"></div>
+                            <div th:replace="${tab.customTemplate}"></div>
                         </div>
                         <div th:unless="${tab.customTemplate != null}" th:remove="tag">
                             <div th:class="${inModal != null and inModal? 'col12' : tab.isMultiColumn != null and tab.isMultiColumn? 'col8' : tab.wantsFullScreen? 'col12' : 'col10'}">
@@ -75,7 +75,7 @@
                                     <fieldset th:each="group, groupStat : ${tab.fieldGroups}" th:remove="tag" th:if="${group.column} == 0 or ${group.column} == null">
                                         <div th:if="${group.customTemplate == null}" th:include="components/partials/entityFormGroups" th:remove="tag"></div>
                                         <div th:unless="${group.customTemplate == null}" th:remove="tag">
-                                            <div th:substituteBy="${group.customTemplate}"></div>
+                                            <div th:replace="${group.customTemplate}"></div>
                                         </div>
                                     </fieldset>
 
@@ -144,7 +144,7 @@
                                 <fieldset th:each="group : ${tab.fieldGroups}" th:if="${group.column} != 0 and ${group.column} != null" th:remove="tag">
                                     <div th:if="${group.customTemplate == null}" th:include="components/partials/entityFormGroups" th:remove="tag"></div>
                                     <div th:unless="${group.customTemplate == null}" th:remove="tag">
-                                        <div th:substituteBy="${group.customTemplate}"></div>
+                                        <div th:replace="${group.customTemplate}"></div>
                                     </div>
                                 </fieldset>
                             </div>

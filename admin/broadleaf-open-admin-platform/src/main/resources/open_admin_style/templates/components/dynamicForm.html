@@ -36,10 +36,10 @@
                                            data-original-overriden-value=${field.attributes['originalOverridenValue']}" ></div>
 
                             <div th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
-                                <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"></div>
+                                <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldType)}"></div>
                             </div>
                             <div th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
-                                <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"></div>
+                                <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"></div>
                             </div>
 
                             <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" ></span>
@@ -49,7 +49,7 @@
 
                 <div th:unless="${#strings.containsIgnoreCase(group.title, 'master')}" th:remove="tag">
                     <div th:if="${dynamicFormActionsTemplate}" th:remove="tag">
-                        <div th:substituteby="${dynamicFormActionsTemplate}" ></div>
+                        <div th:replace="${dynamicFormActionsTemplate}" ></div>
                     </div>
                 </div>
             </div>

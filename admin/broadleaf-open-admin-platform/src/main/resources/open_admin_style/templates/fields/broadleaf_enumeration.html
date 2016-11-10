@@ -1,6 +1,6 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
     <span th:text="#{${field.friendlyName}}"></span>
-<span th:substituteby="components/fieldTooltip" ></span>
+<span th:replace="components/fieldTooltip" ></span>
 </label>
 
 <div th:remove="tag" th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) ge #props.getAsInt('admin.enum.minCountForDropDown')}">

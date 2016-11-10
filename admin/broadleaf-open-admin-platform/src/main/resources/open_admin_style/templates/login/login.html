@@ -22,7 +22,7 @@
             <input type="password" id="password" name="j_password" class="twelve" />
         </div>
 
-        <div th:substituteby="login/termsAndConditions" ></div>
+        <div th:replace="login/termsAndConditions" ></div>
 
         <div class="account-actions">
             <input type="submit" class="button primary large" th:value="#{password.signIn}"/>
@@ -35,7 +35,7 @@
             </ul>
         </div>
 
-   		<div th:substituteby="login/loginDialogFooter" ></div>
+   		<div th:replace="login/loginDialogFooter" ></div>
   
     </blc:form>
 

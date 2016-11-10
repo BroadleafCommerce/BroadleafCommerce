@@ -126,7 +126,7 @@
                         th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}"
                         th:class="${field.isDerived ? 'derived' : ''}">
 
-                        <span th:substituteby="components/partials/listGridIcon"></span>
+                        <span th:replace="components/partials/listGridIcon"></span>
 
                         <th:block th:if="${action}">
                             <a href="#" th:if="${headerField.name == 'media.title'}"

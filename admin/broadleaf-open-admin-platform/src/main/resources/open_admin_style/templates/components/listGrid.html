@@ -139,7 +139,7 @@
                         th:class="${field.isDerived ? 'derived' : ''}">
 
                         <span th:case="'main'" th:remove="tag">
-                            <span th:substituteby="components/partials/listGridIcon"></span>
+                            <span th:replace="components/partials/listGridIcon"></span>
 
                         <a class="list-grid-primary-field"
                            th:if="${headerField.mainEntityLink}"
@@ -170,7 +170,7 @@
                         </span>
 
                         <span th:case="'asset_grid'" th:remove="tag">
-                            <span th:substituteby="components/partials/listGridIcon"></span>
+                            <span th:replace="components/partials/listGridIcon"></span>
 
                             <a th:if="${headerField.mainEntityLink}"
                                th:href="@{${'/assets/' + record.id}}"
@@ -195,7 +195,7 @@
                                 <i class="fa fa-arrows-v fa-lg"></i>
                             </a>
 
-                            <span th:substituteby="components/partials/listGridIcon" ></span>
+                            <span th:replace="components/partials/listGridIcon" ></span>
 
                             <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
                                <span th:remove="tag" th:utext="${field.displayValue}"></span>
