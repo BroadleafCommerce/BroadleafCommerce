@@ -64,13 +64,6 @@
                             </ul>
                         </div>
                     </th>
-                    <!--<th class="listgrid-row-actions"-->
-                        <!--th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">-->
-                        <!--<th:comment th:remove="all">-->
-                            <!--This entry is acting as placeholder for Workflow Action links-->
-                        <!--</th:comment>-->
-                        <!--Actions-->
-                    <!--</th>-->
 
                     <th width="75" th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}">
                         <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort}">
@@ -112,8 +105,6 @@
                         <td th:unless="${index.count == 1}"></td>
                     </div>
                     <td th:if="${listGrid.listGridType} == 'main'"></td>
-                    <!--<td th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">-->
-                    <!--</td>-->
                 </tr>
 
                 <tr th:each="record : ${listGrid.records}"
@@ -247,24 +238,6 @@
                         </span>
                         </div>
                     </td>
-
-                    <!--<td class="listgrid-row-actions"-->
-                        <!--th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">-->
-                        <!--<span class="workflow-action" th:each="action : ${listGrid.activeRowActions}" th:unless="${record.locked}">-->
-                            <!--<a th:classappend="${action.buttonClass}"-->
-                               <!--href="#"-->
-                               <!--class="button button-action"-->
-                               <!--th:attr="data-urlpostfix=${action.urlPostfix},-->
-                                 <!--data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},-->
-                                 <!--data-queryparams=${listGrid.sectionCrumbRepresentation}"-->
-                                <!--th:title="#{${action.displayText}}">-->
-                                <!--<i th:class="${action.iconClass}"></i>-->
-                            <!--</a>-->
-                        <!--</span>-->
-                        <!--<span class="workflow-action" th:if="${record.locked}">-->
-                            <!--<i class="fa fa-lock"></i>-->
-                        <!--</span>-->
-                    <!--</td>-->
 
                     <td th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}" data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}"></td>
                 </tr>
