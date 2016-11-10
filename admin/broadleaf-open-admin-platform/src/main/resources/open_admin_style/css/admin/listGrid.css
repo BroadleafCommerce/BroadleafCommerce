@@ -129,7 +129,6 @@
 }
 .table tbody>tr>td .column-text {
     display: inline-block;
-    max-width: 260px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

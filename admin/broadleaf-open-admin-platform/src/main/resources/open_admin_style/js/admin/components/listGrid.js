@@ -487,17 +487,19 @@ $(document).ready(function () {
 
     var ACTION_PADDING = 35;
 
-    function modifyTextColumnWidth($tr, $workflowAction, removeSpacing) {
-        var $columnText = $tr.find('.column-text');
+    function modifyTextColumnWidth($workflowAction, removeSpacing) {
+        var $td = $workflowAction.closest('td');
+        var $columnText = $td.find('.column-text');
         var textWidth = $columnText.width();
         var actionWidth = $workflowAction.width() + ACTION_PADDING;
 
         if (removeSpacing) {
             textWidth -= actionWidth;
+            textWidth = textWidth + "px";
         } else {
-            textWidth += actionWidth;
+            textWidth = "90%";
         }
-        $columnText.width(textWidth + "px");
+        $columnText.width(textWidth);
     }
 
     $('body').on({
@@ -512,7 +514,7 @@ $(document).ready(function () {
             if ($workflowAction.length && $workflowAction.css('visibility') === 'hidden') {
                 $workflowAction.css({visibility: 'visible'});
 
-                modifyTextColumnWidth($tr, $workflowAction, true);
+                modifyTextColumnWidth($workflowAction, true);
             }
         },
         mouseleave: function () {
@@ -522,7 +524,7 @@ $(document).ready(function () {
             var $tr = $(this);
             var $workflowAction = $tr.find('.workflow-action');
             if ($workflowAction.length) {
-                modifyTextColumnWidth($tr, $workflowAction, false);
+                modifyTextColumnWidth($workflowAction, false);
             }
         }
     }, '.list-grid-table tbody tr');

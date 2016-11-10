@@ -221,7 +221,7 @@
                             </div>
                         </span>
                         <div class="listgrid-row-actions"
-                            th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
+                            th:if="${headerFieldStat.last and (listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
                             <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}" th:unless="${record.locked}">
                             <a th:classappend="${action.buttonClass}"
                                href="#"
