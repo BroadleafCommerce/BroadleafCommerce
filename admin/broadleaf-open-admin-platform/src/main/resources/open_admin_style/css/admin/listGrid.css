@@ -319,6 +319,9 @@ tr {
 ****************************************/
 .listgrid-row-actions {
     text-align: right;
+}
+td .listgrid-row-actions {
+    text-align: right;
     position: absolute;
     right: 10px;
     top: 6px;
