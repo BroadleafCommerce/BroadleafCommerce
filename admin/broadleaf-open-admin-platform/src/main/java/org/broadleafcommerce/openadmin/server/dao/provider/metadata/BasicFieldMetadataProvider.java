@@ -27,9 +27,9 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.broadleafcommerce.common.presentation.FieldValueConfiguration;
 import org.broadleafcommerce.common.presentation.OptionFilterParam;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
-import org.broadleafcommerce.common.presentation.FieldValueConfiguration;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.LookupType;
@@ -111,9 +111,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (!canHandleAnnotationOverride(overrideViaAnnotationRequest, metadata)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
-        Map<String, AdminPresentationOverride> presentationOverrides = new LinkedHashMap<String, AdminPresentationOverride>();
-        Map<String, AdminPresentationToOneLookupOverride> presentationToOneLookupOverrides = new LinkedHashMap<String, AdminPresentationToOneLookupOverride>();
-        Map<String, AdminPresentationDataDrivenEnumerationOverride> presentationDataDrivenEnumerationOverrides = new LinkedHashMap<String, AdminPresentationDataDrivenEnumerationOverride>();
+        Map<String, AdminPresentationOverride> presentationOverrides = new LinkedHashMap<>();
+        Map<String, AdminPresentationToOneLookupOverride> presentationToOneLookupOverrides = new LinkedHashMap<>();
+        Map<String, AdminPresentationDataDrivenEnumerationOverride> presentationDataDrivenEnumerationOverrides = new LinkedHashMap<>();
 
         AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
         if (myOverrides != null) {
@@ -156,7 +156,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (myMergeOverrides != null) {
             for (AdminPresentationMergeOverride override : myMergeOverrides.value()) {
                 String propertyName = override.name();
-                Map<String, FieldMetadata> loopMap = new HashMap<String, FieldMetadata>();
+                Map<String, FieldMetadata> loopMap = new HashMap<>();
                 loopMap.putAll(metadata);
                 for (Map.Entry<String, FieldMetadata> entry : loopMap.entrySet()) {
                     //if (entry.getKey().startsWith(propertyName) || StringUtils.isEmpty(propertyName)) {
@@ -174,7 +174,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                                     String fieldName = serverMetadata.getFieldName();
                                     Field field = overrideViaAnnotationRequest.getDynamicEntityDao().getFieldManager()
                                             .getField(targetClass, fieldName);
-                                    Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                                    Map<String, FieldMetadata> temp = new HashMap<>(1);
                                     temp.put(fieldName, serverMetadata);
                                     FieldInfo info;
                                     if (field != null) {
@@ -226,7 +226,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                                         }
                                         String fieldName = serverMetadata.getFieldName();
                                         Field field = overrideViaXmlRequest.getDynamicEntityDao().getFieldManager().getField(targetClass, fieldName);
-                                        Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                                        Map<String, FieldMetadata> temp = new HashMap<>(1);
                                         temp.put(field.getName(), serverMetadata);
                                         FieldInfo info = buildFieldInfo(field);
                                         buildBasicMetadata(parentClass, targetClass, temp, info, localFieldMetadata,
@@ -353,7 +353,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                         Field field = dynamicEntityDao.getFieldManager().getField(targetClass, fieldName);
                         FieldMetadataOverride localMetadata = constructBasicMetadataOverride(annot, null, null);
                         //do not include the previous metadata - we want to construct a fresh metadata from the override annotation
-                        Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                        Map<String, FieldMetadata> temp = new HashMap<>(1);
                         FieldInfo info = buildFieldInfo(field);
                         buildBasicMetadata(parentClass, targetClass, temp, info, localMetadata, dynamicEntityDao);
                         BasicFieldMetadata result = (BasicFieldMetadata) temp.get(field.getName());
@@ -596,7 +596,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
     protected void processValidationAnnotations(ValidationConfiguration[] configurations, FieldMetadataOverride override) {
         for (ValidationConfiguration configuration : configurations) {
             ConfigurationItem[] items = configuration.configurationItems();
-            Map<String, String> itemMap = new HashMap<String, String>();
+            Map<String, String> itemMap = new HashMap<>();
             for (ConfigurationItem item : items) {
                 itemMap.put(item.itemName(), item.itemValue());
             }
@@ -605,7 +605,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             }
             List<Map<String, String>> configItems = override.getValidationConfigurations().get(configuration.validationImplementation());
             if (configItems == null) {
-                configItems = new ArrayList<Map<String, String>>();
+                configItems = new ArrayList<>();
             }
             configItems.add(itemMap);
             
@@ -819,9 +819,6 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getDefaultValue() != null) {
             metadata.setDefaultValue(basicFieldMetadata.getDefaultValue());
-        }
-        if (basicFieldMetadata.getAllowNoValueEnumOption() != null) {
-            metadata.setAllowNoValueEnumOption(basicFieldMetadata.getAllowNoValueEnumOption());
         }
 
         attributes.put(field.getName(), metadata);
