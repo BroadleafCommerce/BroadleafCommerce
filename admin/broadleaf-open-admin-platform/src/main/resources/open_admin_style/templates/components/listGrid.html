@@ -35,20 +35,20 @@
 
                         <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
                             <div class="listgrid-title">
-                                <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
-                                <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
+                                <span th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}"></span>
+                                <span th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}"></span>
                             </div>
                         </div>
 
                         <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
                             <div class="listgrid-title">
-                                <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
-                                <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
+                                <span th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}"></span>
+                                <span th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}"></span>
                                 <div class="listgrid-filter-sort-container">
                                     <!--<i class="filter-icon fa fa-filter"></i>-->
                                     <i class="sort-icon fa-sort fa"></i>
                                 </div>
-                                <div class="resizer" th:unless="${headerField.resizeDisabled}">&nbsp;</div>
+                                <div class="resizer" th:unless="${headerField.resizeDisabled || headerFieldStat.last}">&nbsp;</div>
                             </div>
 
                             <input type="hidden" class="listgrid-criteria" th:attr="data-name=${headerField.name}" />
@@ -68,13 +68,13 @@
                     <th width="75" th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}">
                         <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort}">
                             <div class="listgrid-title">
-                            Id
+                                <span>Id</span>
                             </div>
                         </div>
 
                         <div class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort}">
                             <div class="listgrid-title">
-                                Id
+                                <span>Id</span>
                                 <div class="listgrid-filter-sort-container">
                                     <i class="sort-icon fa-sort fa"></i>
                                 </div>
