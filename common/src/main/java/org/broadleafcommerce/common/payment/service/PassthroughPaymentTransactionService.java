@@ -38,6 +38,24 @@ public class PassthroughPaymentTransactionService extends AbstractPaymentGateway
     }
 
     @Override
+    public PaymentResponseDTO capture(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
+        PaymentResponseDTO response = new PaymentResponseDTO(paymentRequestDTO.getPaymentType(), PaymentGatewayType.PASSTHROUGH)
+                .paymentTransactionType(PaymentTransactionType.CAPTURE)
+                .amount(new Money(paymentRequestDTO.getTransactionTotal()))
+                .successful(true);
+        return response;
+    }
+
+    @Override
+    public PaymentResponseDTO authorizeAndCapture(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
+        PaymentResponseDTO response = new PaymentResponseDTO(paymentRequestDTO.getPaymentType(), PaymentGatewayType.PASSTHROUGH)
+                .paymentTransactionType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE)
+                .amount(new Money(paymentRequestDTO.getTransactionTotal()))
+                .successful(true);
+        return response;
+    }
+
+    @Override
     public PaymentResponseDTO reverseAuthorize(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
         PaymentResponseDTO response = new PaymentResponseDTO(paymentRequestDTO.getPaymentType(), PaymentGatewayType.PASSTHROUGH)
                 .paymentTransactionType(PaymentTransactionType.REVERSE_AUTH)
@@ -50,6 +68,15 @@ public class PassthroughPaymentTransactionService extends AbstractPaymentGateway
     public PaymentResponseDTO refund(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
         PaymentResponseDTO response = new PaymentResponseDTO(paymentRequestDTO.getPaymentType(), PaymentGatewayType.PASSTHROUGH)
                 .paymentTransactionType(PaymentTransactionType.REFUND)
+                .amount(new Money(paymentRequestDTO.getTransactionTotal()))
+                .successful(true);
+        return response;
+    }
+
+    @Override
+    public PaymentResponseDTO voidPayment(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
+        PaymentResponseDTO response = new PaymentResponseDTO(paymentRequestDTO.getPaymentType(), PaymentGatewayType.PASSTHROUGH)
+                .paymentTransactionType(PaymentTransactionType.VOID)
                 .amount(new Money(paymentRequestDTO.getTransactionTotal()))
                 .successful(true);
         return response;
