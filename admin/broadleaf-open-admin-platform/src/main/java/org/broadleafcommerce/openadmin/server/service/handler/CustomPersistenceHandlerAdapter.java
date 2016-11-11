@@ -157,4 +157,20 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
             return null;
         }
     }
+
+    protected boolean meetsCustomCriteria(PersistencePackage pkg, String[] customCriteria) {
+        if (pkg.getCustomCriteria() == null) {
+            return false;
+        }
+        for (String criteria : pkg.getCustomCriteria()) {
+            if (criteria != null) {
+                for (String search : customCriteria) {
+                    if (criteria.equals(search)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }

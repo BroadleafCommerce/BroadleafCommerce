@@ -300,7 +300,7 @@
             var tableHalfHeight = $tbody.closest('.mCustomScrollBox').height() / 2;
             
             $spinner.css('top', (Math.floor(spinnerOffset) + tableHalfHeight - spinnerHalfSize) + 'px');
-            $spinner.css('left', tableHalfWidth + spinnerHalfSize + 'px');
+            $spinner.css('margin-left', tableHalfWidth - spinnerHalfSize + 'px');
             $spinner.css('display', 'block');
             
             var backdrop = $('<div>', {
@@ -814,21 +814,9 @@ $(document).ready(function () {
                 },
                 update : function(event, ui) {
                     var url = ui.item.data('link') + '/sequence';
-
-                    if (ui.item.closest('table.list-grid-table').length && ui.item.closest('table.list-grid-table').data('listgridtype') === 'tree') {
-                        // Expected uri structure: "/admin/{section}/{child-id}/{alternate-id}/sequence"
-                        // Desired uri structure: "/admin/{section}/{parent-id}/{collection-name}/{child-id}/{alternate-id}/sequence"
-                        // Beginning: "/admin/{section}"
-                        // Middle: "/{parent-id}/{collection-name}"
-                        // End: "/{child-id}/{alternate-id}/sequence"
-                        var parentId = ui.item.closest('.listgrid-container').data('parentid');
-                        var collectionName = ui.item.closest('.tree-listgrid-container').data('collectionname');
-
-                        var thirdToLastIndex = url.lastIndexOf('/', url.lastIndexOf('/', url.lastIndexOf('/') - 1) - 1);
-                        var beginning = url.substring(0, thirdToLastIndex);
-                        var middle = "/" + parentId + "/" + collectionName;
-                        var end = url.substring(thirdToLastIndex);
-                        url = beginning + middle + end;
+                    
+                    if (BLCAdmin.treeListGrid !== undefined) {
+                        url = BLCAdmin.treeListGrid.updateSequenceUrl(ui, url);
                     }
 
                     BLC.ajax({
@@ -939,7 +927,8 @@ $(document).ready(function () {
     $('body').on('click', 'a.sub-list-grid-edit, button.sub-list-grid-edit', function () {
         var link = BLCAdmin.listGrid.getActionLink($(this));
 
-        if ($(this).closest('table').length && $(this).closest('table').data('listgridtype') === 'tree' && $(this).closest('.tree-column-wrapper').length) {
+        if ($(this).closest('table').length && $(this).closest('table').data('listgridtype') === 'tree'
+            && $(this).closest('.select-column[data-parentid]').length) {
             // Expected uri structure: "/admin/{section}/{id}/{alternate-id}"
             // Desired uri structure: "/admin/{section}/{id}"
             link = link.substring(0, link.lastIndexOf('/'));

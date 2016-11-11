@@ -198,11 +198,6 @@ public class CatalogServiceImpl implements CatalogService {
     public List<Category> findAllCategories(int limit, int offset) {
         return categoryDao.readAllCategories(limit, offset);
     }
-    
-    @Override
-    public Category findRootCategory() {
-        return categoryDao.readRootCategory();
-    }
 
     @Override
     public List<Category> findAllSubCategories(Category category) {

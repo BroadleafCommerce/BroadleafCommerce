@@ -66,6 +66,26 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         this.restrictionType = restrictionType;
         this.displayValueProperty = displayValueProperty;
     }
+
+    public ForeignKey withManyToField(String manyToField) {
+        this.setManyToField(manyToField);
+        return this;
+    }
+
+    public ForeignKey withOriginatingField(String originatingField) {
+        this.setOriginatingField(originatingField);
+        return this;
+    }
+
+    public ForeignKey withForeignKeyClass(String foreignKeyClass) {
+        this.setForeignKeyClass(foreignKeyClass);
+        return this;
+    }
+
+    public ForeignKey withSortField(String sortField) {
+        this.setSortField(sortField);
+        return this;
+    }
     
     public String getManyToField() {
         return manyToField;
