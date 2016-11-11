@@ -318,6 +318,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
             int targetQtyNeeded = itemCriteria.getQuantity();
 
+            // This code was added to support a requirement of buying at least "x" matching items
+            // but also applying the item to "x+1", "x+2", etc.
+            int minRequiredTargetQuantity = itemOffer.getMinimumRequiredTargetQuantity();
+            if (minRequiredTargetQuantity > 1 && minRequiredTargetQuantity > targetQtyNeeded) {
+                targetQtyNeeded = minRequiredTargetQuantity;
+            }
+
             targetQtyNeeded = offerServiceUtilities.markTargetsForCriteria(itemOffer, relatedQualifier, checkOnly, promotion, relatedQualifierRoot, itemCriteria, priceDetails, targetQtyNeeded);
 
             if (targetQtyNeeded != 0) {

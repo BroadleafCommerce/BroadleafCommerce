@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.RuleBuilderDisplayType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -68,9 +69,8 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected Boolean hideEnumerationIfEmpty;
     protected SupportedFieldType fieldComponentRenderer;
     protected Boolean readOnly;
-    protected Map<String, List<Map<String, String>>> validationConfigurations = new HashMap<String, List<Map<String, String>>>(5);
+    protected Map<String, List<Map<String, String>>> validationConfigurations = new HashMap<>(5);
     protected Boolean requiredOverride;
-    protected Boolean allowNoValueEnumOption;
     protected String tooltip;
     protected String helpText;
     protected String hint;
@@ -566,11 +566,8 @@ public class BasicFieldMetadata extends FieldMetadata {
     }
 
     public Boolean getAllowNoValueEnumOption() {
-        return allowNoValueEnumOption;
-    }
-
-    public void setAllowNoValueEnumOption(Boolean allowNoValueEnumOption) {
-        this.allowNoValueEnumOption = allowNoValueEnumOption;
+        return StringUtils.isEmpty(getDefaultValue())
+            || (!getRequired() && !(getRequiredOverride() != null && getRequiredOverride()));
     }
 
     @Override
@@ -580,7 +577,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.secondaryType = secondaryType;
         metadata.length = length;
         metadata.required = required;
-        metadata.allowNoValueEnumOption = allowNoValueEnumOption;
         metadata.unique = unique;
         metadata.scale = scale;
         metadata.precision = precision;
@@ -617,10 +613,10 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.helpText = helpText;
         metadata.hint = hint;
         for (Map.Entry<String, List<Map<String, String>>> entry : validationConfigurations.entrySet()) {
-            List<Map<String, String>> clonedConfigItems = new ArrayList<Map<String, String>>(entry.getValue().size());
+            List<Map<String, String>> clonedConfigItems = new ArrayList<>(entry.getValue().size());
             
             for (Map<String, String> configEntries : entry.getValue()) {
-                Map<String, String> clone = new HashMap<String, String>(configEntries.keySet().size());
+                Map<String, String> clone = new HashMap<>(configEntries.keySet().size());
                 for (Map.Entry<String, String> entry2 : configEntries.entrySet()) {
                     clone.put(entry2.getKey(), entry2.getValue());
                 }
@@ -784,9 +780,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (required != null ? !required.equals(metadata.required) : metadata.required != null) {
             return false;
         }
-        if (allowNoValueEnumOption != null ? !allowNoValueEnumOption.equals(metadata.allowNoValueEnumOption) : metadata.allowNoValueEnumOption != null) {
-            return false;
-        }
         if (requiredOverride != null ? !requiredOverride.equals(metadata.requiredOverride) : metadata.requiredOverride != null) {
             return false;
         }
@@ -871,7 +864,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (readOnly != null ? readOnly.hashCode() : 0);
         result = 31 * result + (validationConfigurations != null ? validationConfigurations.hashCode() : 0);
         result = 31 * result + (requiredOverride != null ? requiredOverride.hashCode() : 0);
-        result = 31 * result + (allowNoValueEnumOption != null ? allowNoValueEnumOption.hashCode() : 0);
         result = 31 * result + (tooltip != null ? tooltip.hashCode() : 0);
         result = 31 * result + (helpText != null ? helpText.hashCode() : 0);
         result = 31 * result + (hint != null ? hint.hashCode() : 0);

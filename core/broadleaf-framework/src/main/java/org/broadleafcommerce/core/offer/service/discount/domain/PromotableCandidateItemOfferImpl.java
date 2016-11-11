@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.MinimumTargetsRequired;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
@@ -47,11 +48,16 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     
     protected List<PromotableOrderItem> legacyCandidateTargets = new ArrayList<PromotableOrderItem>();
 
+    protected int minimumTargetsRequired = 1;
+
     public PromotableCandidateItemOfferImpl(PromotableOrder promotableOrder, Offer offer) {
         assert (offer != null);
         assert (promotableOrder != null);
         this.offer = offer;
         this.promotableOrder = promotableOrder;
+        if (this.offer instanceof MinimumTargetsRequired) {
+            setMinimumTargetsRequired(((MinimumTargetsRequired) offer).getMinimumTargetsRequired());
+        }
     }
 
     @Override
@@ -232,5 +238,31 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     @Override
     public void setOriginalPrice(Money originalPrice) {
         this.originalPrice = originalPrice;
+    }
+
+    /**
+     * @see MiniumTargetsRequired
+     */
+    public void setMinimumTargetsRequired(Integer minimumTargetsRequired) {
+        if (minimumTargetsRequired == null || minimumTargetsRequired < 1) {
+            this.minimumTargetsRequired = 1;
+        } else {
+            this.minimumTargetsRequired = minimumTargetsRequired.intValue();
+        }
+    }
+
+    /**
+     * If the offer has a minimum required number of targets, then the first time this
+     * offer is processed, return that number.   On subsequent runs, return 1.
+     * 
+     * @see MinimumTargetsRequired
+     * @return
+     */
+    public int getMinimumRequiredTargetQuantity() {
+        if (uses > 0) {
+            return 1;
+        } else {
+            return minimumTargetsRequired;
+        }
     }
 }
