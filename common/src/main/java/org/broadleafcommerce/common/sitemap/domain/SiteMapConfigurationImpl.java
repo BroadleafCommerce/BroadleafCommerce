@@ -34,6 +34,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -56,7 +57,8 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
     @AdminPresentation(excluded = true)
     protected Integer maximumURLEntriesPerFile;
 
-    @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class,
+            cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.EAGER)
     @AdminPresentationCollection(friendlyName = "SiteMapConfigurationImpl_Generator_Configurations", tab = TabName.General)
     @SiteDiscriminatable(type = SiteDiscriminatableType.SITE)
     protected List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations = new ArrayList<SiteMapGeneratorConfiguration>();
