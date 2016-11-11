@@ -308,6 +308,7 @@
         </plugins>
     </build>
     <modules>
+        <module>customer</module>
         <module>order</module>
         <module>micro-common</module>
         <module>common</module>

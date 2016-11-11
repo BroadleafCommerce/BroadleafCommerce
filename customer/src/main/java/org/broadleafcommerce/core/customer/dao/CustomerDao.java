@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.broadleafcommerce.profile.core.domain.Customer;
