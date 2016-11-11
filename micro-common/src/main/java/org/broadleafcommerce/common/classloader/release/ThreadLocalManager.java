@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.classloader.release;
+package org.broadleafcommerce.common.release;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
