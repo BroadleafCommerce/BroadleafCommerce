@@ -15,14 +15,13 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.core.customer.domain;
 
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.persistence.Status;
 
 import java.io.Serializable;
 
-public interface CustomerAddress extends Status, Serializable, MultiTenantCloneable<CustomerAddress> {
+public interface CustomerAddress extends Status, Serializable { //TODO: microservices - deal with multitenant cloneable, MultiTenantCloneable<CustomerAddress> {
 
     public void setId(Long id);
 

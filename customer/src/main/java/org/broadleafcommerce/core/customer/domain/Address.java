@@ -15,13 +15,11 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.core.customer.domain;
 
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import java.io.Serializable;
 
-public interface Address extends Serializable, MultiTenantCloneable<Address> {
+public interface Address extends Serializable { //TODO: microservices - deal with MultiTenantCloneable<Address> {
 
     public void setId(Long id);
 
@@ -42,22 +40,6 @@ public interface Address extends Serializable, MultiTenantCloneable<Address> {
     public void setCity(String city);
 
     public String getCity();
-
-    /**
-     * @deprecated Should use {@link #setIsoCountrySubdivision()} or {@link #setStateProvinceRegion()} instead
-     * The Broadleaf Country and State domains will no longer be used for addresses to better support i18n.
-     * BLC_STATE and BLC_COUNTRY should primarily be used for look-ups or filtering to those country/states you wish to ship.
-     */
-    @Deprecated
-    public void setState(State state);
-
-    /**
-     * @deprecated Should use {@link #getIsoCountrySubdivision()} or {@link #getStateProvinceRegion()} instead
-     * The Broadleaf Country and State domains will no longer be used for addresses to better support i18n.
-     * BLC_STATE and BLC_COUNTRY should primarily be used for look-ups or filtering to those country/states you wish to ship.
-     */
-    @Deprecated
-    public State getState();
 
     /**
      * gets the ISO 3166-2 code for the country subdivision (state/region/province) where this address resides
@@ -110,17 +92,18 @@ public interface Address extends Serializable, MultiTenantCloneable<Address> {
     @Deprecated
     public Country getCountry();
 
-    /**
-     * gets the ISO 3166-1 alpha-2 code for the country where this address resides
-     * @return - the ISOCountry representation of the code
-     */
-    public ISOCountry getIsoCountryAlpha2();
-
-    /**
-     * sets the ISO 3166-1 alpha-2 code for the country where this address resides
-     * @param isoCountryAlpha2 - ISO 3166-1 alpha-2 code
-     */
-    public void setIsoCountryAlpha2(ISOCountry isoCountryAlpha2);
+//TODO: microservices - deal with I18n domain
+//    /**
+//     * gets the ISO 3166-1 alpha-2 code for the country where this address resides
+//     * @return - the ISOCountry representation of the code
+//     */
+//    public ISOCountry getIsoCountryAlpha2();
+//
+//    /**
+//     * sets the ISO 3166-1 alpha-2 code for the country where this address resides
+//     * @param isoCountryAlpha2 - ISO 3166-1 alpha-2 code
+//     */
+//    public void setIsoCountryAlpha2(ISOCountry isoCountryAlpha2);
 
     public String getTokenizedAddress();
 

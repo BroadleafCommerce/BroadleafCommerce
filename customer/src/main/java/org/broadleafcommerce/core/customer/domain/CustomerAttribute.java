@@ -15,9 +15,8 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.core.customer.domain;
 
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.value.ValueAssignable;
 
 
@@ -31,7 +30,7 @@ import org.broadleafcommerce.common.value.ValueAssignable;
  * @author bpolster
  *
  */
-public interface CustomerAttribute extends ValueAssignable<String>, MultiTenantCloneable<CustomerAttribute> {
+public interface CustomerAttribute extends ValueAssignable<String> { //TODO: microservices - deal with multitenant , MultiTenantCloneable<CustomerAttribute> {
 
     /**
      * Gets the id.

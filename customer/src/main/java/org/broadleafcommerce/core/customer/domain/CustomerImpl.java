@@ -16,22 +16,13 @@
  * #L%
  */
 
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.core.customer.domain;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.audit.Auditable;
-import org.broadleafcommerce.common.audit.AuditableListener;
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.persistence.PreviewStatus;
-import org.broadleafcommerce.common.persistence.Previewable;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -42,35 +33,21 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Where;
 
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 @Entity
-@EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
+@EntityListeners(value = { CustomerPersistedEntityListener.class }) //TODO: microservices - deal with AuditableListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
@@ -91,7 +68,7 @@ import javax.persistence.Transient;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
 })
-public class CustomerImpl implements Customer, AdminMainEntity, Previewable, CustomerAdminPresentation {
+public class CustomerImpl implements Customer, CustomerAdminPresentation { //TODO: microservices - deal with AdminMainEntity, Previewable,{
 
     private static final long serialVersionUID = 1L;
 
@@ -100,11 +77,13 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @Embedded
-    protected Auditable auditable = new Auditable();
+//TODO: microservices - deal with auditable
+//    @Embedded
+//    protected Auditable auditable = new Auditable();
 
-    @Embedded
-    protected PreviewStatus previewable = new PreviewStatus();
+//TODO: microservices - deal with sandbox previewable
+//    @Embedded
+//    protected PreviewStatus previewable = new PreviewStatus();
 
     @Column(name = "USER_NAME")
     @AdminPresentation(friendlyName = "CustomerImpl_UserName",
@@ -167,11 +146,12 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
             group = GroupName.QualificationOptions, order = FieldOrder.DEACTIVATED)
     protected Boolean deactivated = false;
 
-    @ManyToOne(targetEntity = LocaleImpl.class)
-    @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",
-        excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
-    protected Locale customerLocale;
+//TODO: microservices - deal with locale
+//    @ManyToOne(targetEntity = LocaleImpl.class)
+//    @JoinColumn(name = "LOCALE_CODE")
+//    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",
+//        excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+//    protected Locale customerLocale;
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blStandardElements")
@@ -370,15 +350,16 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
         this.unencodedChallengeAnswer = unencodedChallengeAnswer;
     }
 
-    @Override
-    public Auditable getAuditable() {
-        return auditable;
-    }
-
-    @Override
-    public void setAuditable(Auditable auditable) {
-        this.auditable = auditable;
-    }
+//TODO: microservices - deal with auditable
+//    @Override
+//    public Auditable getAuditable() {
+//        return auditable;
+//    }
+//
+//    @Override
+//    public void setAuditable(Auditable auditable) {
+//        this.auditable = auditable;
+//    }
 
     @Override
     public boolean isAnonymous() {
@@ -422,15 +403,16 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
         }
     }
 
-    @Override
-    public Locale getCustomerLocale() {
-        return customerLocale;
-    }
-
-    @Override
-    public void setCustomerLocale(Locale customerLocale) {
-        this.customerLocale = customerLocale;
-    }
+//TODO: microservices - deal with customer
+//    @Override
+//    public Locale getCustomerLocale() {
+//        return customerLocale;
+//    }
+//
+//    @Override
+//    public void setCustomerLocale(Locale customerLocale) {
+//        this.customerLocale = customerLocale;
+//    }
 
     @Override
     public Map<String, CustomerAttribute> getCustomerAttributes() {
@@ -482,32 +464,34 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
         this.customerPayments = customerPayments;
     }
 
-    @Override
-    public String getMainEntityName() {
-        if (!StringUtils.isEmpty(getFirstName()) && !StringUtils.isEmpty(getLastName())) {
-            return getFirstName() + " " + getLastName();
-        }
-        if (!StringUtils.isEmpty(getUsername())) {
-            return getUsername();
-        }
-        return String.valueOf(getId());
-    }
+//TODO: microservices - deal with AdminBasicEntity
+//    @Override
+//    public String getMainEntityName() {
+//        if (!StringUtils.isEmpty(getFirstName()) && !StringUtils.isEmpty(getLastName())) {
+//            return getFirstName() + " " + getLastName();
+//        }
+//        if (!StringUtils.isEmpty(getUsername())) {
+//            return getUsername();
+//        }
+//        return String.valueOf(getId());
+//    }
 
-    @Override
-    public Boolean getPreview() {
-        if (previewable == null) {
-            previewable = new PreviewStatus();
-        }
-        return previewable.getPreview();
-    }
-
-    @Override
-    public void setPreview(Boolean preview) {
-        if (previewable == null) {
-            previewable = new PreviewStatus();
-        }
-        previewable.setPreview(preview);
-    }
+//TODO: microservices - deal with sandbox preview
+//    @Override
+//    public Boolean getPreview() {
+//        if (previewable == null) {
+//            previewable = new PreviewStatus();
+//        }
+//        return previewable.getPreview();
+//    }
+//
+//    @Override
+//    public void setPreview(Boolean preview) {
+//        if (previewable == null) {
+//            previewable = new PreviewStatus();
+//        }
+//        previewable.setPreview(preview);
+//    }
 
     @Override
     public Map<String, Object> getTransientProperties() {
@@ -549,53 +533,54 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
         return result;
     }
 
-    @Override
-    public <G extends Customer> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        Customer cloned = createResponse.getClone();
-        cloned.setAnonymous(anonymous);
-        cloned.setChallengeAnswer(challengeAnswer);
-        cloned.setChallengeQuestion(challengeQuestion);
-        cloned.setCookied(cookied);
-        for (CustomerAddress entry : customerAddresses) {
-            CustomerAddress clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCustomer(cloned);
-            cloned.getCustomerAddresses().add(clonedEntry);
-
-        }
-        for (Map.Entry<String, CustomerAttribute> entry : customerAttributes.entrySet()) {
-            CustomerAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCustomer(cloned);
-            cloned.getCustomerAttributes().put(entry.getKey(), clonedEntry);
-        }
-        cloned.setLoggedIn(loggedIn);
-        cloned.setUsername(username);
-        cloned.setUnencodedPassword(unencodedPassword);
-        cloned.setTaxExemptionCode(taxExemptionCode);
-        cloned.setUnencodedChallengeAnswer(unencodedChallengeAnswer);
-        cloned.setRegistered(registered);
-        cloned.setReceiveEmail(receiveEmail);
-        cloned.setPasswordChangeRequired(passwordChangeRequired);
-        cloned.setPassword(password);
-        cloned.setLastName(lastName);
-        cloned.setFirstName(firstName);
-        cloned.setEmailAddress(emailAddress);
-        cloned.setDeactivated(deactivated);
-        for (CustomerPayment entry : customerPayments) {
-            CustomerPayment clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCustomer(cloned);
-            cloned.getCustomerPayments().add(clonedEntry);
-        }
-        for (CustomerPhone entry : customerPhones) {
-            CustomerPhone clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCustomer(cloned);
-            cloned.getCustomerPhones().add(clonedEntry);
-        }
-        return createResponse;
-    }
+//TODO: microservices - deal with multitenant cloneable
+//    @Override
+//    public <G extends Customer> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+//        if (createResponse.isAlreadyPopulated()) {
+//            return createResponse;
+//        }
+//        Customer cloned = createResponse.getClone();
+//        cloned.setAnonymous(anonymous);
+//        cloned.setChallengeAnswer(challengeAnswer);
+//        cloned.setChallengeQuestion(challengeQuestion);
+//        cloned.setCookied(cookied);
+//        for (CustomerAddress entry : customerAddresses) {
+//            CustomerAddress clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+//            clonedEntry.setCustomer(cloned);
+//            cloned.getCustomerAddresses().add(clonedEntry);
+//
+//        }
+//        for (Map.Entry<String, CustomerAttribute> entry : customerAttributes.entrySet()) {
+//            CustomerAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
+//            clonedEntry.setCustomer(cloned);
+//            cloned.getCustomerAttributes().put(entry.getKey(), clonedEntry);
+//        }
+//        cloned.setLoggedIn(loggedIn);
+//        cloned.setUsername(username);
+//        cloned.setUnencodedPassword(unencodedPassword);
+//        cloned.setTaxExemptionCode(taxExemptionCode);
+//        cloned.setUnencodedChallengeAnswer(unencodedChallengeAnswer);
+//        cloned.setRegistered(registered);
+//        cloned.setReceiveEmail(receiveEmail);
+//        cloned.setPasswordChangeRequired(passwordChangeRequired);
+//        cloned.setPassword(password);
+//        cloned.setLastName(lastName);
+//        cloned.setFirstName(firstName);
+//        cloned.setEmailAddress(emailAddress);
+//        cloned.setDeactivated(deactivated);
+//        for (CustomerPayment entry : customerPayments) {
+//            CustomerPayment clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+//            clonedEntry.setCustomer(cloned);
+//            cloned.getCustomerPayments().add(clonedEntry);
+//        }
+//        for (CustomerPhone entry : customerPhones) {
+//            CustomerPhone clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+//            clonedEntry.setCustomer(cloned);
+//            cloned.getCustomerPhones().add(clonedEntry);
+//        }
+//        return createResponse;
+//    }
 
     @Override
     public String getTaxExemptionCode() {

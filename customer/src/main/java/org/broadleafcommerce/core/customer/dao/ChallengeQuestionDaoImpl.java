@@ -15,18 +15,17 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.dao;
+package org.broadleafcommerce.core.customer.dao;
 
-import org.broadleafcommerce.profile.core.domain.ChallengeQuestion;
+import org.broadleafcommerce.core.customer.domain.ChallengeQuestion;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.List;
 
 @Repository("blChallengeQuestionDao")
 public class ChallengeQuestionDaoImpl implements ChallengeQuestionDao {

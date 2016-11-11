@@ -16,7 +16,7 @@
  * #L%
  */
 
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.core.customer.domain;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 

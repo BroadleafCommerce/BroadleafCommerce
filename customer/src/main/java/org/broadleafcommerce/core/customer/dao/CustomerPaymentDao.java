@@ -15,9 +15,9 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.dao;
+package org.broadleafcommerce.core.customer.dao;
 
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
+import org.broadleafcommerce.core.customer.domain.CustomerPayment;
 
 import java.util.List;
 

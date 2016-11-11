@@ -15,11 +15,8 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.core.customer.domain;
 
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
@@ -27,15 +24,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -87,7 +76,9 @@ public class CustomerAttributeImpl implements CustomerAttribute {
 
     @Override
     public String getValue() {
-        return DynamicTranslationProvider.getValue(this, "value", value);
+        return value;
+        //TODO: microservices - deal with I18n translation
+        //return DynamicTranslationProvider.getValue(this, "value", value);
     }
 
     @Override
@@ -97,7 +88,9 @@ public class CustomerAttributeImpl implements CustomerAttribute {
 
     @Override
     public String getName() {
-        return DynamicTranslationProvider.getValue(this, "name", name);
+        return name;
+        //TODO: microservices - deal with I18n translation
+        //return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
@@ -171,17 +164,18 @@ public class CustomerAttributeImpl implements CustomerAttribute {
         return true;
     }
 
-    @Override
-    public <G extends CustomerAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        CustomerAttribute cloned = createResponse.getClone();
-        // dont clone
-        cloned.setCustomer(customer);
-        cloned.setName(name);
-        cloned.setValue(value);
-        return createResponse;
-    }
+//TODO: microservices - deal with multitenant cloneable
+//    @Override
+//    public <G extends CustomerAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+//        if (createResponse.isAlreadyPopulated()) {
+//            return createResponse;
+//        }
+//        CustomerAttribute cloned = createResponse.getClone();
+//        // dont clone
+//        cloned.setCustomer(customer);
+//        cloned.setName(name);
+//        cloned.setValue(value);
+//        return createResponse;
+//    }
 }

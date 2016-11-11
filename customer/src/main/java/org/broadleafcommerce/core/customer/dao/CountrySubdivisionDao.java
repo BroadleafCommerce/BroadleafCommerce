@@ -15,11 +15,12 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.dao;
+package org.broadleafcommerce.core.customer.dao;
 
-import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
-import java.util.List;
+import org.broadleafcommerce.core.customer.domain.CountrySubdivision;
+
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * @author Elbert Bautista (elbertbautista)

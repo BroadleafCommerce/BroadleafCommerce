@@ -15,12 +15,8 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.core.customer.domain;
 
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.i18n.domain.ISOCountry;
-import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -32,21 +28,13 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -154,13 +142,6 @@ public class AddressImpl implements Address {
     @AdminPresentation(friendlyName = "AddressImpl_City", order=70, group = "AddressImpl_Address")
     protected String city;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class)
-    @JoinColumn(name = "STATE_PROV_REGION")
-    @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
-    @AdminPresentation(friendlyName = "StateImpl_State", order=70, group = "AddressImpl_Address", prominent = true)
-    @Deprecated
-    protected State state;
-
     @Column(name = "ISO_COUNTRY_SUB")
     @AdminPresentation(friendlyName = "AddressImpl_Country_Subdivision", order=110, group = "AddressImpl_Address",
                         tooltip = "AddressImpl_Country_Subdivision_ToolTip")
@@ -181,12 +162,13 @@ public class AddressImpl implements Address {
     @Deprecated
     protected Country country;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ISOCountryImpl.class)
-    @JoinColumn(name = "ISO_COUNTRY_ALPHA2")
-    @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnNames={"ISO_COUNTRY_ALPHA2"})
-    @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order=100, group = "AddressImpl_Address")
-    @AdminPresentationToOneLookup
-    protected ISOCountry isoCountryAlpha2;
+//TODO: microservices - deal with I18n domain
+//    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ISOCountryImpl.class)
+//    @JoinColumn(name = "ISO_COUNTRY_ALPHA2")
+//    @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnNames={"ISO_COUNTRY_ALPHA2"})
+//    @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order=100, group = "AddressImpl_Address")
+//    @AdminPresentationToOneLookup
+//    protected ISOCountry isoCountryAlpha2;
 
     @Column(name = "POSTAL_CODE")
     @AdminPresentation(friendlyName = "AddressImpl_Postal_Code", order=120, group = "AddressImpl_Address")
@@ -352,15 +334,16 @@ public class AddressImpl implements Address {
         this.stateProvinceRegion = stateProvinceRegion;
     }
 
-    @Override
-    public ISOCountry getIsoCountryAlpha2() {
-        return isoCountryAlpha2;
-    }
-
-    @Override
-    public void setIsoCountryAlpha2(ISOCountry isoCountryAlpha2) {
-        this.isoCountryAlpha2 = isoCountryAlpha2;
-    }
+//TODO: microservices - deal with I18n domain
+//    @Override
+//    public ISOCountry getIsoCountryAlpha2() {
+//        return isoCountryAlpha2;
+//    }
+//
+//    @Override
+//    public void setIsoCountryAlpha2(ISOCountry isoCountryAlpha2) {
+//        this.isoCountryAlpha2 = isoCountryAlpha2;
+//    }
 
     @Override
     public String getPostalCode() {
@@ -380,18 +363,6 @@ public class AddressImpl implements Address {
     @Override
     public void setCounty(String county) {
         this.county = county;
-    }
-
-    @Override
-    @Deprecated
-    public State getState() {
-        return state;
-    }
-
-    @Override
-    @Deprecated
-    public void setState(State state) {
-        this.state = state;
     }
 
     @Override
@@ -645,11 +616,14 @@ public class AddressImpl implements Address {
                 return false;
         } else if (!country.equals(other.country))
             return false;
-        if (isoCountryAlpha2 == null) {
-            if (other.isoCountryAlpha2 != null)
-                return false;
-        } else if (!isoCountryAlpha2.equals(other.isoCountryAlpha2))
-            return false;
+
+//TODO: microservices - deal with I18n domain
+//        if (isoCountryAlpha2 == null) {
+//            if (other.isoCountryAlpha2 != null)
+//                return false;
+//        } else if (!isoCountryAlpha2.equals(other.isoCountryAlpha2))
+//            return false;
+
         if (county == null) {
             if (other.county != null)
                 return false;
@@ -675,11 +649,6 @@ public class AddressImpl implements Address {
                 return false;
         } else if (!postalCode.equals(other.postalCode))
             return false;
-        if (state == null) {
-            if (other.state != null)
-                return false;
-        } else if (!state.equals(other.state))
-            return false;
         if (isoCountrySubdivision == null) {
             if (other.isoCountrySubdivision != null)
                 return false;
@@ -702,54 +671,57 @@ public class AddressImpl implements Address {
         result = prime * result + ((city == null) ? 0 : city.hashCode());
         result = prime * result + ((companyName == null) ? 0 : companyName.hashCode());
         result = prime * result + ((country == null) ? 0 : country.hashCode());
-        result = prime * result + ((isoCountryAlpha2 == null) ? 0 : isoCountryAlpha2.hashCode());
+
+//TODO: microservices - deal with I18n domain
+//        result = prime * result + ((isoCountryAlpha2 == null) ? 0 : isoCountryAlpha2.hashCode());
+
         result = prime * result + ((county == null) ? 0 : county.hashCode());
         result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
         result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
         result = prime * result + ((postalCode == null) ? 0 : postalCode.hashCode());
-        result = prime * result + ((state == null) ? 0 : state.hashCode());
         result = prime * result + ((isoCountrySubdivision == null) ? 0 : isoCountrySubdivision.hashCode());
         result = prime * result + ((stateProvinceRegion == null) ? 0 : stateProvinceRegion.hashCode());
         return result;
     }
 
-    @Override
-    public <G extends Address> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        Address cloned = createResponse.getClone();
-        cloned.setActive(isActive);
-        cloned.setAddressLine1(addressLine1);
-        cloned.setAddressLine2(addressLine2);
-        cloned.setAddressLine3(addressLine3);
-        cloned.setBusiness(isBusiness);
-        cloned.setCity(city);
-        cloned.setCompanyName(companyName);
-        cloned.setCounty(county);
-        cloned.setDefault(isDefault);
-        cloned.setEmailAddress(emailAddress);
-        cloned.setFirstName(firstName);
-        cloned.setLastName(lastName);
-        cloned.setFullName(fullName);
-        cloned.setIsoCountryAlpha2(isoCountryAlpha2);
-        cloned.setIsoCountrySubdivision(isoCountrySubdivision);
-        cloned.setStreet(isStreet);
-        cloned.setZipFour(zipFour);
-        cloned.setPhoneFax(phoneFax);
-        cloned.setPhonePrimary(phonePrimary);
-        cloned.setPostalCode(postalCode);
-        cloned.setFax(fax);
-        cloned.setMailing(isMailing);
-        cloned.setStandardized(standardized);
-        cloned.setTokenizedAddress(tokenizedAddress);
-        cloned.setVerificationLevel(verificationLevel);
-        cloned.setStateProvinceRegion(stateProvinceRegion);
-        cloned.setPhoneSecondary(phoneSecondary);
-        cloned.setState(state);
-        cloned.setCountry(country);
-        return createResponse;
-    }
+//TODO: microservices - deal with multitenant cloneable
+//    @Override
+//    public <G extends Address> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+//        if (createResponse.isAlreadyPopulated()) {
+//            return createResponse;
+//        }
+//        Address cloned = createResponse.getClone();
+//        cloned.setActive(isActive);
+//        cloned.setAddressLine1(addressLine1);
+//        cloned.setAddressLine2(addressLine2);
+//        cloned.setAddressLine3(addressLine3);
+//        cloned.setBusiness(isBusiness);
+//        cloned.setCity(city);
+//        cloned.setCompanyName(companyName);
+//        cloned.setCounty(county);
+//        cloned.setDefault(isDefault);
+//        cloned.setEmailAddress(emailAddress);
+//        cloned.setFirstName(firstName);
+//        cloned.setLastName(lastName);
+//        cloned.setFullName(fullName);
+//        cloned.setIsoCountryAlpha2(isoCountryAlpha2);
+//        cloned.setIsoCountrySubdivision(isoCountrySubdivision);
+//        cloned.setStreet(isStreet);
+//        cloned.setZipFour(zipFour);
+//        cloned.setPhoneFax(phoneFax);
+//        cloned.setPhonePrimary(phonePrimary);
+//        cloned.setPostalCode(postalCode);
+//        cloned.setFax(fax);
+//        cloned.setMailing(isMailing);
+//        cloned.setStandardized(standardized);
+//        cloned.setTokenizedAddress(tokenizedAddress);
+//        cloned.setVerificationLevel(verificationLevel);
+//        cloned.setStateProvinceRegion(stateProvinceRegion);
+//        cloned.setPhoneSecondary(phoneSecondary);
+//        cloned.setState(state);
+//        cloned.setCountry(country);
+//        return createResponse;
+//    }
 }

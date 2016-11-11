@@ -15,17 +15,13 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.domain;
-
-import org.broadleafcommerce.common.audit.Auditable;
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.common.locale.domain.Locale;
+package org.broadleafcommerce.core.customer.domain;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public interface Customer extends Serializable, MultiTenantCloneable<Customer> {
+public interface Customer extends Serializable { //TODO: microservices - deal with MultiTenantCloneable<Customer>  {
 
     public Long getId();
 
@@ -79,9 +75,10 @@ public interface Customer extends Serializable, MultiTenantCloneable<Customer> {
 
     public void setUnencodedChallengeAnswer(String unencodedChallengeAnswer);
 
-    public Auditable getAuditable();
-
-    public void setAuditable(Auditable auditable);
+//TODO: microservices - deal with auditable
+//    public Auditable getAuditable();
+//
+//    public void setAuditable(Auditable auditable);
     
     public void setCookied(boolean cookied);
     
@@ -95,9 +92,10 @@ public interface Customer extends Serializable, MultiTenantCloneable<Customer> {
     
     public boolean isAnonymous(); 
 
-    public Locale getCustomerLocale();
-
-    public void setCustomerLocale(Locale customerLocale);
+//TODO: microservices - deal with locale
+//    public Locale getCustomerLocale();
+//
+//    public void setCustomerLocale(Locale customerLocale);
     
     public Map<String, CustomerAttribute> getCustomerAttributes();
 

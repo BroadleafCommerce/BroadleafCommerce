@@ -15,28 +15,18 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.core.customer.domain;
 
-import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -49,7 +39,7 @@ import javax.persistence.Table;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
-public class CountrySubdivisionImpl implements CountrySubdivision, AdminMainEntity {
+public class CountrySubdivisionImpl implements CountrySubdivision { //TODO: microservices - deal with admin basic entity, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -97,7 +87,9 @@ public class CountrySubdivisionImpl implements CountrySubdivision, AdminMainEnti
 
     @Override
     public String getName() {
-        return DynamicTranslationProvider.getValue(this, "name", name);
+        return name;
+        //TODO: microservices - deal with I18n translation
+        // return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
@@ -125,8 +117,9 @@ public class CountrySubdivisionImpl implements CountrySubdivision, AdminMainEnti
         this.category = category;
     }
 
-    @Override
-    public String getMainEntityName() {
-        return getName();
-    }
+//TODO: microservices - deal with admin basic entity
+//    @Override
+//    public String getMainEntityName() {
+//        return getName();
+//    }
 }

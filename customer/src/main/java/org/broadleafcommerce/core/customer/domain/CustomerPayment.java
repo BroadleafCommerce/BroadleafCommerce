@@ -16,9 +16,8 @@
  * #L%
  */
 
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.core.customer.domain;
 
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 
@@ -30,7 +29,7 @@ import java.util.Map;
  * payment that is stored at the Payment Gateway level. This entity can be used to represent any type of payment, 
  * such as credit cards, PayPal accounts, etc.</p>
  */
-public interface CustomerPayment extends AdditionalFields, Serializable, MultiTenantCloneable<CustomerPayment> {
+public interface CustomerPayment extends AdditionalFields, Serializable { //TODO: microservices - deal with multitenant , MultiTenantCloneable<CustomerPayment> {
 
     public void setId(Long id);
 

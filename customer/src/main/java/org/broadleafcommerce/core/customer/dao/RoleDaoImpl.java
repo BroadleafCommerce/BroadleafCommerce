@@ -15,13 +15,13 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.dao;
+package org.broadleafcommerce.core.customer.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.AddressImpl;
-import org.broadleafcommerce.profile.core.domain.CustomerRole;
-import org.broadleafcommerce.profile.core.domain.Role;
+import org.broadleafcommerce.core.customer.domain.Address;
+import org.broadleafcommerce.core.customer.domain.AddressImpl;
+import org.broadleafcommerce.core.customer.domain.CustomerRole;
+import org.broadleafcommerce.core.customer.domain.Role;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
