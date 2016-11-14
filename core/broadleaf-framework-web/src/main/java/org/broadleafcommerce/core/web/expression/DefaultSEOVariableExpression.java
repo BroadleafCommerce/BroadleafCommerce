@@ -39,8 +39,11 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
     public String getProductTitle(Product product, String defaultTitle) {
         String title = product.getMetaTitle();
         if (StringUtils.isEmpty(title)) {
-            title = BLCSystemProperty.resolveBooleanSystemProperty("seo.default.to.category", false)
-                    ? getCategoryTitle(product.getCategory(), defaultTitle) : getDefaultSystemTitle(defaultTitle);
+            if (BLCSystemProperty.resolveBooleanSystemProperty("seo.default.to.category", false)) {
+                title = getCategoryTitle(product.getCategory(), defaultTitle);
+            } else {
+                title = StringUtils.isEmpty(defaultTitle) ? getDefaultSystemTitle() : defaultTitle;
+            }
         }
         return title;
     }
@@ -51,12 +54,14 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
 
     public String getCategoryTitle(Category category, String defaultTitle) {
         String title = category.getMetaTitle();
-        return StringUtils.isEmpty(title) ? getDefaultSystemTitle(defaultTitle) : title;
+        if (StringUtils.isEmpty(title)) {
+            title = StringUtils.isEmpty(defaultTitle) ? getDefaultSystemTitle() : defaultTitle;
+        }
+        return title;
     }
 
-    public String getDefaultSystemTitle(String defaultTitle) {
-        return BLCSystemProperty.resolveBooleanSystemProperty("apply.site.defaults", false)
-                ? BLCSystemProperty.resolveSystemProperty("default.site.title", defaultTitle) : defaultTitle;
+    public String getDefaultSystemTitle() {
+        return BLCSystemProperty.resolveSystemProperty("default.site.title", "");
     }
 
     /// Description methods
@@ -68,8 +73,11 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
     public String getProductDescription(Product product, String defaultDescription) {
         String description = product.getMetaDescription();
         if (StringUtils.isEmpty(description)) {
-            description = BLCSystemProperty.resolveBooleanSystemProperty("seo.default.to.category", false)
-                    ? getCategoryDescription(product.getCategory(), defaultDescription) : getDefaultSystemDescription(defaultDescription);
+            if (BLCSystemProperty.resolveBooleanSystemProperty("seo.default.to.category", false)) {
+                description = getCategoryDescription(product.getCategory(), defaultDescription);
+            } else {
+                description = StringUtils.isEmpty(defaultDescription) ? getDefaultSystemDescription() : defaultDescription;
+            }
         }
         return description;
     }
@@ -80,16 +88,13 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
 
     public String getCategoryDescription(Category category, String defaultDescription) {
         String description = category.getMetaDescription();
-        return StringUtils.isEmpty(description) ? getDefaultSystemDescription(defaultDescription) : description;
+        if (StringUtils.isEmpty(description)) {
+            description = StringUtils.isEmpty(defaultDescription) ? getDefaultSystemDescription() : defaultDescription;
+        }
+        return description;
     }
 
-    public String getDefaultSystemDescription(String defaultDescription) {
-        return BLCSystemProperty.resolveBooleanSystemProperty("apply.site.defaults", false)
-                ? BLCSystemProperty.resolveSystemProperty("default.site.description", defaultDescription) : defaultDescription;
-    }
-
-    // This method is used by any page that does not have a custom description.
-    public String getGenericDescription() {
-        return BLCSystemProperty.resolveSystemProperty("default.site.description", "TESTING");
+    public String getDefaultSystemDescription() {
+        return BLCSystemProperty.resolveSystemProperty("default.site.description", "");
     }
 }
