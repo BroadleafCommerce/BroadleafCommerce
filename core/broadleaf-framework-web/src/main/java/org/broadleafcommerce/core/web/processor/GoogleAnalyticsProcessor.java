@@ -140,6 +140,8 @@ public class GoogleAnalyticsProcessor extends AbstractBroadleafModelVariableModi
                 String state = null;
                 if (StringUtils.isNotBlank(paymentAddress.getStateProvinceRegion())) {
                     state = paymentAddress.getStateProvinceRegion();
+                } else if (paymentAddress.getState() != null) {
+                    state = paymentAddress.getState().getName();
                 }
 
                 String country = null;

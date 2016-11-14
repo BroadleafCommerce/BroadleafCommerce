@@ -24,6 +24,7 @@ import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerAddressImpl;
+import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.dataprovider.CustomerAddressDataProvider;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
@@ -91,6 +92,8 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
         Customer customer = customerService.readCustomerByUsername(userName);
         assert customerAddress.getId() == null;
         customerAddress.setCustomer(customer);
+        State state = stateService.findStateByAbbreviation("KY");
+        customerAddress.getAddress().setState(state);
         Country country = countryService.findCountryByAbbreviation("US");
         customerAddress.getAddress().setCountry(country);
         customerAddress.getAddress().setIsoCountrySubdivision("US-KY");

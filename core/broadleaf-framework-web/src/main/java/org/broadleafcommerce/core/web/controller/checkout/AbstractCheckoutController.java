@@ -39,6 +39,7 @@ import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidat
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
+import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
@@ -46,6 +47,7 @@ import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
+import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
@@ -102,6 +104,9 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     @Resource(name = "blCustomerPaymentService")
     protected CustomerPaymentService customerPaymentService;
+
+    @Resource(name = "blStateService")
+    protected StateService stateService;
 
     @Resource(name = "blCountryService")
     protected CountryService countryService;
@@ -181,6 +186,22 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
      * @throws Exception
      */
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
+        /**
+         * @deprecated - address.setState() is deprecated in favor of ISO standardization
+         * This is here for legacy compatibility
+         */
+        binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (StringUtils.isNotEmpty(text)) {
+                    State state = stateService.findStateByAbbreviation(text);
+                    setValue(state);
+                } else {
+                    setValue(null);
+                }
+            }
+        });
+
         /**
          * @deprecated - address.setCountry() is deprecated in favor of ISO standardization
          * This is here for legacy compatibility

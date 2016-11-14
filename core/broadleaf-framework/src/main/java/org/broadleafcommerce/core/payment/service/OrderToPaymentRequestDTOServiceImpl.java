@@ -190,6 +190,9 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
                 if (StringUtils.isNotBlank(fgAddress.getStateProvinceRegion())) {
                     stateAbbr = fgAddress.getStateProvinceRegion();
+                } else if (fgAddress.getState() != null) {
+                    //support legacy
+                    stateAbbr = fgAddress.getState().getAbbreviation();
                 }
 
 //TODO: microservices - deal with I18n domain
@@ -236,6 +239,9 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
                     if (StringUtils.isNotBlank(billAddress.getStateProvinceRegion())) {
                         stateAbbr = billAddress.getStateProvinceRegion();
+                    } else if (billAddress.getState() != null) {
+                        //support legacy
+                        stateAbbr = billAddress.getState().getAbbreviation();
                     }
 
 //TODO: microservices - deal with I18n domain

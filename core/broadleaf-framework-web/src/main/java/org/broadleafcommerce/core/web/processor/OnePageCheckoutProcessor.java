@@ -49,6 +49,7 @@ import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
+import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.joda.time.DateTime;
 import org.springframework.context.annotation.Conditional;
@@ -86,6 +87,9 @@ import javax.servlet.http.HttpServletRequest;
 @Component("blOnePageCheckoutProcessor")
 @Conditional(TemplatingExistCondition.class)
 public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+
+    @Resource(name = "blStateService")
+    protected StateService stateService;
 
     @Resource(name = "blCountryService")
     protected CountryService countryService;
@@ -156,6 +160,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModi
         populateSectionViewStates(newModelVars);
 
         //Helpful lists to populate dropdowns on a checkout page
+        newModelVars.put("states", stateService.findStates());
         newModelVars.put("countries", countryService.findCountries());
         newModelVars.put("expirationMonths", populateExpirationMonths());
         newModelVars.put("expirationYears", populateExpirationYears());

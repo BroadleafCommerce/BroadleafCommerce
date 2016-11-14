@@ -78,6 +78,8 @@ public class BandedShippingModule implements ShippingModule {
         String state = null;
         if (StringUtils.isNotBlank(address.getStateProvinceRegion())) {
             state = address.getStateProvinceRegion();
+        } else if (address.getState() != null) {
+            state = address.getState().getAbbreviation();
         }
 
         BigDecimal retailTotal = new BigDecimal(0);

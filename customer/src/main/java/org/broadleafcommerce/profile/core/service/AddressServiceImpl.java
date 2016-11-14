@@ -136,6 +136,7 @@ public class AddressServiceImpl implements AddressService {
             dest.setAddressLine1(orig.getAddressLine1());
             dest.setAddressLine2(orig.getAddressLine2());
             dest.setCity(orig.getCity());
+            dest.setState(orig.getState());
             dest.setCounty(orig.getCounty());
             dest.setIsoCountrySubdivision(orig.getIsoCountrySubdivision());
             dest.setStateProvinceRegion(orig.getStateProvinceRegion());

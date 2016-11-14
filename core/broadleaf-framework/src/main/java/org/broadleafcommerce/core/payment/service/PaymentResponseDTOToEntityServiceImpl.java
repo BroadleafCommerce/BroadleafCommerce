@@ -34,10 +34,12 @@ import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
+import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
@@ -51,6 +53,9 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
 
     @Resource(name = "blAddressService")
     protected AddressService addressService;
+
+    @Resource(name = "blStateService")
+    protected StateService stateService;
 
     @Resource(name = "blCountryService")
     protected CountryService countryService;
@@ -105,6 +110,16 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
         address.setAddressLine2(dto.getAddressLine2());
         address.setCity(dto.getAddressCityLocality());
 
+        State state = null;
+        if(dto.getAddressStateRegion() != null) {
+            state = stateService.findStateByAbbreviation(dto.getAddressStateRegion());
+        }
+        if (state == null) {
+            LOG.warn("The given state from the response: " + StringUtil.sanitize(dto.getAddressStateRegion()) + " could not be found"
+                    + " as a state abbreviation in BLC_STATE");
+        }
+        address.setState(state);
+        
         CountrySubdivision isoCountrySub = countrySubdivisionService.findSubdivisionByAbbreviation(dto.getAddressStateRegion());
         if ( isoCountrySub != null) {
             address.setIsoCountrySubdivision(isoCountrySub.getAbbreviation());

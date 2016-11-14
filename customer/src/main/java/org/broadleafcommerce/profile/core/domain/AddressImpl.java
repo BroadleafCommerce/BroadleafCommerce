@@ -31,6 +31,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -147,6 +148,13 @@ public class AddressImpl implements Address {
     @Column(name = "CITY", nullable = false)
     @AdminPresentation(friendlyName = "AddressImpl_City", order=70, group = "AddressImpl_Address")
     protected String city;
+    
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class)
+    @JoinColumn(name = "STATE_PROV_REGION")
+    @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
+    @AdminPresentation(friendlyName = "StateImpl_State", order=70, group = "AddressImpl_Address", prominent = true)
+    @Deprecated
+    protected State state;
 
     @Column(name = "ISO_COUNTRY_SUB")
     @AdminPresentation(friendlyName = "AddressImpl_Country_Subdivision", order=110, group = "AddressImpl_Address",
@@ -369,6 +377,18 @@ public class AddressImpl implements Address {
     @Override
     public void setCounty(String county) {
         this.county = county;
+    }
+
+    @Override
+    @Deprecated
+    public State getState() {
+        return state;
+    }
+
+    @Override
+    @Deprecated
+    public void setState(State state) {
+        this.state = state;
     }
 
     @Override
@@ -655,6 +675,11 @@ public class AddressImpl implements Address {
                 return false;
         } else if (!postalCode.equals(other.postalCode))
             return false;
+        if (state == null) {
+            if (other.state != null)
+                return false;
+        } else if (!state.equals(other.state))
+            return false;
         if (isoCountrySubdivision == null) {
             if (other.isoCountrySubdivision != null)
                 return false;
@@ -686,6 +711,7 @@ public class AddressImpl implements Address {
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
         result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
         result = prime * result + ((postalCode == null) ? 0 : postalCode.hashCode());
+        result = prime * result + ((state == null) ? 0 : state.hashCode());
         result = prime * result + ((isoCountrySubdivision == null) ? 0 : isoCountrySubdivision.hashCode());
         result = prime * result + ((stateProvinceRegion == null) ? 0 : stateProvinceRegion.hashCode());
         return result;

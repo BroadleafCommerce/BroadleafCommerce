@@ -18,6 +18,7 @@
 package org.broadleafcommerce.profile.web.core.service;
 
 import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.testng.annotations.Test;
 
@@ -45,6 +46,23 @@ public class AddressTest extends CommonSetupBaseTest {
     public void findCountryByShortName() {
         Country country = countryService.findCountryByAbbreviation("US");
         assert country != null;
+    }
+
+    @Test(groups = "createState")
+    public void createState() {
+        super.createState();
+    }
+
+    @Test(groups = "findStates", dependsOnGroups = "createState")
+    public void findStates() {
+        List<State> states = stateService.findStates();
+        assert states.size() > 0;
+    }
+
+    @Test(groups = "findStateByAbbreviation", dependsOnGroups = "findStates")
+    public void findStateByAbbreviation() {
+        State state = stateService.findStateByAbbreviation("KY");
+        assert state != null;
     }
 
 }

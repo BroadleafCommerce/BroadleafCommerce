@@ -42,6 +42,22 @@ public interface Address extends Serializable { //TODO: microservices - deal wit
     public String getCity();
 
     /**
+     * @deprecated Should use {@link #setIsoCountrySubdivision()} or {@link #setStateProvinceRegion()} instead
+     * The Broadleaf Country and State domains will no longer be used for addresses to better support i18n.
+     * BLC_STATE and BLC_COUNTRY should primarily be used for look-ups or filtering to those country/states you wish to ship.
+     */
+    @Deprecated
+    public void setState(State state);
+
+    /**
+     * @deprecated Should use {@link #getIsoCountrySubdivision()} or {@link #getStateProvinceRegion()} instead
+     * The Broadleaf Country and State domains will no longer be used for addresses to better support i18n.
+     * BLC_STATE and BLC_COUNTRY should primarily be used for look-ups or filtering to those country/states you wish to ship.
+     */
+    @Deprecated
+    public State getState();
+
+    /**
      * gets the ISO 3166-2 code for the country subdivision (state/region/province) where this address resides
      * @return - the code
      */
