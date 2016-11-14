@@ -74,13 +74,13 @@ public class CreditCardTypesProcessor extends AbstractBroadleafModelVariableModi
     }
     
     @Override
-    public boolean addToLocal() {
-        return true;
+    public boolean useGlobalScope() {
+        return false;
     }
 
     @Override
     public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
-        Map<String, String> creditCardTypes = new HashMap<String, String>();
+        Map<String, String> creditCardTypes = new HashMap<>();
 
         try {
             extensionManager.getProxy().populateCreditCardMap(creditCardTypes);

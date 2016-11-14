@@ -81,8 +81,8 @@ public class AdminFieldBuilderProcessor extends AbstractBroadleafModelVariableMo
     }
     
     @Override
-    public boolean addToLocal() {
-        return true;
+    public boolean useGlobalScope() {
+        return false;
     }
 
 

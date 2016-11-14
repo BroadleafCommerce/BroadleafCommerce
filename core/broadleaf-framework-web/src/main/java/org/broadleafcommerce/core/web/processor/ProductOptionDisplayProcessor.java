@@ -48,18 +48,13 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafModelVariabl
     }
     
     @Override
-    public boolean addToLocal() {
-        return true;
-    }
-
-    protected void initServices(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars) {
-        // extending classes can implement this to inject init logic
+    public boolean useGlobalScope() {
+        return false;
     }
 
     @Override
     public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
-        initServices(tagName, tagAttributes, newModelVars);
-        HashMap<String, String> productOptionDisplayValues = new HashMap<String, String>();
+        HashMap<String, String> productOptionDisplayValues = new HashMap<>();
         Object item = context.parseExpression(tagAttributes.get("orderItem"));
         if (item instanceof DiscreteOrderItem) {
             DiscreteOrderItem orderItem = (DiscreteOrderItem) item;

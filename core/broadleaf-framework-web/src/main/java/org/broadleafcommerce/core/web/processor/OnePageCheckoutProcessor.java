@@ -120,8 +120,8 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModi
     }
     
     @Override
-    public boolean addToLocal() {
-        return true;
+    public boolean useGlobalScope() {
+        return false;
     }
 
     @Override
@@ -308,7 +308,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModi
         localVars.put("unconfirmedCC", unconfirmedCC);
 
         //The Sections are all initialized to INACTIVE view
-        List<CheckoutSectionDTO> drawnSections = new LinkedList<CheckoutSectionDTO>();
+        List<CheckoutSectionDTO> drawnSections = new LinkedList<>();
         CheckoutSectionDTO orderInfoSection = new CheckoutSectionDTO(CheckoutSectionViewType.ORDER_INFO, orderInfoPopulated);
         CheckoutSectionDTO billingInfoSection = new CheckoutSectionDTO(CheckoutSectionViewType.BILLING_INFO, billingPopulated);
         CheckoutSectionDTO shippingInfoSection = new CheckoutSectionDTO(CheckoutSectionViewType.SHIPPING_INFO, shippingPopulated);
@@ -417,7 +417,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModi
         Order cart = CartState.getCart();
 
         if (!(cart instanceof NullOrderImpl) && cart.getFulfillmentGroups().size() > 0 && hasPopulatedShippingAddress(cart)) {
-            Set<FulfillmentOption> options = new HashSet<FulfillmentOption>();
+            Set<FulfillmentOption> options = new HashSet<>();
             options.addAll(fulfillmentOptions);
             FulfillmentEstimationResponse estimateResponse = null;
             try {
@@ -498,7 +498,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModi
         } else {
             dateFormatter = new DateFormatSymbols();
         }
-        List<String> expirationMonths = new ArrayList<String>();
+        List<String> expirationMonths = new ArrayList<>();
         NumberFormat formatter = new DecimalFormat("00");
         String[] months = dateFormatter.getMonths();
         for (int i = 1; i < months.length; i++) {
@@ -514,7 +514,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModi
      * @return List of the next ten years starting with the current year.
      */
     protected List<String> populateExpirationYears() {
-        List<String> expirationYears = new ArrayList<String>();
+        List<String> expirationYears = new ArrayList<>();
         DateTime dateTime = new DateTime();
         for (int i = 0; i < 10; i++) {
             expirationYears.add(dateTime.plusYears(i).getYear() + "");
