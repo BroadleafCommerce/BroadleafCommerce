@@ -793,9 +793,12 @@ span.workflow-action {
     width: 27px;
     height: 27px;
     display: inline-block;
+    background: #94AF39;
+    border-radius: 2px;
+    color: white;
 }
-span.workflow-action:nth-child(2) {
-    margin-left: -6px;
+span.workflow-action:hover {
+    background-color: #809831;
 }
 span.workflow-action a:hover {
     color: #809831;
@@ -803,5 +806,3 @@ span.workflow-action a:hover {
 .dirty span.workflow-action a:hover {
     color: #efbc62;
 }
-
-
