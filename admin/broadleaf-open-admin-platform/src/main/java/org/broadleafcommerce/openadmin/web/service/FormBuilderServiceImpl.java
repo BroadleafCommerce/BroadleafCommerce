@@ -1076,12 +1076,21 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     return null;
                 }
             }
-        } else if (defaultValue != null && StringUtils.isEmpty(defaultValue)) {
+        } else if (isSingleSpaceDefaultSupported(fieldType) && defaultValue != null && StringUtils.isEmpty(defaultValue)) {
             // we return an single-space string as the default value instead of empty strings to ensure compatibility
             // with Oracle DB which converts empty strings to null on insert or updates
             return " ";
         }
         return defaultValue;
+    }
+
+    private boolean isSingleSpaceDefaultSupported(String fieldType) {
+        return Arrays.asList(
+                SupportedFieldType.STRING.toString(), SupportedFieldType.HTML_BASIC.toString(),
+                SupportedFieldType.HTML.toString(), SupportedFieldType.DESCRIPTION.toString(),
+                SupportedFieldType.EMAIL.toString(), SupportedFieldType.CODE.toString(),
+                SupportedFieldType.COLOR.toString())
+                .contains(fieldType);
     }
 
     private String buildMsgForDefValException(String type, BasicFieldMetadata fmd, String defaultValue) {
