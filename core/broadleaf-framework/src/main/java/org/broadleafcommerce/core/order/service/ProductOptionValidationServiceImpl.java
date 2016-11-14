@@ -21,8 +21,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
+import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.exception.ProductOptionValidationException;
+import org.broadleafcommerce.core.order.service.type.MessageType;
+import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
@@ -31,7 +35,8 @@ import java.util.regex.Pattern;
 public class ProductOptionValidationServiceImpl implements ProductOptionValidationService  {
 
     private static final Log LOG = LogFactory.getLog(ProductOptionValidationServiceImpl.class);
-
+    protected static final Integer ADD_TYPE_RANK = ProductOptionValidationStrategyType.ADD_ITEM.getRank();
+    protected static final Integer SUBMIT_TYPE_RANK = ProductOptionValidationStrategyType.SUBMIT_ORDER.getRank();
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.order.service.ProductOptionValidationService#validate(org.broadleafcommerce.core.catalog.domain.ProductOption, java.lang.String)
@@ -49,6 +54,7 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
                     productOption.getAttributeName(), value, productOption.getValidationString(),
                     productOption.getErrorMessage());
         }
+
         return true;
     }
 
@@ -62,11 +68,36 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
     }
 
     protected Boolean validateRegex(String regex, String value) {
-        if (value == null) {
-            return false;
-        }
-        return Pattern.matches(regex, value);
+        return value != null && Pattern.matches(regex, value);
     }
-    
 
+    @Override
+    public boolean hasProductOptionValidationStrategy(ProductOption productOption) {
+        return productOption.getProductOptionValidationStrategyType() != null;
+    }
+
+    @Override
+    public boolean isSubmitType(ProductOption productOption) {
+        boolean hasStrategy = hasProductOptionValidationStrategy(productOption);
+
+        return hasStrategy && productOption.getProductOptionValidationStrategyType().getRank().equals(SUBMIT_TYPE_RANK);
+    }
+
+    @Override
+    public boolean isAddOrNoneType(ProductOption productOption) {
+        boolean hasStrategy = hasProductOptionValidationStrategy(productOption);
+
+        return hasStrategy && productOption.getProductOptionValidationStrategyType().getRank() <= ADD_TYPE_RANK;
+    }
+
+    @Override
+    public void validateWithoutException(ProductOption productOption, String attributeValue, ActivityMessages messages) {
+        try {
+            validate(productOption, attributeValue);
+        } catch (ProductOptionValidationException e) {
+            ActivityMessageDTO msg = new ActivityMessageDTO(MessageType.PRODUCT_OPTION.getType(), 1, e.getMessage());
+            msg.setErrorCode(productOption.getErrorCode());
+            messages.getActivityMessages().add(msg);
+        }
+    }
 }
