@@ -1007,6 +1007,16 @@
                         <groupId>commons-fileupload</groupId>
                         <artifactId>commons-fileupload</artifactId>
                     </exclusion>
+                    <!-- BLC is dependent on ASM 3.3 while Solr Core is dependent on 4.1. These dependencies should
+                         thusly be excluded here -->
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm-commons</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
