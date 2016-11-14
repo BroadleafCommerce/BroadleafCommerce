@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.StringUtil;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
@@ -244,16 +244,15 @@ public class MvelHelper {
      * 
      * Should be called from within a valid web request.
      *
-     * @param request
      * @return
      */
     public static Map<String, Object> buildMvelParameters() {
         Map<String, Object> mvelParameters = new HashMap<String, Object>();
-       BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (brc != null && brc.getRequest() != null) {
+        CommonRequestContext crc = CommonRequestContext.getCommonRequestContext();
+        if (crc != null && crc.getRequest() != null) {
            TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar());
-            HttpServletRequest request = brc.getRequest();
-            RequestDTO requestDto = brc.getRequestDTO();
+            HttpServletRequest request = crc.getRequest();
+            RequestDTO requestDto = crc.getRequestDTO();
             mvelParameters.put("time", timeDto);
             mvelParameters.put("request", requestDto);
 

@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.util;
 
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,7 +34,7 @@ public class FormatUtil {
 
     public static SimpleDateFormat getDateFormat() {
         SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
-        formatter.setTimeZone(BroadleafRequestContext.getBroadleafRequestContext().getTimeZone());
+        formatter.setTimeZone(CommonRequestContext.getCommonRequestContext().getTimeZone());
         return formatter;
     }
     
@@ -47,7 +47,7 @@ public class FormatUtil {
      */
     public static SimpleDateFormat getTimeZoneFormat() {
         SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT_WITH_TIMEZONE);
-        formatter.setTimeZone(BroadleafRequestContext.getBroadleafRequestContext().getTimeZone());
+        formatter.setTimeZone(CommonRequestContext.getCommonRequestContext().getTimeZone());
         return formatter;
     }
 
