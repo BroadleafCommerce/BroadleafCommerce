@@ -398,7 +398,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         group = GroupName.Inventory, order = 1000,
         helpText = "skuInventoryTypeHelpText",
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")
+        broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType",
+        columnWidth = "180px", prominent = true)
     protected String inventoryType;
     
     @Column(name = "QUANTITY_AVAILABLE")
