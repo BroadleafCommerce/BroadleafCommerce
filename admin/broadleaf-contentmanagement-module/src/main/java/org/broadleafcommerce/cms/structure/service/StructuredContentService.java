@@ -275,4 +275,14 @@ public interface StructuredContentService {
      */
     public List<StructuredContentDTO> convertToDtos(List<StructuredContent> scs, boolean isSecure);
 
+
+    /**
+     * First attempts to retrieve {@link StructuredContentDTO} from cache before making calls to database
+     * @param contentName (Name of ContentItem
+     * @param locale
+     * @param isSecure
+     * @return
+     */
+    List<StructuredContentDTO> getStructuredContentItemsByContentName(String contentName, Locale locale,  boolean isSecure);
+
 }

@@ -59,8 +59,8 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
         Boolean oldIgnoreFilters = context.getInternalIgnoreFilters();
         context.setInternalIgnoreFilters(false);
         try {
-            Map<Long, Set<Long>> parentCategoriesByProduct = new HashMap<Long, Set<Long>>();
-            Map<Long, Set<Long>> parentCategoriesByCategory = new HashMap<Long, Set<Long>>();
+            Map<Long, Set<Long>> parentCategoriesByProduct = new HashMap<>();
+            Map<Long, Set<Long>> parentCategoriesByCategory = new HashMap<>();
     
             Long[] products = productIds.toArray(new Long[productIds.size()]);
             BiMap<Long, Long> sandBoxProductToOriginalMap = sandBoxHelper.getSandBoxToOriginalMap(ProductImpl.class, products);
@@ -105,7 +105,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                 for (Map.Entry<Long, Set<Long>> entry : parentCategoriesByProduct.entrySet()) {
                     for (Long categoryId : entry.getValue()) {
                         if (!catalogStructure.getParentCategoriesByCategory().containsKey(categoryId)) {
-                            Set<Long> hierarchy = new HashSet<Long>();
+                            Set<Long> hierarchy = new HashSet<>();
                             parentCategoriesByCategory.put(categoryId, hierarchy);
                         }
                     }
@@ -127,7 +127,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
      * @param categoryHierarchy
      */
     protected void readFullCategoryHierarchy(Map<Long, Set<Long>> categoryHierarchy, Set<Long> builtCategories) {
-        Map<Long, Set<Long>> nextLevel = new HashMap<Long, Set<Long>>();
+        Map<Long, Set<Long>> nextLevel = new HashMap<>();
         Long[] categoryIds = categoryHierarchy.keySet().toArray(new Long[categoryHierarchy.keySet().size()]);
         int batchSize = 800;
         int count = 0;
@@ -149,7 +149,9 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                 }
                 
                 if (builtCategories.contains(childSandBoxVal)) {
-                    LOG.warn("Category circular reference identified for category id " + childSandBoxVal);
+                    LOG.warn("There is either a category circular reference identified for category id " + childSandBoxVal
+                        + " or a product is assigned to both the child category ("
+                        + childSandBoxVal + ") and one of its parent categories. Products only need to be assigned to child categories as all parents are added automatically.");
                     continue;
                 } else {
                     builtCategories.add(childSandBoxVal);
