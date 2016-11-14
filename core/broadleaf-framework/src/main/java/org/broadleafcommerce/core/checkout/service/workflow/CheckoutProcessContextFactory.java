@@ -26,7 +26,7 @@ public class CheckoutProcessContextFactory implements ProcessContextFactory<Chec
 
     @Override
     public ProcessContext<CheckoutSeed> createContext(CheckoutSeed seedData) throws WorkflowException {
-        ProcessContext<CheckoutSeed> context = new DefaultProcessContextImpl<CheckoutSeed>();
+        ProcessContext<CheckoutSeed> context = new DefaultProcessContextImpl<>();
         context.setSeedData(seedData);
 
         return context;

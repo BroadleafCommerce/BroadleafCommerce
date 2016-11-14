@@ -332,6 +332,14 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
     List<DiscreteOrderItem> getDiscreteOrderItems();
     
     /**
+     * Returns all of the {@link OrderItem}s in this {@link Order} that are an instanceof {@link OrderItemImpl}.  This 
+     * will return all of the order items that do not have any reference to a product or sku
+     * 
+     * @return
+     */
+    List<OrderItem> getNonDiscreteOrderItems();
+    
+    /**
      * Checks the DiscreteOrderItems in the cart and returns whether or not the given SKU was found.
      * The equality of the SKUs is based on the .equals() method in SkuImpl. This includes checking the
      * {@link DiscreteOrderItem}s from {link {@link BundleOrderItem#getDiscreteOrderItems()}

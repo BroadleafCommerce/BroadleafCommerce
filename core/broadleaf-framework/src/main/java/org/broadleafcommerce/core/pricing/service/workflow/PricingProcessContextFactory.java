@@ -27,7 +27,7 @@ public class PricingProcessContextFactory implements ProcessContextFactory<Order
 
     @Override
     public ProcessContext<Order> createContext(Order seedData) throws WorkflowException {
-        ProcessContext<Order> context = new DefaultProcessContextImpl<Order>();
+        ProcessContext<Order> context = new DefaultProcessContextImpl<>();
         context.setSeedData(seedData);
 
         return context;
