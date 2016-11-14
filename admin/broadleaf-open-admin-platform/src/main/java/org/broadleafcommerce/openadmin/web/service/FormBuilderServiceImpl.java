@@ -58,6 +58,7 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.EntityFormModifier;
@@ -131,6 +132,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     private static final Log LOG = LogFactory.getLog(FormBuilderServiceImpl.class);
 
     public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
+    protected static final List<String> TYPES_THAT_SUPPORT_SINGLE_SPACE_AS_DEFAULT = Arrays.asList(SupportedFieldType.STRING.toString(),
+                                                                                                   SupportedFieldType.HTML_BASIC.toString(),
+                                                                                                   SupportedFieldType.HTML.toString(),
+                                                                                                   SupportedFieldType.DESCRIPTION.toString(),
+                                                                                                   SupportedFieldType.EMAIL.toString(),
+                                                                                                   SupportedFieldType.CODE.toString(),
+                                                                                                   SupportedFieldType.COLOR.toString());
 
     @Resource(name = "blAdminEntityService")
     protected AdminEntityService adminEntityService;
@@ -720,7 +728,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return result;
     }
 
-    private String buildSelectizeUrl(ListGrid listGrid) {
+    protected String buildSelectizeUrl(ListGrid listGrid) {
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         String url = request.getContextPath();
         url += url.endsWith("/") || listGrid.getSectionKey().startsWith("/") ? listGrid.getSectionKey() : "/" + listGrid.getSectionKey();
@@ -730,7 +738,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     /**
-     * @deprecated use {@link #createListGrid(String, List, ListGrid.Type, DynamicResultSet, String, Integer, String, List, boolean)}
+     * @deprecated use {@link #createListGrid(String, List, ListGrid.Type, DynamicResultSet, String, Integer, String, List, String)}
      * @param className
      * @param headerFields
      * @param type
@@ -873,7 +881,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
      * @param recordField the recordField being populated
      * @param p the property that relates to this recordField
      * @return whether or not this field is derived
-     * @see {@link #createListGrid(String, List, org.broadleafcommerce.openadmin.web.form.component.ListGrid.Type, DynamicResultSet, String, int, String)}
+     * @see {@link #createListGrid(String, List, ListGrid.Type, DynamicResultSet, String, Integer, String, List, String)}
      */
     protected Boolean isDerivedField(Field headerField, Field recordField, Property p) {
         return BooleanUtils.isTrue(((BasicFieldMetadata) p.getMetadata()).getIsDerived());
@@ -1084,16 +1092,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return defaultValue;
     }
 
-    private boolean isSingleSpaceDefaultSupported(String fieldType) {
-        return Arrays.asList(
-                SupportedFieldType.STRING.toString(), SupportedFieldType.HTML_BASIC.toString(),
-                SupportedFieldType.HTML.toString(), SupportedFieldType.DESCRIPTION.toString(),
-                SupportedFieldType.EMAIL.toString(), SupportedFieldType.CODE.toString(),
-                SupportedFieldType.COLOR.toString())
-                .contains(fieldType);
+    protected boolean isSingleSpaceDefaultSupported(String fieldType) {
+        return TYPES_THAT_SUPPORT_SINGLE_SPACE_AS_DEFAULT.contains(fieldType);
     }
 
-    private String buildMsgForDefValException(String type, BasicFieldMetadata fmd, String defaultValue) {
+    protected String buildMsgForDefValException(String type, BasicFieldMetadata fmd, String defaultValue) {
         return StringUtil.sanitize(fmd.getTargetClass()) + " : " + StringUtil.sanitize(fmd.getName()) + " - Failed to parse " 
                 + StringUtil.sanitize(type) + " from DefaultValue [ " + StringUtil.sanitize(defaultValue) + " ]";
     }
@@ -1418,15 +1421,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 }
             }
         }
-        
-//        for (ListGrid lg : ef.getAllListGrids()) {
-//            // We always want the add option to be the first toolbar action for consistency
-//            if (lg.getToolbarActions().isEmpty()) {
-//                lg.addToolbarAction(DefaultListGridActions.ADD);
-//            } else {
-//                lg.getToolbarActions().add(0, DefaultListGridActions.ADD);
-//            }
-//        }
 
         if (CollectionUtils.isEmpty(ef.getActions())) {
             ef.addAction(DefaultEntityFormActions.SAVE);
@@ -1445,10 +1439,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
      * Adds the {@link DefaultEntityFormActions#DELETE} if the user is allowed to delete the <b>entity</b>. The user can
      * delete an entity for the following cases:
      * <ol>
-     *  <li>The user has the security to {@link EntityOperationType#DELETE} the given class name represented by
+     *  <li>The user has the security to {@link EntityOperationType#REMOVE} the given class name represented by
      *  the <b>entityForm</b> (determined by {@link #getSecurityClassname(EntityForm, ClassMetadata)})</li>
      *  <li>The user has the security necessary to delete the given <b>entity</b> according to the
-     *  {@link RowLevelSecurityService#canDelete(Entity)}</li>
+     *  {@link RowLevelSecurityService#canRemove(AdminUser, Entity)}</li>
      * </ol>
      * 
      * @param entityForm the form being generated
@@ -1456,7 +1450,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
      * @param entity the entity being edited
      * @see {@link SecurityVerifier#securityCheck(String, EntityOperationType)}
      * @see {@link #getSecurityClassname(EntityForm, ClassMetadata)}
-     * @see {@link RowLevelSecurityService#canDelete(Entity)}
+     * @see {@link RowLevelSecurityService#canRemove(AdminUser, Entity)}
      */
     protected void addDeleteActionIfAllowed(EntityForm entityForm, ClassMetadata cmd, Entity entity) {
         boolean canDelete = true;
@@ -1490,7 +1484,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
      *  <li>The user does not have the security to {@link EntityOperationType#UPDATE} the given class name represented by
      *  the <b>entityForm</b> (determined by {@link #getSecurityClassname(EntityForm, ClassMetadata)})</li>
      *  <li>The user does not have the security necessary to modify the given <b>entity</b> according to the
-     *  {@link RowLevelSecurityService#canUpdate(Entity)}</li>
+     *  {@link RowLevelSecurityService#canUpdate(AdminUser, Entity)}</li>
      * </ol>
      * 
      * @param entityForm the form being generated
@@ -1498,7 +1492,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
      * @param entity the entity being edited
      * @see {@link SecurityVerifier#securityCheck(String, EntityOperationType)}
      * @see {@link #getSecurityClassname(EntityForm, ClassMetadata)}
-     * @see {@link RowLevelSecurityService#canUpdate(Entity)}
+     * @see {@link RowLevelSecurityService#canUpdate(AdminUser, Entity)}
      */
     protected void setReadOnlyState(EntityForm entityForm, ClassMetadata cmd, Entity entity) {
         boolean readOnly = true;
@@ -1560,7 +1554,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     
     /**
      * Obtains the class name suitable for passing along to the {@link SecurityVerifier}
-     * @param form
+     * @param entityForm
      * @param cmd
      * @return
      */
