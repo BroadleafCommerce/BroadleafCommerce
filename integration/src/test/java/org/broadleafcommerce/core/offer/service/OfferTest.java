@@ -55,11 +55,8 @@ import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,9 +102,6 @@ public class OfferTest extends CommonSetupBaseTest {
     
     @Resource
     private CountryService countryService;
-    
-    @Resource
-    private StateService stateService;
 
     private long sku1;
     private long sku2;
@@ -647,18 +641,11 @@ public class OfferTest extends CommonSetupBaseTest {
         isoCountry.setName("UNITED STATES");
 
         isoService.save(isoCountry);
-        
-        State state = new StateImpl();
-        state.setAbbreviation("TX");
-        state.setName("Texas");
-        state.setCountry(country);
-        
-        stateService.save(state);
-        
-        address.setState(state);
         address.setCountry(country);
         address.setIsoCountrySubdivision("US-TX");
-        address.setIsoCountryAlpha2(isoCountry);
+
+        //TODO: microservices - deal with I18n domain
+        //address.setIsoCountryAlpha2(isoCountry);
         
         for (OrderItem orderItem : order.getOrderItems()) {
             FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();

@@ -23,7 +23,6 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
-import org.broadleafcommerce.profile.core.domain.StateImpl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -52,8 +51,11 @@ public class CheckoutForm implements Serializable {
         billingAddress.setPhoneSecondary(new PhoneImpl());
         shippingAddress.setPhoneFax(new PhoneImpl());
         billingAddress.setPhoneFax(new PhoneImpl());
-        shippingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
-        billingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
+
+        //TODO: microservices - deal with I18n domain
+        //shippingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
+        //billingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
+
         isSameAddress = true;
 
         /**
@@ -62,8 +64,6 @@ public class CheckoutForm implements Serializable {
          */
         shippingAddress.setCountry(new CountryImpl());
         billingAddress.setCountry(new CountryImpl());
-        shippingAddress.setState(new StateImpl());
-        billingAddress.setState(new StateImpl());
     }
 
     public String getEmailAddress() {

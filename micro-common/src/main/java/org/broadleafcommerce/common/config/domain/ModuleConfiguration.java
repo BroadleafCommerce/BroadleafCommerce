@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.config.domain;
 
 //import org.broadleafcommerce.common.audit.Auditable;
+import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 
 import java.io.Serializable;
@@ -53,9 +54,8 @@ public interface ModuleConfiguration extends Serializable {
 
     public ModuleConfigurationType getModuleConfigurationType();
 
-//TODO: microservices - deal with auditable
-//    public void setAuditable(Auditable auditable);
-//
-//    public Auditable getAuditable();
+    public void setAuditable(Auditable auditable);
+
+    public Auditable getAuditable();
 
 }

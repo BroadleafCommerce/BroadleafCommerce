@@ -768,7 +768,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
             return createResponse;
         }
         FulfillmentGroup cloned = createResponse.getClone();
-        cloned.setAddress(address == null ? null : address.createOrRetrieveCopyInstance(context).getClone());
+        //TODO: microservices - deal with multitenant clone
+        //cloned.setAddress(address == null ? null : address.createOrRetrieveCopyInstance(context).getClone());
+
         cloned.setDeliveryInstruction(deliveryInstruction);
         cloned.setFulfillmentOption(fulfillmentOption);
         cloned.setFulfillmentPrice(fulfillmentPrice == null ? null : new Money(fulfillmentPrice));

@@ -140,14 +140,16 @@ public class GoogleAnalyticsProcessor extends AbstractBroadleafModelVariableModi
                 String state = null;
                 if (StringUtils.isNotBlank(paymentAddress.getStateProvinceRegion())) {
                     state = paymentAddress.getStateProvinceRegion();
-                } else if (paymentAddress.getState() != null) {
-                    state = paymentAddress.getState().getName();
                 }
 
                 String country = null;
-                if (paymentAddress.getIsoCountryAlpha2() != null) {
-                    country = paymentAddress.getIsoCountryAlpha2().getName();
-                } else if (paymentAddress.getCountry() != null) {
+
+//TODO: microservices - deal with I18n domain
+//                if (paymentAddress.getIsoCountryAlpha2() != null) {
+//                    country = paymentAddress.getIsoCountryAlpha2().getName();
+//                } else
+
+                if (paymentAddress.getCountry() != null) {
                     country = paymentAddress.getCountry().getName();
                 }
 

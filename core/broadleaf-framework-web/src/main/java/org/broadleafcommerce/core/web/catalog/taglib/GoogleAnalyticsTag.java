@@ -140,11 +140,13 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
                 }
 
                 String country = null;
-                if (paymentAddress.getIsoCountryAlpha2() != null) {
-                    country = paymentAddress.getIsoCountryAlpha2().getName();
-                } else if (paymentAddress.getIsoCountryAlpha2() != null) {
-                    country = paymentAddress.getIsoCountryAlpha2().getName();
-                }
+
+//TODO: microservices - deal with I18n domain
+//                if (paymentAddress.getIsoCountryAlpha2() != null) {
+//                    country = paymentAddress.getIsoCountryAlpha2().getName();
+//                } else if (paymentAddress.getIsoCountryAlpha2() != null) {
+//                    country = paymentAddress.getIsoCountryAlpha2().getName();
+//                }
 
                 String encodedCity = encoder.encodeForJavaScript(paymentAddress.getCity());
                 sb.append(",'" + encodedCity + "'");

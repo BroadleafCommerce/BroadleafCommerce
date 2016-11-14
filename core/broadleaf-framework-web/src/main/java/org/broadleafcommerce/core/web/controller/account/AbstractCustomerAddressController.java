@@ -28,7 +28,6 @@ import org.broadleafcommerce.profile.core.domain.*;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
-import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.web.bind.ServletRequestDataBinder;
 
@@ -63,9 +62,6 @@ public class AbstractCustomerAddressController extends BroadleafAbstractControll
     @Resource(name = "blCustomerAddressValidator")
     protected CustomerAddressValidator customerAddressValidator;
 
-    @Resource(name = "blStateService")
-    protected StateService stateService;
-
     @Resource(name = "blISOService")
     protected ISOService isoService;
 
@@ -80,23 +76,6 @@ public class AbstractCustomerAddressController extends BroadleafAbstractControll
      * @throws Exception
      */
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
-
-        /**
-         * @deprecated - address.setState() is deprecated in favor of ISO standardization
-         * This is here for legacy compatibility
-         */
-        binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    State state = stateService.findStateByAbbreviation(text);
-                    setValue(state);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-
         /**
          * @deprecated - address.setCountry() is deprecated in favor of ISO standardization
          * This is here for legacy compatibility
@@ -157,10 +136,6 @@ public class AbstractCustomerAddressController extends BroadleafAbstractControll
             }
 
         });
-    }
-
-    protected List<State> populateStates() {
-        return stateService.findStates();
     }
 
     protected List<Country> populateCountries() {

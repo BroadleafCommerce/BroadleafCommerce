@@ -56,8 +56,6 @@ import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -275,19 +273,17 @@ public class CheckoutTest extends BaseTest {
         address.setLastName("Fischer");
         address.setPostalCode("75240");
         address.setPrimaryPhone("972-978-9067");
-        State state = new StateImpl();
-        state.setAbbreviation("ALL");
-        state.setName("ALL");
-        address.setState(state);
         Country country = new CountryImpl();
         country.setAbbreviation("US");
         country.setName("United States");
-        state.setCountry(country);
         address.setCountry(country);
         ISOCountry isoCountry = new ISOCountryImpl();
         isoCountry.setAlpha2("US");
         isoCountry.setName("UNITED STATES");
-        address.setIsoCountryAlpha2(isoCountry);
+
+        //TODO: microservices - deal with I18n domain
+        //address.setIsoCountryAlpha2(isoCountry);
+
         return address;
     }
 }

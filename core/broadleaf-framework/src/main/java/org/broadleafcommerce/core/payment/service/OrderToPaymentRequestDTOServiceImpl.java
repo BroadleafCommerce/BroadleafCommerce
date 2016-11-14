@@ -190,14 +190,14 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
                 if (StringUtils.isNotBlank(fgAddress.getStateProvinceRegion())) {
                     stateAbbr = fgAddress.getStateProvinceRegion();
-                } else if (fgAddress.getState() != null) {
-                    //support legacy
-                    stateAbbr = fgAddress.getState().getAbbreviation();
                 }
 
-                if (fgAddress.getIsoCountryAlpha2() != null) {
-                    countryAbbr = fgAddress.getIsoCountryAlpha2().getAlpha2();
-                } else if (fgAddress.getCountry() != null) {
+//TODO: microservices - deal with I18n domain
+//                if (fgAddress.getIsoCountryAlpha2() != null) {
+//                    countryAbbr = fgAddress.getIsoCountryAlpha2().getAlpha2();
+//                } else
+
+                if (fgAddress.getCountry() != null) {
                     //support legacy
                     countryAbbr = fgAddress.getCountry().getAbbreviation();
                 }
@@ -236,14 +236,14 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
                     if (StringUtils.isNotBlank(billAddress.getStateProvinceRegion())) {
                         stateAbbr = billAddress.getStateProvinceRegion();
-                    } else if (billAddress.getState() != null) {
-                        //support legacy
-                        stateAbbr = billAddress.getState().getAbbreviation();
                     }
 
-                    if (billAddress.getIsoCountryAlpha2() != null) {
-                        countryAbbr = billAddress.getIsoCountryAlpha2().getAlpha2();
-                    } else if (billAddress.getCountry() != null) {
+//TODO: microservices - deal with I18n domain
+//                    if (billAddress.getIsoCountryAlpha2() != null) {
+//                        countryAbbr = billAddress.getIsoCountryAlpha2().getAlpha2();
+//                    } else
+
+                    if (billAddress.getCountry() != null) {
                         //support legacy
                         countryAbbr = billAddress.getCountry().getAbbreviation();
                     }

@@ -52,7 +52,7 @@ public class BLCFieldUtils {
      *
      * @param sessionFactory provides metadata about a domain class
      * @param includeUnqualifiedPolymorphicEntities include polymorphic variations that were excluded with {@link org.broadleafcommerce.common.presentation.AdminPresentationClass#excludeFromPolymorphism()}
-     * @param useCache use the polymorphic type list cache in {@link org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl}
+     * @param useCache use the polymorphic type list cache in {@link org.broadleafcommerce.common.util.dao.DynamicDaoHelper}
      * @param ejb3ConfigurationDao provides additional metadata about a domain class
      * @param entityConfiguration contains any explicitly defined entity types for the system
      * @param helper helper class for retrieving polymorphic types for a ceiling domain class
