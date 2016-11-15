@@ -21,6 +21,7 @@
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
+import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 
 
 /**
@@ -36,5 +37,36 @@ public interface CurrentOrderPaymentRequestService {
      * on threadlocal
      */
     public PaymentRequestDTO getPaymentRequestFromCurrentOrder();
+
+    /**
+     * adds a concept of an "order attribute" to the current order in the system
+     * @param orderAttributeKey
+     * @param orderAttributeValue
+     * @throws PaymentException
+     */
+    public void addOrderAttributeToCurrentOrder(String orderAttributeKey, String orderAttributeValue) throws PaymentException;
+
+    /**
+     * adds a concept of an "order attribute" to an order in the system based on ID.
+     * @param orderAttributeKey
+     * @param orderAttributeValue
+     * @throws PaymentException
+     */
+    public void addOrderAttributeToOrder(Long orderId, String orderAttributeKey, String orderAttributeValue) throws PaymentException;
+
+    /**
+     * retrieve an "order attribute" value on the current order in the system
+     * @param orderAttributeKey
+     * @return
+     */
+    public String retrieveOrderAttributeFromCurrentOrder(String orderAttributeKey);
+
+    /**
+     * retrieve an "order attribute" value based on the order id in the system
+     * @param orderId
+     * @param orderAttributeKey
+     * @return
+     */
+    public String retrieveOrderAttributeFromOrder(Long orderId, String orderAttributeKey);
 
 }
