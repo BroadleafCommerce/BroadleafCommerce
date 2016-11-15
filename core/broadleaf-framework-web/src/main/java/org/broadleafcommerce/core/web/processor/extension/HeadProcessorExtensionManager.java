@@ -15,28 +15,34 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor.extension;
 
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jerry Ocanas (jocanas)
  */
+@Component("blHeadProcessorExtensionManager")
+@Conditional(TemplatingExistCondition.class)
 public class HeadProcessorExtensionManager implements HeadProcessorExtensionListener {
 
     protected List<HeadProcessorExtensionListener> listeners;
 
     @Override
-    public void processAttributeValues(Arguments arguments, Element element) {
-        if(listeners == null) {
+    public void processAttributeValues(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+        if (listeners == null) {
             listeners = new ArrayList<HeadProcessorExtensionListener>();
         }
-        for(HeadProcessorExtensionListener listener : listeners){
-            listener.processAttributeValues(arguments, element);
+        for (HeadProcessorExtensionListener listener : listeners) {
+            listener.processAttributeValues(tagName, tagAttributes, newModelVars, context);
         }
     }
 

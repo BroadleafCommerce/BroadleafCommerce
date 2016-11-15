@@ -15,39 +15,47 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ProductOptionValueProcessor extends AbstractAttrProcessor  {
+@Component("blProductOptionValueProcessor")
+@Conditional(TemplatingExistCondition.class)
+public class ProductOptionValueProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     private static final Log LOG = LogFactory.getLog(ProductOptionValueProcessor.class);
-    
-    public ProductOptionValueProcessor() {
-        super("product_option_value");
+
+    @Override
+    public String getName() {
+        return "product_option_value";
     }
     
     @Override
-    protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
-        
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
-        ProductOptionValue productOptionValue = (ProductOptionValue) expression.execute(arguments.getConfiguration(), arguments);
+    public int getPrecedence() {
+        return 10000;
+    }
 
+    @Override
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+        Map<String, String> newAttributes = new HashMap<>();
+        ProductOptionValue productOptionValue = (ProductOptionValue) context.parseExpression(attributeValue);
         ProductOptionValueDTO dto = new ProductOptionValueDTO();
         dto.setOptionId(productOptionValue.getProductOption().getId());
         dto.setValueId(productOptionValue.getId());
@@ -59,55 +67,59 @@ public class ProductOptionValueProcessor extends AbstractAttrProcessor  {
             ObjectMapper mapper = new ObjectMapper();
             Writer strWriter = new StringWriter();
             mapper.writeValue(strWriter, dto);
-            element.setAttribute("data-product-option-value", strWriter.toString());
-            element.removeAttribute(attributeName);
-            return ProcessorResult.OK;
+            newAttributes.put("data-product-option-value", strWriter.toString());
         } catch (Exception ex) {
             LOG.error("There was a problem writing the product option value to JSON", ex);
         }
-        
-        return null;
-        
+        return new BroadleafAttributeModifier(newAttributes);
     }
 
     @Override
-    public int getPrecedence() {
-        return 10000;
+    public boolean useSingleQuotes() {
+        return true;
     }
 
     private class ProductOptionValueDTO {
+
         private Long optionId;
         private Long valueId;
         private String valueName;
         private BigDecimal priceAdjustment;
+
         @SuppressWarnings("unused")
         public Long getOptionId() {
             return optionId;
         }
+
         public void setOptionId(Long optionId) {
             this.optionId = optionId;
         }
+
         @SuppressWarnings("unused")
         public Long getValueId() {
             return valueId;
         }
+
         public void setValueId(Long valueId) {
             this.valueId = valueId;
         }
+
         @SuppressWarnings("unused")
         public String getValueName() {
             return valueName;
         }
+
         public void setValueName(String valueName) {
             this.valueName = valueName;
         }
+
         @SuppressWarnings("unused")
         public BigDecimal getPriceAdjustment() {
             return priceAdjustment;
         }
+
         public void setPriceAdjustment(BigDecimal priceAdjustment) {
             this.priceAdjustment = priceAdjustment;
         }
     }
-
 }

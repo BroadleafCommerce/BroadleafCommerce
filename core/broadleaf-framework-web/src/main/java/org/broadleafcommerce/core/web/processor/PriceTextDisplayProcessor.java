@@ -19,11 +19,13 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.BLCMoneyFormatUtils;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractTextChildModifierAttrProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafTagTextModifierProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * A Thymeleaf processor that renders a Money object according to the currently set locale options.
@@ -33,13 +35,13 @@ import org.thymeleaf.standard.expression.StandardExpressions;
  * 
  * @author apazzolini
  */
-public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProcessor {
+@Component("blPriceTextDisplayProcessor")
+@Conditional(TemplatingExistCondition.class)
+public class PriceTextDisplayProcessor extends AbstractBroadleafTagTextModifierProcessor {
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public PriceTextDisplayProcessor() {
-        super("price");
+    @Override
+    public String getName() {
+        return "price";
     }
     
     @Override
@@ -48,13 +50,10 @@ public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProc
     }
 
     @Override
-    protected String getText(Arguments arguments, Element element, String attributeName) {
-        
+    public String getTagText(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
         Money price = null;
 
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
-        Object result = expression.execute(arguments.getConfiguration(), arguments);
+        Object result = context.parseExpression(attributeValue);
         if (result instanceof Money) {
             price = (Money) result;
         } else if (result instanceof Number) {
@@ -63,4 +62,5 @@ public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProc
 
         return BLCMoneyFormatUtils.formatPrice(price);
     }
+
 }

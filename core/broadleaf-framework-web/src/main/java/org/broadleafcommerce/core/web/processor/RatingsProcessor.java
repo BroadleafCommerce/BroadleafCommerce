@@ -15,20 +15,23 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.RatingService;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -37,54 +40,46 @@ import javax.annotation.Resource;
  *
  * @author jfridye
  */
-public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
-    
+@Component("blRatingsProcessor")
+@Conditional(TemplatingExistCondition.class)
+public class RatingsProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+
     @Resource(name = "blRatingService")
     protected RatingService ratingService;
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     *
-     * NOTE: Thymeleaf normalizes the attribute names by converting all to lower-case
-     * we will use the underscore instead of camel case to avoid confusion
-     *
-     */
-    public RatingsProcessor() {
-        super("ratings");
+    @Override
+    public String getName() {
+        return "ratings";
     }
-
+    
     @Override
     public int getPrecedence() {
         return 10000;
     }
 
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("itemId"));
-        String itemId = String.valueOf(expression.execute(arguments.getConfiguration(), arguments));
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+        String itemId = String.valueOf(context.parseExpression(tagAttributes.get("itemId")));
         RatingSummary ratingSummary = ratingService.readRatingSummary(itemId, RatingType.PRODUCT);
         if (ratingSummary != null) {
-            addToModel(arguments, getRatingsVar(element), ratingSummary);
+            newModelVars.put(getRatingsVar(tagAttributes), ratingSummary);
         }
-        
+
         Customer customer = CustomerState.getCustomer();
         ReviewDetail reviewDetail = null;
         if (!customer.isAnonymous()) {
             reviewDetail = ratingService.readReviewByCustomerAndItem(customer, itemId);
         }
         if (reviewDetail != null) {
-            addToModel(arguments, "currentCustomerReview", reviewDetail);
+            newModelVars.put("currentCustomerReview", reviewDetail);
         }
-        
-    }
-    
-    private String getRatingsVar(Element element) {
-        String ratingsVar = element.getAttributeValue("ratingsVar");
-        if (StringUtils.isNotEmpty(ratingsVar)) {
-            return ratingsVar;
-        } 
-        return "ratingSummary";
     }
 
+    private String getRatingsVar(Map<String, String> tagAttributes) {
+        String ratingsVar = tagAttributes.get("ratingsVar");
+        if (StringUtils.isNotEmpty(ratingsVar)) {
+            return ratingsVar;
+        }
+        return "ratingSummary";
+    }
 }

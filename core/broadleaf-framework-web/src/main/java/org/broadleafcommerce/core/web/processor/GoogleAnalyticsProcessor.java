@@ -15,13 +15,16 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -34,8 +37,8 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.beans.factory.annotation.Value;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -60,7 +63,9 @@ import javax.annotation.Resource;
  * @deprecated use the {@link GoogleUniversalAnalyticsProcessor} instead
  */
 @Deprecated
-public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProcessor {
+@Component("blGoogleAnalyticsProcessor")
+@Conditional(TemplatingExistCondition.class)
+public class GoogleAnalyticsProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -74,31 +79,28 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
     protected String getAffiliationDefault() {
         return BLCSystemProperty.resolveSystemProperty("googleAnalytics.affiliation");
     }
-    
+
     @Value("${googleAnalytics.testLocal}")
     protected boolean testLocal = false;
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public GoogleAnalyticsProcessor() {
-        super("googleanalytics");
+    @Override
+    public String getName() {
+        return "googleanalytics";
     }
-
+    
     @Override
     public int getPrecedence() {
         return 100000;
     }
 
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-
-        String orderNumber = element.getAttributeValue("orderNumber");
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+        String orderNumber = tagAttributes.get("orderNumber");
         Order order = null;
         if (orderNumber != null) {
             order = orderService.findOrderByOrderNumber(orderNumber);
         }
-        addToModel(arguments, "analytics", analytics(getWebPropertyId(), order));
+        newModelVars.put("analytics", analytics(getWebPropertyId(), order));
     }
 
     /**
@@ -120,11 +122,11 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
         sb.append("_gaq.push(['_setAccount', '" + webPropertyId + "']);");
 
         sb.append("_gaq.push(['_trackPageview']);");
-        
+
         if (testLocal) {
             sb.append("_gaq.push(['_setDomainName', '127.0.0.1']);");
         }
-        
+
         if (order != null) {
             Address paymentAddress = getBillingAddress(order);
             if (paymentAddress != null) {
@@ -165,11 +167,11 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
 
                     Sku sku = null;
                     if (orderItem instanceof DiscreteOrderItem) {
-                        sku = ((DiscreteOrderItem)orderItem).getSku();
+                        sku = ((DiscreteOrderItem) orderItem).getSku();
                     } else if (orderItem instanceof BundleOrderItem) {
-                        sku = ((BundleOrderItem)orderItem).getSku();
+                        sku = ((BundleOrderItem) orderItem).getSku();
                     }
-                    
+
                     sb.append("_gaq.push(['_addItem','" + order.getOrderNumber() + "'");
                     sb.append(",'" + sku.getId() + "'");
                     sb.append(",'" + sku.getName() + "'");
@@ -182,15 +184,11 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
             sb.append("_gaq.push(['_trackTrans']);");
         }
 
-        sb.append(" (function() {"
-            + "var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;"
-            + "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';"
-            + "var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);"
-            + "})();");
+        sb.append(" (function() {" + "var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;" + "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';" + "var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);" + "})();");
 
         return sb.toString();
     }
-    
+
     /**
      * Returns the product option values separated by a space if they are
      * relevant for the item, or the product category if no options are available
@@ -201,7 +199,7 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
         if (MapUtils.isEmpty(item.getOrderItemAttributes())) {
             return item.getCategory() == null ? "" : item.getCategory().getName();
         }
-        
+
         //use product options instead
         String result = "";
         for (Map.Entry<String, OrderItemAttribute> entry : item.getOrderItemAttributes().entrySet()) {
@@ -214,7 +212,7 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
 
     protected Address getBillingAddress(Order order) {
         Address address = null;
-        for (OrderPayment payment : order.getPayments())  {
+        for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
                 address = payment.getBillingAddress();
             }
@@ -222,15 +220,15 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
 
         return address;
     }
-    
+
     protected void setTestLocal(boolean testLocal) {
         this.testLocal = testLocal;
     }
-    
+
     public boolean getTestLocal() {
         return testLocal;
     }
-    
+
     public String getAffiliation() {
         if (affiliation == null) {
             return getAffiliationDefault();
@@ -238,7 +236,7 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
             return affiliation;
         }
     }
-    
+
     public void setAffiliation(String affiliation) {
         this.affiliation = affiliation;
     }

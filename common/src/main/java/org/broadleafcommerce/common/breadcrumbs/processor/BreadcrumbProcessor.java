@@ -15,15 +15,18 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.common.breadcrumbs.processor;
 
 import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
 import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,52 +39,53 @@ import javax.annotation.Resource;
  *
  * @author bpolster
  */
-public class BreadcrumbProcessor extends AbstractModelVariableModifierProcessor {
+@Component("blBreadcrumbProcessor")
+@Conditional(TemplatingExistCondition.class)
+public class BreadcrumbProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     @Resource(name = "blBreadcrumbService")
     protected BreadcrumbService breadcrumbService;
 
-    /**
-     * Sets the name of this processor to be used in the Thymeleaf template
-     */
-    public BreadcrumbProcessor() {
-        super("breadcrumbs");
+    @Override
+    public String getName() {
+        return "breadcrumbs";
     }
-
+    
     @Override
     public int getPrecedence() {
-        return 1000;
+        return 10000;
     }
 
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        String baseUrl = getBaseUrl(arguments, element);
-        Map<String, String[]> params = getParams(arguments, element);
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+        String baseUrl = getBaseUrl(tagAttributes);
+        Map<String, String[]> params = getParams(tagAttributes);
         List<BreadcrumbDTO> dtos = breadcrumbService.buildBreadcrumbDTOs(baseUrl, params);
-        String resultVar = element.getAttributeValue("resultVar");
-        
+        String resultVar = tagAttributes.get("resultVar");
+
         if (resultVar == null) {
             resultVar = "breadcrumbs";
         }
-        
+
         if (!CollectionUtils.isEmpty(dtos)) {
-            addToModel(arguments, resultVar, dtos);
+            newModelVars.put(resultVar, dtos);
         }
+
     }
 
-    protected String getBaseUrl(Arguments arguments, Element element) {
+    protected String getBaseUrl(Map<String, String> tagAttributes) {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-
+        
         if (brc != null) {
             return brc.getRequest().getRequestURI();
         }
         return "";
     }
-
-    protected Map<String, String[]> getParams(Arguments arguments, Element element) {
+    
+    protected Map<String, String[]> getParams(Map<String, String> tagAttributes) {
         Map<String, String[]> paramMap = new HashMap<String, String[]>();
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-
+        
         if (brc != null) {
             paramMap = BroadleafRequestContext.getRequestParameterMap();
             if (paramMap != null) {
@@ -90,5 +94,5 @@ public class BreadcrumbProcessor extends AbstractModelVariableModifierProcessor 
         }
         return paramMap;
     }
-
+    
 }

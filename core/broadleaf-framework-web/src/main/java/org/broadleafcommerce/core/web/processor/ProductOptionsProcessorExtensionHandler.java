@@ -21,14 +21,15 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+
+import java.util.Map;
 
 /**
  * @author Jon Fleschler (jfleschler)
  */
 public interface ProductOptionsProcessorExtensionHandler extends ExtensionHandler {
 
-    ExtensionResultStatusType modifyPriceForOverrides(Arguments arguments, Element element, Sku targetSku, ExtensionResultHolder<Money> price);
+    ExtensionResultStatusType modifyPriceForOverrides(Sku targetSku, ExtensionResultHolder<Money> price, BroadleafTemplateContext context, Map<String, String> tagAttributes);
 }

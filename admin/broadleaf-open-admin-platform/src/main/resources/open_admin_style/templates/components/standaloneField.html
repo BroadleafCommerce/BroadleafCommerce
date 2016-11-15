@@ -5,17 +5,17 @@
          th:classappend="${!field.isVisible}? 'hidden'">
         
         <th:block th:if="${field.readOnly}">
-            <div th:substituteby="fields/readonly" />
+            <div th:replace="fields/readonly" ></div>
         </th:block>
         <th:block th:unless="${field.readOnly}">
             <th:block th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}">
-                <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"/>
+                <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldType)}"></div>
             </th:block>
             <th:block th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}">
-                <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"/>
+                <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"></div>
             </th:block>
         </th:block>
 
-        <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
+        <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" ></span>
     </div>
 </form>

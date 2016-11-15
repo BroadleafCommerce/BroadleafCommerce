@@ -15,16 +15,17 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,32 +33,29 @@ import java.util.Map;
 /**
  * @author Priyesh Patel
  */
-public class ProductOptionDisplayProcessor extends AbstractLocalVariableDefinitionElementProcessor {
+@Component("blProductOptionDisplayProcessor")
+@Conditional(TemplatingExistCondition.class)
+public class ProductOptionDisplayProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public ProductOptionDisplayProcessor() {
-        super("product_option_display");
+    @Override
+    public String getName() {
+        return "product_option_display";
     }
-
+    
     @Override
     public int getPrecedence() {
         return 100;
     }
-
-    protected void initServices(Arguments arguments) {
-
+    
+    @Override
+    public boolean useGlobalScope() {
+        return false;
     }
 
     @Override
-    protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
-        initServices(arguments);
-        HashMap<String, String> productOptionDisplayValues = new HashMap<String, String>();
-        Map<String, Object> newVars = new HashMap<String, Object>();
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("orderItem"));
-        Object item = expression.execute(arguments.getConfiguration(), arguments);
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+        HashMap<String, String> productOptionDisplayValues = new HashMap<>();
+        Object item = context.parseExpression(tagAttributes.get("orderItem"));
         if (item instanceof DiscreteOrderItem) {
             DiscreteOrderItem orderItem = (DiscreteOrderItem) item;
 
@@ -69,13 +67,7 @@ public class ProductOptionDisplayProcessor extends AbstractLocalVariableDefiniti
                 }
             }
         }
-        newVars.put("productOptionDisplayValues", productOptionDisplayValues);
-
-        return newVars;
+        newModelVars.put("productOptionDisplayValues", productOptionDisplayValues);
     }
 
-    @Override
-    protected boolean removeHostElement(Arguments arguments, Element element) {
-        return false;
-    }
 }

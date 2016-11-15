@@ -15,17 +15,19 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafAttributeModifier;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogURLService;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +47,9 @@ import javax.servlet.http.HttpServletRequest;
  * 
  * @author bpolster
  */
-public class CatalogRelativeHrefProcessor extends AbstractAttributeModifierAttrProcessor {
+@Component("blCatalogRelativeHrefProcessor")
+@Conditional(TemplatingExistCondition.class)
+public class CatalogRelativeHrefProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     private static final String RHREF = "rhref";
     private static final String HREF = "href";
@@ -53,25 +57,19 @@ public class CatalogRelativeHrefProcessor extends AbstractAttributeModifierAttrP
     @Resource(name = "blCatalogURLService")
     protected CatalogURLService catalogURLService;
 
-    public CatalogRelativeHrefProcessor() {
-        super(RHREF);
-    }
-
     @Override
-    protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
-        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-
-        String relativeHref = buildRelativeHref(expression, arguments, request);
-               
-        Map<String, String> attrs = new HashMap<String, String>();
-        attrs.put(HREF, relativeHref);
-        return attrs;
+    public String getName() {
+        return "RHREF";
+    }
+    
+    @Override
+    public int getPrecedence() {
+        return 0;
     }
 
-    protected String buildRelativeHref(Expression expression, Arguments arguments, HttpServletRequest request) {
-        Object result = expression.execute(arguments.getConfiguration(), arguments);
+    protected String buildRelativeHref(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+        Object result = context.parseExpression(attributeValue);
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         String currentUrl = request.getRequestURI();
 
         if (request.getQueryString() != null) {
@@ -87,22 +85,11 @@ public class CatalogRelativeHrefProcessor extends AbstractAttributeModifierAttrP
     }
 
     @Override
-    protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return ModificationType.SUBSTITUTION;
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+        String relativeHref = buildRelativeHref(tagName, tagAttributes, attributeName, attributeValue, context);
+        Map<String, String> newAttributes = new HashMap<>();
+        newAttributes.put(HREF, relativeHref);
+        return new BroadleafAttributeModifier(newAttributes);
     }
 
-    @Override
-    protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return true;
-    }
-
-    @Override
-    protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
-        return false;
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 0;
-    }
 }

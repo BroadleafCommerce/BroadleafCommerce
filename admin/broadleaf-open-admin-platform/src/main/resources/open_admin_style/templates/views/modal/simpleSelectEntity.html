@@ -1,5 +1,5 @@
 <div th:if="${treeListGrid}" th:remove="tag">
-    <div th:include="components/treeListGrid" th:object="${treeListGrid}" th:remove="tag" />
+    <div th:include="components/treeListGrid" th:object="${treeListGrid}" th:remove="tag" ></div>
     <div th:include="components/listGridModalActions"
          th:each="column, iterStat : ${treeListGrid.treeListGridColumns}"
          th:if="${iterStat.index == 0}"
@@ -19,7 +19,7 @@
                     <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Record)'"></span>
                     <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Records)'"></span>
                 </div>
-                <div th:include="components/listGridToolbar" th:with="listGrid=${listGrid}" th:remove="tag"/>
+                <div th:include="components/listGridToolbar" th:with="listGrid=${listGrid}" th:remove="tag"></div>
             </div>
             <div class="fieldgroup-listgrid-wrapper fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
                 <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag"></div>

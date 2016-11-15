@@ -20,14 +20,16 @@ package org.broadleafcommerce.common.web.payment.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * <p>The following processor will add any Payment Gateway specific Card Type 'codes' to the model if
@@ -53,32 +55,32 @@ import java.util.Map;
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blCreditCardTypesProcessor")
-public class CreditCardTypesProcessor extends AbstractLocalVariableDefinitionElementProcessor {
+@Conditional(TemplatingExistCondition.class)
+public class CreditCardTypesProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
     protected static final Log LOG = LogFactory.getLog(CreditCardTypesProcessor.class);
 
     @Resource(name = "blCreditCardTypesExtensionManager")
     protected CreditCardTypesExtensionManager extensionManager;
 
-    public CreditCardTypesProcessor() {
-        super("credit_card_types");
+    @Override
+    public String getName() {
+        return "credit_card_types";
     }
-
+    
     @Override
     public int getPrecedence() {
         return 100;
     }
-
+    
     @Override
-    protected boolean removeHostElement(Arguments arguments, Element element) {
+    public boolean useGlobalScope() {
         return false;
     }
 
     @Override
-    protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
-        Map<String, Object> localVars = new HashMap<String, Object>();
-
-        Map<String, String> creditCardTypes = new HashMap<String, String>();
+    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+        Map<String, String> creditCardTypes = new HashMap<>();
 
         try {
             extensionManager.getProxy().populateCreditCardMap(creditCardTypes);
@@ -87,12 +89,9 @@ public class CreditCardTypesProcessor extends AbstractLocalVariableDefinitionEle
         }
 
         if (!creditCardTypes.isEmpty()) {
-            localVars.put("paymentGatewayCardTypes", creditCardTypes);
+            newModelVars.put("paymentGatewayCardTypes", creditCardTypes);
         }
 
-        return localVars;
     }
-
-
 
 }

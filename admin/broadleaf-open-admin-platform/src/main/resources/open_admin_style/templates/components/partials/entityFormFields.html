@@ -10,10 +10,10 @@
          th:classappend="${!field.isVisible}? 'hidden'">
 
         <div th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
-            <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"/>
+            <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldType)}"></div>
         </div>
         <div th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
-            <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"/>
+            <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"></div>
         </div>
 
         <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}"></span>
@@ -23,10 +23,10 @@
 
 <th:block th:if="${groupItem.isCustomField()}" th:with="field=${groupItem.field}">
     <div th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
-        <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"/>
+        <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldType)}"></div>
     </div>
     <div th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
-        <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"/>
+        <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"></div>
     </div>
 </th:block>
 
@@ -43,7 +43,7 @@
             <th:block th:if="${listGrid.manualFetch}">
                 <span class="listgrid-total-records" th:text="'(Click Fetch to check for records)'"></span>
             </th:block>
-            <div th:include="components/listGridToolbar" th:with="listGrid=${listGrid}" th:remove="tag"/>
+            <div th:include="components/listGridToolbar" th:with="listGrid=${listGrid}" th:remove="tag"></div>
         </div>
         <div class="fieldgroup-listgrid-wrapper" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
             <div th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}" th:remove="tag"></div>

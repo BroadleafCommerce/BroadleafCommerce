@@ -19,9 +19,9 @@ package org.broadleafcommerce.core.web.processor.extension;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.thymeleaf.Arguments;
 
 import java.util.Set;
 
@@ -30,6 +30,6 @@ import java.util.Set;
  */
 public interface UncacheableDataProcessorExtensionHandler extends ExtensionHandler {
 
-    ExtensionResultStatusType modifyProductListForInventoryCheck(Arguments arguments, Set<Product> products, Set<Sku> skus);
+    ExtensionResultStatusType modifyProductListForInventoryCheck(BroadleafTemplateContext context, Set<Product> products, Set<Sku> skus);
 
 }

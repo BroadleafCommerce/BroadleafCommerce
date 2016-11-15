@@ -20,20 +20,20 @@ package org.broadleafcommerce.common.web.processor;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.context.IWebContext;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.NestableNode;
-import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.element.AbstractElementProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
+import org.broadleafcommerce.common.web.dialect.AbstractBroadleafTagReplacementProcessor;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateModel;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -120,7 +120,9 @@ import javax.servlet.http.HttpServletRequest;
  * @author bpolster
  * @see {@link ResourceBundlingService}
  */
-public class ResourceBundleProcessor extends AbstractElementProcessor {
+@Component("blResourceBundleProcessor")
+@Conditional(TemplatingExistCondition.class)
+public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProcessor {
     
     @Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
@@ -128,50 +130,46 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
     protected boolean getBundleEnabled() {
         return BLCSystemProperty.resolveBooleanSystemProperty("bundle.enabled");
     }
-
-    public ResourceBundleProcessor() {
-        super("bundle");
+    
+    @Override
+    public String getName() {
+        return "bundle";
     }
     
     @Override
     public int getPrecedence() {
         return 10000;
     }
-
+    
     @Override
-    protected ProcessorResult processElement(Arguments arguments, Element element) {
-        String name = element.getAttributeValue("name");
-        String mappingPrefix = element.getAttributeValue("mapping-prefix");
-        boolean async = element.hasAttribute("async");
-        boolean defer = element.hasAttribute("defer");
-        NestableNode parent = element.getParent();
-        List<String> files = new ArrayList<String>();
-        for (String file : element.getAttributeValue("files").split(",")) {
+    public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+        String name = tagAttributes.get("name");
+        String mappingPrefix = tagAttributes.get("mapping-prefix");
+        boolean async = tagAttributes.containsKey("async");
+        boolean defer = tagAttributes.containsKey("defer");
+        
+        List<String> files = new ArrayList<>();
+        for (String file : tagAttributes.get("files").split(",")) {
             files.add(file.trim());
         }
         List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(name);
         if (additionalBundleFiles != null) {
             files.addAll(additionalBundleFiles);
         }
-        
+        BroadleafTemplateModel model = context.createModel();
         if (getBundleEnabled()) {
             String bundleResourceName = bundlingService.resolveBundleResourceName(name, mappingPrefix, files);
-            String bundleUrl = getBundleUrl(arguments, bundleResourceName);
-            Element e = getElement(bundleUrl, async, defer);
-            parent.insertAfter(element, e);
+            String bundleUrl = getBundleUrl(bundleResourceName);
+            
+            addElementToModel(bundleUrl, async, defer, context, model);
         } else {
-            for (String file : files) {
-                file = file.trim();
-                Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                        .parseExpression(arguments.getConfiguration(), arguments, "@{'" + mappingPrefix + file + "'}");
-                String value = (String) expression.execute(arguments.getConfiguration(), arguments);
-                Element e = getElement(value, async, defer);
-                parent.insertBefore(element, e);
+            for (String fileName : files) {
+                fileName = fileName.trim();
+                String fullFileName = (String) context.parseExpression("@{'" + mappingPrefix + fileName + "'}");
+                addElementToModel(fullFileName, async, defer, context, model);
             }
         }
-        
-        parent.removeChild(element);
-        return ProcessorResult.OK;
+        return model;
     }
     
     /**
@@ -185,16 +183,14 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
      * @param bundleName
      * @return
      */
-    protected String getBundleUrl(Arguments arguments, String bundleName) {
+    protected String getBundleUrl(String bundleName) {
         String bundleUrl = bundleName;
 
         if (!StringUtils.startsWith(bundleUrl, "/")) {
             bundleUrl = "/" + bundleUrl;
         }
-
-        IWebContext context = (IWebContext) arguments.getContext();
-        HttpServletRequest request = context.getHttpServletRequest();
-        String contextPath = request.getContextPath();
+        
+        String contextPath = BroadleafRequestContext.getBroadleafRequestContext().getRequest().getContextPath();
 
         if (StringUtils.isNotEmpty(contextPath)) {
             bundleUrl = contextPath + bundleUrl;
@@ -202,38 +198,39 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
 
         return bundleUrl;
     }
-
-    protected Element getScriptElement(String src, boolean async, boolean defer) {
-        Element e = new Element("script");
-        e.setAttribute("type", "text/javascript");
-        e.setAttribute("src", src);
-        if (async) {
-            e.setAttribute("async", true, null);
-        }
-        if (defer) {
-            e.setAttribute("defer", true, null);
-        }
-        return e;
-    }
     
-    protected Element getLinkElement(String src) {
-        Element e = new Element("link");
-        e.setAttribute("rel", "stylesheet");
-        e.setAttribute("href", src);
-        return e;
-    }
-    
-    protected Element getElement(String src, boolean async, boolean defer) {
+    protected void addElementToModel(String src, boolean async, boolean defer, BroadleafTemplateContext context, BroadleafTemplateModel model) {
         if (src.contains(";")) {
             src = src.substring(0, src.indexOf(';'));
         }
         
         if (src.endsWith(".js")) {
-            return getScriptElement(src, async, defer);
+            model.addElement(context.createNonVoidElement("script", getScriptAttributes(src, async, defer), true));
         } else if (src.endsWith(".css")) {
-            return getLinkElement(src);
+            model.addElement(context.createNonVoidElement("link", getLinkAttributes(src), true));
         } else {
             throw new IllegalArgumentException("Unknown extension for: " + src + " - only .js and .css are supported");
         }
     }
+
+    protected Map<String, String> getScriptAttributes(String src, boolean async, boolean defer) {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("type", "text/javascript");
+        attributes.put("src", src);
+        if (async) {
+            attributes.put("async", null);
+        }
+        if (defer) {
+            attributes.put("defer", null);
+        }
+        return attributes;
+    }
+    
+    protected Map<String, String> getLinkAttributes(String src) {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("rel", "stylesheet");
+        attributes.put("href", src);
+        return attributes;
+    }
+
 }

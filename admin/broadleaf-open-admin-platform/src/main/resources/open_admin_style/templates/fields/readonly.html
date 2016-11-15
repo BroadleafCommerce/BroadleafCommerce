@@ -1,5 +1,6 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
-    <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+    <span th:text="#{${field.friendlyName}}"></span>
+<span th:replace="components/fieldTooltip" ></span>
 </label>
 <div class="twelve" style="margin-left: 20px; margin-bottom: 10px;" th:switch="*{fields['__${field.name}__'].fieldType}">
 
@@ -13,14 +14,14 @@
     </span>
 
     <span th:case="'ADDITIONAL_FOREIGN_KEY'" th:remove="tag">
-        <span th:text="*{fields['__${field.name}__'].displayValue}"/>
+        <span th:text="*{fields['__${field.name}__'].displayValue}"></span>
         <input type="hidden" class="display-value-property" th:value="*{fields['__${field.name}__'].foreignKeyDisplayValueProperty}"  />
         <input type="hidden" class="value" th:field="*{fields['__${field.name}__'].value}" th:attr="data-onchangetrigger=${field.onChangeTrigger}" />
         <input type="hidden" class="hidden-display-value" th:field="*{fields['__${field.name}__'].displayValue}" />
     </span>
 
     <span th:case="*" th:remove="tag">
-        <span th:text="*{fields['__${field.name}__'].displayValue}"/>
+        <span th:text="*{fields['__${field.name}__'].displayValue}"></span>
         <input type="hidden" th:field="*{fields['__${field.name}__'].value}" />
     </span>
     

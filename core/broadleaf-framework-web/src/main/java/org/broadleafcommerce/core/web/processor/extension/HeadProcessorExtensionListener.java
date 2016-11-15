@@ -15,16 +15,18 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor.extension;
 
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+
+import java.util.Map;
 
 /**
  * @author Jerry Ocanas (jocanas)
  */
 public interface HeadProcessorExtensionListener {
 
-    public void processAttributeValues(Arguments arguments, Element element);
+    public void processAttributeValues(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context);
 
 }

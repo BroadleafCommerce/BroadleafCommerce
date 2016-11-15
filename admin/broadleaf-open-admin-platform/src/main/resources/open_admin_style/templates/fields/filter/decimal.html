@@ -3,20 +3,20 @@
     <input type="hidden" class="listgrid-criteria-input" th:attr="data-name=${fieldName}" />
     
     <div class="specific-input">
-        <a class="numeric-range-toggle" href="" th:text="#{numericInput.switchToRange}" />
+        <a class="numeric-range-toggle" href="" th:text="#{numericInput.switchToRange}" ></a>
         <br />
     
         <input class="listgrid-criteria-input-range money range-single" />
     </div>
     
     <div class="range-input hidden">
-        <a class="numeric-range-toggle" href="" th:text="#{numericInput.switchToSpecific}" />
+        <a class="numeric-range-toggle" href="" th:text="#{numericInput.switchToSpecific}" ></a>
         <br />
     
         <input class="listgrid-criteria-input-range money range range-low"
                style="margin-right: 7px;" />
     
-        <span th:remove="tag" th:text="#{numericInput.rangeSeparator}" />
+        <span th:remove="tag" th:text="#{numericInput.rangeSeparator}" ></span>
     
         <input class="listgrid-criteria-input-range money range range-high"
                style="margin-left: 4px;" />
