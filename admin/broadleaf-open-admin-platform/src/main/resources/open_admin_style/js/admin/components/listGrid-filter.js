@@ -588,7 +588,7 @@ $(document).ready(function() {
         $input.trigger('change');
     });
     
-    $('body').on('click', 'a.numeric-range-toggle', function(e) {
+    $('body').on('click', '.listgrid-toggle-filter', function(e) {
         e.preventDefault();
         
         var $parent = $(this).closest('div.filter-fields');

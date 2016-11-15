@@ -11,23 +11,26 @@
     <li class="divider"></li>
 </div> -->
 <li>
-    <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">
+    <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}" th:with="type=${#strings.toLowerCase(fieldType)}">
         <input type="hidden" class="sort-property" data-name="sortProperty" th:value="${fieldName}" />
         <input type="hidden" class="sort-direction" data-name="sortDirection" />
 
-        <div class="listgrid-criteria" th:attr="data-field-index=${index}">
+        <div class= "listgrid-criteria" th:attr="data-field-index=${index}">
             <div class="listgrid-criteria-container">
                 <div th:remove="element"
-                th:substituteby="${'fields/filter/' + #strings.toLowerCase(fieldType)}" />
+                th:substituteby="${'fields/filter/' + type}" />
             </div>
         </div>
         
-        <div th:style="${#strings.toLowerCase(fieldType) == 'additional_foreign_key'} ? 'display: none;'">
+        <div th:style="${#strings.toLowerCase(fieldType) == 'additional_foreign_key'} ? 'display: none;'" th:with="toggleTypes=${ {'date', 'decimal', 'integer', 'money'} }">
             <button class="listgrid-filter tiny radius dark button" th:inline="text">
                 <i class="icon-search"></i>[[#{Filter}]]
             </button>
             <button class="listgrid-clear-filter tiny radius dark button" disabled="disabled" th:inline="text">
                 <i class="icon-remove"></i>[[#{Filter_Clear}]]
+            </button>
+            <button th:if="${#lists.contains(toggleTypes, type)}" class="listgrid-toggle-filter tiny radius dark button" th:inline="text">
+                [[#{Filter_Toggle}]]
             </button>
         </div>
     </div>
