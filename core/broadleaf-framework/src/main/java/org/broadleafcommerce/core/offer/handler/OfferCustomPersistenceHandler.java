@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.offer.handler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -167,16 +168,16 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             Property discountValue = entity.findProperty("value");
 
             String value = discountValue.getValue();
-            if (discountType.getValue().equals("PERCENT_OFF")) {
-                value = value.indexOf(".") < 0 ? value : value.replaceAll("0*$", "").replaceAll("\\.$", "");
+            if (discountType == null || StringUtils.isBlank(discountType.getValue())) {
+                discountValue.setValue("");
+            } else if (discountType.getValue().equals("PERCENT_OFF")) {
+                value = !value.contains(".") ? value : value.replaceAll("0*$", "").replaceAll("\\.$", "");
                 discountValue.setValue(value + "%");
             } else if (discountType.getValue().equals("AMOUNT_OFF")) {
                 Locale locale =  BroadleafRequestContext.getBroadleafRequestContext().getLocale();
                 BroadleafCurrency currency =  BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency();
                 NumberFormat nf = BroadleafCurrencyUtils.getNumberFormatFromCache(locale.getJavaLocale(), currency.getJavaCurrency());
                 discountValue.setValue(nf.format(new BigDecimal(value)));
-            } else if (discountType.getValue().equals("")) {
-                discountValue.setValue("");
             }
 
             Property timeRule = entity.findProperty("offerMatchRules---TIME");

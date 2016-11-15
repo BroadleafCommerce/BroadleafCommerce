@@ -19,9 +19,17 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.workflow.ActivityMessages;
 
 public interface ProductOptionValidationService {
 
-    public abstract Boolean validate(ProductOption productOption, String value);
+    Boolean validate(ProductOption productOption, String value);
 
+    boolean isSubmitType(ProductOption productOption);
+
+    boolean hasProductOptionValidationStrategy(ProductOption productOption);
+
+    boolean isAddOrNoneType(ProductOption productOption);
+
+    void validateWithoutException(ProductOption productOption, String attributeValue, ActivityMessages messages);
 }

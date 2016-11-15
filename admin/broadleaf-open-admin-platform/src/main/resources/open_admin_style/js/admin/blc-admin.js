@@ -474,6 +474,11 @@ var BLCAdmin = (function($) {
 
             // If we've already initialized this container, we'll skip it.
             if ($container.data('initialized') == 'true' || !continueInitialization) {
+                // Update all listgrids sizing on the current tab just in case.
+                $container.find('.listgrid-container tbody').each(function (index, element) {
+                    BLCAdmin.listGrid.updateGridTitleBarSize($(element).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
+                    BLCAdmin.listGrid.paginate.updateGridSize($(element));
+                });
                 return;
             }
 

@@ -17,23 +17,25 @@
  */
 package org.broadleafcommerce.core.order.service.workflow.add;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
-import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-import org.broadleafcommerce.core.order.service.exception.ProductOptionValidationException;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
-import org.broadleafcommerce.core.order.service.type.MessageType;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -47,7 +49,7 @@ import java.util.Map.Entry;
 import javax.annotation.Resource;
 
 public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
-    
+
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
     
@@ -67,85 +69,55 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
-        
-        // Quantity was not specified or was equal to zero. We will not throw an exception,
-        // but we will preven the workflow from continuing to execute
-        if (orderItemRequestDTO.getQuantity() == null || orderItemRequestDTO.getQuantity() == 0) {
+        Integer orderItemQuantity = orderItemRequestDTO.getQuantity();
+
+        if (!hasQuantity(orderItemQuantity)) {
             context.stopProcess();
-            return context;
-        }
-
-        // Throw an exception if the user tried to add a negative quantity of something
-        if (orderItemRequestDTO.getQuantity() < 0) {
+        } else if (orderItemQuantity < 0) {
             throw new IllegalArgumentException("Quantity cannot be negative");
-        }
-
-        // Throw an exception if the user did not specify an order to add the item to
-        if (request.getOrder() == null) {
+        } else if (request.getOrder() == null) {
             throw new IllegalArgumentException("Order is required when adding item to order");
-        }
-
-        // Validate that if the user specified a productId, it is a legitimate productId
-        Product product = null;
-        if (orderItemRequestDTO.getProductId() != null) {
-            product = catalogService.findProductById(orderItemRequestDTO.getProductId());
-            if (product == null) {
-                throw new IllegalArgumentException("Product was specified but no matching product was found for productId " + orderItemRequestDTO.getProductId());
-            }
-        }
-
-        Sku sku;
-        try {
-            sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(), (ActivityMessages) context);
-        } catch (RequiredAttributeNotProvidedException e) {
-            // Mark the request as a configuration error and proceed with the add.
-            orderItemRequestDTO.setHasConfigurationError(Boolean.TRUE);
-            return context;
-        }
-
-        // If we couldn't find a sku, then we're unable to add to cart.
-        if (sku == null && !(orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO)) {
-            StringBuilder sb = new StringBuilder();
-            for (Entry<String, String> entry : orderItemRequestDTO.getItemAttributes().entrySet()) {
-                sb.append(entry.toString());
-            }
-            throw new IllegalArgumentException("Could not find SKU for :" +
-                    " productId: " + (product == null ? "null" : product.getId()) + 
-                    " skuId: " + orderItemRequestDTO.getSkuId() + 
-                    " attributes: " + sb.toString());
-        } else if (sku == null) {
-            NonDiscreteOrderItemRequestDTO ndr = (NonDiscreteOrderItemRequestDTO) orderItemRequestDTO;
-            if (StringUtils.isBlank(ndr.getItemName())) {
-                throw new IllegalArgumentException("Item name is required for non discrete order item add requests");
-            }
-            
-            if (ndr.getOverrideRetailPrice() == null && ndr.getOverrideSalePrice() == null) {
-                throw new IllegalArgumentException("At least one override price is required for non discrete order item add requests");
-            }
-        } else if (!sku.isActive()) {
-            throw new IllegalArgumentException("The requested skuId of " + sku.getId() + " is no longer active");
         } else {
-            // We know definitively which sku we're going to add, so we can set this
-            // value with certainty
-            request.getItemRequest().setSkuId(sku.getId());
-        }
-        
-        if (!(orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO) &&
-                request.getOrder().getCurrency() != null && 
-                sku.getCurrency() != null && 
-                !request.getOrder().getCurrency().equals(sku.getCurrency())) {
-            throw new IllegalArgumentException("Cannot have items with differing currencies in one cart");
-        }
-        
-        // If the user has specified a parent order item to attach this to, it must exist in this cart
-        if (orderItemRequestDTO.getParentOrderItemId() != null) {
-            OrderItem parent = orderItemService.readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
-            if (parent == null) {
-                throw new IllegalArgumentException("Could not find parent order item by the given id");
+            Product product = determineProduct(orderItemRequestDTO);
+            Sku sku;
+            try {
+                sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(),
+                    (ActivityMessages) context);
+            } catch (RequiredAttributeNotProvidedException e) {
+                // Mark the request as a configuration error and proceed with the add.
+                orderItemRequestDTO.setHasConfigurationError(Boolean.TRUE);
+                return context;
             }
+
+            addSkuToCart(sku, orderItemRequestDTO, product, request);
+
+            if (!hasSameCurrency(orderItemRequestDTO, request, sku)) {
+                throw new IllegalArgumentException("Cannot have items with differing currencies in one cart");
+            }
+
+            validateIfParentOrderItemExists(orderItemRequestDTO);
         }
         
         return context;
+    }
+
+    protected boolean hasQuantity(Integer orderItemQuantity) {
+        return orderItemQuantity != null && orderItemQuantity != 0;
+    }
+
+    protected Product determineProduct(OrderItemRequestDTO orderItemRequestDTO) {
+        Product product = null;
+        // Validate that if the user specified a productId, it is a legitimate productId
+        if (orderItemRequestDTO.getProductId() != null) {
+            product = catalogService.findProductById(orderItemRequestDTO.getProductId());
+
+            if (product == null) {
+                throw new IllegalArgumentException("Product was specified but no matching product was found for productId "
+                                                   + orderItemRequestDTO.getProductId());
+            }
+        }
+
+        return product;
     }
     
     protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
@@ -163,85 +135,182 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
 
         if (sku == null && product != null) {
             // Set to the default sku
-            if (product.getAdditionalSkus() != null && product.getAdditionalSkus().size() > 0 && !product.getCanSellWithoutOptions()) {
-                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku", null, product.getId().toString());
+            if (cannotSellDefaultSku(product)) {
+                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku", null);
+            } else {
+                sku = product.getDefaultSku();
             }
-            sku = product.getDefaultSku();
         }
         return sku;
     }
+
+    protected boolean cannotSellDefaultSku(Product product) {
+        return CollectionUtils.isNotEmpty(product.getAdditionalSkus()) && !product.getCanSellWithoutOptions();
+    }
     
     protected Sku findMatchingSku(Product product, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
-        Map<String, String> attributeValuesForSku = new HashMap<String,String>();
+        Map<String, String> attributeValuesForSku = new HashMap<>();
+        Sku matchingSku = null;
+
         // Verify that required product-option values were set.
+        if (product != null) {
+            for (ProductOptionXref productOptionXref : ListUtils.emptyIfNull(product.getProductOptionXrefs())) {
+                ProductOption productOption = productOptionXref.getProductOption();
+                String attributeName = productOption.getAttributeName();
+                String attributeValue = attributeValues.get(attributeName);
+                boolean isRequired = productOption.getRequired();
+                boolean hasStrategy = productOptionValidationService.hasProductOptionValidationStrategy(productOption);
+                boolean isAddOrNoneType = productOptionValidationService.isAddOrNoneType(productOption);
 
-        if (product != null && product.getProductOptions() != null && product.getProductOptions().size() > 0) {
-            for (ProductOption productOption : product.getProductOptions()) {
-                if (productOption.getRequired() && (productOption.getProductOptionValidationStrategyType() == null ||
-                        productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank())) {
-                    if (StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
-                        throw new RequiredAttributeNotProvidedException("Unable to add to product ("+ product.getId() +") cart. Required attribute was not provided: " + productOption.getAttributeName(), null, String.valueOf(product.getId()));
-                    } else if (productOption.getUseInSkuGeneration()) {
-                        attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
-                    }
+                if (isRequired && isAddOrNoneType) {
+                    putAttributeValueForSku(attributeValuesForSku, productOption, attributeName, attributeValue, product.getId());
                 }
-                if (!productOption.getRequired() && StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
-                    //if the product option is not required, and user has not set the optional value, then we dont need to validate
-                } else if (productOption.getProductOptionValidationStrategyType() == null || productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank()) {
-                        productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
+
+                if (shouldValidateWithException(isRequired, isAddOrNoneType, attributeValue)) {
+                    productOptionValidationService.validate(productOption, attributeValue);
                 }
-                if((productOption.getProductOptionValidationStrategyType() != null && productOption.getProductOptionValidationStrategyType().getRank() > ProductOptionValidationStrategyType.ADD_ITEM.getRank()))
-                {
-                    //we need to validate however, we will not error out since this message is 
-                    try {
-                        productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
-                    } catch (ProductOptionValidationException e) {
-                        ActivityMessageDTO msg = new ActivityMessageDTO(MessageType.PRODUCT_OPTION.getType(), 1, e.getMessage());
-                        msg.setErrorCode(productOption.getErrorCode());
-                        messages.getActivityMessages().add(msg);
-                    }
-                    
+
+                if (hasStrategy && !isAddOrNoneType) {
+                    // we need to validate; however, we will not error out
+                    productOptionValidationService.validateWithoutException(productOption, attributeValue, messages);
                 }
             }
-            
 
-            if (product !=null && product.getSkus() != null) {
-                for (Sku sku : product.getSkus()) {
-                   if (checkSkuForMatch(sku, attributeValuesForSku)) {
-                       return sku;
-                   }
-                }
-            }
+            matchingSku = getMatchingSku(product, attributeValuesForSku);
         }
 
-        return null;
+        return matchingSku;
     }
 
-    protected boolean checkSkuForMatch(Sku sku, Map<String,String> attributeValues) {
-        if (attributeValues == null || attributeValues.size() == 0) {
-            return false;
+    protected void putAttributeValueForSku(Map<String, String> attributeValuesForSku, ProductOption productOption,
+                                           String attributeName, String attributeValue, Long productId) {
+        if (StringUtils.isEmpty(attributeValue)) {
+            String message = "Unable to add to product (" + productId + ") cart. Required attribute was not provided: "
+                             + attributeName;
+            throw new RequiredAttributeNotProvidedException(message, attributeName, String.valueOf(productId));
+        } else if (productOption.getUseInSkuGeneration()) {
+            attributeValuesForSku.put(attributeName, attributeValue);
+        }
+    }
+
+    protected boolean shouldValidateWithException(boolean isRequired, boolean isAddOrNoneType, String attributeValue) {
+        return isAddOrNoneType && (isRequired || !StringUtils.isEmpty(attributeValue));
+    }
+
+    protected Sku getMatchingSku(Product product, Map<String, String> attributeValuesForSku) {
+        Sku matchingSku = null;
+
+        for (Sku sku : ListUtils.emptyIfNull(product.getAdditionalSkus())) {
+            if (isMatchingSku(sku, attributeValuesForSku)) {
+                matchingSku = sku;
+                break;
+            }
         }
 
-        for (String attributeName : attributeValues.keySet()) {
-            boolean optionValueMatchFound = false;
-            for (ProductOptionValue productOptionValue : sku.getProductOptionValues()) {
-                if (productOptionValue.getProductOption().getAttributeName().equals(attributeName)) {
-                    if (productOptionValue.getAttributeValue().equals(attributeValues.get(attributeName))) {
-                        optionValueMatchFound = true;
-                        break;
-                    } else {
-                        return false;
+        return matchingSku;
+    }
+
+    protected boolean isMatchingSku(Sku sku, Map<String,String> attributeValues) {
+        boolean hasMatchingSku = true;
+
+        if (MapUtils.isEmpty(attributeValues)) {
+            hasMatchingSku = false;
+        } else {
+            for (String attributeName : attributeValues.keySet()) {
+                boolean optionValueMatchFound = false;
+
+                for (SkuProductOptionValueXref productOptionValueXref : sku.getProductOptionValueXrefs()) {
+                    ProductOptionValue productOptionValue = productOptionValueXref.getProductOptionValue();
+                    boolean isSameAttribute = productOptionValue.getProductOption().getAttributeName().equals(attributeName);
+
+                    if (isSameAttribute) {
+                        optionValueMatchFound = productOptionValue.getAttributeValue().equals(attributeValues.get(attributeName));
+
+                        if (optionValueMatchFound) {
+                            break;
+                        } else {
+                            hasMatchingSku = false;
+                        }
                     }
                 }
-            }
 
-            if (optionValueMatchFound) {
-                continue;
-            } else {
-                return false;
+                if (!optionValueMatchFound) {
+                    hasMatchingSku = false;
+                }
             }
         }
 
-        return true;
+        return hasMatchingSku;
+    }
+
+    protected void addSkuToCart(Sku sku, OrderItemRequestDTO orderItemRequestDTO, Product product, CartOperationRequest request) {
+        // If we couldn't find a sku, then we're unable to add to cart.
+        if (!hasSkuOrIsNonDiscreteOI(sku, orderItemRequestDTO)) {
+            handleIfNoSku(orderItemRequestDTO, product);
+        } else if (sku == null) {
+            handleIfNonDiscreteOI(orderItemRequestDTO);
+        } else if (!sku.isActive()) {
+            throw new IllegalArgumentException("The requested skuId of " + sku.getId() + " is no longer active");
+        } else {
+            // We know which sku we're going to add, so we can add it
+            request.getItemRequest().setSkuId(sku.getId());
+        }
+    }
+
+    protected boolean hasSkuOrIsNonDiscreteOI(Sku sku, OrderItemRequestDTO orderItemRequestDTO) {
+        return sku != null || orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO;
+    }
+
+    protected void handleIfNoSku(OrderItemRequestDTO orderItemRequestDTO, Product product) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Entry<String, String> entry : orderItemRequestDTO.getItemAttributes().entrySet()) {
+            sb.append(entry.toString());
+        }
+
+        throw new IllegalArgumentException("Could not find SKU for :" +
+                                           " productId: " + (product == null ? "null" : product.getId()) +
+                                           " skuId: " + orderItemRequestDTO.getSkuId() +
+                                           " attributes: " + sb.toString());
+    }
+
+    protected void handleIfNonDiscreteOI(OrderItemRequestDTO orderItemRequestDTO) {
+        NonDiscreteOrderItemRequestDTO ndr = (NonDiscreteOrderItemRequestDTO) orderItemRequestDTO;
+
+        if (StringUtils.isBlank(ndr.getItemName())) {
+            throw new IllegalArgumentException("Item name is required for non discrete order item add requests");
+        } else if (!hasPrice(ndr)) {
+            throw new IllegalArgumentException("At least one override price is required for non discrete order item add requests");
+        }
+    }
+
+    protected boolean hasPrice(NonDiscreteOrderItemRequestDTO ndr) {
+        return ndr.getOverrideRetailPrice() != null || ndr.getOverrideSalePrice() != null;
+    }
+
+    protected boolean hasSameCurrency(OrderItemRequestDTO orderItemRequestDTO, CartOperationRequest request, Sku sku) {
+        boolean isNDR = orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO;
+        boolean hasSameCurrency = false;
+
+        BroadleafCurrency orderCurrency = request.getOrder().getCurrency();
+        BroadleafCurrency skuCurrency = sku.getCurrency();
+        boolean hasOrderCurrency = request.getOrder().getCurrency() != null;
+        boolean hasSkuCurrency = sku.getCurrency() != null;
+
+        if (hasOrderCurrency && hasSkuCurrency) {
+            hasSameCurrency = orderCurrency.equals(skuCurrency);
+        }
+
+        return isNDR || !hasOrderCurrency || !hasSkuCurrency || hasSameCurrency;
+    }
+
+    protected void validateIfParentOrderItemExists(OrderItemRequestDTO orderItemRequestDTO) {
+        // If the user has specified a parent order item to attach this to, it must exist in this cart
+        if (orderItemRequestDTO.getParentOrderItemId() != null) {
+            OrderItem parent = orderItemService.readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
+            if (parent == null) {
+                throw new IllegalArgumentException("Could not find parent order item by the given id");
+            }
+        }
     }
 }

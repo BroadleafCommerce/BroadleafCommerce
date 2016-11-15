@@ -28,7 +28,7 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.call.AddToCartItem;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.UpdateCartResponse;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
@@ -78,7 +78,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
         }
 
         //Reprice order logic
-        List<AddToCartItem> itemsToReprice = new ArrayList<AddToCartItem>();
+        List<OrderItemRequestDTO> itemsToReprice = new ArrayList<OrderItemRequestDTO>();
         List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
         List<OrderItem> itemsToReset = new ArrayList<OrderItem>();
         boolean repriceOrder = true;
@@ -88,7 +88,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
             if (orderItem instanceof DiscreteOrderItem){
                 DiscreteOrderItem doi = (DiscreteOrderItem) orderItem;
                 if(checkAvailabilityInLocale(doi, currency)){
-                    AddToCartItem itemRequest = new AddToCartItem();
+                    OrderItemRequestDTO itemRequest = new OrderItemRequestDTO();
                     itemRequest.setProductId(doi.getProduct().getId());
                     itemRequest.setQuantity(doi.getQuantity());
                     itemsToReprice.add(itemRequest);
@@ -100,7 +100,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
                 BundleOrderItem boi = (BundleOrderItem) orderItem;
                 for (DiscreteOrderItem doi : boi.getDiscreteOrderItems()) {
                     if(checkAvailabilityInLocale(doi, currency)){
-                        AddToCartItem itemRequest = new AddToCartItem();
+                        OrderItemRequestDTO itemRequest = new OrderItemRequestDTO();
                         itemRequest.setProductId(doi.getProduct().getId());
                         itemRequest.setQuantity(doi.getQuantity());
                         itemsToReprice.add(itemRequest);
@@ -120,7 +120,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
             }
         }
 
-        for(AddToCartItem itemRequest: itemsToReprice){
+        for(OrderItemRequestDTO itemRequest: itemsToReprice){
             try {
                 currentCart = orderService.addItem(currentCart.getId(), itemRequest, false);
             } catch (AddToCartException e) {

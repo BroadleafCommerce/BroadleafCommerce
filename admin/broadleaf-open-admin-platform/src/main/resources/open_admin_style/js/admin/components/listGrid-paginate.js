@@ -227,7 +227,9 @@
         },
         
         initializeTableResizing : function($headerTable, $bodyTable) {
-            
+            var MIN_WIDTH = 60;
+            var CONTROL_WIDTH = 45;
+
             $headerTable.find('th div.resizer').mousedown(function(e) {
                 var $this = $(this).closest('th');
                 
@@ -246,36 +248,36 @@
                 
                 $(document).disableSelection();
             });
-            
+
             $(document).mousemove(function(e) {
                 if (tableResizing.active) {
                     var index = tableResizing.index;
                     var widthDifference = (e.pageX - tableResizing.startX);
-                    
-                    // Resize the selected column to its new width
-                    var newWidth = tableResizing.startWidths[index] + widthDifference;
-                    
-                    if ((newWidth > tableResizing.totalWidth - 30) || (newWidth < 30)) {
+
+                    var currentHeader = $(tableResizing.headerTable.find('thead tr th')[index])[0];
+                    var $currentHeaderText = $(currentHeader).find('.listgrid-title span');
+
+                    var nextHeader = $(tableResizing.headerTable.find('thead tr th')[index+1])[0];
+                    var $nextHeaderText = $(nextHeader).find('.listgrid-title span');
+
+                    // Calculate the new column widths
+                    var currentNewWidth = tableResizing.startWidths[index] + widthDifference;
+                    var nextNewWidth = tableResizing.startWidths[index+1] - widthDifference;
+
+                    // Check the column widths
+                    if ((currentNewWidth < MIN_WIDTH) || (nextNewWidth < MIN_WIDTH)) {
                         return false;
                     }
-                    
-                    $(tableResizing.headerTable.find('thead tr th')[index]).outerWidth(newWidth);
-                    $(tableResizing.bodyTable.find('thead tr th')[index]).outerWidth(newWidth);
-                    
-                    // This represents the width of the table cells other than the one we're resizing
-                    var remainingWidth = tableResizing.totalWidth - tableResizing.startWidths[index];
-                    
-                    for (var i = 0; i < tableResizing.startWidths.length; i++) {
-                        if (i != index) {
-                            var percentage = tableResizing.startWidths[i] / remainingWidth;
-                            var delta = widthDifference * percentage;
-                            
-                            newWidth = tableResizing.startWidths[i] - delta;
-                            
-                            $(tableResizing.headerTable.find('thead tr th')[i]).outerWidth(newWidth);
-                            $(tableResizing.bodyTable.find('thead tr th')[i]).outerWidth(newWidth);
-                        }
-                    }
+
+                    // Resize the selected column to its new width
+                    $(tableResizing.headerTable.find('thead tr th')[index]).outerWidth(currentNewWidth);
+                    $(tableResizing.bodyTable.find('thead tr th')[index]).outerWidth(currentNewWidth);
+                    $currentHeaderText.outerWidth(currentNewWidth - CONTROL_WIDTH);
+
+                    // Resize the next column to its new width
+                    $(tableResizing.headerTable.find('thead tr th')[index+1]).outerWidth(nextNewWidth);
+                    $(tableResizing.bodyTable.find('thead tr th')[index+1]).outerWidth(nextNewWidth);
+                    $nextHeaderText.outerWidth(nextNewWidth - CONTROL_WIDTH);
                 }
             });
             

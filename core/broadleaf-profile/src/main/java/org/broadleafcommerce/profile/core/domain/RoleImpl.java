@@ -18,6 +18,7 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
@@ -36,6 +37,7 @@ import javax.persistence.Table;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ROLE")
+@AdminPresentationClass(friendlyName = "RoleImpl")
 public class RoleImpl implements Role {
 
     private static final long serialVersionUID = 1L;

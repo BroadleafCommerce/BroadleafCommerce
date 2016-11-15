@@ -31,24 +31,24 @@
                         th:style="${(#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';')}"
                         scope="col">
 
-                        <!--<span th:if="${headerFieldStat.first}" class="listgrid-icon" ></span>
--->
+                        <!--<span th:if="${headerFieldStat.first}" class="listgrid-icon" ></span>-->
 
                         <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
                             <div class="listgrid-title">
-                                <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" ></span>
-                                <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" ></span>
+                                <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}"></span>
+                                <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}"></span>
                             </div>
                         </div>
 
                         <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
                             <div class="listgrid-title">
-                                <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" ></span>
-                                <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" ></span>
+                                <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}"></span>
+                                <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}"></span>
                                 <div class="listgrid-filter-sort-container">
                                     <!--<i class="filter-icon fa fa-filter"></i>-->
                                     <i class="sort-icon fa-sort fa"></i>
                                 </div>
+                                <div class="resizer" th:unless="${headerField.resizeDisabled || headerFieldStat.last}">&nbsp;</div>
                             </div>
 
                             <input type="hidden" class="listgrid-criteria" th:attr="data-name=${headerField.name}" />
@@ -64,24 +64,17 @@
                             </ul>
                         </div>
                     </th>
-                    <th class="listgrid-row-actions"
-                        th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
-                        <th:comment th:remove="all">
-                            This entry is acting as placeholder for Workflow Action links
-                        </th:comment>
-                        Actions
-                    </th>
 
                     <th width="75" th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}">
                         <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort}">
                             <div class="listgrid-title">
-                            Id
+                                <span>Id</span>
                             </div>
                         </div>
 
                         <div class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort}">
                             <div class="listgrid-title">
-                                Id
+                                <span>Id</span>
                                 <div class="listgrid-filter-sort-container">
                                     <i class="sort-icon fa-sort fa"></i>
                                 </div>
@@ -112,8 +105,6 @@
                         <td th:unless="${index.count == 1}"></td>
                     </div>
                     <td th:if="${listGrid.listGridType} == 'main'"></td>
-                    <td th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
-                    </td>
                 </tr>
 
                 <tr th:each="record : ${listGrid.records}"
@@ -136,6 +127,7 @@
                         th:switch="${listGrid.listGridType}"
                         th:with="field=${record.getField(headerField.name)}"
                         th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}"
+                        th:title="${field.displayValue}"
                         th:class="${field.isDerived ? 'derived' : ''}">
 
                         <span th:case="'main'" th:remove="tag">
@@ -195,55 +187,56 @@
                                 <i class="fa fa-arrows-v fa-lg"></i>
                             </a>
 
-                            <span th:replace="components/partials/listGridIcon" ></span>
+                            <span th:substituteby="components/partials/listGridIcon" />
 
-                            <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
-                               <span th:remove="tag" th:utext="${field.displayValue}"></span>
-                            </span>
+                            <div class="column-text">
+                                <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
+                                   <span th:remove="tag" th:utext="${field.displayValue}"></span>
+                                </span>
 
-                            <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity and (inModal == null or !inModal)}" th:remove="tag">
-                                <a class="external-link" th:href="@{${record.externalEntityPath}}" th:utext="${field.displayValue}"></a>
-                            </span>
+                                <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity and (inModal == null or !inModal)}" th:remove="tag">
+                                    <a class="external-link" th:href="@{${record.externalEntityPath}}" th:utext="${field.displayValue}"></a>
+                                </span>
 
-                            <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity and (inModal != null and inModal)}"
-                                  th:remove="tag" th:utext="${field.displayValue}">
-                            </span>
+                                <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity and (inModal != null and inModal)}"
+                                      th:remove="tag" th:utext="${field.displayValue}">
+                                </span>
 
-                            <span th:if="${field.fieldType == 'IMAGE'}">
-                                <img class="thumbnail" th:style="${'width: 100%;'}"
-                                    th:src="@{${field.value + record.getField('thumbnailKey').value}}"
-                                    th:attr="data-fullurl=@{${field.value}}" />
-                            </span>
+                                <span th:if="${field.fieldType == 'IMAGE'}">
+                                    <img class="thumbnail" th:style="${'width: 100%;'}"
+                                        th:src="@{${field.value + record.getField('thumbnailKey').value}}"
+                                        th:attr="data-fullurl=@{${field.value}}" />
+                                </span>
 
-                            <span th:if="${field.fieldType == 'COLOR'}">
-                                <span class="sandbox-color-square" 
-                                    th:style="${'background-color: ' + field.value + ';'}"></span>
-                            </span>
+                                <span th:if="${field.fieldType == 'COLOR'}">
+                                    <span class="sandbox-color-square"
+                                        th:style="${'background-color: ' + field.value + ';'}"></span>
+                                </span>
 
-                            <span th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)
-                                    or headerField.canLinkToExternalEntity
-                                    or field.fieldType == 'IMAGE'
-                                    or field.fieldType == 'COLOR'}"
-                                  th:remove="tag" th:utext="${field.displayValue}"></span>
+                                <span th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)
+                                        or headerField.canLinkToExternalEntity
+                                        or field.fieldType == 'IMAGE'
+                                        or field.fieldType == 'COLOR'}"
+                                      th:remove="tag" th:utext="${field.displayValue}"></span>
+                            </div>
                         </span>
-                    </td>
-
-                    <td class="listgrid-row-actions"
-                        th:if="${(listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
-                        <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}" th:unless="${record.locked}">
+                        <div class="listgrid-row-actions"
+                            th:if="${headerFieldStat.last and (listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
+                            <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}" th:unless="${record.locked}">
                             <a th:classappend="${action.buttonClass}"
                                href="#"
                                class="button button-action"
                                th:attr="data-urlpostfix=${action.urlPostfix},
                                  data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                                  data-queryparams=${listGrid.sectionCrumbRepresentation}"
-                                th:title="#{${action.displayText}}">
+                               th:title="#{${action.displayText}}">
                                 <i th:class="${action.iconClass}"></i>
                             </a>
                         </span>
-                        <span class="workflow-action" th:if="${record.locked}">
+                            <span class="workflow-action" th:if="${record.locked}">
                             <i class="fa fa-lock"></i>
                         </span>
+                        </div>
                     </td>
 
                     <td th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}" data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}"></td>

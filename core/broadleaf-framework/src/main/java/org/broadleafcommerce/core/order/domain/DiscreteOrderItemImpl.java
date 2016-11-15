@@ -503,7 +503,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         cloned.setProduct(product);
         cloned.setSku(sku);
         cloned.setCategory(category);
-        cloned.setDiscountingAllowed(discountsAllowed == null ? false : discountsAllowed);
+        ((DiscreteOrderItemImpl)cloned).discountsAllowed = discountsAllowed;
         cloned.setName(name);
         // dont clone
         cloned.setOrder(order);

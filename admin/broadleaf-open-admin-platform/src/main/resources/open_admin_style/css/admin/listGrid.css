@@ -17,7 +17,7 @@
  */
 
 /****************************************
- ADMIN LISTGRID SEARCH,FILTER, SORT STYLES
+ ADMIN LISTGRID SEARCH, FILTER, SORT, RESIZER STYLES
 ****************************************/
 .listgrid-search {
     margin-bottom: 6px;
@@ -42,7 +42,7 @@
 }
 .listgrid-filter-sort-container {
     position: absolute;
-    right: 0;
+    right: 8px;
     display: inline-block;
     background: #E1E0DD;
     padding: 0 5px;
@@ -55,6 +55,18 @@
 }
 .listgrid-filter-sort-container i.active {
     color: #2c2c2c;
+}
+.listgrid-header-wrapper table.list-grid-table thead tr th div.resizer {
+    color: #B9B9B9;
+    right: 0;
+    position: absolute;
+    display: inline-block;
+    cursor: col-resize;
+    border-left: 1px solid;
+    border-right: 1px solid;
+    height: 18px;
+    width: 4px;
+    margin-top: 2px;
 }
 .modal .listgrid-search .col6 {
     padding: 0;
@@ -88,9 +100,14 @@
 }
 .listgrid-container a.sub-list-grid-reorder {
     padding-right: 5px;
+    color: #2c2c2c !important;
+}
+.listgrid-container a.sub-list-grid-reorder:hover {
+    cursor: move;
 }
 .button.button-action.sub-list-grid-edit {
-    display: inline;
+    margin-left: 0;
+    margin-top: -1px;
 }
 .content-yield h4.empty-main-list-grid {
     text-align: center;
@@ -110,6 +127,16 @@
 .table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {
     padding: 6px 15px;
 }
+.table tbody>tr>td .column-text {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+    position: relative;
+    width: 90%;
+    height: 26px;
+}
 /****************************************
  ADMIN LISTGRID TITLE/HEADER  STYLES
 ****************************************/
@@ -117,6 +144,12 @@
     padding: 0;
     overflow: hidden;
     max-width: 100%;
+    height: 22px;
+}
+.listgrid-title span {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .listgrid-header-wrapper {
     background-color: #E1E0DD;
@@ -241,6 +274,7 @@ tr {
     vertical-align: middle;
     position: relative;
     height: 40px;
+    line-height: 24px;
 }
 .table tbody > tr > td > a.list-grid-primary-field {
     display : inline;
@@ -292,10 +326,17 @@ tr {
 .listgrid-row-actions {
     text-align: right;
 }
+td .listgrid-row-actions {
+    text-align: right;
+    position: absolute;
+    right: 10px;
+    top: 6px;
+}
 .listgrid-row-actions span.workflow-action a {
-    color: #B3B3B3;
+    color: white !important;
     vertical-align: middle;
     font-size: 16px;
+    text-decoration: none !important;
 }
 /****************************************
  ADMIN LISTGRID TABLE HOLDER STYLES
