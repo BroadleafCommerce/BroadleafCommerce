@@ -308,6 +308,7 @@
         </plugins>
     </build>
     <modules>
+        <module>address</module>
         <module>customer</module>
         <module>order</module>
         <module>micro-common</module>
@@ -516,6 +517,13 @@
                 <classifier>tests</classifier>
                 <type>jar</type>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.broadleafcommerce</groupId>
+                <artifactId>broadleaf-address</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>

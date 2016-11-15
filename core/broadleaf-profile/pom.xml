@@ -75,6 +75,16 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-address</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
             <exclusions>
