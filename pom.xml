@@ -40,7 +40,7 @@
         <spock.core.version>1.0-groovy-2.3</spock.core.version>
         <spock.spring.version>1.0-groovy-2.3</spock.spring.version>
         <selenium.version>2.43.1</selenium.version>
-        <groovy.version>2.3.10</groovy.version>
+        <groovy.version>2.3.11</groovy.version>
         <project.uri>${project.baseUri}</project.uri>
         <broadleaf-presentation.version>1.0.0-SNAPSHOT</broadleaf-presentation.version>
     </properties>
