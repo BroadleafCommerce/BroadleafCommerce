@@ -25,7 +25,7 @@ import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 /**
  * @author Nick Crum ncrum
  */
-public class AbstractValidateCheckoutActivityExtensionHandler extends AbstractExtensionHandler
+public abstract class AbstractValidateCheckoutActivityExtensionHandler extends AbstractExtensionHandler
         implements ValidateCheckoutActivityExtensionHandler {
 
     @Override
