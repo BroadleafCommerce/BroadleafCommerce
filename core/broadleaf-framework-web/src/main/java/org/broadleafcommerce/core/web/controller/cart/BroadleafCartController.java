@@ -31,7 +31,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.AddToCartItem;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
@@ -107,9 +106,11 @@ public class BroadleafCartController extends AbstractCartController {
      * @throws IOException
      * @throws AddToCartException 
      * @throws PricingException
+     * @throws RemoveFromCartException 
+     * @throws NumberFormatException 
      */
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
-            OrderItemRequestDTO itemRequest) throws IOException, AddToCartException, PricingException  {
+            OrderItemRequestDTO itemRequest) throws IOException, AddToCartException, PricingException, NumberFormatException, RemoveFromCartException  {
         Order cart = CartState.getCart();
         
         // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
@@ -120,10 +121,7 @@ public class BroadleafCartController extends AbstractCartController {
 
         // if this is an update to an existing order item, remove the old before proceeding
         if (isUpdateRequest(request)) {
-            updateCartService.validateCart(cart);
-            if (extensionManager != null) {
-                extensionManager.getProxy().validateAddToCartItem(itemRequest);
-            }
+            updateCartService.validateAddToCartRequest(itemRequest, cart);
 
             String originalOrderItem = request.getParameter("originalOrderItem");
             if (StringUtils.isNotEmpty(originalOrderItem)) {
@@ -169,7 +167,7 @@ public class BroadleafCartController extends AbstractCartController {
             cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
         }
 
-        updateCartService.validateCart(cart);
+        updateCartService.validateAddToCartRequest(itemRequest, cart);
 
         cart = orderService.addItemWithPriceOverrides(cart.getId(), itemRequest, false);
         cart = orderService.save(cart, true);
@@ -282,7 +280,7 @@ public class BroadleafCartController extends AbstractCartController {
         cart = orderService.save(cart, false);
         
         if (isAjaxRequest(request)) {
-            Map<String, Object> extraData = new HashMap<String, Object>();
+            Map<String, Object> extraData = new HashMap<>();
             if(useSku) {
                 extraData.put("skuId", itemRequest.getSkuId());
             } else {
@@ -324,7 +322,7 @@ public class BroadleafCartController extends AbstractCartController {
         cart = orderService.save(cart, true);
         
         if (isAjaxRequest(request)) {
-            Map<String, Object> extraData = new HashMap<String, Object>();
+            Map<String, Object> extraData = new HashMap<>();
             extraData.put("cartItemCount", cart.getItemCount());
             if(useSku) {
                 extraData.put("skuId", itemRequest.getSkuId());
@@ -406,7 +404,7 @@ public class BroadleafCartController extends AbstractCartController {
         }
 
         if (isAjaxRequest(request)) {
-            Map<String, Object> extraData = new HashMap<String, Object>();
+            Map<String, Object> extraData = new HashMap<>();
             extraData.put("promoAdded", promoAdded);
             extraData.put("exception" , exception);
             model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
@@ -458,7 +456,7 @@ public class BroadleafCartController extends AbstractCartController {
     }
 
     public Map<String, String> handleIllegalCartOpException(IllegalCartOperationException ex) {
-        Map<String, String> returnMap = new HashMap<String, String>();
+        Map<String, String> returnMap = new HashMap<>();
         returnMap.put("error", "illegalCartOperation");
         returnMap.put("exception", BLCMessageUtils.getMessage(ex.getType()));
         return returnMap;

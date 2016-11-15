@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.service;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.UpdateCartResponse;
 
 /**
@@ -59,12 +60,12 @@ public interface UpdateCartService {
     public UpdateCartResponse copyCartToCurrentContext(Order currentCart);
 
     /**
-     * Validates the cart against the active price list and locale.
+     * Validates the given add item that will be added to the given cart. This occurs prior to the item actually being added
      *
      * @param cart
      * @throws IllegalArgumentException
      */
-    public void validateCart (Order cart) throws IllegalArgumentException;
+    public void validateAddToCartRequest(OrderItemRequestDTO itemRequest, Order cart) throws IllegalArgumentException;
 
     /**
      * Updates the cart (locale, pricing) and performs validation.
