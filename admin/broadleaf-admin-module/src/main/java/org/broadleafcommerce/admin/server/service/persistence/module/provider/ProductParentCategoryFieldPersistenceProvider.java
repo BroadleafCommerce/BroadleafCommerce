@@ -25,6 +25,7 @@ import org.broadleafcommerce.admin.server.service.persistence.module.provider.ex
         .ProductParentCategoryFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
@@ -64,19 +65,20 @@ public class ProductParentCategoryFieldPersistenceProvider extends FieldPersiste
         if (extensionManager != null) {
             extensionManager.getProxy().manageParentCategory(populateValueRequest.getProperty(), (Product) instance);
         }
-
-        Long requestedValue = null;
-        if (!StringUtils.isEmpty(populateValueRequest.getRequestedValue())) {
-            requestedValue = Long.parseLong(populateValueRequest.getRequestedValue());
-        }
-        boolean dirty = checkDirtyState((Product) instance, requestedValue);
-        if (dirty) {
-            populateValueRequest.getProperty().setIsDirty(true);
-            if (requestedValue != null) {
-                ((Product) instance).setCategory((Category) populateValueRequest.getPersistenceManager()
-                        .getDynamicEntityDao().find(CategoryImpl.class, requestedValue));
-            } else {
-                ((Product) instance).setCategory(null);
+        if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
+            Long requestedValue = null;
+            if (!StringUtils.isEmpty(populateValueRequest.getRequestedValue())) {
+                requestedValue = Long.parseLong(populateValueRequest.getRequestedValue());
+            }
+            boolean dirty = checkDirtyState((Product) instance, requestedValue);
+            if (dirty) {
+                populateValueRequest.getProperty().setIsDirty(true);
+                if (requestedValue != null) {
+                    ((Product) instance).setCategory((Category) populateValueRequest.getPersistenceManager()
+                            .getDynamicEntityDao().find(CategoryImpl.class, requestedValue));
+                } else {
+                    ((Product) instance).setCategory(null);
+                }
             }
         }
         return FieldProviderResponse.HANDLED_BREAK;
