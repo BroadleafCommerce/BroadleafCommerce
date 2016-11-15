@@ -31,6 +31,7 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl
 import org.broadleafcommerce.core.order.domain.OrderItem
 import org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService
+import org.broadleafcommerce.core.order.service.ProductOptionValidationServiceImpl
 import org.broadleafcommerce.core.order.service.exception.ProductOptionValidationException
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException
 import org.broadleafcommerce.core.workflow.ActivityMessages
@@ -61,7 +62,7 @@ class ValidateProductOptionsActivitySpec extends BaseCheckoutActivitySpec {
         productOptions = new ArrayList()
         orderItems = new ArrayList()
 
-        mockProductOptionValidationService = Mock()
+        mockProductOptionValidationService = Spy(ProductOptionValidationServiceImpl)
     }
 
     def "Test that validation is skipped when useSku is set"() {
@@ -82,22 +83,17 @@ class ValidateProductOptionsActivitySpec extends BaseCheckoutActivitySpec {
     def "Test that exception is thrown when attributeValues for a DiscreteOrder Item when ProductOptions are required are not provided"() {
         setup:
 
-
-
         productOption.setRequired(true)
         productOption.setProductOptionValidationStrategyType(null)
+        productOption.setAttributeName('name')
         productOptionXref.setProductOption(productOption)
         productOptions << productOptionXref
-
 
         product.setProductOptionXrefs(productOptions)
         orderItem.setProduct(product)
         orderItem.setOrderItemAttributes(new HashMap())
         orderItems << orderItem
         context.seedData.order.setOrderItems(orderItems)
-
-
-
 
         activity = new ValidateProductOptionsActivity().with {
             useSku = false

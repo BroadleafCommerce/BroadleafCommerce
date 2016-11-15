@@ -29,10 +29,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
-import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
-import org.broadleafcommerce.core.order.service.exception.ProductOptionValidationException;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
-import org.broadleafcommerce.core.order.service.type.MessageType;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
@@ -82,7 +79,7 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
                         boolean isAddOrNoneType = productOptionValidationService.isAddOrNoneType(productOption);
                         boolean isSubmitType = productOptionValidationService.isSubmitType(productOption);
 
-                        if (isMissingRequiredAttribute(isRequired, isAddOrNoneType, isSubmitType, attributeValue)) {
+                        if (isMissingRequiredAttribute(isRequired, hasStrategy, isAddOrNoneType, isSubmitType, attributeValue)) {
                             String message = "Unable to validate cart, product  (" + product.getId() + ") required"
                                              + " attribute was not provided: " + attributeName;
                             throw new RequiredAttributeNotProvidedException(message, attributeName);
@@ -90,7 +87,7 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
 
                         boolean hasValidationType = productOption.getProductOptionValidationType() != null;
 
-                        if (shouldValidateWithException(hasValidationType, isAddOrNoneType, isSubmitType)) {
+                        if (shouldValidateWithException(hasValidationType, hasStrategy, isAddOrNoneType, isSubmitType)) {
                             productOptionValidationService.validate(productOption, attributeValue);
                         }
 
@@ -121,12 +118,14 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
         return orderItems;
     }
 
-    protected boolean shouldValidateWithException(boolean hasValidationType, boolean isAddOrNoneType, boolean isSubmitType) {
-        return hasValidationType && (isAddOrNoneType || isSubmitType);
+    protected boolean shouldValidateWithException(boolean hasValidationType, boolean hasStrategy, boolean isAddOrNoneType, boolean isSubmitType) {
+        boolean passesStrategyValidation = !hasStrategy || (hasStrategy && (isAddOrNoneType || isSubmitType));
+        return hasValidationType && (passesStrategyValidation);
     }
 
-    protected boolean isMissingRequiredAttribute(boolean isRequired, boolean isAddOrNoneType, boolean isSubmitType, String attributeValue) {
-        return isRequired && (isAddOrNoneType || isSubmitType) && StringUtils.isEmpty(attributeValue);
+    protected boolean isMissingRequiredAttribute(boolean isRequired, boolean hasStrategy, boolean isAddOrNoneType, boolean isSubmitType, String attributeValue) {
+        boolean passesStrategyValidation = !hasStrategy || (hasStrategy && (isAddOrNoneType || isSubmitType));
+        return isRequired && passesStrategyValidation && StringUtils.isEmpty(attributeValue);
     }
 
     public ProductOptionValidationStrategyType getProductOptionValidationStrategyType() {
