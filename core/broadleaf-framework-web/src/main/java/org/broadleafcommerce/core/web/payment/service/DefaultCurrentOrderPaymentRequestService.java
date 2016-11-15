@@ -62,10 +62,10 @@ public class DefaultCurrentOrderPaymentRequestService implements CurrentOrderPay
     @Override
     public void addOrderAttributeToOrder(Long orderId, String orderAttributeKey, String orderAttributeValue) throws PaymentException {
         Order currentCart = CartState.getCart();
-        if (orderId != null && !currentCart.getId().equals(orderId)) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn(String.format("The current cart resolved from cart state [%s] is not the same as the requested order ID [%s]. Session may have expired or local cart state was lost. This may need manual review.", currentCart.getId(), orderId));
-            }
+        Long currentCartId = currentCart.getId();
+        
+        if (orderId != null && !currentCartId.equals(orderId)) {
+            logWarningIfCartMismatch(currentCartId, orderId);
             currentCart = orderService.findOrderById(orderId);
         }
 
@@ -81,6 +81,12 @@ public class DefaultCurrentOrderPaymentRequestService implements CurrentOrderPay
             throw new PaymentException(e);
         }
     }
+    
+    protected void logWarningIfCartMismatch(Long currentCartId, Long orderId) {
+        if (LOG.isWarnEnabled()) {
+            LOG.warn(String.format("The current cart resolved from cart state [%s] is not the same as the requested order ID [%s]. Session may have expired or local cart state was lost. This may need manual review.", currentCartId, orderId));
+        }
+    }
 
     @Override
     public String retrieveOrderAttributeFromCurrentOrder(String orderAttributeKey) {
@@ -90,10 +96,10 @@ public class DefaultCurrentOrderPaymentRequestService implements CurrentOrderPay
     @Override
     public String retrieveOrderAttributeFromOrder(Long orderId, String orderAttributeKey) {
         Order currentCart = CartState.getCart();
-        if (orderId != null && !currentCart.getId().equals(orderId)) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn(String.format("The current cart resolved from cart state [%s] is not the same as the requested order ID [%s]. Session may have expired or local cart state was lost. This may need manual review.", currentCart.getId(), orderId));
-            }
+        Long currentCartId = currentCart.getId();
+        
+        if (orderId != null && !currentCartId.equals(orderId)) {
+            logWarningIfCartMismatch(currentCartId, orderId);
             currentCart = orderService.findOrderById(orderId);
         }
 
