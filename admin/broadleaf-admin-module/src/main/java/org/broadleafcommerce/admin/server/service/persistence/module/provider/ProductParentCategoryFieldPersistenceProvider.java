@@ -67,7 +67,7 @@ public class ProductParentCategoryFieldPersistenceProvider extends FieldPersiste
         }
         if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
             Long requestedValue = null;
-            if (!StringUtils.isEmpty(populateValueRequest.getRequestedValue())) {
+            if (StringUtils.isNotEmpty(populateValueRequest.getRequestedValue())) {
                 requestedValue = Long.parseLong(populateValueRequest.getRequestedValue());
             }
             boolean dirty = checkDirtyState((Product) instance, requestedValue);
