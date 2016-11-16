@@ -29,7 +29,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -62,6 +64,7 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         form.setAddress(address);
         form.setAddressName(customerAddress.getAddressName());
         form.setCustomerAddressId(customerAddress.getId());
+        form.setDefault(customerAddress.isDefault());
         model.addAttribute("customerAddressForm", form);
         return getCustomerAddressesView();
     }
@@ -86,7 +89,11 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         }
         if (!isAjaxRequest(request)) {
             List<CustomerAddress> addresses = customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
-            model.addAttribute("addresses", addresses);
+            Map<CustomerAddress, Address> addressMap = new HashMap<>();
+            for (CustomerAddress addy : addresses) {
+                addressMap.put(addy, addressService.readAddressById(addy.getAddressExternalId()));
+            }
+            model.addAttribute("addresses", addressMap);
         }
         redirectAttributes.addFlashAttribute("successMessage", getAddressAddedMessage());
         return getCustomerAddressesRedirect();

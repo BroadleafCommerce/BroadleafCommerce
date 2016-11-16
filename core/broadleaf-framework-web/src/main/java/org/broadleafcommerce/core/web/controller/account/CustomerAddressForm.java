@@ -30,7 +30,7 @@ public class CustomerAddressForm implements Serializable {
     protected Address address = new AddressImpl();
     protected String addressName;
     protected Long customerAddressId;
-    protected Boolean isDefault;
+    protected boolean isDefault;
 
     public CustomerAddressForm() {
         address.setPhonePrimary(new PhoneImpl());
@@ -71,11 +71,11 @@ public class CustomerAddressForm implements Serializable {
         this.customerAddressId = customerAddressId;
     }
     
-    public Boolean isDefault() {
+    public boolean isDefault() {
         return this.isDefault;
     }
     
-    public void setDefault(Boolean isDefault) {
+    public void setDefault(boolean isDefault) {
         this.isDefault = isDefault;
     }
 

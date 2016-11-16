@@ -24,7 +24,12 @@ import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddressValidator;
-import org.broadleafcommerce.profile.core.domain.*;
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.CustomerAddress;
+import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.profile.core.domain.PhoneImpl;
+import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
@@ -32,10 +37,13 @@ import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.web.bind.ServletRequestDataBinder;
 
+import java.beans.PropertyEditorSupport;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.beans.PropertyEditorSupport;
-import java.util.List;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its children.
@@ -167,8 +175,13 @@ public class AbstractCustomerAddressController extends BroadleafAbstractControll
         return countryService.findCountries();
     }
 
-    protected List<CustomerAddress> populateCustomerAddresses() {
-        return customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
+    protected Map<CustomerAddress, Address> populateCustomerAddresses() {
+        List<CustomerAddress> customerAddresses = customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
+        Map<CustomerAddress, Address> addressMap = new HashMap<>();
+        for (CustomerAddress addy : customerAddresses) {
+            addressMap.put(addy, addressService.readAddressById(addy.getAddressExternalId()));
+        }
+        return addressMap;
     }
 
     public String getCustomerAddressesView() {
