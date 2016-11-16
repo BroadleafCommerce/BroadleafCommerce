@@ -207,14 +207,6 @@ public class AddressImpl implements Address {
     @Index(name="ADDRESS_PHONE_FAX_IDX", columnNames={"PHONE_FAX_ID"})
     protected Phone phoneFax;
 
-    @Column(name = "IS_DEFAULT")
-    @AdminPresentation(friendlyName = "AddressImpl_Default_Address", order=160, group = "AddressImpl_Address")
-    protected boolean isDefault = false;
-
-    @Column(name = "IS_ACTIVE")
-    @AdminPresentation(friendlyName = "AddressImpl_Active_Address", order=170, group = "AddressImpl_Address")
-    protected boolean isActive = true;
-
     @Column(name = "IS_BUSINESS")
     @AdminPresentation(friendlyName = "AddressImpl_Business_Address", order=180, group = "AddressImpl_Address")
     protected boolean isBusiness = false;
@@ -429,26 +421,6 @@ public class AddressImpl implements Address {
     @Override
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
-    }
-
-    @Override
-    public boolean isDefault() {
-        return isDefault;
-    }
-
-    @Override
-    public void setDefault(boolean isDefault) {
-        this.isDefault = isDefault;
-    }
-
-    @Override
-    public boolean isActive() {
-        return isActive;
-    }
-
-    @Override
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
     }
 
     @Override

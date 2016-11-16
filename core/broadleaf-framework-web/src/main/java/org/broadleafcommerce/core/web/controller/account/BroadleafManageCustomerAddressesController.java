@@ -81,7 +81,7 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         customerAddress.setAddressName(form.getAddressName());
         customerAddress.setCustomer(CustomerState.getCustomer());
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
-        if (form.getAddress().isDefault()) {
+        if (form.isDefault()) {
             customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
         }
         if (!isAjaxRequest(request)) {
@@ -122,7 +122,7 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         customerAddress.setAddressExternalId(address.getId());
         customerAddress.setAddressName(form.getAddressName());
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
-        if (form.getAddress().isDefault()) {
+        if (form.isDefault()) {
             customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
         }
         redirectAttributes.addFlashAttribute("successMessage", getAddressUpdatedMessage());

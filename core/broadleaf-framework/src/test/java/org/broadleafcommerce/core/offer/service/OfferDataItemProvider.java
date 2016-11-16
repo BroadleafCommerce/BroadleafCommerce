@@ -389,7 +389,6 @@ public class OfferDataItemProvider {
         //TODO: microservices - deal with I18n domain
         //address1.setIsoCountryAlpha2(isoCountry);
 
-        address1.setDefault(true);
         address1.setFirstName("John");
         address1.setLastName("Tester");
         address1.setPostalCode("75244");
@@ -441,7 +440,6 @@ public class OfferDataItemProvider {
         //TODO: microservices - deal with I18n domain
         //address2.setIsoCountryAlpha2(isoCountry2);
 
-        address2.setDefault(true);
         address2.setFirstName("John");
         address2.setLastName("Tester");
         address2.setPostalCode("75244");
@@ -612,7 +610,6 @@ public class OfferDataItemProvider {
         //TODO: microservices - deal with I18n domain
         //address1.setIsoCountryAlpha2(isoCountry);
 
-        address1.setDefault(true);
         address1.setFirstName("John");
         address1.setLastName("Tester");
         address1.setPostalCode("75244");
@@ -664,7 +661,6 @@ public class OfferDataItemProvider {
         //TODO: microservices - deal with I18n domain
         //address2.setIsoCountryAlpha2(isoCountry2);
 
-        address2.setDefault(true);
         address2.setFirstName("John");
         address2.setLastName("Tester");
         address2.setPostalCode("75244");

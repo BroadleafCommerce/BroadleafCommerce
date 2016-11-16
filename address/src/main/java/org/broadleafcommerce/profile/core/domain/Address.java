@@ -133,10 +133,6 @@ public interface Address extends Serializable { //TODO: microservices - deal wit
 
     public void setCompanyName(String companyName);
 
-    public boolean isDefault();
-
-    public void setDefault(boolean isDefault);
-
     public String getFirstName();
 
     public void setFirstName(String firstName);
@@ -223,7 +219,4 @@ public interface Address extends Serializable { //TODO: microservices - deal wit
 
     public void setVerificationLevel(String verificationLevel);
 
-    public boolean isActive();
-
-    public void setActive(boolean isActive);
 }

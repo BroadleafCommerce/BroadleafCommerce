@@ -21,7 +21,9 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerAddressImpl;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -40,7 +42,6 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
     public List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long customerId) {
         Query query = em.createNamedQuery("BC_READ_ACTIVE_CUSTOMER_ADDRESSES_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
-        query.setParameter("archived", 'N');
         return query.getResultList();
     }
 
