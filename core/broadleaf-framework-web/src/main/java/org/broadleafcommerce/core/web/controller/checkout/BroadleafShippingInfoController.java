@@ -259,7 +259,8 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
         
         CustomerAddress customerAddress = customerAddressService.create();
         customerAddress.setAddressName(addressForm.getAddressName());
-        customerAddress.setAddress(addressForm.getAddress());
+        Address address = addressService.saveAddress(addressForm.getAddress());
+        customerAddress.setAddressExternalId(address.getId());
         customerAddress.setCustomer(CustomerState.getCustomer());
         customerAddressService.saveCustomerAddress(customerAddress);
 

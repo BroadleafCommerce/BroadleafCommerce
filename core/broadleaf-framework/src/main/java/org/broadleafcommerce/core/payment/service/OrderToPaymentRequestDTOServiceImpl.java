@@ -32,6 +32,8 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
+import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +57,9 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fgService;
+
+    @Resource(name = "blPhoneService")
+    protected PhoneService phoneService;
 
     @Override
     public PaymentRequestDTO translateOrder(Order order) {
@@ -153,9 +158,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         Customer customer = order.getCustomer();
         String phoneNumber = null;
         if (customer.getCustomerPhones() != null && !customer.getCustomerPhones().isEmpty()) {
-            for (CustomerPhone phone : customer.getCustomerPhones()) {
-                if (phone.getPhone().isDefault()) {
-                    phoneNumber =  phone.getPhone().getPhoneNumber();
+            for (CustomerPhone customerPhone : customer.getCustomerPhones()) {
+                if (customerPhone.isDefault()) {
+                    Phone phone = phoneService.readPhoneById(customerPhone.getPhoneExternalId());
+                    phoneNumber =  phone.getPhoneNumber();
                 }
             }
         }

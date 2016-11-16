@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
+import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
@@ -115,9 +116,11 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
     @Override
     @Transactional(value = TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public OrderPayment createOrderPaymentFromCustomerPayment(Order order, CustomerPayment customerPayment, Money amount) {
+        Address customerPaymentAddress = addressService.readAddressById(customerPayment.getBillingAddressExternalId());
+
         OrderPayment orderPayment = create();
         orderPayment.setOrder(order);
-        orderPayment.setBillingAddress(addressService.copyAddress(customerPayment.getBillingAddress()));
+        orderPayment.setBillingAddress(addressService.copyAddress(customerPaymentAddress));
         
         PaymentGatewayType gatewayType = customerPayment.getPaymentGatewayType();
         PaymentType paymentType = customerPayment.getPaymentType();
@@ -157,7 +160,7 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
     public CustomerPayment createCustomerPaymentFromPaymentTransaction(PaymentTransaction transaction) {
         CustomerPayment customerPayment = customerPaymentService.create();
         customerPayment.setCustomer(transaction.getOrderPayment().getOrder().getCustomer());
-        customerPayment.setBillingAddress(addressService.copyAddress(transaction.getOrderPayment().getBillingAddress()));
+        customerPayment.setBillingAddressExternalId(addressService.copyAddress(transaction.getOrderPayment().getBillingAddress()).getId());
         customerPayment.setPaymentType(transaction.getOrderPayment().getType());
         customerPayment.setPaymentGatewayType(transaction.getOrderPayment().getGatewayType());
         customerPayment.setAdditionalFields(transaction.getAdditionalFields());

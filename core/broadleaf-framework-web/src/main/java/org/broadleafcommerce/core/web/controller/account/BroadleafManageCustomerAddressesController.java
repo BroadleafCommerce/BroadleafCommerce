@@ -50,6 +50,8 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
     
     public String viewCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId) {
         CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
+        Address address = addressService.readAddressById(customerAddress.getAddressExternalId());
+
         if (customerAddress == null) {
             throw new IllegalArgumentException("Customer Address not found with the specified customerAddressId");
         }
@@ -57,7 +59,7 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         validateCustomerOwnedData(customerAddress);
 
         CustomerAddressForm form = new CustomerAddressForm();
-        form.setAddress(customerAddress.getAddress());
+        form.setAddress(address);
         form.setAddressName(customerAddress.getAddressName());
         form.setCustomerAddressId(customerAddress.getId());
         model.addAttribute("customerAddressForm", form);
@@ -75,7 +77,7 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         
         Address address = addressService.saveAddress(form.getAddress());
         CustomerAddress customerAddress = customerAddressService.create();
-        customerAddress.setAddress(address);
+        customerAddress.setAddressExternalId(address.getId());
         customerAddress.setAddressName(form.getAddressName());
         customerAddress.setCustomer(CustomerState.getCustomer());
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
@@ -116,7 +118,8 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
 
         validateCustomerOwnedData(customerAddress);
 
-        customerAddress.setAddress(form.getAddress());
+        Address address = addressService.saveAddress(form.getAddress());
+        customerAddress.setAddressExternalId(address.getId());
         customerAddress.setAddressName(form.getAddressName());
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
         if (form.getAddress().isDefault()) {

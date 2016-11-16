@@ -20,6 +20,7 @@ package org.broadleafcommerce.profile.web.controller.validator;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.service.CustomerPhoneService;
+import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -30,10 +31,14 @@ import java.util.List;
 @Component("blCustomerPhoneValidator")
 public class CustomerPhoneValidator implements Validator {
 
+    @Resource(name="blPhoneService")
+    private final PhoneService phoneService;
+
     @Resource(name="blCustomerPhoneService")
     private final CustomerPhoneService customerPhoneService;
 
     public CustomerPhoneValidator(){
+        this.phoneService = null;
         this.customerPhoneService = null;
     }
 
@@ -48,43 +53,46 @@ public class CustomerPhoneValidator implements Validator {
 
         if (!errors.hasErrors()) {
             //check for duplicate phone number
-            List<CustomerPhone> phones = customerPhoneService.readAllCustomerPhonesByCustomerId(cPhone.getCustomer().getId());
+            List<CustomerPhone> customerPhones = customerPhoneService.readAllCustomerPhonesByCustomerId(cPhone.getCustomer().getId());
 
-            String phoneNum = cPhone.getPhone().getPhoneNumber();
+            Phone phone = phoneService.readPhoneById(cPhone.getPhoneExternalId());
+            String phoneNum = phone.getPhoneNumber();
             String phoneName = cPhone.getPhoneName();
 
-            Long phoneId = cPhone.getPhone().getId();
+            Long phoneId = phone.getId();
             Long customerPhoneId = cPhone.getId();
 
             boolean foundPhoneIdForUpdate = false;
             boolean foundCustomerPhoneIdForUpdate = false;
 
-            for (CustomerPhone existingPhone : phones) {
+            for (CustomerPhone existingCustomerPhone : customerPhones) {
+                Phone existingPhone = phoneService.readPhoneById(cPhone.getPhoneExternalId());
+
                 //validate that the phoneId passed for an editPhone scenario exists for this user
                 if(phoneId != null && !foundPhoneIdForUpdate){
-                    if(existingPhone.getPhone().getId().equals(phoneId)){
+                    if(existingPhone.getId().equals(phoneId)){
                         foundPhoneIdForUpdate = true;
                     }
                 }
 
                 //validate that the customerPhoneId passed for an editPhone scenario exists for this user
                 if(customerPhoneId != null && !foundCustomerPhoneIdForUpdate){
-                    if(existingPhone.getId().equals(customerPhoneId)){
+                    if(existingCustomerPhone.getId().equals(customerPhoneId)){
                         foundCustomerPhoneIdForUpdate = true;
                     }
                 }
 
-                if(existingPhone.getId().equals(cPhone.getId())){
+                if(existingCustomerPhone.getId().equals(cPhone.getId())){
                     continue;
                 }
 
-                if(phoneNum.equals(existingPhone.getPhone().getPhoneNumber())){
+                if(phoneNum.equals(existingPhone.getPhoneNumber())){
                     errors.pushNestedPath("phone");
                     errors.rejectValue("phoneNumber", "phoneNumber.duplicate", null);
                     errors.popNestedPath();
                 }
 
-                if(phoneName.equalsIgnoreCase(existingPhone.getPhoneName())){
+                if(phoneName.equalsIgnoreCase(existingCustomerPhone.getPhoneName())){
                     errors.rejectValue("phoneName", "phoneName.duplicate", null);
                 }
             }

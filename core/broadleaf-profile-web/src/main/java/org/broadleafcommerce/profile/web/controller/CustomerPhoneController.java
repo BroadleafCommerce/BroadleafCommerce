@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.service.CustomerPhoneService;
+import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.broadleafcommerce.profile.web.controller.validator.CustomerPhoneValidator;
 import org.broadleafcommerce.profile.web.controller.validator.PhoneValidator;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -50,6 +51,8 @@ public class CustomerPhoneController {
     private static final String prefix = "myAccount/phone/customerPhones";
     private static final String redirect = "redirect:/myaccount/phone/viewPhone.htm";
 
+    @Resource(name="blPhoneService")
+    private PhoneService phoneService;
     @Resource(name="blCustomerPhoneService")
     private CustomerPhoneService customerPhoneService;
     @Resource(name="blCustomerPhoneValidator")
@@ -165,10 +168,17 @@ public class CustomerPhoneController {
         errors.popNestedPath();
 
         if (!errors.hasErrors()) {
+            Phone phone = (Phone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.Phone");
+            phone.setActive(phoneNameForm.getPhone().isActive());
+            phone.setDefault(phoneNameForm.getPhone().isDefault());
+            phone.setCountryCode(phoneNameForm.getPhone().getCountryCode());
+            phone.setExtension(phoneNameForm.getPhone().getExtension());
+            phone.setPhoneNumber(phoneNameForm.getPhone().getPhoneNumber());
+
             CustomerPhone customerPhone = (CustomerPhone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.CustomerPhone");
             customerPhone.setCustomer(customerState.getCustomer(request));
             customerPhone.setPhoneName(phoneNameForm.getPhoneName());
-            customerPhone.setPhone(phoneNameForm.getPhone());
+            customerPhone.setDefault(phoneNameForm.getPhone().isDefault());
 
             if ((customerPhoneId != null) && (customerPhoneId > 0)) {
                 customerPhone.setId(customerPhoneId);
@@ -177,9 +187,13 @@ public class CustomerPhoneController {
             customerPhoneValidator.validate(customerPhone, errors);
 
             if (!errors.hasErrors()) {
+                phone = phoneService.savePhone(phone);
+
+                customerPhone.setPhoneExternalId(phone.getId());
                 customerPhone = customerPhoneService.saveCustomerPhone(customerPhone);
+
                 request.setAttribute("customerPhoneId", customerPhone.getId());
-                request.setAttribute("phoneId", customerPhone.getPhone().getId());
+                request.setAttribute("phoneId", phone.getId());
             }
 
             return savePhoneSuccessView;
@@ -258,6 +272,7 @@ public class CustomerPhoneController {
         } else {
             Long currCustomerId = customerState.getCustomer(request).getId();
             CustomerPhone cPhone = customerPhoneService.readCustomerPhoneById(customerPhoneId);
+            Phone phone = phoneService.readPhoneById(cPhone.getPhoneExternalId());
 
             if (cPhone != null) {
                 // TODO: verify this is the current customers phone
@@ -266,10 +281,10 @@ public class CustomerPhoneController {
                     return viewPhoneErrorView;
                 }
 
-                phoneNameForm.setPhone(cPhone.getPhone());
+                phoneNameForm.setPhone(phone);
                 phoneNameForm.setPhoneName(cPhone.getPhoneName());
                 request.setAttribute("customerPhoneId", cPhone.getId());
-                request.setAttribute("phoneId", cPhone.getPhone().getId());
+                request.setAttribute("phoneId", phone.getId());
 
                 return viewPhoneSuccessView;
             } else {
