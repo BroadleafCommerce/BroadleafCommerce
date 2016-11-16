@@ -184,32 +184,24 @@ public class RelatedProductProcessor extends AbstractBroadleafModelVariableModif
         String typeStr = tagAttributes.get("type");
 
         if (productIdStr != null) {
-            Object productId = context.parseExpression(productIdStr);
-            if (productId instanceof BigDecimal) {
-                productId = new Long(((BigDecimal) productId).toPlainString());
-            }
-            relatedProductDTO.setProductId((Long) productId);
+            Number productId = context.parseExpression(productIdStr);
+            relatedProductDTO.setProductId(productId.longValue());
         }
 
         if (categoryIdStr != null) {
-            Object categoryId = context.parseExpression(categoryIdStr);
-            if (categoryId instanceof BigDecimal) {
-                categoryId = new Long(((BigDecimal) categoryId).toPlainString());
-            }
-            relatedProductDTO.setCategoryId((Long) categoryId);
+            Number categoryId = context.parseExpression(categoryIdStr);
+            relatedProductDTO.setCategoryId(categoryId.longValue());
         }
 
         if (quantityStr != null) {
             Object quantityObj = context.parseExpression(quantityStr);
-            int quantity = 0;
-            if (quantityObj instanceof String) {
-                quantity = Integer.parseInt((String) quantityObj);
-            } else if (quantityObj instanceof BigInteger){
-                quantity = ((BigInteger) quantityObj).intValue();
-            } else {
-                quantity = ((BigDecimal) quantityObj).intValue();
+            Number quantity = 0;
+            if (quantityObj instanceof Number) {
+                quantity = (Number) quantityObj;
+            } else if (quantityObj instanceof String) {
+                quantity = new Integer((String) quantityObj);
             }
-            relatedProductDTO.setQuantity(quantity);
+            relatedProductDTO.setQuantity(quantity.intValue());
         }
 
         if (typeStr != null) {
@@ -217,7 +209,6 @@ public class RelatedProductProcessor extends AbstractBroadleafModelVariableModif
             if (typeExp instanceof String && RelatedProductTypeEnum.getInstance((String) typeExp) != null) {
                 relatedProductDTO.setType(RelatedProductTypeEnum.getInstance((String) typeExp));
             }
-
         }
 
         if ("false".equalsIgnoreCase(tagAttributes.get("cumulativeResults"))) {
