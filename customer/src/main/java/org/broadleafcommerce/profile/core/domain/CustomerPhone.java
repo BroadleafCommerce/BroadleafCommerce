@@ -32,6 +32,10 @@ public interface CustomerPhone extends Serializable { //TODO: microservices - de
     public boolean isDefault();
 
     public void setDefault(boolean isDefault);
+    
+    public boolean isActive();
+
+    public void setActive(boolean isActive);
 
     public Customer getCustomer();
 

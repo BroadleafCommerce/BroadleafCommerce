@@ -29,8 +29,26 @@ import org.broadleafcommerce.profile.core.domain.Phone;
  *
  */
 public class PhoneNameForm {
-    private Phone phone;
-    private String phoneName;
+    protected Phone phone;
+    protected String phoneName;
+    protected Boolean isActive;
+    protected Boolean isDefault;
+    
+    public Boolean isActive() {
+        return isActive;
+    }
+    
+    public void setActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+    
+    public Boolean isDefault() {
+        return isDefault;
+    }
+    
+    public void setDefault(Boolean isDefault) {
+        this.isDefault = isDefault;
+    }
 
     public Phone getPhone() {
         return phone;

@@ -169,8 +169,6 @@ public class CustomerPhoneController {
 
         if (!errors.hasErrors()) {
             Phone phone = (Phone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.Phone");
-            phone.setActive(phoneNameForm.getPhone().isActive());
-            phone.setDefault(phoneNameForm.getPhone().isDefault());
             phone.setCountryCode(phoneNameForm.getPhone().getCountryCode());
             phone.setExtension(phoneNameForm.getPhone().getExtension());
             phone.setPhoneNumber(phoneNameForm.getPhone().getPhoneNumber());
@@ -178,7 +176,8 @@ public class CustomerPhoneController {
             CustomerPhone customerPhone = (CustomerPhone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.CustomerPhone");
             customerPhone.setCustomer(customerState.getCustomer(request));
             customerPhone.setPhoneName(phoneNameForm.getPhoneName());
-            customerPhone.setDefault(phoneNameForm.getPhone().isDefault());
+            customerPhone.setDefault(phoneNameForm.isDefault());
+            customerPhone.setActive(phoneNameForm.isActive());
 
             if ((customerPhoneId != null) && (customerPhoneId > 0)) {
                 customerPhone.setId(customerPhoneId);

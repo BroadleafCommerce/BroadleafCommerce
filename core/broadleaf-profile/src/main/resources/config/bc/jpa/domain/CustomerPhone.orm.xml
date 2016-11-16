@@ -24,14 +24,14 @@
     <named-query name="BC_READ_ACTIVE_CUSTOMER_PHONES_BY_CUSTOMER_ID" >
         <query>SELECT cp FROM org.broadleafcommerce.profile.core.domain.CustomerPhone cp
         WHERE cp.customer.id = :customerId
-        AND cp.phone.isActive = TRUE
+        AND cp.isActive = TRUE
         ORDER BY cp.id</query>
     </named-query>
 
     <named-query name="BC_FIND_DEFAULT_PHONE_BY_CUSTOMER_ID" >
         <query>SELECT cp FROM org.broadleafcommerce.profile.core.domain.CustomerPhone cp
         WHERE cp.customer.id = :customerId
-        AND cp.phone.isDefault = TRUE</query>
+        AND cp.isDefault = TRUE</query>
     </named-query>
     
     <named-query name="BC_READ_ALL_CUSTOMER_PHONES_BY_CUSTOMER_ID" >

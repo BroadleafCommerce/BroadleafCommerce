@@ -22,6 +22,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,14 +63,6 @@ public class PhoneImpl implements Phone {
     @Column(name = "EXTENSION")
     @AdminPresentation(friendlyName = "PhoneImpl_Extension", order=3, group = "PhoneImpl_Phone")
     protected String extension;
-
-    @Column(name = "IS_DEFAULT")
-    @AdminPresentation(friendlyName = "PhoneImpl_Default_Phone", order=4, group = "PhoneImpl_Phone")
-    protected boolean isDefault = false;
-
-    @Column(name = "IS_ACTIVE")
-    @AdminPresentation(friendlyName = "PhoneImpl_Active_Phone", order=5, group = "PhoneImpl_Phone")
-    protected boolean isActive = true;
 
     @Override
     public Long getId() {
@@ -112,31 +105,9 @@ public class PhoneImpl implements Phone {
     }
 
     @Override
-    public boolean isDefault() {
-        return isDefault;
-    }
-
-    @Override
-    public void setDefault(boolean isDefault) {
-        this.isDefault = isDefault;
-    }
-
-    @Override
-    public boolean isActive() {
-        return isActive;
-    }
-
-    @Override
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (isActive ? 1231 : 1237);
-        result = prime * result + (isDefault ? 1231 : 1237);
         result = prime * result + ((countryCode == null) ? 0 : countryCode.hashCode());
         result = prime * result + ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
         result = prime * result + ((extension == null) ? 0 : extension.hashCode());
@@ -158,10 +129,6 @@ public class PhoneImpl implements Phone {
             return id.equals(other.id);
         }
 
-        if (isActive != other.isActive)
-            return false;
-        if (isDefault != other.isDefault)
-            return false;
         if (countryCode == null) {
             if (other.countryCode != null)
                 return false;

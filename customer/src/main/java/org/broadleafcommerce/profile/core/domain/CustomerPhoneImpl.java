@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -85,6 +86,10 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
     @Column(name = "IS_DEFAULT")
     @AdminPresentation(friendlyName = "CustomerPhoneImpl_Default_Address", order=160, group = "CustomerPhoneImpl_Phone")
     protected boolean isDefault = false;
+    
+    @Column(name = "IS_ACTIVE")
+    @AdminPresentation(friendlyName = "PhoneImpl_Active_Phone", order=5, group = "PhoneImpl_Phone")
+    protected boolean isActive = true;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
@@ -120,6 +125,16 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
 
     @Override
     public void setDefault(boolean isDefault) { this.isDefault = isDefault; }
+    
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
+
+    @Override
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 
     @Override
     public Customer getCustomer() {
@@ -145,6 +160,8 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + (isActive ? 1231 : 1237);
+        result = prime * result + (isDefault ? 1231 : 1237);
         result = prime * result + ((customer == null) ? 0 : customer.hashCode());
         result = prime * result + ((phoneExternalId == null) ? 0 : phoneExternalId.hashCode());
         result = prime * result + ((phoneName == null) ? 0 : phoneName.hashCode());
@@ -165,6 +182,10 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
             return id.equals(other.id);
         }
 
+        if (isActive != other.isActive)
+            return false;
+        if (isDefault != other.isDefault)
+            return false;
         if (customer == null) {
             if (other.customer != null)
                 return false;
