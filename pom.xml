@@ -314,7 +314,6 @@
         <module>micro-common</module>
         <module>common</module>
         <module>core</module>
-        <module>integration</module>
         <module>admin</module>
     </modules>
     <dependencies>
