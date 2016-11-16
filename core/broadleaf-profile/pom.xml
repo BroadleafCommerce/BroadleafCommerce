@@ -76,7 +76,7 @@
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-address</artifactId>
+            <artifactId>broadleaf-contact</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
