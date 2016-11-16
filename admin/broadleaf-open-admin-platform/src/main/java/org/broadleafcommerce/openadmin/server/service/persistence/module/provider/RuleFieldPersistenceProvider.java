@@ -383,7 +383,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
      * @return whether the class is embeddable
      */
     protected boolean isEmbeddable(Class<?> clazz) {
-        return clazz.isAssignableFrom(Embeddable.class);
+        return clazz.getAnnotation(Embeddable.class) != null;
     }
 
     protected boolean populateQuantityRule(PopulateValueRequest populateValueRequest, Serializable instance) throws FieldNotAvailableException, IllegalAccessException {
