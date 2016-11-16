@@ -49,6 +49,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -383,7 +384,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
      * @return whether the class is embeddable
      */
     protected boolean isEmbeddable(Class<?> clazz) {
-        return clazz.getAnnotation(Embeddable.class) != null;
+        return AnnotationUtils.findAnnotation(clazz, Embeddable.class) != null;
     }
 
     protected boolean populateQuantityRule(PopulateValueRequest populateValueRequest, Serializable instance) throws FieldNotAvailableException, IllegalAccessException {
