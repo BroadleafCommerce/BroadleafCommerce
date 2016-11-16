@@ -37,12 +37,12 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
         // if parameter address is set as default, unset all other default addresses
         List<CustomerAddress> activeCustomerAddresses = readActiveCustomerAddressesByCustomerId(customerAddress.getCustomer().getId());
         if (activeCustomerAddresses != null && activeCustomerAddresses.isEmpty()) {
-            customerAddress.getAddress().setDefault(true);
+            customerAddress.setDefault(true);
         } else {
-            if (customerAddress.getAddress().isDefault()) {
+            if (customerAddress.isDefault()) {
                 for (CustomerAddress activeCustomerAddress : activeCustomerAddresses) {
-                    if (!activeCustomerAddress.getId().equals(customerAddress.getId()) && activeCustomerAddress.getAddress().isDefault()) {
-                        activeCustomerAddress.getAddress().setDefault(false);
+                    if (!activeCustomerAddress.getId().equals(customerAddress.getId()) && activeCustomerAddress.isDefault()) {
+                        activeCustomerAddress.setDefault(false);
                         customerAddressDao.save(activeCustomerAddress);
                     }
                 }

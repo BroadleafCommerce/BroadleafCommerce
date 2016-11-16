@@ -82,15 +82,18 @@ public class CustomerAddressImpl implements CustomerAddress {
             group = "CustomerAddressImpl_Identification", groupOrder = 1, prominent = true, gridOrder = 1)
     protected String addressName;
 
+    @Column(name = "IS_DEFAULT")
+    @AdminPresentation(friendlyName = "CustomerAddressImpl_Default_Address", order=160, group = "CustomerAddressImpl_Address")
+    protected boolean isDefault = false;
+
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = AddressImpl.class, optional=false)
-    @JoinColumn(name = "ADDRESS_ID")
-    @Index(name="CUSTOMERADDRESS_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
-    protected Address address;
+    @Column(name = "ADDRESS_EXTERNAL_ID")
+    @Index(name="CUSTOMERADDRESS_ADDRESS_INDEX", columnNames={"ADDRESS_EXTERNAL_ID"})
+    protected Long addressExternalId;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -116,6 +119,12 @@ public class CustomerAddressImpl implements CustomerAddress {
     }
 
     @Override
+    public boolean isDefault() { return isDefault; }
+
+    @Override
+    public void setDefault(boolean isDefault) { this.isDefault = isDefault; }
+
+    @Override
     public Customer getCustomer() {
         return customer;
     }
@@ -126,20 +135,19 @@ public class CustomerAddressImpl implements CustomerAddress {
     }
 
     @Override
-    public Address getAddress() {
-        return address;
+    public Long getAddressExternalId() {
+        return addressExternalId;
     }
 
     @Override
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setAddressExternalId(Long addressReferenceId) {
+        this.addressExternalId = addressReferenceId;
     }
 
     @Override
     public String toString() {
         return (addressName == null) 
-                ? address.getFirstName() + " - " + address.getAddressLine1()
-                : addressName;
+                ? addressExternalId.toString() : addressExternalId + " - " + addressName;
     }
 
     @Override
@@ -170,7 +178,7 @@ public class CustomerAddressImpl implements CustomerAddress {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((address == null) ? 0 : address.hashCode());
+        result = prime * result + ((addressExternalId == null) ? 0 : addressExternalId.hashCode());
         result = prime * result + ((addressName == null) ? 0 : addressName.hashCode());
         result = prime * result + ((customer == null) ? 0 : customer.hashCode());
         return result;
@@ -193,11 +201,11 @@ public class CustomerAddressImpl implements CustomerAddress {
             return id.equals(other.id);
         }
 
-        if (address == null) {
-            if (other.address != null) {
+        if (addressExternalId == null) {
+            if (other.addressExternalId != null) {
                 return false;
             }
-        } else if (!address.equals(other.address)) {
+        } else if (!addressExternalId.equals(other.addressExternalId)) {
             return false;
         }
         

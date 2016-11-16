@@ -29,12 +29,16 @@ public interface CustomerPhone extends Serializable { //TODO: microservices - de
 
     public String getPhoneName();
 
+    public boolean isDefault();
+
+    public void setDefault(boolean isDefault);
+
     public Customer getCustomer();
 
     public void setCustomer(Customer customer);
 
-    public Phone getPhone();
+    public Long getPhoneExternalId();
 
-    public void setPhone(Phone phone);
+    public void setPhoneExternalId(Long phoneReferenceId);
 
 }

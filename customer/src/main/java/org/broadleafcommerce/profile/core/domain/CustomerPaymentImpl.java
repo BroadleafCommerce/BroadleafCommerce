@@ -94,9 +94,9 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = AddressImpl.class, optional = true)
-    @JoinColumn(name = "ADDRESS_ID")
-    protected Address billingAddress;
+    @Column(name = "ADDRESS_EXTERNAL_ID")
+    @Index(name="CUSTOMERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_EXTERNAL_ID"})
+    protected Long billingAddressExternalId;
 
     @Column(name = "PAYMENT_TOKEN")
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_paymentToken",
@@ -162,13 +162,13 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     }
 
     @Override
-    public Address getBillingAddress() {
-        return billingAddress;
+    public Long getBillingAddressExternalId() {
+        return billingAddressExternalId;
     }
 
     @Override
-    public void setBillingAddress(Address billingAddress) {
-        this.billingAddress = billingAddress;
+    public void setBillingAddressExternalId(Long billingAddressReferenceId) {
+        this.billingAddressExternalId = billingAddressReferenceId;
     }
 
     @Override

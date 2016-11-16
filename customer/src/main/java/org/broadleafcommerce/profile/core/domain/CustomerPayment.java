@@ -38,9 +38,9 @@ public interface CustomerPayment extends AdditionalFields, Serializable { //TODO
 
     public void setCustomer(Customer customer);
 
-    public Address getBillingAddress();
+    public Long getBillingAddressExternalId();
 
-    public void setBillingAddress(Address billingAddress);
+    public void setBillingAddressExternalId(Long billingAddressReferenceId);
 
     public String getPaymentToken();
 

@@ -54,7 +54,7 @@ public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
     public void makeCustomerPhoneDefault(Long customerPhoneId, Long customerId) {
         List<CustomerPhone> customerPhones = readActiveCustomerPhonesByCustomerId(customerId);
         for (CustomerPhone customerPhone : customerPhones) {
-            customerPhone.getPhone().setDefault(customerPhone.getId().equals(customerPhoneId));
+            customerPhone.setDefault(customerPhone.getId().equals(customerPhoneId));
             em.merge(customerPhone);
         }
     }

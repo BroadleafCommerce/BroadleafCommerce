@@ -36,13 +36,13 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
     public CustomerPhone saveCustomerPhone(CustomerPhone customerPhone) {
         List<CustomerPhone> activeCustomerPhones = readActiveCustomerPhonesByCustomerId(customerPhone.getCustomer().getId());
         if (activeCustomerPhones != null && activeCustomerPhones.isEmpty()) {
-            customerPhone.getPhone().setDefault(true);
+            customerPhone.setDefault(true);
         } else {
             // if parameter customerPhone is set as default, unset all other default phones
-            if (customerPhone.getPhone().isDefault()) {
+            if (customerPhone.isDefault()) {
                 for (CustomerPhone activeCustomerPhone : activeCustomerPhones) {
-                    if (!activeCustomerPhone.getId().equals(customerPhone.getId()) && activeCustomerPhone.getPhone().isDefault()) {
-                        activeCustomerPhone.getPhone().setDefault(false);
+                    if (!activeCustomerPhone.getId().equals(customerPhone.getId()) && activeCustomerPhone.isDefault()) {
+                        activeCustomerPhone.setDefault(false);
                         customerPhoneDao.save(activeCustomerPhone);
                     }
                 }

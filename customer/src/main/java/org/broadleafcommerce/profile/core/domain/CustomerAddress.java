@@ -30,15 +30,16 @@ public interface CustomerAddress extends Status, Serializable { //TODO: microser
 
     public String getAddressName();
 
+    public boolean isDefault();
+
+    public void setDefault(boolean isDefault);
+
     public Customer getCustomer();
 
     public void setCustomer(Customer customer);
 
-    public Address getAddress();
+    public Long getAddressExternalId();
 
-    public void setAddress(Address address);
-    
-   
-    
+    public void setAddressExternalId(Long externalId);
 
 }

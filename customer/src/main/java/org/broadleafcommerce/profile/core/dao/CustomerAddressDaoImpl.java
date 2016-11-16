@@ -59,7 +59,7 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
     public void makeCustomerAddressDefault(Long customerAddressId, Long customerId) {
         List<CustomerAddress> customerAddresses = readActiveCustomerAddressesByCustomerId(customerId);
         for (CustomerAddress customerAddress : customerAddresses) {
-            customerAddress.getAddress().setDefault(customerAddress.getId().equals(customerAddressId));
+            customerAddress.setDefault(customerAddress.getId().equals(customerAddressId));
             em.merge(customerAddress);
         }
     }

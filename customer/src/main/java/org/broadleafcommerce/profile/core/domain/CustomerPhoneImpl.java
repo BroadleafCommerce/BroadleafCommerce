@@ -82,15 +82,18 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
             groupOrder = 1, prominent = true, gridOrder = 1)
     protected String phoneName;
 
+    @Column(name = "IS_DEFAULT")
+    @AdminPresentation(friendlyName = "CustomerPhoneImpl_Default_Address", order=160, group = "CustomerPhoneImpl_Phone")
+    protected boolean isDefault = false;
+
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class, optional=false)
-    @JoinColumn(name = "PHONE_ID")
-    @Index(name="CUSTPHONE_PHONE_INDEX", columnNames={"PHONE_ID"})
-    protected Phone phone;
+    @Column(name = "PHONE_EXTERNAL_ID")
+    @Index(name="CUSTPHONE_PHONE_INDEX", columnNames={"PHONE_EXTERNAL_ID"})
+    protected Long phoneExternalId;
 
     @Override
     public Long getId() {
@@ -113,6 +116,12 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
     }
 
     @Override
+    public boolean isDefault() { return isDefault; }
+
+    @Override
+    public void setDefault(boolean isDefault) { this.isDefault = isDefault; }
+
+    @Override
     public Customer getCustomer() {
         return customer;
     }
@@ -123,13 +132,13 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
     }
 
     @Override
-    public Phone getPhone() {
-        return phone;
+    public Long getPhoneExternalId() {
+        return phoneExternalId;
     }
 
     @Override
-    public void setPhone(Phone phone) {
-        this.phone = phone;
+    public void setPhoneExternalId(Long phoneReferenceId) {
+        this.phoneExternalId = phoneReferenceId;
     }
 
     @Override
@@ -137,7 +146,7 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
         final int prime = 31;
         int result = 1;
         result = prime * result + ((customer == null) ? 0 : customer.hashCode());
-        result = prime * result + ((phone == null) ? 0 : phone.hashCode());
+        result = prime * result + ((phoneExternalId == null) ? 0 : phoneExternalId.hashCode());
         result = prime * result + ((phoneName == null) ? 0 : phoneName.hashCode());
         return result;
     }
@@ -161,10 +170,10 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
                 return false;
         } else if (!customer.equals(other.customer))
             return false;
-        if (phone == null) {
-            if (other.phone != null)
+        if (phoneExternalId == null) {
+            if (other.phoneExternalId != null)
                 return false;
-        } else if (!phone.equals(other.phone))
+        } else if (!phoneExternalId.equals(other.phoneExternalId))
             return false;
         if (phoneName == null) {
             if (other.phoneName != null)
