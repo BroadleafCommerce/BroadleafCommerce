@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -34,7 +32,16 @@ import org.hibernate.annotations.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
 
 /**
  * Created by bpolster.
@@ -121,22 +128,23 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
         this.fieldDefinitions = fieldDefinitions;
     }
 
-    @Override
-    public <G extends FieldGroup> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
-            throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        FieldGroup cloned = createResponse.getClone();
-        cloned.setInitCollapsedFlag(initCollapsedFlag);
-        cloned.setName(name);
-        for (FieldDefinition fieldDefinition : fieldDefinitions) {
-            FieldDefinition clonedDef = fieldDefinition.createOrRetrieveCopyInstance(context).getClone();
-            cloned.getFieldDefinitions().add(clonedDef);
-        }
-        return createResponse;
-    }
+// TODO microservices - deal with multitenant cloneable
+//    @Override
+//    public <G extends FieldGroup> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+//            throws CloneNotSupportedException {
+//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+//        if (createResponse.isAlreadyPopulated()) {
+//            return createResponse;
+//        }
+//        FieldGroup cloned = createResponse.getClone();
+//        cloned.setInitCollapsedFlag(initCollapsedFlag);
+//        cloned.setName(name);
+//        for (FieldDefinition fieldDefinition : fieldDefinitions) {
+//            FieldDefinition clonedDef = fieldDefinition.createOrRetrieveCopyInstance(context).getClone();
+//            cloned.getFieldDefinitions().add(clonedDef);
+//        }
+//        return createResponse;
+//    }
 
     @Override
     public Boolean isMasterFieldGroup() {

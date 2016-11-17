@@ -17,34 +17,31 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
-import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
-
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * Created by jfischer
- * @deprecated use {@link DataDrivenEnumerationValue} instead
+ * Created by bpolster.
  */
-@Deprecated
-public interface FieldEnumerationItem extends Serializable {
-    
-    FieldEnumeration getFieldEnumeration();
+public interface FieldGroup extends Serializable { // TODO microservices - deal with , MultiTenantCloneable<FieldGroup> {
 
-    void setFieldEnumeration(FieldEnumeration fieldEnumeration);
+    public Long getId();
 
-    int getFieldOrder();
+    public void setId(Long id);
 
-    void setFieldOrder(int fieldOrder);
+    public String getName();
 
-    String getFriendlyName();
+    public void setName(String name);
 
-    void setFriendlyName(String friendlyName);
+    public Boolean getInitCollapsedFlag();
 
-    Long getId();
+    public void setInitCollapsedFlag(Boolean initCollapsedFlag);
 
-    void setId(Long id);
+    public List<FieldDefinition> getFieldDefinitions();
 
-    String getName();
+    public void setFieldDefinitions(List<FieldDefinition> fieldDefinitions);
 
-    void setName(String name);
+    public Boolean isMasterFieldGroup();
+
+    public void setIsMasterFieldGroup(Boolean isMasterFieldGroup);
 }

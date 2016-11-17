@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -327,7 +325,7 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     public void setFieldOrder(int fieldOrder) {
         this.fieldOrder = fieldOrder;
     }
-
+    
     @Override
     public DataDrivenEnumeration getDataDrivenEnumeration() {
         return dataDrivenEnumeration;
@@ -368,38 +366,39 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
         this.hint = hint;
     }
 
-    @Override
-    public <G extends FieldDefinition> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
-            throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        FieldDefinition cloned = createResponse.getClone();
-        cloned.setName(name);
-        cloned.setFriendlyName(friendlyName);
-        cloned.setFieldType(fieldType);
-        cloned.setSecurityLevel(securityLevel);
-        cloned.setHiddenFlag(hiddenFlag);
-        cloned.setValidationRegEx(validationRegEx);
-        cloned.setValidationErrorMesageKey(validationErrorMesageKey);
-        cloned.setMaxLength(maxLength);
-        cloned.setColumnWidth(columnWidth);
-        cloned.setTextAreaFlag(textAreaFlag);
-        cloned.setRequiredFlag(requiredFlag);
-        if (dataDrivenEnumeration != null) {
-            cloned.setDataDrivenEnumeration(dataDrivenEnumeration.createOrRetrieveCopyInstance(context).getClone());
-        }
-        cloned.setAllowMultiples(allowMultiples);
-        if (fieldGroup != null) {
-            cloned.setFieldGroup(fieldGroup.createOrRetrieveCopyInstance(context).getClone());
-        }
-        cloned.setFieldOrder(fieldOrder);
-        cloned.setTooltip(tooltip);
-        cloned.setHelpText(helpText);
-        cloned.setHint(hint);
-        return createResponse;
-    }
+// TODO microservices - deal with multitenant cloneable
+//    @Override
+//    public <G extends FieldDefinition> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+//            throws CloneNotSupportedException {
+//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+//        if (createResponse.isAlreadyPopulated()) {
+//            return createResponse;
+//        }
+//        FieldDefinition cloned = createResponse.getClone();
+//        cloned.setName(name);
+//        cloned.setFriendlyName(friendlyName);
+//        cloned.setFieldType(fieldType);
+//        cloned.setSecurityLevel(securityLevel);
+//        cloned.setHiddenFlag(hiddenFlag);
+//        cloned.setValidationRegEx(validationRegEx);
+//        cloned.setValidationErrorMesageKey(validationErrorMesageKey);
+//        cloned.setMaxLength(maxLength);
+//        cloned.setColumnWidth(columnWidth);
+//        cloned.setTextAreaFlag(textAreaFlag);
+//        cloned.setRequiredFlag(requiredFlag);
+//        if (dataDrivenEnumeration != null) {
+//            cloned.setDataDrivenEnumeration(dataDrivenEnumeration.createOrRetrieveCopyInstance(context).getClone());
+//        }
+//        cloned.setAllowMultiples(allowMultiples);
+//        if (fieldGroup != null) {
+//            cloned.setFieldGroup(fieldGroup.createOrRetrieveCopyInstance(context).getClone());
+//        }
+//        cloned.setFieldOrder(fieldOrder);
+//        cloned.setTooltip(tooltip);
+//        cloned.setHelpText(helpText);
+//        cloned.setHint(hint);
+//        return createResponse;
+//    }
 
 }
 
