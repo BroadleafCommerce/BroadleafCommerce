@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.common.extension;
 
-import org.broadleafcommerce.common.site.domain.SiteImpl;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-
 /**
  * <p>
  * Extension handler used for contributions to native Object methods on entity like equals() clone() and hashCode(). It is

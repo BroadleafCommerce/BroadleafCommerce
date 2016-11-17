@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.file.service;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,8 +27,6 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.FileServiceException;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.type.FileApplicationType;
-import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -354,16 +351,17 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
             path = tempFileSystemBaseDirectory;
         }
 
-        if (!skipSite) {
-            // Create site specific directory if Multi-site (all site files will be located in the same directory)
-            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            if (brc != null && brc.getSite() != null) {
-                String siteDirectory = "site-" + brc.getSite().getId();
-                String siteHash = DigestUtils.md5Hex(siteDirectory);
-                path = FilenameUtils.concat(path, siteHash.substring(0, 2));
-                path = FilenameUtils.concat(path, siteDirectory);
-            }
-        }
+// TODO microservices - deal with site discrimination along with BroadleafRequestContext
+//        if (!skipSite) {
+//            // Create site specific directory if Multi-site (all site files will be located in the same directory)
+//            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+//            if (brc != null && brc.getSite() != null) {
+//                String siteDirectory = "site-" + brc.getSite().getId();
+//                String siteHash = DigestUtils.md5Hex(siteDirectory);
+//                path = FilenameUtils.concat(path, siteHash.substring(0, 2));
+//                path = FilenameUtils.concat(path, siteDirectory);
+//            }
+//        }
 
         return path;
     }
