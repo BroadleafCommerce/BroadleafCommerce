@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
+import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
@@ -84,9 +85,12 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                 sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(),
                     (ActivityMessages) context);
             } catch (RequiredAttributeNotProvidedException e) {
-                // Mark the request as a configuration error and proceed with the add.
-                orderItemRequestDTO.setHasConfigurationError(Boolean.TRUE);
-                return context;
+                if (orderItemRequestDTO instanceof ConfigurableOrderItemRequest) {
+                    // Mark the request as a configuration error and proceed with the add.
+                    orderItemRequestDTO.setHasConfigurationError(Boolean.TRUE);
+                    return context;
+                }
+                throw e;
             }
 
             addSkuToCart(sku, orderItemRequestDTO, product, request);
