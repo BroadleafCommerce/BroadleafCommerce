@@ -18,8 +18,8 @@
 
 package org.broadleafcommerce.cms.web.processor;
 
+import org.broadleafcommerce.cms.file.service.StaticAssetPathService;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
-import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModifierProcessor;

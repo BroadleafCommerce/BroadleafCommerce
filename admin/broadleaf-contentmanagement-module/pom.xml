@@ -80,6 +80,16 @@
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-content</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-common</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>

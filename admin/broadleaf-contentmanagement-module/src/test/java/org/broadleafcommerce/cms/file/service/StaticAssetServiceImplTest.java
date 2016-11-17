@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.cms.file.service;
 
-import org.broadleafcommerce.common.file.service.StaticAssetPathServiceImpl;
-
 import junit.framework.TestCase;
 
 /**

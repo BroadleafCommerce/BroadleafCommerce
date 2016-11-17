@@ -18,9 +18,9 @@
 package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.cms.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.template.TemplateType;

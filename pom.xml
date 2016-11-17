@@ -309,6 +309,7 @@
     </build>
     <modules>
         <module>contact</module>
+        <module>content</module>
         <module>customer</module>
         <module>order</module>
         <module>micro-common</module>
@@ -520,6 +521,13 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-contact</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.broadleafcommerce</groupId>
+                <artifactId>broadleaf-content</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
