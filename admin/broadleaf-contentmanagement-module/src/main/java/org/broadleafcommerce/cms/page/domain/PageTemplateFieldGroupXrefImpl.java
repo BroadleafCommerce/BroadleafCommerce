@@ -19,8 +19,6 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -32,8 +30,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Polymorphism;
-import org.hibernate.annotations.PolymorphismType;
 
 import java.math.BigDecimal;
 
@@ -135,20 +131,21 @@ public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXre
         return groupOrder;
     }
 
-    @Override
-    public <G extends PageTemplateFieldGroupXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        PageTemplateFieldGroupXref cloned = createResponse.getClone();
-        if (pageTemplate != null) {
-            cloned.setPageTemplate(pageTemplate.createOrRetrieveCopyInstance(context).getClone());
-        }
-        if (fieldGroup != null) {
-            cloned.setFieldGroup(fieldGroup.createOrRetrieveCopyInstance(context).getClone());
-        }
-        cloned.setGroupOrder(groupOrder);
-        return createResponse;
-    }
+// TODO microservices - deal with multitenant cloneable
+//    @Override
+//    public <G extends PageTemplateFieldGroupXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+//        if (createResponse.isAlreadyPopulated()) {
+//            return createResponse;
+//        }
+//        PageTemplateFieldGroupXref cloned = createResponse.getClone();
+//        if (pageTemplate != null) {
+//            cloned.setPageTemplate(pageTemplate.createOrRetrieveCopyInstance(context).getClone());
+//        }
+//        if (fieldGroup != null) {
+//            cloned.setFieldGroup(fieldGroup.createOrRetrieveCopyInstance(context).getClone());
+//        }
+//        cloned.setGroupOrder(groupOrder);
+//        return createResponse;
+//    }
 }

@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.value.ValueAssignable;
 
 /**
@@ -25,7 +24,7 @@ import org.broadleafcommerce.common.value.ValueAssignable;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public interface PageAttribute extends ValueAssignable<String>,MultiTenantCloneable<PageAttribute> {
+public interface PageAttribute extends ValueAssignable<String> { //TODO microservices - deal with,MultiTenantCloneable<PageAttribute> {
 
     /**
      * Returns the id

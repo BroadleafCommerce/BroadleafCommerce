@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -167,17 +165,18 @@ public class PageAttributeImpl implements PageAttribute, ProfileEntity {
         return true;
     }
 
-    @Override
-    public <G extends PageAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        PageAttribute cloned = createResponse.getClone();
-        CreateResponse<Page> pageCloneRsp = page.createOrRetrieveCopyInstance(context);
-        cloned.setPage(pageCloneRsp.getClone());
-        cloned.setName(name);
-        cloned.setValue(value);
-        return createResponse;
-    }
+// TODO microservices - deal with multitenant cloneable
+//    @Override
+//    public <G extends PageAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+//        if (createResponse.isAlreadyPopulated()) {
+//            return createResponse;
+//        }
+//        PageAttribute cloned = createResponse.getClone();
+//        CreateResponse<Page> pageCloneRsp = page.createOrRetrieveCopyInstance(context);
+//        cloned.setPage(pageCloneRsp.getClone());
+//        cloned.setName(name);
+//        cloned.setValue(value);
+//        return createResponse;
+//    }
 }

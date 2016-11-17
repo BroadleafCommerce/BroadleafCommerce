@@ -18,12 +18,12 @@
 package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
+import java.io.Serializable;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * A structured content field template holds the structure for a
@@ -35,7 +35,7 @@ import java.util.List;
  *
  * @author bpolster
  */
-public interface StructuredContentFieldTemplate extends Serializable, MultiTenantCloneable<StructuredContentFieldTemplate> {
+public interface StructuredContentFieldTemplate extends Serializable { //TODO microservices - deal with , MultiTenantCloneable<StructuredContentFieldTemplate> {
 
     /**
      * Gets the primary key.

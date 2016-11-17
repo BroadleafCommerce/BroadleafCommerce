@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -175,18 +173,19 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         return newField;
     }
 
-    @Override
-    public <G extends StructuredContentItemCriteria> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        StructuredContentItemCriteria cloned = createResponse.getClone();
-        if (structuredContent != null) {
-            cloned.setStructuredContent(structuredContent.createOrRetrieveCopyInstance(context).getClone());
-        }
-        cloned.setMatchRule(orderItemMatchRule);
-        cloned.setQuantity(quantity);
-        return createResponse;
-    }
+// TODO microservices - deal with multitenant cloneable
+//    @Override
+//    public <G extends StructuredContentItemCriteria> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+//        if (createResponse.isAlreadyPopulated()) {
+//            return createResponse;
+//        }
+//        StructuredContentItemCriteria cloned = createResponse.getClone();
+//        if (structuredContent != null) {
+//            cloned.setStructuredContent(structuredContent.createOrRetrieveCopyInstance(context).getClone());
+//        }
+//        cloned.setMatchRule(orderItemMatchRule);
+//        cloned.setQuantity(quantity);
+//        return createResponse;
+//    }
 }

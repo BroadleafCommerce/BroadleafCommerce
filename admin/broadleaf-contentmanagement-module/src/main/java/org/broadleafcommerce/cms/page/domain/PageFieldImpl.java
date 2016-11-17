@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -142,25 +140,24 @@ public class PageFieldImpl implements PageField, ProfileEntity {
         this.page = page;
     }
 
-    @Override
-    public <G extends PageField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        PageField cloned = createResponse.getClone();
-        if (page != null) {
-            cloned.setPage(page.createOrRetrieveCopyInstance(context).getClone());
-        }
-        cloned.setFieldKey(fieldKey);
-        //we don't want to engage the dynamic behavior housed in the getter/setter methods for these fields
-        ((PageFieldImpl) cloned).stringValue = stringValue;
-        ((PageFieldImpl) cloned).lobValue = lobValue;
-
-        return createResponse;
-
-
-    }
+// TODO microservices - deal with multitenant cloneable
+//    @Override
+//    public <G extends PageField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+//
+//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+//        if (createResponse.isAlreadyPopulated()) {
+//            return createResponse;
+//        }
+//        PageField cloned = createResponse.getClone();
+//        if (page != null) {
+//            cloned.setPage(page.createOrRetrieveCopyInstance(context).getClone());
+//        }
+//        cloned.setFieldKey(fieldKey);
+//        //we don't want to engage the dynamic behavior housed in the getter/setter methods for these fields
+//        ((PageFieldImpl) cloned).stringValue = stringValue;
+//        ((PageFieldImpl) cloned).lobValue = lobValue;
+//
+//        return createResponse;
+//    }
 }
 

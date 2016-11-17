@@ -17,11 +17,10 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Serializable;
 
 /**
  * A content type corresponds to an area where content should be targeted.   For example,
@@ -36,7 +35,7 @@ import java.io.Serializable;
  *
  * @author bpolster.
  */
-public interface StructuredContentType extends Serializable,MultiTenantCloneable<StructuredContentType> {
+public interface StructuredContentType extends Serializable { //TODO microservices - deal with ,MultiTenantCloneable<StructuredContentType> {
 
     /**
      * Gets the primary key.

@@ -18,8 +18,6 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMapOverride;
 import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
@@ -316,39 +314,40 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
         this.excludeFromSiteMap = excludeFromSiteMap;
     }
 
-    @Override
-    public <G extends Page> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-
-        Page cloned = createResponse.getClone();
-        cloned.setPriority(priority);
-        cloned.setActiveEndDate(activeEndDate);
-        cloned.setActiveStartDate(activeStartDate);
-        cloned.setDescription(description);
-        cloned.setExcludeFromSiteMap(getExcludeFromSiteMap());
-        cloned.setFullUrl(fullUrl);
-        cloned.setMetaDescription(metaDescription);
-        cloned.setOfflineFlag(offlineFlag);
-        cloned.setMetaTitle(metaTitle);
-        for(Map.Entry<String, PageField> entry : pageFields.entrySet()){
-            CreateResponse<PageField> clonedPageField = entry.getValue().createOrRetrieveCopyInstance(context);
-            PageField pageField = clonedPageField.getClone();
-            cloned.getPageFields().put(entry.getKey(),pageField);
-        }
-        for(Map.Entry<String,PageRule> entry : pageMatchRules.entrySet()){
-            CreateResponse<PageRule> clonedRsp = entry.getValue().createOrRetrieveCopyInstance(context);
-            PageRule clonedRule = clonedRsp.getClone();
-            cloned.getPageMatchRules().put(entry.getKey(),clonedRule);
-        }
-        if (pageTemplate != null){
-            CreateResponse<PageTemplate> clonedTemplateRsp = pageTemplate.createOrRetrieveCopyInstance(context);
-            cloned.setPageTemplate(clonedTemplateRsp.getClone());
-        }
-        return createResponse;
-    }
+// TODO microservices - deal with multitenant cloneable
+//    @Override
+//    public <G extends Page> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+//        if (createResponse.isAlreadyPopulated()) {
+//            return createResponse;
+//        }
+//
+//        Page cloned = createResponse.getClone();
+//        cloned.setPriority(priority);
+//        cloned.setActiveEndDate(activeEndDate);
+//        cloned.setActiveStartDate(activeStartDate);
+//        cloned.setDescription(description);
+//        cloned.setExcludeFromSiteMap(getExcludeFromSiteMap());
+//        cloned.setFullUrl(fullUrl);
+//        cloned.setMetaDescription(metaDescription);
+//        cloned.setOfflineFlag(offlineFlag);
+//        cloned.setMetaTitle(metaTitle);
+//        for(Map.Entry<String, PageField> entry : pageFields.entrySet()){
+//            CreateResponse<PageField> clonedPageField = entry.getValue().createOrRetrieveCopyInstance(context);
+//            PageField pageField = clonedPageField.getClone();
+//            cloned.getPageFields().put(entry.getKey(),pageField);
+//        }
+//        for(Map.Entry<String,PageRule> entry : pageMatchRules.entrySet()){
+//            CreateResponse<PageRule> clonedRsp = entry.getValue().createOrRetrieveCopyInstance(context);
+//            PageRule clonedRule = clonedRsp.getClone();
+//            cloned.getPageMatchRules().put(entry.getKey(),clonedRule);
+//        }
+//        if (pageTemplate != null){
+//            CreateResponse<PageTemplate> clonedTemplateRsp = pageTemplate.createOrRetrieveCopyInstance(context);
+//            cloned.setPageTemplate(clonedTemplateRsp.getClone());
+//        }
+//        return createResponse;
+//    }
 
     @Override
     public String getMainEntityName() {

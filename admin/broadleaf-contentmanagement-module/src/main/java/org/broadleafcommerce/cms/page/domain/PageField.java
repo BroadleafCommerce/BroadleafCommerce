@@ -17,14 +17,12 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-
 import java.io.Serializable;
 
 /**
  * Created by bpolster.
  */
-public interface PageField extends Serializable,MultiTenantCloneable<PageField> {
+public interface PageField extends Serializable { // TODO microservices - deal with ,MultiTenantCloneable<PageField> {
 
     public Long getId();
 

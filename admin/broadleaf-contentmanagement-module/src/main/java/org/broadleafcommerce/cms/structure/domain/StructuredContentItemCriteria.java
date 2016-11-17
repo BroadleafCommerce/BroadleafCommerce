@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
 
 import javax.annotation.Nonnull;
@@ -33,7 +32,7 @@ import javax.annotation.Nonnull;
  * @see org.broadleafcommerce.core.order.service.StructuredContentCartRuleProcessor
  * @author bpolster
  */
-public interface StructuredContentItemCriteria extends QuantityBasedRule,MultiTenantCloneable<StructuredContentItemCriteria> {
+public interface StructuredContentItemCriteria extends QuantityBasedRule { //TODO microservices - deal with ,MultiTenantCloneable<StructuredContentItemCriteria> {
 
     /**
      * Returns the parent <code>StructuredContent</code> item to which this
