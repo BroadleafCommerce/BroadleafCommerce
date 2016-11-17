@@ -669,22 +669,23 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (metadata.getExplicitFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
             //this is a lookup - exclude the fields on this OneToOne or ManyToOne field
+            //metadata.setExcluded(true);
             if (basicFieldMetadata.getForcePopulateChildProperties() == null || !basicFieldMetadata.getForcePopulateChildProperties()) {
                 metadata.setChildrenExcluded(true);
             }
-        }
-
-        if (basicFieldMetadata.getExcluded() != null) {
-            if (LOG.isDebugEnabled()) {
-                if (basicFieldMetadata.getExcluded()) {
-                    LOG.debug("buildBasicMetadata:Excluding " + field.getName() + " because it was explicitly declared in config");
-                } else {
-                    LOG.debug("buildBasicMetadata:Showing " + field.getName() + " because it was explicitly declared in config");
+            //metadata.setVisibility(VisibilityEnum.GRID_HIDDEN);
+        } else {
+            if (basicFieldMetadata.getExcluded() != null) {
+                if (LOG.isDebugEnabled()) {
+                    if (basicFieldMetadata.getExcluded()) {
+                        LOG.debug("buildBasicMetadata:Excluding " + field.getName() + " because it was explicitly declared in config");
+                    } else {
+                        LOG.debug("buildBasicMetadata:Showing " + field.getName() + " because it was explicitly declared in config");
+                    }
                 }
+                metadata.setExcluded(basicFieldMetadata.getExcluded());
             }
-            metadata.setExcluded(basicFieldMetadata.getExcluded());
         }
-
         if (basicFieldMetadata.getGroup() != null) {
             metadata.setGroup(basicFieldMetadata.getGroup());
         }
