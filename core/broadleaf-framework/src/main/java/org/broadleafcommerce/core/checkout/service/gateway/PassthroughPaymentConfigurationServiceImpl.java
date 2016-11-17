@@ -20,12 +20,13 @@ package org.broadleafcommerce.core.checkout.service.gateway;
 import org.broadleafcommerce.common.payment.service.AbstractPaymentGatewayConfigurationService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayRollbackService;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 /**
  * A Default Configuration to handle Passthrough Payments, for example COD payments.
- * This default implementation just supports a rollback service.
+ * This default implementation just supports a rollback service and transaction service.
  *
  * @author Elbert Bautista (elbertbautista)
  */
@@ -38,9 +39,17 @@ public class PassthroughPaymentConfigurationServiceImpl extends AbstractPaymentG
     @Resource(name = "blPassthroughPaymentRollbackService")
     protected PaymentGatewayRollbackService rollbackService;
 
+    @Resource(name = "blPassthroughPaymentTransactionService")
+    protected PaymentGatewayTransactionService transactionService;
+
     @Override
     public PaymentGatewayConfiguration getConfiguration() {
         return configuration;
+    }
+
+    @Override
+    public PaymentGatewayTransactionService getTransactionService() {
+        return transactionService;
     }
 
 }

@@ -60,7 +60,7 @@ public class PassthroughPaymentConfigurationImpl extends AbstractPaymentGatewayC
 
     @Override
     public boolean handlesCapture() {
-        return false;
+        return true;
     }
 
     @Override
@@ -70,17 +70,17 @@ public class PassthroughPaymentConfigurationImpl extends AbstractPaymentGatewayC
 
     @Override
     public boolean handlesReverseAuthorize() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean handlesVoid() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean handlesRefund() {
-        return false;
+        return true;
     }
 
     @Override
