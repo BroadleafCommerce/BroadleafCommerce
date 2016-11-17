@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.enumeration.domain;
 
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -142,21 +140,22 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
         this.enumValues = orderItems;
     }
 
-    @Override
-    public <G extends DataDrivenEnumeration> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
-            throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        DataDrivenEnumeration cloned = createResponse.getClone();
-        cloned.setKey(key);
-        cloned.setModifiable(modifiable);
-        for (DataDrivenEnumerationValue value : enumValues) {
-            DataDrivenEnumerationValue clonedValue = value.createOrRetrieveCopyInstance(context).getClone();
-            cloned.getEnumValues().add(clonedValue);
-        }
-        return createResponse;
-    }
+// TODO microservices - deal with multitenant cloneable
+//    @Override
+//    public <G extends DataDrivenEnumeration> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+//            throws CloneNotSupportedException {
+//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+//        if (createResponse.isAlreadyPopulated()) {
+//            return createResponse;
+//        }
+//        DataDrivenEnumeration cloned = createResponse.getClone();
+//        cloned.setKey(key);
+//        cloned.setModifiable(modifiable);
+//        for (DataDrivenEnumerationValue value : enumValues) {
+//            DataDrivenEnumerationValue clonedValue = value.createOrRetrieveCopyInstance(context).getClone();
+//            cloned.getEnumValues().add(clonedValue);
+//        }
+//        return createResponse;
+//    }
 
 }
