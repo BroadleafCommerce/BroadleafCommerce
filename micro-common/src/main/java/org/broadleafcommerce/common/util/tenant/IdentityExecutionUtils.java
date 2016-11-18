@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.util.TransactionUtils;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -52,7 +52,7 @@ public class IdentityExecutionUtils {
         context.setIdentifier(site);
         IdentityUtilContext.setUtilContext(context);
 
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext brc = CommonRequestContext.getCommonRequestContext();
         Site previousSite = brc.getSite();
         Catalog previousCatalog = brc.getCurrentCatalog();
         Site previousProfile = brc.getCurrentProfile();
@@ -78,11 +78,11 @@ public class IdentityExecutionUtils {
             }
             IdentityUtilContext.setUtilContext(null);
             if (isNew) {
-                BroadleafRequestContext.setBroadleafRequestContext(null);
+                CommonRequestContext.setCommonRequestContext(null);
             }
-            BroadleafRequestContext.getBroadleafRequestContext().setSite(previousSite);
-            BroadleafRequestContext.getBroadleafRequestContext().setCurrentCatalog(previousCatalog);
-            BroadleafRequestContext.getBroadleafRequestContext().setCurrentProfile(previousProfile);
+            CommonRequestContext.getCommonRequestContext().setSite(previousSite);
+            CommonRequestContext.getCommonRequestContext().setCurrentCatalog(previousCatalog);
+            CommonRequestContext.getCommonRequestContext().setCurrentProfile(previousProfile);
         }
     }
 
@@ -108,14 +108,14 @@ public class IdentityExecutionUtils {
     
     public static <T, G extends Throwable> T runOperationAndIgnoreIdentifier(IdentityOperation<T, G> operation, 
             PlatformTransactionManager transactionManager) throws G {
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext brc = CommonRequestContext.getCommonRequestContext();
         Site previousSite = brc.getSite();
         Catalog previousCatalog = brc.getCurrentCatalog();
         Site previousProfile = brc.getCurrentProfile();
     
         boolean isNew = initRequestContext(null, null, null);
-        boolean isIgnoringSite = BroadleafRequestContext.getBroadleafRequestContext().getIgnoreSite();
-        BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(true);
+        boolean isIgnoringSite = CommonRequestContext.getCommonRequestContext().getIgnoreSite();
+        CommonRequestContext.getCommonRequestContext().setIgnoreSite(true);
 
         activateSession();
         
@@ -135,22 +135,22 @@ public class IdentityExecutionUtils {
             }
             
             if (isNew) {
-                BroadleafRequestContext.setBroadleafRequestContext(null);
+                CommonRequestContext.setCommonRequestContext(null);
             }
-            BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(isIgnoringSite);
-            BroadleafRequestContext.getBroadleafRequestContext().setSite(previousSite);
-            BroadleafRequestContext.getBroadleafRequestContext().setCurrentCatalog(previousCatalog);
-            BroadleafRequestContext.getBroadleafRequestContext().setCurrentProfile(previousProfile);
+            CommonRequestContext.getCommonRequestContext().setIgnoreSite(isIgnoringSite);
+            CommonRequestContext.getCommonRequestContext().setSite(previousSite);
+            CommonRequestContext.getCommonRequestContext().setCurrentCatalog(previousCatalog);
+            CommonRequestContext.getCommonRequestContext().setCurrentProfile(previousProfile);
         }
     }
 
     private static boolean initRequestContext(Site site, Site profile, Catalog catalog) {
         boolean isNew = false;
-        BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext requestContext = CommonRequestContext.getCommonRequestContext();
 
         if (requestContext == null) {
-            requestContext = new BroadleafRequestContext();
-            BroadleafRequestContext.setBroadleafRequestContext(requestContext);
+            requestContext = new CommonRequestContext();
+            CommonRequestContext.setCommonRequestContext(requestContext);
             isNew = true;
         }
 

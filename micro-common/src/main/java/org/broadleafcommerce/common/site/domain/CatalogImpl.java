@@ -24,7 +24,6 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -111,7 +110,9 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
 
     @Override
     public String getName() {
-        return DynamicTranslationProvider.getValue(this, "name", name);
+        // TODO microservices - deal with i18n
+        //return DynamicTranslationProvider.getValue(this, "name", name);
+        return name;
     }
 
     @Override
