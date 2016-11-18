@@ -18,29 +18,26 @@
 package org.broadleafcommerce.common.web;
 
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
-import org.broadleafcommerce.common.site.domain.Catalog;
-import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Convenient holder class for various objects to be automatically available on thread local without invoking the various
@@ -83,10 +80,6 @@ public class CommonRequestContext {
     protected Map<String, Object> additionalProperties = new HashMap<String, Object>();
     protected MessageSource messageSource;
     protected RequestDTO requestDTO;
-    protected Site site;
-    protected Catalog currentCatalog;
-    protected Site currentProfile;
-    protected Boolean ignoreSite = false;
 
     /**
      * Gets the current request on the context
@@ -231,63 +224,6 @@ public class CommonRequestContext {
             secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
         }
         return secure;
-    }
-    
-    public Catalog getCurrentCatalog() {
-        return currentCatalog;
-    }
-
-    public void setCurrentCatalog(Catalog currentCatalog) {
-        this.currentCatalog = currentCatalog;
-    }
-
-    public Site getCurrentProfile() {
-        return currentProfile;
-    }
-
-    public void setCurrentProfile(Site currentProfile) {
-        this.currentProfile = currentProfile;
-    }
-    
-    /**
-     * Returns a Site instance that is not attached to any Hibernate session
-     * @return
-     * @deprecated this has been changed to {@link #getNonPersistentSite()} to explicitly indicate that the site
-     * being returned is not attached to a Hibernate session
-     */
-    @Deprecated
-    public Site getSite() {
-        return getNonPersistentSite();
-    }
-
-    /**
-     * @deprecated this has been changed to {@link #setNonPersistentSite()} to explicitly indicate that the site being set
-     * is not attached to an active Hibernate session
-     */
-    @Deprecated
-    public void setSite(Site site) {
-        setNonPersistentSite(site);
-    }
-    
-    /**
-     * @return the site that is currently associated to this request thread. The site that is returned is not attached to a
-     * Hibernate session and thus cannot lazy-load collection properties. For additional collections that are added to
-     * extensions of {@link Site}, they should be manually cloned by overriding the clone() method.
-     */
-    public Site getNonPersistentSite() {
-        return site;
-    }
-    
-    public void setNonPersistentSite(Site site) {
-        this.site = site;
-    }
-    
-    public Boolean getIgnoreSite() {
-        return ignoreSite;
-    }
-
-    public void setIgnoreSite(Boolean ignoreSite) {
-        this.ignoreSite = ignoreSite;
     }
 
     @SuppressWarnings("unchecked")

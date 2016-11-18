@@ -23,9 +23,11 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
@@ -35,6 +37,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -136,9 +139,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
 
     @Override
     public String getName() {
-        // TODO microservices - deal with i18n
-        //return DynamicTranslationProvider.getValue(this, "name", name);
-        return name;
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
