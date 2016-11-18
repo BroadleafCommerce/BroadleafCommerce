@@ -110,7 +110,7 @@ public class BroadleafCartController extends AbstractCartController {
      * @throws NumberFormatException 
      */
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
-            OrderItemRequestDTO itemRequest) throws IOException, AddToCartException, PricingException, NumberFormatException, RemoveFromCartException  {
+            OrderItemRequestDTO itemRequest) throws IOException, AddToCartException, PricingException, NumberFormatException, RemoveFromCartException, IllegalArgumentException  {
         Order cart = CartState.getCart();
         
         // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
