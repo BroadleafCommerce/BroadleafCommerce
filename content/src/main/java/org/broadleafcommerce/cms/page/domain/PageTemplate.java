@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.cms.field.domain.FieldGroup;
-import org.broadleafcommerce.common.locale.domain.Locale;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -43,24 +40,6 @@ public interface PageTemplate extends Serializable { // TODO microservices - dea
     public String getTemplatePath();
 
     public void setTemplatePath(String templatePath);
-
-    /**
-     * @deprecated in favor of translating individual fields
-     * @return
-     */
-    public Locale getLocale();
-
-    /**
-     * @deprecated in favor of translating individual fields
-     * @return
-     */
-    public void setLocale(Locale locale);
-
-    @Deprecated
-    public List<FieldGroup> getFieldGroups();
-
-    @Deprecated
-    public void setFieldGroups(List<FieldGroup> fieldGroups);
 
     public List<PageTemplateFieldGroupXref> getFieldGroupXrefs();
 

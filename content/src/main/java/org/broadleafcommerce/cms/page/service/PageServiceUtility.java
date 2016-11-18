@@ -29,12 +29,10 @@ import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
 import org.broadleafcommerce.cms.page.domain.PageRule;
 import org.broadleafcommerce.cms.page.domain.PageTemplateFieldGroupXref;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.springframework.stereotype.Service;
 
@@ -60,17 +58,15 @@ public class PageServiceUtility {
     @Resource(name="blPageDao")
     protected PageDao pageDao;
     
-    @Resource(name = "blGenericEntityDao")
-    protected GenericEntityDao genericDao;
+// TODO microservices - deal with what will replace the generic entity dao
+//    @Resource(name = "blGenericEntityDao")
+//    protected GenericEntityDao genericDao;
 
     @Resource(name = "blPageServiceExtensionManager")
     protected PageServiceExtensionManager extensionManager;
 
     @Resource(name="blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
-
-    @Resource(name = "blSandBoxHelper")
-    protected SandBoxHelper sandBoxHelper;
 
     public PageDTO buildPageDTO(Page page, boolean secure) {
         PageDTO pageDTO = new PageDTO();
@@ -81,9 +77,10 @@ public class PageServiceUtility {
 
         if (page.getPageTemplate() != null) {
             pageDTO.setTemplatePath(page.getPageTemplate().getTemplatePath());
-            if (page.getPageTemplate().getLocale() != null) {
-                pageDTO.setLocaleCode(page.getPageTemplate().getLocale().getLocaleCode());
-            }
+// TODO microservices - deal with locale
+//            if (page.getPageTemplate().getLocale() != null) {
+//                pageDTO.setLocaleCode(page.getPageTemplate().getLocale().getLocaleCode());
+//            }
         }
 
         for (String fieldKey : page.getPageFields().keySet()) {
@@ -199,7 +196,8 @@ public class PageServiceUtility {
                 String id = ((String) entry.getValue()).split("\\|")[2];
                 Object newValue = null;
                 if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(id) && !"null".equals(id)) {
-                    newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
+                    // TODO microservices - deal with what will replace the generic entity dao
+                    //newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
                 }
                 if (newValue != null) {
                     clone.getPageFields().put(entry.getKey(), newValue);

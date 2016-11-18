@@ -20,7 +20,6 @@ package org.broadleafcommerce.cms.page.dao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
-import org.broadleafcommerce.common.locale.domain.Locale;
 
 import java.util.List;
 
@@ -75,10 +74,11 @@ public interface PageDao {
     public List<PageTemplate> readAllPageTemplates();
 
     public List<Page> findPageByURI(String uri);
-    
-    public List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri);
 
-    public List<Page> findPageByURI(Locale locale, String uri);
+// TODO microservices - deal with locale
+//    public List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri);
+//
+//    public List<Page> findPageByURI(Locale locale, String uri);
 
     public void detachPage(Page page);
 

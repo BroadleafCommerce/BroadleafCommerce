@@ -24,7 +24,6 @@ import org.broadleafcommerce.common.file.service.BroadleafFileUtils;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 
 import java.util.HashMap;
@@ -61,10 +60,11 @@ public class BroadleafRobotsController {
     	
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
-
-        PageDTO page = pageService.findPageByURI(null,
-                "/robots.txt", buildMvelParameters(request), isSecure(request));
-
+        
+        //TODO microservices - deal with locale
+        //PageDTO page = pageService.findPageByURI(null,
+        //        "/robots.txt", buildMvelParameters(request), isSecure(request));
+        PageDTO page = null;
         if (page != null && page.getPageFields().containsKey("body")) {
             String body = (String) page.getPageFields().get("body");
             body = body.replace("${siteBaseUrl}", baseUrlResolver.getSiteBaseUrl());

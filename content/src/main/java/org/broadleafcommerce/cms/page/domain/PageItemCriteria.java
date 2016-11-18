@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
 
 import javax.annotation.Nonnull;
@@ -33,7 +32,7 @@ import javax.annotation.Nonnull;
  * @see org.broadleafcommerce.core.order.service.PageCartRuleProcessor
  * @author bpolster
  */
-public interface PageItemCriteria extends QuantityBasedRule,MultiTenantCloneable<PageItemCriteria> {
+public interface PageItemCriteria extends QuantityBasedRule { //TODO microservices - deal with ,MultiTenantCloneable<PageItemCriteria> {
 
     /**
      * Returns the parent <code>Page</code> to which this

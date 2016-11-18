@@ -23,10 +23,7 @@ import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
 import org.broadleafcommerce.cms.page.domain.PageImpl;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
-import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.ejb.QueryHints;
@@ -54,11 +51,12 @@ import javax.persistence.criteria.Root;
 @Repository("blPageDao")
 public class PageDaoImpl implements PageDao {
 
-    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
-
-    {
-        DUMMY_SANDBOX.setId(-1l);
-    }
+// TODO microservices - deal with sandbox object (this probably can be deleted though)
+//    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
+//
+//    {
+//        DUMMY_SANDBOX.setId(-1l);
+//    }
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
@@ -155,21 +153,27 @@ public class PageDaoImpl implements PageDao {
         return pages;
     }
 
-    @Override
-    public List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri) {
-        Query query;
-
-        if (languageOnlyLocale == null) {
-            languageOnlyLocale = fullLocale;
-        }
-        query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
-        query.setParameter("fullLocale", fullLocale);
-        query.setParameter("languageOnlyLocale", languageOnlyLocale);
-        query.setParameter("uri", uri);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-
-        return query.getResultList();
-    }
+// TODO microservices - deal with locale
+//    @Override
+//    public List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri) {
+//        Query query;
+//
+//        if (languageOnlyLocale == null) {
+//            languageOnlyLocale = fullLocale;
+//        }
+//        query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
+//        query.setParameter("fullLocale", fullLocale);
+//        query.setParameter("languageOnlyLocale", languageOnlyLocale);
+//        query.setParameter("uri", uri);
+//        query.setHint(QueryHints.HINT_CACHEABLE, true);
+//
+//        return query.getResultList();
+//    }
+//    
+//    @Override
+//    public List<Page> findPageByURI(Locale locale, String uri) {
+//        return findPageByURI(locale, null, uri);
+//    }
 
     @Override
     public List<Page> readAllPages() {
@@ -220,11 +224,6 @@ public class PageDaoImpl implements PageDao {
         } catch (NoResultException e) {
             return new ArrayList<PageTemplate>();
         }
-    }
-
-    @Override
-    public List<Page> findPageByURI(Locale locale, String uri) {
-        return findPageByURI(locale, null, uri);
     }
 
     @Override

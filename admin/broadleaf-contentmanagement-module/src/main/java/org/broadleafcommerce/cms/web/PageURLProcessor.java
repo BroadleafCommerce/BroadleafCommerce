@@ -17,15 +17,6 @@
  */
 package org.broadleafcommerce.cms.web;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
@@ -36,6 +27,15 @@ import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @deprecated.   Should now use PageHandlerMapping
@@ -82,7 +82,9 @@ public class PageURLProcessor implements URLProcessor {
     @Override
     public boolean canProcessURL(String key) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        PageDTO p = pageService.findPageByURI(context.getLocale(), key, buildMvelParameters(context.getRequest()), context.isSecure());
+        // TODO microservices - deal with locale
+        //PageDTO p = pageService.findPageByURI(context.getLocale(), key, buildMvelParameters(context.getRequest()), context.isSecure());
+        PageDTO p = null;
         context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, p);
         return (p != null);
     }
@@ -104,7 +106,8 @@ public class PageURLProcessor implements URLProcessor {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         PageDTO p = (PageDTO) context.getRequest().getAttribute(PAGE_ATTRIBUTE_NAME);
         if (p == null) {
-            p = pageService.findPageByURI(context.getLocale(), key, buildMvelParameters(context.getRequest()), context.isSecure());
+            //TODO microservices - deal with locale
+            //p = pageService.findPageByURI(context.getLocale(), key, buildMvelParameters(context.getRequest()), context.isSecure());
         }
 
         if (p != null) {

@@ -21,8 +21,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -30,7 +28,6 @@ import org.hibernate.annotations.Type;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -46,7 +43,8 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_FLD")
-@EntityListeners(value = { AdminAuditableListener.class })
+// TODO microservices - deal with AdminAuditableListener
+//@EntityListeners(value = { AdminAuditableListener.class })
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE, skipOverlaps=true),
@@ -107,10 +105,13 @@ public class PageFieldImpl implements PageField, ProfileEntity {
 
     @Override
     public String getValue() {
+// TODO microservices - deal with i18n domain
         if (stringValue != null && stringValue.length() > 0) {
-            return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey, stringValue);
+//            return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey, stringValue);
+            return stringValue;
         } else {
-            return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey, lobValue);
+//            return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey, lobValue);
+            return lobValue;
         }
     }
 

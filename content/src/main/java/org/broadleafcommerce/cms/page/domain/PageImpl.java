@@ -19,11 +19,11 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMapOverride;
-import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ClonePolicyMapOverride;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -34,7 +34,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.common.web.Locatable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -52,7 +51,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -73,7 +71,8 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE")
-@EntityListeners(value = { AdminAuditableListener.class })
+// TODO microservices - deal with AdminAuditableListener
+//@EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationOverrides(
     {
         @AdminPresentationOverride(name="auditable.createdBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),

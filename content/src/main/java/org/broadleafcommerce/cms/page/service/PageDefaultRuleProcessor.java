@@ -20,7 +20,6 @@ package org.broadleafcommerce.cms.page.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.page.dto.PageDTO;
-import org.broadleafcommerce.common.rule.AbstractRuleProcessor;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +34,7 @@ import java.util.Map;
  *
  */
 @Service("blPageDefaultRuleProcessor")
-public class PageDefaultRuleProcessor extends AbstractRuleProcessor<PageDTO> {
+public class PageDefaultRuleProcessor { //TODO microservices deal with rule processors  extends AbstractRuleProcessor<PageDTO> {
     private static final Log LOG = LogFactory.getLog(PageDefaultRuleProcessor.class);
 
     /**
@@ -55,7 +54,9 @@ public class PageDefaultRuleProcessor extends AbstractRuleProcessor<PageDTO> {
             if (LOG.isTraceEnabled())  {
                 LOG.trace("Processing content rule for page with id " + page.getId() +".   Value = " + StringUtil.sanitize(ruleExpression));
             }
-            boolean result = executeExpression(ruleExpression, vars);
+            //TODO microservices - deal with rule processors
+            //boolean result = executeExpression(ruleExpression, vars);
+            boolean result = false;
             if (! result) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Page failed to pass rule and will not be included for Page with id " + page.getId() +".   Value = " + StringUtil.sanitize(ruleExpression));

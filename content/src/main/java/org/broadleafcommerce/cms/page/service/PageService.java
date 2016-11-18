@@ -17,16 +17,15 @@
  */
 package org.broadleafcommerce.cms.page.service;
 
-import net.sf.ehcache.Cache;
-
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
-import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 
 import java.util.List;
 import java.util.Map;
+
+import net.sf.ehcache.Cache;
 
 /**
  * Created by bpolster.
@@ -76,7 +75,8 @@ public interface PageService {
      * @param secure - set to true if current request is over HTTPS
      * @return
      */
-    public PageDTO findPageByURI(Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure);
+// TODO microservices - deal with locale
+//    public PageDTO findPageByURI(Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure);
     
     /**
      * Returns all pages, regardless of any sandbox they are apart of
@@ -111,7 +111,8 @@ public interface PageService {
      * @param locale
      * @return copy of DTOList
      */
-    public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure, String identifier, Locale locale);
+// TODO microservices - deal with locale
+//    public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure, String identifier, Locale locale);
 
     String getPageMapCacheKey(String uri, Long sandBoxId, Long site);
 }

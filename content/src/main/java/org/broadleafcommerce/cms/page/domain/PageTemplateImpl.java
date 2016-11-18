@@ -26,8 +26,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -39,7 +37,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -49,8 +46,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -103,12 +98,6 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
         readOnly = true)
     protected String templatePath;
 
-    @ManyToOne(targetEntity = LocaleImpl.class)
-    @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(excluded = true)
-    @Deprecated
-    protected Locale locale;
-
     @OneToMany(targetEntity = PageTemplateFieldGroupXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true, mappedBy = "pageTemplate")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderBy("groupOrder")
@@ -157,37 +146,6 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
     @Override
     public void setTemplatePath(String templatePath) {
         this.templatePath = templatePath;
-    }
-
-    @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    @Override
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-    }
-
-    @Override
-    @Deprecated
-    public List<FieldGroup> getFieldGroups() {
-        if (legacyFieldGroups.isEmpty()) {
-            for (PageTemplateFieldGroupXref xref : getFieldGroupXrefs()) {
-                legacyFieldGroups.add(xref.getFieldGroup());
-            }
-        }
-        return Collections.unmodifiableList(legacyFieldGroups);
-    }
-
-    @Override
-    @Deprecated
-    public void setFieldGroups(List<FieldGroup> fieldGroups) {
-        this.legacyFieldGroups.clear();
-        this.fieldGroups.clear();
-        for (FieldGroup group : fieldGroups) {
-            this.fieldGroups.add(new PageTemplateFieldGroupXrefImpl(this, group));
-        }
     }
 
     @Override
