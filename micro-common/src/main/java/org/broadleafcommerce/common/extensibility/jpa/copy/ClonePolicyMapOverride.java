@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.extensibility.jpa.clone;
+package org.broadleafcommerce.common.extensibility.jpa.copy;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
