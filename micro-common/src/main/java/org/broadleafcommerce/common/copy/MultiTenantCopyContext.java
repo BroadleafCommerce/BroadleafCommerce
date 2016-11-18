@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.util.tenant.IdentityExecutionUtils;
 import org.broadleafcommerce.common.util.tenant.IdentityOperation;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -132,7 +132,7 @@ public class MultiTenantCopyContext {
      */
     public <G> CreateResponse<G> createOrRetrieveCopyInstance(Object instance) throws CloneNotSupportedException {
         CreateResponse<G> createResponse;
-        BroadleafRequestContext context = setupContext();
+        CommonRequestContext context = setupContext();
         validateOriginal(instance);
         Class<?> instanceClass = instance.getClass();
         createResponse = handleEmbedded(instanceClass);
@@ -203,14 +203,14 @@ public class MultiTenantCopyContext {
         }
     }
 
-    protected void tearDownContext(BroadleafRequestContext context) {
+    protected void tearDownContext(CommonRequestContext context) {
         context.setCurrentCatalog(getFromCatalog());
         context.setCurrentProfile(getFromSite());
         context.setSite(getFromSite());
     }
 
-    protected BroadleafRequestContext setupContext() {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+    protected CommonRequestContext setupContext() {
+        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
         context.setCurrentCatalog(getToCatalog());
         context.setCurrentProfile(getToSite());
         context.setSite(getToSite());
@@ -229,7 +229,7 @@ public class MultiTenantCopyContext {
         return response;
     }
 
-    protected <G> CreateResponse<G> handleStandardEntity(Object instance, BroadleafRequestContext context, Class<?> instanceClass) throws CloneNotSupportedException {
+    protected <G> CreateResponse<G> handleStandardEntity(Object instance, CommonRequestContext context, Class<?> instanceClass) throws CloneNotSupportedException {
         CreateResponse<G> createResponse;
         Long originalId = getIdentifier(instance);
         Object previousClone = getPreviousClone(instanceClass, originalId);
