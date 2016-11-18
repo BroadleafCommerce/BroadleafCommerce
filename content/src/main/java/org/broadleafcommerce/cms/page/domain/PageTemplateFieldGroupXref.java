@@ -18,6 +18,7 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -27,7 +28,7 @@ import java.math.BigDecimal;
  * @author Kelly Tisdell
  *
  */
-public interface PageTemplateFieldGroupXref extends Serializable { // TODO microservices - deal with , MultiTenantCloneable<PageTemplateFieldGroupXref> {
+public interface PageTemplateFieldGroupXref extends Serializable, MultiTenantCloneable<PageTemplateFieldGroupXref> {
 
     public void setId(Long id);
 

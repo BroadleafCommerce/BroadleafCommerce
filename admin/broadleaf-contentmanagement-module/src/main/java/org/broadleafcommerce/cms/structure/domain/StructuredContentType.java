@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 
 import javax.annotation.Nonnull;
@@ -35,7 +37,7 @@ import javax.annotation.Nullable;
  *
  * @author bpolster.
  */
-public interface StructuredContentType extends Serializable { //TODO microservices - deal with ,MultiTenantCloneable<StructuredContentType> {
+public interface StructuredContentType extends Serializable, MultiTenantCloneable<StructuredContentType> {
 
     /**
      * Gets the primary key.

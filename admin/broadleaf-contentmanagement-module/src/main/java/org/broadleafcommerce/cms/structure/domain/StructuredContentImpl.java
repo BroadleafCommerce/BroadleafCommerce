@@ -18,6 +18,8 @@
 package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ClonePolicyMapOverride;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -320,41 +322,40 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         return getContentName();
     }
 
-// TODO microservices - deal with multitenant cloneable
-//    @Override
-//    public <G extends StructuredContent> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-//        if (createResponse.isAlreadyPopulated()) {
-//            return createResponse;
-//        }
-//        StructuredContent cloned = createResponse.getClone();
-//        cloned.setContentName(contentName);
-//        cloned.setLocale(locale);
-//        cloned.setOfflineFlag(offlineFlag);
-//        cloned.setPriority(priority);
-//        if (structuredContentType != null) {
-//            CreateResponse<StructuredContentType> clonedType = structuredContentType.createOrRetrieveCopyInstance(context);
-//            cloned.setStructuredContentType(clonedType.getClone());
-//        }
-//        for(StructuredContentItemCriteria itemCriteria : qualifyingItemCriteria){
-//            CreateResponse<StructuredContentItemCriteria> clonedItem = itemCriteria.createOrRetrieveCopyInstance(context);
-//            StructuredContentItemCriteria clonedCritera = clonedItem.getClone();
-//            cloned.getQualifyingItemCriteria().add(clonedCritera);
-//        }
-//        for(Entry<String, StructuredContentRule> entry : structuredContentMatchRules.entrySet()){
-//            CreateResponse<StructuredContentRule> clonedItem = entry.getValue().createOrRetrieveCopyInstance(context);
-//            StructuredContentRule clonedRule = clonedItem.getClone();
-//            cloned.getStructuredContentMatchRules().put(entry.getKey(),clonedRule);
-//
-//        }
-//        for(Entry<String, StructuredContentFieldXref> entry : structuredContentFields.entrySet() ){
-//            CreateResponse<StructuredContentFieldXref> clonedItem = entry.getValue().createOrRetrieveCopyInstance(context);
-//            StructuredContentFieldXref clonedContentFieldXref = clonedItem.getClone();
-//            cloned.getStructuredContentFieldXrefs().put(entry.getKey(),clonedContentFieldXref);
-//        }
-//
-//        return createResponse;
-//    }
+    @Override
+    public <G extends StructuredContent> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        StructuredContent cloned = createResponse.getClone();
+        cloned.setContentName(contentName);
+        cloned.setLocale(locale);
+        cloned.setOfflineFlag(offlineFlag);
+        cloned.setPriority(priority);
+        if (structuredContentType != null) {
+            CreateResponse<StructuredContentType> clonedType = structuredContentType.createOrRetrieveCopyInstance(context);
+            cloned.setStructuredContentType(clonedType.getClone());
+        }
+        for(StructuredContentItemCriteria itemCriteria : qualifyingItemCriteria){
+            CreateResponse<StructuredContentItemCriteria> clonedItem = itemCriteria.createOrRetrieveCopyInstance(context);
+            StructuredContentItemCriteria clonedCritera = clonedItem.getClone();
+            cloned.getQualifyingItemCriteria().add(clonedCritera);
+        }
+        for(Entry<String, StructuredContentRule> entry : structuredContentMatchRules.entrySet()){
+            CreateResponse<StructuredContentRule> clonedItem = entry.getValue().createOrRetrieveCopyInstance(context);
+            StructuredContentRule clonedRule = clonedItem.getClone();
+            cloned.getStructuredContentMatchRules().put(entry.getKey(),clonedRule);
+
+        }
+        for(Entry<String, StructuredContentFieldXref> entry : structuredContentFields.entrySet() ){
+            CreateResponse<StructuredContentFieldXref> clonedItem = entry.getValue().createOrRetrieveCopyInstance(context);
+            StructuredContentFieldXref clonedContentFieldXref = clonedItem.getClone();
+            cloned.getStructuredContentFieldXrefs().put(entry.getKey(),clonedContentFieldXref);
+        }
+
+        return createResponse;
+    }
 
     public static class Presentation {
         public static class Tab {

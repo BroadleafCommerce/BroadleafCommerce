@@ -17,12 +17,14 @@
  */
 package org.broadleafcommerce.common.enumeration.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 
 /**
  * @author Jeff Fischer
  */
-public interface DataDrivenEnumerationValue extends Serializable { // TODO microservices - deal with , MultiTenantCloneable<DataDrivenEnumerationValue> {
+public interface DataDrivenEnumerationValue extends Serializable, MultiTenantCloneable<DataDrivenEnumerationValue> {
     
     public String getDisplay();
 

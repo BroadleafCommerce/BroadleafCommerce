@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.rule.SimpleRule;
 
 import javax.annotation.Nonnull;
@@ -35,7 +36,7 @@ import javax.annotation.Nullable;
  * @author bpolster
  *
  */
-public interface PageRule extends SimpleRule { //TODO microservices - deal with ,MultiTenantCloneable<PageRule> {
+public interface PageRule extends SimpleRule, MultiTenantCloneable<PageRule> {
 
     /**
      * Gets the primary key.

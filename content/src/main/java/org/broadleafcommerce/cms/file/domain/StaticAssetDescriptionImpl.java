@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -111,17 +113,16 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
         return newAssetDescription;
     }
     
-// TODO microservices - deal with multitenant cloneable
-//    @Override
-//    public <G extends StaticAssetDescription> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-//        if (createResponse.isAlreadyPopulated()) {
-//            return createResponse;
-//        }
-//        StaticAssetDescription cloned = createResponse.getClone();
-//        cloned.setDescription(description);
-//        cloned.setLongDescription(longDescription);
-//        return createResponse;
-//    }
+    @Override
+    public <G extends StaticAssetDescription> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        StaticAssetDescription cloned = createResponse.getClone();
+        cloned.setDescription(description);
+        cloned.setLongDescription(longDescription);
+        return createResponse;
+    }
 }
 

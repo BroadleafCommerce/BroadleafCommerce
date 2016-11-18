@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.cms.page.service;
 
+import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
@@ -24,12 +25,19 @@ import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.page.dto.NullPageDTO;
 import org.broadleafcommerce.common.page.dto.PageDTO;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,9 +65,8 @@ public class PageServiceImpl implements PageService {
 //    @Resource(name="blPageRuleProcessors")
 //    protected List<RuleProcessor<PageDTO>> pageRuleProcessors;
 
-// TODO microservices - deal with locale
-//    @Resource(name="blLocaleService")
-//    protected LocaleService localeService;
+    @Resource(name="blLocaleService")
+    protected LocaleService localeService;
     
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
@@ -113,85 +120,81 @@ public class PageServiceImpl implements PageService {
     /*
      * Retrieve the page if one is available for the passed in uri.
      */
-// TODO microservices - deal with locale
-//    @Override
-//    public PageDTO findPageByURI(Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure) {
-//        List<PageDTO> returnList = null;
-//
-//        if (uri != null) {
-//            List<Page> pageList = pageDao.findPageByURI(uri);
-//            returnList = buildPageDTOList(pageList, secure, uri, locale);
-//        }
-//        
-//        PageDTO dto = evaluatePageRules(returnList, locale, ruleDTOs);
-//        
-//        if (dto.getId() != null) {
-//            Page page = findPageById(dto.getId());
-//
-//            ExtensionResultHolder<PageDTO> newDTO = new ExtensionResultHolder<>();
-//
-//            // Allow an extension point to override the page to render.
-//            extensionManager.getProxy().overridePageDto(newDTO, dto, page);
-//            if (newDTO.getResult() != null) {
-//                dto = newDTO.getResult();
-//            }
-//        }
-//        
-//        if (dto != null) {
-//            dto = pageServiceUtility.hydrateForeignLookups(dto);
-//        }
-//        
-//        return dto;
-//    }
+    @Override
+    public PageDTO findPageByURI(Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure) {
+        List<PageDTO> returnList = null;
+
+        if (uri != null) {
+            List<Page> pageList = pageDao.findPageByURI(uri);
+            returnList = buildPageDTOList(pageList, secure, uri, locale);
+        }
+        
+        PageDTO dto = evaluatePageRules(returnList, locale, ruleDTOs);
+        
+        if (dto.getId() != null) {
+            Page page = findPageById(dto.getId());
+
+            ExtensionResultHolder<PageDTO> newDTO = new ExtensionResultHolder<>();
+
+            // Allow an extension point to override the page to render.
+            extensionManager.getProxy().overridePageDto(newDTO, dto, page);
+            if (newDTO.getResult() != null) {
+                dto = newDTO.getResult();
+            }
+        }
+        
+        if (dto != null) {
+            dto = pageServiceUtility.hydrateForeignLookups(dto);
+        }
+        
+        return dto;
+    }
 
     /*
      * Converts a list of pages to a list of pageDTOs, and caches the list.
      */
-// TODO microservices - deal with locale
-// TODO microservices - deal with broadleafrequestcontext
-//    @Override
-//    public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure, String identifier, Locale locale) {
-//        List<PageDTO> dtoList = new ArrayList<>();
-//        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-//
+    @Override
+    public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure, String identifier, Locale locale) {
+        List<PageDTO> dtoList = new ArrayList<>();
+        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
+// TODO microservices - deal with sandboxing
 //        if (context.isProductionSandBox()) {
 //            dtoList = buildPageDTOListUsingCache(pageList, identifier, locale, secure);
 //        } else {
 //            // no caching actions needed if not production sandbox
-//            addPageListToPageDTOList(pageList, secure, dtoList);
 //        }
-//
-//        return copyDTOList(dtoList);
-//    }
+        addPageListToPageDTOList(pageList, secure, dtoList);
 
-// TODO microservices - deal with locale
-//    protected List<PageDTO> buildPageDTOListUsingCache(List<Page> pageList, String identifier, Locale locale, boolean secure) {
-//        List<PageDTO> dtoList = getCachedPageDTOList(pageList, identifier, locale, secure);
-//
-//        if (dtoList == null || dtoList.isEmpty()) {
-//            addPageListToPageDTOList(pageList, secure, dtoList);
-//
-//            if (dtoList != null && !dtoList.isEmpty()) {
-//                Collections.sort(dtoList, new BeanComparator("priority"));
-//                addPageListToCache(dtoList, identifier, locale, secure);
-//            }
-//        }
-//
-//        return dtoList;
-//    }
+        return copyDTOList(dtoList);
+    }
 
-// TODO microservices - deal with locale
-//    protected List<PageDTO> getCachedPageDTOList(List<Page> pageList, String identifier, Locale locale, boolean secure) {
-//        List<PageDTO> dtoList = new ArrayList<>();
-//        String key = buildKey(identifier, locale, secure);
-//        List<PageDTO> cachedList = getPageListFromCache(key);
-//
-//        if (cachedList != null && cachedList.size() == pageList.size()) {
-//            dtoList = cachedList;
-//        }
-//
-//        return dtoList;
-//    }
+    protected List<PageDTO> buildPageDTOListUsingCache(List<Page> pageList, String identifier, Locale locale, boolean secure) {
+        List<PageDTO> dtoList = getCachedPageDTOList(pageList, identifier, locale, secure);
+
+        if (dtoList == null || dtoList.isEmpty()) {
+            addPageListToPageDTOList(pageList, secure, dtoList);
+
+            if (dtoList != null && !dtoList.isEmpty()) {
+                Collections.sort(dtoList, new BeanComparator("priority"));
+                addPageListToCache(dtoList, identifier, locale, secure);
+            }
+        }
+
+        return dtoList;
+    }
+
+    protected List<PageDTO> getCachedPageDTOList(List<Page> pageList, String identifier, Locale locale, boolean secure) {
+        List<PageDTO> dtoList = new ArrayList<>();
+        String key = buildKey(identifier, locale, secure);
+        // TODO microservices - deal with statistics services
+        //List<PageDTO> cachedList = getPageListFromCache(key);
+        List<PageDTO> cachedList = null;
+        if (cachedList != null && cachedList.size() == pageList.size()) {
+            dtoList = cachedList;
+        }
+
+        return dtoList;
+    }
 
     protected void addPageListToPageDTOList(List<Page> pageList, boolean secure, List<PageDTO> dtoList) {
         if (pageList != null) {
@@ -219,36 +222,34 @@ public class PageServiceImpl implements PageService {
 //        return null;
 //    }
 
-// TODO microservices - deal with locale
-//    protected void addPageListToCache(List<PageDTO> pageList, String identifier, Locale locale, boolean secure) {
-//        String key = buildKey(identifier, locale, secure);
-//        getPageCache().put(new Element(key, pageList));
-//        addPageMapCacheEntry(identifier, key);
-//    }
+    protected void addPageListToCache(List<PageDTO> pageList, String identifier, Locale locale, boolean secure) {
+        String key = buildKey(identifier, locale, secure);
+        getPageCache().put(new Element(key, pageList));
+        addPageMapCacheEntry(identifier, key);
+    }
 
-// TODO microservices - deal with broadleafrequestcontext
-// TODO microservices - deal with site
-//    @SuppressWarnings("unchecked")
-//    protected void addPageMapCacheEntry(String identifier, String key) {
-//        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-//        Site site = context.getNonPersistentSite();
-//        Long siteId = (site != null) ? site.getId() : null;
-//        Long sandBoxId = context.getSandBoxId();
-//
-//        String mapKey = getPageMapCacheKey(identifier, sandBoxId, siteId);
-//
-//        if (mapKey != null) {
-//            Element e = getPageMapCache().get(mapKey);
-//
-//            if (e == null || e.getObjectValue() == null) {
-//                List<String> keys = new ArrayList<>();
-//                keys.add(key);
-//                getPageMapCache().put(new Element(mapKey, keys));
-//            } else {
-//                ((List<String>) e.getObjectValue()).add(mapKey);
-//            }
-//        }
-//    }
+    @SuppressWarnings("unchecked")
+    protected void addPageMapCacheEntry(String identifier, String key) {
+        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
+        Site site = context.getNonPersistentSite();
+        Long siteId = (site != null) ? site.getId() : null;
+        // TODO microservices - deal with sandboxing
+        //Long sandBoxId = context.getSandBoxId();
+        Long sandBoxId = null;
+        String mapKey = getPageMapCacheKey(identifier, sandBoxId, siteId);
+
+        if (mapKey != null) {
+            Element e = getPageMapCache().get(mapKey);
+
+            if (e == null || e.getObjectValue() == null) {
+                List<String> keys = new ArrayList<>();
+                keys.add(key);
+                getPageMapCache().put(new Element(mapKey, keys));
+            } else {
+                ((List<String>) e.getObjectValue()).add(mapKey);
+            }
+        }
+    }
 
     @Override
     public String getPageMapCacheKey(String uri, Long sandBoxId, Long site) {
@@ -256,43 +257,41 @@ public class PageServiceImpl implements PageService {
         return uri + "-" + sandBoxId + "-" + siteString;
     }
 
-// TODO microservices - deal with locale
-// TODO microservices - deal with broadleafrequestcontext
-// TODO microservices - deal with site
-//    protected String buildKey(String identifier, Locale locale, Boolean secure) {
-//        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-//        Long sandBoxId = context.getSandBoxId();
-//        Site site = context.getNonPersistentSite();
-//        Long siteId = (site != null) ? site.getId() : null;
-//        locale = findLanguageOnlyLocale(locale);
-//        StringBuilder key = new StringBuilder(identifier);
-//
-//        if (locale != null) {
-//            key.append("-").append(locale.getLocaleCode());
-//        }
-//        if (secure != null) {
-//            key.append("-").append(secure);
-//        }
-//        if (sandBoxId != null) {
-//            key.append("-").append(sandBoxId);
-//        }
-//        if (siteId != null) {
-//            key.append("-").append(siteId);
-//        }
-//
-//        return key.toString();
-//    }
+    protected String buildKey(String identifier, Locale locale, Boolean secure) {
+        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
+        // TODO microservices - deal with sandboxing
+        //Long sandBoxId = context.getSandBoxId();
+        Long sandBoxId = null;
+        Site site = context.getNonPersistentSite();
+        Long siteId = (site != null) ? site.getId() : null;
+        locale = findLanguageOnlyLocale(locale);
+        StringBuilder key = new StringBuilder(identifier);
 
-// TODO microservices - deal with locale
-//    protected Locale findLanguageOnlyLocale(Locale locale) {
-//        if (locale != null ) {
-//            Locale languageOnlyLocale = localeService.findLocaleByCode(LocaleUtil.findLanguageCode(locale));
-//            if (languageOnlyLocale != null) {
-//                return languageOnlyLocale;
-//            }
-//        }
-//        return locale;
-//    }
+        if (locale != null) {
+            key.append("-").append(locale.getLocaleCode());
+        }
+        if (secure != null) {
+            key.append("-").append(secure);
+        }
+        if (sandBoxId != null) {
+            key.append("-").append(sandBoxId);
+        }
+        if (siteId != null) {
+            key.append("-").append(siteId);
+        }
+
+        return key.toString();
+    }
+
+    protected Locale findLanguageOnlyLocale(Locale locale) {
+        if (locale != null ) {
+            Locale languageOnlyLocale = localeService.findLocaleByCode(LocaleUtil.findLanguageCode(locale));
+            if (languageOnlyLocale != null) {
+                return languageOnlyLocale;
+            }
+        }
+        return locale;
+    }
 
     @Override
     public Cache getPageCache() {
@@ -326,32 +325,31 @@ public class PageServiceImpl implements PageService {
         return dtoListCopy;
     }
 
-// TODO microservices - deal with locale
-//    protected PageDTO evaluatePageRules(List<PageDTO> pageDTOList, Locale locale, Map<String, Object> ruleDTOs) {
-//        if (pageDTOList == null) {
-//            return NULL_PAGE;
-//        }
-//
-//        // First check to see if we have a page that matches on the full locale.
-//        for (PageDTO page : pageDTOList) {
-//            if (locale != null && locale.getLocaleCode() != null) {
-//                if (locale.getLocaleCode().equals(page.getLocaleCode())) {
-//                    if (passesPageRules(page, ruleDTOs)) {
-//                        return page;
-//                    }
-//                }
-//            }
-//        }
-//
-//        // Otherwise, we look for a match using just the language.
-//        for (PageDTO page : pageDTOList) {
-//            if (passesPageRules(page, ruleDTOs)) {
-//                return page;
-//            }
-//        }
-//
-//        return NULL_PAGE;
-//    }
+    protected PageDTO evaluatePageRules(List<PageDTO> pageDTOList, Locale locale, Map<String, Object> ruleDTOs) {
+        if (pageDTOList == null) {
+            return NULL_PAGE;
+        }
+
+        // First check to see if we have a page that matches on the full locale.
+        for (PageDTO page : pageDTOList) {
+            if (locale != null && locale.getLocaleCode() != null) {
+                if (locale.getLocaleCode().equals(page.getLocaleCode())) {
+                    if (passesPageRules(page, ruleDTOs)) {
+                        return page;
+                    }
+                }
+            }
+        }
+
+        // Otherwise, we look for a match using just the language.
+        for (PageDTO page : pageDTOList) {
+            if (passesPageRules(page, ruleDTOs)) {
+                return page;
+            }
+        }
+
+        return NULL_PAGE;
+    }
 
     protected boolean passesPageRules(PageDTO page, Map<String, Object> ruleDTOs) {
 // TODO microservices - deal with rule processing

@@ -17,12 +17,14 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 
 /**
  * Created by bpolster.
  */
-public interface StaticAssetDescription extends Serializable { //TODO microservices - deal with multitenant cloneable , MultiTenantCloneable<StaticAssetDescription> {
+public interface StaticAssetDescription extends Serializable, MultiTenantCloneable<StaticAssetDescription> {
 
     public Long getId();
 

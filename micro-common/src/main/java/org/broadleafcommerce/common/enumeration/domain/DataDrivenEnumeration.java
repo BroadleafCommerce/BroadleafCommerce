@@ -17,10 +17,12 @@
  */
 package org.broadleafcommerce.common.enumeration.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 import java.util.List;
 
-public interface DataDrivenEnumeration extends Serializable { //TODO microservices - deal with , MultiTenantCloneable<DataDrivenEnumeration> {
+public interface DataDrivenEnumeration extends Serializable, MultiTenantCloneable<DataDrivenEnumeration> {
     
     public Long getId();
 

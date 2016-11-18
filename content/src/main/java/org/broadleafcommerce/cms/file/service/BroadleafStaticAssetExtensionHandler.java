@@ -19,6 +19,8 @@ package org.broadleafcommerce.cms.file.service;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.springframework.ui.Model;
 
 /**
  * 
@@ -26,8 +28,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
  */
 public interface BroadleafStaticAssetExtensionHandler extends ExtensionHandler {
 
-// TODO microservices - deal with where Site is going to live
-//    public ExtensionResultStatusType removeShareOptionsForMTStandardSite(Model model, Site currentSite);
+    public ExtensionResultStatusType removeShareOptionsForMTStandardSite(Model model, Site currentSite);
 
     /**
      * Provide an extension point to modify the url for a StaticAsset in the case

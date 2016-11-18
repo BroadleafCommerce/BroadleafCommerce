@@ -19,9 +19,12 @@ package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
@@ -162,8 +165,7 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
             friendlyName = "assetDescriptionTitle",
             keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
             deleteEntityUponRemove = true,
-            // TODO microservices - deal with locale
-            //mapKeyOptionEntityClass = LocaleImpl.class,
+            mapKeyOptionEntityClass = LocaleImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
             mapKeyOptionEntityValueField = "localeCode"
 )
@@ -278,29 +280,28 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
         this.storageType = storageType.getType();
     }
 
-//TODO microservices - deal with multitenant cloneable
-//    @Override
-//    public <G extends StaticAsset> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-//        if (createResponse.isAlreadyPopulated()) {
-//            return createResponse;
-//        }
-//        StaticAsset cloned = createResponse.getClone();
-//        cloned.setName(name);
-//        cloned.setAltText(altText);
-//        cloned.setFileExtension(fileExtension);
-//        cloned.setFileSize(fileSize);
-//        cloned.setFullUrl(fullUrl);
-//        cloned.setMimeType(mimeType);
-//        cloned.setTitle(title);
-//        cloned.setStorageType(getStorageType());
-//        for(Map.Entry<String, StaticAssetDescription> entry : contentMessageValues.entrySet()){
-//            CreateResponse<StaticAssetDescription> clonedDescRsp = entry.getValue().createOrRetrieveCopyInstance(context);
-//            cloned.getContentMessageValues().put(entry.getKey(),clonedDescRsp.getClone());
-//        }
-//
-//        return createResponse;
-//    }
+    @Override
+    public <G extends StaticAsset> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        StaticAsset cloned = createResponse.getClone();
+        cloned.setName(name);
+        cloned.setAltText(altText);
+        cloned.setFileExtension(fileExtension);
+        cloned.setFileSize(fileSize);
+        cloned.setFullUrl(fullUrl);
+        cloned.setMimeType(mimeType);
+        cloned.setTitle(title);
+        cloned.setStorageType(getStorageType());
+        for(Map.Entry<String, StaticAssetDescription> entry : contentMessageValues.entrySet()){
+            CreateResponse<StaticAssetDescription> clonedDescRsp = entry.getValue().createOrRetrieveCopyInstance(context);
+            cloned.getContentMessageValues().put(entry.getKey(),clonedDescRsp.getClone());
+        }
+
+        return createResponse;
+    }
 
     @Override
     public String getMainEntityName() {

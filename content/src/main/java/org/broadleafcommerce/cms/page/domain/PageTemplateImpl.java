@@ -21,11 +21,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -46,6 +50,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -97,6 +103,12 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
         visibility = VisibilityEnum.HIDDEN_ALL, 
         readOnly = true)
     protected String templatePath;
+    
+    @ManyToOne(targetEntity = LocaleImpl.class)
+    @JoinColumn(name = "LOCALE_CODE")
+    @AdminPresentation(excluded = true)
+    @Deprecated
+    protected Locale locale;
 
     @OneToMany(targetEntity = PageTemplateFieldGroupXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true, mappedBy = "pageTemplate")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
@@ -147,6 +159,16 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
     public void setTemplatePath(String templatePath) {
         this.templatePath = templatePath;
     }
+    
+    @Override
+    public Locale getLocale() {
+        return locale;
+    }
+
+    @Override
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
 
     @Override
     public List<PageTemplateFieldGroupXref> getFieldGroupXrefs() {
@@ -163,25 +185,24 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
         return getTemplateName();
     }
 
-// TODO microservices - deal with multitenant cloneable
-//    @Override
-//    public <G extends PageTemplate> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-//        if (createResponse.isAlreadyPopulated()) {
-//            return createResponse;
-//        }
-//        PageTemplate cloned = createResponse.getClone();
-//        cloned.setTemplateName(templateName);
-//        cloned.setTemplateDescription(templateDescription);
-//        cloned.setTemplatePath(templatePath);
-//        cloned.setLocale(locale);
-//        for (PageTemplateFieldGroupXref fieldGroup : fieldGroups) {
-//            CreateResponse<PageTemplateFieldGroupXref> clonedGroupResponse = fieldGroup.createOrRetrieveCopyInstance(context);
-//            PageTemplateFieldGroupXref clonedGroup = clonedGroupResponse.getClone();
-//            cloned.getFieldGroupXrefs().add(clonedGroup);
-//        }
-//        return createResponse;
-//    }
+    @Override
+    public <G extends PageTemplate> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        PageTemplate cloned = createResponse.getClone();
+        cloned.setTemplateName(templateName);
+        cloned.setTemplateDescription(templateDescription);
+        cloned.setTemplatePath(templatePath);
+        cloned.setLocale(locale);
+        for (PageTemplateFieldGroupXref fieldGroup : fieldGroups) {
+            CreateResponse<PageTemplateFieldGroupXref> clonedGroupResponse = fieldGroup.createOrRetrieveCopyInstance(context);
+            PageTemplateFieldGroupXref clonedGroup = clonedGroupResponse.getClone();
+            cloned.getFieldGroupXrefs().add(clonedGroup);
+        }
+        return createResponse;
+    }
 
 }
 

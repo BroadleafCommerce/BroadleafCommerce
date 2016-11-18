@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -129,23 +131,22 @@ public class StructuredContentFieldXrefImpl implements StructuredContentFieldXre
         return key;
     }
 
-// TODO microservices - deal with multitenant cloneable
-//    @Override
-//    public <G extends StructuredContentFieldXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-//        if (createResponse.isAlreadyPopulated()) {
-//            return createResponse;
-//        }
-//        StructuredContentFieldXref cloned = createResponse.getClone();
-//        cloned.setKey(key);
-//        if (structuredContent != null) {
-//            cloned.setStructuredContent(structuredContent.createOrRetrieveCopyInstance(context).getClone());
-//        }
-//        if (structuredContentField != null) {
-//            CreateResponse<StructuredContentField> clonedFieldRsp = structuredContentField
-//                    .createOrRetrieveCopyInstance(context);
-//            cloned.setStrucuturedContentField(clonedFieldRsp.getClone());
-//        }
-//        return createResponse;
-//    }
+    @Override
+    public <G extends StructuredContentFieldXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        StructuredContentFieldXref cloned = createResponse.getClone();
+        cloned.setKey(key);
+        if (structuredContent != null) {
+            cloned.setStructuredContent(structuredContent.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (structuredContentField != null) {
+            CreateResponse<StructuredContentField> clonedFieldRsp = structuredContentField
+                    .createOrRetrieveCopyInstance(context);
+            cloned.setStrucuturedContentField(clonedFieldRsp.getClone());
+        }
+        return createResponse;
+    }
 }

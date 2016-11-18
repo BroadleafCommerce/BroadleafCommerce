@@ -122,8 +122,7 @@ public class AdminAssetController extends AdminBasicEntityController {
         model.addAttribute("cmsUrlPrefix", staticAssetService.getStaticAssetUrlPrefix());
         String returnPath = super.viewEntityForm(request, response, model, pathVars, id);
 
-// TODO microservices - deal with where we going to put the Site domain
-//        staticAssetExtensionManager.getProxy().removeShareOptionsForMTStandardSite(model, currentSite);
+        staticAssetExtensionManager.getProxy().removeShareOptionsForMTStandardSite(model, currentSite);
 
         return returnPath;
     }

@@ -17,13 +17,16 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.locale.domain.Locale;
+
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by bpolster.
  */
-public interface PageTemplate extends Serializable { // TODO microservices - deal with , MultiTenantCloneable<PageTemplate> {
+public interface PageTemplate extends Serializable, MultiTenantCloneable<PageTemplate> {
 
     public Long getId();
 
@@ -40,6 +43,18 @@ public interface PageTemplate extends Serializable { // TODO microservices - dea
     public String getTemplatePath();
 
     public void setTemplatePath(String templatePath);
+    
+    /**
+     * @deprecated in favor of translating individual fields
+     * @return
+     */
+    public Locale getLocale();
+
+    /**
+     * @deprecated in favor of translating individual fields
+     * @return
+     */
+    public void setLocale(Locale locale);
 
     public List<PageTemplateFieldGroupXref> getFieldGroupXrefs();
 

@@ -69,9 +69,7 @@ public class PageHandlerMapping extends BLCAbstractHandlerMapping {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
             String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
-            //TODO microservices - deal with locale
-            //PageDTO page = pageService.findPageByURI(context.getLocale(), requestUri, buildMvelParameters(request), context.isSecure());
-            PageDTO page = null;
+            PageDTO page = pageService.findPageByURI(context.getLocale(), requestUri, buildMvelParameters(request), context.isSecure());
             if (page != null && ! (page instanceof NullPageDTO)) {
                 context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, page);
                 return controllerName;

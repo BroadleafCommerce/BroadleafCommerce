@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
@@ -27,7 +29,7 @@ import javax.annotation.Nullable;
 /**
  * Created by bpolster.
  */
-public interface Page extends Serializable { //TODO microservices - deal with ,MultiTenantCloneable<Page> {
+public interface Page extends Serializable, MultiTenantCloneable<Page> {
 
     public Long getId();
 

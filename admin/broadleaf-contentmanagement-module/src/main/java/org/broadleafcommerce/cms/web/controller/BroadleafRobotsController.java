@@ -61,10 +61,8 @@ public class BroadleafRobotsController {
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
         
-        //TODO microservices - deal with locale
-        //PageDTO page = pageService.findPageByURI(null,
-        //        "/robots.txt", buildMvelParameters(request), isSecure(request));
-        PageDTO page = null;
+        PageDTO page = pageService.findPageByURI(null,
+                "/robots.txt", buildMvelParameters(request), isSecure(request));
         if (page != null && page.getPageFields().containsKey("body")) {
             String body = (String) page.getPageFields().get("body");
             body = body.replace("${siteBaseUrl}", baseUrlResolver.getSiteBaseUrl());

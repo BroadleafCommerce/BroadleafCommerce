@@ -19,6 +19,8 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -112,22 +114,21 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
         this.fieldGroups = fieldGroups;
     }
 
-// TODO microservices - deal with multitenant cloneable
-//    @Override
-//    public <G extends StructuredContentFieldTemplate> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-//        if (createResponse.isAlreadyPopulated()) {
-//            return createResponse;
-//        }
-//        StructuredContentFieldTemplate cloned = createResponse.getClone();
-//        cloned.setName(name);
-//        for(FieldGroup entry : fieldGroups){
-//            CreateResponse<FieldGroup> clonedGroupRsp = entry.createOrRetrieveCopyInstance(context);
-//            FieldGroup clonedGroup = clonedGroupRsp.getClone();
-//            cloned.getFieldGroups().add(clonedGroup);
-//        }
-//
-//        return createResponse;
-//    }
+    @Override
+    public <G extends StructuredContentFieldTemplate> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        StructuredContentFieldTemplate cloned = createResponse.getClone();
+        cloned.setName(name);
+        for(FieldGroup entry : fieldGroups){
+            CreateResponse<FieldGroup> clonedGroupRsp = entry.createOrRetrieveCopyInstance(context);
+            FieldGroup clonedGroup = clonedGroupRsp.getClone();
+            cloned.getFieldGroups().add(clonedGroup);
+        }
+
+        return createResponse;
+    }
 }
 

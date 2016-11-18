@@ -23,6 +23,7 @@ import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
 import org.broadleafcommerce.cms.page.domain.PageImpl;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
@@ -153,27 +154,26 @@ public class PageDaoImpl implements PageDao {
         return pages;
     }
 
-// TODO microservices - deal with locale
-//    @Override
-//    public List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri) {
-//        Query query;
-//
-//        if (languageOnlyLocale == null) {
-//            languageOnlyLocale = fullLocale;
-//        }
-//        query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
-//        query.setParameter("fullLocale", fullLocale);
-//        query.setParameter("languageOnlyLocale", languageOnlyLocale);
-//        query.setParameter("uri", uri);
-//        query.setHint(QueryHints.HINT_CACHEABLE, true);
-//
-//        return query.getResultList();
-//    }
-//    
-//    @Override
-//    public List<Page> findPageByURI(Locale locale, String uri) {
-//        return findPageByURI(locale, null, uri);
-//    }
+    @Override
+    public List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri) {
+        Query query;
+
+        if (languageOnlyLocale == null) {
+            languageOnlyLocale = fullLocale;
+        }
+        query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
+        query.setParameter("fullLocale", fullLocale);
+        query.setParameter("languageOnlyLocale", languageOnlyLocale);
+        query.setParameter("uri", uri);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+
+        return query.getResultList();
+    }
+    
+    @Override
+    public List<Page> findPageByURI(Locale locale, String uri) {
+        return findPageByURI(locale, null, uri);
+    }
 
     @Override
     public List<Page> readAllPages() {

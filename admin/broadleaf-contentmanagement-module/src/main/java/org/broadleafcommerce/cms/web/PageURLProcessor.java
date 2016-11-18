@@ -82,9 +82,7 @@ public class PageURLProcessor implements URLProcessor {
     @Override
     public boolean canProcessURL(String key) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        // TODO microservices - deal with locale
-        //PageDTO p = pageService.findPageByURI(context.getLocale(), key, buildMvelParameters(context.getRequest()), context.isSecure());
-        PageDTO p = null;
+        PageDTO p = pageService.findPageByURI(context.getLocale(), key, buildMvelParameters(context.getRequest()), context.isSecure());
         context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, p);
         return (p != null);
     }
@@ -106,8 +104,7 @@ public class PageURLProcessor implements URLProcessor {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         PageDTO p = (PageDTO) context.getRequest().getAttribute(PAGE_ATTRIBUTE_NAME);
         if (p == null) {
-            //TODO microservices - deal with locale
-            //p = pageService.findPageByURI(context.getLocale(), key, buildMvelParameters(context.getRequest()), context.isSecure());
+            p = pageService.findPageByURI(context.getLocale(), key, buildMvelParameters(context.getRequest()), context.isSecure());
         }
 
         if (p != null) {

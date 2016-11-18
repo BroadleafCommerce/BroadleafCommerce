@@ -18,6 +18,8 @@
 package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.cms.field.type.StorageType;
+import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -25,7 +27,7 @@ import java.util.Map;
 /**
  * Created by bpolster.
  */
-public interface StaticAsset extends Serializable { // TODO microservices - deal with MultiTenantCloneable<StaticAsset> {
+public interface StaticAsset extends Serializable, MultiTenantCloneable<StaticAsset> {
 
     /**
      * Returns the id of the static asset.

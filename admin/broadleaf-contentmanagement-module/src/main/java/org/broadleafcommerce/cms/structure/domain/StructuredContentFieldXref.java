@@ -17,7 +17,9 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-public interface StructuredContentFieldXref {//TODO microservices - deal with multitenant cloneable extends MultiTenantCloneable<StructuredContentFieldXref> {
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
+public interface StructuredContentFieldXref extends MultiTenantCloneable<StructuredContentFieldXref> {
 
     public void setId(Long id);
 
