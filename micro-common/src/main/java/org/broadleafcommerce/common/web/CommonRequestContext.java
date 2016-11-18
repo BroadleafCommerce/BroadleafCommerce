@@ -24,6 +24,8 @@ import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.context.MessageSource;
@@ -62,15 +64,14 @@ public class CommonRequestContext {
         COMMON_REQUEST_CONTEXT.set(commonRequestContext);
     }
 
-//TODO: microservices - deal with locale
-//    public static boolean hasLocale(){
-//        if (getCommonRequestContext() != null) {
-//            if(getCommonRequestContext().getLocale() != null){
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
+    public static boolean hasLocale(){
+        if (getCommonRequestContext() != null) {
+            if(getCommonRequestContext().getLocale() != null){
+                return true;
+            }
+        }
+        return false;
+    }
     
     public static BroadleafCurrency getCurrency() {
         BroadleafCurrency returnCurrency = null;
@@ -91,10 +92,7 @@ public class CommonRequestContext {
     protected WebRequest webRequest;
     protected BroadleafCurrency broadleafCurrency;
     protected BroadleafCurrency requestedCurrency;
-
-    //TODO: microservices - deal with locale
-    //protected Locale locale;
-
+    protected Locale locale;
     protected TimeZone timeZone;
     protected java.util.Locale javaLocale;
     protected Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -185,26 +183,25 @@ public class CommonRequestContext {
         return webRequest;
     }
 
-//TODO: microservices - deal with locale
-//    public Locale getLocale() {
-//        return locale;
-//    }
-//
-//    /**
-//     * Returns the java.util.Locale constructed from the org.broadleafcommerce.common.locale.domain.Locale.
-//     * @return
-//     */
-//    public java.util.Locale getJavaLocale() {
-//        if (this.javaLocale == null) {
-//            this.javaLocale = convertLocaleToJavaLocale();
-//        }
-//        return this.javaLocale;
-//    }
-//
-//    public void setLocale(Locale locale) {
-//        this.locale = locale;
-//        this.javaLocale = convertLocaleToJavaLocale();
-//    }
+    public Locale getLocale() {
+        return locale;
+    }
+
+    /**
+     * Returns the java.util.Locale constructed from the org.broadleafcommerce.common.locale.domain.Locale.
+     * @return
+     */
+    public java.util.Locale getJavaLocale() {
+        if (this.javaLocale == null) {
+            this.javaLocale = convertLocaleToJavaLocale();
+        }
+        return this.javaLocale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+        this.javaLocale = convertLocaleToJavaLocale();
+    }
 
     public String getRequestURIWithoutContext() {
         String requestURIWithoutContext = null;
@@ -226,21 +223,20 @@ public class CommonRequestContext {
         return requestURIWithoutContext;
     }
 
-//TODO: microservices - deal with locale
-//    protected java.util.Locale convertLocaleToJavaLocale() {
-//        if (locale == null || locale.getLocaleCode() == null) {
-//            return java.util.Locale.getDefault();
-//        } else {
-//            return CommonRequestContext.convertLocaleToJavaLocale(locale);
-//        }
-//    }
-//
-//    public static java.util.Locale convertLocaleToJavaLocale(Locale broadleafLocale) {
-//        if (broadleafLocale != null) {
-//            return broadleafLocale.getJavaLocale();
-//        }
-//        return null;
-//    }
+    protected java.util.Locale convertLocaleToJavaLocale() {
+        if (locale == null || locale.getLocaleCode() == null) {
+            return java.util.Locale.getDefault();
+        } else {
+            return CommonRequestContext.convertLocaleToJavaLocale(locale);
+        }
+    }
+
+    public static java.util.Locale convertLocaleToJavaLocale(Locale broadleafLocale) {
+        if (broadleafLocale != null) {
+            return broadleafLocale.getJavaLocale();
+        }
+        return null;
+    }
 
     public boolean isSecure() {
         boolean secure = false;
@@ -371,8 +367,7 @@ public class CommonRequestContext {
     public CommonRequestContext createLightWeightClone() {
         CommonRequestContext context = new CommonRequestContext();
 
-        //TODO: microservices - deal with locale
-        //context.setLocale(locale);
+        context.setLocale(locale);
 
         context.setMessageSource(messageSource);
         context.setTimeZone(timeZone);
@@ -391,9 +386,8 @@ public class CommonRequestContext {
     public String createLightWeightCloneJson() {
         StringBuilder sb = new StringBuilder();
 
-//TODO: microservices - deal with locale
-//        sb.append("\",\"locale\":\"");
-//        sb.append(locale==null?null:locale.getLocaleCode());
+        sb.append("\",\"locale\":\"");
+        sb.append(locale==null?null:locale.getLocaleCode());
 
         sb.append("\",\"timeZone\":\"");
         sb.append(timeZone==null?null:timeZone.getID());
@@ -420,10 +414,9 @@ public class CommonRequestContext {
             throw ExceptionHelper.refineException(e);
         }
 
-//TODO: microservices - deal with local
-//        if (!json.get("locale").equals("null")) {
-//            context.setLocale(em.find(LocaleImpl.class, json.get("locale")));
-//        }
+        if (!json.get("locale").equals("null")) {
+            context.setLocale(em.find(LocaleImpl.class, json.get("locale")));
+        }
 
         if (!json.get("timeZone").equals("null")) {
             context.setTimeZone(TimeZone.getTimeZone(json.get("timeZone")));

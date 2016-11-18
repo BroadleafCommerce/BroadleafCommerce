@@ -28,6 +28,8 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.FileServiceException;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.type.FileApplicationType;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -217,17 +219,16 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
      * @param The starting directory for local files which must end with a '/';
      */
     protected String getSiteDirectory(String baseDirectory) {
-// TODO microservices - deal with site multitenancy along with BroadleafRequestContext
-//        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-//        if (brc != null) {
-//            Site site = brc.getSite();
-//            if (site != null) {
-//                String siteDirectory = "site-" + site.getId();
-//                String siteHash = DigestUtils.md5Hex(siteDirectory);
-//                String sitePath = FilenameUtils.concat(siteHash.substring(0, 2), siteDirectory);
-//                return FilenameUtils.concat(baseDirectory, sitePath);
-//            }
-//        }
+        CommonRequestContext brc = CommonRequestContext.getCommonRequestContext();
+        if (brc != null) {
+            Site site = brc.getSite();
+            if (site != null) {
+                String siteDirectory = "site-" + site.getId();
+                String siteHash = DigestUtils.md5Hex(siteDirectory);
+                String sitePath = FilenameUtils.concat(siteHash.substring(0, 2), siteDirectory);
+                return FilenameUtils.concat(baseDirectory, sitePath);
+            }
+        }
 
         return baseDirectory;
     }
