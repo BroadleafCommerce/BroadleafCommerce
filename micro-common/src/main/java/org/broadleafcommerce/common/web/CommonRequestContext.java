@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
@@ -70,10 +71,26 @@ public class CommonRequestContext {
 //        }
 //        return false;
 //    }
+    
+    public static BroadleafCurrency getCurrency() {
+        BroadleafCurrency returnCurrency = null;
+        if (getCommonRequestContext() != null) {
+            returnCurrency = getCommonRequestContext().getBroadleafCurrency();
+        }
+
+        if (returnCurrency == null) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("BroadleafRequestContext.getCurrency() called but returned null");
+            }
+        }
+        return returnCurrency;
+    }
 
     protected HttpServletRequest request;
     protected HttpServletResponse response;
     protected WebRequest webRequest;
+    protected BroadleafCurrency broadleafCurrency;
+    protected BroadleafCurrency requestedCurrency;
 
     //TODO: microservices - deal with locale
     //protected Locale locale;
@@ -233,6 +250,22 @@ public class CommonRequestContext {
         return secure;
     }
     
+    public BroadleafCurrency getBroadleafCurrency() {
+        return broadleafCurrency;
+    }
+    
+    public void setBroadleafCurrency(BroadleafCurrency broadleafCurrency) {
+        this.broadleafCurrency = broadleafCurrency;
+    }
+
+    public BroadleafCurrency getRequestedBroadleafCurrency() {
+        return requestedCurrency;
+    }
+
+    public void setRequestedBroadleafCurrency(BroadleafCurrency requestedCurrency) {
+        this.requestedCurrency = requestedCurrency;
+    }
+
     public Catalog getCurrentCatalog() {
         return currentCatalog;
     }

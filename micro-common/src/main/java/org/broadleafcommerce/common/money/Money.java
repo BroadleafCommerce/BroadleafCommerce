@@ -21,7 +21,7 @@ package org.broadleafcommerce.common.money;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.util.CurrencyAdapter;
 import org.broadleafcommerce.common.util.xml.BigDecimalRoundingAdapter;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -441,7 +441,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         }
 
         // Check the BLC Thread
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext brc = CommonRequestContext.getCommonRequestContext();
 
         if (brc != null && brc.getBroadleafCurrency() != null) {
             assert brc.getBroadleafCurrency().getCurrencyCode() != null;
