@@ -26,63 +26,82 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
  * @author Jon Fleschler (jfleschler)
  */
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderImpl_baseOrder",
-        tabs = {
-                @AdminTabPresentation(name = OrderAdminPresentation.TabName.OrderItems,
-                        order = OrderAdminPresentation.TabOrder.OrderItems,
-                        groups = {
-                                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.General,
-                                        order = OrderAdminPresentation.GroupOrder.General,
-                                        untitled = true)
-                        }
-                ),
-                @AdminTabPresentation(name = OrderAdminPresentation.TabName.FulfillmentGroups,
-                        order = OrderAdminPresentation.TabOrder.FulfillmentGroups
-                ),
-                @AdminTabPresentation(name = OrderAdminPresentation.TabName.Payment,
-                        order = OrderAdminPresentation.TabOrder.Payment
-                ),
-                @AdminTabPresentation(name = OrderAdminPresentation.TabName.Advanced,
-                        order = OrderAdminPresentation.TabOrder.Advanced
-                )
-        }
+    tabs = {
+        @AdminTabPresentation(name = OrderAdminPresentation.TabName.General,
+            order = OrderAdminPresentation.TabOrder.General,
+            groups = {
+                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.General,
+                    order = OrderAdminPresentation.GroupOrder.General,
+                    untitled = true),
+                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.Customer,
+                    order = OrderAdminPresentation.GroupOrder.Customer,
+                    column = 1),
+                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.OrderTotals,
+                    order = OrderAdminPresentation.GroupOrder.OrderTotals,
+                    untitled = true, column = 1)
+            }
+        ),
+        @AdminTabPresentation(name = OrderAdminPresentation.TabName.FulfillmentGroups,
+            order = OrderAdminPresentation.TabOrder.FulfillmentGroups),
+        @AdminTabPresentation(name = OrderAdminPresentation.TabName.Payment,
+            order = OrderAdminPresentation.TabOrder.Payment),
+        @AdminTabPresentation(name = OrderAdminPresentation.TabName.Advanced,
+            order = OrderAdminPresentation.TabOrder.Advanced,
+            groups = {
+                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.Advanced,
+                    order = OrderAdminPresentation.GroupOrder.Advanced,
+                    untitled = true)
+            }
+        )
+    }
 )
 
 public interface OrderAdminPresentation {
-    public static class TabName {
-        public static final String OrderItems = "OrderImpl_Order_Items_Tab";
+    class TabName {
+        public static final String General = "General";
         public static final String FulfillmentGroups = "OrderImpl_Fulfillment_Groups_Tab";
         public static final String Payment = "OrderImpl_Payment_Tab";
         public static final String Advanced = "OrderImpl_Advanced_Tab";
     }
 
-    public static class TabOrder {
-        public static final int OrderItems = 2000;
-        public static final int FulfillmentGroups = 3000;
-        public static final int Payment = 4000;
-        public static final int Advanced = 5000;
+    class TabOrder {
+        public static final int General = 1000;
+        public static final int FulfillmentGroups = 2000;
+        public static final int Payment = 3000;
+        public static final int Advanced = 4000;
     }
     
-    public static class GroupName {
+    class GroupName {
         public static final String General = "General";
+        public static final String Customer = "OrderImpl_Customer_Details_Group";
+        public static final String OrderTotals = "OrderImpl_Order_Totals_Group";
+        public static final String Advanced = "OrderImpl_Advanced";
     }
 
-    public static class GroupOrder {
+    class GroupOrder {
         public static final int General = 1000;
+        public static final int Customer = 2000;
+        public static final int OrderTotals = 3000;
+
+        public static final int Advanced = 1000;
     }
 
-    public static class FieldOrder {
+    class FieldOrder {
         public static final int NAME = 1000;
-        public static final int CUSTOMER = 2000;
-        public static final int TOTAL = 3000;
-        public static final int STATUS = 4000;
-        public static final int SUBTOTAL = 5000;
-        public static final int ORDERNUMBER = 6000;
-        public static final int TOTALTAX = 7000;
-        public static final int TOTALFGCHARGES = 8000;
-        public static final int SUBMITDATE = 9000;
-        public static final int EMAILADDRESS = 10000;
+        public static final int ORDERNUMBER = 2000;
+        public static final int STATUS = 3000;
+        public static final int SUBMITDATE = 4000;
+
+        public static final int CUSTOMER = 1000;
+        public static final int EMAILADDRESS = 2000;
+
+        public static final int SUBTOTAL = 1000;
+        public static final int TOTALTAX = 2000;
+        public static final int TOTALFGCHARGES = 3000;
+        public static final int TOTAL = 4000;
 
         public static final int ADJUSTMENTS = 1000;
         public static final int OFFERCODES = 2000;
+        public static final int ATTRIBUTES = 3000;
     }
 }
