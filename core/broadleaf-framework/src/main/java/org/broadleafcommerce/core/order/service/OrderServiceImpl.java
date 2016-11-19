@@ -393,7 +393,7 @@ public class OrderServiceImpl implements OrderService {
             for (OfferCode offerCode : offerCodes) {
                 
                 if (order.getAddedOfferCodes().contains(offerCode) || addedOffers.contains(offerCode.getOffer())) {
-//                    throw new OfferAlreadyAddedException("The offer has already been added.");
+                    throw new OfferAlreadyAddedException("The offer has already been added.");
                 } else if (!offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode)) {
                     throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
                 } else if (!offerCode.isActive() || !offerCode.getOffer().isActive()) {
@@ -421,7 +421,7 @@ public class OrderServiceImpl implements OrderService {
     public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException {
          order.getAddedOfferCodes().clear();
          order = save(order, priceOrder);
-         return order;  
+         return order;
     }
 
     @Override
