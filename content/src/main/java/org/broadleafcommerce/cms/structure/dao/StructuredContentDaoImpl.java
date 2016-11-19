@@ -23,8 +23,6 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -47,10 +45,11 @@ import javax.persistence.criteria.Root;
 @Repository("blStructuredContentDao")
 public class StructuredContentDaoImpl implements StructuredContentDao {
 
-    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
-    {
-        DUMMY_SANDBOX.setId(-1l);
-    }
+// TODO microservices - deal with sandboxing (this can probably be removed though)
+//    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
+//    {
+//        DUMMY_SANDBOX.setId(-1l);
+//    }
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;

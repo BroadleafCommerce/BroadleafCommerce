@@ -17,18 +17,17 @@
  */
 package org.broadleafcommerce.cms.structure.service;
 
-import net.sf.ehcache.Cache;
-
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.hibernate.Criteria;
 
 import java.util.List;
 import java.util.Map;
+
+import net.sf.ehcache.Cache;
 
 /**
  * Provides services to manage <code>StructuredContent</code> items.
@@ -214,24 +213,11 @@ public interface StructuredContentService {
      * @param site
      * @param locale
      * @param contentType
-     * @return cache key for DTOList
-     *
-     * @deprecated use {@link #buildTypeKeyWithSecure(SandBox, Long, Locale, String, Boolean)}
-     */
-    @Deprecated
-    public String buildTypeKey(SandBox currentSandbox, Long site, Locale locale, String contentType);
-
-    /**
-     * Builds the cache key for DTOLists based on the SC Type.
-     *
-     * @param currentSandbox
-     * @param site
-     * @param locale
-     * @param contentType
      * @param secure
      * @return cache key for DTOList
      */
-    public String buildTypeKeyWithSecure(SandBox currentSandbox, Long site, Locale locale, String contentType, Boolean secure);
+    //TODO microservices - deal with sandboxing
+    //public String buildTypeKeyWithSecure(SandBox currentSandbox, Long site, Locale locale, String contentType, Boolean secure);
 
 
     public List<StructuredContentDTO> getStructuredContentListFromCache(String key);
@@ -242,7 +228,8 @@ public interface StructuredContentService {
      * @param sandBox
      * @param sc
      */
-    void removeStructuredContentFromCache(SandBox sandBox, StructuredContent sc);
+    //TODO microservices - deal with sandboxing
+    //void removeStructuredContentFromCache(SandBox sandBox, StructuredContent sc);
 
     /**
      * Call to evict both secure and non-secure SC items matching
