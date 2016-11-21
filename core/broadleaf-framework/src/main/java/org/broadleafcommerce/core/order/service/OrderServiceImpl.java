@@ -385,7 +385,6 @@ public class OrderServiceImpl implements OrderService {
     @Transactional("blTransactionManager")
     public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferException {
         preValidateCartOperation(order);
-        Set<Offer> addedOffers = offerService.getUniqueOffersFromOrder(order);
         if (extensionManager != null) {
             extensionManager.getProxy().addOfferCodes(order, offerCodes, priceOrder);
         }
