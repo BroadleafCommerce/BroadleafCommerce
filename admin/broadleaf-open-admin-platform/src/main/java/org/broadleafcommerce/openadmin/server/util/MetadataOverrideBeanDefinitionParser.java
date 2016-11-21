@@ -53,7 +53,7 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
         if (response != null) {
             overallMap = (Map<String, BeanDefinition>) response.getPropertyValues().get("sourceMap");
         } else {
-            overallMap = new ManagedMap<String, BeanDefinition>();
+            overallMap = new ManagedMap<>();
         }
         List<Element> overrideItemElements = DomUtils.getChildElementsByTagName(element, "overrideItem");
         for (Element overrideItem : overrideItemElements) {
@@ -72,7 +72,7 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
             if (overrideItemDefinition != null) {
                 overrideItemMap = (Map<String, BeanDefinition>) overrideItemDefinition.getPropertyValues().get("sourceMap");
             } else {
-                overrideItemMap = new ManagedMap<String, BeanDefinition>();
+                overrideItemMap = new ManagedMap<>();
             }
 
             List<Element> fieldElements = DomUtils.getChildElementsByTagName(overrideItem, "field");
@@ -97,9 +97,9 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
 
                 {
                     List<Element> validationElements = DomUtils.getChildElementsByTagName(fieldElement, "validation");
-                    Map<String, Map<String, String>> validationConfigMap = new ManagedMap<String, Map<String, String>>();
+                    Map<String, Map<String, String>> validationConfigMap = new ManagedMap<>();
                     for (Element validationElement : validationElements) {
-                        Map<String, String> validationMap = new ManagedMap<String, String>();
+                        Map<String, String> validationMap = new ManagedMap<>();
                         List<Element> valPropElements = DomUtils.getChildElementsByTagName(validationElement, "property");
                         for (Element valPropElement : valPropElements) {
                             String valPropName = valPropElement.getAttribute("name");
@@ -116,9 +116,9 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
 
                 {
                     List<Element> showIfFieldEqualsElements = DomUtils.getChildElementsByTagName(fieldElement, "showIfFieldEquals");
-                    Map<String, List<String>> valueConfigMap = new ManagedMap<String, List<String>>();
+                    Map<String, List<String>> valueConfigMap = new ManagedMap<>();
                     for (Element valueElement : showIfFieldEqualsElements) {
-                        List<String> validationMap = new ArrayList<String>();
+                        List<String> validationMap = new ArrayList<>();
                         List<Element> valPropElements = DomUtils.getChildElementsByTagName(valueElement, "property");
                         for (Element valPropElement : valPropElements) {
                             String valPropValue = valPropElement.getAttribute("value");
@@ -128,7 +128,7 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                         valueConfigMap.put(className, validationMap);
                     }
                     if (!valueConfigMap.isEmpty()) {
-                        metadataBuilder.addPropertyValue("showIfFieldEquals", valueConfigMap);
+                        metadataDefinition.getPropertyValues().addPropertyValue("showIfFieldEquals", valueConfigMap);
                     }
                 }
 
