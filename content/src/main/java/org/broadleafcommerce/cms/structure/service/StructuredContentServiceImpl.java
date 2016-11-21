@@ -748,7 +748,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     public List<StructuredContentDTO> getStructuredContentItemsByContentName(String contentName, Locale locale, boolean secure) {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
         Long site = (context.getNonPersistentSite() != null) ? context.getNonPersistentSite().getId() : null;
 // TODO microservices - deal with sandboxing
 //        String cacheKey = buildNameKey(context.getSandBox(), site, languageOnlyLocale, "any", contentName, secure);
