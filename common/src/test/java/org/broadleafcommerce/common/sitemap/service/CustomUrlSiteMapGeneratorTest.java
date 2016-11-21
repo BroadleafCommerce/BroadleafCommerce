@@ -31,7 +31,7 @@ import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.junit.Test;
 
 import java.io.File;
@@ -64,8 +64,8 @@ public class CustomUrlSiteMapGeneratorTest extends SiteMapGeneratorTest {
     
     @Test
     public void testSiteMapsWithSiteContext() throws SiteMapException, IOException {
-        BroadleafRequestContext brc = new BroadleafRequestContext();
-        BroadleafRequestContext.setBroadleafRequestContext(brc);
+        CommonRequestContext brc = new CommonRequestContext();
+        CommonRequestContext.setCommonRequestContext(brc);
 
         Site site = new SiteImpl();
         site.setId(256L);
@@ -87,7 +87,7 @@ public class CustomUrlSiteMapGeneratorTest extends SiteMapGeneratorTest {
         compareFiles(file3, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap2.xml");
         
         // Remove the request context from thread local so it doesn't get in the way of subsequent tests
-        BroadleafRequestContext.setBroadleafRequestContext(null);
+        CommonRequestContext.setCommonRequestContext(null);
     }
     
     public CustomUrlSiteMapGeneratorConfiguration getConfiguration() {
