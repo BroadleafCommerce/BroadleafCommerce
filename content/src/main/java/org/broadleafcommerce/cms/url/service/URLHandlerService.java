@@ -17,12 +17,9 @@
  */
 package org.broadleafcommerce.cms.url.service;
 
-import net.sf.ehcache.Cache;
+import org.broadleafcommerce.cms.url.domain.URLHandler;
 
 import java.util.List;
-
-import org.broadleafcommerce.cms.url.domain.URLHandler;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
 
 /**

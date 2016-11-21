@@ -22,7 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.url.dao.URLHandlerDao;
 import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandlerDTO;
-import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,9 +45,6 @@ public class URLHandlerServiceImpl implements URLHandlerService {
 
     @Resource(name="blURLHandlerDao")
     protected URLHandlerDao urlHandlerDao;
-
-    @Resource(name="blStatisticsService")
-    protected StatisticsService statisticsService;
 
     protected Map<String, Pattern> urlPatternMap = new EfficientLRUMap<String, Pattern>(2000);
 
