@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.dao;
+package org.broadleafcommerce.admin.server.service.handler;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
