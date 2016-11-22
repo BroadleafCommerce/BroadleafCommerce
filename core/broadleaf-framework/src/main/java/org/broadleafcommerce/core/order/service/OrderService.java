@@ -266,17 +266,6 @@ public interface OrderService {
     public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException;
     
     /**
-     * The null order is the default order for all customers when they initially
-     * enter the site. Upon the first addition of a product to a cart, a non-null order
-     * will be provisioned for the user.
-     * 
-     * @see org.broadleafcommerce.core.order.domain.NullOrderImpl for more information
-     * 
-     * @return a shared, static, unmodifiable NullOrder
-     */
-    public Order getNullOrder();
-    
-    /**
      * @see #setAutomaticallyMergeLikeItems(boolean)
      * 
      * @return whether or not like-items will be automatically merged

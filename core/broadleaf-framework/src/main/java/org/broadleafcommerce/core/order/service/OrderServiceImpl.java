@@ -39,8 +39,6 @@ import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
-import org.broadleafcommerce.core.order.domain.NullOrderFactory;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -102,10 +100,6 @@ public class OrderServiceImpl implements OrderService {
     @Resource(name = "blOfferDao")
     protected OfferDao offerDao;
 
-    /* Factories */
-    @Resource(name = "blNullOrderFactory")
-    protected NullOrderFactory nullOrderFactory;
-    
     /* Services */
     @Resource(name = "blPricingService")
     protected PricingService pricingService;
@@ -203,11 +197,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order findOrderById(Long orderId, boolean refresh) {
         return orderDao.readOrderById(orderId, refresh);
-    }
-
-    @Override
-    public Order getNullOrder() {
-        return nullOrderFactory.getNullOrder();
     }
 
     @Override
@@ -903,7 +892,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order reloadOrder(Order order) {
-        if (order == null || order instanceof NullOrderImpl || order.getId() == null) {
+        if (order == null || order.getId() == null) {
             return order;
         }
 
