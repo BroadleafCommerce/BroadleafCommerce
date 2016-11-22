@@ -18,11 +18,11 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -41,7 +41,7 @@ public interface MergeCartService {
      * @throws PricingException
      * @throws RemoveFromCartException 
      */
-    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException, RemoveFromCartException;
+    public MergeCartResponse mergeCart(OrderCustomer orderCustomer, Order anonymousCart, boolean priceOrder) throws PricingException, RemoveFromCartException;
     
     /**
      * Delegates to mergeCart(Customer, Order, boolean) with priceOrder set to true
@@ -56,7 +56,7 @@ public interface MergeCartService {
      * @throws PricingException
      * @throws RemoveFromCartException 
      */
-    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException, RemoveFromCartException;
+    public MergeCartResponse mergeCart(OrderCustomer orderCustomer, Order anonymousCart) throws PricingException, RemoveFromCartException;
     
     /**
      * Reconstruct the cart using previous stored state taking into
@@ -66,7 +66,7 @@ public interface MergeCartService {
      * @return the response containing the cart and any items removed from the cart
      * @throws RemoveFromCartException
      */
-    public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException, RemoveFromCartException;
+    public ReconstructCartResponse reconstructCart(OrderCustomer orderCustomer, boolean priceOrder) throws PricingException, RemoveFromCartException;
     
     /**
      * 
@@ -80,6 +80,6 @@ public interface MergeCartService {
      * @throws PricingException
      * @throws RemoveFromCartException 
      */
-    public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException, RemoveFromCartException;
+    public ReconstructCartResponse reconstructCart(OrderCustomer orderCustomer) throws PricingException, RemoveFromCartException;
 
 }

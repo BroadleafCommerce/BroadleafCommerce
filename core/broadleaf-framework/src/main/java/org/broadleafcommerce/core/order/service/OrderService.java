@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
@@ -38,7 +39,6 @@ import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.Date;
 import java.util.List;
@@ -68,7 +68,7 @@ public interface OrderService {
      * @param customer
      * @return the newly created order
      */
-    public Order createNewCartForCustomer(Customer customer);
+    public Order createNewCartForCustomer(OrderCustomer orderCustomer);
 
     /**
      * Creates a new Order for the given customer with the given name. Typically, this represents
@@ -79,21 +79,21 @@ public interface OrderService {
      * @param args additional arguments to be used by Broadleaf extensions
      * @return the newly created named order
      */
-    public Order createNamedOrderForCustomer(String name, Customer customer);
+    public Order createNamedOrderForCustomer(String name, OrderCustomer orderCustomer);
 
     /**
      * Looks up an Order by the given customer and a specified order name.
      * 
      * This is typically used to retrieve a "wishlist" order.
      * 
-     * @see #createNamedOrderForCustomer(String name, Customer customer)
+     * @see #createNamedOrderForCustomer(String name, OrderCustomer orderCustomer)
      * 
      * @param name
      * @param customer
      * @param args additional arguments to be used by Broadleaf extensions
      * @return the named order requested
      */
-    public Order findNamedOrderForCustomer(String name, Customer customer);
+    public Order findNamedOrderForCustomer(String name, OrderCustomer orderCustomer);
     
     /**
      * Looks up an Order by its database id
@@ -131,7 +131,7 @@ public interface OrderService {
      * @param customer
      * @return the current shopping cart for the customer
      */
-    public Order findCartForCustomer(Customer customer);
+    public Order findCartForCustomer(OrderCustomer orderCustomer);
     
     /**
      * Looks up all Orders for the specified customer, regardless of current OrderStatus
@@ -139,7 +139,7 @@ public interface OrderService {
      * @param customer
      * @return the requested Orders
      */
-    public List<Order> findOrdersForCustomer(Customer customer);
+    public List<Order> findOrdersForCustomer(OrderCustomer orderCustomer);
     
     /**
      * Looks up all Orders for the specified customer that are in the specified OrderStatus.
@@ -148,7 +148,7 @@ public interface OrderService {
      * @param status
      * @return the requested Orders
      */
-    public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status);
+    public List<Order> findOrdersForCustomer(OrderCustomer orderCustomer, OrderStatus status);
     
     /**
      * Looks up Orders and returns the order matching the given orderNumber

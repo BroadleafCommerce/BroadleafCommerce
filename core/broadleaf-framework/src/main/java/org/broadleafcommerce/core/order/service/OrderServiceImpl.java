@@ -42,6 +42,7 @@ import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
@@ -64,7 +65,6 @@ import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.exception.LockAcquisitionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -162,20 +162,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional("blTransactionManager")
-    public Order createNewCartForCustomer(Customer customer) {
-        return orderDao.createNewCartForCustomer(customer);
+    public Order createNewCartForCustomer(OrderCustomer orderCustomer) {
+        return orderDao.createNewCartForCustomer(orderCustomer);
     }
 
     @Override
     @Transactional("blTransactionManager")
-    public Order createNamedOrderForCustomer(String name, Customer customer) {
+    public Order createNamedOrderForCustomer(String name, OrderCustomer orderCustomer) {
         Order namedOrder = orderDao.create();
-        namedOrder.setCustomer(customer);
+        namedOrder.setOrderCustomer(orderCustomer);
         namedOrder.setName(name);
         namedOrder.setStatus(OrderStatus.NAMED);
         
         if (extensionManager != null) {
-            extensionManager.getProxy().attachAdditionalDataToNewNamedCart(customer, namedOrder);
+            extensionManager.getProxy().attachAdditionalDataToNewNamedCart(orderCustomer, namedOrder);
         }
         
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
@@ -186,8 +186,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findNamedOrderForCustomer(String name, Customer customer) {
-        return orderDao.readNamedOrderForCustomer(customer, name);
+    public Order findNamedOrderForCustomer(String name, OrderCustomer orderCustomer) {
+        return orderDao.readNamedOrderForCustomer(orderCustomer, name);
     }
 
     @Override
@@ -211,18 +211,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findCartForCustomer(Customer customer) {
-        return orderDao.readCartForCustomer(customer);
+    public Order findCartForCustomer(OrderCustomer orderCustomer) {
+        return orderDao.readCartForCustomer(orderCustomer);
     }
 
     @Override
-    public List<Order> findOrdersForCustomer(Customer customer) {
-        return orderDao.readOrdersForCustomer(customer.getId());
+    public List<Order> findOrdersForCustomer(OrderCustomer orderCustomer) {
+        return orderDao.readOrdersForCustomer(orderCustomer.getId());
     }
 
     @Override
-    public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status) {
-        return orderDao.readOrdersForCustomer(customer, status);
+    public List<Order> findOrdersForCustomer(OrderCustomer orderCustomer, OrderStatus status) {
+        return orderDao.readOrdersForCustomer(orderCustomer, status);
     }
 
     @Override
@@ -393,7 +393,7 @@ public class OrderServiceImpl implements OrderService {
                 
                 if (order.getAddedOfferCodes().contains(offerCode) || addedOffers.contains(offerCode.getOffer())) {
                     throw new OfferAlreadyAddedException("The offer has already been added.");
-                } else if (!offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode)) {
+                } else if (!offerService.verifyMaxCustomerUsageThreshold(order.getOrderCustomer(), offerCode)) {
                     throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
                 } else if (!offerCode.isActive() || !offerCode.getOffer().isActive()) {
                     throw new OfferExpiredException("The offer has expired.");
@@ -469,9 +469,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException {
-        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
+        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getOrderCustomer());
         if (cartOrder == null) {
-            cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
+            cartOrder = createNewCartForCustomer(namedOrder.getOrderCustomer());
         }
         List<OrderItem> items = new ArrayList<OrderItem>(namedOrder.getOrderItems());
         for (OrderItem item : items) {
@@ -493,9 +493,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public Order addItemFromNamedOrder(Order namedOrder, OrderItem item, boolean priceOrder) throws RemoveFromCartException, AddToCartException {
-        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
+        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getOrderCustomer());
         if (cartOrder == null) {
-            cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
+            cartOrder = createNewCartForCustomer(namedOrder.getOrderCustomer());
         }
         
         if (moveNamedOrderItems) {
@@ -522,9 +522,9 @@ public class OrderServiceImpl implements OrderService {
             return addItemFromNamedOrder(namedOrder, item, priceOrder);
         }
         
-        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
+        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getOrderCustomer());
         if (cartOrder == null) {
-            cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
+            cartOrder = createNewCartForCustomer(namedOrder.getOrderCustomer());
         }
         
         if (moveNamedOrderItems) {

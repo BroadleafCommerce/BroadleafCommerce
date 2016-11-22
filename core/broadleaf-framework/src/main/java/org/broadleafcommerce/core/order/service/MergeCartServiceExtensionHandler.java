@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.order.service;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 
 
 /**
@@ -30,8 +30,8 @@ import org.broadleafcommerce.profile.core.domain.Customer;
  */
 public interface MergeCartServiceExtensionHandler extends ExtensionHandler {
     
-    ExtensionResultStatusType setNewCartOwnership(Order cart, Customer customer);
+    ExtensionResultStatusType setNewCartOwnership(Order cart, OrderCustomer orderCustomer);
 
-    ExtensionResultStatusType updateMergedOrder(Order cart, Customer customer);
+    ExtensionResultStatusType updateMergedOrder(Order cart, OrderCustomer orderCustomer);
     
 }

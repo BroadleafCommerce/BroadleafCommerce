@@ -22,13 +22,13 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -60,30 +60,30 @@ public class MergeCartServiceImpl implements MergeCartService {
     protected MergeCartServiceExtensionManager extensionManager;
 
     @Override
-    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart)
+    public MergeCartResponse mergeCart(OrderCustomer orderCustomer, Order anonymousCart)
             throws PricingException, RemoveFromCartException {
-        return mergeCart(customer, anonymousCart, true);
+        return mergeCart(orderCustomer, anonymousCart, true);
     }
 
     @Override
-    public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException, RemoveFromCartException {
-        return reconstructCart(customer, true);
+    public ReconstructCartResponse reconstructCart(OrderCustomer orderCustomer) throws PricingException, RemoveFromCartException {
+        return reconstructCart(orderCustomer, true);
     }
 
     @Override
-    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder)
+    public MergeCartResponse mergeCart(OrderCustomer orderCustomer, Order anonymousCart, boolean priceOrder)
             throws PricingException, RemoveFromCartException {
         MergeCartResponse mergeCartResponse = new MergeCartResponse();
         mergeCartResponse.setMerged(false); // We no longer merge items, only transition cart states
 
         // We need to make sure that the old, saved customer cart is reconstructed with availability concerns in mind
-        ReconstructCartResponse reconstructCartResponse = reconstructCart(customer, false);
+        ReconstructCartResponse reconstructCartResponse = reconstructCart(orderCustomer, false);
         mergeCartResponse.setRemovedItems(reconstructCartResponse.getRemovedItems());
         Order customerCart = reconstructCartResponse.getOrder();
         
         if (anonymousCart != null && customerCart != null && anonymousCart.equals(customerCart)) {
             // The carts are the same, use either ensuring it's owned by the current customer
-            setNewCartOwnership(anonymousCart, customer);
+            setNewCartOwnership(anonymousCart, orderCustomer);
             mergeCartResponse.setOrder(anonymousCart);
         } else if (anonymousCart == null || anonymousCart.getOrderItems().size() == 0) {
             // The anonymous cart is of no use, use the customer cart
@@ -103,7 +103,7 @@ public class MergeCartServiceImpl implements MergeCartService {
             }
             
             // The customer cart is of no use, use the anonymous cart
-            setNewCartOwnership(anonymousCart, customer);
+            setNewCartOwnership(anonymousCart, orderCustomer);
             mergeCartResponse.setOrder(anonymousCart);
         } else {
             // Both carts have some items. The anonymous cart will always be the more recent one by definition
@@ -111,7 +111,7 @@ public class MergeCartServiceImpl implements MergeCartService {
             setSavedCartAttributes(customerCart);
             orderService.save(customerCart, false);
 
-            setNewCartOwnership(anonymousCart, customer);
+            setNewCartOwnership(anonymousCart, orderCustomer);
             mergeCartResponse.setOrder(anonymousCart);
         }
         
@@ -124,10 +124,10 @@ public class MergeCartServiceImpl implements MergeCartService {
     }
     
     @Override
-    public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder)
+    public ReconstructCartResponse reconstructCart(OrderCustomer orderCustomer, boolean priceOrder)
             throws PricingException, RemoveFromCartException {
         ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
-        Order customerCart = orderService.findCartForCustomer(customer);
+        Order customerCart = orderService.findCartForCustomer(orderCustomer);
 
         if (customerCart != null) {
             List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
@@ -180,15 +180,15 @@ public class MergeCartServiceImpl implements MergeCartService {
         cart.setStatus(OrderStatus.NAMED);
     }
 
-    protected void setNewCartOwnership(Order cart, Customer customer) {
-        cart.setCustomer(customer);
+    protected void setNewCartOwnership(Order cart, OrderCustomer orderCustomer) {
+        cart.setOrderCustomer(orderCustomer);
 
         // copy the customer's email to this order, overriding any previously set email
-        if (cart != null && StringUtils.isNotBlank(customer.getEmailAddress())) {
-            cart.setEmailAddress(customer.getEmailAddress());
+        if (cart != null && StringUtils.isNotBlank(orderCustomer.getEmailAddress())) {
+            cart.setEmailAddress(orderCustomer.getEmailAddress());
         }
         
-        extensionManager.getProxy().setNewCartOwnership(cart, customer);
+        extensionManager.getProxy().setNewCartOwnership(cart, orderCustomer);
     }
 
     /**
