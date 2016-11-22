@@ -1,14 +1,21 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.order.domain.OrderCustomerAdminPresentation.FieldOrder;
 import org.broadleafcommerce.core.order.domain.OrderCustomerAdminPresentation.GroupName;
 import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 
 public class OrderCustomerImpl implements OrderCustomer {
 
+    @Id
+    @Column(name = "CUSTOMER_ID")
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
+    protected Long id;
+    
     @Column(name = "FIRST_NAME")
     @AdminPresentation(friendlyName = "CustomerImpl_First_Name",
             group = GroupName.Customer, order = FieldOrder.FIRST_NAME,
@@ -26,6 +33,11 @@ public class OrderCustomerImpl implements OrderCustomer {
     @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", group = GroupName.Customer,
             order=FieldOrder.EMAIL)
     protected String emailAddress;
+    
+    @Override
+    public Long getId() {
+        return id;
+    }
     
     @Override
     public String getFirstName() {
