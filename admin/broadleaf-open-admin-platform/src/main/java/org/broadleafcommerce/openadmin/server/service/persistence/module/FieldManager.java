@@ -208,7 +208,7 @@ public class FieldManager {
                     // iterate through each modifier and if it can handle this field, receive the modified value
                     if (CollectionUtils.isNotEmpty(modifiers)) {
                         for (FieldManagerModifier modifier : modifiers) {
-                            if (modifier.canHandle(field, value, entityManager)) {
+                            if (modifier.canHandle(field, newValue, entityManager)) {
                                 newValue = modifier.getModifiedWriteValue(field, value, newValue, entityManager);
                             }
                         }
