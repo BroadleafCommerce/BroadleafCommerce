@@ -6,4 +6,6 @@ public interface OrderCustomer {
     public String getFirstName();
     
     public String getLastName();
+    
+    public String getEmailAddress();
 }

@@ -1,8 +1,9 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.profile.core.domain.CustomerAdminPresentation.FieldOrder;
-import org.broadleafcommerce.profile.core.domain.CustomerAdminPresentation.GroupName;
+import org.broadleafcommerce.core.order.domain.OrderCustomerAdminPresentation.FieldOrder;
+import org.broadleafcommerce.core.order.domain.OrderCustomerAdminPresentation.GroupName;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 
@@ -20,6 +21,12 @@ public class OrderCustomerImpl implements OrderCustomer {
             prominent = true, gridOrder = 3000)
     protected String lastName;
     
+    @Column(name = "EMAIL_ADDRESS")
+    @Index(name="ORDER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", group = GroupName.Customer,
+            order=FieldOrder.EMAIL)
+    protected String emailAddress;
+    
     @Override
     public String getFirstName() {
         return firstName;
@@ -28,6 +35,11 @@ public class OrderCustomerImpl implements OrderCustomer {
     @Override
     public String getLastName() {
         return lastName;
+    }
+
+    @Override
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
 }
