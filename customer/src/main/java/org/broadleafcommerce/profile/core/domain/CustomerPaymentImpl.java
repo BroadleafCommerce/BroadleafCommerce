@@ -18,6 +18,8 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -38,8 +40,10 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -227,23 +231,22 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
         this.additionalFields = additionalFields;
     }
 
-//TODO: microservices - deal with multitenant cloneable
-//    @Override
-//    public <G extends CustomerPayment> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-//        if (createResponse.isAlreadyPopulated()) {
-//            return createResponse;
-//        }
-//        CustomerPayment cloned = createResponse.getClone();
-//        // dont clone
-//        cloned.setCustomer(customer);
-//        cloned.setBillingAddress(billingAddress.createOrRetrieveCopyInstance(context).getClone());
-//        cloned.setIsDefault(isDefault);
-//        cloned.setPaymentToken(paymentToken);
-//        for (Map.Entry<String, String> entry : additionalFields.entrySet()) {
-//            cloned.getAdditionalFields().put(entry.getKey(), entry.getValue());
-//        }
-//        return createResponse;
-//    }
+    @Override
+    public <G extends CustomerPayment> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CustomerPayment cloned = createResponse.getClone();
+        // dont clone
+        cloned.setCustomer(customer);
+        cloned.setBillingAddressExternalId(billingAddressExternalId);
+        cloned.setIsDefault(isDefault);
+        cloned.setPaymentToken(paymentToken);
+        for (Map.Entry<String, String> entry : additionalFields.entrySet()) {
+            cloned.getAdditionalFields().put(entry.getKey(), entry.getValue());
+        }
+        return createResponse;
+    }
 
 }

@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -689,43 +691,41 @@ public class AddressImpl implements Address {
         return result;
     }
 
-//TODO: microservices - deal with multitenant cloneable
-//    @Override
-//    public <G extends Address> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-//        if (createResponse.isAlreadyPopulated()) {
-//            return createResponse;
-//        }
-//        Address cloned = createResponse.getClone();
-//        cloned.setActive(isActive);
-//        cloned.setAddressLine1(addressLine1);
-//        cloned.setAddressLine2(addressLine2);
-//        cloned.setAddressLine3(addressLine3);
-//        cloned.setBusiness(isBusiness);
-//        cloned.setCity(city);
-//        cloned.setCompanyName(companyName);
-//        cloned.setCounty(county);
-//        cloned.setDefault(isDefault);
-//        cloned.setEmailAddress(emailAddress);
-//        cloned.setFirstName(firstName);
-//        cloned.setLastName(lastName);
-//        cloned.setFullName(fullName);
-//        cloned.setIsoCountryAlpha2(isoCountryAlpha2);
-//        cloned.setIsoCountrySubdivision(isoCountrySubdivision);
-//        cloned.setStreet(isStreet);
-//        cloned.setZipFour(zipFour);
-//        cloned.setPhoneFax(phoneFax);
-//        cloned.setPhonePrimary(phonePrimary);
-//        cloned.setPostalCode(postalCode);
-//        cloned.setFax(fax);
-//        cloned.setMailing(isMailing);
-//        cloned.setStandardized(standardized);
-//        cloned.setTokenizedAddress(tokenizedAddress);
-//        cloned.setVerificationLevel(verificationLevel);
-//        cloned.setStateProvinceRegion(stateProvinceRegion);
-//        cloned.setPhoneSecondary(phoneSecondary);
-//        cloned.setState(state);
-//        cloned.setCountry(country);
-//        return createResponse;
-//    }
+    @Override
+    public <G extends Address> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        Address cloned = createResponse.getClone();
+        cloned.setAddressLine1(addressLine1);
+        cloned.setAddressLine2(addressLine2);
+        cloned.setAddressLine3(addressLine3);
+        cloned.setBusiness(isBusiness);
+        cloned.setCity(city);
+        cloned.setCompanyName(companyName);
+        cloned.setCounty(county);
+        cloned.setEmailAddress(emailAddress);
+        cloned.setFirstName(firstName);
+        cloned.setLastName(lastName);
+        cloned.setFullName(fullName);
+        // TODO microservices - deal with i18n domain
+        //cloned.setIsoCountryAlpha2(isoCountryAlpha2);
+        cloned.setIsoCountrySubdivision(isoCountrySubdivision);
+        cloned.setStreet(isStreet);
+        cloned.setZipFour(zipFour);
+        cloned.setPhoneFax(phoneFax);
+        cloned.setPhonePrimary(phonePrimary);
+        cloned.setPostalCode(postalCode);
+        cloned.setFax(fax);
+        cloned.setMailing(isMailing);
+        cloned.setStandardized(standardized);
+        cloned.setTokenizedAddress(tokenizedAddress);
+        cloned.setVerificationLevel(verificationLevel);
+        cloned.setStateProvinceRegion(stateProvinceRegion);
+        cloned.setPhoneSecondary(phoneSecondary);
+        cloned.setState(state);
+        cloned.setCountry(country);
+        return createResponse;
+    }
 }

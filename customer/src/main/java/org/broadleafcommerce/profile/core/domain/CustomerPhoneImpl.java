@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
@@ -204,18 +206,17 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
         return true;
     }
 
-//TODO: microservices - deal with multitenant cloneable
-//    @Override
-//    public <G extends CustomerPhone> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-//        if (createResponse.isAlreadyPopulated()) {
-//            return createResponse;
-//        }
-//        CustomerPhone cloned = createResponse.getClone();
-//        // dont clone
-//        cloned.setCustomer(customer);
-//        cloned.setPhoneName(phoneName);
-//        cloned.setPhone(phone);
-//        return createResponse;
-//    }
+    @Override
+    public <G extends CustomerPhone> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CustomerPhone cloned = createResponse.getClone();
+        // dont clone
+        cloned.setCustomer(customer);
+        cloned.setPhoneName(phoneName);
+        cloned.setPhoneExternalId(phoneExternalId);
+        return createResponse;
+    }
 }

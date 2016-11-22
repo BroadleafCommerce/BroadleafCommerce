@@ -133,8 +133,7 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
         }
         OrderMultishipOption cloned = createResponse.getClone();
 
-        //TODO: microservices - deal with multitenant clone
-        //cloned.setAddress(address.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setAddress(address.createOrRetrieveCopyInstance(context).getClone());
 
         cloned.setFulfillmentOption(fulfillmentOption.createOrRetrieveCopyInstance(context).getClone());
         cloned.setOrder(order);

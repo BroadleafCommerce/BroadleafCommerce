@@ -17,9 +17,11 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 
-public interface Address extends Serializable { //TODO: microservices - deal with MultiTenantCloneable<Address> {
+public interface Address extends Serializable, MultiTenantCloneable<Address> {
 
     public void setId(Long id);
 

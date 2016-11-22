@@ -17,10 +17,12 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.persistence.Status;
+
 import java.io.Serializable;
 
-public interface CustomerAddress extends Status, Serializable { //TODO: microservices - deal with multitenant cloneable, MultiTenantCloneable<CustomerAddress> {
+public interface CustomerAddress extends Status, Serializable, MultiTenantCloneable<CustomerAddress> {
 
     public void setId(Long id);
 

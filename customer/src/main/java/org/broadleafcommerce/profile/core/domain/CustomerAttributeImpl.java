@@ -17,12 +17,15 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -171,18 +174,17 @@ public class CustomerAttributeImpl implements CustomerAttribute {
         return true;
     }
 
-//TODO: microservices - deal with multitenant cloneable
-//    @Override
-//    public <G extends CustomerAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-//        if (createResponse.isAlreadyPopulated()) {
-//            return createResponse;
-//        }
-//        CustomerAttribute cloned = createResponse.getClone();
-//        // dont clone
-//        cloned.setCustomer(customer);
-//        cloned.setName(name);
-//        cloned.setValue(value);
-//        return createResponse;
-//    }
+    @Override
+    public <G extends CustomerAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CustomerAttribute cloned = createResponse.getClone();
+        // dont clone
+        cloned.setCustomer(customer);
+        cloned.setName(name);
+        cloned.setValue(value);
+        return createResponse;
+    }
 }

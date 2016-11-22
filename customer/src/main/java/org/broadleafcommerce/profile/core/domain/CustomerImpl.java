@@ -20,9 +20,13 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -39,10 +43,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Where;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -157,12 +163,11 @@ public class CustomerImpl implements Customer, CustomerAdminPresentation { //TOD
             group = GroupName.QualificationOptions, order = FieldOrder.DEACTIVATED)
     protected Boolean deactivated = false;
 
-//TODO: microservices - deal with locale
-//    @ManyToOne(targetEntity = LocaleImpl.class)
-//    @JoinColumn(name = "LOCALE_CODE")
-//    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",
-//        excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
-//    protected Locale customerLocale;
+    @ManyToOne(targetEntity = LocaleImpl.class)
+    @JoinColumn(name = "LOCALE_CODE")
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",
+        excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+    protected Locale customerLocale;
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blStandardElements")
@@ -414,16 +419,15 @@ public class CustomerImpl implements Customer, CustomerAdminPresentation { //TOD
         }
     }
 
-//TODO: microservices - deal with customer
-//    @Override
-//    public Locale getCustomerLocale() {
-//        return customerLocale;
-//    }
-//
-//    @Override
-//    public void setCustomerLocale(Locale customerLocale) {
-//        this.customerLocale = customerLocale;
-//    }
+    @Override
+    public Locale getCustomerLocale() {
+        return customerLocale;
+    }
+
+    @Override
+    public void setCustomerLocale(Locale customerLocale) {
+        this.customerLocale = customerLocale;
+    }
 
     @Override
     public Map<String, CustomerAttribute> getCustomerAttributes() {
@@ -544,54 +548,53 @@ public class CustomerImpl implements Customer, CustomerAdminPresentation { //TOD
         return result;
     }
 
-//TODO: microservices - deal with multitenant cloneable
-//    @Override
-//    public <G extends Customer> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-//        if (createResponse.isAlreadyPopulated()) {
-//            return createResponse;
-//        }
-//        Customer cloned = createResponse.getClone();
-//        cloned.setAnonymous(anonymous);
-//        cloned.setChallengeAnswer(challengeAnswer);
-//        cloned.setChallengeQuestion(challengeQuestion);
-//        cloned.setCookied(cookied);
-//        for (CustomerAddress entry : customerAddresses) {
-//            CustomerAddress clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-//            clonedEntry.setCustomer(cloned);
-//            cloned.getCustomerAddresses().add(clonedEntry);
-//
-//        }
-//        for (Map.Entry<String, CustomerAttribute> entry : customerAttributes.entrySet()) {
-//            CustomerAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-//            clonedEntry.setCustomer(cloned);
-//            cloned.getCustomerAttributes().put(entry.getKey(), clonedEntry);
-//        }
-//        cloned.setLoggedIn(loggedIn);
-//        cloned.setUsername(username);
-//        cloned.setUnencodedPassword(unencodedPassword);
-//        cloned.setTaxExemptionCode(taxExemptionCode);
-//        cloned.setUnencodedChallengeAnswer(unencodedChallengeAnswer);
-//        cloned.setRegistered(registered);
-//        cloned.setReceiveEmail(receiveEmail);
-//        cloned.setPasswordChangeRequired(passwordChangeRequired);
-//        cloned.setPassword(password);
-//        cloned.setLastName(lastName);
-//        cloned.setFirstName(firstName);
-//        cloned.setEmailAddress(emailAddress);
-//        cloned.setDeactivated(deactivated);
-//        for (CustomerPayment entry : customerPayments) {
-//            CustomerPayment clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-//            clonedEntry.setCustomer(cloned);
-//            cloned.getCustomerPayments().add(clonedEntry);
-//        }
-//        for (CustomerPhone entry : customerPhones) {
-//            CustomerPhone clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-//            clonedEntry.setCustomer(cloned);
-//            cloned.getCustomerPhones().add(clonedEntry);
-//        }
-//        return createResponse;
-//    }
+    @Override
+    public <G extends Customer> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        Customer cloned = createResponse.getClone();
+        cloned.setAnonymous(anonymous);
+        cloned.setChallengeAnswer(challengeAnswer);
+        cloned.setChallengeQuestion(challengeQuestion);
+        cloned.setCookied(cookied);
+        for (CustomerAddress entry : customerAddresses) {
+            CustomerAddress clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCustomer(cloned);
+            cloned.getCustomerAddresses().add(clonedEntry);
+
+        }
+        for (Map.Entry<String, CustomerAttribute> entry : customerAttributes.entrySet()) {
+            CustomerAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCustomer(cloned);
+            cloned.getCustomerAttributes().put(entry.getKey(), clonedEntry);
+        }
+        cloned.setLoggedIn(loggedIn);
+        cloned.setUsername(username);
+        cloned.setUnencodedPassword(unencodedPassword);
+        cloned.setTaxExemptionCode(taxExemptionCode);
+        cloned.setUnencodedChallengeAnswer(unencodedChallengeAnswer);
+        cloned.setRegistered(registered);
+        cloned.setReceiveEmail(receiveEmail);
+        cloned.setPasswordChangeRequired(passwordChangeRequired);
+        cloned.setPassword(password);
+        cloned.setLastName(lastName);
+        cloned.setFirstName(firstName);
+        cloned.setEmailAddress(emailAddress);
+        cloned.setDeactivated(deactivated);
+        for (CustomerPayment entry : customerPayments) {
+            CustomerPayment clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCustomer(cloned);
+            cloned.getCustomerPayments().add(clonedEntry);
+        }
+        for (CustomerPhone entry : customerPhones) {
+            CustomerPhone clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCustomer(cloned);
+            cloned.getCustomerPhones().add(clonedEntry);
+        }
+        return createResponse;
+    }
 
     @Override
     public String getTaxExemptionCode() {
