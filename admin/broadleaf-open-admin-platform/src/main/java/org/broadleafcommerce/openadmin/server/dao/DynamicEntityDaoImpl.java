@@ -125,9 +125,6 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Autowired
-    protected List<FieldManagerModifier> fieldManagerModifiers = new ArrayList<>();
-
     @Resource(name="blFieldMetadataProviders")
     protected List<FieldMetadataProvider> fieldMetadataProviders = new ArrayList<>();
 
@@ -1411,7 +1408,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     @Override
     public FieldManager getFieldManager() {
-        return new FieldManager(entityConfiguration, getStandardEntityManager(), fieldManagerModifiers);
+        return new FieldManager(entityConfiguration, getStandardEntityManager());
     }
 
     @Override

@@ -19,10 +19,12 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.common.value.ValueAssignable;
@@ -36,6 +38,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -58,12 +61,10 @@ public class FieldManager {
     protected EntityConfiguration entityConfiguration;
     protected EntityManager entityManager;
     protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
-    protected List<FieldManagerModifier> modifiers;
 
-    public FieldManager(EntityConfiguration entityConfiguration, EntityManager entityManager, List<FieldManagerModifier> modifiers) {
+    public FieldManager(EntityConfiguration entityConfiguration, EntityManager entityManager) {
         this.entityConfiguration = entityConfiguration;
         this.entityManager = entityManager;
-        this.modifiers = modifiers;
     }
 
     public static Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
@@ -78,6 +79,16 @@ public class FieldManager {
                 persistenceManager.getDynamicEntityDao().getEjb3ConfigurationDao(), entityConfiguration,
                 persistenceManager.getDynamicEntityDao().getDynamicDaoHelper());
         return fieldUtils.getField(clazz, fieldName);
+    }
+
+    protected Collection<FieldManagerModifier> getFieldManagerModifiers() {
+        Map<String, FieldManagerModifier> modifierMap = ApplicationContextHolder.getApplicationContext().getBeansOfType(FieldManagerModifier.class);
+
+        if (MapUtils.isNotEmpty(modifierMap)) {
+            return modifierMap.values();
+        }
+
+        return new ArrayList<>();
     }
 
     public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException, FieldNotAvailableException {
@@ -139,6 +150,7 @@ public class FieldManager {
         }
 
         // iterate through each modifier and if it can handle this field, receive the modified value
+        Collection<FieldManagerModifier> modifiers = getFieldManagerModifiers();
         if (CollectionUtils.isNotEmpty(modifiers) && field != null) {
             for (FieldManagerModifier modifier : modifiers) {
                 if (modifier.canHandle(field, value, entityManager)) {
@@ -174,17 +186,17 @@ public class FieldManager {
             field.setAccessible(true);
             if (j == count - 1) {
                 if (mapKey != null) {
-                    Map map;
+                    Map<String, Object> map;
                     if (field.get(value) instanceof List) {
 
                         String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
                         String fullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1) + fieldNamePart.substring(1);
                         try {
-                            map = (Map)PropertyUtils.getProperty(bean, fullFieldName);
+                            map = (Map<String, Object>)PropertyUtils.getProperty(bean, fullFieldName);
                         } catch (InvocationTargetException|NoSuchMethodException e) {
                             fullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1) + fieldNamePart.substring(1);
                             try {
-                                map = (Map) PropertyUtils.getProperty(bean, fullFieldName);
+                                map = (Map<String, Object>) PropertyUtils.getProperty(bean, fullFieldName);
                             } catch (InvocationTargetException|NoSuchMethodException n) {
                                 LOG.info("Unable to find a reference to (" + field.getType().getName() + ") in the EntityConfigurationManager. " +
                                         "Using the type of this class.");
@@ -192,7 +204,7 @@ public class FieldManager {
                             }
                         }
                     } else {
-                        map = (Map) field.get(value);
+                        map = (Map<String, Object>) field.get(value);
                     }
                     if (newValue == null) {
                         Object currentValue = map.get(mapKey);
@@ -206,6 +218,7 @@ public class FieldManager {
                     }
                 } else {
                     // iterate through each modifier and if it can handle this field, receive the modified value
+                    Collection<FieldManagerModifier> modifiers = getFieldManagerModifiers();
                     if (CollectionUtils.isNotEmpty(modifiers)) {
                         for (FieldManagerModifier modifier : modifiers) {
                             if (modifier.canHandle(field, newValue, entityManager)) {

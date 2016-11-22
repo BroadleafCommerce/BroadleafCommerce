@@ -60,11 +60,7 @@ public class OracleRequiredFieldManagerModifier implements FieldManagerModifier 
 
         Column column = field.getAnnotation(Column.class);
         AdminPresentation adminPresentation = field.getAnnotation(AdminPresentation.class);
-        if (adminPresentation == null) {
-            return false;
-        }
-
-        return isRequiredField(adminPresentation, column) && isStringFieldType(adminPresentation);
+        return adminPresentation != null && isRequiredField(adminPresentation, column) && isStringFieldType(adminPresentation);
     }
 
     protected boolean isRequiredField(AdminPresentation adminPresentation, Column column) {
