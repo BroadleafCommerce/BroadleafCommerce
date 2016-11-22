@@ -18,10 +18,9 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.Date;
 import java.util.List;
@@ -44,13 +43,13 @@ public interface OrderDao {
 
     Order readOrderById(Long orderId, boolean refresh);
 
-    List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus);
+    List<Order> readOrdersForCustomer(OrderCustomer orderCustomer, OrderStatus orderStatus);
 
     List<Order> readOrdersForCustomer(Long id);
 
-    Order readNamedOrderForCustomer(Customer customer, String name);
+    Order readNamedOrderForCustomer(OrderCustomer orderCustomer, String name);
 
-    Order readCartForCustomer(Customer customer);
+    Order readCartForCustomer(OrderCustomer orderCustomer);
 
     Order save(Order order);
 
@@ -60,7 +59,7 @@ public interface OrderDao {
 
     Order create();
 
-    Order createNewCartForCustomer(Customer customer);
+    Order createNewCartForCustomer(OrderCustomer orderCustomer);
 
     Order readOrderByOrderNumber(String orderNumber);
 

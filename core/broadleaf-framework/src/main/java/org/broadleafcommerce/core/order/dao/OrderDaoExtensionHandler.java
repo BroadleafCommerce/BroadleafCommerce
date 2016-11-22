@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.order.dao;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 
 import java.util.List;
 
@@ -30,10 +30,10 @@ import java.util.List;
  */
 public interface OrderDaoExtensionHandler extends ExtensionHandler {
     
-    public ExtensionResultStatusType attachAdditionalDataToNewCart(Customer customer, Order cart);
+    public ExtensionResultStatusType attachAdditionalDataToNewCart(OrderCustomer orderCustomer, Order cart);
 
-    public ExtensionResultStatusType processPostSaveNewCart(Customer customer, Order cart);
+    public ExtensionResultStatusType processPostSaveNewCart(OrderCustomer orderCustomer, Order cart);
     
-    public ExtensionResultStatusType applyAdditionalOrderLookupFilter(Customer customer, String name, List<Order> orders);
+    public ExtensionResultStatusType applyAdditionalOrderLookupFilter(OrderCustomer orderCustomer, String name, List<Order> orders);
 
 }

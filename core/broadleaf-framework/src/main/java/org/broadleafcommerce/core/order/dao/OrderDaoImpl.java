@@ -27,14 +27,12 @@ import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdap
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
-import org.broadleafcommerce.profile.core.dao.CustomerDao;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +51,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -68,9 +65,6 @@ public class OrderDaoImpl implements OrderDao {
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-
-    @Resource(name = "blCustomerDao")
-    protected CustomerDao customerDao;
 
     @Resource(name = "blOrderDaoExtensionManager")
     protected OrderDaoExtensionManager extensionManager;
@@ -171,12 +165,12 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Order> readOrdersForCustomer(final Customer customer, final OrderStatus orderStatus) {
+    public List<Order> readOrdersForCustomer(final OrderCustomer orderCustomer, final OrderStatus orderStatus) {
         if (orderStatus == null) {
-            return readOrdersForCustomer(customer.getId());
+            return readOrdersForCustomer(orderCustomer.getId());
         } else {
             final Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_STATUS");
-            query.setParameter("customerId", customer.getId());
+            query.setParameter("customerId", orderCustomer.getId());
             query.setParameter("orderStatus", orderStatus.getType());
             return query.getResultList();
         }
@@ -191,10 +185,10 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Order readCartForCustomer(final Customer customer) {
+    public Order readCartForCustomer(final OrderCustomer orderCustomer) {
         Order order = null;
         final Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
-        query.setParameter("customerId", customer.getId());
+        query.setParameter("customerId", orderCustomer.getId());
         query.setParameter("orderStatus", OrderStatus.IN_PROCESS.getType());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
@@ -207,21 +201,10 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Order createNewCartForCustomer(Customer customer) {
+    public Order createNewCartForCustomer(OrderCustomer orderCustomer) {
         Order order = create();
-        if (customer.getUsername() == null) {
-            customer.setUsername(String.valueOf(customer.getId()));
-            if (customerDao.readCustomerById(customer.getId()) != null) {
-                throw new IllegalArgumentException("Attempting to save a customer with an id (" + customer.getId() + ") " +
-                        "that already exists in the database. This can occur when legacy customers have been migrated to " +
-                        "Broadleaf customers, but the batchStart setting has not been declared for id generation. In " +
-                        "such a case, the defaultBatchStart property of IdGenerationDaoImpl (spring id of " +
-                        "blIdGenerationDao) should be set to the appropriate start value.");
-            }
-            customer = customerDao.save(customer);
-        }
-        order.setCustomer(customer);
-        order.setEmailAddress(customer.getEmailAddress());
+        order.setOrderCustomer(orderCustomer);
+        order.setEmailAddress(orderCustomer.getEmailAddress());
         order.setStatus(OrderStatus.IN_PROCESS);
 
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
@@ -230,13 +213,13 @@ public class OrderDaoImpl implements OrderDao {
         }
 
         if (extensionManager != null) {
-            extensionManager.getProxy().attachAdditionalDataToNewCart(customer, order);
+            extensionManager.getProxy().attachAdditionalDataToNewCart(orderCustomer, order);
         }
         
         order = save(order);
 
         if (extensionManager != null) {
-            extensionManager.getProxy().processPostSaveNewCart(customer, order);
+            extensionManager.getProxy().processPostSaveNewCart(orderCustomer, order);
         }
 
         return order;
@@ -257,9 +240,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Order readNamedOrderForCustomer(final Customer customer, final String name) {
+    public Order readNamedOrderForCustomer(final OrderCustomer orderCustomer, final String name) {
         final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
-        query.setParameter("customerId", customer.getId());
+        query.setParameter("customerId", orderCustomer.getId());
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -280,7 +263,7 @@ public class OrderDaoImpl implements OrderDao {
             
         // Apply any additional filters that extension modules have registered
         if (orders != null && !orders.isEmpty() && extensionManager != null) {
-            extensionManager.getProxy().applyAdditionalOrderLookupFilter(customer, name, orders);
+            extensionManager.getProxy().applyAdditionalOrderLookupFilter(orderCustomer, name, orders);
         }
         
         return orders == null || orders.isEmpty() ? null : orders.get(0);
