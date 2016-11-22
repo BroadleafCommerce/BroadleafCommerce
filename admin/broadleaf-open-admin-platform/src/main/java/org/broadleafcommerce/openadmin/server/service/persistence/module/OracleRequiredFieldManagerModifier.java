@@ -60,19 +60,19 @@ public class OracleRequiredFieldManagerModifier implements FieldManagerModifier 
 
         Column column = field.getAnnotation(Column.class);
         AdminPresentation adminPresentation = field.getAnnotation(AdminPresentation.class);
-        return adminPresentation != null && isRequiredField(adminPresentation, column) && isStringFieldType(adminPresentation);
+        return adminPresentation != null && isRequiredField(adminPresentation, column) && isStringFieldType(value, adminPresentation);
     }
 
     protected boolean isRequiredField(AdminPresentation adminPresentation, Column column) {
         RequiredOverride requiredOverride = adminPresentation.requiredOverride();
-        return (column != null && !column.nullable()) || (requiredOverride.equals(RequiredOverride.REQUIRED));
+        String defaultValue = adminPresentation.defaultValue();
+        return ((column != null && !column.nullable()) || (requiredOverride.equals(RequiredOverride.REQUIRED))) && StringUtils.isEmpty(defaultValue);
     }
 
-    protected boolean isStringFieldType(AdminPresentation adminPresentation) {
-        String defaultValue = adminPresentation.defaultValue();
+    protected boolean isStringFieldType(Object value, AdminPresentation adminPresentation) {
         SupportedFieldType fieldType = adminPresentation.fieldType();
-        return StringUtils.isEmpty(defaultValue)
-                && TYPES_THAT_SUPPORT_SINGLE_SPACE_AS_DEFAULT.contains(fieldType.toString());
+        return TYPES_THAT_SUPPORT_SINGLE_SPACE_AS_DEFAULT.contains(fieldType.toString())
+            || (SupportedFieldType.UNKNOWN.toString().equals(fieldType.toString()) && value instanceof String);
     }
 
     @Override
