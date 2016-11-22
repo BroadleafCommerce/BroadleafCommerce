@@ -160,14 +160,14 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      * 
      * @return
      */
-    Customer getCustomer();
+    OrderCustomer getOrderCustomer();
 
     /**
      * Sets the associated {@link Customer} for this Order.
      * 
      * @param customer
      */
-    void setCustomer(Customer customer);
+    void setOrderCustomer(OrderCustomer orderCustomer);
 
     /**
      * Gets the status of the Order.
