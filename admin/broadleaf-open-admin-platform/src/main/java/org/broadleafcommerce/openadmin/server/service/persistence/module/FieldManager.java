@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,10 +58,12 @@ public class FieldManager {
     protected EntityConfiguration entityConfiguration;
     protected EntityManager entityManager;
     protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
+    protected List<FieldManagerModifier> modifiers;
 
-    public FieldManager(EntityConfiguration entityConfiguration, EntityManager entityManager) {
+    public FieldManager(EntityConfiguration entityConfiguration, EntityManager entityManager, List<FieldManagerModifier> modifiers) {
         this.entityConfiguration = entityConfiguration;
         this.entityManager = entityManager;
+        this.modifiers = modifiers;
     }
 
     public static Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
@@ -91,9 +94,11 @@ public class FieldManager {
                 fieldNamePart = fieldNamePart.substring(0, fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR));
             }
             field = getSingleField(componentClass, fieldNamePart);
+
             if (field != null) {
                 field.setAccessible(true);
                 value = field.get(value);
+
                 if (value instanceof List) {
 
                     String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
@@ -122,10 +127,20 @@ public class FieldManager {
                         value = ((List) value).get(0);
                     }
                 }
+
                 if (value != null) {
                     componentClass = value.getClass();
                 } else {
                     break;
+                }
+
+                // iterate through each modifier and if it can handle this field, receive the modified value
+                if (CollectionUtils.isNotEmpty(modifiers)) {
+                    for (FieldManagerModifier modifier : modifiers) {
+                        if (modifier.canHandle(field, value, entityManager)) {
+                            value = modifier.getModifiedReadValue(field, value, entityManager);
+                        }
+                    }
                 }
             } else {
                 throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class (" + componentClass + ")");
@@ -190,6 +205,15 @@ public class FieldManager {
                         map.put(mapKey, newValue);
                     }
                 } else {
+                    // iterate through each modifier and if it can handle this field, receive the modified value
+                    if (CollectionUtils.isNotEmpty(modifiers)) {
+                        for (FieldManagerModifier modifier : modifiers) {
+                            if (modifier.canHandle(field, value, entityManager)) {
+                                newValue = modifier.getModifiedWriteValue(field, value, newValue, entityManager);
+                            }
+                        }
+                    }
+
                     field.set(value, newValue);
                 }
             } else {

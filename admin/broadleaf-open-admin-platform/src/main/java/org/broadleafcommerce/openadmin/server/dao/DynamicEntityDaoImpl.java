@@ -46,6 +46,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManagerModifier;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.FieldNamePropertyValidator;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.hibernate.Criteria;
@@ -57,6 +58,7 @@ import org.hibernate.mapping.Property;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -122,6 +124,9 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    @Autowired
+    protected List<FieldManagerModifier> fieldManagerModifiers = new ArrayList<>();
 
     @Resource(name="blFieldMetadataProviders")
     protected List<FieldMetadataProvider> fieldMetadataProviders = new ArrayList<>();
@@ -1406,7 +1411,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     @Override
     public FieldManager getFieldManager() {
-        return new FieldManager(entityConfiguration, getStandardEntityManager());
+        return new FieldManager(entityConfiguration, getStandardEntityManager(), fieldManagerModifiers);
     }
 
     @Override
