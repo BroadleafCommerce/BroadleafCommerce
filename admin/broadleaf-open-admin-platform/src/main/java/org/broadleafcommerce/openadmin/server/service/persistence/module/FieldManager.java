@@ -83,7 +83,7 @@ public class FieldManager {
     public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException, FieldNotAvailableException {
         StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
-        Field field;
+        Field field = null;
         Object value = HibernateUtils.deproxy(bean);
 
         while (tokens.hasMoreTokens()) {
@@ -133,17 +133,17 @@ public class FieldManager {
                 } else {
                     break;
                 }
-
-                // iterate through each modifier and if it can handle this field, receive the modified value
-                if (CollectionUtils.isNotEmpty(modifiers)) {
-                    for (FieldManagerModifier modifier : modifiers) {
-                        if (modifier.canHandle(field, value, entityManager)) {
-                            value = modifier.getModifiedReadValue(field, value, entityManager);
-                        }
-                    }
-                }
             } else {
                 throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class (" + componentClass + ")");
+            }
+        }
+
+        // iterate through each modifier and if it can handle this field, receive the modified value
+        if (CollectionUtils.isNotEmpty(modifiers) && field != null) {
+            for (FieldManagerModifier modifier : modifiers) {
+                if (modifier.canHandle(field, value, entityManager)) {
+                    value = modifier.getModifiedReadValue(field, value, entityManager);
+                }
             }
         }
 

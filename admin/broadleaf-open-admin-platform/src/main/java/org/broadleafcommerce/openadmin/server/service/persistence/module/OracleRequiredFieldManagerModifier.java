@@ -27,6 +27,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.persistence.Column;
 import javax.persistence.EntityManager;
 
 /**
@@ -56,12 +57,25 @@ public class OracleRequiredFieldManagerModifier implements FieldManagerModifier 
         if (!dialectHelper.isOracle()) {
             return false;
         }
+
+        Column column = field.getAnnotation(Column.class);
         AdminPresentation adminPresentation = field.getAnnotation(AdminPresentation.class);
+        if (adminPresentation == null) {
+            return false;
+        }
+
+        return isRequiredField(adminPresentation, column) && isStringFieldType(adminPresentation);
+    }
+
+    protected boolean isRequiredField(AdminPresentation adminPresentation, Column column) {
         RequiredOverride requiredOverride = adminPresentation.requiredOverride();
+        return (column != null && !column.nullable()) || (requiredOverride.equals(RequiredOverride.REQUIRED));
+    }
+
+    protected boolean isStringFieldType(AdminPresentation adminPresentation) {
         String defaultValue = adminPresentation.defaultValue();
         SupportedFieldType fieldType = adminPresentation.fieldType();
-        return requiredOverride.equals(RequiredOverride.REQUIRED)
-                && StringUtils.isEmpty(defaultValue)
+        return StringUtils.isEmpty(defaultValue)
                 && TYPES_THAT_SUPPORT_SINGLE_SPACE_AS_DEFAULT.contains(fieldType.toString());
     }
 
