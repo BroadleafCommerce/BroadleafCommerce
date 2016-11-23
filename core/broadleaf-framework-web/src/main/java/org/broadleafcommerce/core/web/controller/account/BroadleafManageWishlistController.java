@@ -26,11 +26,11 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * The controller responsible for wishlist management activities, including
@@ -47,10 +47,10 @@ public class BroadleafManageWishlistController extends AbstractAccountController
 
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
             AddToCartItem itemRequest, String wishlistName) throws IOException, AddToCartException, PricingException  {
-        Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer(request));
+        Order wishlist = orderCustomerFacadeService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer(request));
 
         if (wishlist == null) {
-            wishlist = orderService.createNamedOrderForCustomer(wishlistName, CustomerState.getCustomer(request));
+            wishlist = orderCustomerFacadeService.createNamedOrderForCustomer(wishlistName, CustomerState.getCustomer(request));
         }
         
         wishlist = orderService.addItem(wishlist.getId(), itemRequest, true);
@@ -60,14 +60,14 @@ public class BroadleafManageWishlistController extends AbstractAccountController
     
     public String viewWishlist(HttpServletRequest request, HttpServletResponse response, Model model,
             String wishlistName) {
-        Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
+        Order wishlist = orderCustomerFacadeService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
         model.addAttribute("wishlist", wishlist);
         return getAccountWishlistView();
     }
 
     public String removeItemFromWishlist(HttpServletRequest request, HttpServletResponse response, Model model,
             String wishlistName, Long itemId) throws RemoveFromCartException {
-        Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
+        Order wishlist = orderCustomerFacadeService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
         
         orderService.removeItem(wishlist.getId(), itemId, false);
 
@@ -77,7 +77,7 @@ public class BroadleafManageWishlistController extends AbstractAccountController
 
     public String moveItemToCart(HttpServletRequest request, HttpServletResponse response, Model model, 
             String wishlistName, Long orderItemId) throws RemoveFromCartException, AddToCartException {
-        Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
+        Order wishlist = orderCustomerFacadeService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
         List<OrderItem> orderItems = wishlist.getOrderItems();
 
         OrderItem orderItem = null;
@@ -101,7 +101,7 @@ public class BroadleafManageWishlistController extends AbstractAccountController
     
     public String moveListToCart(HttpServletRequest request, HttpServletResponse response, Model model, 
             String wishlistName) throws RemoveFromCartException, AddToCartException {
-        Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
+        Order wishlist = orderCustomerFacadeService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
         
         orderService.addAllItemsFromNamedOrder(wishlist, true);
         

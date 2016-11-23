@@ -115,7 +115,7 @@ public class BroadleafCartController extends AbstractCartController {
         // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
         // and provision a fresh cart for the current customer upon the first cart add
         if (cart == null) {
-            cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
+            cart = orderCustomerFacadeService.createNewCartForCustomer(CustomerState.getCustomer(request));
         }
 
         // if this is an update to an existing order item, remove the old before proceeding
@@ -163,7 +163,7 @@ public class BroadleafCartController extends AbstractCartController {
         // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
         // and provision a fresh cart for the current customer upon the first cart add
         if (cart == null) {
-            cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
+            cart = orderCustomerFacadeService.createNewCartForCustomer(CustomerState.getCustomer(request));
         }
 
         updateCartService.validateAddToCartRequest(itemRequest, cart);

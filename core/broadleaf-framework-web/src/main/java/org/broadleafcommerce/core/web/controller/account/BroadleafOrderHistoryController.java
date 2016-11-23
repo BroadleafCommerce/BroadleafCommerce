@@ -38,7 +38,7 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
     protected static String orderDetailsRedirectView = "account/partials/orderDetails";
     
     public String viewOrderHistory(HttpServletRequest request, Model model) {
-        List<Order> orders = orderService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
+        List<Order> orders = orderCustomerFacadeService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
         model.addAttribute("orders", orders);
         return getOrderHistoryView();
     }
@@ -70,9 +70,9 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
     protected void validateCustomerOwnedData(Order order) {
         if (validateCustomerOwnedData) {
             Customer activeCustomer = CustomerState.getCustomer();
-            if (activeCustomer != null && !(activeCustomer.equals(order.getCustomer()))) {
+            if (activeCustomer != null && !(activeCustomer.getId().equals(order.getOrderCustomer().getExternalId()))) {
                 throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
-            } else if (activeCustomer == null && order.getCustomer() != null) {
+            } else if (activeCustomer == null && order.getOrderCustomer() != null) {
                 throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
             }
         }

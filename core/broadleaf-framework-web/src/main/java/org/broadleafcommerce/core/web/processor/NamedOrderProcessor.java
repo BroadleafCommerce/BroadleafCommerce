@@ -22,7 +22,7 @@ import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.OrderCustomerFacadeService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.context.annotation.Conditional;
@@ -54,8 +54,8 @@ import javax.annotation.Resource;
 @Conditional(TemplatingExistCondition.class)
 public class NamedOrderProcessor extends AbstractBroadleafModelVariableModifierProcessor {
 
-    @Resource(name = "blOrderService")
-    protected OrderService orderService;
+    @Resource(name = "blOrderCustomerFacadeService")
+    protected OrderCustomerFacadeService orderCustomerFacadeService;
     
     @Override
     public String getName() {
@@ -74,7 +74,7 @@ public class NamedOrderProcessor extends AbstractBroadleafModelVariableModifierP
         String orderVar = tagAttributes.get("orderVar");
         String orderName = tagAttributes.get("orderName");
 
-        Order order = orderService.findNamedOrderForCustomer(orderName, customer);
+        Order order = orderCustomerFacadeService.findNamedOrderForCustomer(orderName, customer);
         if (order != null) {
             newModelVars.put(orderVar, order);
         }
