@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
 import org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -135,7 +136,7 @@ public interface OfferService {
      * @param customer
      * @return
      */
-    public List<OfferCode> buildOfferCodeListForCustomer(Customer customer);
+    public List<OfferCode> buildOfferCodeListForCustomer(OrderCustomer orderCustomer);
 
     public CustomerOfferDao getCustomerOfferDao();
 
@@ -188,7 +189,7 @@ public interface OfferService {
      * @param offer the offer to check
      * @return <b>true</b> if it is ok for the customer to use this offer with their current order, <b>false</b> if not.
      */
-    public boolean verifyMaxCustomerUsageThreshold(@Nonnull Customer customer, @Nonnull Offer offer);
+    public boolean verifyMaxCustomerUsageThreshold(@Nonnull OrderCustomer orderCustomer, @Nonnull Offer offer);
     
     /**
      * <p>Validates that the given code is underneath the max uses for that code. This method will also delegate to
@@ -198,7 +199,7 @@ public interface OfferService {
      * @param code the code to check
      * @return <b>true</b> if it is ok for the customer to use this offer with their current order, <b>false</b> if not.
      */
-    public boolean verifyMaxCustomerUsageThreshold(@Nonnull Customer customer, @Nonnull OfferCode code);
+    public boolean verifyMaxCustomerUsageThreshold(@Nonnull OrderCustomer orderCustomer, @Nonnull OfferCode code);
     
     /**
      * Returns a set of offers that have been used for this order by checking adjustments on the different levels like
