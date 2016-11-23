@@ -26,8 +26,8 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandid
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +45,7 @@ public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandl
     }
 
     @Override
-    public ExtensionResultStatusType buildOfferCodeListForCustomer(Customer customer, List<OfferCode> offerCodes) {
+    public ExtensionResultStatusType buildOfferCodeListForCustomer(OrderCustomer orderCustomer, List<OfferCode> offerCodes) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
