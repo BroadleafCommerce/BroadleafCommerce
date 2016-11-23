@@ -20,9 +20,7 @@ package org.broadleafcommerce.core.web.controller.account;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.MergeCartService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.order.CartState;
@@ -103,7 +101,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 
             // Need to ensure that the Cart on CartState is owned by the newly registered customer.
             Order cart = CartState.getCart();
-            if (cart != null && !(cart instanceof NullOrderImpl) && cart.getEmailAddress() == null) {
+            if (cart != null && cart.getEmailAddress() == null) {
                 cart.setEmailAddress(newCustomer.getEmailAddress());
                 orderService.save(cart, false);
             }

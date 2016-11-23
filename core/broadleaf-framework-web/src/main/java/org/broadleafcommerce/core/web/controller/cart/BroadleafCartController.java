@@ -26,7 +26,6 @@ import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.AddToCartItem;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
@@ -87,7 +86,7 @@ public class BroadleafCartController extends AbstractCartController {
      */
     public String cart(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
         Order cart = CartState.getCart();
-        if (cart != null && !(cart instanceof NullOrderImpl)) {
+        if (cart != null) {
             model.addAttribute("paymentRequestDTO", dtoTranslationService.translateOrder(CartState.getCart()));
         }
         return getCartView();
@@ -115,7 +114,7 @@ public class BroadleafCartController extends AbstractCartController {
         
         // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
         // and provision a fresh cart for the current customer upon the first cart add
-        if (cart == null || cart instanceof NullOrderImpl) {
+        if (cart == null) {
             cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
         }
 
@@ -163,7 +162,7 @@ public class BroadleafCartController extends AbstractCartController {
 
         // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
         // and provision a fresh cart for the current customer upon the first cart add
-        if (cart == null || cart instanceof NullOrderImpl) {
+        if (cart == null) {
             cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
         }
 
@@ -376,7 +375,7 @@ public class BroadleafCartController extends AbstractCartController {
         Boolean promoAdded = false;
         String exception = "";
         
-        if (cart != null && !(cart instanceof NullOrderImpl)) {
+        if (cart != null) {
             List<OfferCode> offerCodes = offerService.lookupAllOfferCodesByCode(customerOffer);
             for (OfferCode offerCode : offerCodes) {
                 if (offerCode != null) {

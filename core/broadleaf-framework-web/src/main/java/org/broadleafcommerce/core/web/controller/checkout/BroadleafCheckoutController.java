@@ -26,7 +26,6 @@ import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.checkout.service.gateway.PassthroughPaymentConstants;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -74,7 +73,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             model.addAttribute("cartRequiresLock", true);
         }
 
-        if (!(cart instanceof NullOrderImpl)) {
+        if (cart != null) {
             model.addAttribute("orderMultishipOptions",
                     orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
             model.addAttribute("paymentRequestDTO",
@@ -208,7 +207,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     public String processCompleteCheckoutOrderFinalized(final RedirectAttributes redirectAttributes) throws PaymentException {
         Order cart = CartState.getCart();
 
-        if (cart != null && !(cart instanceof NullOrderImpl)) {
+        if (cart != null) {
             try {
                 String orderNumber = initiateCheckout(cart.getId());
                 return getConfirmationViewRedirect(orderNumber);

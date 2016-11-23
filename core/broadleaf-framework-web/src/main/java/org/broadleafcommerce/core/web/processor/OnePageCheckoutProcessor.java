@@ -31,7 +31,6 @@ import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
@@ -148,7 +147,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModi
 
         //Add PaymentRequestDTO to the model in the case of errors or other cases
         Order cart = CartState.getCart();
-        if (cart != null && !(cart instanceof NullOrderImpl)) {
+        if (cart != null) {
             newModelVars.put("paymentRequestDTO", orderToPaymentRequestDTOService.translateOrder(cart));
         }
 
@@ -422,7 +421,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModi
         List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
         Order cart = CartState.getCart();
 
-        if (!(cart instanceof NullOrderImpl) && cart.getFulfillmentGroups().size() > 0 && hasPopulatedShippingAddress(cart)) {
+        if (cart.getFulfillmentGroups().size() > 0 && hasPopulatedShippingAddress(cart)) {
             Set<FulfillmentOption> options = new HashSet<>();
             options.addAll(fulfillmentOptions);
             FulfillmentEstimationResponse estimateResponse = null;

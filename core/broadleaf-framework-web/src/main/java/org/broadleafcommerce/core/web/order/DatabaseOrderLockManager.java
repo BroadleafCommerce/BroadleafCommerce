@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.web.order;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.OrderLockManager;
@@ -44,9 +43,9 @@ public class DatabaseOrderLockManager implements OrderLockManager {
 
     @Override
     public Object acquireLock(Order order) {
-        if (order == null || order instanceof NullOrderImpl) {
+        if (order == null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Thread[" + Thread.currentThread().getId() + "] Attempted to grab a lock for a NullOrderImpl. ");
+                LOG.debug("Thread[" + Thread.currentThread().getId() + "] Attempted to grab a lock for a null order. ");
             }
             return order;
         }
@@ -87,13 +86,6 @@ public class DatabaseOrderLockManager implements OrderLockManager {
 
     @Override
     public Object acquireLockIfAvailable(Order order) {
-        if (order instanceof NullOrderImpl) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Attempted to grab a lock for a NullOrderImpl. Not blocking");
-            }
-            return order;
-        }
-
         boolean lockAcquired = orderService.acquireLock(order); 
         return lockAcquired ? order : null;
     }
@@ -101,16 +93,10 @@ public class DatabaseOrderLockManager implements OrderLockManager {
     @Override
     public void releaseLock(Object lockObject) {
         Order order = (Order) lockObject;
-        if (order instanceof NullOrderImpl) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Thread[" + Thread.currentThread().getId() + "] Attempted to release a lock for a NullOrderImpl");
-            }
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Thread[" + Thread.currentThread().getId() + "] releasing lock for order[" + order.getId() + "]");
-            }
-            orderService.releaseLock(order);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Thread[" + Thread.currentThread().getId() + "] releasing lock for order[" + order.getId() + "]");
         }
+        orderService.releaseLock(order);
     }
 
     protected long getDatabaseLockPollingIntervalMs() {

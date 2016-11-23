@@ -21,7 +21,6 @@ package org.broadleafcommerce.core.web.processor;
 import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -78,8 +77,6 @@ public class NamedOrderProcessor extends AbstractBroadleafModelVariableModifierP
         Order order = orderService.findNamedOrderForCustomer(orderName, customer);
         if (order != null) {
             newModelVars.put(orderVar, order);
-        } else {
-            newModelVars.put(orderVar, new NullOrderImpl());
         }
     }
 }
