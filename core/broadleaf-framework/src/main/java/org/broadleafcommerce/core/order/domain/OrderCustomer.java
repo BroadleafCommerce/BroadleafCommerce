@@ -10,4 +10,12 @@ public interface OrderCustomer {
     public String getLastName();
     
     public String getEmailAddress();
+
+    public void setEmailAddress(String emailAddress);
+
+    public void setLastName(String lastName);
+
+    public void setFirstName(String firstName);
+
+    public void setId(Long id);
 }

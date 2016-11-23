@@ -53,5 +53,25 @@ public class OrderCustomerImpl implements OrderCustomer {
     public String getEmailAddress() {
         return emailAddress;
     }
+    
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    @Override
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    
+    @Override
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    
+    @Override
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
 
 }
