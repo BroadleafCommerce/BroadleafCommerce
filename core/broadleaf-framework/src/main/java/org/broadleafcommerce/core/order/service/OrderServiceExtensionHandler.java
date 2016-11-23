@@ -22,8 +22,8 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import java.util.List;
  */
 public interface OrderServiceExtensionHandler extends ExtensionHandler {
     
-    public ExtensionResultStatusType attachAdditionalDataToNewNamedCart(Customer customer, Order cart);
+    public ExtensionResultStatusType attachAdditionalDataToNewNamedCart(OrderCustomer orderCustomer, Order cart);
 
     public ExtensionResultStatusType preValidateCartOperation(Order cart, ExtensionResultHolder erh);
 
