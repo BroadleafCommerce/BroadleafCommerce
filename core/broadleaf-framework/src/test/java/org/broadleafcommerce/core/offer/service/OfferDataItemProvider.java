@@ -63,6 +63,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import org.broadleafcommerce.core.order.domain.OrderCustomerImpl;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
@@ -76,8 +78,6 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.broadleafcommerce.profile.core.domain.State;
@@ -359,14 +359,12 @@ public class OfferDataItemProvider {
         
         order.getOrderItems().add(orderItem2);
         
-        Customer customer = new CustomerImpl();
-        customer.setEmailAddress("test@test.com");
-        customer.setFirstName("John");
-        customer.setLastName("Tester");
-        customer.setReceiveEmail(true);
-        customer.setRegistered(true);
+        OrderCustomer orderCustomer = new OrderCustomerImpl();
+        orderCustomer.setEmailAddress("test@test.com");
+        orderCustomer.setFirstName("John");
+        orderCustomer.setLastName("Tester");
         
-        order.setCustomer(customer);
+        order.setOrderCustomer(orderCustomer);
         
         order.setEmailAddress("test@test.com");
         
@@ -580,14 +578,12 @@ public class OfferDataItemProvider {
 
         bundleOrderItem.getDiscreteOrderItems().add(orderItem2);
 
-        Customer customer = new CustomerImpl();
-        customer.setEmailAddress("test@test.com");
-        customer.setFirstName("John");
-        customer.setLastName("Tester");
-        customer.setReceiveEmail(true);
-        customer.setRegistered(true);
+        OrderCustomer orderCustomer = new OrderCustomerImpl();
+        orderCustomer.setEmailAddress("test@test.com");
+        orderCustomer.setFirstName("John");
+        orderCustomer.setLastName("Tester");
 
-        order.setCustomer(customer);
+        order.setOrderCustomer(orderCustomer);
 
         order.setEmailAddress("test@test.com");
 
