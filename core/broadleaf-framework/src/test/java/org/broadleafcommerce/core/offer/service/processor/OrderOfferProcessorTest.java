@@ -79,17 +79,17 @@ public class OrderOfferProcessorTest extends TestCase {
         
         PromotableOrder order = dataProvider.createBasicPromotableOrder();
         List<Offer> offers = dataProvider.createCustomerBasedOffer("customer.registered==true", dataProvider.yesterday(), dataProvider.yesterday(), OfferDiscountType.PERCENT_OFF);
-        orderProcessor.filterOffers(offers, order.getOrder().getCustomer());
+        orderProcessor.filterOffers(offers, order.getOrder().getOrderCustomer());
         //confirm out-of-date orders are filtered out
         assertTrue(offers.size() == 0);
         
         offers = dataProvider.createCustomerBasedOffer("customer.registered==true", dataProvider.yesterday(), dataProvider.tomorrow(), OfferDiscountType.PERCENT_OFF);
-        orderProcessor.filterOffers(offers, order.getOrder().getCustomer());
+        orderProcessor.filterOffers(offers, order.getOrder().getOrderCustomer());
         //confirm valid customer offer is retained
         assertTrue(offers.size() == 1);
         
         offers = dataProvider.createCustomerBasedOffer("customer.registered==false", dataProvider.yesterday(), dataProvider.tomorrow(), OfferDiscountType.PERCENT_OFF);
-        orderProcessor.filterOffers(offers, order.getOrder().getCustomer());
+        orderProcessor.filterOffers(offers, order.getOrder().getOrderCustomer());
         //confirm invalid customer offer is culled
         assertTrue(offers.size() == 0);
         
