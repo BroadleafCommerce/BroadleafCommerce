@@ -18,7 +18,6 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
@@ -81,16 +80,6 @@ public class FieldManager {
         return fieldUtils.getField(clazz, fieldName);
     }
 
-    protected Collection<FieldManagerModifier> getFieldManagerModifiers() {
-        Map<String, FieldManagerModifier> modifierMap = ApplicationContextHolder.getApplicationContext().getBeansOfType(FieldManagerModifier.class);
-
-        if (MapUtils.isNotEmpty(modifierMap)) {
-            return modifierMap.values();
-        }
-
-        return new ArrayList<>();
-    }
-
     public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException, FieldNotAvailableException {
         StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
@@ -149,16 +138,10 @@ public class FieldManager {
             }
         }
 
-        // iterate through each modifier and if it can handle this field, receive the modified value
-        Collection<FieldManagerModifier> modifiers = getFieldManagerModifiers();
-        if (CollectionUtils.isNotEmpty(modifiers) && field != null) {
-            for (FieldManagerModifier modifier : modifiers) {
-                if (modifier.canHandle(field, value, entityManager)) {
-                    value = modifier.getModifiedReadValue(field, value, entityManager);
-                }
-            }
+        FieldModifierManager modifierManager = FieldModifierManager.getFieldModifierManager();
+        if (modifierManager != null) {
+            value = modifierManager.getModifiedReadValue(field, value, entityManager);
         }
-
         return value;
 
     }
@@ -217,16 +200,10 @@ public class FieldManager {
                         map.put(mapKey, newValue);
                     }
                 } else {
-                    // iterate through each modifier and if it can handle this field, receive the modified value
-                    Collection<FieldManagerModifier> modifiers = getFieldManagerModifiers();
-                    if (CollectionUtils.isNotEmpty(modifiers)) {
-                        for (FieldManagerModifier modifier : modifiers) {
-                            if (modifier.canHandle(field, newValue, entityManager)) {
-                                newValue = modifier.getModifiedWriteValue(field, value, newValue, entityManager);
-                            }
-                        }
+                    FieldModifierManager modifierManager = FieldModifierManager.getFieldModifierManager();
+                    if (modifierManager != null) {
+                        newValue = modifierManager.getModifiedWriteValue(field, value, newValue, entityManager);
                     }
-
                     field.set(value, newValue);
                 }
             } else {
