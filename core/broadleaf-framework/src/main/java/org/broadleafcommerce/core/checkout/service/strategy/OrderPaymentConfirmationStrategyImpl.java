@@ -45,7 +45,9 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
 import java.text.SimpleDateFormat;
+
 import javax.annotation.Resource;
 
 /**
@@ -210,7 +212,7 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
     }
 
     protected void populateCustomerOnRequest(PaymentRequestDTO requestDTO, OrderPayment payment) {
-        if (payment != null && payment.getOrder() != null && payment.getOrder().getCustomer() != null) {
+        if (payment != null && payment.getOrder() != null && payment.getOrder().getOrderCustomer() != null) {
             orderToPaymentRequestService.populateCustomerInfo(payment.getOrder(), requestDTO);
         }
 

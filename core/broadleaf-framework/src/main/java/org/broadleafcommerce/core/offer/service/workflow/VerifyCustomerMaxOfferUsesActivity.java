@@ -54,7 +54,7 @@ public class VerifyCustomerMaxOfferUsesActivity extends BaseActivity<ProcessCont
         
         for (Offer offer : appliedOffers) {
             if (offer.isLimitedUsePerCustomer()) {
-                Long currentUses = offerAuditService.countUsesByCustomer(order.getCustomer().getId(), offer.getId());
+                Long currentUses = offerAuditService.countUsesByCustomer(order.getOrderCustomer().getId(), offer.getId());
                 if (currentUses >= offer.getMaxUsesPerCustomer()) {
                     throw new OfferMaxUseExceededException("The customer has used this offer more than the maximum allowed number of times.");
                 }
