@@ -7,14 +7,26 @@ import org.broadleafcommerce.core.order.domain.OrderCustomerAdminPresentation.Gr
 import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "BLC_ORDER_CUSTOMER")
 public class OrderCustomerImpl implements OrderCustomer {
 
     @Id
     @Column(name = "CUSTOMER_ID")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
+    
+    @Column(name = "EXTERNAL_ID")
+    @AdminPresentation(friendlyName = "CustomerImpl_External_Id",
+            group = GroupName.Customer, order = FieldOrder.EXTERNAL_ID)
+    protected Long externalId;
     
     @Column(name = "FIRST_NAME")
     @AdminPresentation(friendlyName = "CustomerImpl_First_Name",
@@ -40,6 +52,11 @@ public class OrderCustomerImpl implements OrderCustomer {
     }
     
     @Override
+    public Long getExternalId() {
+        return externalId;
+    }
+    
+    @Override
     public String getFirstName() {
         return firstName;
     }
@@ -57,6 +74,11 @@ public class OrderCustomerImpl implements OrderCustomer {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public void setExternalId(Long externalId) {
+        this.externalId = externalId;
     }
     
     @Override

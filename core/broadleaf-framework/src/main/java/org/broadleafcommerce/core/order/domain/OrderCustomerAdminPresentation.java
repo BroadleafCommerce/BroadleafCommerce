@@ -45,6 +45,7 @@ public interface OrderCustomerAdminPresentation {
         public static final int FIRST_NAME = 1000;
         public static final int LAST_NAME = 2000;
         public static final int EMAIL = 3000;
+        public static final int EXTERNAL_ID = 4000;
     }
     
 }

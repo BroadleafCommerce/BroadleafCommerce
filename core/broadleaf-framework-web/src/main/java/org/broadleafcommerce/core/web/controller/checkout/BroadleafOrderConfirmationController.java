@@ -43,7 +43,7 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
         Customer customer = CustomerState.getCustomer();
         if (customer != null) {
             Order order = orderService.findOrderByOrderNumber(orderNumber);
-            if (order != null && customer.equals(order.getCustomer())) {
+            if (order != null && customer.getId().equals(order.getOrderCustomer().getExternalId())) {
                 extensionManager.getProxy().processAdditionalConfirmationActions(order);
 
                 model.addAttribute("order", order);
@@ -59,7 +59,7 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
         Customer customer = CustomerState.getCustomer();
         if (customer != null) {
             Order order = orderService.findOrderById(orderId);
-            if (order != null && customer.equals(order.getCustomer())) {
+            if (order != null && customer.getId().equals(order.getOrderCustomer().getExternalId())) {
                 extensionManager.getProxy().processAdditionalConfirmationActions(order);
 
                 model.addAttribute("order", order);
