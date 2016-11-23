@@ -20,15 +20,16 @@ package org.broadleafcommerce.core.offer.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.CustomerOfferImpl;
-import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository("blCustomerOfferDao")
 public class CustomerOfferDaoImpl implements CustomerOfferDao {
@@ -59,9 +60,9 @@ public class CustomerOfferDaoImpl implements CustomerOfferDao {
     }
 
     @SuppressWarnings("unchecked")
-    public List<CustomerOffer> readCustomerOffersByCustomer(final Customer customer) {
+    public List<CustomerOffer> readCustomerOffersByCustomer(final OrderCustomer orderCustomer) {
         final Query query = em.createNamedQuery("BC_READ_CUSTOMER_OFFER_BY_CUSTOMER_ID");
-        query.setParameter("customerId", customer.getId());
+        query.setParameter("customerId", orderCustomer.getId());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Offer");
 

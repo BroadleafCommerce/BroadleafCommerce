@@ -18,7 +18,7 @@
 package org.broadleafcommerce.core.offer.service.processor;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 
 import java.util.List;
 
@@ -29,6 +29,6 @@ import java.util.List;
  */
 public interface BaseProcessor {
     
-    public List<Offer> filterOffers(List<Offer> offers, Customer customer);
+    public List<Offer> filterOffers(List<Offer> offers, OrderCustomer orderCustomer);
     
 }

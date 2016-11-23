@@ -39,9 +39,9 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.joda.time.LocalDateTime;
 
 import java.util.ArrayList;
@@ -314,13 +314,13 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     }
 
     @Override
-    public List<Offer> filterOffers(List<Offer> offers, Customer customer) {
+    public List<Offer> filterOffers(List<Offer> offers, OrderCustomer orderCustomer) {
         List<Offer> filteredOffers = new ArrayList<Offer>();
         if (offers != null && !offers.isEmpty()) {
             filteredOffers = removeOutOfDateOffers(offers);
             filteredOffers = removeTimePeriodOffers(filteredOffers);
             filteredOffers = removeInvalidRequestOffers(filteredOffers);
-            filteredOffers = removeInvalidCustomerOffers(filteredOffers, customer);
+            filteredOffers = removeInvalidCustomerOffers(filteredOffers, orderCustomer);
         }
         return filteredOffers;
     }
@@ -487,10 +487,10 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @param customer
      * @return List of Offers that apply to this customer
      */
-    protected List<Offer> removeInvalidCustomerOffers(List<Offer> offers, Customer customer){
+    protected List<Offer> removeInvalidCustomerOffers(List<Offer> offers, OrderCustomer orderCustomer){
         List<Offer> offersToRemove = new ArrayList<Offer>();
         for (Offer offer : offers) {
-            if (!couldOfferApplyToCustomer(offer, customer)) {
+            if (!couldOfferApplyToCustomer(offer, orderCustomer)) {
                 offersToRemove.add(offer);
             }
         }
@@ -509,7 +509,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @param customer
      * @return true if offer can be applied, otherwise false
      */
-    protected boolean couldOfferApplyToCustomer(Offer offer, Customer customer) {
+    protected boolean couldOfferApplyToCustomer(Offer offer, OrderCustomer orderCustomer) {
         boolean appliesToCustomer = false;
         
         String rule = null;
@@ -520,7 +520,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
         if (rule != null) {
             HashMap<String, Object> vars = new HashMap<String, Object>();
-            vars.put("customer", customer);
+            vars.put("customer", orderCustomer);
             Boolean expressionOutcome = executeExpression(rule, vars);
             if (expressionOutcome != null && expressionOutcome) {
                 appliesToCustomer = true;
