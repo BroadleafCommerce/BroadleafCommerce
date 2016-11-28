@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.util;
 
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -101,7 +101,7 @@ public class BLCRequestUtils {
      * to Third Party Gateways.
      */
     public static String getRequestedServerPrefix() {
-        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        HttpServletRequest request = CommonRequestContext.getCommonRequestContext().getRequest();
         String scheme = request.getScheme();
         StringBuilder serverPrefix = new StringBuilder(scheme);
         serverPrefix.append("://");
