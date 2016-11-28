@@ -26,17 +26,16 @@ import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerPhone;
-import org.broadleafcommerce.profile.core.domain.Phone;
-import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 
 /**
@@ -57,9 +56,6 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fgService;
-
-    @Resource(name = "blPhoneService")
-    protected PhoneService phoneService;
 
     @Override
     public PaymentRequestDTO translateOrder(Order order) {
@@ -155,15 +151,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
     @Override
     public void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO) {
-        Customer customer = order.getCustomer();
+        OrderCustomer customer = order.getOrderCustomer();
         String phoneNumber = null;
-        if (customer.getCustomerPhones() != null && !customer.getCustomerPhones().isEmpty()) {
-            for (CustomerPhone customerPhone : customer.getCustomerPhones()) {
-                if (customerPhone.isDefault()) {
-                    Phone phone = phoneService.readPhoneById(customerPhone.getPhoneExternalId());
-                    phoneNumber =  phone.getPhoneNumber();
-                }
-            }
+        if (StringUtils.isNotBlank(order.getPhoneNumber())) {
+            phoneNumber =  order.getPhoneNumber();
         }
 
         String orderEmail = (customer.getEmailAddress() == null)? order.getEmailAddress() : customer.getEmailAddress();

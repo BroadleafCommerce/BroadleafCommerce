@@ -95,6 +95,7 @@ public interface OrderAdminPresentation {
 
         public static final int CUSTOMER = 1000;
         public static final int EMAILADDRESS = 2000;
+        public static final int PHONENUMBER = 3000;
 
         public static final int SUBTOTAL = 1000;
         public static final int TOTALTAX = 2000;

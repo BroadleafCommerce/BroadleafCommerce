@@ -283,7 +283,12 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             group = GroupName.Pricing, order = FieldOrder.TAX_EXEMPTION_CODE,
             visibility = VisibilityEnum.GRID_HIDDEN)
     protected String taxExemptionCode;
-
+    
+    @Column(name = "PHONE_NUMBER")
+    @AdminPresentation(friendlyName = "OrderImpl_Phone_Number",
+            group = GroupName.Customer, order=FieldOrder.PHONENUMBER)
+    protected String phoneNumber;
+    
     @Column(name = "TAX_OVERRIDE")
     protected Boolean taxOverride;
 
@@ -835,6 +840,15 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Override
     public boolean isTaxExempt() {
         return isTaxExempt != null && isTaxExempt != false &&  StringUtils.isNotEmpty(taxExemptionCode);
+    }
+    
+    @Override
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+    
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     @Override

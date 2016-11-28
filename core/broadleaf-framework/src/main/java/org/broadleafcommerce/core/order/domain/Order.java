@@ -496,5 +496,9 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
     public void setTaxExemptionCode(String exemption);
 
     public boolean isTaxExempt();
+    
+    public String getPhoneNumber();
+    
+    public void setPhoneNumber(String phoneNumber);
 
 }
