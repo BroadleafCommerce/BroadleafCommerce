@@ -83,7 +83,7 @@ public class SimpleTaxProvider implements TaxProvider {
 
     @Override
     public Order calculateTaxForOrder(Order order, ModuleConfiguration config) throws TaxException {
-        if (!order.getCustomer().isTaxExempt()) {
+        if (!order.isTaxExempt()) {
             for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
                 // Set taxes on the fulfillment group items
                 for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {

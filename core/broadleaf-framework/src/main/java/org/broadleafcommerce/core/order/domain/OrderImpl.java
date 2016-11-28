@@ -40,6 +40,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
@@ -270,6 +271,18 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(excluded = true)
     protected Locale locale;
+    
+    @Column(name = "IS_TAX_EXEMPT")
+    @AdminPresentation(friendlyName = "OrderImpl_Is_Tax_Exempt",
+            group = GroupName.Pricing, order = FieldOrder.IS_TAX_EXEMPT,
+            defaultValue = "false")
+    protected Boolean isTaxExempt = false;
+
+    @Column(name = "TAX_EXEMPTION_CODE")
+    @AdminPresentation(friendlyName = "OrderImpl_Customer_TaxExemptCode",
+            group = GroupName.Pricing, order = FieldOrder.TAX_EXEMPTION_CODE,
+            visibility = VisibilityEnum.GRID_HIDDEN)
+    protected String taxExemptionCode;
 
     @Column(name = "TAX_OVERRIDE")
     protected Boolean taxOverride;
@@ -803,6 +816,25 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Override
     public void setOrderMessages(List<ActivityMessageDTO> orderMessages) {
         this.orderMessages = orderMessages;
+    }
+    
+    @Override
+    public String getTaxExemptionCode() {
+        return this.taxExemptionCode;
+    }
+
+    @Override
+    public void setTaxExemptionCode(String exemption) {
+        this.taxExemptionCode = exemption;
+
+        if (exemption != null) {
+            this.isTaxExempt = true;
+        }
+    }
+
+    @Override
+    public boolean isTaxExempt() {
+        return isTaxExempt != null && isTaxExempt != false &&  StringUtils.isNotEmpty(taxExemptionCode);
     }
 
     @Override

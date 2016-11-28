@@ -76,6 +76,7 @@ public interface OrderAdminPresentation {
         public static final String Customer = "OrderImpl_Customer_Details_Group";
         public static final String OrderTotals = "OrderImpl_Order_Totals_Group";
         public static final String Advanced = "OrderImpl_Advanced";
+        public static final String Pricing = "OrderImpl_Pricing";
     }
 
     class GroupOrder {
@@ -103,5 +104,8 @@ public interface OrderAdminPresentation {
         public static final int ADJUSTMENTS = 1000;
         public static final int OFFERCODES = 2000;
         public static final int ATTRIBUTES = 3000;
+        
+        public static final int IS_TAX_EXEMPT = 1000;
+        public static final int TAX_EXEMPTION_CODE= 2000;
     }
 }

@@ -490,5 +490,11 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      * @param taxOverride
      */
     public void setTaxOverride(Boolean taxOverride);
+    
+    public String getTaxExemptionCode();
+
+    public void setTaxExemptionCode(String exemption);
+
+    public boolean isTaxExempt();
 
 }
