@@ -18,10 +18,12 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.common.value.ValueAssignable;
@@ -35,6 +37,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -80,7 +83,7 @@ public class FieldManager {
     public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException, FieldNotAvailableException {
         StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
-        Field field;
+        Field field = null;
         Object value = HibernateUtils.deproxy(bean);
 
         while (tokens.hasMoreTokens()) {
@@ -91,9 +94,11 @@ public class FieldManager {
                 fieldNamePart = fieldNamePart.substring(0, fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR));
             }
             field = getSingleField(componentClass, fieldNamePart);
+
             if (field != null) {
                 field.setAccessible(true);
                 value = field.get(value);
+
                 if (value instanceof List) {
 
                     String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
@@ -122,6 +127,7 @@ public class FieldManager {
                         value = ((List) value).get(0);
                     }
                 }
+
                 if (value != null) {
                     componentClass = value.getClass();
                 } else {
@@ -132,6 +138,10 @@ public class FieldManager {
             }
         }
 
+        FieldModifierManager modifierManager = FieldModifierManager.getFieldModifierManager();
+        if (modifierManager != null) {
+            value = modifierManager.getModifiedReadValue(field, value, entityManager);
+        }
         return value;
 
     }
@@ -159,17 +169,17 @@ public class FieldManager {
             field.setAccessible(true);
             if (j == count - 1) {
                 if (mapKey != null) {
-                    Map map;
+                    Map<String, Object> map;
                     if (field.get(value) instanceof List) {
 
                         String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
                         String fullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1) + fieldNamePart.substring(1);
                         try {
-                            map = (Map)PropertyUtils.getProperty(bean, fullFieldName);
+                            map = (Map<String, Object>)PropertyUtils.getProperty(bean, fullFieldName);
                         } catch (InvocationTargetException|NoSuchMethodException e) {
                             fullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1) + fieldNamePart.substring(1);
                             try {
-                                map = (Map) PropertyUtils.getProperty(bean, fullFieldName);
+                                map = (Map<String, Object>) PropertyUtils.getProperty(bean, fullFieldName);
                             } catch (InvocationTargetException|NoSuchMethodException n) {
                                 LOG.info("Unable to find a reference to (" + field.getType().getName() + ") in the EntityConfigurationManager. " +
                                         "Using the type of this class.");
@@ -177,7 +187,7 @@ public class FieldManager {
                             }
                         }
                     } else {
-                        map = (Map) field.get(value);
+                        map = (Map<String, Object>) field.get(value);
                     }
                     if (newValue == null) {
                         Object currentValue = map.get(mapKey);
@@ -190,6 +200,10 @@ public class FieldManager {
                         map.put(mapKey, newValue);
                     }
                 } else {
+                    FieldModifierManager modifierManager = FieldModifierManager.getFieldModifierManager();
+                    if (modifierManager != null) {
+                        newValue = modifierManager.getModifiedWriteValue(field, value, newValue, entityManager);
+                    }
                     field.set(value, newValue);
                 }
             } else {
