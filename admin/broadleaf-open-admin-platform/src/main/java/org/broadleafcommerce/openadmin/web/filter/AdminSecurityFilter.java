@@ -18,6 +18,8 @@
 package org.broadleafcommerce.openadmin.web.filter;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.handler.SecurityFilter;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
@@ -61,6 +63,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author trevorleffert, Jeff Fischer
  */
 public class AdminSecurityFilter extends SecurityFilter {
+
+    private static final Log LOG = LogFactory.getLog(AdminSecurityFilter.class);
     
     @Resource(name = "blAdminAuthenticationFailureHandler")
     protected AuthenticationFailureHandler failureHandler;
@@ -70,8 +74,10 @@ public class AdminSecurityFilter extends SecurityFilter {
             super.doFilter(baseRequest, baseResponse, chain);
         } catch (ServletException e) {
             if (e.getCause() instanceof StaleStateServiceException) {
-                e.printStackTrace(new PrintWriter(baseResponse.getWriter()));
+                LOG.debug("Stale state detected", e);
                 ((HttpServletResponse) baseResponse).setStatus(HttpServletResponse.SC_CONFLICT);
+                baseResponse.getWriter().write("Stale State Detected\n");
+                baseResponse.getWriter().write(e.getMessage() + "\n");
             } else if (e.getCause() instanceof ServiceException) {
                 HttpServletRequest baseHttpRequest = (HttpServletRequest) baseRequest;
                 //if authentication is null and CSRF token is invalid, must be session time out
