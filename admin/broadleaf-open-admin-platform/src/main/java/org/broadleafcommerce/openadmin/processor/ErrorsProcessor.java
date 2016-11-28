@@ -22,14 +22,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafAttributeModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierAttrProcessor;
+import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
@@ -56,7 +56,7 @@ import java.util.Map;
  */
 @Component("blErrorsProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class ErrorsProcessor extends AbstractBroadleafAttributeModelVariableModifierProcessor {
+public class ErrorsProcessor extends AbstractBroadleafVariableModifierAttrProcessor {
 
     protected static final Log LOG = LogFactory.getLog(ErrorsProcessor.class);
 
@@ -82,15 +82,16 @@ public class ErrorsProcessor extends AbstractBroadleafAttributeModelVariableModi
     }
     
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, Map<String, Object> newLocalVariables, BroadleafTemplateContext context) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
 
         BindStatus bindStatus = context.getBindStatus(attributeValue);
 
+        Map<String, Object> newLocalVars = new HashMap<>();
         if (bindStatus.isError()) {
             EntityForm form = (EntityForm) ((BindingResult) bindStatus.getErrors()).getTarget();
 
             // Map of tab name -> (Map field Name -> list of error messages)
-            Map<String, Map<String, List<String>>> result = new HashMap<String, Map<String, List<String>>>();
+            Map<String, Map<String, List<String>>> result = new HashMap<>();
             if (!hideTopLevelFieldErrors) {
                 for (FieldError err : bindStatus.getErrors().getFieldErrors()) {
                     //attempt to look up which tab the field error is on. If it can't be found, just use
@@ -103,7 +104,7 @@ public class ErrorsProcessor extends AbstractBroadleafAttributeModelVariableModi
 
                     Map<String, List<String>> tabErrors = result.get(tabName);
                     if (tabErrors == null) {
-                        tabErrors = new HashMap<String, List<String>>();
+                        tabErrors = new HashMap<>();
                         result.put(tabName, tabErrors);
                     }
                     if (err.getField().contains(DynamicEntityFormInfo.FIELD_SEPARATOR)) {
@@ -131,8 +132,8 @@ public class ErrorsProcessor extends AbstractBroadleafAttributeModelVariableModi
                             //this is the code that is executed when a Translations add action contains errors
                             //this branch of the code just puts a placeholder "tabErrors", to avoid errprProcessor parsing errors, and
                             //avoids checking on tabs, fieldGroups or fields (which for translations are empty), thus skipping any warning
-                            newLocalVariables.put("tabErrors", tabErrors);
-                            return;
+                            newLocalVars.put("tabErrors", tabErrors);
+                            return newLocalVars;
                         }
                     }
                 }
@@ -147,15 +148,15 @@ public class ErrorsProcessor extends AbstractBroadleafAttributeModelVariableModi
             for (ObjectError err : bindStatus.getErrors().getGlobalErrors()) {
                 Map<String, List<String>> tabErrors = result.get(GENERAL_ERRORS_TAB_KEY);
                 if (tabErrors == null) {
-                    tabErrors = new HashMap<String, List<String>>();
+                    tabErrors = new HashMap<>();
                     result.put(translatedGeneralTab, tabErrors);
                 }
                 addFieldError(GENERAL_ERROR_FIELD_KEY, err.getCode(), tabErrors);
             }
 
-            newLocalVariables.put("tabErrors", result);
+            newLocalVars.put("tabErrors", result);
         }
-        return;
+        return newLocalVars;
     }
 
     private String extractFieldName(FieldError err) {
@@ -167,7 +168,7 @@ public class ErrorsProcessor extends AbstractBroadleafAttributeModelVariableModi
     protected void addFieldError(String fieldName, String message, Map<String, List<String>> tabErrors) {
         List<String> messages = tabErrors.get(fieldName);
         if (messages == null) {
-            messages = new ArrayList<String>();
+            messages = new ArrayList<>();
             tabErrors.put(fieldName, messages);
         }
         messages.add(message);

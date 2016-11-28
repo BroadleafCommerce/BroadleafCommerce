@@ -21,12 +21,12 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.handler.CsrfFilter;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateElement;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateModel;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateModelModifierDTO;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafModelModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateModelModifierDTO;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -117,7 +117,7 @@ public class FormProcessor extends AbstractBroadleafModelModifierProcessor {
             }
         }
         dto.setFormParameters(formAttributes);
-        dto.setTagName("form");
+        dto.setReplacementTagName("form");
         return dto;
     }
     

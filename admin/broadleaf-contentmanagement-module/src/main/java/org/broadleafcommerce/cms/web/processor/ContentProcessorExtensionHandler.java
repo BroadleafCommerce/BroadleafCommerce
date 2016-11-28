@@ -21,7 +21,7 @@ package org.broadleafcommerce.cms.web.processor;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.web.deeplink.DeepLink;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 
 import java.util.List;
 import java.util.Map;

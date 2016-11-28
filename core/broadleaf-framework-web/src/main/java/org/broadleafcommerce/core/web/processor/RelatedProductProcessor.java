@@ -19,22 +19,21 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +62,7 @@ import javax.annotation.Resource;
  */
 @Component("blRelatedProductProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class RelatedProductProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+public class RelatedProductProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
@@ -92,20 +91,20 @@ public class RelatedProductProcessor extends AbstractBroadleafModelVariableModif
      * Controller method for the processor that readies the service call and adds the results to the model.
      */
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         RelatedProductDTO relatedProductDTO = buildDTO(tagAttributes, tagName, context);
         List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(relatedProductDTO);
-        if (useSku) {
-            newModelVars.put(getRelatedSkusResultVar(tagAttributes), getRelatedSkus(relatedProducts, relatedProductDTO.getQuantity()));
-        } else {
-            newModelVars.put(getRelatedProductsResultVar(tagAttributes), relatedProducts);
-            newModelVars.put(getProductsResultVar(tagAttributes), convertRelatedProductsToProducts(relatedProducts));
-            newModelVars.put("blcAllProducts", buildProductList(relatedProducts));
-        }
+        
+        Map<String, Object> newModelVars = new HashMap<>();
+        newModelVars.put(getRelatedProductsResultVar(tagAttributes), relatedProducts);
+        newModelVars.put(getProductsResultVar(tagAttributes), convertRelatedProductsToProducts(relatedProducts));
+        newModelVars.put("blcAllProducts", buildProductList(relatedProducts));
+        
+        return newModelVars;
     }
 
     protected List<Product> buildProductList(List<? extends PromotableProduct> relatedProducts) {
-        List<Product> productList = new ArrayList<Product>();
+        List<Product> productList = new ArrayList<>();
         if (relatedProducts != null) {
             for (PromotableProduct promProduct : relatedProducts) {
                 productList.add(promProduct.getRelatedProduct());
@@ -115,7 +114,7 @@ public class RelatedProductProcessor extends AbstractBroadleafModelVariableModif
     }
 
     protected List<Sku> getRelatedSkus(List<? extends PromotableProduct> relatedProducts, Integer maxQuantity) {
-        List<Sku> relatedSkus = new ArrayList<Sku>();
+        List<Sku> relatedSkus = new ArrayList<>();
         if (relatedProducts != null) {
             Integer numSkus = 0;
             for (PromotableProduct promProduct : relatedProducts) {
@@ -143,7 +142,7 @@ public class RelatedProductProcessor extends AbstractBroadleafModelVariableModif
     }
 
     protected List<Product> convertRelatedProductsToProducts(List<? extends PromotableProduct> relatedProducts) {
-        List<Product> products = new ArrayList<Product>();
+        List<Product> products = new ArrayList<>();
         if (relatedProducts != null) {
             for (PromotableProduct product : relatedProducts) {
                 products.add(product.getRelatedProduct());
@@ -156,14 +155,6 @@ public class RelatedProductProcessor extends AbstractBroadleafModelVariableModif
         String resultVar = tagAttributes.get("relatedProductsResultVar");
         if (resultVar == null) {
             resultVar = "relatedProducts";
-        }
-        return resultVar;
-    }
-
-    private String getRelatedSkusResultVar(Map<String, String> tagAttributes) {
-        String resultVar = tagAttributes.get("relatedSkusResultVar");
-        if (resultVar == null) {
-            resultVar = "relatedSkus";
         }
         return resultVar;
     }

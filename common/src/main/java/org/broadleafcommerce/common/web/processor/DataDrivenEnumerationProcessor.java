@@ -17,19 +17,18 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
-import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
 import org.broadleafcommerce.common.enumeration.service.DataDrivenEnumerationService;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.broadleafcommerce.common.web.expression.DataDrivenEnumVariableExpression;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import com.google.common.collect.ImmutableMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -47,13 +46,18 @@ import javax.annotation.Resource;
  *          {@link DataDrivenEnumerationValue#getDisplay()}
  *
  * @author Phillip Verheyden (phillipuniverse)
+ * @deprecated use {@link DataDrivenEnumVariableExpression} instead
  */
+@Deprecated
 @Component("blDataDrivenEnumerationProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class DataDrivenEnumerationProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+public class DataDrivenEnumerationProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Resource(name = "blDataDrivenEnumerationService")
     protected DataDrivenEnumerationService enumService;
+    
+    @Resource
+    protected DataDrivenEnumVariableExpression ddeVariableExpression;
     
     @Override
     public String getName() {
@@ -65,38 +69,10 @@ public class DataDrivenEnumerationProcessor extends AbstractBroadleafModelVariab
         return 10000;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor#populateModelVariables(java.lang.String, java.util.Map, java.util.Map)
-     */
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
-        String key = tagAttributes.get("key");
-        if (StringUtils.isEmpty(key)) {
-            throw new IllegalArgumentException("No 'key' parameter was passed to find enumeration values");
-        }
-        
-        DataDrivenEnumeration ddEnum = enumService.findEnumByKey(key);
-        if (ddEnum == null) {
-            throw new IllegalArgumentException("Could not find a data driven enumeration keyed by " + key);
-        }
-        List<DataDrivenEnumerationValue> enumValues = new ArrayList<>(ddEnum.getEnumValues());
-        
-        final String sort = tagAttributes.get("sort");
-        if (StringUtils.isNotEmpty(sort)) {
-            Collections.sort(enumValues, new Comparator<DataDrivenEnumerationValue>() {
-
-                @Override
-                public int compare(DataDrivenEnumerationValue arg0, DataDrivenEnumerationValue arg1) {
-                    if (sort.equals("ASCENDING")) {
-                        return arg0.getDisplay().compareTo(arg1.getDisplay());
-                    } else {
-                        return arg1.getDisplay().compareTo(arg0.getDisplay());
-                    }
-                }
-            });
-        }
-        
-        newModelVars.put("enumValues", enumValues);
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+        List<DataDrivenEnumerationValue> enumValues = ddeVariableExpression.getEnumValues(tagAttributes.get("key"), tagAttributes.get("sort"));
+        return ImmutableMap.of("enumValues", (Object) enumValues);
     }
 
 }
