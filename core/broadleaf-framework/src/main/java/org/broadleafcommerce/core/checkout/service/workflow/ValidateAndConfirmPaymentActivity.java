@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationS
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.strategy.OrderPaymentConfirmationStrategy;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
@@ -37,7 +38,6 @@ import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;

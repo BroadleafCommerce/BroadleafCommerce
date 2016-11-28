@@ -20,9 +20,9 @@ package org.broadleafcommerce.core.payment.service;
 import org.broadleafcommerce.common.payment.dto.AddressDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -37,7 +37,7 @@ public interface PaymentResponseDTOToEntityService {
 
     /**
      * <p>
-     * Will attempt to populate the {@link org.broadleafcommerce.profile.core.domain.CustomerPayment#setPaymentToken(String)}
+     * Will attempt to populate the {@link org.broadleafcommerce.core.payment.domain.CustomerPayment#setPaymentToken(String)}
      * by first looking at the response map for key {@link org.broadleafcommerce.common.payment.PaymentAdditionalFieldType#TOKEN}.
      * If not found, it will next look and see if a Credit Card is populated on the response and will attempt to get the
      * {@link org.broadleafcommerce.common.payment.dto.CreditCardDTO#getCreditCardNum()}

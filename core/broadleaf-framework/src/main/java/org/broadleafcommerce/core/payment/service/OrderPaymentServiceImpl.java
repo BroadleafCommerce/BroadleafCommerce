@@ -27,13 +27,12 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
+import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.AddressService;
-import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -159,7 +158,7 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
     @Transactional(value = TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public CustomerPayment createCustomerPaymentFromPaymentTransaction(PaymentTransaction transaction) {
         CustomerPayment customerPayment = customerPaymentService.create();
-        customerPayment.setCustomer(transaction.getOrderPayment().getOrder().getCustomer());
+        customerPayment.setOrderCustomer(transaction.getOrderPayment().getOrder().getOrderCustomer());
         customerPayment.setBillingAddressExternalId(addressService.copyAddress(transaction.getOrderPayment().getBillingAddress()).getId());
         customerPayment.setPaymentType(transaction.getOrderPayment().getType());
         customerPayment.setPaymentGatewayType(transaction.getOrderPayment().getGatewayType());

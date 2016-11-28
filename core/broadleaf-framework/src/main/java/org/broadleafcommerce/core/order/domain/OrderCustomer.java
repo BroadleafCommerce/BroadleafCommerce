@@ -1,5 +1,8 @@
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.core.payment.domain.CustomerPayment;
+
+import java.util.List;
 
 public interface OrderCustomer {
 
@@ -12,6 +15,8 @@ public interface OrderCustomer {
     public String getLastName();
     
     public String getEmailAddress();
+    
+    public List<CustomerPayment> getCustomerPayments();
 
     public void setId(Long id);
     
@@ -22,5 +27,7 @@ public interface OrderCustomer {
     public void setLastName(String lastName);
 
     public void setFirstName(String firstName);
+    
+    public void setCustomerPayments(List<CustomerPayment> customerPayments);
 
 }

@@ -16,7 +16,7 @@
  * #L%
  */
 
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
@@ -32,6 +32,8 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import org.broadleafcommerce.core.order.domain.OrderCustomerImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -93,10 +95,10 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     @Column(name = "CUSTOMER_PAYMENT_ID")
     protected Long id;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CustomerImpl.class, optional = false)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = OrderCustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Customer customer;
+    protected OrderCustomer customer;
 
     @Column(name = "ADDRESS_EXTERNAL_ID")
     @Index(name="CUSTOMERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_EXTERNAL_ID"})
@@ -156,12 +158,12 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     }
 
     @Override
-    public Customer getCustomer() {
+    public OrderCustomer getOrderCustomer() {
         return customer;
     }
 
     @Override
-    public void setCustomer(Customer customer) {
+    public void setOrderCustomer(OrderCustomer customer) {
         this.customer = customer;
     }
 
@@ -239,7 +241,7 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
         }
         CustomerPayment cloned = createResponse.getClone();
         // dont clone
-        cloned.setCustomer(customer);
+        cloned.setOrderCustomer(customer);
         cloned.setBillingAddressExternalId(billingAddressExternalId);
         cloned.setIsDefault(isDefault);
         cloned.setPaymentToken(paymentToken);

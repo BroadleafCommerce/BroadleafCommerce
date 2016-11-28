@@ -19,10 +19,10 @@ package org.broadleafcommerce.core.payment.service;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 
 import java.util.List;
 
@@ -73,7 +73,7 @@ public interface OrderPaymentService {
 
     /**
      * <p>
-     * Create a {@link org.broadleafcommerce.profile.core.domain.CustomerPayment} token for the passed in Customer
+     * Create a {@link org.broadleafcommerce.core.payment.domain.CustomerPayment} token for the passed in Customer
      * given a {@link org.broadleafcommerce.core.payment.domain.PaymentTransaction}. This assumes that the
      * token and any additional request attributes needed to do another transaction for this specific gateway
      * has already been persisted to the {@link org.broadleafcommerce.core.payment.domain.PaymentTransaction#getAdditionalFields()} map.
@@ -90,7 +90,7 @@ public interface OrderPaymentService {
 
     /**
      * <p>
-     * Will attempt to populate the {@link org.broadleafcommerce.profile.core.domain.CustomerPayment#setPaymentToken(String)}
+     * Will attempt to populate the {@link org.broadleafcommerce.core.payment.domain.CustomerPayment#setPaymentToken(String)}
      * by looking at the {@link org.broadleafcommerce.core.payment.domain.PaymentTransaction#getAdditionalFields()}
      * for key {@link org.broadleafcommerce.common.payment.PaymentAdditionalFieldType#TOKEN}.
      *

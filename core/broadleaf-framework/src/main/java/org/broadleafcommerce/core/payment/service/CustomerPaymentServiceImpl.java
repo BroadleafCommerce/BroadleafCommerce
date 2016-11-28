@@ -15,14 +15,17 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.service;
+package org.broadleafcommerce.core.payment.service;
 
-import org.broadleafcommerce.profile.core.dao.CustomerPaymentDao;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import org.broadleafcommerce.core.order.service.OrderCustomerService;
+import org.broadleafcommerce.core.payment.dao.CustomerPaymentDao;
+import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+
 import javax.annotation.Resource;
 
 @Service("blCustomerPaymentService")
@@ -33,7 +36,7 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
     protected CustomerPaymentDao customerPaymentDao;
 
     @Resource(name="blCustomerService")
-    protected CustomerService customerService;
+    protected OrderCustomerService orderCustomerService;
 
     @Override
     @Transactional("blTransactionManager")
@@ -68,7 +71,8 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
         return customerPaymentDao.create();
     }
 
-    public CustomerPayment findDefaultPaymentForCustomer(Customer customer) {
+    @Override
+    public CustomerPayment findDefaultPaymentForCustomer(OrderCustomer customer) {
         if (customer == null) { return null; }
         List<CustomerPayment> payments = readCustomerPaymentsByCustomerId(customer.getId());
         for (CustomerPayment payment : payments) {
@@ -82,7 +86,7 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
     @Override
     @Transactional("blTransactionManager")
     public CustomerPayment setAsDefaultPayment(CustomerPayment payment) {
-        CustomerPayment oldDefault = findDefaultPaymentForCustomer(payment.getCustomer());
+        CustomerPayment oldDefault = findDefaultPaymentForCustomer(payment.getOrderCustomer());
         if (oldDefault != null) {
             oldDefault.setIsDefault(false);
             saveCustomerPayment(oldDefault);
@@ -93,7 +97,7 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
 
     @Override
     @Transactional("blTransactionManager")
-    public Customer deleteCustomerPaymentFromCustomer(Customer customer, CustomerPayment payment) {
+    public OrderCustomer deleteCustomerPaymentFromCustomer(OrderCustomer customer, CustomerPayment payment) {
         List<CustomerPayment> payments = customer.getCustomerPayments();
         for (CustomerPayment customerPayment : payments) {
             if (customerPayment.getId().equals(payment.getId())) {
@@ -101,7 +105,7 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
                 break;
             }
         }
-       return customerService.saveCustomer(customer);
+       return orderCustomerService.save(customer);
     }
 
 }

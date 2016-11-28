@@ -126,10 +126,6 @@ public interface Customer extends Serializable, MultiTenantCloneable<Customer>  
 
     public void setCustomerPhones(List<CustomerPhone> customerPhones);
 
-    public List<CustomerPayment> getCustomerPayments();
-
-    public void setCustomerPayments(List<CustomerPayment> customerPayments);
-
     /**
      * The code used by an external system to determine if the user is tax exempt and/or what specific taxes the user is
      * exempt from.

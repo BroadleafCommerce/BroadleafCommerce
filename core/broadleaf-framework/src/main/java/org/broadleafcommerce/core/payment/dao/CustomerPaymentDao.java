@@ -15,17 +15,17 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.service;
+package org.broadleafcommerce.core.payment.dao;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
+import org.broadleafcommerce.core.payment.domain.CustomerPayment;
+
 import java.util.List;
 
-public interface CustomerPaymentService {
-
-    public CustomerPayment saveCustomerPayment(CustomerPayment customerPayment);
+public interface CustomerPaymentDao {
 
     public List<CustomerPayment> readCustomerPaymentsByCustomerId(Long customerId);
+
+    public CustomerPayment save(CustomerPayment customerPayment);
 
     public CustomerPayment readCustomerPaymentById(Long customerPaymentId);
 
@@ -34,11 +34,5 @@ public interface CustomerPaymentService {
     public void deleteCustomerPaymentById(Long customerPaymentId);
 
     public CustomerPayment create();
-
-    public CustomerPayment findDefaultPaymentForCustomer(Customer customer);
-
-    public CustomerPayment setAsDefaultPayment(CustomerPayment payment);
-
-    public Customer deleteCustomerPaymentFromCustomer(Customer customer, CustomerPayment payment);
 
 }

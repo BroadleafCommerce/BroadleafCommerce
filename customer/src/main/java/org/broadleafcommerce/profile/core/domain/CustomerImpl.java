@@ -196,16 +196,6 @@ public class CustomerImpl implements Customer, CustomerAdminPresentation { //TOD
             addType = AddMethodType.PERSIST)
     protected List<CustomerPhone> customerPhones = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class, cascade = { CascadeType.ALL })
-    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-    @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Payments",
-            tab = TabName.PaymentMethods, order = 1000,
-            addType = AddMethodType.PERSIST,
-            readOnly = true)
-    protected List<CustomerPayment> customerPayments = new ArrayList<>();
-
     @Column(name = "IS_TAX_EXEMPT")
     @AdminPresentation(friendlyName = "CustomerImpl_Is_Tax_Exempt",
             group = GroupName.Pricing, order = FieldOrder.IS_TAX_EXEMPT,
@@ -469,16 +459,6 @@ public class CustomerImpl implements Customer, CustomerAdminPresentation { //TOD
         this.customerPhones = customerPhones;
     }
 
-    @Override
-    public List<CustomerPayment> getCustomerPayments() {
-        return customerPayments;
-    }
-
-    @Override
-    public void setCustomerPayments(List<CustomerPayment> customerPayments) {
-        this.customerPayments = customerPayments;
-    }
-
 //TODO: microservices - deal with AdminBasicEntity
 //    @Override
 //    public String getMainEntityName() {
@@ -583,11 +563,6 @@ public class CustomerImpl implements Customer, CustomerAdminPresentation { //TOD
         cloned.setFirstName(firstName);
         cloned.setEmailAddress(emailAddress);
         cloned.setDeactivated(deactivated);
-        for (CustomerPayment entry : customerPayments) {
-            CustomerPayment clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCustomer(cloned);
-            cloned.getCustomerPayments().add(clonedEntry);
-        }
         for (CustomerPhone entry : customerPhones) {
             CustomerPhone clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setCustomer(cloned);

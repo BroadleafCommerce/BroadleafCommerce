@@ -23,7 +23,8 @@ public interface OrderCustomerAdminPresentation {
     
     public static class TabName {
         public static final String General = "General";
-        public static final String Advanced = "CustomerImpl_Advanced_Tab";
+        public static final String Advanced = "OrderCustomerImpl_Advanced_Tab";
+        public static final String PaymentMethods = "OrderCustomerImpl_Payment_Tab";
     }
 
     public static class TabOrder {

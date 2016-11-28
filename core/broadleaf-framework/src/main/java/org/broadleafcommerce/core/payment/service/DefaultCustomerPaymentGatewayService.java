@@ -20,17 +20,17 @@ package org.broadleafcommerce.core.payment.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
-import org.broadleafcommerce.common.payment.dto.AddressDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.CustomerPaymentGatewayService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
+import org.broadleafcommerce.common.web.payment.controller.CustomerPaymentGatewayAbstractController;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import org.broadleafcommerce.core.order.service.OrderCustomerService;
+import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.AddressService;
-import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
-import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 
 /**
@@ -51,7 +51,7 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
     protected CustomerPaymentService customerPaymentService;
 
     @Resource(name = "blCustomerService")
-    protected CustomerService customerService;
+    protected OrderCustomerService orderCustomerService;
 
     @Resource(name = "blPaymentResponseDTOToEntityService")
     protected PaymentResponseDTOToEntityService dtoToEntityService;
@@ -70,10 +70,10 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
         }
 
         Long customerId = Long.parseLong(responseDTO.getCustomer().getCustomerId());
-        Customer customer = customerService.readCustomerById(customerId);
-        if (customer != null) {
+        OrderCustomer orderCustomer = orderCustomerService.findOrderCustomerByExternalId(customerId);
+        if (orderCustomer != null) {
             CustomerPayment customerPayment = customerPaymentService.create();
-            customerPayment.setCustomer(customer);
+            customerPayment.setOrderCustomer(orderCustomer);
             customerPayment.setAdditionalFields(responseDTO.getResponseMap());
             customerPayment.setPaymentGatewayType(config.getGatewayType());
             customerPayment.setPaymentType(responseDTO.getPaymentType());
@@ -107,7 +107,7 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
             }
 
             customerPayment = customerPaymentService.saveCustomerPayment(customerPayment);
-            customer.getCustomerPayments().add(customerPayment);
+            orderCustomer.getCustomerPayments().add(customerPayment);
             return customerPayment.getId();
         }
 

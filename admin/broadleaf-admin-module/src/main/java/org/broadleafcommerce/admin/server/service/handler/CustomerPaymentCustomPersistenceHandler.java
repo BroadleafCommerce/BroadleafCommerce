@@ -25,6 +25,9 @@ import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.core.payment.domain.CustomerPayment;
+import org.broadleafcommerce.core.payment.domain.CustomerPaymentImpl;
+import org.broadleafcommerce.core.payment.service.CustomerPaymentService;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -40,9 +43,6 @@ import org.broadleafcommerce.openadmin.server.service.handler.ClassCustomPersist
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
-import org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl;
-import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

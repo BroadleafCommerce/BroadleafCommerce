@@ -15,11 +15,14 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
+import org.broadleafcommerce.core.order.domain.OrderCustomerPersistedEvent;
+import org.broadleafcommerce.profile.core.domain.CustomerPersistedEvent;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
@@ -40,7 +43,7 @@ public class CustomerPaymentPersistedEntityListener {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
                 public void afterCommit() {
-                    ApplicationContextHolder.getApplicationContext().publishEvent(new CustomerPersistedEvent(((CustomerPayment) entity).getCustomer()));
+                    ApplicationContextHolder.getApplicationContext().publishEvent(new OrderCustomerPersistedEvent(((CustomerPayment) entity).getOrderCustomer()));
                 }
             });
         }

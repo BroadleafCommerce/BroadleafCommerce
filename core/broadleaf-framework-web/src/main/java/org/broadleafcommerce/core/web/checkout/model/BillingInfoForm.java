@@ -17,9 +17,9 @@
  */
 package org.broadleafcommerce.core.web.checkout.model;
 
+import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 
 import java.io.Serializable;
