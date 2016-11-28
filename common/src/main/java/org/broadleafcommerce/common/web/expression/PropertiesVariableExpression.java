@@ -19,8 +19,8 @@ package org.broadleafcommerce.common.web.expression;
 
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.processor.ConfigVariableProcessor;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;

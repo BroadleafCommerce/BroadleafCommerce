@@ -25,9 +25,6 @@ import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -46,6 +43,9 @@ import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionDTO;
 import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionStateType;
 import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionViewType;
 import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
@@ -59,6 +59,7 @@ import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -86,7 +87,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component("blOnePageCheckoutProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Resource(name = "blStateService")
     protected StateService stateService;
@@ -125,7 +126,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModi
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         //Pre-populate the command objects
         OrderInfoForm orderInfoForm = (OrderInfoForm) context.parseExpression(tagAttributes.get("orderInfoForm"));
 
@@ -142,6 +143,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModi
         prepopulateCheckoutForms(CartState.getCart(), orderInfoForm, shippingInfoForm, billingInfoForm);
 
         //Add PaymentRequestDTO to the model in the case of errors or other cases
+        Map<String, Object> newModelVars = new HashMap<>();
         Order cart = CartState.getCart();
         if (cart != null && !(cart instanceof NullOrderImpl)) {
             newModelVars.put("paymentRequestDTO", orderToPaymentRequestDTOService.translateOrder(cart));
@@ -168,6 +170,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafModelVariableModi
         //Populate any Payment Processing Errors
         populateProcessingError(newModelVars);
 
+        return newModelVars;
     }
 
     /**

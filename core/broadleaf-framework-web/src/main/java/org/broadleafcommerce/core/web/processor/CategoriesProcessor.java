@@ -21,17 +21,18 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +51,7 @@ import javax.annotation.Resource;
  */
 @Component("blCategoriesProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class CategoriesProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+public class CategoriesProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -69,17 +70,18 @@ public class CategoriesProcessor extends AbstractBroadleafModelVariableModifierP
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         String resultVar = tagAttributes.get("resultVar");
         String parentCategory = tagAttributes.get("parentCategory");
         String unparsedMaxResults = tagAttributes.get("maxResults");
 
+        Map<String, Object> newModelVars = new HashMap<>();
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
             ExtensionResultStatusType result = extensionManager.getProxy().findAllPossibleChildCategories(parentCategory, unparsedMaxResults, holder);
             if (ExtensionResultStatusType.HANDLED.equals(result)) {
                 newModelVars.put(resultVar, holder.getResult());
-                return;
+                return newModelVars;
             }
         }
 
@@ -91,7 +93,7 @@ public class CategoriesProcessor extends AbstractBroadleafModelVariableModifierP
             List<CategoryXref> subcategories = categories.get(0).getChildCategoryXrefs();
             List<Category> results = Collections.emptyList();
             if (subcategories != null && !subcategories.isEmpty()) {
-                results = new ArrayList<Category>(subcategories.size());
+                results = new ArrayList<>(subcategories.size());
                 if (StringUtils.isNotEmpty(unparsedMaxResults)) {
                     int maxResults = Integer.parseInt(unparsedMaxResults);
                     if (subcategories.size() > maxResults) {
@@ -105,7 +107,7 @@ public class CategoriesProcessor extends AbstractBroadleafModelVariableModifierP
             }
             newModelVars.put(resultVar, results);
         }
-
+        return newModelVars;
     }
 
 }

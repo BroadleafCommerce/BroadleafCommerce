@@ -20,11 +20,13 @@ package org.broadleafcommerce.common.web.payment.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.ImmutableMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +58,7 @@ import javax.annotation.Resource;
  */
 @Component("blCreditCardTypesProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class CreditCardTypesProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+public class CreditCardTypesProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     protected static final Log LOG = LogFactory.getLog(CreditCardTypesProcessor.class);
 
@@ -79,7 +81,7 @@ public class CreditCardTypesProcessor extends AbstractBroadleafModelVariableModi
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         Map<String, String> creditCardTypes = new HashMap<>();
 
         try {
@@ -89,9 +91,10 @@ public class CreditCardTypesProcessor extends AbstractBroadleafModelVariableModi
         }
 
         if (!creditCardTypes.isEmpty()) {
-            newModelVars.put("paymentGatewayCardTypes", creditCardTypes);
+            return ImmutableMap.of("paymentGatewayCardTypes", (Object) creditCardTypes);
+        } else {
+            return null;
         }
-
     }
 
 }

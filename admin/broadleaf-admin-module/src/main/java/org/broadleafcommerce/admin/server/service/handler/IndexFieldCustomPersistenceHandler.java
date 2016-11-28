@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.dao;
+package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -184,7 +184,7 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
             criteria.select(root);
 
             // Check if we are searching for specific field names
-            List<Predicate> restrictions = new ArrayList<Predicate>();
+            List<Predicate> restrictions = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(filterValues)) {
                 restrictions.add(builder.like(root.get("field").<String>get("friendlyName"), "%" + filterValues.get(0) + "%"));
                 didFilter = true;

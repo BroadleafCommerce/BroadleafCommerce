@@ -15,22 +15,19 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.dao;
+package org.broadleafcommerce.admin.server.service.handler;
 
-import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.search.domain.IndexField;
-import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 /**
- * @author Nick Crum ncrum
+ * @author Chad Harchar (charchar)
  */
-public abstract class AbstractIndexFieldCustomPersistenceHandlerExtensionHandler extends AbstractExtensionHandler
-        implements IndexFieldCustomPersistenceHandlerExtensionHandler {
+@Service("blIndexFieldCustomPersistenceHandlerExtensionManager")
+public class IndexFieldCustomPersistenceHandlerExtensionManager extends ExtensionManager<IndexFieldCustomPersistenceHandlerExtensionHandler> {
 
-    @Override
-    public ExtensionResultStatusType addtoSearchableFields(PersistencePackage persistencePackage, IndexField searchField) throws ServiceException {
-        return ExtensionResultStatusType.NOT_HANDLED;
+    public IndexFieldCustomPersistenceHandlerExtensionManager() {
+        super(IndexFieldCustomPersistenceHandlerExtensionHandler.class);
     }
+
 }

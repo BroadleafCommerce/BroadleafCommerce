@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.web.expression;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -29,6 +28,7 @@ import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageP
 import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
 import org.broadleafcommerce.core.promotionMessage.service.PromotionMessageGenerator;
 import org.broadleafcommerce.core.promotionMessage.util.BLCPromotionMessageUtils;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
