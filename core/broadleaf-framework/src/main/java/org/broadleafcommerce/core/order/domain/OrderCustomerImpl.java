@@ -26,6 +26,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -70,6 +71,9 @@ public class OrderCustomerImpl implements OrderCustomer {
             readOnly = true)
     protected List<CustomerPayment> customerPayments = new ArrayList<>();
     
+    @Transient
+    protected boolean anonymous;
+    
     @Override
     public Long getId() {
         return id;
@@ -98,6 +102,11 @@ public class OrderCustomerImpl implements OrderCustomer {
     @Override
     public List<CustomerPayment> getCustomerPayments() {
         return customerPayments;
+    }
+    
+    @Override
+    public boolean isAnonymous() {
+        return anonymous;
     }
 
     @Override
@@ -128,6 +137,11 @@ public class OrderCustomerImpl implements OrderCustomer {
     @Override
     public void setCustomerPayments(List<CustomerPayment> customerPayments) {
         this.customerPayments = customerPayments;
+    }
+
+    @Override
+    public void setAnonymous(boolean anonymous) {
+        this.anonymous = anonymous;
     }
 
 }

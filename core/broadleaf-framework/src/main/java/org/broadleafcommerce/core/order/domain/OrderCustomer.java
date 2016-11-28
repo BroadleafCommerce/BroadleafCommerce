@@ -17,6 +17,8 @@ public interface OrderCustomer {
     public String getEmailAddress();
     
     public List<CustomerPayment> getCustomerPayments();
+    
+    public boolean isAnonymous();
 
     public void setId(Long id);
     
@@ -29,5 +31,7 @@ public interface OrderCustomer {
     public void setFirstName(String firstName);
     
     public void setCustomerPayments(List<CustomerPayment> customerPayments);
+    
+    public void setAnonymous(boolean anonymous);
 
 }
