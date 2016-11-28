@@ -18,7 +18,7 @@
 
 package org.broadleafcommerce.core.web.processor.extension;
 
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 
 import java.util.Map;
 

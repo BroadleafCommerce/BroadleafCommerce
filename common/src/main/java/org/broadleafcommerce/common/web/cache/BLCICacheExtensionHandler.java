@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.web.cache;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.presentation.cache.BroadleafTemplateCacheContext;
 
 /**
  * @author Chad Harchar (charchar)

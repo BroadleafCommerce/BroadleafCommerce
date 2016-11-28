@@ -17,14 +17,14 @@
  */
 package org.broadleafcommerce.openadmin.processor;
 
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -32,6 +32,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -47,7 +48,7 @@ import javax.annotation.Resource;
  */
 @Component("blAdminModuleProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class AdminModuleProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+public class AdminModuleProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
 
@@ -73,14 +74,16 @@ public class AdminModuleProcessor extends AbstractBroadleafModelVariableModifier
     }
     
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         String resultVar = tagAttributes.get("resultVar");
 
+        Map<String, Object> newModelVars = new HashMap<>();
         AdminUser user = getPersistentAdminUser();
         if (user != null) {
             AdminMenu menu = adminNavigationService.buildMenu(user);
             newModelVars.put(resultVar, menu);
         }
+        return newModelVars;
     }
     
     protected AdminUser getPersistentAdminUser() {
