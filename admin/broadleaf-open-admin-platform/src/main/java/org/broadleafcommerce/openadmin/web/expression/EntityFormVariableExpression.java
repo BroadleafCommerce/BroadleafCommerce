@@ -17,10 +17,10 @@
  */
 package org.broadleafcommerce.openadmin.web.expression;
 
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 

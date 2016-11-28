@@ -17,16 +17,18 @@
  */
 package org.broadleafcommerce.openadmin.processor;
 
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.dialect.BroadleafDialectPrefix;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
 import org.broadleafcommerce.openadmin.web.service.AdminFieldBuilderProcessorExtensionManager;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -37,7 +39,7 @@ import javax.annotation.Resource;
  */
 @Component("blAdminFieldBuilderProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class AdminFieldBuilderProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+public class AdminFieldBuilderProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Resource(name = "blRuleBuilderFieldServiceFactory")
     protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
@@ -61,7 +63,7 @@ public class AdminFieldBuilderProcessor extends AbstractBroadleafModelVariableMo
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         FieldWrapper fieldWrapper = new FieldWrapper();
         String fieldBuilder = context.parseExpression(tagAttributes.get("fieldBuilder"));
         String ceilingEntity = context.parseExpression(tagAttributes.get("ceilingEntity"));
@@ -77,7 +79,7 @@ public class AdminFieldBuilderProcessor extends AbstractBroadleafModelVariableMo
             extensionManager.getProxy().modifyRuleBuilderFields(fieldBuilder, ceilingEntity, fieldWrapper);
         }
         
-        newModelVars.put("fieldWrapper", fieldWrapper);
+        return ImmutableMap.of("fieldWrapper", (Object) fieldWrapper);
     }
     
     @Override

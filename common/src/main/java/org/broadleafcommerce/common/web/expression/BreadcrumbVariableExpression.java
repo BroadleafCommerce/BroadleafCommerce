@@ -15,54 +15,66 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+/**
+ * 
+ */
 package org.broadleafcommerce.common.web.expression;
 
-import org.broadleafcommerce.common.file.service.StaticAssetPathService;
+import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
+import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 /**
- * For HTML fields maintained in the admin, redactor allows the user to select images. These images need to be able to be served from a CDN.
- * Goal is to be able to use this syntax in html pages.
- * Example of trying to  resolve images in longDescription:
- *
- * <div id="description" th:with="input=*{longDescription}">
- *     <span th:utext="${#cms.fixUrl(input)}"></span>
- * </div>
- *
- * @author by reginaldccole
+ * 
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
  */
-@Component("blAssetURLVariableExpression")
+@Component("blBreadcrumbVariableExpression")
 @Conditional(TemplatingExistCondition.class)
-public class AssetURLVariableExpression implements BroadleafVariableExpression {
+public class BreadcrumbVariableExpression implements BroadleafVariableExpression {
 
-    @Resource(name="blStaticAssetPathService")
-    protected StaticAssetPathService staticAssetPathService;
-
-
+    @Resource(name = "blBreadcrumbService")
+    protected BreadcrumbService breadcrumbService;
+    
     @Override
     public String getName() {
-        return "cms";
+        return "breadcrumbs";
     }
 
+    public List<BreadcrumbDTO> getBreadcrumbs() {
+        String baseUrl = getBaseUrl();
+        Map<String, String[]> params = getParams();
+        return breadcrumbService.buildBreadcrumbDTOs(baseUrl, params);
+    }
 
-    /**
-     * This method will resolve image urls located in HTML.
-     * @see StaticAssetPathService#convertAllAssetPathsInContent(String, boolean)
-     * @param content
-     * @return
-     */
-    public String fixUrl(String content){
-        boolean isSecure = false;
+    protected String getBaseUrl() {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        
         if (brc != null) {
-             isSecure  = brc.getRequest().isSecure();
+            return brc.getRequest().getRequestURI();
         }
-        return staticAssetPathService.convertAllAssetPathsInContent(content,isSecure);
+        return "";
     }
-
+    
+    protected Map<String, String[]> getParams() {
+        Map<String, String[]> paramMap = new HashMap<>();
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        
+        if (brc != null) {
+            paramMap = BroadleafRequestContext.getRequestParameterMap();
+            if (paramMap != null) {
+                paramMap = new HashMap<>(paramMap);
+            }
+        }
+        return paramMap;
+    }
 }

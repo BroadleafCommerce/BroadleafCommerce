@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Framework Web
+ * BroadleafCommerce Framework
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,18 +15,19 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+package org.broadleafcommerce.admin.server.service.handler;
 
-package org.broadleafcommerce.core.web.processor.extension;
-
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
-
-import java.util.Map;
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 
 /**
- * @author Jerry Ocanas (jocanas)
+ * @author Chad Harchar (charchar)
  */
-public interface HeadProcessorExtensionListener {
+public interface IndexFieldCustomPersistenceHandlerExtensionHandler extends ExtensionHandler {
 
-    public void processAttributeValues(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context);
+    ExtensionResultStatusType addtoSearchableFields(PersistencePackage persistencePackage, IndexField searchField) throws ServiceException;
 
 }

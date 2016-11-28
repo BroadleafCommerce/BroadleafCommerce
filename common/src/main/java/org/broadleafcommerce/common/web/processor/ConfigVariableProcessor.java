@@ -18,12 +18,14 @@
 package org.broadleafcommerce.common.web.processor;
 
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.common.web.expression.PropertiesVariableExpression;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -40,10 +42,12 @@ import java.util.Map;
  * 
  * @author bpolster
  * @see {@link PropertiesVariableExpression}
+ * @deprecated use {@link PropertiesVariableExpression} instead
  */
+@Deprecated
 @Component("blConfigVariableProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class ConfigVariableProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+public class ConfigVariableProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Override
     public String getName() {
@@ -56,10 +60,10 @@ public class ConfigVariableProcessor extends AbstractBroadleafModelVariableModif
     }
 
     /* (non-Javadoc)
-     * @see org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor#populateModelVariables(java.lang.String, java.util.Map, java.util.Map)
+     * @see org.broadleafcommerce.presentation.dialect.AbstractModelVariableModifierProcessor#populateModelVariables(java.lang.String, java.util.Map, java.util.Map)
      */
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         String resultVar = tagAttributes.get("resultVar");
         if (resultVar == null) {
             resultVar = "value";
@@ -68,7 +72,7 @@ public class ConfigVariableProcessor extends AbstractBroadleafModelVariableModif
         String attributeName = tagAttributes.get("name");
         String attributeValue = BLCSystemProperty.resolveSystemProperty(attributeName);
         
-        newModelVars.put(resultVar, attributeValue);
+        return ImmutableMap.of(resultVar, (Object) attributeValue);
     }
 
 }

@@ -18,17 +18,19 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.web.expression.OrderVariableExpression;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -50,10 +52,12 @@ import javax.annotation.Resource;
  * 
  * @see {@link Order#getName()}
  * @author elbertbautista
+ * @deprecated use {@link OrderVariableExpression#getNamedOrderForCurrentCustomer(String)} instead
  */
+@Deprecated
 @Component("blNamedOrderProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class NamedOrderProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+public class NamedOrderProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -69,17 +73,19 @@ public class NamedOrderProcessor extends AbstractBroadleafModelVariableModifierP
     }
     
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         Customer customer = CustomerState.getCustomer();
 
         String orderVar = tagAttributes.get("orderVar");
         String orderName = tagAttributes.get("orderName");
 
         Order order = orderService.findNamedOrderForCustomer(orderName, customer);
+        Map<String, Object> newModelVars = new HashMap<>();
         if (order != null) {
             newModelVars.put(orderVar, order);
         } else {
             newModelVars.put(orderVar, new NullOrderImpl());
         }
+        return newModelVars;
     }
 }
