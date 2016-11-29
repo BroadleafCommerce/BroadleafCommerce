@@ -133,15 +133,13 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Override
     public Sku getSku() {
         if (deproxiedSku == null) {
-            if (sku instanceof HibernateProxy) {
-                PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
 
-                if (postLoaderDao != null) {
-                    Long id = sku.getId();
-                    deproxiedSku = postLoaderDao.find(SkuImpl.class, id);
-                } else {
-                    deproxiedSku = HibernateUtils.deproxy(sku);
-                }
+            if (postLoaderDao != null) {
+                Long id = sku.getId();
+                deproxiedSku = postLoaderDao.find(SkuImpl.class, id);
+            } else if (sku instanceof HibernateProxy) {
+                deproxiedSku = HibernateUtils.deproxy(sku);
             } else {
                 deproxiedSku = sku;
             }
@@ -171,15 +169,13 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Override
     public Product getProduct() {
         if (deproxiedProduct == null) {
-            if (product instanceof HibernateProxy) {
-                PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
 
-                if (postLoaderDao != null) {
-                    Long id = product.getId();
-                    deproxiedProduct = postLoaderDao.find(ProductImpl.class, id);
-                } else {
-                    deproxiedProduct = HibernateUtils.deproxy(product);
-                }
+            if (postLoaderDao != null) {
+                Long id = product.getId();
+                deproxiedProduct = postLoaderDao.find(ProductImpl.class, id);
+            } else if (product instanceof HibernateProxy) {
+                deproxiedProduct = HibernateUtils.deproxy(product);
             } else {
                 deproxiedProduct = product;
             }
