@@ -4,5 +4,5 @@
     <div th:replace="layout/partials/headerDetailedMsg" ></div>
 
     <div id="sectionKey" th:text="${sectionKey}" style="display: none;" ></div>
-    <div th:replace="${'views/' + viewType}" th:with="inModal='false'"></div>
+    <th:block th:include="${'views/' + viewType}" th:with="inModal='false'"></th:block>
 </div>

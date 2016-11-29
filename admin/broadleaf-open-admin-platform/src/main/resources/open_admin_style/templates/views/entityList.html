@@ -2,7 +2,7 @@
     <div th:replace="components/emptyMainListGrid" ></div>
 </div>
 <div th:unless="${#lists.isEmpty(listGrid.records) and !isFilter}" class="content-yield listgrid-container" id="main">
-    <div th:include="${listGrid.searchFieldsTemplateOverride == null ? 'components/searchFields' : listGrid.searchFieldsTemplateOverride}" th:object="${listGrid}" th:remove="tag" ></div>
-    <!--<div th:include="components/listGridToolbar" th:object="${listGrid}" th:remove="tag" />-->
-    <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" ></div>
+    <th:block th:include="${listGrid.searchFieldsTemplateOverride == null ? 'components/searchFields' : listGrid.searchFieldsTemplateOverride}" th:object="${listGrid}"></th:block>
+    <!--<th:block th:include="components/listGridToolbar" th:object="${listGrid}"/>-->
+    <th:block th:include="components/listGrid" th:object="${listGrid}"></th:block>
 </div>

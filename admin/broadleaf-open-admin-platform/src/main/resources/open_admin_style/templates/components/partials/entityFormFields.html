@@ -43,15 +43,15 @@
             <th:block th:if="${listGrid.manualFetch}">
                 <span class="listgrid-total-records" th:text="'(Click Fetch to check for records)'"></span>
             </th:block>
-            <div th:replace="components/listGridToolbar" th:with="listGrid=${listGrid}"></div>
+            <th:blockv th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"></th:blockv>
         </div>
         <div class="fieldgroup-listgrid-wrapper" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
-            <div th:replace="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></div>
+            <th:block th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
         </div>
     </div>
     <div th:if="${listGrid.selectType} == 'selectize'"
          class="field-group" th:id="${listGrid.subCollectionFieldName}">
-        <div th:replace="components/selectizeLabelBar" th:with="listGrid=${listGrid}"></div>
-        <div th:replace="components/selectizeCollection" th:with="listGrid=${listGrid}"></div>
+        <th:block th:include="components/selectizeLabelBar" th:with="listGrid=${listGrid}"></th:block>
+        <th:block th:include="components/selectizeCollection" th:with="listGrid=${listGrid}"></th:block>
     </div>
 </th:block>

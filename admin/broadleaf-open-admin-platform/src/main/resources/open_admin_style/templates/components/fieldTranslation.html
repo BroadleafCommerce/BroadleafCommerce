@@ -1,4 +1,4 @@
-<div th:if="${field.translatable and hideTranslations != 'true'}" th:remove="tag">
+<th:block th:if="${field.translatable and hideTranslations != 'true'}">
     <a class="show-translations" th:unless="${df}"
        th:href="@{/translation(ceilingEntity=${entityForm.translationCeilingEntity},
                                entityId=${entityForm.translationId},
@@ -13,4 +13,4 @@
                                isRte=${field.fieldType == 'HTML' || field.fieldType == 'HTML_BASIC'})}">
         <i class="blc-icon-globe" style="color: #94AF39; vertical-align: middle;"></i><span th:utext="#{Translation}"></span>
     </a>
-</div>
+</th:block>
