@@ -72,7 +72,7 @@
     </div>
     
     <div class="modal-body">
-        <div th:include="${'views/' + viewType}" th:with="inModal=(${showActions == null}? true : false)" th:remove="tag"></div>
+        <div th:replace="${'views/' + viewType}" th:with="inModal=(${showActions == null}? true : false)"></div>
     </div>
     
 </div>

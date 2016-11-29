@@ -1,4 +1,2 @@
-<blc:form th:include="components/entityForm"
-    th:remove="tag"
-    th:with="additionalClasses='modal-form',
-             showSingleTab='false'" ></blc:form>
+<blc:form th:replace="components/entityForm"
+    th:with="additionalClasses='modal-form', showSingleTab='false'"></blc:form>
