@@ -88,36 +88,6 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
     @Value("${blPU.hibernate.hbm2ddl.import_files_sql_extractor}")
     protected String blPUHibernateHbm2ddlImport_files_sql_extractor;
 
-    @Value("${blCMSStorage.hibernate.hbm2ddl.auto}")
-    protected String blCMSStorageHibernateHbm2ddlAuto;
-    @Value("${blCMSStorage.hibernate.dialect}")
-    protected String blCMSStorageHibernateDialect;
-    @Value("${blCMSStorage.hibernate.show_sql}")
-    protected String blCMSStorageHibernateShow_sql;
-    @Value("${blCMSStorage.hibernate.cache.use_second_level_cache}")
-    protected String blCMSStorageHibernateCacheUse_second_level_cache;
-    @Value("${blCMSStorage.hibernate.cache.use_query_cache}")
-    protected String blCMSStorageHibernateCacheUse_query_cache;
-    @Value("${blCMSStorage.hibernate.hbm2ddl.import_files}")
-    protected String blCMSStorageHibernateHbm2ddlImport_files;
-    @Value("${blCMSStorage.hibernate.hbm2ddl.import_files_sql_extractor}")
-    protected String blCMSStorageHibernateHbm2ddlImport_files_sql_extractor;
-
-    @Value("${blSecurePU.hibernate.hbm2ddl.auto}")
-    protected String blSecurePUHibernateHbm2ddlAuto;
-    @Value("${blSecurePU.hibernate.dialect}")
-    protected String blSecurePUHibernateDialect;
-    @Value("${blSecurePU.hibernate.show_sql}")
-    protected String blSecurePUHibernateShow_sql;
-    @Value("${blSecurePU.hibernate.cache.use_second_level_cache}")
-    protected String blSecurePUHibernateCacheUse_second_level_cache;
-    @Value("${blSecurePU.hibernate.cache.use_query_cache}")
-    protected String blSecurePUHibernateCacheUse_query_cache;
-    @Value("${blSecurePU.hibernate.hbm2ddl.import_files}")
-    protected String blSecurePUHibernateHbm2ddlImport_files;
-    @Value("${blSecurePU.hibernate.hbm2ddl.import_files_sql_extractor}")
-    protected String blSecurePUHibernateHbm2ddlImport_files_sql_extractor;
-
     @PostConstruct
     public void populatePresetProperties() {
         if (!blPUHibernateHbm2ddlAuto.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.auto", blPUHibernateHbm2ddlAuto);
@@ -134,22 +104,6 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
             }
         }
         if (!blPUHibernateHbm2ddlImport_files_sql_extractor.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files_sql_extractor", blPUHibernateHbm2ddlImport_files_sql_extractor);
-
-        if (!blCMSStorageHibernateHbm2ddlAuto.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.hbm2ddl.auto", blCMSStorageHibernateHbm2ddlAuto);
-        if (!blCMSStorageHibernateDialect.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.dialect", blCMSStorageHibernateDialect);
-        if (!blCMSStorageHibernateShow_sql.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.show_sql", blCMSStorageHibernateShow_sql);
-        if (!blCMSStorageHibernateCacheUse_second_level_cache.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.cache.use_second_level_cache", blCMSStorageHibernateCacheUse_second_level_cache);
-        if (!blCMSStorageHibernateCacheUse_query_cache.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.cache.use_query_cache", blCMSStorageHibernateCacheUse_query_cache);
-        if (!blCMSStorageHibernateHbm2ddlImport_files.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.hbm2ddl.import_files", blCMSStorageHibernateHbm2ddlImport_files);
-        if (!blCMSStorageHibernateHbm2ddlImport_files_sql_extractor.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.hbm2ddl.import_files_sql_extractor", blCMSStorageHibernateHbm2ddlImport_files_sql_extractor);
-
-        if (!blSecurePUHibernateHbm2ddlAuto.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.hbm2ddl.auto", blSecurePUHibernateHbm2ddlAuto);
-        if (!blSecurePUHibernateDialect.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.dialect", blSecurePUHibernateDialect);
-        if (!blSecurePUHibernateShow_sql.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.show_sql", blSecurePUHibernateShow_sql);
-        if (!blSecurePUHibernateCacheUse_second_level_cache.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.cache.use_second_level_cache", blSecurePUHibernateCacheUse_second_level_cache);
-        if (!blSecurePUHibernateCacheUse_query_cache.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.cache.use_query_cache", blSecurePUHibernateCacheUse_query_cache);
-        if (!blSecurePUHibernateHbm2ddlImport_files.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.hbm2ddl.import_files", blSecurePUHibernateHbm2ddlImport_files);
-        if (!blSecurePUHibernateHbm2ddlImport_files_sql_extractor.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.hbm2ddl.import_files_sql_extractor", blSecurePUHibernateHbm2ddlImport_files_sql_extractor);
 
         persistenceUnitProperties.putAll(overrideProperties);
     }

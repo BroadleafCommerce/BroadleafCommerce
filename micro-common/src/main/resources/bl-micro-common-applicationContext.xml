@@ -28,7 +28,7 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.common"/>
-    
+
     <!-- Override Spring's default ApplicationEventMultiCaster with one that is a little smarter about asynchronous -->
     <bean id="applicationEventMulticaster" class="org.broadleafcommerce.common.event.BroadleafApplicationEventMulticaster"/>
 
@@ -55,7 +55,7 @@
         <!--</property>-->
     <!--</bean>-->
 
-    <bean id="blConfigurationManager" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager"/>
+    <!--<bean id="blConfigurationManager" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager"/>-->
 
     <!--<bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.NullMessageCreator">-->
         <!--<constructor-arg ref="blMailSender"/>-->
@@ -181,7 +181,7 @@
     <!--<bean id="blEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo" />-->
     <!--<bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />-->
     
-    <bean id="blSiteResolver" class="org.broadleafcommerce.common.web.NullBroadleafSiteResolver" />
+    <!--<bean id="blSiteResolver" class="org.broadleafcommerce.common.web.NullBroadleafSiteResolver" />-->
     <!--<bean id="blThemeResolver" class="org.broadleafcommerce.common.web.NullBroadleafThemeResolver" />-->
 
     <bean id="blFileServiceProviders" class="org.springframework.beans.factory.config.ListFactoryBean" >
