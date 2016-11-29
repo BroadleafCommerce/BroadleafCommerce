@@ -28,7 +28,7 @@ public class OrderCustomerFacadeServiceImpl implements OrderCustomerFacadeServic
     
     @Override
     public List<Order> findOrdersForCustomer(Customer customer, OrderStatus orderStatus) {
-        OrderCustomer orderCustomer = findOrCreateOrderCustomerFromCustomer(customer);
+        OrderCustomer orderCustomer = findOrderCustomerFromCustomer(customer);
         if (orderCustomer == null) {
             return null;
         }
@@ -37,7 +37,7 @@ public class OrderCustomerFacadeServiceImpl implements OrderCustomerFacadeServic
 
     @Override
     public Order findCartForCustomer(Customer customer) {
-        OrderCustomer orderCustomer = findOrCreateOrderCustomerFromCustomer(customer);
+        OrderCustomer orderCustomer = findOrderCustomerFromCustomer(customer);
         if (orderCustomer == null) {
             return null;
         }
@@ -45,17 +45,8 @@ public class OrderCustomerFacadeServiceImpl implements OrderCustomerFacadeServic
     }
 
     @Override
-    public Order createNamedOrderForCustomer(String name, Customer customer) {
-        OrderCustomer orderCustomer = findOrCreateOrderCustomerFromCustomer(customer);
-        if (orderCustomer == null) {
-            return null;
-        }
-        return orderService.createNamedOrderForCustomer(name, orderCustomer);
-    }
-
-    @Override
     public Order findNamedOrderForCustomer(String name, Customer customer) {
-        OrderCustomer orderCustomer = findOrCreateOrderCustomerFromCustomer(customer);
+        OrderCustomer orderCustomer = findOrderCustomerFromCustomer(customer);
         if (orderCustomer == null) {
             return null;
         }
@@ -63,43 +54,55 @@ public class OrderCustomerFacadeServiceImpl implements OrderCustomerFacadeServic
     }
     
     @Override
-    public Order createNewCartForCustomer(Customer customer) {
-        OrderCustomer orderCustomer = findOrCreateOrderCustomerFromCustomer(customer);
-        if (orderCustomer == null) {
-            return null;
-        }
-        return orderService.createNewCartForCustomer(orderCustomer);
-    }
-    
-    @Override
     public MergeCartResponse mergeCart(Customer customer, Order order) throws PricingException, RemoveFromCartException {
-        OrderCustomer orderCustomer = findOrCreateOrderCustomerFromCustomer(customer);
+        OrderCustomer orderCustomer = findOrderCustomerFromCustomer(customer);
         if (orderCustomer == null) {
             return null;
         }
         return mergeCartService.mergeCart(orderCustomer, order);
     }
     
-    protected OrderCustomer findOrCreateOrderCustomerFromCustomer(Customer customer) {
+    @Override
+    public Order createNamedOrderForCustomer(String name, Customer customer) {
+        OrderCustomer orderCustomer = createOrderCustomerFromCustomer(customer);
+        if (orderCustomer == null) {
+            return null;
+        }
+        return orderService.createNamedOrderForCustomer(name, orderCustomer);
+    }
+    
+    @Override
+    public Order createNewCartForCustomer(Customer customer) {
+        OrderCustomer orderCustomer = createOrderCustomerFromCustomer(customer);
+        if (orderCustomer == null) {
+            return null;
+        }
+        return orderService.createNewCartForCustomer(orderCustomer);
+    }
+    
+    protected OrderCustomer findOrderCustomerFromCustomer(Customer customer) {
         if (customer == null || customer.getId() == null) {
             return null;
         }
-        OrderCustomer orderCustomer = orderCustomerService.findOrderCustomerByExternalId(customer.getId());
-        if (orderCustomer == null) {
-            orderCustomer = orderCustomerService.createOrderCustomer();
-            if (StringUtils.isNotBlank(customer.getEmailAddress())) {
-                orderCustomer.setEmailAddress(customer.getEmailAddress());
-            }
-            if (StringUtils.isNotBlank(customer.getFirstName())) {
-                orderCustomer.setFirstName(customer.getFirstName());
-            }
-            if (StringUtils.isNoneBlank(customer.getLastName())) {
-                orderCustomer.setLastName(customer.getLastName());
-            }
-            orderCustomer.setExternalId(customer.getId());
-            orderCustomer = orderCustomerService.save(orderCustomer);
-        }
-        return orderCustomer;
+        return orderCustomerService.findOrderCustomerByExternalId(customer.getId());
     }
-
+    
+    protected OrderCustomer createOrderCustomerFromCustomer(Customer customer) {
+        if (customer == null || customer.getId() == null) {
+            return null;
+        }
+        OrderCustomer orderCustomer = orderCustomerService.createOrderCustomer();
+        if (StringUtils.isNotBlank(customer.getEmailAddress())) {
+            orderCustomer.setEmailAddress(customer.getEmailAddress());
+        }
+        if (StringUtils.isNotBlank(customer.getFirstName())) {
+            orderCustomer.setFirstName(customer.getFirstName());
+        }
+        if (StringUtils.isNoneBlank(customer.getLastName())) {
+            orderCustomer.setLastName(customer.getLastName());
+        }
+        orderCustomer.setExternalId(customer.getId());
+        return orderCustomer = orderCustomerService.save(orderCustomer);
+    }
+    
 }
