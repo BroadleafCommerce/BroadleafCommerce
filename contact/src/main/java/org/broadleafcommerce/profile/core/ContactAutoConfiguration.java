@@ -25,7 +25,10 @@ import org.springframework.context.annotation.ImportResource;
  * Created by brandon on 11/21/16.
  */
 @Configuration
-@ImportResource("classpath:/bl-contact-applicationContext-entity.xml")
-public class ContactApplicationConfiguration {
-
+@ImportResource({
+        "classpath:/bl-contact-applicationContext-persistence.xml",
+        "classpath:/bl-contact-applicationContext-entity.xml",
+        "classpath:/bl-contact-applicationContext.xml"
+})
+public class ContactAutoConfiguration {
 }

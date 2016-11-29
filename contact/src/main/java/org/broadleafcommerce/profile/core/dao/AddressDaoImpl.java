@@ -28,7 +28,7 @@ import javax.persistence.PersistenceContext;
 @Repository("blAddressDao")
 public class AddressDaoImpl implements AddressDao {
 
-    @PersistenceContext(unitName = "blContactPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
     @Resource(name="blEntityConfiguration")

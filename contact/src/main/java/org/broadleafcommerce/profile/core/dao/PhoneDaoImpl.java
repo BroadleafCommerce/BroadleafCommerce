@@ -28,7 +28,7 @@ import javax.persistence.PersistenceContext;
 @Repository("blPhoneDao")
 public class PhoneDaoImpl implements PhoneDao {
 
-    @PersistenceContext(unitName="blContactPU")
+    @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
     @Resource(name="blEntityConfiguration")

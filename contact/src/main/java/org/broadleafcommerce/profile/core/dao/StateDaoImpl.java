@@ -38,7 +38,7 @@ import java.util.List;
 @Repository("blStateDao")
 public class StateDaoImpl implements StateDao {
 
-    @PersistenceContext(unitName = "blContactPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
     @Resource(name = "blEntityConfiguration")

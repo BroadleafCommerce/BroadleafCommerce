@@ -35,12 +35,6 @@
     <bean id="blServiceMonitor" class="org.broadleafcommerce.common.vendor.service.monitor.ServiceMonitor" init-method="init"/>
     
     <bean id="springAppContext" class="org.broadleafcommerce.common.util.SpringAppContext"/>
-    
-    <bean id="blAddressVerificationProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list/>
-        </property>
-    </bean>
 
     <bean id="blPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
         <constructor-arg value="${password.site.encoder}"/>
