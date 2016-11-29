@@ -1,13 +1,19 @@
 <th:block th:if="${entityFormTemplatePath == null}">
-    <blc:form th:replace="components/entityForm"
-        th:with="additionalTabClasses='entity-form',
+    <blc:form th:remove="tag">
+        <th:block th:include="components/entityForm"
+             th:with="additionalTabClasses='entity-form',
                  showSingleTab='true',
-                 inModal=${inModal != null and inModal}" ></blc:form>
+                 inModal=${inModal != null and inModal}">
+        </th:block>
+    </blc:form>
 </th:block>
 
 <th:block th:unless="${entityFormTemplatePath == null}">
-    <blc:form th:replace="${entityFormTemplatePath}"
-        th:with="additionalTabClasses='entity-form',
+    <blc:form th:remove="tag">
+        <th:block th:include="${entityFormTemplatePath}"
+             th:with="additionalTabClasses='entity-form',
                  showSingleTab='true',
-                 inModal=${inModal != null and inModal}" ></blc:form>
+                 inModal=${inModal != null and inModal}">
+        </th:block>
+    </blc:form>
 </th:block>
