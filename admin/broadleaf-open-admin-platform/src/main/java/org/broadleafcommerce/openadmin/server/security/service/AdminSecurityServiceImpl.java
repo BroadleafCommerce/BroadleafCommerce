@@ -250,7 +250,8 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return returnUser;
     }
 
-    protected void clearAdminSecurityCache() {
+    @Override
+    public void clearAdminSecurityCache() {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Admin Security Cache DELETE");
         }
