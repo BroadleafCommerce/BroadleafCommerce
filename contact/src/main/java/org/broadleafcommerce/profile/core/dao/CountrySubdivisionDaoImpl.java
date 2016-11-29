@@ -38,7 +38,7 @@ import javax.persistence.TypedQuery;
 @Repository("blCountrySubdivisionDao")
 public class CountrySubdivisionDaoImpl implements CountrySubdivisionDao {
 
-    @PersistenceContext(unitName = "blPU")
+    @PersistenceContext(unitName = "blContactPU")
     protected EntityManager em;
 
     @Resource(name = "blEntityConfiguration")
