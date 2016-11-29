@@ -22,7 +22,7 @@ package org.broadleafcommerce.core.web.expression;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.OrderCustomerFacadeService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 
@@ -36,8 +36,8 @@ import javax.annotation.Resource;
  */
 public class OrderVariableExpression implements BroadleafVariableExpression {
 
-    @Resource(name = "blOrderService")
-    protected OrderService orderService;
+    @Resource(name = "blOrderCustomerFacadeService")
+    protected OrderCustomerFacadeService orderCustomerFacadeService;
     
     @Override
     public String getName() {
@@ -49,6 +49,6 @@ public class OrderVariableExpression implements BroadleafVariableExpression {
     }
     
     public Order getNamedOrderForCustomer(String orderName, Customer customer) {
-        return orderService.findNamedOrderForCustomer(orderName, customer);
+        return orderCustomerFacadeService.findNamedOrderForCustomer(orderName, customer);
     }
 }

@@ -18,12 +18,8 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.OrderCustomerFacadeService;
 import org.broadleafcommerce.core.web.expression.OrderVariableExpression;
 import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
@@ -83,6 +79,7 @@ public class NamedOrderProcessor extends AbstractBroadleafVariableModifierProces
         String orderName = tagAttributes.get("orderName");
 
         Order order = orderCustomerFacadeService.findNamedOrderForCustomer(orderName, customer);
+        Map<String, Object> newModelVars = new HashMap<>();
         if (order != null) {
             newModelVars.put(orderVar, order);
         }
