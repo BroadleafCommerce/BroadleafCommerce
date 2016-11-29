@@ -128,26 +128,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             throw new EntityNotFoundException();
         }
 
-        for (Entity entity : entities) {
-            trimSingleSpacePropertyValues(entity);
-        }
-
         return response;
-    }
-
-    /**
-     * This method is intended to convert single-space property values to empty strings. Temporary entity database
-     * records must use single-space strings instead of empty strings for non-nullable fields to be compatible
-     * with databases like Oracle DB which convert empty string to NULL on inserts/updates.
-     *
-     * @param entity
-     */
-    protected void trimSingleSpacePropertyValues(Entity entity) {
-        for (Property property : entity.getProperties()) {
-            if (property.getValue() != null && property.getValue().equals(" ")) {
-                property.setValue("");
-            }
-        }
     }
 
     @Override
