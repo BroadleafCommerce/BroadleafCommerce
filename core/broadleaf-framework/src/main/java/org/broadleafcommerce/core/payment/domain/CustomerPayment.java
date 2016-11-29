@@ -21,7 +21,6 @@ package org.broadleafcommerce.core.payment.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.profile.core.domain.AdditionalFields;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
@@ -39,9 +38,9 @@ public interface CustomerPayment extends AdditionalFields, Serializable, MultiTe
 
     public Long getId();
 
-    public OrderCustomer getOrderCustomer();
+    public Long getCustomerExternalId();
 
-    public void setOrderCustomer(OrderCustomer orderCustomer);
+    public void setCustomerExternalId(Long customerExternalId);
 
     public Long getBillingAddressExternalId();
 

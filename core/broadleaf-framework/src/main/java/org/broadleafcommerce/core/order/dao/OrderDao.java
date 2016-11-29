@@ -47,7 +47,7 @@ public interface OrderDao {
 
     List<Order> readOrdersForCustomer(Long id);
 
-    Order readNamedOrderForCustomer(OrderCustomer orderCustomer, String name);
+    Order readNamedOrderForCustomer(Long customerExternalId, String name);
 
     Order readCartForCustomer(OrderCustomer orderCustomer);
 

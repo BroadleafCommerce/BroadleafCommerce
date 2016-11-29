@@ -64,7 +64,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderCustomer;
-import org.broadleafcommerce.core.order.domain.OrderCustomerImpl;
+import org.broadleafcommerce.core.order.domain.OrderCustomerDTO;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
@@ -359,7 +359,7 @@ public class OfferDataItemProvider {
         
         order.getOrderItems().add(orderItem2);
         
-        OrderCustomer orderCustomer = new OrderCustomerImpl();
+        OrderCustomer orderCustomer = new OrderCustomerDTO();
         orderCustomer.setEmailAddress("test@test.com");
         orderCustomer.setFirstName("John");
         orderCustomer.setLastName("Tester");
@@ -578,7 +578,7 @@ public class OfferDataItemProvider {
 
         bundleOrderItem.getDiscreteOrderItems().add(orderItem2);
 
-        OrderCustomer orderCustomer = new OrderCustomerImpl();
+        OrderCustomer orderCustomer = new OrderCustomerDTO();
         orderCustomer.setEmailAddress("test@test.com");
         orderCustomer.setFirstName("John");
         orderCustomer.setLastName("Tester");

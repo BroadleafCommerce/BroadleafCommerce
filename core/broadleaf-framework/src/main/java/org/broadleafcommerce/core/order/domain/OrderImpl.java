@@ -38,7 +38,6 @@ import org.broadleafcommerce.common.persistence.Previewable;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
@@ -141,14 +140,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             order=FieldOrder.NAME)
     protected String name;
 
-    @ManyToOne(targetEntity = OrderCustomerImpl.class, optional=false)
-    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
-    @Index(name="ORDER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
-    @AdminPresentation(friendlyName = "OrderImpl_Customer", group = GroupName.Customer,
-            order=FieldOrder.CUSTOMER)
-    @AdminPresentationToOneLookup()
-    protected OrderCustomer orderCustomer;
-
     @Column(name = "ORDER_STATUS")
     @Index(name="ORDER_STATUS_INDEX", columnNames={"ORDER_STATUS"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = GroupName.General,
@@ -194,12 +185,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             prominent = true,
             gridOrder = 3000)
     private String orderNumber;
-
-    @Column(name = "EMAIL_ADDRESS")
-    @Index(name="ORDER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", group = GroupName.Customer,
-            order=FieldOrder.EMAILADDRESS)
-    protected String emailAddress;
 
     @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
@@ -272,15 +257,43 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @AdminPresentation(excluded = true)
     protected Locale locale;
     
+    @Transient
+    protected List<ActivityMessageDTO> orderMessages;
+    
+    /*
+     * Customer related info on the order
+     */
+    @Column(name = "CUSTOMER_ID")
+    @AdminPresentation(friendlyName = "OrderImplCustomer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
+    protected Long customerExternalId;
+    
+    @Column(name = "FIRST_NAME")
+    @AdminPresentation(friendlyName = "OrderImplFirst_Name",
+            group = GroupName.Customer, order = FieldOrder.FIRSTNAME,
+            prominent = true, gridOrder = 2000)
+    protected String firstName;
+    
+    @Column(name = "LAST_NAME")
+    @AdminPresentation(friendlyName = "OrderImplLast_Name",
+            group = GroupName.Customer, order = FieldOrder.LASTNAME,
+            prominent = true, gridOrder = 3000)
+    protected String lastName;
+    
+    @Column(name = "EMAIL_ADDRESS")
+    @Index(name="ORDER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", 
+            group = GroupName.Customer, order=FieldOrder.EMAILADDRESS)
+    protected String emailAddress;
+    
     @Column(name = "IS_TAX_EXEMPT")
     @AdminPresentation(friendlyName = "OrderImpl_Is_Tax_Exempt",
-            group = GroupName.Pricing, order = FieldOrder.IS_TAX_EXEMPT,
+            group = GroupName.Customer, order = FieldOrder.IS_TAX_EXEMPT,
             defaultValue = "false")
     protected Boolean isTaxExempt = false;
 
     @Column(name = "TAX_EXEMPTION_CODE")
     @AdminPresentation(friendlyName = "OrderImpl_Customer_TaxExemptCode",
-            group = GroupName.Pricing, order = FieldOrder.TAX_EXEMPTION_CODE,
+            group = GroupName.Customer, order = FieldOrder.TAX_EXEMPTION_CODE,
             visibility = VisibilityEnum.GRID_HIDDEN)
     protected String taxExemptionCode;
     
@@ -289,11 +302,13 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             group = GroupName.Customer, order=FieldOrder.PHONENUMBER)
     protected String phoneNumber;
     
+    @Column(name = "IS_ANONYMOUS")
+    @AdminPresentation(friendlyName = "OrderImpl_Is_Anonymous",
+            group = GroupName.Customer)
+    protected boolean anonymous;
+    
     @Column(name = "TAX_OVERRIDE")
     protected Boolean taxOverride;
-
-    @Transient
-    protected List<ActivityMessageDTO> orderMessages;
 
     @Override
     public Long getId() {
@@ -395,16 +410,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Override
     public void setSubmitDate(Date submitDate) {
         this.submitDate = submitDate;
-    }
-
-    @Override
-    public OrderCustomer getOrderCustomer() {
-        return orderCustomer;
-    }
-
-    @Override
-    public void setOrderCustomer(OrderCustomer orderCustomer) {
-        this.orderCustomer = orderCustomer;
     }
 
     @Override
@@ -741,8 +746,8 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public String getMainEntityName() {
         String customerName = null;
         String orderNumber = getOrderNumber();
-        if (!StringUtils.isEmpty(getOrderCustomer().getFirstName()) && !StringUtils.isEmpty(getOrderCustomer().getLastName())) {
-            customerName = getOrderCustomer().getFirstName() + " " + getOrderCustomer().getLastName();
+        if (!StringUtils.isEmpty(getFirstName()) && !StringUtils.isEmpty(getLastName())) {
+            customerName = getFirstName() + " " + getLastName();
         }
         if (!StringUtils.isEmpty(orderNumber) && !StringUtils.isEmpty(customerName)) {
             return orderNumber + " - " + customerName;
@@ -781,12 +786,8 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             return id.equals(other.id);
         }
 
-        if (orderCustomer == null) {
-            if (other.orderCustomer != null) {
-                return false;
-            }
-        } else if (!orderCustomer.equals(other.orderCustomer)) {
-            return false;
+        if (customerExternalId != null && other.customerExternalId != null) {
+            return customerExternalId.equals(other.customerExternalId);
         }
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         Date otherDateCreated = other.auditable != null ? other.auditable.getDateCreated() : null;
@@ -804,7 +805,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((orderCustomer == null) ? 0 : orderCustomer.hashCode());
+        result = prime * result + ((customerExternalId == null) ? 0 : customerExternalId.hashCode());
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         result = prime * result + ((myDateCreated == null) ? 0 : myDateCreated.hashCode());
         return result;
@@ -847,8 +848,49 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         return phoneNumber;
     }
     
+    @Override
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public Long getCustomerExternalId() {
+        return customerExternalId;
+    }
+
+    @Override
+    public void setCustomerExternalId(Long customerExternalId) {
+        this.customerExternalId = customerExternalId;
+    }
+
+    @Override
+    public String getFirstName() {
+        return firstName;
+    }
+
+    @Override
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    @Override
+    public String getLastName() {
+        return lastName;
+    }
+
+    @Override
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    @Override
+    public boolean isAnonymous() {
+        return anonymous;
+    }
+
+    @Override
+    public void setAnonymous(boolean anonymous) {
+        this.anonymous = anonymous;
     }
 
     @Override
@@ -865,7 +907,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         cloned.setOrderNumber(orderNumber);
         cloned.setTotalTax(getTotalTax());
         cloned.setSubmitDate(submitDate);
-        cloned.setOrderCustomer(orderCustomer);
+        cloned.setCustomerExternalId(customerExternalId);
         cloned.setStatus(getStatus());
         cloned.setTotalFulfillmentCharges(getTotalFulfillmentCharges());
         cloned.setSubTotal(getSubTotal());
@@ -906,6 +948,5 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
         return  createResponse;
     }
-
 
 }

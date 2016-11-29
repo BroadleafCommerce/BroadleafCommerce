@@ -41,6 +41,7 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import org.broadleafcommerce.core.order.domain.OrderCustomerDTO;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
@@ -156,20 +157,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional("blTransactionManager")
-    public Order createNewCartForCustomer(OrderCustomer orderCustomer) {
-        return orderDao.createNewCartForCustomer(orderCustomer);
+    public Order createNewCartForCustomer(OrderCustomerDTO customerDTO) {
+        return orderDao.createNewCartForCustomer(customerDTO);
     }
 
     @Override
     @Transactional("blTransactionManager")
-    public Order createNamedOrderForCustomer(String name, OrderCustomer orderCustomer) {
+    public Order createNamedOrderForCustomer(String name, OrderCustomerDTO customerDTO) {
         Order namedOrder = orderDao.create();
-        namedOrder.setOrderCustomer(orderCustomer);
+        customerDTO.populateOrderWithOrderCustomerDTO(namedOrder);
         namedOrder.setName(name);
         namedOrder.setStatus(OrderStatus.NAMED);
         
         if (extensionManager != null) {
-            extensionManager.getProxy().attachAdditionalDataToNewNamedCart(orderCustomer, namedOrder);
+            extensionManager.getProxy().attachAdditionalDataToNewNamedCart(customerDTO, namedOrder);
         }
         
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
@@ -180,8 +181,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findNamedOrderForCustomer(String name, OrderCustomer orderCustomer) {
-        return orderDao.readNamedOrderForCustomer(orderCustomer, name);
+    public Order findNamedOrderForCustomer(String name, Long customerExternalId) {
+        return orderDao.readNamedOrderForCustomer(customerExternalId, name);
     }
 
     @Override

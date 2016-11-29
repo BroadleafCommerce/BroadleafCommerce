@@ -156,20 +156,6 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
     void setTotal(Money orderTotal);
 
     /**
-     * Gets the {@link Customer} for this {@link Order}.
-     * 
-     * @return
-     */
-    OrderCustomer getOrderCustomer();
-
-    /**
-     * Sets the associated {@link Customer} for this Order.
-     * 
-     * @param customer
-     */
-    void setOrderCustomer(OrderCustomer orderCustomer);
-
-    /**
      * Gets the status of the Order.
      * 
      * @return
@@ -368,10 +354,6 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      */
     void setOrderNumber(String orderNumber);
 
-    String getEmailAddress();
-
-    void setEmailAddress(String emailAddress);
-
     Map<Offer, OfferInfo> getAdditionalOfferInformation();
 
     void setAdditionalOfferInformation(Map<Offer, OfferInfo> additionalOfferInformation);
@@ -490,6 +472,26 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      * @param taxOverride
      */
     public void setTaxOverride(Boolean taxOverride);
+    
+    public Long getCustomerExternalId();
+    
+    public void setCustomerExternalId(Long customerExternalId);
+    
+    public String getFirstName();
+    
+    public void setFirstName(String firstName);
+    
+    public String getLastName();
+    
+    public void setLastName(String lastName);
+    
+    public String getEmailAddress();
+    
+    public void setEmailAddress(String emailAddress);
+
+    public boolean isAnonymous();
+    
+    public void setAnonymous(boolean anonymous);
     
     public String getTaxExemptionCode();
 

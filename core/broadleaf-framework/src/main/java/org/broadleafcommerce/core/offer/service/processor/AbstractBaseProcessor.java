@@ -39,7 +39,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import org.broadleafcommerce.core.order.domain.OrderCustomerDTO;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.joda.time.LocalDateTime;
@@ -314,7 +314,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     }
 
     @Override
-    public List<Offer> filterOffers(List<Offer> offers, OrderCustomer orderCustomer) {
+    public List<Offer> filterOffers(List<Offer> offers, OrderCustomerDTO orderCustomer) {
         List<Offer> filteredOffers = new ArrayList<Offer>();
         if (offers != null && !offers.isEmpty()) {
             filteredOffers = removeOutOfDateOffers(offers);
@@ -487,7 +487,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @param customer
      * @return List of Offers that apply to this customer
      */
-    protected List<Offer> removeInvalidCustomerOffers(List<Offer> offers, OrderCustomer orderCustomer){
+    protected List<Offer> removeInvalidCustomerOffers(List<Offer> offers, OrderCustomerDTO orderCustomer){
         List<Offer> offersToRemove = new ArrayList<Offer>();
         for (Offer offer : offers) {
             if (!couldOfferApplyToCustomer(offer, orderCustomer)) {
@@ -509,7 +509,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @param customer
      * @return true if offer can be applied, otherwise false
      */
-    protected boolean couldOfferApplyToCustomer(Offer offer, OrderCustomer orderCustomer) {
+    protected boolean couldOfferApplyToCustomer(Offer offer, OrderCustomerDTO orderCustomer) {
         boolean appliesToCustomer = false;
         
         String rule = null;

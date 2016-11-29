@@ -26,7 +26,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandid
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import org.broadleafcommerce.core.order.domain.OrderCustomerDTO;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 
 import java.util.HashMap;
@@ -47,7 +47,7 @@ public interface OfferServiceExtensionHandler extends ExtensionHandler {
      * @param offerCodes
      * @return
      */
-    public ExtensionResultStatusType buildOfferCodeListForCustomer(OrderCustomer orderCustomer, List<OfferCode> offerCodes);
+    public ExtensionResultStatusType buildOfferCodeListForCustomer(OrderCustomerDTO customerDTO, List<OfferCode> offerCodes);
 
     /**
      * Modules may extend the calculatePotentialSavings method.   Once the handlers run, the 

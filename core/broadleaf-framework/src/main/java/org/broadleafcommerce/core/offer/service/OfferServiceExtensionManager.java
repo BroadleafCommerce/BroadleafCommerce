@@ -28,7 +28,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandid
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import org.broadleafcommerce.core.order.domain.OrderCustomerDTO;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +55,7 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
     public static final ExtensionManagerOperation buildOfferCodeListForCustomer = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OfferServiceExtensionHandler) handler).buildOfferCodeListForCustomer((OrderCustomer) params[0], (List<OfferCode>) params[1]);
+            return ((OfferServiceExtensionHandler) handler).buildOfferCodeListForCustomer((OrderCustomerDTO) params[0], (List<OfferCode>) params[1]);
         }
     };
 
@@ -125,8 +125,8 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
     }
 
     @Override
-    public ExtensionResultStatusType buildOfferCodeListForCustomer(OrderCustomer orderCustomer, List<OfferCode> offerCodes) {
-        return execute(buildOfferCodeListForCustomer, orderCustomer, offerCodes);
+    public ExtensionResultStatusType buildOfferCodeListForCustomer(OrderCustomerDTO customerDTO, List<OfferCode> offerCodes) {
+        return execute(buildOfferCodeListForCustomer, customerDTO, offerCodes);
     }
 
     @Override

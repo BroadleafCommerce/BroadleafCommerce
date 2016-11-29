@@ -43,7 +43,7 @@ import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import org.broadleafcommerce.core.order.domain.OrderCustomerDTO;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -177,7 +177,7 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public List<Offer> buildOfferListForOrder(Order order) {
         List<Offer> offers = new ArrayList<Offer>();
-        List<CustomerOffer> customerOffers = lookupOfferCustomerByCustomer(order.getOrderCustomer());
+        List<CustomerOffer> customerOffers = lookupOfferCustomerByCustomer(order.getCustomerExternalId());
         for (CustomerOffer customerOffer : customerOffers) {
             if (!offers.contains(customerOffer.getOffer())) {
                 offers.add(customerOffer.getOffer());
@@ -193,7 +193,7 @@ public class OfferServiceImpl implements OfferService {
         }
         List<Offer> globalOffers = lookupAutomaticDeliveryOffers();
         for (Offer globalOffer : globalOffers) {
-            if (!offers.contains(globalOffer) && verifyMaxCustomerUsageThreshold(order.getOrderCustomer(), globalOffer)) {
+            if (!offers.contains(globalOffer) && verifyMaxCustomerUsageThreshold(order.getCustomerExternalId(), globalOffer)) {
                 offers.add(globalOffer);
             }
         }
@@ -206,16 +206,16 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public List<OfferCode> buildOfferCodeListForCustomer(OrderCustomer orderCustomer) {
+    public List<OfferCode> buildOfferCodeListForCustomer(OrderCustomerDTO customerDTO) {
         ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
         if (extensionManager != null) {
-            extensionManager.buildOfferCodeListForCustomer(orderCustomer, offerCodes);
+            extensionManager.buildOfferCodeListForCustomer(customerDTO, offerCodes);
         }
         if (!offerCodes.isEmpty()) {
             Iterator<OfferCode> itr = offerCodes.iterator();
             while (itr.hasNext()) {
                 OfferCode offerCode = itr.next();
-                if (!offerCode.isActive() || !verifyMaxCustomerUsageThreshold(orderCustomer, offerCode)) {
+                if (!offerCode.isActive() || !verifyMaxCustomerUsageThreshold(customerDTO.getExternalId(), offerCode)) {
                     itr.remove();
                 }
             }
@@ -230,8 +230,8 @@ public class OfferServiceImpl implements OfferService {
      * @param customer
      * @return a List of offers assigned to the customer
      */
-    protected List<CustomerOffer> lookupOfferCustomerByCustomer(OrderCustomer orderCustomer) {
-        List<CustomerOffer> offerCustomers = customerOfferDao.readCustomerOffersByCustomer(orderCustomer);
+    protected List<CustomerOffer> lookupOfferCustomerByCustomer(Long customerExternalId) {
+        List<CustomerOffer> offerCustomers = customerOfferDao.readCustomerOffersByCustomer(customerExternalId);
         return offerCustomers;
     }
 
@@ -332,7 +332,7 @@ public class OfferServiceImpl implements OfferService {
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
             PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order, false);
-            List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, order.getOrderCustomer());
+            List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, OrderCustomerDTO.createOrderCustomerDtoFromOrder(order));
             if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("No offers applicable to this order.");
@@ -442,7 +442,7 @@ public class OfferServiceImpl implements OfferService {
                     possibleFGOffers.add(offer);
                 }
             }
-            List<Offer> filteredOffers = orderOfferProcessor.filterOffers(possibleFGOffers, order.getOrderCustomer());
+            List<Offer> filteredOffers = orderOfferProcessor.filterOffers(possibleFGOffers, OrderCustomerDTO.createOrderCustomerDtoFromOrder(order));
             List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
             for (Offer offer : filteredOffers) {
                 fulfillmentGroupOfferProcessor.filterFulfillmentGroupLevelOffer(promotableOrder, qualifiedFGOffers, offer);
@@ -459,9 +459,9 @@ public class OfferServiceImpl implements OfferService {
     }
     
     @Override
-    public boolean verifyMaxCustomerUsageThreshold(OrderCustomer orderCustomer, Offer offer) {
+    public boolean verifyMaxCustomerUsageThreshold(Long customerExternalId, Offer offer) {
         if (offer.isLimitedUsePerCustomer()) {                
-            Long currentUses = offerAuditService.countUsesByCustomer(orderCustomer.getId(), offer.getId());
+            Long currentUses = offerAuditService.countUsesByCustomer(customerExternalId, offer.getId());
             if (currentUses >= offer.getMaxUsesPerCustomer()) {
                 return false;
             }
@@ -470,13 +470,13 @@ public class OfferServiceImpl implements OfferService {
     }
     
     @Override
-    public boolean verifyMaxCustomerUsageThreshold(@Nonnull OrderCustomer orderCustomer, OfferCode code) {
+    public boolean verifyMaxCustomerUsageThreshold(@Nonnull Long customerExternalId, OfferCode code) {
         boolean underCodeMaxUses = true;
         if (code.isLimitedUse()) {
             Long currentCodeUses = offerAuditService.countOfferCodeUses(code.getId());
             underCodeMaxUses = currentCodeUses < code.getMaxUses();
         }
-        return underCodeMaxUses && verifyMaxCustomerUsageThreshold(orderCustomer, code.getOffer());
+        return underCodeMaxUses && verifyMaxCustomerUsageThreshold(customerExternalId, code.getOffer());
     }
     
     @Override

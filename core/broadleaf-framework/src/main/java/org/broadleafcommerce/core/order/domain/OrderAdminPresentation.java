@@ -93,9 +93,12 @@ public interface OrderAdminPresentation {
         public static final int STATUS = 3000;
         public static final int SUBMITDATE = 4000;
 
-        public static final int CUSTOMER = 1000;
-        public static final int EMAILADDRESS = 2000;
-        public static final int PHONENUMBER = 3000;
+        public static final int FIRSTNAME = 1000;
+        public static final int LASTNAME = 2000;
+        public static final int EMAILADDRESS = 3000;
+        public static final int PHONENUMBER = 4000;
+        public static final int IS_TAX_EXEMPT = 5000;
+        public static final int TAX_EXEMPTION_CODE= 6000;
 
         public static final int SUBTOTAL = 1000;
         public static final int TOTALTAX = 2000;
@@ -105,8 +108,5 @@ public interface OrderAdminPresentation {
         public static final int ADJUSTMENTS = 1000;
         public static final int OFFERCODES = 2000;
         public static final int ATTRIBUTES = 3000;
-        
-        public static final int IS_TAX_EXEMPT = 1000;
-        public static final int TAX_EXEMPTION_CODE= 2000;
     }
 }

@@ -240,7 +240,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Order readNamedOrderForCustomer(final OrderCustomer orderCustomer, final String name) {
+    public Order readNamedOrderForCustomer(final Long orderCustomer, final String name) {
         final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
         query.setParameter("customerId", orderCustomer.getId());
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());

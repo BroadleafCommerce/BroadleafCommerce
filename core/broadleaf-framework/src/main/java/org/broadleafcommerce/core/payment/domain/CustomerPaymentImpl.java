@@ -32,8 +32,6 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
-import org.broadleafcommerce.core.order.domain.OrderCustomerImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -46,7 +44,6 @@ import org.hibernate.annotations.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -58,7 +55,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -94,11 +90,10 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
             })
     @Column(name = "CUSTOMER_PAYMENT_ID")
     protected Long id;
-
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = OrderCustomerImpl.class, optional = false)
-    @JoinColumn(name = "CUSTOMER_ID")
+    
+    @Column(name = "CUSTOMER_ID")
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
-    protected OrderCustomer customer;
+    protected Long customerExternalId;
 
     @Column(name = "ADDRESS_EXTERNAL_ID")
     @Index(name="CUSTOMERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_EXTERNAL_ID"})
@@ -155,16 +150,6 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     @Override
     public Long getId() {
         return id;
-    }
-
-    @Override
-    public OrderCustomer getOrderCustomer() {
-        return customer;
-    }
-
-    @Override
-    public void setOrderCustomer(OrderCustomer customer) {
-        this.customer = customer;
     }
 
     @Override
@@ -232,6 +217,16 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     public void setAdditionalFields(Map<String, String> additionalFields) {
         this.additionalFields = additionalFields;
     }
+    
+    @Override
+    public Long getCustomerExternalId() {
+        return customerExternalId;
+    }
+
+    @Override
+    public void setCustomerExternalId(Long customerExternalId) {
+        this.customerExternalId = customerExternalId;
+    }
 
     @Override
     public <G extends CustomerPayment> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
@@ -241,7 +236,7 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
         }
         CustomerPayment cloned = createResponse.getClone();
         // dont clone
-        cloned.setOrderCustomer(customer);
+        cloned.setCustomerExternalId(customerExternalId);
         cloned.setBillingAddressExternalId(billingAddressExternalId);
         cloned.setIsDefault(isDefault);
         cloned.setPaymentToken(paymentToken);

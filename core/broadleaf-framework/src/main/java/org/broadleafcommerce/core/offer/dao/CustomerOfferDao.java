@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.offer.dao;
 
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ public interface CustomerOfferDao {
 
     public CustomerOffer readCustomerOfferById(Long customerOfferId);
 
-    public List<CustomerOffer> readCustomerOffersByCustomer(OrderCustomer orderCustomer);
+    public List<CustomerOffer> readCustomerOffersByCustomer(Long customerExternalId);
 
     public CustomerOffer save(CustomerOffer customerOffer);
 
