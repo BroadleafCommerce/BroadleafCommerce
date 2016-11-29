@@ -19,13 +19,15 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.ImmutableMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +37,7 @@ import java.util.Map;
  */
 @Component("blProductOptionDisplayProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class ProductOptionDisplayProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Override
     public String getName() {
@@ -53,7 +55,7 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafModelVariabl
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         HashMap<String, String> productOptionDisplayValues = new HashMap<>();
         Object item = context.parseExpression(tagAttributes.get("orderItem"));
         if (item instanceof DiscreteOrderItem) {
@@ -67,7 +69,7 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafModelVariabl
                 }
             }
         }
-        newModelVars.put("productOptionDisplayValues", productOptionDisplayValues);
+        return ImmutableMap.of("productOptionDisplayValues", (Object) productOptionDisplayValues);
     }
 
 }

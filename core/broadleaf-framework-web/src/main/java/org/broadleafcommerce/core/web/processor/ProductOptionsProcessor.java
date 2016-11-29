@@ -24,14 +24,14 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.BLCMoneyFormatUtils;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +58,7 @@ import javax.annotation.Resource;
  */
 @Component("blProductOptionsProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class ProductOptionsProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
     protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
@@ -80,13 +80,15 @@ public class ProductOptionsProcessor extends AbstractBroadleafModelVariableModif
     }
     
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         Long productId = (Long) context.parseExpression(tagAttributes.get("productId"));
         Product product = catalogService.findProductById(productId);
+        Map<String, Object> newModelVars = new HashMap<>();
         if (product != null) {
             addAllProductOptionsToModel(newModelVars, product);
             addProductOptionPricingToModel(newModelVars, product, context, tagAttributes);
         }
+        return newModelVars;
     }
 
     protected void addProductOptionPricingToModel(Map<String, Object> newModelVars, Product product, BroadleafTemplateContext context, Map<String, String> tagAttributes) {

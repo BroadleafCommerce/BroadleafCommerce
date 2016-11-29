@@ -18,7 +18,7 @@
 package org.broadleafcommerce.common.web;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 

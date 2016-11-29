@@ -132,13 +132,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     private static final Log LOG = LogFactory.getLog(FormBuilderServiceImpl.class);
 
     public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
-    protected static final List<String> TYPES_THAT_SUPPORT_SINGLE_SPACE_AS_DEFAULT = Arrays.asList(SupportedFieldType.STRING.toString(),
-                                                                                                   SupportedFieldType.HTML_BASIC.toString(),
-                                                                                                   SupportedFieldType.HTML.toString(),
-                                                                                                   SupportedFieldType.DESCRIPTION.toString(),
-                                                                                                   SupportedFieldType.EMAIL.toString(),
-                                                                                                   SupportedFieldType.CODE.toString(),
-                                                                                                   SupportedFieldType.COLOR.toString());
 
     @Resource(name = "blAdminEntityService")
     protected AdminEntityService adminEntityService;
@@ -1088,16 +1081,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     return null;
                 }
             }
-        } else if (isSingleSpaceDefaultSupported(fieldType) && defaultValue != null && StringUtils.isEmpty(defaultValue)) {
-            // we return an single-space string as the default value instead of empty strings to ensure compatibility
-            // with Oracle DB which converts empty strings to null on insert or updates
-            return " ";
         }
         return defaultValue;
-    }
-
-    protected boolean isSingleSpaceDefaultSupported(String fieldType) {
-        return TYPES_THAT_SUPPORT_SINGLE_SPACE_AS_DEFAULT.contains(fieldType);
     }
 
     protected String buildMsgForDefValException(String type, BasicFieldMetadata fmd, String defaultValue) {

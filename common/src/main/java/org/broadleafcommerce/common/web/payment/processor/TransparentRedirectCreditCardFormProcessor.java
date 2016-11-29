@@ -21,12 +21,12 @@ package org.broadleafcommerce.common.web.payment.processor;
 import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateElement;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateModel;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateModelModifierDTO;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafModelModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateModelModifierDTO;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 

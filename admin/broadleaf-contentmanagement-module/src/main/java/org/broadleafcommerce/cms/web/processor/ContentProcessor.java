@@ -34,11 +34,11 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.condition.TemplatingExistCondition;
 import org.broadleafcommerce.common.web.deeplink.DeepLink;
-import org.broadleafcommerce.common.web.dialect.AbstractBroadleafModelVariableModifierProcessor;
-import org.broadleafcommerce.common.web.domain.BroadleafAssignation;
-import org.broadleafcommerce.common.web.domain.BroadleafTemplateContext;
+import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafAssignation;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -95,7 +95,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component("blContentProcessor")
 @Conditional(TemplatingExistCondition.class)
-public class ContentProcessor extends AbstractBroadleafModelVariableModifierProcessor {
+public class ContentProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     protected final Log LOG = LogFactory.getLog(getClass());
     public static final String REQUEST_DTO = "blRequestDTO";
@@ -138,7 +138,7 @@ public class ContentProcessor extends AbstractBroadleafModelVariableModifierProc
     }
 
     @Override
-    public void populateModelVariables(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         String contentType = tagAttributes.get("contentType");
         String contentName = tagAttributes.get("contentName");
         String maxResultsStr = tagAttributes.get("maxResults");
@@ -175,8 +175,9 @@ public class ContentProcessor extends AbstractBroadleafModelVariableModifierProc
 
         Locale locale = blcContext.getLocale();
 
+        Map<String, Object> newModelVars = new HashMap<>();
         contentItems = getContentItems(contentName, maxResults, request, mvelParameters, currentSandbox, structuredContentType, locale, tagName, tagAttributes, newModelVars, context);
-
+        
         if (contentItems.size() > 0) {
 
             // sort the resulting list by the configured property sorts on the tag
@@ -206,7 +207,7 @@ public class ContentProcessor extends AbstractBroadleafModelVariableModifierProc
                 });
             }
 
-            List<Map<String, Object>> contentItemFields = new ArrayList<Map<String, Object>>();
+            List<Map<String, Object>> contentItemFields = new ArrayList<>();
 
             for (StructuredContentDTO item : contentItems) {
                 if (StringUtils.isNotEmpty(fieldFilters)) {
@@ -253,6 +254,8 @@ public class ContentProcessor extends AbstractBroadleafModelVariableModifierProc
             extensionManager.getProxy().postProcessDeepLinks(links);
             newModelVars.put(deepLinksVar, links);
         }
+        
+        return newModelVars;
     }
 
     /**
@@ -307,7 +310,7 @@ public class ContentProcessor extends AbstractBroadleafModelVariableModifierProc
 
         RequestDTO requestDto = (RequestDTO) request.getAttribute(REQUEST_DTO);
 
-        Map<String, Object> mvelParameters = new HashMap<String, Object>();
+        Map<String, Object> mvelParameters = new HashMap<>();
         mvelParameters.put("time", timeDto);
         mvelParameters.put("request", requestDto);
 
