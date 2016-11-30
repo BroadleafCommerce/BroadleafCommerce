@@ -25,14 +25,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.cache.Hydrated;
-import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
@@ -52,8 +50,8 @@ import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.common.web.Locatable;
+import org.broadleafcommerce.core.catalog.domain.type.FulfillmentType;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet;
 import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
@@ -487,7 +485,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public String getName() {
-        return DynamicTranslationProvider.getValue(this, "name", name);
+        return name; //TODO microservices - deal with i18n return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
@@ -546,7 +544,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public String getDescription() {
-        return DynamicTranslationProvider.getValue(this, "description", description);
+        return description;// TODO microservices - deal with i18n return DynamicTranslationProvider.getValue(this, "description", description);
     }
 
     @Override
@@ -602,7 +600,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public String getLongDescription() {
-        return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
+        return longDescription;// TODO microservices - deal with i18n return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
     }
 
     @Override
@@ -761,9 +759,10 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public List<Long> getChildCategoryIds() {
-        if (childCategoryIds == null) {
-            HydratedSetup.populateFromCache(this, "childCategoryIds");
-        }
+    // TODO microservices - deal with cache hydration
+//        if (childCategoryIds == null) {
+//            HydratedSetup.populateFromCache(this, "childCategoryIds");
+//        }
         return childCategoryIds;
     }
 
