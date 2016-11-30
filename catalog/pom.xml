@@ -64,5 +64,13 @@
             <artifactId>broadleaf-micro-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <artifactId>solr-solrj</artifactId>
+            <groupId>org.apache.solr</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>solr-core</artifactId>
+            <groupId>org.apache.solr</groupId>
+        </dependency>
     </dependencies>
 </project>
