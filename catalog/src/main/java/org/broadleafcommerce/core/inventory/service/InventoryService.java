@@ -19,9 +19,7 @@
 package org.broadleafcommerce.core.inventory.service;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryActivity;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
 
 import java.util.Collection;
 import java.util.Map;
