@@ -23,7 +23,6 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -33,8 +32,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -175,7 +172,7 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
 
     @Override
     public String getFriendlyName() {
-        return DynamicTranslationProvider.getValue(this, "friendlyName", friendlyName);
+        return friendlyName;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "friendlyName", friendlyName);
     }
 
     @Override
@@ -191,18 +188,6 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     @Override
     public void setTranslatable(Boolean translatable) {
         this.translatable = translatable;
-    }
-
-    @Deprecated
-    @Override
-    public List<SearchConfig> getSearchConfigs() {
-        throw new UnsupportedOperationException("The default Field implementation does not support search configs");
-    }
-
-    @Deprecated
-    @Override
-    public void setSearchConfigs(List<SearchConfig> searchConfigs) {
-        throw new UnsupportedOperationException("The default Field implementation does not support search configs");
     }
 
     @Override
