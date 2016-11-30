@@ -25,6 +25,8 @@ import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.common.cache.CacheStatType;
+import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
@@ -71,9 +73,8 @@ public class PageServiceImpl implements PageService {
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
 
-// TODO microservices - deal with statistics services
-//    @Resource(name="blStatisticsService")
-//    protected StatisticsService statisticsService;
+    @Resource(name="blStatisticsService")
+    protected StatisticsService statisticsService;
 
     @Resource(name = "blPageServiceUtility")
     protected PageServiceUtility pageServiceUtility;
@@ -186,9 +187,7 @@ public class PageServiceImpl implements PageService {
     protected List<PageDTO> getCachedPageDTOList(List<Page> pageList, String identifier, Locale locale, boolean secure) {
         List<PageDTO> dtoList = new ArrayList<>();
         String key = buildKey(identifier, locale, secure);
-        // TODO microservices - deal with statistics services
-        //List<PageDTO> cachedList = getPageListFromCache(key);
-        List<PageDTO> cachedList = null;
+        List<PageDTO> cachedList = getPageListFromCache(key);
         if (cachedList != null && cachedList.size() == pageList.size()) {
             dtoList = cachedList;
         }
@@ -207,20 +206,19 @@ public class PageServiceImpl implements PageService {
         }
     }
 
-// TODO microservices - deal with statistics services
-//    protected List<PageDTO> getPageListFromCache(String key) {
-//        if (key != null) {
-//            Element cacheElement = getPageCache().get(key);
-//
-//            if (cacheElement != null && cacheElement.getObjectValue() != null) {
-//                statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), true);
-//                return (List<PageDTO>) cacheElement.getObjectValue();
-//            }
-//            statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), false);
-//        }
-//
-//        return null;
-//    }
+    protected List<PageDTO> getPageListFromCache(String key) {
+        if (key != null) {
+            Element cacheElement = getPageCache().get(key);
+
+            if (cacheElement != null && cacheElement.getObjectValue() != null) {
+                statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), true);
+                return (List<PageDTO>) cacheElement.getObjectValue();
+            }
+            statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), false);
+        }
+
+        return null;
+    }
 
     protected void addPageListToCache(List<PageDTO> pageList, String identifier, Locale locale, boolean secure) {
         String key = buildKey(identifier, locale, secure);

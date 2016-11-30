@@ -35,6 +35,8 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldXref;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.common.cache.CacheStatType;
+import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
@@ -97,9 +99,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     @Resource(name = "blStructuredContentServiceExtensionManager")
     protected StructuredContentServiceExtensionManager extensionManager;
 
-// TODO microservices - deal with statistics service
-//    @Resource(name = "blStatisticsService")
-//    protected StatisticsService statisticsService;
+    @Resource(name = "blStatisticsService")
+    protected StatisticsService statisticsService;
 
     protected Cache structuredContentCache;
 
@@ -717,13 +718,12 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     protected StructuredContentDTO getSingleStructuredContentFromCache(String key) {
         Element scElement = getStructuredContentCache().get(key);
 
-// TODO microservices - deal with statistics service
-//        if (scElement != null) {
-//            statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), true);
-//            return (StructuredContentDTO) scElement.getValue();
-//        }
-//
-//        statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), false);
+        if (scElement != null) {
+            statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), true);
+            return (StructuredContentDTO) scElement.getValue();
+        }
+
+        statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), false);
 
         return null;
     }
@@ -732,14 +732,13 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     public List<StructuredContentDTO> getStructuredContentListFromCache(String key) {
         Element scElement = getStructuredContentCache().get(key);
 
-// TODO microservices - deal with statistics service
-//        if (scElement != null) {
-//            statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), true);
-//
-//            return (List<StructuredContentDTO>) scElement.getObjectValue();
-//        }
-//
-//        statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), false);
+        if (scElement != null) {
+            statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), true);
+
+            return (List<StructuredContentDTO>) scElement.getObjectValue();
+        }
+
+        statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), false);
 
         return null;
     }
