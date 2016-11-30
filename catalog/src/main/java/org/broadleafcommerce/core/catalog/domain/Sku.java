@@ -21,11 +21,11 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.type.FulfillmentType;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 
 import java.awt.Dimension;
 import java.io.Serializable;
