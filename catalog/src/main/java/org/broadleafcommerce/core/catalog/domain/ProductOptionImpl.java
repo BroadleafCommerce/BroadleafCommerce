@@ -24,7 +24,6 @@ import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectio
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
@@ -220,7 +219,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     
     @Override
     public String getLabel() {
-        return DynamicTranslationProvider.getValue(this, "label", label);
+        return label;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "label", label);
     }
     
     @Override
@@ -338,7 +337,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
 
     @Override
     public String getErrorMessage() {
-        return DynamicTranslationProvider.getValue(this, "errorMessage", errorMessage);
+        return errorMessage;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "errorMessage", errorMessage);
     }
 
     @Override

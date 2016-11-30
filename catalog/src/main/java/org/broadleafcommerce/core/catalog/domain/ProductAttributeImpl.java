@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -25,7 +24,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -108,7 +106,7 @@ public class ProductAttributeImpl implements ProductAttribute {
 
     @Override
     public String getValue() {
-        return DynamicTranslationProvider.getValue(this, "value", value);
+        return value;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "value", value);
     }
 
     @Override
@@ -132,7 +130,7 @@ public class ProductAttributeImpl implements ProductAttribute {
 
     @Override
     public String getName() {
-        return DynamicTranslationProvider.getValue(this, "name", name);
+        return name;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override

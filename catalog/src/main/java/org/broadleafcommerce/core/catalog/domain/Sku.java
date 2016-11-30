@@ -27,7 +27,6 @@ import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 
-import java.awt.Dimension;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;

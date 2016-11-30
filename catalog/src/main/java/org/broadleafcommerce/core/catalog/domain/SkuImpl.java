@@ -32,7 +32,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.IgnoreEnterpriseBehavior;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -688,7 +687,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
             return lookupDefaultSku().getName();
         }
         
-        return DynamicTranslationProvider.getValue(this, "name", name);
+        return name;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
@@ -702,7 +701,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
             return lookupDefaultSku().getDescription();
         }
         
-        return DynamicTranslationProvider.getValue(this, "description", description);
+        return description;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "description", description);
     }
 
     @Override
@@ -716,7 +715,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
             return lookupDefaultSku().getLongDescription();
         }
         
-        return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
+        return longDescription;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
     }
 
     @Override
