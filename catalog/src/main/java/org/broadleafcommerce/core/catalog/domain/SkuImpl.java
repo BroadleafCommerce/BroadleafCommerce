@@ -49,15 +49,13 @@ import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.hibernate.annotations.BatchSize;
@@ -84,9 +82,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -100,8 +96,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
-import javax.persistence.MapKeyClass;
-import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -372,25 +366,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @BatchSize(size = 50)
     protected List<SkuFee> fees = new ArrayList<SkuFee>();
 
-    @ElementCollection
-    @CollectionTable(name = "BLC_SKU_FULFILLMENT_FLAT_RATES", 
-        joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true))
-    @MapKeyJoinColumn(name = "FULFILLMENT_OPTION_ID", referencedColumnName = "FULFILLMENT_OPTION_ID")
-    @MapKeyClass(FulfillmentOptionImpl.class)
-    @Column(name = "RATE", precision = 19, scale = 5)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
-    @BatchSize(size = 50)
-    protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
-
-    @ManyToMany(targetEntity = FulfillmentOptionImpl.class)
-    @JoinTable(name = "BLC_SKU_FULFILLMENT_EXCLUDED",
-            joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"),
-            inverseJoinColumns = @JoinColumn(name = "FULFILLMENT_OPTION_ID",referencedColumnName = "FULFILLMENT_OPTION_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
-    @BatchSize(size = 50)
-    protected List<FulfillmentOption> excludedFulfillmentOptions = new ArrayList<FulfillmentOption>();
-
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType",
         group = GroupName.Inventory, order = 1000,
@@ -601,7 +576,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
             if (currency != null) {
                 tmpCurrency = currency;
             } else {
-                tmpCurrency = BroadleafRequestContext.getCurrency();
+                tmpCurrency = CommonRequestContext.getCurrency();
             }
             if (retailPrice != null) {
                 dsp.setRetailPrice(new Money(retailPrice, tmpCurrency));
@@ -1271,15 +1246,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
             SkuMediaXrefImpl clonedEntry = ((SkuMediaXrefImpl)entry.getValue()).createOrRetrieveCopyInstance(context).getClone();
             cloned.getSkuMediaXref().put(entry.getKey(),clonedEntry);
         }
-        for(FulfillmentOption entry : excludedFulfillmentOptions){
-            FulfillmentOption clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            cloned.getExcludedFulfillmentOptions().add(clonedEntry);
-        }
-        for(Map.Entry<FulfillmentOption, BigDecimal> entry : fulfillmentFlatRates.entrySet()){
-            FulfillmentOption clonedEntry = entry.getKey().createOrRetrieveCopyInstance(context).getClone();
-            cloned.getFulfillmentFlatRates().put(clonedEntry,entry.getValue());
-        }
-
         return  createResponse;
     }
 }
