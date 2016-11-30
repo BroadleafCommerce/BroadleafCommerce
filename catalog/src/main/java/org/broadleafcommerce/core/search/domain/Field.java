@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.search.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Represents a String-based mapping of entities and properties. This is used in various places,
@@ -97,23 +96,6 @@ public interface Field extends Serializable, MultiTenantCloneable<Field> {
      * @param abbreviation
      */
     public void setAbbreviation(String abbreviation);
-
-    /**
-     * Gets the searchConfigs. Note that a concrete implementation or usage of this class is not available
-     * in the community version of Broadleaf Commerce.
-     * @return the searchConfigs
-     * @deprecated
-     */
-    @Deprecated
-    public List<SearchConfig> getSearchConfigs();
-    
-    /**
-     * Sets the searchConfigs. 
-     * @param searchConfigs
-     * @deprecated
-     */
-    @Deprecated
-    public void setSearchConfigs(List<SearchConfig> searchConfigs);
 
     /**
      * Returns the qualified name of this Field. The default implementation returns the entityType joined
