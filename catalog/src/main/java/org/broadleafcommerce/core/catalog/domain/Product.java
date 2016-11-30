@@ -23,7 +23,6 @@ import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
-import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
