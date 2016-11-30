@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 
 import java.util.HashMap;
 import java.util.Map;
