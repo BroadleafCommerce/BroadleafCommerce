@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.catalog.service.dynamic;
 
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
-import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 
 import java.util.HashMap;
 
