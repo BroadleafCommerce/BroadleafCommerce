@@ -20,11 +20,11 @@ package org.broadleafcommerce.core.catalog.service.dynamic;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
+
+import javax.annotation.Nonnull;
 
 /**
  * <p>Interface for calculating dynamic pricing for a {@link Sku}. This should be hooked up via a custom subclass of 
@@ -52,21 +52,6 @@ public interface DynamicSkuPricingService {
     @Nonnull
     @SuppressWarnings("rawtypes")
     public DynamicSkuPrices getSkuPrices(SkuPriceWrapper skuWrapper, HashMap skuPricingConsiderations);
-
-    @Nonnull
-    @SuppressWarnings("rawtypes")
-    @Deprecated
-    public DynamicSkuPrices getSkuPrices(Sku sku, HashMap skuPricingConsiderations);
-
-    /**
-     * Used for t
-     * 
-     * @param sku
-     * @param skuPricingConsiderations
-     * @return
-     */
-    @SuppressWarnings("rawtypes")
-    public DynamicSkuPrices getSkuBundleItemPrice(SkuBundleItem sku, HashMap skuPricingConsiderations);
 
     /**
      * Execute dynamic pricing on the price of a product option value. 
