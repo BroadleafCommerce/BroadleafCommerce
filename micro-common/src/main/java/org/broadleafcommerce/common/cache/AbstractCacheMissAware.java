@@ -17,15 +17,10 @@
  */
 package org.broadleafcommerce.common.cache;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.springframework.util.ClassUtils;
 
 import java.io.Serializable;
@@ -34,6 +29,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import javax.annotation.Resource;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * Support for any class that wishes to utilize a query miss cache. This cache is capable of caching a query miss
@@ -61,12 +60,13 @@ public abstract class AbstractCacheMissAware {
      * @return the completed key
      */
     protected String buildKey(String... params) {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        SandBox sandBox = context.getSandBox();
+// TODO microservices - deal with sandboxing
+//        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+//        SandBox sandBox = context.getSandBox();
+//        if (sandBox != null) {
+//            key = sandBox.getId() + "_" + key;
+//        }
         String key = StringUtils.join(params, '_');
-        if (sandBox != null) {
-            key = sandBox.getId() + "_" + key;
-        }
         return key;
     }
 
@@ -169,25 +169,26 @@ public abstract class AbstractCacheMissAware {
      */
     protected <T> T getCachedObject(Class<T> responseClass, String cacheName, String statisticsName, PersistentRetrieval<T> retrieval, String... params) {
         T nullResponse = getNullObject(responseClass);
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
         String key = buildKey(params);
         T response = null;
-        if (context.isProductionSandBox() || (context.getAdditionalProperties().containsKey("allowLevel2Cache") && (Boolean) context.getAdditionalProperties().get("allowLevel2Cache"))) {
-            response = getObjectFromCache(key, cacheName);
-        }
+        // TODO microservices - deal with sandboxing
+//        if (context.isProductionSandBox() || (context.getAdditionalProperties().containsKey("allowLevel2Cache") && (Boolean) context.getAdditionalProperties().get("allowLevel2Cache"))) {
+//            response = getObjectFromCache(key, cacheName);
+//        }
         if (response == null) {
             response = retrieval.retrievePersistentObject();
             if (response == null) {
                 response = nullResponse;
             }
             //only handle null, non-hits. Otherwise, let level 2 cache handle it
-            if ((context.isProductionSandBox() || (context.getAdditionalProperties().containsKey("allowLevel2Cache") && (Boolean) context.getAdditionalProperties().get("allowLevel2Cache"))) && response.equals(nullResponse)) {
-                statisticsService.addCacheStat(statisticsName, false);
-                getCache(cacheName).put(new Element(key, response));
-                if (getLogger().isTraceEnabled()) {
-                    getLogger().trace("Caching [" + key + "] as null in the [" + cacheName + "] cache.");
-                }
-            }
+        // TODO microservices - deal with sandboxing
+//            if ((context.isProductionSandBox() || (context.getAdditionalProperties().containsKey("allowLevel2Cache") && (Boolean) context.getAdditionalProperties().get("allowLevel2Cache"))) && response.equals(nullResponse)) {
+//                statisticsService.addCacheStat(statisticsName, false);
+//                getCache(cacheName).put(new Element(key, response));
+//                if (getLogger().isTraceEnabled()) {
+//                    getLogger().trace("Caching [" + key + "] as null in the [" + cacheName + "] cache.");
+//                }
         } else {
             statisticsService.addCacheStat(statisticsName, true);
         }
