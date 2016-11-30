@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -137,13 +136,6 @@ public class MergeCartServiceImpl implements MergeCartService {
                     DiscreteOrderItem doi = (DiscreteOrderItem) orderItem;
                     if (!checkActive(doi) || !checkInventory(doi) || !checkOtherValidity(orderItem)) {
                         itemsToRemove.add(orderItem);
-                    }
-                } else if (orderItem instanceof BundleOrderItem) {
-                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-                    for (DiscreteOrderItem doi : bundleOrderItem.getDiscreteOrderItems()) {
-                        if (!checkActive(doi) || !checkInventory(doi) || !checkOtherValidity(orderItem)) {
-                            itemsToRemove.add(doi.getBundleOrderItem());
-                        }
                     }
                 }
             }

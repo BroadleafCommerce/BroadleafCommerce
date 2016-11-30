@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
@@ -186,14 +185,6 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                 if (fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
                     fgis.add(fulfillmentGroupItem);
-                } else if (orderItem instanceof BundleOrderItem) {
-                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
-                        if (fulfillmentGroupItem.getOrderItem().equals(discreteOrderItem)){
-                            fgis.add(fulfillmentGroupItem);
-                            break;
-                        }
-                    }
                 }
             }
         }
@@ -212,15 +203,6 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
                 if (fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
                     itr.remove();
                     fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
-                } else if (orderItem instanceof BundleOrderItem) {
-                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
-                        if (fulfillmentGroupItem.getOrderItem().equals(discreteOrderItem)){
-                            itr.remove();
-                            fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
-                            break;
-                        }
-                    }
                 }
             }
         }

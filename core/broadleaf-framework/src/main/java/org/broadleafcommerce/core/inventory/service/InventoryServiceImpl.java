@@ -26,7 +26,6 @@ import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -36,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -277,26 +275,6 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                 }
                 if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
                     skuInventoryMap.put(sku, quantity);
-                }
-            } else if (orderItem instanceof BundleOrderItem) {
-                BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
-                if (InventoryType.CHECK_QUANTITY.equals(bundleItem.getSku().getInventoryType())) {
-                    // add the bundle sku of quantities to decrement
-                    skuInventoryMap.put(bundleItem.getSku(), bundleItem.getQuantity());
-                }
-
-                // Now add all of the discrete items within the bundl
-                List<DiscreteOrderItem> discreteItems = bundleItem.getDiscreteOrderItems();
-                for (DiscreteOrderItem discreteItem : discreteItems) {
-                    if (InventoryType.CHECK_QUANTITY.equals(discreteItem.getSku().getInventoryType())) {
-                        Integer quantity = skuInventoryMap.get(discreteItem.getSku());
-                        if (quantity == null) {
-                            quantity = (discreteItem.getQuantity() * bundleItem.getQuantity());
-                        } else {
-                            quantity += (discreteItem.getQuantity() * bundleItem.getQuantity());
-                        }
-                        skuInventoryMap.put(discreteItem.getSku(), quantity);
-                    }
                 }
             }
         }

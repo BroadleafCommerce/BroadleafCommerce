@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.order.service.workflow.remove;
 
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
@@ -60,12 +59,6 @@ public class ValidateRemoveRequestActivity extends BaseActivity<ProcessContext<C
             throw new IllegalArgumentException("Could not find order item to remove");
         }
         
-        if (orderItem != null && orderItem instanceof DiscreteOrderItem) {
-            DiscreteOrderItem doi = (DiscreteOrderItem) orderItem;
-            if (doi.getBundleOrderItem() != null) {
-                throw new IllegalArgumentException("Cannot remove an item that is part of a bundle");
-            }
-        }
         request.setOrderItem(orderItem);
         
         return context;

@@ -18,19 +18,16 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
-import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -52,21 +49,6 @@ public interface OrderItemService {
     public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
 
     public GiftWrapOrderItem createGiftWrapOrderItem(GiftWrapOrderItemRequest itemRequest);
-
-    /**
-     * Used to create "manual" product bundles.   Manual product bundles are primarily designed
-     * for grouping items in the cart display.    Typically ProductBundle will be used to
-     * achieve non programmer related bundles.
-     *
-     *
-     * @param itemRequest
-     * @return
-     */
-    public BundleOrderItem createBundleOrderItem(BundleOrderItemRequest itemRequest);
-
-    public BundleOrderItem createBundleOrderItem(ProductBundleOrderItemRequest itemRequest);
-
-    public BundleOrderItem createBundleOrderItem(ProductBundleOrderItemRequest itemRequest, boolean saveItem);
 
     /**
      * Creates an OrderItemRequestDTO object that most closely resembles the given OrderItem.

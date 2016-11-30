@@ -36,7 +36,6 @@ import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.dao.OrderDao;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderFactory;
@@ -445,15 +444,6 @@ public class OrderServiceImpl implements OrderService {
                         return discreteItem;
                     }
 
-                } else if (currentItem instanceof BundleOrderItem) {
-                    BundleOrderItem bundleItem = (BundleOrderItem) currentItem;
-                    if (skuId != null) {
-                        if (bundleItem.getSku() != null && skuId.equals(bundleItem.getSku().getId())) {
-                            return bundleItem;
-                        }
-                    } else if (productId != null && bundleItem.getProduct() != null && productId.equals(bundleItem.getProduct().getId())) {
-                        return bundleItem;
-                    }
                 }
             }
         }
@@ -669,14 +659,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new WorkflowException(new ItemNotFoundException());
             }
             List<Long> childrenToRemove = new ArrayList<Long>();
-            if (oi instanceof BundleOrderItem) {
-                List<DiscreteOrderItem> bundledItems = ((BundleOrderItem) oi).getDiscreteOrderItems();
-                for (DiscreteOrderItem doi : bundledItems) {
-                    findAllChildrenToRemove(childrenToRemove, doi);
-                }
-            } else {
-                findAllChildrenToRemove(childrenToRemove, oi);
-            }
+            findAllChildrenToRemove(childrenToRemove, oi);
             for (Long childToRemove : childrenToRemove) {
                 removeItemInternal(orderId, childToRemove, false);
             }                    
@@ -877,11 +860,6 @@ public class OrderServiceImpl implements OrderService {
                 if (itemMatches(discreteItem.getSku(), discreteItem.getProduct(), discreteItem.getOrderItemAttributes(),
                         itemToFind)) {
                     return discreteItem;
-                }
-            } else if (currentItem instanceof BundleOrderItem) {
-                BundleOrderItem bundleItem = (BundleOrderItem) currentItem;
-                if (itemMatches(bundleItem.getSku(), bundleItem.getProduct(), null, itemToFind)) {
-                    return bundleItem;
                 }
             }
         }

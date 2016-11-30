@@ -23,7 +23,6 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -96,20 +95,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
                 } else {
                     itemsToRemove.add(orderItem);
                 }
-            } else if (orderItem instanceof BundleOrderItem) {
-                BundleOrderItem boi = (BundleOrderItem) orderItem;
-                for (DiscreteOrderItem doi : boi.getDiscreteOrderItems()) {
-                    if(checkAvailabilityInLocale(doi, currency)){
-                        OrderItemRequestDTO itemRequest = new OrderItemRequestDTO();
-                        itemRequest.setProductId(doi.getProduct().getId());
-                        itemRequest.setQuantity(doi.getQuantity());
-                        itemsToReprice.add(itemRequest);
-                        itemsToReset.add(orderItem);
-                    } else {
-                        itemsToRemove.add(orderItem);
-                    }
-                }
-            }
+            } 
         }
 
         for(OrderItem orderItem: itemsToReset){

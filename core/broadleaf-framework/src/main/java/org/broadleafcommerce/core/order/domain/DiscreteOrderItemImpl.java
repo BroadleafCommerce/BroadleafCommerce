@@ -28,12 +28,9 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.HibernateUtils;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
-import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.hibernate.annotations.BatchSize;
@@ -100,16 +97,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
     protected Product product;
-
-    @ManyToOne(targetEntity = BundleOrderItemImpl.class)
-    @JoinColumn(name = "BUNDLE_ORDER_ITEM_ID")
-    @AdminPresentation(excluded = true)
-    protected BundleOrderItem bundleOrderItem;
-
-    @ManyToOne(targetEntity = SkuBundleItemImpl.class)
-    @JoinColumn(name = "SKU_BUNDLE_ITEM_ID")
-    @AdminPresentation(excluded = true)
-    protected SkuBundleItem skuBundleItem;
 
     @ElementCollection
     @MapKeyColumn(name="NAME")
@@ -191,49 +178,11 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     }
 
     @Override
-    public BundleOrderItem getBundleOrderItem() {
-        return bundleOrderItem;
-    }
-
-    @Override
-    public void setBundleOrderItem(BundleOrderItem bundleOrderItem) {
-        if (this.order != null && bundleOrderItem != null) {
-            throw new IllegalStateException("Cannot set a BundleOrderItem on a DiscreteOrderItem that is already associated with an Order");
-        }
-        this.bundleOrderItem = bundleOrderItem;
-    }
-
-    @Override
     public void setOrder(Order order) {
-        if (order != null && bundleOrderItem != null) {
+        if (order != null) {
             throw new IllegalStateException("Cannot set an Order on a DiscreteOrderItem that is already associated with a BundleOrderItem");
         }
         this.order = order;
-    }
-
-    /**
-     * If this item is part of a bundle that was created via a ProductBundle, then this
-     * method returns a reference to the corresponding SkuBundleItem.
-     * <p/>
-     * For manually created
-     * <p/>
-     * For all others, this method returns null.
-     *
-     * @return
-     */
-    @Override
-    public SkuBundleItem getSkuBundleItem() {
-        return skuBundleItem;
-    }
-
-    /**
-     * Sets the associated SkuBundleItem.
-     *
-     * @param SkuBundleItem
-     */
-    @Override
-    public void setSkuBundleItem(SkuBundleItem SkuBundleItem) {
-        this.skuBundleItem =SkuBundleItem;
     }
 
     @Override
@@ -247,11 +196,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     
     @Override
     public Order getOrder() {
-        if (order == null) {
-            if (getBundleOrderItem() != null) {
-                return getBundleOrderItem().getOrder();
-            }
-        }
         return order;
     }
 
@@ -268,13 +212,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         }
         if (skuSalePrice == null) {
             skuSalePrice = getSku().getSalePrice();
-        }
-
-        // Override retail/sale prices from skuBundle.
-        if (skuBundleItem != null) {
-            if (skuBundleItem.getSalePrice() != null) {
-                skuSalePrice = skuBundleItem.getSalePrice();
-            }
         }
 
         boolean updated = false;
@@ -309,13 +246,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             return false;
         }
         Money skuRetailPrice = getSku().getRetailPrice();
-
-        // Override retail/sale prices from skuBundle.
-        if (skuBundleItem != null) {
-            if (skuBundleItem.getRetailPrice() != null) {
-                skuRetailPrice = skuBundleItem.getRetailPrice();
-            }
-        }
 
         boolean updated = false;
         //use the sku prices - the retail and sale prices could be null
@@ -409,7 +339,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         }
         orderItem.setBaseRetailPrice(convertToMoney(baseRetailPrice));
         orderItem.setBaseSalePrice(convertToMoney(baseSalePrice));
-        orderItem.setBundleOrderItem(bundleOrderItem);
         orderItem.setProduct(product);
         orderItem.setSku(sku);
 
@@ -441,13 +370,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             return id.equals(other.id);
         }
 
-        if (bundleOrderItem == null) {
-            if (other.bundleOrderItem != null) {
-                return false;
-            }
-        } else if (!bundleOrderItem.equals(other.bundleOrderItem)) {
-            return false;
-        }
         if (sku == null) {
             if (other.sku != null) {
                 return false;
@@ -462,7 +384,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     public int hashCode() {
         final int prime = super.hashCode();
         int result = 1;
-        result = prime * result + ((bundleOrderItem == null) ? 0 : bundleOrderItem.hashCode());
         result = prime * result + ((sku == null) ? 0 : sku.hashCode());
         return result;
     }
@@ -474,21 +395,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         } else {
             return discountsAllowed.booleanValue();
         }
-    }
-
-    @Override
-    public BundleOrderItem findParentItem() {
-        for (OrderItem orderItem : getOrder().getOrderItems()) {
-            if (orderItem instanceof BundleOrderItem) {
-                BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
-                for (OrderItem containedItem : bundleItem.getOrderItems()) {
-                    if (containedItem.equals(this)) {
-                        return bundleItem;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     @Override

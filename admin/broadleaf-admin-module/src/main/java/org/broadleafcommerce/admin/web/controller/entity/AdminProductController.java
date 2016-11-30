@@ -17,19 +17,16 @@
  */
 package org.broadleafcommerce.admin.web.controller.entity;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -349,14 +346,6 @@ public class AdminProductController extends AdminBasicEntityController {
         ListGrid productOptionsGrid = form.findListGrid("productOptions");
         if (productOptionsGrid != null) {
             productOptionsGrid.addToolbarAction(generateSkusAction);
-        }
-        
-        // When we're dealing with product bundles, we don't want to render the product options and additional skus
-        // list grids. Remove them from the form.
-        if (ProductBundle.class.isAssignableFrom(Class.forName(form.getEntityType()))) {
-            form.removeListGrid("additionalSkus");
-            form.removeListGrid("productOptions");
-            form.removeField("canSellWithoutOptions");
         }
         
         form.removeListGrid("defaultSku.skuAttributes");

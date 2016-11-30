@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -95,52 +94,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             }
         }
         
-        if (orderItem instanceof BundleOrderItem) {
-            //We only care about the discrete order items
-            List<DiscreteOrderItem> itemsToAdd = new ArrayList<DiscreteOrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
-            for (DiscreteOrderItem doi : itemsToAdd) {
-                FulfillmentGroup fulfillmentGroup = null;
-                FulfillmentType type = resolveFulfillmentType(doi);
-                if (type == null) {
-                    //Use the fulfillment group with a null type
-                    fulfillmentGroup = nullFulfillmentTypeGroup;
-                } else {
-                    if (FulfillmentType.PHYSICAL_PICKUP_OR_SHIP.equals(type)) {
-                        //This is really a special case. "PICKUP_OR_SHIP" is convenient to allow a sku to be picked up or shipped.
-                        //However, it is ambiguous when actually trying to create a fulfillment group. So we default to "PHYSICAL_SHIP".
-                        type = FulfillmentType.PHYSICAL_SHIP;
-                    }
-                    
-                    //Use the fulfillment group with the specified type
-                    fulfillmentGroup = fulfillmentGroups.get(type);
-                }
-                
-                //If the null type or specified type, above were null, then we need to create a new fulfillment group
-                boolean createdFulfillmentGroup = false;
-                if (fulfillmentGroup == null) {
-                    fulfillmentGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
-                    //Set the type
-                    fulfillmentGroup.setType(type);
-                    fulfillmentGroup.setOrder(order);
-                    order.getFulfillmentGroups().add(fulfillmentGroup);
-                    
-                    createdFulfillmentGroup = true;
-                }
-                
-                fulfillmentGroup = addItemToFulfillmentGroup(order, doi, doi.getQuantity() * orderItem.getQuantity(), fulfillmentGroup);
-                order = fulfillmentGroup.getOrder();
-                
-                // If we had to create a new fulfillment group, then ensure that this will operate correctly for the next set
-                // of fulfillment groups
-                if (createdFulfillmentGroup) {
-                    if (type == null) {
-                        nullFulfillmentTypeGroup = fulfillmentGroup;
-                    } else {
-                        fulfillmentGroups.put(type, fulfillmentGroup);
-                    }
-                }
-            }
-        } else if (orderItem instanceof DiscreteOrderItem) {
+        if (orderItem instanceof DiscreteOrderItem) {
             DiscreteOrderItem doi = (DiscreteOrderItem)orderItem;
             FulfillmentGroup fulfillmentGroup = null;
             FulfillmentType type = resolveFulfillmentType(doi);
@@ -227,17 +181,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             // If the quantity didn't change, nothing needs to happen
             return request;
         } else {
-            List<FulfillmentGroupItem> fgisToDelete = new ArrayList<FulfillmentGroupItem>();
-            if (orderItem instanceof BundleOrderItem) {
-                List<OrderItem> itemsToUpdate = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
-                for (OrderItem oi : itemsToUpdate) {
-                    int quantityPer = oi.getQuantity();
-                    fgisToDelete.addAll(updateItemQuantity(order, oi, (quantityPer * orderItemQuantityDelta)));
-                }
-            } else {
-                fgisToDelete.addAll(updateItemQuantity(order, orderItem, orderItemQuantityDelta));
-            }
-            request.setFgisToDelete(fgisToDelete);
+            request.setFgisToDelete(updateItemQuantity(order, orderItem, orderItemQuantityDelta));
         }
         
         return request;
@@ -297,16 +241,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     public CartOperationRequest onItemRemoved(CartOperationRequest request) {
         Order order = request.getOrder();
         OrderItem orderItem = request.getOrderItem();
-        
-        if (orderItem instanceof BundleOrderItem) {
-            List<OrderItem> itemsToRemove = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
-            for (OrderItem oi : itemsToRemove) {
-                request.getFgisToDelete().addAll(fulfillmentGroupService.getFulfillmentGroupItemsForOrderItem(order, oi));
-            }
-        } else {
-            request.getFgisToDelete().addAll(fulfillmentGroupService.getFulfillmentGroupItemsForOrderItem(order, orderItem));
-        }
-        
+        request.getFgisToDelete().addAll(fulfillmentGroupService.getFulfillmentGroupItemsForOrderItem(order, orderItem));
         return request;
     }
     
@@ -330,15 +265,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         Map<Long, FulfillmentGroupItem> fgItemMap = new HashMap<Long, FulfillmentGroupItem>();
 
         for (OrderItem oi : order.getOrderItems()) {
-            if (oi instanceof BundleOrderItem) {
-                for (DiscreteOrderItem doi : ((BundleOrderItem) oi).getDiscreteOrderItems()) {
-                    expandedOrderItems.add(doi);
-                }
-            } else if (oi instanceof DiscreteOrderItem) {
-                expandedOrderItems.add(oi);
-            } else {
-                expandedOrderItems.add(oi);
-            }
+            expandedOrderItems.add(oi);
         }
         
         for (OrderItem oi : expandedOrderItems) {
@@ -347,12 +274,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                 oiQuantity = 0;
             }
             
-            if (oi instanceof DiscreteOrderItem && ((DiscreteOrderItem) oi).getBundleOrderItem() != null) {
-                oiQuantity += ((DiscreteOrderItem) oi).getBundleOrderItem().getQuantity() * oi.getQuantity();
-            } else {
-                oiQuantity += oi.getQuantity();
-            }
-            
+            oiQuantity += oi.getQuantity();
             oiQuantityMap.put(oi.getId(), oiQuantity);
         }
 

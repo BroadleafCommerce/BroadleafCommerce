@@ -23,7 +23,6 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -110,8 +109,6 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
         for (OrderItem oi : order.getOrderItems()) {
             if (oi instanceof DiscreteOrderItem) {
                 orderItems.add((DiscreteOrderItem) oi);
-            } else if (oi instanceof BundleOrderItem) {
-                orderItems.addAll(((BundleOrderItem) oi).getDiscreteOrderItems());
             }
         }
 

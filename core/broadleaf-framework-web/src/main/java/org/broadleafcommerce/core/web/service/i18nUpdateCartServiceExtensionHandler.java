@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -103,13 +102,6 @@ public class i18nUpdateCartServiceExtensionHandler extends AbstractUpdateCartSer
             translateOrderItem(orderItem, sku);
         }
 
-        for (OrderItem orderItem : cart.getOrderItems()) {
-            if (orderItem instanceof BundleOrderItem) {
-                BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
-                Sku sku = bundleItem.getSku();
-                translateOrderItem(orderItem, sku);
-            }
-        }
     }
 
     protected void translateOrderItem(OrderItem orderItem, Sku sku) {

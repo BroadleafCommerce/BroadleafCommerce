@@ -18,11 +18,9 @@
 package org.broadleafcommerce.core.pricing.service.workflow;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -142,52 +140,4 @@ public class FulfillmentItemPricingActivityTest extends TestCase {
                 new Money(new BigDecimal(".05"), order.getCurrency())));
     }
 
-    public void testBundleDistribution() throws Exception {
-        Order order = dataProvider.createOrderWithBundle();
-        Money subTotal = new Money(order.getCurrency());
-        for (OrderItem orderItem : order.getOrderItems()) {
-            subTotal = subTotal.add(orderItem.getTotalPrice());
-        }
-        order.setSubTotal(subTotal);
-
-        OrderAdjustment adjustment = new OrderAdjustmentImpl();
-        adjustment.setValue(new Money(new BigDecimal("1"), order.getCurrency()));
-        adjustment.setOrder(order);
-        order.getOrderAdjustments().add(adjustment);
-
-        ProcessContext<Order> context = new DefaultProcessContextImpl<Order>();
-        context.setSeedData(order);
-
-        fulfillmentItemPricingActivity.execute(context);
-
-        assertTrue(sumProratedOfferAdjustments(order).equals(
-                new Money(new BigDecimal("1"), order.getCurrency())));
-    }
-
-    public void testBundleDistributionWithoutItemSum() throws Exception {
-        Order order = dataProvider.createOrderWithBundle();
-
-        Money subTotal = new Money(order.getCurrency());
-        for (OrderItem orderItem : order.getOrderItems()) {
-            if (orderItem instanceof BundleOrderItem) {
-                BundleOrderItem bItem = (BundleOrderItem) orderItem;
-                bItem.getProductBundle().setPricingModel(ProductBundlePricingModelType.BUNDLE);
-            }
-            subTotal = subTotal.add(orderItem.getTotalPrice());
-        }
-        order.setSubTotal(subTotal);
-
-        OrderAdjustment adjustment = new OrderAdjustmentImpl();
-        adjustment.setValue(new Money(new BigDecimal("1"), order.getCurrency()));
-        adjustment.setOrder(order);
-        order.getOrderAdjustments().add(adjustment);
-
-        ProcessContext<Order> context = new DefaultProcessContextImpl<Order>();
-        context.setSeedData(order);
-
-        fulfillmentItemPricingActivity.execute(context);
-
-        assertTrue(sumProratedOfferAdjustments(order).equals(
-                new Money(new BigDecimal("1"), order.getCurrency())));
-    }
 }

@@ -36,17 +36,14 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.PreviewStatus;
 import org.broadleafcommerce.common.persistence.Previewable;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
-import org.broadleafcommerce.core.catalog.domain.CategoryAdminPresentation;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
@@ -513,12 +510,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (OrderItem orderItem : orderItems) {
-            if (orderItem instanceof BundleOrderItem) {
-                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
-                for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
-                    discreteOrderItems.add(discreteOrderItem);
-                }
-            } else if (orderItem instanceof DiscreteOrderItem) {
+            if (orderItem instanceof DiscreteOrderItem) {
                 DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                 discreteOrderItems.add(discreteOrderItem);
             }
@@ -543,11 +535,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             if (orderItem instanceof DiscreteOrderItem) {
                 DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                 if (discreteOrderItem.getSku() != null && discreteOrderItem.getSku().equals(sku)) {
-                    return true;
-                }
-            } else if (orderItem instanceof BundleOrderItem) {
-                BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-                if (bundleOrderItem.getSku() != null && bundleOrderItem.getSku().equals(sku)) {
                     return true;
                 }
             }

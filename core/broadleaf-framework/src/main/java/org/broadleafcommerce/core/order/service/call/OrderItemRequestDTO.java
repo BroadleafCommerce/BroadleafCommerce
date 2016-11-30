@@ -19,8 +19,6 @@ package org.broadleafcommerce.core.order.service.call;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
 
 import java.util.ArrayList;

@@ -17,15 +17,12 @@
  */
 package org.broadleafcommerce.core.order.service.call;
 
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
 
 import java.util.ArrayList;
 import java.util.List;
 public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
 
-    protected BundleOrderItem bundleOrderItem;
-    
     protected List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
 
     public DiscreteOrderItemRequest() {
@@ -51,14 +48,6 @@ public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
         copyProperties(returnRequest);
         returnRequest.setDiscreteOrderItemFeePrices(discreteOrderItemFeePrices);
         return returnRequest;
-    }
-
-    public BundleOrderItem getBundleOrderItem() {
-        return bundleOrderItem;
-    }
-    
-    public void setBundleOrderItem(BundleOrderItem bundleOrderItem) {
-        this.bundleOrderItem = bundleOrderItem;
     }
 
     public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices() {

@@ -24,7 +24,6 @@ import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.ContextualInventoryService;
 import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
@@ -69,8 +68,6 @@ public class CheckAvailabilityActivity extends BaseActivity<ProcessContext<CartO
             OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
             if (orderItem instanceof DiscreteOrderItem) {
                 sku = ((DiscreteOrderItem) orderItem).getSku();
-            } else if (orderItem instanceof BundleOrderItem) {
-                sku = ((BundleOrderItem) orderItem).getSku();
             } else {
                 LOG.warn("Could not check availability; did not recognize passed-in item " + orderItem.getClass().getName());
                 return context;

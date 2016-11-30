@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.core.order.service.workflow.remove;
 
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
@@ -39,16 +37,7 @@ public class RemoveOrderMultishipOptionActivity extends BaseActivity<ProcessCont
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         Long orderItemId = request.getItemRequest().getOrderItemId();
-
-        OrderItem orderItem = request.getOrderItem();
-        if (orderItem instanceof BundleOrderItem) {
-            for (OrderItem discrete : ((BundleOrderItem) orderItem).getDiscreteOrderItems()) {
-                request.getMultishipOptionsToDelete().add(new Long[] { discrete.getId(), null });
-            }
-        } else {
-            request.getMultishipOptionsToDelete().add(new Long[] { orderItemId, null });
-        }
-        
+        request.getMultishipOptionsToDelete().add(new Long[] { orderItemId, null });
         return context;
     }
 

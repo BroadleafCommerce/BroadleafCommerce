@@ -22,7 +22,6 @@ import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
@@ -58,9 +57,7 @@ public class ConsolidateFulfillmentFeesActivity extends BaseActivity<ProcessCont
             //create and associate all the Fulfillment Fees
             for (FulfillmentGroupItem item : fulfillmentGroup.getFulfillmentGroupItems()) {
                 List<SkuFee> fees = null;
-                if (item.getOrderItem() instanceof BundleOrderItem) {
-                    fees = ((BundleOrderItem)item.getOrderItem()).getSku().getFees();
-                } else if (item.getOrderItem() instanceof DiscreteOrderItem) {
+                if (item.getOrderItem() instanceof DiscreteOrderItem) {
                     fees = ((DiscreteOrderItem)item.getOrderItem()).getSku().getFees();
                 }
                 

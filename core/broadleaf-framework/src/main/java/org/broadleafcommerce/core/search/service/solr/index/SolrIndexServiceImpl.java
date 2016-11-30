@@ -40,7 +40,6 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
@@ -470,10 +469,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     continue;
                 }
                 
-                if (sku.getDefaultProduct() instanceof ProductBundle) {
-                    continue;
-                }
-
                 skusToIndex.add(sku);
             }
         }
