@@ -21,8 +21,6 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
-import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 
 import java.io.Serializable;
 import java.util.List;
