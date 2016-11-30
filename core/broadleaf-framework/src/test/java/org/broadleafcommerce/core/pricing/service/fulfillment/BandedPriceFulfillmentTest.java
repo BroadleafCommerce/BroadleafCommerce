@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.pricing.service.fulfillment;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -48,6 +47,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import junit.framework.TestCase;
 
 /**
  * 
@@ -197,10 +198,6 @@ public class BandedPriceFulfillmentTest extends TestCase {
             //set the sku price to some arbitrary amount - won't matter because the test is based on order item price
             sku.setRetailPrice(new Money("1"));
             orderItem.setSku(sku);
-
-            if (flatRates != null && i < flatRates.length) {
-                sku.getFulfillmentFlatRates().put(option, new BigDecimal(flatRates[i]));
-            }
 
             if (option instanceof BandedPriceFulfillmentOption) {
                 orderItem.setPrice(new Money(total.divide(new BigDecimal(orderItemsToCreate))));

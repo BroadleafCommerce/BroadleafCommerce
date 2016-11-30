@@ -128,14 +128,6 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                         sku = ((DiscreteOrderItem)fulfillmentGroupItem.getOrderItem()).getSku();
                     }
 
-                    if (sku != null && option.getUseFlatRates()) {                        
-                        BigDecimal rate = sku.getFulfillmentFlatRates().get(option);
-                        if (rate != null) {
-                            addToTotal = false;
-                            flatTotal = flatTotal.add(rate);
-                        }
-                    }
-                    
                     if (addToTotal) {
                         foundCandidateForBand = true;
                         BigDecimal price = (fulfillmentGroupItem.getTotalItemAmount() != null) ? fulfillmentGroupItem.getTotalItemAmount().getAmount() : null;
