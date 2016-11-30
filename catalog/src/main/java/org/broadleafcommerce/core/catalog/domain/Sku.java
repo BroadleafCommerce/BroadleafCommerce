@@ -29,7 +29,6 @@ import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 
 import java.awt.Dimension;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -564,39 +563,6 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      * @param fees
      */
     public void setFees(List<SkuFee> fees);
-
-    /**
-     * Gets the flat rate for fulfilling this {@link Sku} for a particular {@link FulfillmentOption}. Depending
-     * on the result of {@link FulfillmentOption#getUseFlatRates()}, this flat rate will be used in calculating
-     * the cost of fulfilling this {@link Sku}.
-     * 
-     * @return the flat rates for this {@link Sku}
-     */
-    public Map<FulfillmentOption, BigDecimal> getFulfillmentFlatRates();
-
-    /**
-     * Sets the flat rates for fulfilling this {@link Sku} for a particular {@link FulfillmentOption}. Depending
-     * on the result of {@link FulfillmentOption#getUseFlatRates()}, this flat rate will be used in calculating
-     * the cost of fulfilling this {@link Sku}.
-     * 
-     * @param fulfillmentFlatRates
-     */
-    public void setFulfillmentFlatRates(Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates);
-
-    /**
-     * Gets the {@link FulfillmentOption}s that this {@link Sku} should be excluded from. For instance,
-     * some {@link Sku}s might not be available to be fulfilled next-day
-     * 
-     * @return
-     */
-    public List<FulfillmentOption> getExcludedFulfillmentOptions();
-
-    /**
-     * Sets the {@link FulfillmentOption}s that this Sku should be excluded from being apart of
-     * 
-     * @param excludedFulfillmentOptions
-     */
-    public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions);
 
     /**
      * Returns the type of inventory for this sku

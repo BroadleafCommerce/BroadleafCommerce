@@ -1050,26 +1050,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     }
 
     @Override
-    public Map<FulfillmentOption, BigDecimal> getFulfillmentFlatRates() {
-        return fulfillmentFlatRates;
-    }
-
-    @Override
-    public void setFulfillmentFlatRates(Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates) {
-        this.fulfillmentFlatRates = fulfillmentFlatRates;
-    }
-
-    @Override
-    public List<FulfillmentOption> getExcludedFulfillmentOptions() {
-        return excludedFulfillmentOptions;
-    }
-
-    @Override
-    public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions) {
-        this.excludedFulfillmentOptions = excludedFulfillmentOptions;
-    }
-
-    @Override
     public InventoryType getInventoryType() {
         if (StringUtils.isEmpty(this.inventoryType)) {
             if (hasDefaultSku() && lookupDefaultSku().getInventoryType() != null) {
