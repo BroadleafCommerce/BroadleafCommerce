@@ -1,12 +1,12 @@
-<div th:if="${treeListGridColumn}" th:with="listGrid=${treeListGridColumn.listGrid}" th:remove="tag">
+<th:block th:if="${treeListGridColumn}" th:with="listGrid=${treeListGridColumn.listGrid}">
     <div th:unless="${listGrid.selectType} == 'selectize'" th:include="components/listGrid" th:object="${treeListGridColumn.listGrid}"
             th:attr="data-numitemsaffected=${numItemsAffected}"></div>
-    <div th:if="${listGrid.selectType} == 'selectize'" th:include="components/selectizeCollection" th:with="listGrid=${listGrid}" th:remove="tag"></div>
-</div>
-<div th:unless="${treeListGridColumn}" th:remove="tag">
-    <div th:unless="${listGrid.selectType} == 'selectize'" th:remove="tag">
+    <th:block th:if="${listGrid.selectType} == 'selectize'" th:include="components/selectizeCollection" th:with="listGrid=${listGrid}"></th:block>
+</th:block>
+<th:block th:unless="${treeListGridColumn}">
+    <th:block th:unless="${listGrid.selectType} == 'selectize'">
         <div th:if="${listGrid.listGridType} == 'asset_grid'" th:include="components/mediaGrid" th:with="listGrid=${listGrid}"></div>
         <div th:unless="${listGrid.listGridType} == 'asset_grid'" th:include="components/listGrid" th:attr="data-numitemsaffected=${numItemsAffected}"></div>
-    </div>
-    <div th:if="${listGrid.selectType} == 'selectize'" th:include="components/selectizeCollection" th:with="listGrid=${listGrid}" th:remove="tag"></div>
-</div>
+    </th:block>
+    <th:block th:if="${listGrid.selectType} == 'selectize'" th:include="components/selectizeCollection" th:with="listGrid=${listGrid}"></th:block>
+</th:block>

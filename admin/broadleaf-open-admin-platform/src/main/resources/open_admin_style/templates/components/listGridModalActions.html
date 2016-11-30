@@ -13,7 +13,7 @@
                              data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                              data-queryparams=${listGrid.sectionCrumbRepresentation},
                              data-listgridid=${#strings.replace(#strings.replace('listGrid-'+listGrid.listGridType+'-'+listGrid.subCollectionFieldName, '_', '-'), '.', '-')}">
-            <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" ></span>
+            <i th:class="${action.iconClass}"></i>&nbsp;<th:block th:text="#{${action.displayText}}"></th:block>
         </button>
     </th:block>
 </div>

@@ -1,6 +1,6 @@
 <a href="#" class="boolean-link" th:attr="data-target=*{fields['__${field.name}__'].value}"
     th:classappend="*{fields['__${field.name}__'].value} ? 'view-options' : 'hide-options'">
-        <span th:text="#{${field.friendlyName}}" th:remove="tag"></span>
+        <th:block th:text="#{${field.friendlyName}}"></th:block>
 </a>
 <div class="radio-container" style="display: none;">
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" ></label>

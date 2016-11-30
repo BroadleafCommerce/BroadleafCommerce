@@ -97,13 +97,13 @@
 
                 <tr th:if="${#lists.isEmpty(listGrid.records)}" class="list-grid-no-results">
                     <td class="multiselect-checkbox" th:if="${listGrid.selectType} == 'multi_select'"></td>
-                    <div th:remove="tag" th:each="headerField,index : ${listGrid.headerFields}" th:if="${headerField.isVisible}">
+                    <th:block th:each="headerField,index : ${listGrid.headerFields}" th:if="${headerField.isVisible}">
                         <td colspan="2" th:if="${index.count == 1}">
                             (No records found)
                         </td>
 
                         <td th:unless="${index.count == 1}"></td>
-                    </div>
+                    </th:block>
                     <td th:if="${listGrid.listGridType} == 'main'"></td>
                 </tr>
 
@@ -130,7 +130,7 @@
                         th:title="${field.displayValue}"
                         th:class="${field.isDerived ? 'derived' : ''}">
 
-                        <span th:case="'main'" th:remove="tag">
+                        <th:block th:case="'main'">
                             <span th:replace="components/partials/listGridIcon"></span>
 
                         <a class="list-grid-primary-field"
@@ -139,9 +139,9 @@
                            th:utext="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}"></a>
 
 
-                            <span th:if="${!headerField.mainEntityLink and headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}" th:remove="tag">
+                            <th:block th:if="${!headerField.mainEntityLink and headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}">
                                 <a class="external-link" th:href="@{${headerField.foreignKeySectionPath + '/' + field.value}}" th:utext="${field.displayValue}"></a>
-                            </span>
+                            </th:block>
 
                             <span th:if="${field.fieldType == 'IMAGE'}">
                                 <img class="thumbnail" th:style="${'width: 100%;'}"
@@ -154,14 +154,14 @@
                                     th:style="${'background-color: ' + field.value + ';'}"></span>
                             </span>
 
-                            <span th:unless="${headerField.mainEntityLink 
+                            <th:block th:unless="${headerField.mainEntityLink
                                     or headerField.canLinkToExternalEntity 
                                     or field.fieldType == 'IMAGE'
                                     or field.fieldType == 'COLOR'}"
-                                  th:utext="${field.displayValue}" th:remove="tag"></span>
-                        </span>
+                                  th:utext="${field.displayValue}"></th:block>
+                        </th:block>
 
-                        <span th:case="'asset_grid'" th:remove="tag">
+                        <th:block th:case="'asset_grid'">
                             <span th:replace="components/partials/listGridIcon"></span>
 
                             <a th:if="${headerField.mainEntityLink}"
@@ -174,12 +174,12 @@
                                      th:attr="data-fullurl=@{${field.value}}" />
                             </span>
 
-                            <span th:unless="${headerField.mainEntityLink
+                            <th:block th:unless="${headerField.mainEntityLink
                                     or field.fieldType == 'IMAGE'}"
-                                  th:utext="${field.displayValue}" th:remove="tag"></span>
-                        </span>
+                                  th:utext="${field.displayValue}"></th:block>
+                        </th:block>
 
-                        <span th:case="*" th:remove="tag">
+                        <th:block th:case="*">
                             <a href="#" class="sub-list-grid-reorder"
                                style="visibility: hidden;"
                                th:if="${headerFieldStat.first} and ${listGrid.isSortable()}"
@@ -187,20 +187,20 @@
                                 <i class="fa fa-arrows-v fa-lg"></i>
                             </a>
 
-                            <span th:substituteby="components/partials/listGridIcon" />
+                            <span th:replace="components/partials/listGridIcon"></span>
 
                             <div class="column-text">
-                                <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
-                                   <span th:remove="tag" th:utext="${field.displayValue}"></span>
-                                </span>
+                                <th:block th:if="${headerField.canLinkToExternalEntity}">
+                                   <th:block  th:utext="${field.displayValue}"></th:block>
+                                </th:block>
 
-                                <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity and (inModal == null or !inModal)}" th:remove="tag">
+                                <th:block th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity and (inModal == null or !inModal)}">
                                     <a class="external-link" th:href="@{${record.externalEntityPath}}" th:utext="${field.displayValue}"></a>
-                                </span>
+                                </th:block>
 
-                                <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity and (inModal != null and inModal)}"
-                                      th:remove="tag" th:utext="${field.displayValue}">
-                                </span>
+                                <th:block th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity and (inModal != null and inModal)}"
+                                          th:utext="${field.displayValue}">
+                                </th:block>
 
                                 <span th:if="${field.fieldType == 'IMAGE'}">
                                     <img class="thumbnail" th:style="${'width: 100%;'}"
@@ -213,13 +213,13 @@
                                         th:style="${'background-color: ' + field.value + ';'}"></span>
                                 </span>
 
-                                <span th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)
+                                <th:block th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)
                                         or headerField.canLinkToExternalEntity
                                         or field.fieldType == 'IMAGE'
                                         or field.fieldType == 'COLOR'}"
-                                      th:remove="tag" th:utext="${field.displayValue}"></span>
+                                          th:utext="${field.displayValue}"></th:block>
                             </div>
-                        </span>
+                        </th:block>
                         <div class="listgrid-row-actions"
                             th:if="${headerFieldStat.last and (listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
                             <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}" th:unless="${record.locked}">

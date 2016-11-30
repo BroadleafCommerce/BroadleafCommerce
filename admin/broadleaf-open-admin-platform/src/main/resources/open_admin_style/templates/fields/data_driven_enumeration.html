@@ -3,14 +3,14 @@
 <span th:replace="components/fieldTooltip" ></span>
 </label>
 
-<div th:remove="tag" th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) ge #props.getAsInt('admin.enum.minCountForDropDown')}">
+<th:block th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) ge #props.getAsInt('admin.enum.minCountForDropDown')}">
     <select class="six" th:field="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}">
         <option th:if="${field.allowNoValueEnumOption}" value="" th:utext="#{No_Value_Selected}"></option>
         <option th:each="entry : *{fields['__${field.name}__'].options}"
                 th:value="${entry.key}"
                 th:text="#{${entry.value}}" ></option>
     </select>
-</div>
+</th:block>
 
 <th:block th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) lt #props.getAsInt('admin.enum.minCountForDropDown')}">
     <div class="radio-container">

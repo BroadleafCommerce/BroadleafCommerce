@@ -16,7 +16,7 @@
                              data-urlpostfix=${action.urlPostfix},
                              data-queryparams=${listGrid.sectionCrumbRepresentation},
                              disabled=${action.actionId == 'SPLIT'} ? 'disabled'">
-                    <span th:text="#{${action.displayText}}" th:remove="tag" ></span>
+                    <th:block th:text="#{${action.displayText}}"></th:block>
                 </a>
                 <div class="asset-title-divider"></div>
 
@@ -45,7 +45,7 @@
                              data-hiddenfields=${asset.getHiddenFieldsJson()}" />
 
                         <div class="asset-actions">
-                            <span th:each="action : ${listGrid.activeRowActions}" th:remove="tag">
+                            <th:block th:each="action : ${listGrid.activeRowActions}">
                                 <a href="#"
                                    th:if="#{${action.displayText}} == 'Delete'"
                                    class="media-grid-remove"
@@ -55,12 +55,12 @@
                                    th:title="#{${action.displayText}}">
                                     <i class="fa fa-close"></i>
                                 </a>
-                            </span>
+                            </th:block>
                         </div>
                     </div>
 
                     <!-- Title and Key links -->
-                     <span th:each="action : ${listGrid.activeRowActions}" th:remove="tag" th:if="#{${action.displayText}} == 'Edit'">
+                     <th:block th:each="action : ${listGrid.activeRowActions}" th:if="#{${action.displayText}} == 'Edit'">
                         <a href="#"
                            class="media-link"
                            th:attr="data-urlpostfix=${action.urlPostfix},
@@ -78,7 +78,7 @@
                             th:title="#{${action.displayText}}"
                             th:text="${'key: ' + asset.getField('key').getValue()}">
                          </a>
-                    </span>
+                    </th:block>
                 </div>
             </div>
         </div>

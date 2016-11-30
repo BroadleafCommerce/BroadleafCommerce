@@ -16,7 +16,7 @@
                          data-urlpostfix=${action.urlPostfix},
                          data-queryparams=${listGrid.sectionCrumbRepresentation},
                          disabled=${action.actionId == 'SPLIT'} ? 'disabled'">
-            <span th:text="#{${action.displayText}}" th:remove="tag"></span>
+            <th:block th:text="#{${action.displayText}}"></th:block>
         </button>
 
         <!-- Dropdown button if more than one toolbar action -->
@@ -24,7 +24,7 @@
                   th:each="actionGroup,iterStat : ${listGrid.activeToolbarActionGroups}">
             <div class="button-group">
                 <button type="button" class="button primary toolbar-action dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <span th:text="#{${actionGroup.name}}" th:remove="tag"></span>
+                    <th:block th:text="#{${actionGroup.name}}"></th:block>
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right" role="menu">
@@ -36,7 +36,7 @@
                                      data-urlpostfix=${action.urlPostfix},
                                      data-queryparams=${listGrid.sectionCrumbRepresentation},
                                      disabled=${action.actionId == 'SPLIT'} ? 'disabled'">
-                                <span th:text="#{${action.displayText}}" th:remove="tag"></span>
+                                <th:block th:text="#{${action.displayText}}"></th:block>
                             </a>
                         </li>
                     </th:block>
@@ -55,7 +55,7 @@
                          data-urlpostfix=${action.urlPostfix},
                          data-queryparams=${listGrid.sectionCrumbRepresentation},
                          disabled=${action.actionId == 'SPLIT'} ? 'disabled'">
-            <span th:text="#{${action.displayText}}" th:remove="tag"></span>
+            <th:block th:text="#{${action.displayText}}"></th:block>
         </button>
 
         <!-- Dropdown button if more than one row action -->
@@ -63,7 +63,7 @@
                   th:each="actionGroup,iterStat : ${listGrid.activeRowActionGroups}">
             <div class="button-group">
                 <button type="button" class="button primary row-action dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <span th:text="#{${actionGroup.name}}" th:remove="tag"></span>
+                    <th:block th:text="#{${actionGroup.name}}"></th:block>
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right" role="menu">
@@ -75,7 +75,7 @@
                                         data-urlpostfix=${action.urlPostfix},
                                         data-queryparams=${listGrid.sectionCrumbRepresentation},
                                         disabled=${action.actionId == 'SPLIT'} ? 'disabled'">
-                                <span th:text="#{${action.displayText}}" th:remove="tag"></span>
+                                <th:block th:text="#{${action.displayText}}"></th:block>
                             </a>
                         </li>
                     </th:block>

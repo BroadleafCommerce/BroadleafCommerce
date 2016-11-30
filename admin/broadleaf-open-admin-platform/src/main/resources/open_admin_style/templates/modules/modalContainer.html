@@ -2,77 +2,77 @@
     <div class="modal-header">
     
         <h3 id="myModalLabel" th:inline="text" th:switch="${modalHeaderType}">
-            <span th:case="'viewEntity'" th:remove="tag">
+            <th:block th:case="'viewEntity'">
                 [[${entityForm.mainEntityName}]]
                 <small>
                     <a th:href="@{${entityForm.sectionKey + '/' + entityForm.id}}" target="_blank">(Edit)</a>
                 </small>
-            </span>
+            </th:block>
             
-            <span th:case="'addEntity'" th:remove="tag">
+            <th:block th:case="'addEntity'">
                 [[#{modal.title.addNew}]] [[#{${entityFriendlyName}}]]
-            </span>
+            </th:block>
             
-            <span th:case="'addCollectionItem'" th:remove="tag">
+            <th:block th:case="'addCollectionItem'">
                 [[#{modal.title.add}]]
-                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.addFriendlyName)}">
-                    <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" ></span>
-                    <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" ></span>
-                </span>
-                <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.addFriendlyName)}" th:text="#{${collectionProperty.metadata.addFriendlyName}}"></span>
-            </span>
+                <th:block th:if="${#strings.isEmpty(collectionProperty.metadata.addFriendlyName)}">
+                    <th:block th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" ></th:block>
+                    <th:block th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" ></th:block>
+                </th:block>
+                <th:block th:unless="${#strings.isEmpty(collectionProperty.metadata.addFriendlyName)}" th:text="#{${collectionProperty.metadata.addFriendlyName}}"></th:block>
+            </th:block>
             
-            <span th:case="'selectCollectionItem'" th:remove="tag">
+            <th:block th:case="'selectCollectionItem'">
                 [[#{modal.title.select}]]
-                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" ></span>
-                <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" ></span>
-            </span>
+                <th:block th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" ></th:block>
+                <th:block th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" ></th:block>
+            </th:block>
             
-            <span th:case="'updateCollectionItem'" th:remove="tag">
+            <th:block th:case="'updateCollectionItem'">
                 [[#{modal.title.update}]]
-                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" ></span>
-                <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" ></span>
-            </span>
+                <th:block th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" ></th:block>
+                <th:block th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" ></th:block>
+            </th:block>
 
-            <span th:case="'viewCollectionItem'" th:remove="tag">
+            <th:block th:case="'viewCollectionItem'">
                 [[#{modal.title.view}]]
-                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" ></span>
-                <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" ></span>
-            </span>
+                <th:block th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" ></th:block>
+                <th:block th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" ></th:block>
+            </th:block>
             
-            <span th:case="'translation'" th:remove="tag">
+            <th:block th:case="'translation'">
                 [[#{modal.title.fieldTranslations}]]
-            </span>
+            </th:block>
             
-            <span th:case="'addTranslation'" th:remove="tag">
+            <th:block th:case="'addTranslation'">
                 [[#{modal.title.addTranslation}]]
-            </span>
+            </th:block>
             
-            <span th:case="'updateTranslation'" th:remove="tag">
+            <th:block th:case="'updateTranslation'">
                 [[#{modal.title.editTranslation}]]
-            </span>
+            </th:block>
             
-            <span th:case="'selectAsset'" th:remove="tag">
+            <th:block th:case="'selectAsset'">
                 [[#{modal.title.selectAsset}]]
-            </span>
+            </th:block>
 
-            <span th:case="'custom'" th:remove="tag">
-                <span th:remove="tag" th:utext="#{${modalTitle}}" ></span>
-            </span>
+            <th:block th:case="'custom'">
+                <th:block th:utext="#{${modalTitle}}" ></th:block>
+            </th:block>
 
-            <span th:case="'customWithVar'" th:remove="tag" th:utext="#{${modalTitle}(${modalTitleVar})}">
-            </span>
+            <th:block th:case="'customWithVar'" th:utext="#{${modalTitle}(${modalTitleVar})}">
+            </th:block>
 
-            <span th:case="*" th:remove="tag">
-                <span th:remove="tag" th:utext="#{modal.title.default}" ></span>
-            </span>
+            <th:block th:case="*">
+                <th:block th:utext="#{modal.title.default}" ></th:block>
+            </th:block>
         </h3>
         
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     </div>
     
     <div class="modal-body">
-        <div th:include="${'views/' + viewType}" th:with="inModal=(${showActions == null}? true : false)" th:remove="tag"></div>
+        <th:block th:include="${'views/' + viewType}" th:with="inModal=(${showActions == null}? true : false)"></th:block>
     </div>
     
 </div>

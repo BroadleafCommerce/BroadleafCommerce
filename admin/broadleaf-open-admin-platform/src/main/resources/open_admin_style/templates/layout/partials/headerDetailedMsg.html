@@ -2,13 +2,13 @@
     th:if="${headerDetailedMsg}"
     th:classappend="${(headerDetailedMsg == null ? 'hidden' : '') + (headerDetailedMsgAlert ? 'alert' : '')}">
 
-    <div th:remove="tag" th:unless="${headerDetailedMsgNoI18n}">
+    <th:block th:unless="${headerDetailedMsgNoI18n}">
         <div id="headerDetailedMsgHeader" th:if="${headerDetailedMsgHeader}" th:text="#{${headerDetailedMsgHeader}}" ></div>
         <div id="headerDetailedMsgBody" th:if="${headerDetailedMsgBody}" th:utext="#{${headerDetailedMsgBody}}" ></div>
-    </div>
+    </th:block>
 
-    <div th:remove="tag" th:if="${headerDetailedMsgNoI18n}">
+    <th:block th:if="${headerDetailedMsgNoI18n}">
         <div id="headerDetailedMsgHeader" th:if="${headerDetailedMsgHeader}" th:text="${headerDetailedMsgHeader}" ></div>
         <div id="headerDetailedMsgBody" th:if="${headerDetailedMsgBody}" th:utext="${headerDetailedMsgBody}" ></div>
-    </div>
+    </th:block>
 </div>
