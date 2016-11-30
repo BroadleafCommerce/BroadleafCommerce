@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 
@@ -229,13 +228,6 @@ public interface ProductDao {
      * @return a {@code Product} instance based on the Broadleaf entity configuration.
      */
     public Product create(ProductType productType);
-
-    /**
-     * Returns all active ProductBundles whose automatic property is true.
-     *
-     * @return
-     */
-    public List<ProductBundle> readAutomaticProductBundles();
 
     /**
      * Look up a product that matches the given URI
