@@ -17,11 +17,11 @@
  */
 package org.broadleafcommerce.core.store.service;
 
+import org.broadleafcommerce.core.store.domain.StoreAddressDTO;
+import org.broadleafcommerce.core.store.domain.Store;
+
 import java.util.List;
 import java.util.Map;
-
-import org.broadleafcommerce.core.store.domain.Store;
-import org.broadleafcommerce.profile.core.domain.Address;
 
 public interface StoreService {
 
@@ -40,7 +40,7 @@ public interface StoreService {
 
     public Store saveStore(Store store);
 
-    public Map<Store,Double> findStoresByAddress(Address searchAddress, double distance);
+    public Map<Store,Double> findStoresByAddress(StoreAddressDTO addressDTO, double distance);
 
     public List<Store> readAllStores();
 

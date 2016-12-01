@@ -24,15 +24,12 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -40,8 +37,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -87,9 +82,8 @@ public class StoreImpl implements Store {
     @AdminPresentation(friendlyName = "StoreImpl_Store_Hours", fieldType = SupportedFieldType.HTML)
     protected String storeHours;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class)
-    @JoinColumn(name = "ADDRESS_ID")
-    protected Address address;
+    @Column(name = "ADDRESS_ID")
+    protected Long addressExternalId;
 
     @Column(name = "LATITUDE")
     @AdminPresentation(friendlyName = "StoreImpl_lat", order = Presentation.FieldOrder.LATITUDE,
@@ -129,13 +123,13 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public Address getAddress() {
-        return address;
+    public Long getAddressExternalId() {
+        return addressExternalId;
     }
 
     @Override
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setAddressExternalId(Long addressExternalId) {
+        this.addressExternalId = addressExternalId;
     }
 
     @Override

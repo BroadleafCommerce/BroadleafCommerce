@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.store.domain;
 
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.profile.core.domain.Address;
 
 import java.io.Serializable;
 
@@ -39,8 +38,8 @@ public interface Store extends Status, Serializable{
     public String getStoreHours();
     public void setStoreHours(String storeHours);
     
-    public Address getAddress();
-    public void setAddress(Address address);
+    public Long getAddressExternalId();
+    public void setAddressExternalId(Long addressExternalId);
     
     public Double getLongitude();
     public void setLongitude(Double longitude);

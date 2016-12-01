@@ -17,18 +17,18 @@
  */
 package org.broadleafcommerce.core.store.service;
 
+import org.broadleafcommerce.core.store.dao.StoreDao;
+import org.broadleafcommerce.core.store.domain.StoreAddressDTO;
+import org.broadleafcommerce.core.store.domain.Store;
+import org.broadleafcommerce.core.store.domain.ZipCode;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-
-import org.broadleafcommerce.core.store.dao.StoreDao;
-import org.broadleafcommerce.core.store.domain.Store;
-import org.broadleafcommerce.core.store.domain.ZipCode;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("blStoreService")
 public class StoreServiceImpl implements StoreService {
@@ -66,7 +66,7 @@ public class StoreServiceImpl implements StoreService {
         return storeDao.save(store);
     }
 
-    public Map<Store, Double> findStoresByAddress(Address searchAddress, double distance) {
+    public Map<Store, Double> findStoresByAddress(StoreAddressDTO searchAddress, double distance) {
         Map<Store, Double> matchingStores = new HashMap<Store, Double>();
         for (Store store : readAllStores()) {
             Double storeDistance = findStoreDistance(store, Integer.parseInt(searchAddress.getPostalCode()));
