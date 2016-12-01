@@ -21,8 +21,6 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryActivity;
-import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
 
 import java.util.Collection;
 import java.util.Map;
