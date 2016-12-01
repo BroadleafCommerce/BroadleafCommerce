@@ -102,6 +102,7 @@ public class CommonRequestContext {
     protected Catalog currentCatalog;
     protected Site currentProfile;
     protected Boolean ignoreSite = false;
+    protected Boolean internalIgnoreFilters = false;
 
     /**
      * Gets the current request on the context
@@ -355,6 +356,20 @@ public class CommonRequestContext {
     public void setRequestDTO(RequestDTO requestDTO) {
         this.requestDTO = requestDTO;
     }
+    
+    /**
+     * Intended for internal use only
+     */
+    public Boolean getInternalIgnoreFilters() {
+        return internalIgnoreFilters;
+    }
+
+    /**
+     * Intended for internal use only
+     */
+    public void setInternalIgnoreFilters(Boolean internalIgnoreFilters) {
+        this.internalIgnoreFilters = internalIgnoreFilters;
+    }
 
     /**
      * In some cases, it is useful to utilize a clone of the context that does not include the actual container request
@@ -368,7 +383,7 @@ public class CommonRequestContext {
         CommonRequestContext context = new CommonRequestContext();
 
         context.setLocale(locale);
-
+        context.setInternalIgnoreFilters(internalIgnoreFilters);
         context.setMessageSource(messageSource);
         context.setTimeZone(timeZone);
         //purposefully excluding additionalProperties - this contains state that can mess with SandBoxFilterEnabler (for one)
@@ -388,7 +403,8 @@ public class CommonRequestContext {
 
         sb.append("\",\"locale\":\"");
         sb.append(locale==null?null:locale.getLocaleCode());
-
+        sb.append("\",\"internalIgnoreFilters\":\"");
+        sb.append(internalIgnoreFilters==null?null:internalIgnoreFilters.toString());
         sb.append("\",\"timeZone\":\"");
         sb.append(timeZone==null?null:timeZone.getID());
         sb.append("\"}");
