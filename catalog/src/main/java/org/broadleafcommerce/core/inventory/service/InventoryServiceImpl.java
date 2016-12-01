@@ -26,9 +26,6 @@ import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -260,22 +257,20 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     }
 
     @Override
-    public Map<Sku, Integer> buildSkuInventoryMap(Order order) {
+    public Map<Sku, Integer> buildSkuInventoryMap(Map<Sku, Integer> skuQuantityMap) {
         //map to hold skus and quantity purchased
         HashMap<Sku, Integer> skuInventoryMap = new HashMap<Sku, Integer>();
 
-        for (OrderItem orderItem : order.getOrderItems()) {
-            if (orderItem instanceof DiscreteOrderItem) {
-                Sku sku = ((DiscreteOrderItem) orderItem).getSku();
-                Integer quantity = skuInventoryMap.get(sku);
-                if (quantity == null) {
-                    quantity = orderItem.getQuantity();
-                } else {
-                    quantity += orderItem.getQuantity();
-                }
-                if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                    skuInventoryMap.put(sku, quantity);
-                }
+        for (Sku sku : skuQuantityMap.keySet()) {
+            Integer quantity = skuInventoryMap.get(sku);
+            Integer requestedQuantity = skuQuantityMap.get(sku); 
+            if (quantity == null) {
+                quantity = requestedQuantity;
+            } else {
+                quantity += requestedQuantity;
+            }
+            if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+                skuInventoryMap.put(sku, quantity);
             }
         }
 

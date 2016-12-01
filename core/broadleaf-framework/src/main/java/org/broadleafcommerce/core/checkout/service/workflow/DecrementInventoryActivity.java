@@ -19,13 +19,15 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.inventory.service.ContextualInventoryService;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 
 /**
@@ -46,10 +48,19 @@ public class DecrementInventoryActivity extends BaseActivity<ProcessContext<Chec
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         CheckoutSeed seed = context.getSeedData();
-        List<OrderItem> orderItems = seed.getOrder().getOrderItems();
+
+        Map<Sku, Integer> skuQuantityMap = new HashMap<>();
+        for (OrderItem orderItem : seed.getOrder().getOrderItems()) {
+            if (orderItem instanceof DiscreteOrderItem) {
+                Sku sku = ((DiscreteOrderItem) orderItem).getSku();
+                Integer q = skuQuantityMap.get(sku);
+                q = q == null ? orderItem.getQuantity() : q + orderItem.getQuantity();
+                skuQuantityMap.put(sku, q);
+            }
+        }
 
         //map to hold skus and quantity purchased
-        Map<Sku, Integer> skuInventoryMap = inventoryService.buildSkuInventoryMap(seed.getOrder());
+        Map<Sku, Integer> skuInventoryMap = inventoryService.buildSkuInventoryMap(skuQuantityMap);
 
         Map<String, Object> rollbackState = new HashMap<String, Object>();
         if (getRollbackHandler() != null && !getAutomaticallyRegisterRollbackHandler()) {

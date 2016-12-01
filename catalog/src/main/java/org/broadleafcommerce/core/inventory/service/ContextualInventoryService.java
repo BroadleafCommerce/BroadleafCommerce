@@ -18,10 +18,6 @@
 package org.broadleafcommerce.core.inventory.service;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryActivity;
-import org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryRollbackHandler;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
 
 import java.util.Collection;
 import java.util.Map;
@@ -132,9 +128,9 @@ public interface ContextualInventoryService extends InventoryService {
     public void reconcileChangeOrderInventory(Map<Sku, Integer> decrementSkuQuantities, Map<Sku, Integer> incrementSkuQuantities, Map<String, Object> context) throws InventoryUnavailableException;
 
     /**
-     * <p>Convenience method to build the sku inventory map given an {@link org.broadleafcommerce.core.order.domain.Order}</p>
+     * <p>Convenience method to build the sku inventory map given a map of skus and their requested quantities</p>
      * @param order
      * @return a SKU to Quantity map represented by the items and quantities on the fulfillment group and fulfillment group items in the order.
      */
-    public Map<Sku, Integer> buildSkuInventoryMap(Order order);
+    public Map<Sku, Integer> buildSkuInventoryMap(Map<Sku, Integer> skuQuantityMap);
 }
