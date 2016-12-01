@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -170,7 +170,7 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements S
 
     protected String getSite() {
         String site = "";
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext brc = CommonRequestContext.getCommonRequestContext();
         if (brc != null) {
             if (brc.getSite() != null) {
                 site = String.valueOf(brc.getSite().getId());

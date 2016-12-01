@@ -17,10 +17,6 @@
  */
 package org.broadleafcommerce.common.config.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
 import org.broadleafcommerce.common.config.dao.SystemPropertiesDao;
@@ -28,12 +24,16 @@ import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
 import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * Service that retrieves property settings from the database.   If not set in 
@@ -78,13 +78,12 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
             }
         }
 
-        String result;
+        String result = null;
         // We don't want to utilize this cache for sandboxes
-        if (BroadleafRequestContext.getBroadleafRequestContext().getSandBox() == null) {
-            result = getPropertyFromCache(name);
-        } else {
-            result = null;
-        }
+        // TODO microservices - deal with sandbox
+//        if (CommonRequestContext.getCommonRequestContext().getSandBox() == null) {
+//            result = getPropertyFromCache(name);
+//        }
 
         if (result != null) {
             return result;
@@ -135,7 +134,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
      */
     protected String buildKey(String propertyName) {
         String key = propertyName;
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext brc = CommonRequestContext.getCommonRequestContext();
         if (brc != null) {
             if (brc.getSite() != null) {
                 key = brc.getSite().getId() + "-" + key;
