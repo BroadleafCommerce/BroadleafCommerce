@@ -22,6 +22,8 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -31,6 +33,7 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.hibernate.annotations.Cache;
@@ -38,6 +41,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 
@@ -115,12 +119,14 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
     @Transient
     protected Money salesValue;
 
+    @Transient
+    protected Offer deproxiedOffer;
 
     @Override
     public void init(OrderItem orderItem, Offer offer, String reason){
-        this.orderItem = orderItem;
-        this.offer = offer;
-        this.reason = reason;
+        setOrderItem(orderItem);
+        setOffer(offer);
+        setReason(reason);
     }
 
     @Override
@@ -140,7 +146,20 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
 
     @Override
     public Offer getOffer() {
-        return offer;
+        if (deproxiedOffer == null) {
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+
+            if (postLoaderDao != null) {
+                Long id = offer.getId();
+                deproxiedOffer = postLoaderDao.find(OfferImpl.class, id);
+            } else if (offer instanceof HibernateProxy) {
+                deproxiedOffer = HibernateUtils.deproxy(offer);
+            } else {
+                deproxiedOffer = offer;
+            }
+        }
+
+        return deproxiedOffer;
     }
 
     @Override
@@ -160,6 +179,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
 
     public void setOffer(Offer offer) {
         this.offer = offer;
+        deproxiedOffer = null;
     }
 
     @Override

@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -37,6 +39,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -52,6 +55,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -101,9 +105,28 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @AdminPresentationToOneLookup()
     protected ProductBundle productBundle;
 
+    @Transient
+    protected Sku deproxiedSku;
+
+    @Transient
+    protected ProductBundle deproxiedProductBundle;
+
     @Override
     public Sku getSku() {
-        return HibernateUtils.deproxy(sku);
+        if (deproxiedSku == null) {
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+
+            if (postLoaderDao != null) {
+                Long id = sku.getId();
+                deproxiedSku = postLoaderDao.find(SkuImpl.class, id);
+            } else if (sku instanceof HibernateProxy) {
+                deproxiedSku = HibernateUtils.deproxy(sku);
+            } else {
+                deproxiedSku = sku;
+            }
+        }
+
+        return deproxiedSku;
     }
 
     @Override
@@ -123,12 +146,26 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public ProductBundle getProductBundle() {
-        return HibernateUtils.deproxy(productBundle);
+        if (deproxiedProductBundle == null) {
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+
+            if (postLoaderDao != null) {
+                Long id = productBundle.getId();
+                deproxiedProductBundle = postLoaderDao.find(ProductBundleImpl.class, id);
+            } else if (productBundle instanceof HibernateProxy) {
+                deproxiedProductBundle = HibernateUtils.deproxy(productBundle);
+            } else {
+                deproxiedProductBundle = productBundle;
+            }
+        }
+
+        return deproxiedProductBundle;
     }
 
     @Override
     public void setProductBundle(ProductBundle productBundle) {
         this.productBundle = productBundle;
+        deproxiedProductBundle = null;
     }
 
     @Override
