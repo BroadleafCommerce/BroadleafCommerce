@@ -1,15 +1,15 @@
-<div th:if="${treeListGrid}" th:remove="tag">
-    <div th:include="components/treeListGrid" th:object="${treeListGrid}" th:remove="tag" ></div>
-    <div th:include="components/listGridModalActions"
+<th:block th:if="${treeListGrid}">
+    <th:block th:include="components/treeListGrid" th:object="${treeListGrid}"></th:block>
+    <th:block th:include="components/listGridModalActions"
          th:each="column, iterStat : ${treeListGrid.treeListGridColumns}"
          th:if="${iterStat.index == 0}"
-         th:with="listGrid=${column.listGrid}" th:remove="tag"></div>
-</div>
-<div th:unless="${treeListGrid}" th:remove="tag">
-    <div th:if="${isAssetGrid != null and isAssetGrid}" th:remove="tag">
-        <div th:include="views/assetGridWithUploadForm" th:remove="tag"></div>
-    </div>
-    <div th:unless="${isAssetGrid != null and isAssetGrid}" th:remove="tag">
+         th:with="listGrid=${column.listGrid}"></th:block>
+</th:block>
+<th:block th:unless="${treeListGrid}">
+    <th:block th:if="${isAssetGrid != null and isAssetGrid}">
+        <th:block th:include="views/assetGridWithUploadForm"></th:block>
+    </th:block>
+    <th:block th:unless="${isAssetGrid != null and isAssetGrid}">
         <div class="fieldset-card field-group listgrid-container single-listgrid"
              th:classappend="${additionalClasses != null} ? ${additionalClasses}"
              th:id="${listGrid.subCollectionFieldName}">
@@ -19,12 +19,12 @@
                     <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Record)'"></span>
                     <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Records)'"></span>
                 </div>
-                <div th:include="components/listGridToolbar" th:with="listGrid=${listGrid}" th:remove="tag"></div>
+                <th:block th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"></th:block>
             </div>
             <div class="fieldgroup-listgrid-wrapper fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
-                <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag"></div>
+                <th:block th:include="components/listGrid" th:object="${listGrid}"></th:block>
             </div>
         </div>
-        <div th:include="components/listGridModalActions" th:object="${listGrid}" th:remove="tag"></div>
-    </div>
-</div>
+        <th:block th:include="components/listGridModalActions" th:object="${listGrid}"></th:block>
+    </th:block>
+</th:block>

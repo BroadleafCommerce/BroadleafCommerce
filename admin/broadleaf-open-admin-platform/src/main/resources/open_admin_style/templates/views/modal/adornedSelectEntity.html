@@ -1,12 +1,12 @@
 <div class="adorned-select-wrapper">
-    <div th:include="components/entityForm" th:with="additionalClasses='modal-form'" th:remove="tag"></div>
+    <th:block th:include="components/entityForm" th:with="additionalClasses='modal-form'"></th:block>
 
     <div class="content-yield">
-        <div th:if="${treeListGrid}" th:remove="tag">
-            <div th:include="components/treeListGrid" th:remove="tag"
+        <th:block th:if="${treeListGrid}">
+            <th:block th:include="components/treeListGrid"
                  th:object="${treeListGrid}"
-                 th:with="inModal=${inModal != null and inModal}, isLookup=${isLookup != null and isLookup}"></div>
-        </div>
+                 th:with="inModal=${inModal != null and inModal}, isLookup=${isLookup != null and isLookup}"></th:block>
+        </th:block>
         <div class="fieldset-card field-group listgrid-container inModal" th:unless="${treeListGrid}"
             th:classappend="${additionalClasses != null} ? ${additionalClasses}"
             th:id="${listGrid.subCollectionFieldName}">
@@ -16,10 +16,10 @@
                     <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Record)'"></span>
                     <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Records)'"></span>
                 </div>
-                <div th:include="components/listGridToolbar" th:with="listGrid=${listGrid}" th:remove="tag"></div>
+                <th:block th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"></th:block>
             </div>
             <div class="fieldgroup-listgrid-wrapper fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
-                <div th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}" th:remove="tag"></div>
+                <th:block th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
             </div>
         </div>
     </div>

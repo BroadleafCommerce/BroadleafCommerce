@@ -1,4 +1,4 @@
-<div th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}" th:remove="tag">
+<th:block th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}">
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
         <span th:text="#{${field.friendlyName}}"></span>
 <span th:replace="components/fieldTooltip" ></span>
@@ -17,7 +17,7 @@
     
     <span class="error" th:errors="*{fields['__${field.name}__'].value}" ></span>
 
-</div>
+</th:block>
 
 <div th:unless="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}"
     class="additional-foreign-key-container twelve">
@@ -32,7 +32,7 @@
 
     <div class="foreign-key-value-container">
         
-        <div th:remove="tag" th:unless="${field.isTypeaheadEnabled}">
+        <th:block th:unless="${field.isTypeaheadEnabled}">
 
 
             <div class="input-group">
@@ -61,15 +61,15 @@
 
 
 
-        </div>
+        </th:block>
 
-        <div th:remove="tag" th:if="${field.isTypeaheadEnabled}">
+        <th:block th:if="${field.isTypeaheadEnabled}">
             <input type="text" class="to-one-typeahead twelve"
                 th:disabled="${field.readOnly}"
                 th:placeholder="#{typeahead.placeholder(#{${field.friendlyName}})}"
                 th:value="*{fields['__${field.name}__'].displayValue}"
                 th:attr="data-typeahead-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/typeahead'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})}" />
-        </div>
+        </th:block>
 
         <span class="error" th:errors="*{fields['__${field.name}__'].value}" ></span>
     </div>

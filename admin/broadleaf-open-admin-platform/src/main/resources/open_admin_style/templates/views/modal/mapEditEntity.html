@@ -1,3 +1,5 @@
-<blc:form th:include="components/entityForm"
-    th:remove="tag"
-    th:with="additionalClasses='modal-form'" ></blc:form>
+<blc:form th:remove="tag">
+    <th:block th:include="components/entityForm"
+              th:with="additionalClasses='modal-form'">
+    </th:block>
+</blc:form>

@@ -20,20 +20,18 @@
                         data-selectizeplaceholder=#{${listGrid.friendlyName}}"
                 th:placeholder="'Select ' + #{${listGrid.friendlyName}} + '...'"
                 tabindex="-1">
-            <div th:each="record : ${listGrid.records}"
-                 th:unless="${#lists.isEmpty(listGrid.records)}"
-                 th:remove="tag">
+            <th:block th:each="record : ${listGrid.records}"
+                 th:unless="${#lists.isEmpty(listGrid.records)}">
 
-                <div th:each="headerField : ${record.listGrid.headerFields}"
+                <th:block th:each="headerField : ${record.listGrid.headerFields}"
                      th:if="${headerField.isVisible}"
-                     th:with="field=${record.getField(headerField.name)}"
-                     th:remove="tag">
+                     th:with="field=${record.getField(headerField.name)}">
 
                     <option th:if="${record.altId}" th:value="${record.id}" th:attr="data-alternate_id=${record.altId}" selected="selected" th:text="${field.displayValue}"></option>
                     <option th:unless="${record.altId}" th:value="${record.id}" selected="selected" th:text="${field.displayValue}"></option>
 
-                </div>
-            </div>
+                </th:block>
+            </th:block>
         </select>
 
         <select th:id="'selectize-' + ${listGrid.friendlyName}"
@@ -43,20 +41,18 @@
                 th:disabled="${listGrid.isReadOnly}"
                 th:classappend="${listGrid.isReadOnly} ? 'disabled' : ''"
                 tabindex="-1" readonly="readonly">
-            <div th:each="record : ${listGrid.records}"
-                th:unless="${#lists.isEmpty(listGrid.records)}"
-                th:remove="tag">
+            <th:block th:each="record : ${listGrid.records}"
+                th:unless="${#lists.isEmpty(listGrid.records)}">
 
-                <div th:each="headerField : ${record.listGrid.headerFields}"
+                <th:block th:each="headerField : ${record.listGrid.headerFields}"
                     th:if="${headerField.isVisible}"
-                    th:with="field=${record.getField(headerField.name)}"
-                    th:remove="tag">
+                    th:with="field=${record.getField(headerField.name)}">
 
                     <option th:if="${record.altId}" th:value="${record.id}" th:attr="data-alternate_id=${record.altId}" selected="selected" th:text="${field.displayValue}"></option>
                     <option th:unless="${record.altId}" th:value="${record.id}" selected="selected" th:text="${field.displayValue}"></option>
 
-                </div>
-            </div>
+                </th:block>
+            </th:block>
         </select>
     </div>
 </th:block>

@@ -31,12 +31,12 @@
     </div>
 
 
-    <div th:if="${customRibbon == null or #strings.equals(customRibbon, '')}" th:remove="tag">
+    <th:block th:if="${customRibbon == null or #strings.equals(customRibbon, '')}">
         <div th:replace="layout/partials/sandboxRibbon"></div>
-    </div>
-    <div th:unless="${customRibbon == null or #strings.equals(customRibbon, '')}" th:remove="tag">
+    </th:block>
+    <th:block th:unless="${customRibbon == null or #strings.equals(customRibbon, '')}">
         <div th:replace="${customRibbon}"></div>
-    </div>
+    </th:block>
 </header>
 <div id="lightbox" style="display: none;">
 
