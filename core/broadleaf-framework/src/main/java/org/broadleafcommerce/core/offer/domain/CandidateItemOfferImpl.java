@@ -25,11 +25,15 @@ import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.PostLoaderDao;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.proxy.HibernateProxy;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -72,6 +76,9 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)
     private BigDecimal discountedPrice;
 
+    @Transient
+    protected Offer deproxiedOffer;
+
     @Override
     public Long getId() {
         return id;
@@ -95,6 +102,7 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
+        deproxiedOffer = null;
     }
 
     @Override
@@ -104,7 +112,20 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
     @Override
     public Offer getOffer() {
-        return offer;
+        if (deproxiedOffer == null) {
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+
+            if (postLoaderDao != null) {
+                Long id = offer.getId();
+                deproxiedOffer = postLoaderDao.find(OfferImpl.class, id);
+            } else if (offer instanceof HibernateProxy) {
+                deproxiedOffer = HibernateUtils.deproxy(offer);
+            } else {
+                deproxiedOffer = offer;
+            }
+        }
+
+        return deproxiedOffer;
     }
     
     @Override
