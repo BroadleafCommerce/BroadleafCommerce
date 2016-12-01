@@ -787,7 +787,7 @@ p.deployment-summary {
 /****************************************
  ADMIN WORKFLOW RELATED STYLES
 ****************************************/
-span.workflow-action {
+span.listgrid-row-action {
     font-size: 16px;
     visibility: hidden;
     width: 27px;
@@ -797,12 +797,12 @@ span.workflow-action {
     border-radius: 2px;
     color: white;
 }
-span.workflow-action:hover {
+span.listgrid-row-action:hover {
     background-color: #809831;
 }
-span.workflow-action a:hover {
+span.listgrid-row-action a:hover {
     color: #809831;
 }
-.dirty span.workflow-action a:hover {
+.dirty span.listgrid-row-action a:hover {
     color: #efbc62;
 }

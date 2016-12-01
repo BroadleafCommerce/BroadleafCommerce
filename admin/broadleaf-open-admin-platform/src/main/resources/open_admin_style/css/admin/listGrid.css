@@ -335,7 +335,7 @@ td .listgrid-row-actions {
     right: 10px;
     top: 6px;
 }
-.listgrid-row-actions span.workflow-action a {
+.listgrid-row-actions span.listgrid-row-action a {
     color: white !important;
     vertical-align: middle;
     font-size: 16px;
@@ -345,7 +345,7 @@ td .listgrid-row-actions {
 .listgrid-toolbar-actions .button:not(:first-child) {
     margin-left: 10px;
 }
-.listgrid-row-actions .workflow-action:not(:first-child) {
+.listgrid-row-actions .listgrid-row-action:not(:first-child) {
     margin-left: 5px;
 }
 /****************************************
