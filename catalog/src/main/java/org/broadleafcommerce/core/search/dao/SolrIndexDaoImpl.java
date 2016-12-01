@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.search.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.springframework.stereotype.Repository;
@@ -55,7 +55,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
     
     @Override
     public void populateProductCatalogStructure(List<Long> productIds, CatalogStructure catalogStructure) {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
         Boolean oldIgnoreFilters = context.getInternalIgnoreFilters();
         context.setInternalIgnoreFilters(false);
         try {

@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.search.service.solr.index;
 import org.apache.commons.collections4.MapUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.site.domain.Catalog;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.broadleafcommerce.core.search.dao.CatalogStructure;
 
 import java.util.HashMap;
@@ -46,7 +46,7 @@ public class SolrIndexCachedOperation {
      * @return The cache for the current thread, or null if not set
      */
     public static CatalogStructure getCache() {
-        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext ctx = CommonRequestContext.getCommonRequestContext();
         Catalog currentCatalog = ctx == null ? null : ctx.getCurrentCatalog();
         if (currentCatalog != null) {
             return MapUtils.getObject(CACHE.get(), currentCatalog.getId());
@@ -61,7 +61,7 @@ public class SolrIndexCachedOperation {
      * @param cache the cache object (usually an empty map)
      */
     public static void setCache(CatalogStructure cache) {
-        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext ctx = CommonRequestContext.getCommonRequestContext();
         Catalog currentCatalog = ctx == null ? null : ctx.getCurrentCatalog();
         Map<Long, CatalogStructure> catalogCaches = CACHE.get();
         if (catalogCaches == null) {

@@ -21,7 +21,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.LBHttpSolrClient;
 import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 
 import java.util.Collection;
 
@@ -68,7 +68,7 @@ public class BroadleafCloudSolrClient extends CloudSolrClient {
     @Override
     public String getDefaultCollection() {
         if (solrConfig != null && solrConfig.isSiteCollections()) {
-            Site site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
+            Site site = CommonRequestContext.getCommonRequestContext().getNonPersistentSite();
             return (reindexClient) ? solrConfig.getSiteReindexAliasName(site) : solrConfig.getSiteAliasName(site);
         }
 

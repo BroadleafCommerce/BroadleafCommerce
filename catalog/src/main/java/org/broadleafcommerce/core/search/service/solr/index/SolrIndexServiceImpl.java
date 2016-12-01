@@ -36,7 +36,7 @@ import org.broadleafcommerce.common.util.StopWatch;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
@@ -712,7 +712,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Override
     public Object[] saveState() {
          return new Object[] {
-             BroadleafRequestContext.getBroadleafRequestContext(),
+             CommonRequestContext.getCommonRequestContext(),
              SkuPricingConsiderationContext.getSkuPricingConsiderationContext(),
              SkuPricingConsiderationContext.getSkuPricingService(),
              SkuActiveDateConsiderationContext.getSkuActiveDatesService()
@@ -722,7 +722,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Override
     @SuppressWarnings("rawtypes")
     public void restoreState(Object[] pack) {
-         BroadleafRequestContext.setBroadleafRequestContext((BroadleafRequestContext) pack[0]);
+         CommonRequestContext.setCommonRequestContext((CommonRequestContext) pack[0]);
          SkuPricingConsiderationContext.setSkuPricingConsiderationContext((HashMap) pack[1]);
          SkuPricingConsiderationContext.setSkuPricingService((DynamicSkuPricingService) pack[2]);
          SkuActiveDateConsiderationContext.setSkuActiveDatesService((DynamicSkuActiveDatesService) pack[3]);

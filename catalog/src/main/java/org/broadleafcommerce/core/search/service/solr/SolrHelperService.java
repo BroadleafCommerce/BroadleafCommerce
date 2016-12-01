@@ -24,7 +24,6 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;

@@ -32,7 +32,7 @@ import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,7 +53,6 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.jms.IllegalStateException;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
@@ -758,7 +757,7 @@ public class SolrConfiguration implements InitializingBean {
     
     
     public SolrClient getSiteServer() {
-        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext ctx = CommonRequestContext.getCommonRequestContext();
         Site site = ctx.getNonPersistentSite();
 
         CloudSolrClient client = (CloudSolrClient) primaryServer;
@@ -776,7 +775,7 @@ public class SolrConfiguration implements InitializingBean {
     }
     
     public SolrClient getSiteReindexServer() {
-        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+        CommonRequestContext ctx = CommonRequestContext.getCommonRequestContext();
         Site site = ctx.getNonPersistentSite();
 
         CloudSolrClient client = (CloudSolrClient) primaryServer;

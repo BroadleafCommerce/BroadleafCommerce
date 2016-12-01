@@ -30,7 +30,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -196,7 +196,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "PRIMARY"
         if (solrConfiguration.isSiteCollections()) {
-            solrQuery.setParam("collection", solrConfiguration.getSiteAliasName(BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite()));
+            solrQuery.setParam("collection", solrConfiguration.getSiteAliasName(CommonRequestContext.getCommonRequestContext().getNonPersistentSite()));
         } else {
             solrQuery.setParam("collection", solrConfiguration.getPrimaryName()); //This should be ignored if not using SolrCloud
         }
@@ -295,8 +295,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     public String getLocalePrefix() {
-        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
-            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+        if (CommonRequestContext.getCommonRequestContext() != null) {
+            Locale locale = CommonRequestContext.getCommonRequestContext().getLocale();
             if (locale != null) {
                 return locale.getLocaleCode() + "_";
             }
