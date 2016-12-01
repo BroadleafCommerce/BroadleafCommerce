@@ -1370,6 +1370,11 @@ var getCurrentHashVal = function() {
 };
 
 $(document).ready(function() {
+    // primary entity buttons should be disabled until page is loaded
+    $(window).load(function () {
+        $('.button.primary.large').prop('disabled', false).removeClass('disabled');
+    });
+
     $(window).resize(function() {
         $.doTimeout('resize', 150, function() {
             if (BLCAdmin.currentModal() != null) {
