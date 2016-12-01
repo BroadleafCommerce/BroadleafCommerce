@@ -69,12 +69,13 @@ public class StringUtil {
         if (StringUtils.isEmpty(bigger) || StringUtils.isEmpty(included)) {
             return false;
         }
-        String[] biggerSegments = bigger.split("\\.");
-        String[] includedSetments = included.split("\\.");
-
-        String[] biggerSubset = Arrays.copyOfRange(biggerSegments, 0, includedSetments.length);
-
-        return Arrays.equals(biggerSubset, includedSetments);
+        if (bigger.equals(included)) {
+            return true;
+        }
+        if (bigger.startsWith(included + ".")) {
+            return true;
+        }
+        return false;
     }
 
     public static double determineSimilarity(String test1, String test2) {
