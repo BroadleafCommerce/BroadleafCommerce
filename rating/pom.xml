@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>broadleaf</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>6.0.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.broadleafcommerce</groupId>
+    <artifactId>broadleaf-rating</artifactId>
+    <version>6.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>BroadleafCommerce Contact</name>
+    <description>BroadleafCommerce Contact Module</description>
+    <url>http://www.broadleafcommerce.org</url>
+
+    <properties>
+        <project.uri>${project.baseUri}/../</project.uri>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>Broadleaf Fair Use 1.0</name>
+            <url>http://license.broadleafcommerce.org/fair_use_license-1.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>Fair Use Community License</comments>
+        </license>
+        <license>
+            <name>Broadleaf End User License Agreement 1.1</name>
+            <url>http://license.broadleafcommerce.org/commercial_license-1.1.txt</url>
+            <distribution>repo</distribution>
+            <comments>Commercial License Applicable When Bounds of Fair Use License Are Exceeded</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>architect</id>
+            <email>architect@broadleafcommerce.org</email>
+            <organization>Broadleaf Commerce</organization>
+            <organizationUrl>http://www.broadleafcommerce.org</organizationUrl>
+            <timezone>-6</timezone>
+        </developer>
+    </developers>
+
+    <build>
+        <plugins>
+            <!-- Temporarily removed until main class exists -->
+            <!-- <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin> -->
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>blc-development</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.zeroturnaround</groupId>
+                        <artifactId>jrebel-maven-plugin</artifactId>
+                        <version>1.1.5</version>
+                        <executions>
+                            <execution>
+                                <id>generate-rebel-xml</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.codehaus.plexus</groupId>
+                                <artifactId>plexus-utils</artifactId>
+                                <version>1.4.1</version>
+                                <scope>runtime</scope>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.broadleafcommerce</groupId>
+            <artifactId>broadleaf-micro-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</project>

@@ -322,6 +322,7 @@
     <modules>
         <module>catalog</module>
         <module>contact</module>
+        <module>rating</module>
         <module>content</module>
         <module>customer</module>
         <module>order</module>
@@ -534,6 +535,13 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-contact</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.broadleafcommerce</groupId>
+                <artifactId>broadleaf-rating</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
