@@ -43,7 +43,8 @@
                     <th:block th:if="${action.displayText == 'Add'}" th:text="#{*{friendlyName}}"></th:block>
                 </button>
             </th:block>
-            <button type="button" class="button primary large dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="button primary large dropdown-toggle disabled" data-toggle="dropdown"
+                    aria-expanded="false" disabled="disabled">
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right" role="menu">
@@ -132,7 +133,7 @@
                          data-confirm-text=${action.confirmEnabledText}">
                 <th:block th:text="#{${action.displayText}}"></th:block>
             </button>
-            <button type="button" class="button primary large dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="button primary large dropdown-toggle disabled" disabled="disabled" data-toggle="dropdown" aria-expanded="false">
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right" role="menu">
