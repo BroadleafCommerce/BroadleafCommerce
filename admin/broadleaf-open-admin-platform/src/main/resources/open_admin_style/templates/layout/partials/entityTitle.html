@@ -27,7 +27,7 @@
         <div th:if="${not #lists.isEmpty(mainActions) and (#lists.size(mainActions) > 1 or #lists.size(entityTypes) > 1)}" class="button-group">
             <img th:src="@{/img/admin/ajax-loader.gif}" class="ajax-loader" />
             <div th:with="action=${mainActions[0]}" th:remove="tag">
-                <button type="button" class="button primary large"
+                <button type="button" class="button primary large disabled" disabled="disabled"
                         th:if="${action.id == 'ADD'}"
                         th:classappend="${action.buttonClass}"
                         th:object="${entityTypes[0]}"
@@ -35,7 +35,7 @@
                     <span th:text="#{${action.displayText}}" th:remove="tag"></span>
                     <span th:if="${action.displayText == 'Add'}" th:text="#{*{friendlyName}}" th:remove="tag"></span>
                 </button>
-                <button type="button" class="button primary large"
+                <button type="button" class="button primary large disabled" disabled="disabled"
                         th:unless="${action.id == 'ADD'}"
                         th:classappend="${action.buttonClass}"
                         th:attr="data-url=@{${!#strings.isEmpty(action.urlOverride) ? action.urlOverride : ('/' + sectionKey + action.urlPostfix)}}">
@@ -43,7 +43,8 @@
                     <span th:if="${action.displayText == 'Add'}" th:text="#{*{friendlyName}}" th:remove="tag"></span>
                 </button>
             </div>
-            <button type="button" class="button primary large dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="button primary large dropdown-toggle disabled" data-toggle="dropdown"
+                    aria-expanded="false" disabled="disabled">
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right" role="menu">
@@ -73,24 +74,24 @@
         <div th:unless="${not #lists.isEmpty(mainActions) and (#lists.size(mainActions) > 1 or #lists.size(entityTypes) > 1)}" th:remove="tag">
             <div  th:each="action,iterStat : ${mainActions}" th:remove="tag">
                 <div th:if="${action.id == 'ADD'}" th:remove="tag">
-                    <a class="button primary large"
+                    <button class="button primary large disabled" disabled="disabled"
                        th:classappend="${action.buttonClass}"
                        th:type="${action.buttonType}"
                        th:href="@{'/' + ${sectionKey + action.urlPostfix}(entityType=${entityTypes[0].fullyQualifiedClassname})}"
                        th:attr="data-url=@{'/' + ${sectionKey + action.urlPostfix}(entityType=${entityTypes[0].fullyQualifiedClassname})}">
                         <span th:text="#{${action.displayText}}" th:remove="tag"></span>
                         <span th:if="${action.displayText == 'Add'}" th:text="#{${entityFriendlyName}}" th:remove="tag"></span>
-                    </a>
+                    </button>
                 </div>
                 <div th:unless="${action.id == 'ADD'}" th:remove="tag">
-                    <a class="button primary large"
+                    <button class="button primary large disabled" disabled="disabled"
                        th:classappend="${action.buttonClass}"
                        th:type="${action.buttonType}"
                        th:href="@{'/' + ${sectionKey + action.urlPostfix}}"
                        th:attr="data-url=@{'/' + ${sectionKey + action.urlPostfix}}">
                         <span th:text="#{${action.displayText}}" th:remove="tag"></span>
                         <span th:if="${action.displayText == 'Add'}" th:text="#{${entityFriendlyName}}" th:remove="tag"></span>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -132,7 +133,7 @@
                          data-confirm-text=${action.confirmEnabledText}">
                 <span th:text="#{${action.displayText}}" th:remove="tag"></span>
             </button>
-            <button type="button" class="button primary large dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="button primary large dropdown-toggle disabled" disabled="disabled" data-toggle="dropdown" aria-expanded="false">
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right" role="menu">
