@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.util.dao;
+package org.broadleafcommerce.common.util.dao;
 
 import javax.persistence.Query;
 import java.util.ArrayList;
