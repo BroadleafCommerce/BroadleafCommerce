@@ -151,7 +151,7 @@ import java.util.Set;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class ProductImpl implements Product, ProductAdminPresentation, Status, AdminMainEntity, Locatable, TemplatePathContainer, VendorRelated {
+public class ProductImpl implements Product, ProductAdminPresentation, Status, AdminMainEntity, Locatable, TemplatePathContainer {
 
     private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /**
@@ -225,15 +225,6 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             group = GroupName.General, order = FieldOrder.MANUFACTURER,
             prominent = true, gridOrder = 4)
     protected String manufacturer;
-
-    //TODO 2204 I think it makes sense to include vendor, possibly as a weave, since all products would benefit. I also
-    //like it as a simple field so that it is easy to filter by in a list grid. This should actually be an embedded with
-    //a reference to a real Vendor instance.
-    @Column(name = "VENDOR")
-    @AdminPresentation(friendlyName = "Vendor",
-            group = GroupName.General, order = FieldOrder.MANUFACTURER,
-            prominent = true, gridOrder = 4, visibility = VisibilityEnum.VISIBLE_ALL, readOnly = true)
-    protected String vendor;
 
     @Deprecated
     @Column(name = "IS_FEATURED_PRODUCT", nullable = false)
@@ -1103,7 +1094,6 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         cloned.setUrl(url);
         cloned.setUrlKey(urlKey);
         cloned.setManufacturer(manufacturer);
-        ((VendorRelated) cloned).setVendor(vendor);
         cloned.setPromoMessage(promoMessage);
         if (defaultCategory != null) {
             cloned.setDefaultCategory(defaultCategory.createOrRetrieveCopyInstance(context).getClone());
@@ -1149,15 +1139,5 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Override
     public FieldEntity getFieldEntityType() {
         return FieldEntity.PRODUCT;
-    }
-
-    @Override
-    public String getVendor() {
-        return vendor;
-    }
-
-    @Override
-    public void setVendor(String vendor) {
-        this.vendor = vendor;
     }
 }
