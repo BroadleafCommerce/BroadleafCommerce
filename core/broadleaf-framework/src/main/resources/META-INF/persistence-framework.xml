@@ -40,7 +40,6 @@
         <mapping-file>config/bc/jpa/domain/FulfillmentOption.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Store.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file> 
-        <mapping-file>config/bc/jpa/domain/Rating.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/SearchRedirect.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Solr.orm.xml</mapping-file>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryImpl</class>
@@ -123,10 +122,6 @@
         <class>org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl</class>
         <class>org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl</class>
         <class>org.broadleafcommerce.core.search.domain.RequiredFacetImpl</class>
-        <class>org.broadleafcommerce.core.rating.domain.RatingSummaryImpl</class>
-        <class>org.broadleafcommerce.core.rating.domain.RatingDetailImpl</class>
-        <class>org.broadleafcommerce.core.rating.domain.ReviewDetailImpl</class>
-        <class>org.broadleafcommerce.core.rating.domain.ReviewFeedbackImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl</class>
         <class>org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl</class>
         <class>org.broadleafcommerce.core.social.domain.UserConnectionImpl</class>
