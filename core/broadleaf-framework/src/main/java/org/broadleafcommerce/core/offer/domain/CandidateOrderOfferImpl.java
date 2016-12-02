@@ -19,6 +19,9 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.PostLoaderDao;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
@@ -26,6 +29,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 
@@ -38,6 +42,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_ORDER_OFFER")
@@ -73,6 +78,9 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
     @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)
     protected BigDecimal discountedPrice;
 
+    @Transient
+    protected Offer deproxiedOffer;
+
     @Override
     public Long getId() {
         return id;
@@ -90,12 +98,26 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
 
     @Override
     public Offer getOffer() {
-        return offer;
+        if (deproxiedOffer == null) {
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+
+            if (postLoaderDao != null) {
+                Long id = offer.getId();
+                deproxiedOffer = postLoaderDao.find(OfferImpl.class, id);
+            } else if (offer instanceof HibernateProxy) {
+                deproxiedOffer = HibernateUtils.deproxy(offer);
+            } else {
+                deproxiedOffer = offer;
+            }
+        }
+
+        return deproxiedOffer;
     }
 
     @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
+        deproxiedOffer = null;
         discountedPrice = null;  // price needs to be recalculated
     }
 
