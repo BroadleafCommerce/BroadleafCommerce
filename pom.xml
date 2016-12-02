@@ -534,6 +534,13 @@
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
+                <artifactId>broadleaf-catalog</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-contact</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
