@@ -155,16 +155,6 @@
         <property name="targetRef" value="blPaymentGatewayConfigurationServices"/>
     </bean>
 
-    <bean class="org.broadleafcommerce.core.search.service.solr.FileSystemSolrIndexStatusProviderImpl" name="blFileSystemSolrIndexStatusProvider"/>
-
-    <bean id="blSolrIndexStatusProviders" class="org.springframework.beans.factory.config.ListFactoryBean" >
-        <property name="sourceList">
-            <list>
-                <ref bean="blFileSystemSolrIndexStatusProvider"/>
-            </list>
-        </property>
-    </bean>
-
     <!-- Begin Section Custom Criteria -->
     <bean id="blProductSectionCustomCriteria" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">

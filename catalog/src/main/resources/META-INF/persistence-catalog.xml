@@ -1,0 +1,64 @@
+<!--
+  #%L
+  BroadleafCommerce Catalog
+  %%
+  Copyright (C) 2009 - 2016 Broadleaf Commerce
+  %%
+  Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+  (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+  unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+  the Broadleaf End User License Agreement (EULA), Version 1.1
+  (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+  shall apply.
+  
+  Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+  between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+  #L%
+  -->
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+    <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>config/bc/jpa/domain/Category.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/CategoryXref.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Product.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/ProductOption.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Sku.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Availability.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Store.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Solr.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/SearchSynonym.orm.xml</mapping-file>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryAttributeImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryMediaXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductOptionImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuMediaXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuFeeImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl</class>
+        <class>org.broadleafcommerce.core.store.domain.StoreImpl</class>
+        <class>org.broadleafcommerce.core.store.domain.ZipCodeImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.FieldImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.SearchSynonymImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.SearchFacetImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.IndexFieldImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.RequiredFacetImpl</class>
+        <class>org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl</class>
+    </persistence-unit>
+</persistence>

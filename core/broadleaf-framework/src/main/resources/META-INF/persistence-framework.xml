@@ -22,12 +22,6 @@
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
     <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
-        <mapping-file>config/bc/jpa/domain/Category.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/CategoryXref.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/Product.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/ProductOption.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/Sku.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/Availability.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ShippingRate.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/CodeType.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Order.orm.xml</mapping-file>
@@ -38,29 +32,6 @@
         <mapping-file>config/bc/jpa/domain/FulfillmentGroup.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/FulfillmentGroupItem.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/FulfillmentOption.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/Store.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file> 
-        <mapping-file>config/bc/jpa/domain/SearchRedirect.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/Solr.orm.xml</mapping-file>
-        <class>org.broadleafcommerce.core.catalog.domain.CategoryImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.CategoryAttributeImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.CategoryMediaXrefImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.ProductImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.ProductBundleImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.ProductOptionImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.SkuImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.SkuMediaXrefImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.SkuFeeImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl</class>
         <class>org.broadleafcommerce.core.util.domain.CodeTypeImpl</class>
         <class>org.broadleafcommerce.core.inventory.domain.SkuAvailabilityImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl</class>
@@ -111,21 +82,8 @@
         <class>org.broadleafcommerce.core.payment.domain.PaymentLogImpl</class>
         <class>org.broadleafcommerce.core.pricing.domain.ShippingRateImpl</class>
         <class>org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl</class>
-        <class>org.broadleafcommerce.core.store.domain.StoreImpl</class>
-        <class>org.broadleafcommerce.core.store.domain.ZipCodeImpl</class>
-        <class>org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl</class>
-        <class>org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl</class>
-        <class>org.broadleafcommerce.core.search.domain.FieldImpl</class>
-        <class>org.broadleafcommerce.core.search.domain.SearchSynonymImpl</class>
-        <class>org.broadleafcommerce.core.search.domain.SearchFacetImpl</class>
-        <class>org.broadleafcommerce.core.search.domain.IndexFieldImpl</class>
-        <class>org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl</class>
-        <class>org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl</class>
-        <class>org.broadleafcommerce.core.search.domain.RequiredFacetImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl</class>
-        <class>org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl</class>
         <class>org.broadleafcommerce.core.social.domain.UserConnectionImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfigurationImpl</class>
         <exclude-unlisted-classes/>
         <!-- JPA properties are inherited from persistence-common.xml -->
