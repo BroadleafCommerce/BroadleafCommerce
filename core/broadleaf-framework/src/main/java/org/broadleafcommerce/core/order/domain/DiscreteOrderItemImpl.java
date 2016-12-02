@@ -171,7 +171,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (deproxiedProduct == null) {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
 
-            if (postLoaderDao != null) {
+            if (product != null && postLoaderDao != null) {
                 Long id = product.getId();
                 deproxiedProduct = postLoaderDao.find(ProductImpl.class, id);
             } else if (product instanceof HibernateProxy) {
