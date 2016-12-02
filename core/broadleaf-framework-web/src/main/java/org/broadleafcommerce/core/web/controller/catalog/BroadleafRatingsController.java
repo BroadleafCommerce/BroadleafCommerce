@@ -42,7 +42,7 @@ public class BroadleafRatingsController {
     public String viewReviewForm(HttpServletRequest request, Model model, ReviewForm form, String itemId) {
         Product product = catalogService.findProductById(Long.valueOf(itemId));
         form.setProduct(product);
-        ReviewDetail reviewDetail = ratingService.readReviewByCustomerAndItem(CustomerState.getCustomer(), itemId);
+        ReviewDetail reviewDetail = ratingService.readReviewByCustomerAndItem(CustomerState.getCustomer().getId(), itemId);
         if (reviewDetail != null) {
             form.setReviewText(reviewDetail.getReviewText());
             form.setRating(reviewDetail.getRatingDetail().getRating());
@@ -52,7 +52,7 @@ public class BroadleafRatingsController {
     }
     
     public String reviewItem(HttpServletRequest request, Model model, ReviewForm form, String itemId) {
-        ratingService.reviewItem(itemId, RatingType.PRODUCT, CustomerState.getCustomer(), form.getRating(), form.getReviewText());
+        ratingService.reviewItem(itemId, RatingType.PRODUCT, CustomerState.getCustomer().getId(), form.getRating(), form.getReviewText());
         model.addAttribute("reviewForm", form);
         return getSuccessView();
     }
