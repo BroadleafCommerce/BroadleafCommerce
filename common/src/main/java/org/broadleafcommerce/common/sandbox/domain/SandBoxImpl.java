@@ -100,9 +100,11 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "PARENT_SANDBOX_ID")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
     protected SandBox parentSandBox;
 
     @OneToMany(mappedBy = "parentSandBox", targetEntity = SandBoxImpl.class)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
     protected List<SandBox> childSandBoxes;
 
     @Column(name = "COLOR")
