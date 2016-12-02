@@ -20,12 +20,15 @@
 package org.broadleafcommerce.core.offer.service;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
@@ -36,6 +39,7 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.test.BaseTest;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import java.io.BufferedReader;
@@ -43,9 +47,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
+import javax.annotation.Resource;
+
 public class MVELTest extends BaseTest {
+
+    @Resource
+    private CatalogService catalogService;
 
     private StringBuffer functions = new StringBuffer();
 
@@ -72,14 +82,16 @@ public class MVELTest extends BaseTest {
     }
 
     @Test
+    @Transactional
     public void testOfferAppliesToItemsInCategoryAndOrderValueGreaterThanFifty() {
         //----------------------------------------------------------------------------------------------------
         // Mock up some order data
         OrderImpl order = new OrderImpl();
         CategoryImpl category = new CategoryImpl();
         category.setName("t-shirt");
+        Product product = createProduct();
+
         DiscreteOrderItemImpl orderItem = new DiscreteOrderItemImpl();
-        ProductImpl product = new ProductImpl();
         ArrayList<CategoryProductXref> categories = new ArrayList<CategoryProductXref>();
         CategoryProductXref categoryXref = new CategoryProductXrefImpl();
         categoryXref.setProduct(product);
@@ -87,6 +99,7 @@ public class MVELTest extends BaseTest {
         categories.add(categoryXref);
         product.setAllParentCategoryXrefs(categories);
         orderItem.setProduct(product);
+
         order.getOrderItems().add(orderItem);
         order.setSubTotal(new Money(110D));
 
@@ -111,6 +124,35 @@ public class MVELTest extends BaseTest {
         Serializable domainExp2 = MVEL.compileExpression("($ in currentItem.product.allParentCategories if $.name == 't-shirt') != empty and order.subTotal.amount >= 50", context);
         Boolean expressionOutcome2 = (Boolean)MVEL.executeExpression(domainExp2, domainVars);
         assert expressionOutcome2 != null && expressionOutcome2;
+    }
+
+    private Product createProduct() {
+        Category category = new CategoryImpl();
+        category.setName("t-shirt");
+
+        category = catalogService.saveCategory(category);
+
+        Product product = new ProductImpl();
+        Sku sku = new SkuImpl();
+        sku = catalogService.saveSku(sku);
+        product.setDefaultSku(sku);
+        product.setName("Lavender Soap");
+
+        Calendar activeStartCal = Calendar.getInstance();
+        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
+        product.setActiveStartDate(activeStartCal.getTime());
+
+        product.setCategory(category);
+        product.getAllParentCategoryXrefs().clear();
+        product = catalogService.saveProduct(product);
+
+        CategoryProductXref categoryXref = new CategoryProductXrefImpl();
+        categoryXref.setProduct(product);
+        categoryXref.setCategory(category);
+        product.getAllParentCategoryXrefs().add(categoryXref);
+
+        product = catalogService.saveProduct(product);
+        return product;
     }
 
     @Test
