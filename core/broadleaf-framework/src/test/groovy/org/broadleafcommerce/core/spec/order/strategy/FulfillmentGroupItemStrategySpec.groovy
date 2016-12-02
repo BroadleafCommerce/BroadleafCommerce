@@ -293,30 +293,7 @@ class FulfillmentGroupItemStrategySpec extends Specification {
         request.getFgisToDelete().size() == 0
         
     }
-    
-    /**
-     * <ul> orderItemQuantityDelta != 0 --> request FgisToDelete is set...
-     *     <li> orderItem is BundleOrderItem --> Fg added for each discrete order item in bundle using updateItemQuantity </li>
-     */
-    def "If orderItemQuantityDelta not zero and orderItem is BundleOrderItem, fulfillment groups added for each item within bundle"(){
-        setup: "set orderItemQuantityDelta to be non-zero, set orderItem to be BundleOrderItem, and mock fulfillment groups returned by updateItemQuantity"
-        request.orderItemQuantityDelta = 1
-        
-        BundleOrderItemImpl boi = Spy(BundleOrderItemImpl)
-        DiscreteOrderItemImpl doi = new DiscreteOrderItemImpl()
-        boi.setDiscreteOrderItems(Arrays.asList(doi))
-        
-        FulfillmentGroup testFg = new FulfillmentGroupImpl()
-        strategy.updateItemQuantity(*_) >> Arrays.asList(testFg)
-        
-        request.setOrderItem(boi)
-        when:
-        request = strategy.onItemUpdated(request)
-        
-        then:
-        request.getFgisToDelete().get(0) == testFg
-    }
-    
+
     /**
      * <ul> orderItemQuantityDelta != 0 --> request FgisToDelete is set...
      *     <li> orderItem is not BundleOrderItem --> Fg added for order item using updateItemQuantity </li>
@@ -466,31 +443,6 @@ class FulfillmentGroupItemStrategySpec extends Specification {
         then:
         IllegalStateException e = thrown()
         
-    }
-    
-    
-    // onItemRemoved Tests #2
-    
-    /**  
-     * <ul>
-     *      <li> orderItem is BundleOrderItem --> add fgis for DiscreteOrderItems within Bundle to fgisToDelete </li>
-     * </ul>
-     */
-    def "If orderItem is a BundleOrderItem, then all fgItems within the DiscreteOis within the Bundle will be set to be removed"(){
-        setup: "orderItem as BundleOrderItem, DiscreteOis within the Bundle"
-        BundleOrderItem testBoi = new BundleOrderItemImpl()
-        DiscreteOrderItem testDoi = new DiscreteOrderItemImpl()
-        testBoi.getDiscreteOrderItems().add(testDoi)
-        FulfillmentGroupItem testFgi = new FulfillmentGroupItemImpl()
-        mockFulfillmentGroupService.getFulfillmentGroupItemsForOrderItem(*_) >> Arrays.asList(testFgi)
-        
-        request.setOrderItem(testBoi)
-        
-        when:
-        request = strategy.onItemRemoved(request)
-        
-        then:
-        request.getFgisToDelete().get(0) == testFgi
     }
     
     /**

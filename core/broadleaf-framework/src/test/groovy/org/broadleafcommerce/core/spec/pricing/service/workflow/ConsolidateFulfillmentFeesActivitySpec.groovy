@@ -24,7 +24,7 @@ import org.broadleafcommerce.common.money.Money
 import org.broadleafcommerce.core.catalog.domain.SkuFeeImpl
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.catalog.service.type.SkuFeeType
-import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl
@@ -52,7 +52,7 @@ class ConsolidateFulfillmentFeesActivitySpec extends BasePricingActivitySpec {
             new FulfillmentGroupImpl().with() {
                 fulfillmentGroupItems = [
                     new FulfillmentGroupItemImpl().with() {
-                        orderItem = new BundleOrderItemImpl().with() {
+                        orderItem = new DiscreteOrderItemImpl().with() {
                             sku = new SkuImpl().with() {
                                 id = 1
                                 retailPrice = new Money('1.00')
@@ -64,7 +64,7 @@ class ConsolidateFulfillmentFeesActivitySpec extends BasePricingActivitySpec {
                                         amount = new Money('1.00')
                                         it
                                     }
-                                ] as List
+                                ]
                                 it
                             }
                             it
