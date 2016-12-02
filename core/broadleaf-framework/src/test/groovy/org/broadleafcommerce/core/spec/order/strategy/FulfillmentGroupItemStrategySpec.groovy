@@ -18,8 +18,6 @@
 package org.broadleafcommerce.core.spec.order.strategy
 
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao
-import org.broadleafcommerce.core.order.domain.BundleOrderItem
-import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup
@@ -277,60 +275,6 @@ class FulfillmentGroupItemStrategySpec extends Specification {
         testFg.getOrder() == testOrder
         testOrder.getFulfillmentGroups().get(0) == testFg
     }
-    
-    def "If order has no fulfillmentGroups, and orderItem is Bundle, and fulfillmentType is null, the DiscreteOis are added to a new fulfillmentGroup"(){
-        setup: "Fg for order, and orderItem that is bundle"
-        Order testOrder = new OrderImpl()
-        DiscreteOrderItem testDoi = new DiscreteOrderItemImpl()
-        BundleOrderItem testOi = new BundleOrderItemImpl()
-        
-        FulfillmentGroup testFg = new FulfillmentGroupImpl()
-        testFg.setOrder(testOrder)
-        testFg.setType(null)
-        
-        
-        request.setOrder(testOrder)
-        request.setOrderItem(testOi)
-        testOi.setDiscreteOrderItems(Arrays.asList(testDoi))
-        
-        strategy.resolveFulfillmentType(testDoi) >> null
-        mockFulfillmentGroupService.createEmptyFulfillmentGroup() >> testFg
-        when:
-        request = strategy.onItemAdded(request)
-        
-        then:
-        1 * strategy.addItemToFulfillmentGroup(testOrder,testDoi,_,testFg) >> testFg
-        testFg.getOrder() == testOrder
-        testOrder.getFulfillmentGroups().get(0) == testFg
-    }
-    
-    def "If order has no fulfillmentGroups, and orderItem is Bundle, the DiscreteOis are added to a new fulfillmentGroup"(){
-        setup: "Fg for order, and orderItem that is bundle"
-        Order testOrder = new OrderImpl()
-        DiscreteOrderItem testDoi = new DiscreteOrderItemImpl()
-        BundleOrderItem testOi = new BundleOrderItemImpl()
-        
-        FulfillmentGroup testFg = new FulfillmentGroupImpl()
-        testFg.setOrder(testOrder)
-        testFg.setType(FulfillmentType.PHYSICAL_SHIP)
-        
-        
-        request.setOrder(testOrder)
-        request.setOrderItem(testOi)
-        testOi.setDiscreteOrderItems(Arrays.asList(testDoi))
-        
-        strategy.resolveFulfillmentType(testDoi) >> FulfillmentType.PHYSICAL_PICKUP_OR_SHIP
-        mockFulfillmentGroupService.createEmptyFulfillmentGroup() >> testFg
-        when:
-        request = strategy.onItemAdded(request)
-        
-        then:
-        1 * strategy.addItemToFulfillmentGroup(testOrder,testDoi,_,testFg) >> testFg
-        testFg.getOrder() == testOrder
-        testOrder.getFulfillmentGroups().get(0) == testFg
-    }
-    
-    
     
     // onItemUpdated Tests
     

@@ -36,9 +36,6 @@ class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
      * 1) catalogService finds sku, product, and category
      *  a) NonDiscrete -> orderItem has given quantity, retail/sale price, itemname, and order
      *  b) product == null -> category,product,sku,quantity,itemattributes,order,sale/retail price
-     *  c) product not ProductBundle -> category,product,sku,quantity,itemattributes,order,sale/retail price
-     *      * both are DiscreteOrderItem
-     *  d) not a b or c -> BundleOrderItem
      * 2) category == null and product != null -> category is Default
      * 3) parentOrderItemId != null-> item.getParentOrderItem = orderItemService.readOrderItemById()
      * 
@@ -157,31 +154,5 @@ class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
         context.seedData.getOrderItem() instanceof DiscreteOrderItem
         
     }
-    
-    def "If product is not null and a ProductBundle is given, a bundle order item is added to the order"() {
-        setup:
-        OrderItemRequestDTO testItemRequest = Spy(OrderItemRequestDTO).with {
-            skuId = 1
-            productId = 1
-            categoryId = 1
-            quantity = 1
-            overrideSalePrice = new Money("1.00")
-            overrideRetailPrice = new Money("1.50")
-            it
-        }
-        
-        context.seedData.itemRequest = testItemRequest
-        
-        BundleOrderItem testItem = Mock(BundleOrderItem)
-        
-        when: "The activity is executed"
-        context = activity.execute(context)
-        
-        then: "There is an order item added to the order"
-        1 * mockOrderItemService.buildOrderItemFromDTO(_,_) >> testItem
-        context.seedData.getOrderItem() == testItem
-        context.seedData.getOrderItem() instanceof BundleOrderItem
-    }
-    
     
 }

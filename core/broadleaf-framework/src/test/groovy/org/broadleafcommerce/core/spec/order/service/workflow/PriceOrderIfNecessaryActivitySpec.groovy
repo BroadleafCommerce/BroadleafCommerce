@@ -18,8 +18,6 @@
 package org.broadleafcommerce.core.spec.order.service.workflow
 
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao
-import org.broadleafcommerce.core.order.domain.BundleOrderItem
-import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup
@@ -49,15 +47,6 @@ import org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryAc
  *      * delete those items
  *      
  * 4) for each oi in order
- *      a) if BundleOrderItem
- *          * for each doi in bundle
- *              * savedDoi = orderItemServe.saveOrderItem(doi)
- *              * remove from bundle
- *              * doisToAdd.add(savedDoi)
- *          * re-add saved doi's to bundle
- *          * add bundle to savedOrderItems
- *          * for each doi in savedBundle
- *              * set bundle for doi to be savedBundle
  *      b) not Bundle
  *          * getOiFgiMap called on oi
  *          * oi put in savedOrderItems
@@ -174,43 +163,5 @@ class PriceOrderIfNecessaryActivitySpec extends BaseOrderWorkflowSpec {
         then: "the order items are now deleted"
         testOrder.getOrderItems().indexOf(testOi1) == -1
     }
-    
-    def "If the order has OrderItems then there are all saved and added back to the order"(){
-        setup: "setup order items in order"
-        OrderImpl testOrder = new OrderImpl()
-        
-        DiscreteOrderItem testOiB = new DiscreteOrderItemImpl().with {
-            id = new Long(1)
-            it
-        }
-        BundleOrderItem testBoi = new BundleOrderItemImpl().with{
-            id = new Long(2)
-            it
-        }
-        testBoi.getDiscreteOrderItems().add(testOiB)
-        
-        OrderItem testOi = new OrderItemImpl().with{
-            id = new Long(3)
-            it
-        }
-        
-        testOrder.addOrderItem(testBoi)
-        testOrder.addOrderItem(testOi)
-        
-        context.seedData.setOrder(testOrder)
-        
-        context.seedData.getOrderItem() >> new OrderItemImpl()
-        context.seedData.itemRequest.getParentOrderItemId() >> new Long(2)
-        
-        when: "the activity is executed"
-        context = activity.execute(context)
-        
-        then: "the order items are saved by the orderItemService"
-        1 * mockOrderItemService.saveOrderItem(testOiB) >> testOiB
-        1 * mockOrderItemService.saveOrderItem(testBoi) >> testBoi
-        1 * mockOrderItemService.saveOrderItem(testOi) >> testOi
-        
-    }
-    
     
 }

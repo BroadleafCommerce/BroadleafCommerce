@@ -22,7 +22,6 @@ import org.broadleafcommerce.core.catalog.service.CatalogService
 import org.broadleafcommerce.core.inventory.service.ContextualInventoryService
 import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException
 import org.broadleafcommerce.core.inventory.service.type.InventoryType
-import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl
 import org.broadleafcommerce.core.order.domain.OrderItemImpl
 import org.broadleafcommerce.core.order.service.OrderItemService
@@ -34,8 +33,6 @@ import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivi
  * 1a) orderItemId != null
  *      a) orderItem instanceOf DiscreteOrderItem
  *          * sku is set using DiscreteOrderItem.getSku() CONTINUE
- *      b) orderItem instanceOf BundleOrderItem 
- *          * sku is set using BundleOrderItem.getSku() CONTINUE
  *      c) LOG.warn() issued and return context EXIT
  * 1b) orderItemId == null
  *      a) sku set using catalogService.findSkuById(_) CONTINUE
@@ -78,24 +75,6 @@ class CheckAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         
         setup: "setup a discrete order item and non-null orderitemId"
         DiscreteOrderItemImpl mockOrderItem = Spy(DiscreteOrderItemImpl)
-        SkuImpl mockSku = Spy(SkuImpl)
-        mockSku.getId() >> 1
-        
-        context.seedData.itemRequest.getQuantity() >> 0
-        context.seedData.itemRequest.getOrderItemId() >> 1
-        mockOrderItemService.readOrderItemById(_) >> mockOrderItem
-        
-        when: "the activity is executed"
-        context = activity.execute(context);
-        
-        then: "that sku is checked for availability"
-        1 * mockOrderItem.getSku() >> mockSku
-        1 * mockSku.isAvailable() >> true
-    }
-    
-    def "If the order item id is non-null, and there is a BundleOrderItem, then a sku from that BundleOrderItem will be tested for availability"(){
-        setup: "setup a bundle order item and non-null orderitemId"
-        BundleOrderItemImpl mockOrderItem = Spy(BundleOrderItemImpl)
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
         
