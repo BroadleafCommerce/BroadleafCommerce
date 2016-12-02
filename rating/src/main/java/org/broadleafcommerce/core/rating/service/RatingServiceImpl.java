@@ -28,7 +28,6 @@ import org.broadleafcommerce.core.rating.domain.ReviewDetailImpl;
 import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
 import org.broadleafcommerce.core.rating.service.type.RatingSortType;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,12 +56,12 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional("blTransactionManager")
-    public void markReviewHelpful(Long reviewId, Customer customer, Boolean helpful) {
+    public void markReviewHelpful(Long reviewId, Long customerExternalId, Boolean helpful) {
         ReviewDetail reviewDetail = reviewDetailDao.readReviewDetailById(reviewId);
 
         if (reviewDetail != null) {
             ReviewFeedback reviewFeedback = reviewDetailDao.createFeedback();
-            reviewFeedback.setCustomer(customer);
+            reviewFeedback.setCustomerExternalId(customerExternalId);
             reviewFeedback.setIsHelpful(helpful);
             reviewFeedback.setReviewDetail(reviewDetail);
             reviewDetail.getReviewFeedback().add(reviewFeedback);
@@ -73,17 +72,17 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional("blTransactionManager")
-    public void rateItem(String itemId, RatingType type, Customer customer, Double rating) {
+    public void rateItem(String itemId, RatingType type, Long customerExternalId, Double rating) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
 
         if (ratingSummary == null) {
             ratingSummary = ratingSummaryDao.createSummary(itemId, type);
         }
 
-        RatingDetail ratingDetail = ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
+        RatingDetail ratingDetail = ratingSummaryDao.readRating(customerExternalId, ratingSummary.getId());
 
         if (ratingDetail == null) {
-            ratingDetail = ratingSummaryDao.createDetail(ratingSummary, rating, SystemTime.asDate(), customer);
+            ratingDetail = ratingSummaryDao.createDetail(ratingSummary, rating, SystemTime.asDate(), customerExternalId);
         }
 
         ratingDetail.setRating(rating);
@@ -150,27 +149,27 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional("blTransactionManager")
-    public void reviewItem(String itemId, RatingType type, Customer customer, Double rating, String reviewText) {
+    public void reviewItem(String itemId, RatingType type, Long customerExternalId, Double rating, String reviewText) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
 
         if (ratingSummary == null) {
             ratingSummary = ratingSummaryDao.createSummary(itemId, type);
         }
 
-        RatingDetail ratingDetail = ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
+        RatingDetail ratingDetail = ratingSummaryDao.readRating(customerExternalId, ratingSummary.getId());
 
         if (ratingDetail == null) {
-            ratingDetail = ratingSummaryDao.createDetail(ratingSummary, rating, SystemTime.asDate(), customer);
+            ratingDetail = ratingSummaryDao.createDetail(ratingSummary, rating, SystemTime.asDate(), customerExternalId);
         } else {
             ratingDetail.setRating(rating);         
         }
 
         ratingSummary.getRatings().add(ratingDetail);
 
-        ReviewDetail reviewDetail = ratingSummaryDao.readReview(customer.getId(), ratingSummary.getId());
+        ReviewDetail reviewDetail = ratingSummaryDao.readReview(customerExternalId, ratingSummary.getId());
 
         if (reviewDetail == null) {
-            reviewDetail = new ReviewDetailImpl(customer, SystemTime.asDate(), ratingDetail, reviewText, ratingSummary);
+            reviewDetail = new ReviewDetailImpl(customerExternalId, SystemTime.asDate(), ratingDetail, reviewText, ratingSummary);
         } else {
             reviewDetail.setReviewText(reviewText);         
         }
@@ -182,8 +181,8 @@ public class RatingServiceImpl implements RatingService {
     }
     
     @Override
-    public ReviewDetail readReviewByCustomerAndItem(Customer customer, String itemId) {
-        return reviewDetailDao.readReviewByCustomerAndItem(customer, itemId);
+    public ReviewDetail readReviewByCustomerAndItem(Long customerExternalId, String itemId) {
+        return reviewDetailDao.readReviewByCustomerAndItem(customerExternalId, itemId);
     }
 
 }

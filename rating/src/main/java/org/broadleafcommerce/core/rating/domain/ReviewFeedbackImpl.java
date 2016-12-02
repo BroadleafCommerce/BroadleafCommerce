@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -51,10 +49,9 @@ public class ReviewFeedbackImpl implements ReviewFeedback {
     @Column(name = "REVIEW_FEEDBACK_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
-    @JoinColumn(name = "CUSTOMER_ID")
+    @Column(name = "CUSTOMER_ID")
     @Index(name="REVIEWFEED_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
-    protected Customer customer;
+    protected Long customerExternalId;
 
     @Column(name = "IS_HELPFUL", nullable = false)
     protected Boolean isHelpful = false;
@@ -70,8 +67,8 @@ public class ReviewFeedbackImpl implements ReviewFeedback {
     }
 
     @Override
-    public Customer getCustomer() {
-        return customer;
+    public Long getCustomerExternalId() {
+        return customerExternalId;
     }
 
     @Override
@@ -95,8 +92,8 @@ public class ReviewFeedbackImpl implements ReviewFeedback {
     }
 
     @Override
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setCustomerExternalId(Long customerExternalId) {
+        this.customerExternalId = customerExternalId;
     }
 
     @Override

@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.domain.ReviewDetailImpl;
 import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -48,9 +47,9 @@ public class ReviewDetailDaoImpl implements ReviewDetailDao {
     }
     
     @Override
-    public ReviewDetail readReviewByCustomerAndItem(Customer customer, String itemId) {
+    public ReviewDetail readReviewByCustomerAndItem(Long customerExternalId, String itemId) {
         final Query query = em.createNamedQuery("BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_ITEM_ID");
-        query.setParameter("customerId", customer.getId());
+        query.setParameter("customerId", customerExternalId);
         query.setParameter("itemId", itemId);
         ReviewDetail reviewDetail = null;
         try {

@@ -24,7 +24,6 @@ import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.domain.RatingSummaryImpl;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -65,12 +64,12 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
     }
     
     @Override
-    public RatingDetail createDetail(RatingSummary ratingSummary, Double rating, Date submittedDate, Customer customer) {
+    public RatingDetail createDetail(RatingSummary ratingSummary, Double rating, Date submittedDate, Long customerExternalId) {
         RatingDetail detail = createDetail();
         detail.setRatingSummary(ratingSummary);
         detail.setRating(rating);
         detail.setRatingSubmittedDate(submittedDate);
-        detail.setCustomer(customer);
+        detail.setCustomerExternalId(customerExternalId);
         return detail;
     }
     

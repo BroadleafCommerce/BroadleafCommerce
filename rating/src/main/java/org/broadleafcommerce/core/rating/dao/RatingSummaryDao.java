@@ -21,7 +21,6 @@ import org.broadleafcommerce.core.rating.domain.RatingDetail;
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.Date;
 import java.util.List;
@@ -34,7 +33,7 @@ public interface RatingSummaryDao {
     
     public RatingDetail createDetail();
     
-    public RatingDetail createDetail(RatingSummary ratingSummary, Double rating, Date submittedDate, Customer customer);
+    public RatingDetail createDetail(RatingSummary ratingSummary, Double rating, Date submittedDate, Long customerExternalId);
     
     RatingSummary readRatingSummary(String itemId, RatingType type);
     List<RatingSummary> readRatingSummaries(List<String> itemIds, RatingType type);

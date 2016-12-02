@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.rating.dao;
 
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface ReviewDetailDao {
 
@@ -27,6 +26,6 @@ public interface ReviewDetailDao {
     ReviewDetail saveReviewDetail(ReviewDetail reviewDetail);
     ReviewDetail create();
     ReviewFeedback createFeedback();
-    ReviewDetail readReviewByCustomerAndItem(Customer customer, String itemId);
+    ReviewDetail readReviewByCustomerAndItem(Long customerExternalId, String itemId);
 
 }

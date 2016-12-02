@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.rating.domain;
 
 import org.broadleafcommerce.core.rating.service.type.ReviewStatusType;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.Date;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.List;
 public interface ReviewDetail {
 
     Long getId();
-    Customer getCustomer();
+    Long getCustomerExternalId();
     String getReviewText();
     void setReviewText(String reviewText);
     Date getReviewSubmittedDate();

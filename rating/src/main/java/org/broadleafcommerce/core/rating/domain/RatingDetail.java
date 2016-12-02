@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
-
 import java.util.Date;
 
 public interface RatingDetail {
@@ -31,9 +29,9 @@ public interface RatingDetail {
     
     public void setRating(Double newRating);
     
-    public Customer getCustomer();
+    public Long getCustomerExternalId();
     
-    public void setCustomer(Customer customer);
+    public void setCustomerExternalId(Long customerExternalId);
     
     public Date getRatingSubmittedDate();
     

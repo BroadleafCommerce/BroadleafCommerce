@@ -18,8 +18,6 @@
 package org.broadleafcommerce.core.rating.domain;
 
 import org.broadleafcommerce.core.rating.service.type.ReviewStatusType;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -59,10 +57,9 @@ public class ReviewDetailImpl implements ReviewDetail {
     @Column(name = "REVIEW_DETAIL_ID")
     private Long id;
 
-    @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
-    @JoinColumn(name = "CUSTOMER_ID")
+    @Column(name = "CUSTOMER_ID")
     @Index(name="REVIEWDETAIL_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
-    protected Customer customer;
+    protected Long customerExternalId;
 
     @Column(name = "REVIEW_SUBMITTED_DATE", nullable = false)
     protected Date reivewSubmittedDate;
@@ -95,9 +92,9 @@ public class ReviewDetailImpl implements ReviewDetail {
 
     public ReviewDetailImpl() {}
 
-    public ReviewDetailImpl(Customer customer, Date reivewSubmittedDate, RatingDetail ratingDetail, String reviewText, RatingSummary ratingSummary) {
+    public ReviewDetailImpl(Long customerExternalId, Date reivewSubmittedDate, RatingDetail ratingDetail, String reviewText, RatingSummary ratingSummary) {
         super();
-        this.customer = customer;
+        this.customerExternalId = customerExternalId;
         this.reivewSubmittedDate = reivewSubmittedDate;
         this.reviewText = reviewText;
         this.ratingSummary = ratingSummary;
@@ -134,8 +131,8 @@ public class ReviewDetailImpl implements ReviewDetail {
     }
 
     @Override
-    public Customer getCustomer() {
-        return customer;
+    public Long getCustomerExternalId() {
+        return customerExternalId;
     }
 
     @Override

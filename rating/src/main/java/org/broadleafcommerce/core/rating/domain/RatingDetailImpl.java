@@ -17,14 +17,10 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -59,10 +55,9 @@ public class RatingDetailImpl implements RatingDetail {
     @Column(name = "RATING_SUBMITTED_DATE", nullable = false)
     protected Date ratingSubmittedDate;
 
-    @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
-    @JoinColumn(name = "CUSTOMER_ID")
+    @Column(name = "CUSTOMER_ID")
     @Index(name="RATING_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
-    protected Customer customer;
+    protected Long customerExternalId;
 
     @ManyToOne(optional = false, targetEntity = RatingSummaryImpl.class)
     @JoinColumn(name = "RATING_SUMMARY_ID")
@@ -99,13 +94,13 @@ public class RatingDetailImpl implements RatingDetail {
     }
 
     @Override
-    public Customer getCustomer() {
-        return customer;
+    public Long getCustomerExternalId() {
+        return customerExternalId;
     }
     
     @Override
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setCustomerExternalId(Long customerExternalId) {
+        this.customerExternalId = customerExternalId;
     }
 
     @Override

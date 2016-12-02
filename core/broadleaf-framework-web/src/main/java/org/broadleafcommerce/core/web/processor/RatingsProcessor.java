@@ -70,7 +70,7 @@ public class RatingsProcessor extends AbstractBroadleafVariableModifierProcessor
         Customer customer = CustomerState.getCustomer();
         ReviewDetail reviewDetail = null;
         if (!customer.isAnonymous()) {
-            reviewDetail = ratingService.readReviewByCustomerAndItem(customer, itemId);
+            reviewDetail = ratingService.readReviewByCustomerAndItem(customer.getId(), itemId);
         }
         if (reviewDetail != null) {
             newModelVars.put("currentCustomerReview", reviewDetail);
