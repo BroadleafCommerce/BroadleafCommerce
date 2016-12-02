@@ -38,7 +38,6 @@ class BuildOrderItemFromDTOSpec extends BaseBuildOrderItemFromDTOSpec {
      *  b) product == null -> category,product,sku,quantity,itemattributes,order,sale/retail price
      *  c) product not ProductBundle -> category,product,sku,quantity,itemattributes,order,sale/retail price
      *      * both are DiscreteOrderItem
-     *  d) not a b or c -> BundleOrderItem
      * 2) category == null and product != null -> category is Default
      * 3) parentOrderItemId != null-> item.getParentOrderItem = orderItemService.readOrderItemById()
      * 
@@ -69,7 +68,6 @@ class BuildOrderItemFromDTOSpec extends BaseBuildOrderItemFromDTOSpec {
             it
         }
         Sku testSku = new SkuImpl()
-        Product testProduct = new ProductBundleImpl()
         CategoryImpl testCat = new CategoryImpl()
         OrderItem testItem = new OrderItemImpl()
 
@@ -78,7 +76,6 @@ class BuildOrderItemFromDTOSpec extends BaseBuildOrderItemFromDTOSpec {
 
         then: "There is an order item created"
         1 * mockCatalogService.findSkuById(_) >> testSku
-        1 * mockCatalogService.findProductById(_) >> testProduct
         1 * mockCatalogService.findCategoryById(_) >> testCat
         1 * orderItemService.createOrderItem(_) >> testItem
         orderItem != null
@@ -118,7 +115,6 @@ class BuildOrderItemFromDTOSpec extends BaseBuildOrderItemFromDTOSpec {
             it
         }
         Sku testSku = new SkuImpl()
-        Product testProduct = new ProductBundleImpl()
         OrderItem testItem = new OrderItemImpl()
 
         when: "The activity is executed"
@@ -126,7 +122,6 @@ class BuildOrderItemFromDTOSpec extends BaseBuildOrderItemFromDTOSpec {
 
         then: "There is an order item created"
         1 * mockCatalogService.findSkuById(_) >> testSku
-        1 * mockCatalogService.findProductById(_) >> testProduct
         1 * orderItemService.createOrderItem(_) >> testItem
         orderItem == testItem
     }
@@ -152,32 +147,6 @@ class BuildOrderItemFromDTOSpec extends BaseBuildOrderItemFromDTOSpec {
         orderItem == testItem
     }
 
-    def "If product is not null and a ProductBundle is given, a bundle order item is created"() {
-        setup:
-        context.seedData.itemRequest = Spy(OrderItemRequestDTO).with {
-            skuId = 1
-            productId = 1
-            categoryId = 1
-            quantity = 1
-            overrideSalePrice = new Money("1.00")
-            overrideRetailPrice = new Money("1.50")
-            it
-        }
-        CategoryImpl testCategory = Mock(CategoryImpl)
-        ProductBundle testProduct = Mock(ProductBundle)
-
-        BundleOrderItem testItem = Mock(BundleOrderItem)
-
-        when: "The activity is executed"
-        OrderItem orderItem = orderItemService.buildOrderItemFromDTO(context.seedData.order, context.seedData.itemRequest)
-
-        then: "There is an order item created"
-        1 * mockCatalogService.findCategoryById(_) >> testCategory
-        1 * mockCatalogService.findProductById(_) >> testProduct
-        1 * orderItemService.createBundleOrderItem(*_) >> testItem
-        orderItem == testItem
-    }
-
     def "If the item request finds its parent order item id is not null, the new order item has its parent set to that order item"(){
         setup:
         OrderItemRequestDTO testItemRequest = Spy(OrderItemRequestDTO).with {
@@ -192,10 +161,7 @@ class BuildOrderItemFromDTOSpec extends BaseBuildOrderItemFromDTOSpec {
         context.seedData.itemRequest = testItemRequest
 
         CategoryImpl testCategory = Mock(CategoryImpl)
-        ProductBundle testProduct = Mock(ProductBundle)
 
-
-        BundleOrderItem testItem = new BundleOrderItemImpl()
         OrderItem testParent = Mock(OrderItem)
 
         testItemRequest.getParentOrderItemId() >> 1
@@ -205,10 +171,6 @@ class BuildOrderItemFromDTOSpec extends BaseBuildOrderItemFromDTOSpec {
 
         then: "There is an order item created"
         1 * mockCatalogService.findCategoryById(_) >> testCategory
-        1 * mockCatalogService.findProductById(_) >> testProduct
-        1 * orderItemService.createBundleOrderItem(*_) >> testItem
-        1 * orderItemService.readOrderItemById(_) >> testParent
-        orderItem == testItem
         orderItem.getParentOrderItem() == testParent
     }
 }
