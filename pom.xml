@@ -320,6 +320,7 @@
         </plugins>
     </build>
     <modules>
+        <module>catalog</module>
         <module>contact</module>
         <module>content</module>
         <module>customer</module>
