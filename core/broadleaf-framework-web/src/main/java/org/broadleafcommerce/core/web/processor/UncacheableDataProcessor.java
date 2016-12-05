@@ -31,7 +31,7 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.SkuAccessor;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.processor.extension.UncacheableDataProcessorExtensionManager;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
@@ -39,7 +39,6 @@ import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -71,7 +70,7 @@ import javax.annotation.Resource;
  * @author bpolster
  */
 @Component("blUncacheableDataProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementProcessor {
     
     @Value("${solr.index.use.sku}")

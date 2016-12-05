@@ -19,10 +19,9 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.BLCMoneyFormatUtils;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagTextModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -36,7 +35,7 @@ import java.util.Map;
  * @author apazzolini
  */
 @Component("blPriceTextDisplayProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class PriceTextDisplayProcessor extends AbstractBroadleafTagTextModifierProcessor {
 
     @Override

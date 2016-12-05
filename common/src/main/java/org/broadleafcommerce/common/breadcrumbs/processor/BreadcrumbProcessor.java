@@ -20,10 +20,9 @@ package org.broadleafcommerce.common.breadcrumbs.processor;
 
 import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
 import org.broadleafcommerce.common.web.expression.BreadcrumbVariableExpression;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -40,7 +39,7 @@ import javax.annotation.Resource;
  * @author bpolster
  */
 @Component("blBreadcrumbProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class BreadcrumbProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Resource

@@ -20,12 +20,10 @@ package org.broadleafcommerce.common.web.processor;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -34,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -121,7 +120,7 @@ import javax.annotation.Resource;
  * @see {@link ResourceBundlingService}
  */
 @Component("blResourceBundleProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProcessor {
     
     @Resource(name = "blResourceBundlingService")
@@ -159,7 +158,7 @@ public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProc
         BroadleafTemplateModel model = context.createModel();
         if (getBundleEnabled()) {
             String bundleResourceName = bundlingService.resolveBundleResourceName(name, mappingPrefix, files);
-            String bundleUrl = getBundleUrl(bundleResourceName);
+            String bundleUrl = getBundleUrl(bundleResourceName, context);
             
             addElementToModel(bundleUrl, async, defer, context, model);
         } else {
@@ -183,15 +182,18 @@ public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProc
      * @param bundleName
      * @return
      */
-    protected String getBundleUrl(String bundleName) {
+    protected String getBundleUrl(String bundleName, BroadleafTemplateContext context) {
         String bundleUrl = bundleName;
 
         if (!StringUtils.startsWith(bundleUrl, "/")) {
             bundleUrl = "/" + bundleUrl;
         }
         
-        String contextPath = BroadleafRequestContext.getBroadleafRequestContext().getRequest().getContextPath();
-
+        HttpServletRequest request = context.getRequest();
+        String contextPath = "";
+        if (request != null) {
+            contextPath = request.getContextPath();
+        }
         if (StringUtils.isNotEmpty(contextPath)) {
             bundleUrl = contextPath + bundleUrl;
         }

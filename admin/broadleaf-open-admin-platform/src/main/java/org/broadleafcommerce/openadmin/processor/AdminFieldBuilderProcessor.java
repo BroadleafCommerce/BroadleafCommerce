@@ -21,11 +21,10 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
 import org.broadleafcommerce.openadmin.web.service.AdminFieldBuilderProcessorExtensionManager;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableMap;
@@ -38,7 +37,7 @@ import javax.annotation.Resource;
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blAdminFieldBuilderProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class AdminFieldBuilderProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Resource(name = "blRuleBuilderFieldServiceFactory")

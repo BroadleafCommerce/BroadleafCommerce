@@ -2,6 +2,6 @@
     <i class="fa fa-question-circle"></i>
     <span>
         <img class="callout" th:src="@{/img/admin/tooltip-callout.gif}" />
-        <span th:utext="#{${field.tooltip}}" th:remove="tag"></span>
+        <th:block th:utext="#{${field.tooltip}}"></th:block>
     </span>
 </a>

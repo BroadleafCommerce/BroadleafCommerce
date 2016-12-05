@@ -1,9 +1,9 @@
 <div class="sticky-container">
-    <div th:remove="tag" th:if="${entityTitlePath == null}">
+    <th:block th:if="${entityTitlePath == null}">
         <div th:replace="layout/partials/entityTitle" ></div>
-    </div>
-    <div th:remove="tag" th:unless="${entityTitlePath == null}">
+    </th:block>
+    <th:block th:unless="${entityTitlePath == null}">
         <div th:replace="${entityTitlePath}"></div>
-    </div>
+    </th:block>
 </div>
 <div class="sticky-container-padding" style="display: none;" ></div>

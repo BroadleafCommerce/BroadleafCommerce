@@ -21,7 +21,7 @@
         No description provided, <a href="" class="description-link">add one</a>
     </div>
     <div th:unless="*{#strings.isEmpty(fields['__${field.name}__'].value)}" class="description-text">
-        <span th:text="*{fields['__${field.name}__'].value}" th:remove="tag"></span>
+        <th:block th:text="*{fields['__${field.name}__'].value}"></th:block>
         <a href="" class="description-link">&nbsp;&nbsp;(edit)</a>
     </div>
 </div>

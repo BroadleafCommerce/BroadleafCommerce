@@ -20,12 +20,11 @@ package org.broadleafcommerce.openadmin.processor;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
 import org.broadleafcommerce.presentation.model.BroadleafAttributeModifier;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -37,7 +36,7 @@ import java.util.Map;
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blAdminComponentIdProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class AdminComponentIdProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     @Override
@@ -78,7 +77,7 @@ public class AdminComponentIdProcessor extends AbstractBroadleafAttributeModifie
             id = cleanCssIdString(fieldName);
         }
         
-        Map<String, String> attrs = new HashMap<String, String>();
+        Map<String, String> attrs = new HashMap<>();
         attrs.put("id", id);
         return new BroadleafAttributeModifier(attrs);
     }

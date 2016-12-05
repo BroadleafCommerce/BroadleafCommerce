@@ -21,11 +21,10 @@ package org.broadleafcommerce.cms.web.processor;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafAttributeModifier;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -42,7 +41,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author apazzolini
  */
 @Component("blUrlRewriteProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class UrlRewriteProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     @Resource(name = "blStaticAssetPathService")

@@ -25,11 +25,10 @@ import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -61,7 +60,7 @@ import javax.annotation.Resource;
  * @author bpolster
  */
 @Component("blRelatedProductProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class RelatedProductProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Value("${solr.index.use.sku}")

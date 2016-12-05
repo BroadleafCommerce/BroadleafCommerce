@@ -26,7 +26,7 @@
                      data-action=${action.urlPostfix}"
             th:type="${action.buttonType}"
             th:classappend="${action.buttonClass}">
-            <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" ></span>
+            <i th:class="${action.iconClass}"></i>&nbsp;<th:block th:text="#{${action.displayText}}"></th:block>
         </button>   
         <img th:src="@{/img/admin/ajax-loader.gif}" class="ajax-loader" />                 
     </div>

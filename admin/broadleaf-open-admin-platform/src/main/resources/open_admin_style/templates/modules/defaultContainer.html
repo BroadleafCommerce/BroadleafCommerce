@@ -1,9 +1,8 @@
 <div class="main-content" role="main">
     <div th:replace="layout/partials/stickyHeader" ></div>
 
-    <!--<div th:replace="layout/partials/headerFlash" />-->
     <div th:replace="layout/partials/headerDetailedMsg" ></div>
 
     <div id="sectionKey" th:text="${sectionKey}" style="display: none;" ></div>
-    <div th:include="${'views/' + viewType}" th:with="inModal='false'" th:remove="tag"></div>
+    <th:block th:include="${'views/' + viewType}" th:with="inModal='false'"></th:block>
 </div>

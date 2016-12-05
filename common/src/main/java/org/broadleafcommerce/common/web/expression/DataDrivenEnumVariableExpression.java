@@ -24,8 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
 import org.broadleafcommerce.common.enumeration.service.DataDrivenEnumerationService;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
-import org.springframework.context.annotation.Conditional;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ import javax.annotation.Resource;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blDataDrivenEnumVariableExpression")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class DataDrivenEnumVariableExpression implements BroadleafVariableExpression {
 
     @Resource(name = "blDataDrivenEnumerationService")

@@ -22,11 +22,10 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogURLService;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafAttributeModifier;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -48,7 +47,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author bpolster
  */
 @Component("blCatalogRelativeHrefProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class CatalogRelativeHrefProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     private static final String RHREF = "rhref";
