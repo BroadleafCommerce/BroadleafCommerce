@@ -30,8 +30,8 @@ public class PomEvaluator {
 
     private static String SEPARATOR = "============================================================";
     
-    private static Map<String, Category> knownLibraries = new HashMap<String,Category>();
-    private static Map<LicenseType, List<Dependency>> licenseDependencyMap = new HashMap<LicenseType, List<Dependency>>();
+    private static Map<String, Category> knownLibraries = new HashMap<>();
+    private static Map<LicenseType, List<Dependency>> licenseDependencyMap = new HashMap<>();
     
     private static Category SPRING = new Category("Spring Framework", LicenseType.APACHE2, FrameworkType.GENERAL);
     private static Category HIBERNATE = new Category("Hibernate Framework", LicenseType.LGPL, FrameworkType.PERSISTENCE);
@@ -84,7 +84,6 @@ public class PomEvaluator {
         knownLibraries.put("javax.xml.bind", JAVAX);
         knownLibraries.put("javax.mail", JAVAX);
         knownLibraries.put("javax.servlet", JAVAX);
-        knownLibraries.put("javax.servlet.jsp", JAVAX);
         knownLibraries.put("javax.validation", JAVAX);
         knownLibraries.put("jstl", JAVAX);
 
@@ -240,7 +239,7 @@ public class PomEvaluator {
 //    }
 
     public static void printOutDependencies(Category category, List<Dependency> dependencies) {
-        List<String> dependencyNames = new ArrayList<String>();
+        List<String> dependencyNames = new ArrayList<>();
         for (Dependency d : dependencies) {
             dependencyNames.add(d.toString());
         }
@@ -259,7 +258,7 @@ public class PomEvaluator {
 
     public static List<Dependency> populateDependencies(BufferedReader br) throws IOException {
         String currentLine;
-        List<Dependency> dependencyList = new ArrayList<Dependency>();
+        List<Dependency> dependencyList = new ArrayList<>();
 
         while (forwardToTag("<dependency", br)) {
             Dependency current = new Dependency();
@@ -306,8 +305,9 @@ public class PomEvaluator {
         String artifactId;
         String version;
         String scope;
-        List<Category> categoriesThatDependOnThis = new ArrayList<Category>();
+        List<Category> categoriesThatDependOnThis = new ArrayList<>();
 
+        @Override
         public String toString() {
             return groupId + "." + artifactId + "." + version + "  [" + scope + "]";
         }
@@ -335,6 +335,7 @@ public class PomEvaluator {
             this.url = url;
         }
 
+        @Override
         public String toString() {
             return name.toString() + ":" + url;
         }
@@ -359,7 +360,7 @@ public class PomEvaluator {
         String categoryName;
         LicenseType licenseType;
         FrameworkType frameworkType;
-        List<Dependency> dependencyList = new ArrayList<Dependency>();
+        List<Dependency> dependencyList = new ArrayList<>();
         Category[] usedByCategories;
 
 
@@ -374,6 +375,7 @@ public class PomEvaluator {
             this.usedByCategories = usedByCategories;
         }
 
+        @Override
         public String toString() {
             return "Category Name : " + categoryName +
                     "\rLicense Type : " + licenseType.name +
