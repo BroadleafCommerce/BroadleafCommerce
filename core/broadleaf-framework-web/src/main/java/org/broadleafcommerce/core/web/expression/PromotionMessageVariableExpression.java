@@ -28,8 +28,7 @@ import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageP
 import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
 import org.broadleafcommerce.core.promotionMessage.service.PromotionMessageGenerator;
 import org.broadleafcommerce.core.promotionMessage.util.BLCPromotionMessageUtils;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
-import org.springframework.context.annotation.Conditional;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ import javax.annotation.Resource;
  * @author Chris Kittrell (ckittrell)
  */
 @Service("blPromotionMessageVariableExpression")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class PromotionMessageVariableExpression extends BLCVariableExpression {
 
     private static final Log LOG = LogFactory.getLog(PromotionMessageVariableExpression.class);

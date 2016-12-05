@@ -27,8 +27,7 @@ import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogURLService;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
-import org.springframework.context.annotation.Conditional;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 
 import java.text.NumberFormat;
@@ -47,7 +46,7 @@ import javax.annotation.Resource;
  * @author bpolster
  */
 @Component("blBLCVariableExpression")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class BLCVariableExpression implements BroadleafVariableExpression {
     
     @Override

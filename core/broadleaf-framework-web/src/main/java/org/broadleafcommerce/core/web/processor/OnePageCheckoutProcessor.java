@@ -43,7 +43,7 @@ import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionDTO;
 import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionStateType;
 import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionViewType;
 import org.broadleafcommerce.core.web.order.CartState;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
@@ -52,7 +52,6 @@ import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.joda.time.DateTime;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.text.DateFormatSymbols;
@@ -86,7 +85,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blOnePageCheckoutProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Resource(name = "blStateService")

@@ -19,12 +19,11 @@ package org.broadleafcommerce.openadmin.processor;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
 import org.broadleafcommerce.presentation.model.BroadleafAttributeModifier;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -39,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author elbertbautista
  */
 @Component("blAdminSectionHrefProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class AdminSectionHrefProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     @Override
@@ -67,7 +66,7 @@ public class AdminSectionHrefProcessor extends AbstractBroadleafAttributeModifie
             href = request.getContextPath() + section.getUrl();
         }
         
-        Map<String, String> attrs = new HashMap<String, String>();
+        Map<String, String> attrs = new HashMap<>();
         attrs.put("href", href);
         return new BroadleafAttributeModifier(attrs);
     }

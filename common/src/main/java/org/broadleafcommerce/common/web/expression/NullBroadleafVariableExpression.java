@@ -17,8 +17,7 @@
  */
 package org.broadleafcommerce.common.web.expression;
 
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
-import org.springframework.context.annotation.Conditional;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,7 +26,7 @@ import org.springframework.stereotype.Component;
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blNullBroadleafVariableExpression")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class NullBroadleafVariableExpression implements BroadleafVariableExpression {
 
     @Override

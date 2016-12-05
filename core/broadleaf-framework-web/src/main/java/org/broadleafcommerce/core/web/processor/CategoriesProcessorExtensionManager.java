@@ -19,15 +19,14 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
-import org.springframework.context.annotation.Conditional;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Service;
 
 /**
  * @author Jeff Fischer
  */
 @Service("blCategoriesProcessorExtensionManager")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class CategoriesProcessorExtensionManager extends ExtensionManager<CategoriesProcessorExtensionHandler> {
 
     public CategoriesProcessorExtensionManager() {

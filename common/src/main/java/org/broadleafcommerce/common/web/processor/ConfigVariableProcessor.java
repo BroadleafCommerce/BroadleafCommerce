@@ -19,10 +19,9 @@ package org.broadleafcommerce.common.web.processor;
 
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.expression.PropertiesVariableExpression;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableMap;
@@ -46,7 +45,7 @@ import java.util.Map;
  */
 @Deprecated
 @Component("blConfigVariableProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class ConfigVariableProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Override

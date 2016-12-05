@@ -21,11 +21,10 @@ package org.broadleafcommerce.core.web.processor;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafAttributeModifier;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -43,7 +42,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author apazzolini
  */
 @Component("blPaginationPageLinkProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class PaginationPageLinkProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     @Override
@@ -62,7 +61,7 @@ public class PaginationPageLinkProcessor extends AbstractBroadleafAttributeModif
         HttpServletRequest request = blcContext.getRequest();
 
         String baseUrl = request.getRequestURL().toString();
-        Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
+        Map<String, String[]> params = new HashMap<>(request.getParameterMap());
 
         Integer page = (Integer) context.parseExpression(attributeValue);
         if (page != null && page > 1) {

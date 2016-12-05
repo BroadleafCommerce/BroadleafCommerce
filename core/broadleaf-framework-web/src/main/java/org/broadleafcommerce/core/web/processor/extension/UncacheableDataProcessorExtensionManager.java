@@ -18,8 +18,7 @@
 package org.broadleafcommerce.core.web.processor.extension;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
-import org.springframework.context.annotation.Conditional;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,7 +27,7 @@ import org.springframework.stereotype.Service;
  * @author Jeff Fischer
  */
 @Service("blUncacheableDataProcessorExtensionManager")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class UncacheableDataProcessorExtensionManager extends ExtensionManager<UncacheableDataProcessorExtensionHandler> {
 
     public UncacheableDataProcessorExtensionManager() {

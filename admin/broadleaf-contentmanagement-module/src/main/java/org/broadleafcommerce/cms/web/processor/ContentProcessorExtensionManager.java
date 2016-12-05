@@ -19,15 +19,14 @@
 package org.broadleafcommerce.cms.web.processor;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
-import org.springframework.context.annotation.Conditional;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blContentProcessorExtensionManager")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class ContentProcessorExtensionManager extends ExtensionManager<ContentProcessorExtensionHandler> {
 
     public ContentProcessorExtensionManager() {

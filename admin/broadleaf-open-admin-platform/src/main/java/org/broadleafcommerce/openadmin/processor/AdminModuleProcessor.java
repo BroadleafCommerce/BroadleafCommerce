@@ -21,11 +21,10 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,7 +46,7 @@ import javax.annotation.Resource;
  * @author elbertbautista
  */
 @Component("blAdminModuleProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class AdminModuleProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";

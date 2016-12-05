@@ -21,10 +21,9 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableMap;
@@ -36,7 +35,7 @@ import java.util.Map;
  * @author Priyesh Patel
  */
 @Component("blProductOptionDisplayProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Override

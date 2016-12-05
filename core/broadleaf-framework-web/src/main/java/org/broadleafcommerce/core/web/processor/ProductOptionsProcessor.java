@@ -29,10 +29,9 @@ import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,7 +56,7 @@ import javax.annotation.Resource;
  *
  */
 @Component("blProductOptionsProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);

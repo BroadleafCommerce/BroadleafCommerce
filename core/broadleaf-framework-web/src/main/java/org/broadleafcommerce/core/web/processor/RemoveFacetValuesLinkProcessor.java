@@ -23,11 +23,10 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafAttributeModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafAttributeModifier;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -44,7 +43,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author apazzolini
  */
 @Component("blRemoveFacetValuesLinkProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class RemoveFacetValuesLinkProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
     @Resource(name = "blSearchFacetDTOService")
@@ -66,7 +65,7 @@ public class RemoveFacetValuesLinkProcessor extends AbstractBroadleafAttributeMo
         HttpServletRequest request = blcContext.getRequest();
 
         String baseUrl = request.getRequestURL().toString();
-        Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
+        Map<String, String[]> params = new HashMap<>(request.getParameterMap());
 
         SearchFacetDTO facet = (SearchFacetDTO) context.parseExpression(attributeValue);
 

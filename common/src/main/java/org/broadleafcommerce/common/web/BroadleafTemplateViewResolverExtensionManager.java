@@ -18,8 +18,7 @@
 package org.broadleafcommerce.common.web;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
-import org.springframework.context.annotation.Conditional;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -30,7 +29,7 @@ import java.util.List;
  * @author Andre Azzolini (apazzolini)
  */
 @Service("blBroadleafTemplateViewResolverExtensionManager")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class BroadleafTemplateViewResolverExtensionManager extends ExtensionManager<BroadleafTemplateViewResolverExtensionHandler> {
 
     private List<BroadleafTemplateViewResolverExtensionHandler> EMPTY_LIST = Collections.emptyList();

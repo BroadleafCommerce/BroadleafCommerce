@@ -19,8 +19,7 @@
 package org.broadleafcommerce.common.web.payment.expression;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
-import org.springframework.context.annotation.Conditional;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -53,7 +52,7 @@ import javax.annotation.Resource;
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blpaymentGatewayFieldVariableExpression")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class PaymentGatewayFieldVariableExpression implements BroadleafVariableExpression {
 
     @Resource(name = "blPaymentGatewayFieldExtensionManager")
@@ -65,7 +64,7 @@ public class PaymentGatewayFieldVariableExpression implements BroadleafVariableE
     }
 
     public String mapName(String fieldName) {
-        Map<String, String> fieldNameMap = new HashMap<String, String>();
+        Map<String, String> fieldNameMap = new HashMap<>();
         fieldNameMap.put(fieldName, fieldName);
         extensionManager.getProxy().mapFieldName(fieldName, fieldNameMap);
         return fieldNameMap.get(fieldName);

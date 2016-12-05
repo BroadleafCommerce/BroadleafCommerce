@@ -31,14 +31,13 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.SkuAccessor;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateNonVoidElement;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -75,7 +74,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blGoogleUniversalAnalyticsProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagReplacementProcessor {
 
     private static final Log LOG = LogFactory.getLog(GoogleUniversalAnalyticsProcessor.class);
@@ -190,7 +189,7 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagRepla
      * Grabs a map of trackers keyed by the tracker name with the analytics ID as the value
      */
     protected Map<String, String> getTrackers() {
-        Map<String, String> trackers = new HashMap<String, String>();
+        Map<String, String> trackers = new HashMap<>();
         if (shouldShowMasterTracker()) {
             trackers.put("master", getMasterWebPropertyId());
         }

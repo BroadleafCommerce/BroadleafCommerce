@@ -20,8 +20,7 @@ package org.broadleafcommerce.openadmin.web.expression;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
-import org.springframework.context.annotation.Conditional;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,7 +29,7 @@ import org.springframework.stereotype.Component;
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blEntityFormVariableExpression")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class EntityFormVariableExpression implements BroadleafVariableExpression {
     
     @Override

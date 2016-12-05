@@ -21,13 +21,12 @@ package org.broadleafcommerce.common.web.payment.processor;
 import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafModelModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModelModifierDTO;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -69,7 +68,7 @@ import javax.annotation.Resource;
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blTransparentRedirectCreditCardFormProcessor")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadleafModelModifierProcessor {
 
     @Resource(name = "blTRCreditCardExtensionManager")
@@ -97,8 +96,8 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadlea
     public BroadleafTemplateModelModifierDTO getInjectedModelAndTagAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafTemplateContext context) {
         PaymentRequestDTO requestDTO = (PaymentRequestDTO) context.parseExpression(rootTagAttributes.get("paymentRequestDTO"));
 
-        Map<String, Map<String, String>> formParameters = new HashMap<String, Map<String, String>>();
-        Map<String, String> configurationSettings = new HashMap<String, String>();
+        Map<String, Map<String, String>> formParameters = new HashMap<>();
+        Map<String, String> configurationSettings = new HashMap<>();
 
         //Create the configuration settings map to pass into the payment module
         Map<String, String> keysToKeep = new HashMap<>();
