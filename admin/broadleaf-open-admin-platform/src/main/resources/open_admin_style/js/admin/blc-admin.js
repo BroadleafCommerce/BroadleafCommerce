@@ -1370,12 +1370,13 @@ var getCurrentHashVal = function() {
 };
 
 $(document).ready(function() {
-    $(window).resize(function() {
-        // primary entity buttons should be disabled until page is loaded
-        $(window).load(function () {
-            $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');
-        });
 
+    // primary entity buttons should be disabled until page is loaded
+    $(window).load(function () {
+        $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');
+    });
+
+    $(window).resize(function() {
         $.doTimeout('resize', 150, function() {
             if (BLCAdmin.currentModal() != null) {
                 BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
