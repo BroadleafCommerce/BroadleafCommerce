@@ -183,7 +183,8 @@ div.alert-box.list-grid-alert.save-alert a.close {
     font-size: 11px;
     text-transform: none;
 }
-.listgrid-toolbar .listgrid-toolbar-actions, .listgrid-toolbar .listgrid-row-actions {
+.listgrid-toolbar .listgrid-toolbar-actions,
+.listgrid-toolbar .listgrid-row-actions {
     display: inline-block;
 }
 .listgrid-toolbar .listgrid-row-actions {
@@ -312,11 +313,13 @@ tr {
     border-top: none;
     height: 40px;
 }
-.listgrid-body-wrapper tbody tr td a:not(.workflow-icon),  tbody tr td a:not(.workflow-icon) {
+.listgrid-body-wrapper tbody tr td a:not(.workflow-icon),
+tbody tr td a:not(.workflow-icon) {
     color: #809831;
     text-decoration: underline;
 }
-.listgrid-body-wrapper tbody tr.dirty td a:not(.workflow-icon), tbody tr.dirty td a:not(.workflow-icon) {
+.listgrid-body-wrapper tbody tr.dirty td a:not(.workflow-icon),
+tbody tr.dirty td a:not(.workflow-icon) {
     color: #efbc62;
     text-decoration: underline;
 }
@@ -332,11 +335,18 @@ td .listgrid-row-actions {
     right: 10px;
     top: 6px;
 }
-.listgrid-row-actions span.workflow-action a {
+.listgrid-row-actions span.listgrid-row-action a {
     color: white !important;
     vertical-align: middle;
     font-size: 16px;
     text-decoration: none !important;
+}
+.listgrid-row-actions .button:not(:first-child),
+.listgrid-toolbar-actions .button:not(:first-child) {
+    margin-left: 10px;
+}
+.listgrid-row-actions .listgrid-row-action:not(:first-child) {
+    margin-left: 5px;
 }
 /****************************************
  ADMIN LISTGRID TABLE HOLDER STYLES

@@ -513,21 +513,21 @@ $(document).ready(function () {
                 $tr.find('a.sub-list-grid-reorder').css({visibility: 'visible'});
             }
 
-            var $workflowAction = $tr.find('.workflow-action');
-            if ($workflowAction.length && $workflowAction.css('visibility') === 'hidden') {
-                $workflowAction.css({visibility: 'visible'});
+            var $listgridRowAction = $tr.find('.listgrid-row-action');
+            if ($listgridRowAction.length && $listgridRowAction.css('visibility') === 'hidden') {
+                $listgridRowAction.css({visibility: 'visible'});
 
-                modifyTextColumnWidth($workflowAction, true);
+                modifyTextColumnWidth($listgridRowAction, true);
             }
         },
         mouseleave: function () {
             $(this).find('a.sub-list-grid-reorder').css({visibility: 'hidden'});
-            $(this).find('.workflow-action').css({visibility: 'hidden'});
+            $(this).find('.listgrid-row-action').css({visibility: 'hidden'});
 
             var $tr = $(this);
-            var $workflowAction = $tr.find('.workflow-action');
-            if ($workflowAction.length) {
-                modifyTextColumnWidth($workflowAction, false);
+            var $listgridRowAction = $tr.find('.listgrid-row-action');
+            if ($listgridRowAction.length) {
+                modifyTextColumnWidth($listgridRowAction, false);
             }
         }
     }, '.list-grid-table tbody tr');
