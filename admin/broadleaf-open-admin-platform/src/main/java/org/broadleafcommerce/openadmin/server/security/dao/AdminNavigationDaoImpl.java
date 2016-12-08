@@ -51,12 +51,17 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     
     @Override
     public AdminSection save(AdminSection adminSection) {
-        return em.merge(adminSection);
+        adminSection = em.merge(adminSection);
+        AdminModule module = adminSection.getModule();
+        em.refresh(module);
+        return adminSection;
     }
 
     @Override
     public void remove(AdminSection adminSection) {
+        AdminModule module = adminSection.getModule();
         em.remove(adminSection);
+        em.refresh(module);
     }
 
     @Override
