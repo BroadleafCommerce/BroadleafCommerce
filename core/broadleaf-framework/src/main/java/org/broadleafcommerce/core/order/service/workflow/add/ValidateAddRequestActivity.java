@@ -76,11 +76,13 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         ExtensionResultHolder<Exception> resultHolder = new ExtensionResultHolder<>();
         resultHolder.setResult(null);
-        ExtensionResultStatusType result = extensionManager.getProxy().validate(context.getSeedData(), resultHolder);
+        if (extensionManager != null && extensionManager.getProxy() != null) {
+            ExtensionResultStatusType result = extensionManager.getProxy().validate(context.getSeedData(), resultHolder);
 
-        if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-            if (resultHolder.getResult() != null) {
-                throw resultHolder.getResult();
+            if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+                if (resultHolder.getResult() != null) {
+                    throw resultHolder.getResult();
+                }
             }
         }
 
