@@ -30,71 +30,53 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
         return "seo";
     }
 
-    /// Title methods
-
-    public String getProductTitle(Product product) {
-        return getProductTitle(product, "");
-    }
-
-    public String getProductTitle(Product product, String defaultTitle) {
-        String title = product.getMetaTitle();
-        if (StringUtils.isEmpty(title)) {
-            if (BLCSystemProperty.resolveBooleanSystemProperty("seo.default.to.category", false)) {
-                title = getCategoryTitle(product.getCategory(), defaultTitle);
-            } else {
-                title = StringUtils.isEmpty(defaultTitle) ? getDefaultSystemTitle() : defaultTitle;
-            }
-        }
-        return title;
+    public String getCategoryTitlePattern() {
+        return BLCSystemProperty.resolveSystemProperty("seo.category.title.pattern");
     }
 
     public String getCategoryTitle(Category category) {
-        return getCategoryTitle(category, "");
-    }
-
-    public String getCategoryTitle(Category category, String defaultTitle) {
         String title = category.getMetaTitle();
         if (StringUtils.isEmpty(title)) {
-            title = StringUtils.isEmpty(defaultTitle) ? getDefaultSystemTitle() : defaultTitle;
+            title = category.getName();
         }
         return title;
     }
 
-    public String getDefaultSystemTitle() {
-        return BLCSystemProperty.resolveSystemProperty("default.site.title", "");
-    }
-
-    /// Description methods
-
-    public String getProductDescription(Product product) {
-        return getProductDescription(product, "");
-    }
-
-    public String getProductDescription(Product product, String defaultDescription) {
-        String description = product.getMetaDescription();
-        if (StringUtils.isEmpty(description)) {
-            if (BLCSystemProperty.resolveBooleanSystemProperty("seo.default.to.category", false)) {
-                description = getCategoryDescription(product.getCategory(), defaultDescription);
-            } else {
-                description = StringUtils.isEmpty(defaultDescription) ? getDefaultSystemDescription() : defaultDescription;
-            }
-        }
-        return description;
+    public String getCategoryDescriptionPattern() {
+        return BLCSystemProperty.resolveSystemProperty("seo.category.description.pattern");
     }
 
     public String getCategoryDescription(Category category) {
-        return getCategoryDescription(category, "");
-    }
-
-    public String getCategoryDescription(Category category, String defaultDescription) {
         String description = category.getMetaDescription();
-        if (StringUtils.isEmpty(description)) {
-            description = StringUtils.isEmpty(defaultDescription) ? getDefaultSystemDescription() : defaultDescription;
-        }
-        return description;
+        return StringUtils.isEmpty(description) ? "" : ". " + description;
     }
 
-    public String getDefaultSystemDescription() {
-        return BLCSystemProperty.resolveSystemProperty("default.site.description", "");
+    public String getProductTitlePattern(Category category) {
+        String pattern = category.getProductTitlePatternOverride();
+        if (StringUtils.isEmpty(pattern)) {
+            pattern = BLCSystemProperty.resolveSystemProperty("seo.product.title.pattern");
+        }
+        return pattern;
+    }
+
+    public String getProductTitle(Product product) {
+        String title = product.getMetaTitle();
+        if (StringUtils.isEmpty(title)) {
+            title = product.getName();
+        }
+        return title;
+    }
+
+    public String getProductDescriptionPattern(Category category) {
+        String pattern = category.getProductDescriptionPatternOverride();
+        if (StringUtils.isEmpty(pattern)) {
+            pattern = BLCSystemProperty.resolveSystemProperty("seo.product.description.pattern");
+        }
+        return pattern;
+    }
+
+    public String getProductDescription(Product product) {
+        String description = product.getMetaDescription();
+        return StringUtils.isEmpty(description) ? "" : ". " + description;
     }
 }
