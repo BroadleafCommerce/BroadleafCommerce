@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.web.expression;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -28,6 +29,10 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
     @Override
     public String getName() {
         return "seo";
+    }
+
+    public String getSiteSimpleURL() {
+        return BLCMessageUtils.getMessage("seo.site.simple.url");
     }
 
     public String getCategoryTitlePattern() {
