@@ -76,6 +76,14 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      */
     public void setName(@Nonnull String name);
 
+    String getProductTitlePatternOverride();
+
+    void setProductTitlePatternOverride(String productTitlePatternOverride);
+
+    String getProductDescriptionPatternOverride();
+
+    void setProductDescriptionPatternOverride(String productDescriptionPatternOverride);
+
     /**
      * Gets the default parent category. This method will delegate to
      * {@link #getParentCategory()} by default, unless the "use.legacy.default.category.mode" property is set to
