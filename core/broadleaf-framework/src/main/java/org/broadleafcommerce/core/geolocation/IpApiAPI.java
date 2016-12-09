@@ -1,7 +1,5 @@
 package org.broadleafcommerce.core.geolocation;
 
-import org.broadleafcommerce.core.geolocation.GeolocationAPI;
-import org.broadleafcommerce.core.geolocation.GeolocationDTO;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
