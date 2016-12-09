@@ -15,18 +15,16 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.bootstrap;
+package org.broadleafcommerce.common.extensibility.context.merge;
 
-import org.broadleafcommerce.common.extensibility.context.merge.MergeBeanStatusProvider;
-import org.broadleafcommerce.common.extensibility.context.merge.Placement;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 
-import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Provides a convenience annotation for declaring a bean merge into an existing collection of beans (presumably a
@@ -40,6 +38,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)
+@Bean
 public @interface Merge {
 
     /**

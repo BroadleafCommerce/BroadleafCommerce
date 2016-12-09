@@ -15,20 +15,17 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.bootstrap;
+package org.broadleafcommerce.common.extensibility.context.merge;
 
 import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
-import org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor;
-import org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor;
-import org.broadleafcommerce.common.extensibility.context.merge.MergeBeanStatusProvider;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.stereotype.Component;
 
@@ -38,14 +35,13 @@ import java.util.Map;
  * @author Jeff Fischer
  */
 @Component
-public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements BeanFactoryPostProcessor {
+public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor {
 
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) throws BeansException {
-        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) bf;
-
-        for (String name : beanFactory.getBeanDefinitionNames()) {
-            BeanDefinition beanDefinition = beanFactory.getBeanDefinition(name);
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+        
+        for (String name : registry.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = registry.getBeanDefinition(name);
             if (beanDefinition instanceof AnnotatedBeanDefinition) {
                 MethodMetadata metadata = ((AnnotatedBeanDefinition) beanDefinition).getFactoryMethodMetadata();
                 if (metadata != null) {
@@ -70,7 +66,7 @@ public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements 
                             }
                         }
                         BeanDefinition definition = builder.getBeanDefinition();
-                        beanFactory.registerBeanDefinition(
+                        registry.registerBeanDefinition(
                                 name +
                                 "_" +
                                 attributes.get("targetRef") +
@@ -82,4 +78,10 @@ public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements 
             }
         }
     }
+    
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) throws BeansException {
+        // intentionally unimplemented
+    }
+
 }
