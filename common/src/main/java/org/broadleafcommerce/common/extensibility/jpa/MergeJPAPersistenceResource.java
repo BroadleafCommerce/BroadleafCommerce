@@ -19,8 +19,8 @@ package org.broadleafcommerce.common.extensibility.jpa;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
+import org.broadleafcommerce.common.extensibility.context.merge.ResourceInputStream;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeManagerSetupException;
 import org.broadleafcommerce.common.util.StringUtil;
@@ -35,14 +35,15 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  *
@@ -54,11 +55,12 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
     private static final Log LOG = LogFactory.getLog(MergeJPAPersistenceResource.class);
     private ErrorHandler handler = new SimpleSaxErrorHandler(LOG);
 
+    @Override
     public Resource getMergedConfigResource(ResourceInputStream[] sources) throws BeansException {
         Resource configResource = null;
         ResourceInputStream merged = null;
         try {
-            List<String> mappingFiles = new ArrayList<String>(20);
+            List<String> mappingFiles = new ArrayList<>(20);
             ResourceInputStream[] inMemoryStreams = new ResourceInputStream[sources.length];
             for (int j=0;j<sources.length;j++){
                 byte[] sourceArray = buildArrayFromStream(sources[j]);

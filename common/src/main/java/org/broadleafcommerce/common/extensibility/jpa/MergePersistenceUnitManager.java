@@ -18,10 +18,8 @@
 package org.broadleafcommerce.common.extensibility.jpa;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.bootstrap.EnvironmentKey;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassTransformer;
@@ -68,8 +66,8 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
     private static final Log LOG = LogFactory.getLog(MergePersistenceUnitManager.class);
 
-    protected HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<String, PersistenceUnitInfo>();
-    protected List<BroadleafClassTransformer> classTransformers = new ArrayList<BroadleafClassTransformer>();
+    protected HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<>();
+    protected List<BroadleafClassTransformer> classTransformers = new ArrayList<>();
 
     @Resource(name="blMergedPersistenceXmlLocations")
     protected Set<String> mergedPersistenceXmlLocations;
@@ -218,7 +216,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         }
 
         try {
-            List<String> managedClassNames = new ArrayList<String>();
+            List<String> managedClassNames = new ArrayList<>();
             
             boolean weaverRegistered = true;
             for (PersistenceUnitInfo pui : mergedPus.values()) {
@@ -261,7 +259,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 // If a class happened to be loaded by the ClassLoader before we had a chance to set up our instrumentation,
                 // it may not be in a consistent state. This verifies with the EntityMarkerClassTransformer that it
                 // actually saw the classes loaded by the above process
-                List<String> nonTransformedClasses = new ArrayList<String>();
+                List<String> nonTransformedClasses = new ArrayList<>();
                 for (PersistenceUnitInfo pui : mergedPus.values()) {
                     for (String managedClassName : pui.getManagedClassNames()) {
                         // We came across a class that is not a real persistence class (doesn't have the right annotations)
@@ -405,7 +403,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         String autoDDLStatus = pui.getProperties().getProperty("hibernate.hbm2ddl.auto");
         boolean isCreate = autoDDLStatus != null && (autoDDLStatus.equals("create") || autoDDLStatus.equals("create-drop"));
         boolean detectedCreate = false;
-        if (isCreate && ArrayUtils.contains(environment.getActiveProfiles(), EnvironmentKey.getDefaultEnvironmentKey())) {
+        if (isCreate) {
             try {
                 if (mBeanExporter.getServer().isRegistered(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"))) {
                     Boolean response = (Boolean) mBeanExporter.getServer().invoke(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"), "getStartedWithCreate",

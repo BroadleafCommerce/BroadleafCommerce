@@ -74,7 +74,10 @@ import java.util.Set;
  * SystemPropertyRuntimeEnvironmentKeyResolver is used (which uses the system
  * property 'runtime.environment')
  * @author <a href="mailto:chris.lee.9@gmail.com">Chris Lee</a>
+ * @deprecated Instead of using anything around the -Druntime-environment values, you should be using Spring profiles
+ * and properties activated with that via {@link ProfileAwarePropertiesBeanFactoryPostProcessor}.
  */
+@Deprecated
 public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderConfigurer implements InitializingBean {
 
     private static final Log LOG = LogFactory.getLog(RuntimeEnvironmentPropertiesConfigurer.class);
@@ -83,9 +86,9 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     protected static final String SHARED_PROPERTY_OVERRIDE = "property-shared-override";
     protected static final String PROPERTY_OVERRIDE = "property-override";
     
-    protected static Set<String> defaultEnvironments = new LinkedHashSet<String>();
-    protected static Set<Resource> blcPropertyLocations = new LinkedHashSet<Resource>();
-    protected static Set<Resource> defaultPropertyLocations = new LinkedHashSet<Resource>();
+    protected static Set<String> defaultEnvironments = new LinkedHashSet<>();
+    protected static Set<Resource> blcPropertyLocations = new LinkedHashSet<>();
+    protected static Set<Resource> defaultPropertyLocations = new LinkedHashSet<>();
     
     static {
         defaultEnvironments.add("production");
@@ -117,6 +120,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         setNullValue("@null");
     }
 
+    @Override
     public void afterPropertiesSet() throws IOException {
         // If no environment override has been specified, used the default environments
         if (environments == null || environments.size() == 0) {
@@ -124,7 +128,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         }
         
         // Prepend the default property locations to the specified property locations (if any)
-        Set<Resource> combinedLocations = new LinkedHashSet<Resource>();
+        Set<Resource> combinedLocations = new LinkedHashSet<>();
         if (!CollectionUtils.isEmpty(overridableProperyLocations)) {
             combinedLocations.addAll(overridableProperyLocations);
         }
@@ -143,7 +147,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         }
 
         String environment = determineEnvironment();
-        ArrayList<Resource> allLocations = new ArrayList<Resource>();
+        ArrayList<Resource> allLocations = new ArrayList<>();
         
         /* Process configuration in the following order (later files override earlier files
          * common-shared.properties
@@ -152,7 +156,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
          * [environment].properties
          * -Dproperty-override-shared specified value, if any
          * -Dproperty-override specified value, if any  */
-        Set<Set<Resource>> testLocations = new LinkedHashSet<Set<Resource>>();
+        Set<Set<Resource>> testLocations = new LinkedHashSet<>();
         testLocations.add(propertyLocations);
         testLocations.add(defaultPropertyLocations);
 
@@ -357,6 +361,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
             this.resolver = new PropertyPlaceholderConfigurerResolver(props);
         }
 
+        @Override
         public String resolveStringValue(String strVal) throws BeansException {
             String value = this.helper.replacePlaceholders(strVal, this.resolver);
             return (value.equals("") ? null : value);
@@ -371,6 +376,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
             this.props = props;
         }
 
+        @Override
         public String resolvePlaceholder(String placeholderName) {
             return RuntimeEnvironmentPropertiesConfigurer.this.resolvePlaceholder(placeholderName, props, 1);
         }

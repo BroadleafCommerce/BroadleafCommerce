@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.web.util;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.broadleafcommerce.bootstrap.EnvironmentKey;
 import org.springframework.core.env.Environment;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -57,7 +56,7 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         checkOutput: {
-            if (!ArrayUtils.contains(environment.getActiveProfiles(), EnvironmentKey.getDefaultEnvironmentKey()) || useWhileInDefaultEnvironment) {
+            if (ArrayUtils.isNotEmpty(environment.getActiveProfiles()) || useWhileInDefaultEnvironment) {
                 String path = getResourcePath(request);
                 String gzipPath = path + ".gz";
                 if (useGzipCompression(request, response, path, gzipPath)) {

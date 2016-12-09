@@ -17,9 +17,8 @@
  */
 package org.broadleafcommerce.common.extensibility.cache.ehcache;
 
-import net.sf.ehcache.CacheManager;
-import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
+import org.broadleafcommerce.common.extensibility.context.merge.ResourceInputStream;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
@@ -27,11 +26,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
+
+import net.sf.ehcache.CacheManager;
 
 public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean implements ApplicationContextAware {
 
@@ -71,7 +73,7 @@ public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean im
 
     @PostConstruct
     public void configureMergedItems() {
-        List<Resource> temp = new ArrayList<Resource>();
+        List<Resource> temp = new ArrayList<>();
         if (mergedCacheConfigLocations != null && !mergedCacheConfigLocations.isEmpty()) {
             for (String location : mergedCacheConfigLocations) {
                 temp.add(applicationContext.getResource(location));

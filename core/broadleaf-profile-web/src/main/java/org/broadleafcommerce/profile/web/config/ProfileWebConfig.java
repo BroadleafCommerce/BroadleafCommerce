@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Admin Module
+ * BroadleafCommerce Common Libraries
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,17 +15,14 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.bootstrap.admin;
+package org.broadleafcommerce.profile.web.config;
 
-import org.broadleafcommerce.bootstrap.AbstractBroadleafConfigEnvironmentPostProcessor;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Jeff Fischer
  */
-public class BroadleafConfigEnvironmentPostProcessor extends AbstractBroadleafConfigEnvironmentPostProcessor {
-
-    @Override
-    protected String getConfigLocation() {
-        return "config/bc/admin2/";
-    }
+@Configuration
+public class ProfileWebConfig {
+    
 }

@@ -32,10 +32,6 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.web.controller.*"/>
     </context:component-scan>
 
-    <bean id="blConfiguration" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
-        <property name="ignoreUnresolvablePlaceholders" value="true"/>
-    </bean>
-
     <bean id="blPersistenceManagerEventHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>

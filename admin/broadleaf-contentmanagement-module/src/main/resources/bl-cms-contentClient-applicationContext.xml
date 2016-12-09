@@ -28,10 +28,6 @@
     </context:component-scan>
     <context:component-scan base-package="org.broadleafcommerce.common.locale"/>
 
-    <bean id="blConfiguration" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
-        <property name="ignoreUnresolvablePlaceholders" value="true"/>
-    </bean>
-
     <bean id="blMergedPersistenceXmlLocations-cms" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>

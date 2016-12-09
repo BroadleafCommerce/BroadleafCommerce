@@ -15,17 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.bootstrap.profile;
+package org.broadleafcommerce.core.config;
 
-import org.broadleafcommerce.bootstrap.AbstractBroadleafConfigEnvironmentPostProcessor;
+import org.broadleafcommerce.common.config.FrameworkCommonPropertySource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Jeff Fischer
  */
-public class BroadleafConfigEnvironmentPostProcessor extends AbstractBroadleafConfigEnvironmentPostProcessor {
+@Configuration
+public class FrameworkConfig {
 
-    @Override
-    protected String getConfigLocation() {
-        return "config/bc/profile/";
+    @Bean
+    public static FrameworkCommonPropertySource blFrameworkProperties() {
+        return new FrameworkCommonPropertySource("config/bc/fw/");
     }
+    
 }

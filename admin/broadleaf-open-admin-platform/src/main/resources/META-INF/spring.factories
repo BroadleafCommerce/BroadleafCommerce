@@ -1,1 +1,1 @@
-org.springframework.boot.env.EnvironmentPostProcessor=org.broadleafcommerce.bootstrap.openadmin.BroadleafConfigEnvironmentPostProcessor
+org.springframework.boot.env.EnvironmentPostProcessor=org.broadleafcommerce.openadmin.config.OpenAdminConfig

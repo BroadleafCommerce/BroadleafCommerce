@@ -15,17 +15,23 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.bootstrap.openadmin;
+package org.broadleafcommerce.cms.config;
 
-import org.broadleafcommerce.bootstrap.AbstractBroadleafConfigEnvironmentPostProcessor;
+import org.broadleafcommerce.common.config.FrameworkCommonPropertySource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * @author Jeff Fischer
+ * Default configuration to load up CMS properties
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
  */
-public class BroadleafConfigEnvironmentPostProcessor extends AbstractBroadleafConfigEnvironmentPostProcessor {
+@Configuration
+public class CmsConfig {
 
-    @Override
-    protected String getConfigLocation() {
-        return "config/bc/admin/";
+    @Bean
+    public static FrameworkCommonPropertySource blCmsProperties() {
+        return new FrameworkCommonPropertySource("config/bc/cms/");
     }
+    
 }

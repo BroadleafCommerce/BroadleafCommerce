@@ -50,10 +50,6 @@
         <property name="useSuffixPatternMatch" value="false" />
     </bean>
 
-    <bean id="blConfiguration" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
-        <property name="ignoreUnresolvablePlaceholders" value="true"/>
-    </bean>
-    
     <bean id="blAdminExceptionResolver" class="org.broadleafcommerce.openadmin.web.handler.AdminMappingExceptionResolver">
         <property name="showDebugMessage" value="${exception.showDebugMessage}" />
     </bean>
