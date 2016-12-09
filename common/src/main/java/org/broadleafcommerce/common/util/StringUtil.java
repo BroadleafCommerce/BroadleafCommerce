@@ -27,7 +27,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.Adler32;
@@ -67,13 +66,8 @@ public class StringUtil {
         if (StringUtils.isEmpty(bigger) || StringUtils.isEmpty(included)) {
             return false;
         }
-        if (bigger.equals(included)) {
-            return true;
-        }
-        if (bigger.startsWith(included + ".")) {
-            return true;
-        }
-        return false;
+        
+        return bigger.equals(included) || bigger.startsWith(included + ".");
     }
 
     public static double determineSimilarity(String test1, String test2) {
