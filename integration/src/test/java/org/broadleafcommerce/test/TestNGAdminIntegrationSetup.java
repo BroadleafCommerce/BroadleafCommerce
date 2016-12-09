@@ -43,8 +43,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
             "classpath:/bl-open-admin-contentCreator-applicationContext.xml",
             "classpath:/bl-admin-applicationContext.xml",
             "classpath:/bl-cms-contentClient-applicationContext.xml",
-            "classpath:/bl-cms-contentCreator-applicationContext.xml"},
-    loader = BroadleafGenericGroovyXmlWebContextLoader.class)
+            "classpath:/bl-cms-contentCreator-applicationContext.xml"})
 })
 @WebAppConfiguration
 @TestExecutionListeners(TransactionalTestExecutionListener.class)

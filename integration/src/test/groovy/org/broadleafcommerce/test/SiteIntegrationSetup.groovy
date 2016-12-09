@@ -38,8 +38,7 @@ import spock.lang.Specification
 @ContextHierarchy([
 @ContextConfiguration(name = "siteRoot", 
     locations = ["classpath:/bl-open-admin-contentClient-applicationContext.xml",
-        "classpath:/bl-cms-contentClient-applicationContext.xml"],
-    loader = BroadleafGenericGroovyXmlWebContextLoader.class)
+        "classpath:/bl-cms-contentClient-applicationContext.xml"])
 ])
 @WebAppConfiguration
 class SiteIntegrationSetup extends Specification {

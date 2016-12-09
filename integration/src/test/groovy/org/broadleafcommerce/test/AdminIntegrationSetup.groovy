@@ -23,6 +23,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.test.context.web.WebAppConfiguration
 
 import spock.lang.Specification
+
 /**
  * Base Integration Test Setup groovy file for Admin based integration tests. This base class has all the
  * applicationContext's shared by Integration tests for Admin based testing. Extend from this class on a
@@ -41,8 +42,7 @@ import spock.lang.Specification
             "classpath:/bl-open-admin-contentCreator-applicationContext.xml",
             "classpath:/bl-admin-applicationContext.xml",
             "classpath:/bl-cms-contentClient-applicationContext.xml",
-            "classpath:/bl-cms-contentCreator-applicationContext.xml"],
-    loader = BroadleafGenericGroovyXmlWebContextLoader.class)
+            "classpath:/bl-cms-contentCreator-applicationContext.xml"])
 ])
 @WebAppConfiguration
 class AdminIntegrationSetup extends Specification {

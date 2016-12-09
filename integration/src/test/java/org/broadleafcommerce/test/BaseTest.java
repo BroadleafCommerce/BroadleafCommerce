@@ -17,19 +17,13 @@
  */
 package org.broadleafcommerce.test;
 
-import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
-import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.RequestScope;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -42,35 +36,35 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    protected static MergeClassPathXMLApplicationContext mergeContext = null;
+    protected static ApplicationContext mergeContext = null;
 
     protected static List<String> moduleContexts = new ArrayList<>();
 
-    public static MergeClassPathXMLApplicationContext getContext() {
+    public static ApplicationContext getContext() {
         try {
             if (mergeContext == null) {
-                // Note that as of 2.2.0, this array will no longer include "bl-applicationContext-test", as we want that to
-                // be the very last context loaded.
-                String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
-                List<String> allContexts = new ArrayList<>(Arrays.asList(contexts));
-
-                // We need the content applicationContexts and admin applicationContexts
-                allContexts.add("bl-open-admin-contentClient-applicationContext.xml");
-                allContexts.add("bl-open-admin-contentCreator-applicationContext.xml");
-                allContexts.add("bl-admin-applicationContext.xml");
-
-                // After the framework applicationContexts are loaded, we want the module ones
-                allContexts.addAll(moduleContexts);
-                
-                // Lastly, we want the test applicationContext
-                allContexts.add("bl-applicationContext-test.xml");
-
-                String[] strArray = new String[allContexts.size()];
-                mergeContext = new MergeClassPathXMLApplicationContext(allContexts.toArray(strArray), new String[]{});
-                
-                //allow for request-scoped beans that can occur in web application contexts
-                RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest()));
-                mergeContext.getBeanFactory().registerScope("request", new RequestScope());
+//                // Note that as of 2.2.0, this array will no longer include "bl-applicationContext-test", as we want that to
+//                // be the very last context loaded.
+//                String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
+//                List<String> allContexts = new ArrayList<>(Arrays.asList(contexts));
+//
+//                // We need the content applicationContexts and admin applicationContexts
+//                allContexts.add("bl-open-admin-contentClient-applicationContext.xml");
+//                allContexts.add("bl-open-admin-contentCreator-applicationContext.xml");
+//                allContexts.add("bl-admin-applicationContext.xml");
+//
+//                // After the framework applicationContexts are loaded, we want the module ones
+//                allContexts.addAll(moduleContexts);
+//                
+//                // Lastly, we want the test applicationContext
+//                allContexts.add("bl-applicationContext-test.xml");
+//
+//                String[] strArray = new String[allContexts.size()];
+//                mergeContext = new MergeClassPathXMLApplicationContext(allContexts.toArray(strArray), new String[]{});
+//                
+//                //allow for request-scoped beans that can occur in web application contexts
+//                RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest()));
+//                mergeContext.getBeanFactory().registerScope("request", new RequestScope());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

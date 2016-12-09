@@ -40,8 +40,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextHierarchy({
     @ContextConfiguration(name = "siteRoot",
             locations ={"classpath:/bl-open-admin-contentClient-applicationContext.xml",
-            "classpath:/bl-cms-contentClient-applicationContext.xml"},
-            loader = BroadleafGenericGroovyXmlWebContextLoader.class)
+            "classpath:/bl-cms-contentClient-applicationContext.xml"})
 })
 @WebAppConfiguration
 @TestExecutionListeners(TransactionalTestExecutionListener.class)

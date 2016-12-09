@@ -19,7 +19,6 @@ package org.broadleafcommerce.common.extensibility.context.merge;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeManagerSetupException;
 import org.broadleafcommerce.common.util.StringUtil;
