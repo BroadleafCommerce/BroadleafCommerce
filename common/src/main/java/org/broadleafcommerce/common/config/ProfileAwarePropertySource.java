@@ -82,9 +82,15 @@ public class ProfileAwarePropertySource implements Ordered {
     public static final int DEFAULT_ORDER = 100;
     
     protected String classpathFolder;
+    protected int order = DEFAULT_ORDER;
     
     public ProfileAwarePropertySource(String classpathFolder) {
         this.classpathFolder = classpathFolder;
+    }
+    
+    public ProfileAwarePropertySource(String classpathFolder, int order) {
+        this.classpathFolder = classpathFolder;
+        this.order = order;
     }
     
     public String getClasspathFolder() {
@@ -98,7 +104,7 @@ public class ProfileAwarePropertySource implements Ordered {
      */
     @Override
     public int getOrder() {
-        return DEFAULT_ORDER;
+        return order;
     }
     
 }

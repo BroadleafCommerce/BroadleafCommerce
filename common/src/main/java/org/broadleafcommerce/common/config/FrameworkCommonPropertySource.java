@@ -61,11 +61,17 @@ public class FrameworkCommonPropertySource implements Ordered {
     public static final int DEFAULT_ORDER = 1000;
     
     protected String classpathFolder;
+    protected int order = 1000;
     
     public FrameworkCommonPropertySource(String classpathFolder) {
         this.classpathFolder = classpathFolder;
     }
     
+    public FrameworkCommonPropertySource(String classpathFolder, int order) {
+        this.classpathFolder = classpathFolder;
+        this.order = order;
+    }
+
     public String getClasspathFolder() {
         return classpathFolder;
     }
@@ -77,6 +83,6 @@ public class FrameworkCommonPropertySource implements Ordered {
      */
     @Override
     public int getOrder() {
-        return DEFAULT_ORDER;
+        return order;
     }
 }
