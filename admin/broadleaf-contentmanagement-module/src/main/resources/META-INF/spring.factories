@@ -1,1 +1,1 @@
-org.springframework.boot.env.EnvironmentPostProcessor=org.broadleafcommerce.cms.config.CmsConfig
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.broadleafcommerce.cms.config.CmsConfig

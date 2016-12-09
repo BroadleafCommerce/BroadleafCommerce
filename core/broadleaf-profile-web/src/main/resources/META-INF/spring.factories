@@ -1,1 +1,1 @@
-org.springframework.boot.env.EnvironmentPostProcessor=org.broadleafcommerce.profile.web.config.ProfileWebConfig
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.broadleafcommerce.profile.web.config.ProfileWebConfig
