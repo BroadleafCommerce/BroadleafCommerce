@@ -34,7 +34,7 @@ import org.springframework.core.io.ClassPathResource;
  * {@literal @}Configuration
  * public class ModuleProperties {
  *     {@literal @}Bean
- *     public FrameworkCommonPropertySource blModuleProps() {
+ *     public static FrameworkCommonPropertySource blModuleProps() {
  *         return new FrameworkCommonPropertySource("config/bc/module");
  *     }
  * }
@@ -49,7 +49,8 @@ import org.springframework.core.io.ClassPathResource;
  * <p>
  * These bean instances are created very early in the Spring lifecycle, during {@link BeanFactoryPostProcessor} instantiation. Therefore
  * you should not be doing any complicated bean logic here (instantating dependencies, trying to {@literal @}Autowire anything, etc) or
- * else you might run into unintended consequences.
+ * else you might run into unintended consequences. Also note that the registration of this {@literal @}Bean method is {@code static} since
+ * it should follow the same registration rules of a {@link BeanFactoryPostProcessor}.
  * 
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link ProfileAwarePropertiesBeanFactoryPostProcessor}

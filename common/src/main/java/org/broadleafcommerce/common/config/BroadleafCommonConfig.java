@@ -48,12 +48,12 @@ public class BroadleafCommonConfig {
     }
     
     @Bean
-    public FrameworkCommonPropertySource blCommonProperties() {
+    public static FrameworkCommonPropertySource blCommonProperties() {
         return new FrameworkCommonPropertySource("config/bc/");
     }
     
     @Bean
-    public ProfileAwarePropertySource blDefaultRuntimeProperties() {
+    public static ProfileAwarePropertySource blDefaultRuntimeProperties() {
         return new ProfileAwarePropertySource("runtime-properties");
     }
     

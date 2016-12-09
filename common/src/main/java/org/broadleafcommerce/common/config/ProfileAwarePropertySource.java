@@ -53,8 +53,8 @@ import org.springframework.core.env.Environment;
  * </ul>
  *  
  * <p>
- * If you are using Spring boot, this is a deprecated construct and instead you should rely on application.properties.
- * and the ordering given in the 
+ * If you are using Spring boot, this is a deprecated construct and instead you should rely on application.properties and the profile-specific variants of that. Registration
+ * is the same as {@link FrameworkCommonPropertySource}.
  * 
  * <p>
  * Properties registered via this {@link ProfileAwarePropertySource} is functionally equivalent to registering them via {@link PropertySource} and have the same ordering
