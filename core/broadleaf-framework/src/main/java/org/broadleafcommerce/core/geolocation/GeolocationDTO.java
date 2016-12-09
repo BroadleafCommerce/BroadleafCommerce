@@ -22,6 +22,7 @@ public class GeolocationDTO {
     protected String source;
     protected String ipAddress;
     protected String countryCode;
+    protected String regionCode;
 
     public String getSource() {
         return source;
@@ -47,12 +48,21 @@ public class GeolocationDTO {
         this.countryCode = countryCode;
     }
 
+    public String getRegionCode() {
+        return regionCode;
+    }
+
+    public void setRegionCode(String regionCode) {
+        this.regionCode = regionCode;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("{");
         builder.append("source:[" + source + "]; ")
                 .append("ip address:[" + ipAddress + "]; ")
-                .append("country code:[ " + countryCode + "]}");
+                .append("country code:[ " + countryCode + "]; ")
+                .append("region code:[ " + regionCode + "]}");
         return builder.toString();
     }
 }
