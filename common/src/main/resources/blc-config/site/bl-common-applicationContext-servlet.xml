@@ -21,8 +21,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <!-- Bean Post-processors that need to activated in the servlet context  -->
+    
+    <!-- Ensures the @Value annotations are resolved -->
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
         <property name="ignoreUnresolvablePlaceholders" value="true" />
     </bean>
+    <!-- Activates @Merge bean methods -->
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.MergeAnnotationAwareBeanDefinitionRegistryPostProcessor" />
     
 </beans>
