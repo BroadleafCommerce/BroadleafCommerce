@@ -113,12 +113,16 @@ public class ProfileAwarePropertiesBeanFactoryPostProcessor implements BeanFacto
                 }
                 
                 String deprecatedDefaultProfile = getDeprecatedDefaultProfileKey();
-                String deprecatedLastAddedResourceName = addProfileSpecificSources(env, configLocation, deprecatedDefaultProfile, lastAddedResourceName);
-                boolean deprecatedDefaultProfileFound = (!deprecatedLastAddedResourceName.equals(lastAddedResourceName));
-                
-                if (deprecatedDefaultProfileFound) {
-                    LOG.info("The usage of " + getDeprecatedDefaultProfileKey() + ".properties is deprecated, use Spring's default profiles instead");
-                    env.setDefaultProfiles(ArrayUtils.add(defaultProfiles, deprecatedDefaultProfile));
+                if (!ArrayUtils.contains(defaultProfiles, deprecatedDefaultProfile)) {
+                    String deprecatedLastAddedResourceName = addProfileSpecificSources(env, configLocation, deprecatedDefaultProfile, lastAddedResourceName);
+                    boolean deprecatedDefaultProfileFound = (!deprecatedLastAddedResourceName.equals(lastAddedResourceName));
+                    
+                    lastAddedResourceName = deprecatedLastAddedResourceName;
+                    
+                    if (deprecatedDefaultProfileFound) {
+                        LOG.info("The usage of " + getDeprecatedDefaultProfileKey() + ".properties is deprecated, use Spring's default profiles instead");
+                        env.setDefaultProfiles(ArrayUtils.add(defaultProfiles, deprecatedDefaultProfile));
+                    }
                 }
             }
         }
