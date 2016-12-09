@@ -23,6 +23,7 @@ package org.broadleafcommerce.core.payment.service;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -92,7 +93,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         populateBillTo(order, requestDTO);
 
         // Only set totals and line items when in a Payment flow
-        if (PaymentTransactionType.UNCONFIRMED.equals(paymentTransaction.getType())) {
+        // At this point in a checkout, CustomerCredit and GiftCards are still Unconfirmed,
+        // thus the check to prevent incorrect payment totals
+        if (PaymentTransactionType.UNCONFIRMED.equals(paymentTransaction.getType()) &&
+                paymentTransaction.getOrderPayment().isFinalPayment()) {
             populateTotals(order, requestDTO);
             populateDefaultLineItemsAndSubtotal(order, requestDTO);
         }
