@@ -22,7 +22,13 @@ public class GeolocationDTO {
     protected String source;
     protected String ipAddress;
     protected String countryCode;
+    protected String countryName;
     protected String regionCode;
+    protected String regionName;
+    protected String city;
+    protected String zipCode;
+    protected Double latitude;
+    protected Double longitude;
 
     public String getSource() {
         return source;
@@ -48,6 +54,14 @@ public class GeolocationDTO {
         this.countryCode = countryCode;
     }
 
+    public String getCountryName() {
+        return countryName;
+    }
+
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+
     public String getRegionCode() {
         return regionCode;
     }
@@ -56,13 +70,59 @@ public class GeolocationDTO {
         this.regionCode = regionCode;
     }
 
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("{");
-        builder.append("source:[" + source + "]; ")
-                .append("ip address:[" + ipAddress + "]; ")
-                .append("country code:[ " + countryCode + "]; ")
-                .append("region code:[ " + regionCode + "]}");
-        return builder.toString();
+        return "GeolocationDTO{" +
+                "source='" + source + '\'' +
+                ", ipAddress='" + ipAddress + '\'' +
+                ", countryCode='" + countryCode + '\'' +
+                ", countryName='" + countryName + '\'' +
+                ", regionCode='" + regionCode + '\'' +
+                ", regionName='" + regionName + '\'' +
+                ", city='" + city + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
     }
 }
