@@ -18,14 +18,13 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.common.value.Searchable;
-
+import org.broadleafcommerce.common.value.ValueAssignable;
 
 /**
  * 
  * @author Phillip Verheyden
  */
-public interface CategoryAttribute extends Searchable<String>, MultiTenantCloneable<CategoryAttribute> {
+public interface CategoryAttribute extends ValueAssignable<String>, MultiTenantCloneable<CategoryAttribute> {
 
     /**
      * Gets the id.
