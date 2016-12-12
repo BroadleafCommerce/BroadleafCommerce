@@ -246,27 +246,4 @@
         </property>
     </bean>
 
-    <!-- Replace StoreImpl column OPEN with STORE_OPEN to be SQL Server compatible. This can be removed in 5.1. -->
-
-    <bean id="blStoreOpenConditionalFieldAnnotationTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalFieldAnnotationCopyTransformMemberDTO">
-        <property name="templateNames">
-            <array>
-                <value>org.broadleafcommerce.core.store.weave.WeaveStoreOpen</value>
-            </array>
-        </property>
-        <property name="conditionalProperty" value="enable.optional.store.open.field"/>
-    </bean>
-
-    <bean id="blFrameworkConditionalFieldAnnotationCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="org.broadleafcommerce.core.store.domain.StoreImpl" value-ref="blStoreOpenConditionalFieldAnnotationTransformerMember" />
-            </map>
-        </property>
-    </bean>
-
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blFrameworkConditionalFieldAnnotationCopyTransformers"/>
-        <property name="targetRef" value="blConditionalFieldAnnotationCopyTransformers"/>
-    </bean>
 </beans>
