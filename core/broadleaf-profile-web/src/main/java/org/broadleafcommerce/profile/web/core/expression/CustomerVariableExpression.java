@@ -18,8 +18,10 @@
 package org.broadleafcommerce.profile.web.core.expression;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.stereotype.Service;
 
 
 /**
@@ -27,6 +29,8 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
  * 
  * @author Andre Azzolini (apazzolini)
  */
+@Service("blCustomerVariableExpression")
+@ConditionalOnTemplating
 public class CustomerVariableExpression implements BroadleafVariableExpression {
     
     @Override
