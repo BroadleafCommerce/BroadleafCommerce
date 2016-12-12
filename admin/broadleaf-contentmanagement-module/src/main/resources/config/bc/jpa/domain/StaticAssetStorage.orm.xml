@@ -17,14 +17,15 @@
   #L%
   -->
 
-<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+<entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+                 version="2.0">
 
-    <named-query name="BC_READ_STATIC_ASSET_STORAGE_BY_STATIC_ASSET_ID" >
+    <named-query name="BC_READ_STATIC_ASSET_STORAGE_BY_STATIC_ASSET_ID">
         <query>SELECT staticAssetStorage
-               FROM org.broadleafcommerce.cms.file.domain.StaticAssetStorage staticAssetStorage
-               WHERE staticAssetStorage.staticAssetId = :id
+            FROM org.broadleafcommerce.cms.file.domain.StaticAssetStorage staticAssetStorage
+            WHERE staticAssetStorage.staticAssetId = :id
         </query>
     </named-query>
 
