@@ -222,7 +222,7 @@
                         </th:block>
                         <div class="listgrid-row-actions"
                             th:if="${headerFieldStat.last and (listGrid.listGridType == 'tree' or listGrid.listGridType == 'asset_grid_folder') and (not #lists.isEmpty(listGrid.activeRowActions))}">
-                            <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}" th:unless="${record.locked}">
+                            <span class="listgrid-row-action" th:each="action : ${listGrid.activeRowActions}" th:unless="${record.locked}">
                             <a th:classappend="${action.buttonClass}"
                                href="#"
                                class="button button-action"
@@ -232,10 +232,10 @@
                                th:title="#{${action.displayText}}">
                                 <i th:class="${action.iconClass}"></i>
                             </a>
-                        </span>
-                            <span class="workflow-action" th:if="${record.locked}">
-                            <i class="fa fa-lock"></i>
-                        </span>
+                            </span>
+                                <span class="listgrid-row-action" th:if="${record.locked}">
+                                <i class="fa fa-lock"></i>
+                            </span>
                         </div>
                     </td>
 

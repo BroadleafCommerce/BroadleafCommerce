@@ -96,11 +96,6 @@ public class SkuAttributeImpl implements SkuAttribute {
     @Column(name = "VALUE", nullable=false)
     @AdminPresentation(friendlyName = "SkuAttributeImpl_Attribute_Value", order=2, group = "SkuAttributeImpl_Description", prominent=true, gridOrder = 2)
     protected String value;
-
-    /** The searchable. */
-    @Column(name = "SEARCHABLE")
-    @AdminPresentation(excluded = true)
-    protected Boolean searchable = false;
   
     /** The sku. */
     @ManyToOne(targetEntity = SkuImpl.class, optional=false, cascade = CascadeType.REFRESH)
@@ -138,26 +133,6 @@ public class SkuAttributeImpl implements SkuAttribute {
     @Override
     public void setValue(String value) {
         this.value = value;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSearchable()
-     */
-    @Override
-    public Boolean getSearchable() {
-        if (searchable == null) {
-            return Boolean.FALSE;
-        } else {
-            return searchable;
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setSearchable(java.lang.Boolean)
-     */
-    @Override
-    public void setSearchable(Boolean searchable) {
-        this.searchable = searchable;
     }
     
     /* (non-Javadoc)
@@ -253,7 +228,6 @@ public class SkuAttributeImpl implements SkuAttribute {
         if (sku != null) {
             cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
         }
-        cloned.setSearchable(getSearchable());
         cloned.setValue(value);
         return createResponse;
     }

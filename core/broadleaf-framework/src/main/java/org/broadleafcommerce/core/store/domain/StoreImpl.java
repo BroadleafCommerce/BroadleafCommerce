@@ -79,7 +79,7 @@ public class StoreImpl implements Store {
     @AdminPresentation(friendlyName = "StoreImpl_Store_Number")
     protected String storeNumber;
 
-    @Column(name = "OPEN")
+    @Column(name = "STORE_OPEN")
     @AdminPresentation(friendlyName = "StoreImpl_Open")
     protected Boolean open;
 

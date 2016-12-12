@@ -84,11 +84,6 @@ public class ProductAttributeImpl implements ProductAttribute {
     @Column(name = "VALUE")
     @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Value", order=2, group = "ProductAttributeImpl_Description", prominent=true, gridOrder = 2)
     protected String value;
-
-    /** The searchable. */
-    @Column(name = "SEARCHABLE")
-    @AdminPresentation(excluded = true)
-    protected Boolean searchable = false;
     
     /** The product. */
     @ManyToOne(targetEntity = ProductImpl.class, optional=false, cascade = CascadeType.REFRESH)
@@ -114,20 +109,6 @@ public class ProductAttributeImpl implements ProductAttribute {
     @Override
     public void setValue(String value) {
         this.value = value;
-    }
-
-    @Override
-    public Boolean getSearchable() {
-        if (searchable == null) {
-            return Boolean.FALSE;
-        } else {
-            return searchable;
-        }
-    }
-
-    @Override
-    public void setSearchable(Boolean searchable) {
-        this.searchable = searchable;
     }
 
     @Override
@@ -208,7 +189,6 @@ public class ProductAttributeImpl implements ProductAttribute {
             cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
         }
         cloned.setName(name);
-        cloned.setSearchable(searchable);
         cloned.setValue(value);
         return  createResponse;
     }

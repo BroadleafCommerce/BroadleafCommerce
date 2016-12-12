@@ -27,6 +27,8 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -34,6 +36,7 @@ import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
@@ -42,6 +45,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -136,6 +140,9 @@ public class OfferCodeImpl implements OfferCode {
 
     @Transient
     protected Offer sbClonedOffer;
+
+    @Transient
+    protected Offer deproxiedOffer;
     
     @Override
     public Long getId() {
@@ -149,26 +156,26 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public Offer getOffer() {
-        //This guarantees that the offer is the correct one based on sandboxed state.  If the offer has been overridden/cloned in the local site,
-        //  then that overridden/cloned offer will be used.
-        if (sbClonedOffer == null) {
-            GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
-            if (genericEntityDao != null && offer != null && offer.getId() != null) {
+        if (deproxiedOffer == null) {
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+
+            if (postLoaderDao != null) {
                 Long id = offer.getId();
-                sbClonedOffer = genericEntityDao.getEntityManager().find(OfferImpl.class, id);
-            } 
+                deproxiedOffer = postLoaderDao.find(OfferImpl.class, id);
+            } else if (offer instanceof HibernateProxy) {
+                deproxiedOffer = HibernateUtils.deproxy(offer);
+            } else {
+                deproxiedOffer = offer;
+            }
         }
-        //if for some reason the cloned offer was not found, at a minimum return the original offer (so we are not returning null)
-        if (sbClonedOffer == null) {
-            sbClonedOffer = offer;
-        }
-        return sbClonedOffer;
+
+        return deproxiedOffer;
     }
 
     @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
-        sbClonedOffer = null;
+        sbClonedOffer = deproxiedOffer = null;
     }
 
     @Override

@@ -19,7 +19,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
@@ -49,6 +49,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,6 +66,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.Embeddable;
 import javax.persistence.EntityManager;
 import javax.persistence.OneToMany;
 
@@ -317,13 +319,22 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         return dirty;
     }
 
-    protected Object extractParent(PopulateValueRequest populateValueRequest, Serializable instance) throws IllegalAccessException, FieldNotAvailableException {
-        Object parent = instance;
-        String parentName = populateValueRequest.getProperty().getName();
-        if (parentName.contains(".")) {
-            parent = populateValueRequest.getFieldManager().getFieldValue(instance,
-                    parentName.substring(0, parentName.lastIndexOf(".")));
-        }
+    /**
+     * This method is intended to find the object that the field is supposed to be populated on. Typically, this is the
+     * instance itself, but sometimes it may be a property of an object this instance relates to.
+     *
+     * This method ignores parent candidates that implement {@link Embeddable} as the proper parent for these
+     * fields is the object itself and not the embedded object.
+     *
+     * @param populateValueRequest the {@link PopulateValueRequest}
+     * @param instance the Object we are populating field values on
+     * @return the proper parent for the {@link PopulateValueRequest}
+     * @throws IllegalAccessException
+     * @throws FieldNotAvailableException
+     */
+    protected Object extractParent(PopulateValueRequest populateValueRequest, Serializable instance)
+            throws IllegalAccessException, FieldNotAvailableException {
+        Object parent = recursivelyExtractParent(populateValueRequest, instance);
         if (!populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().contains(parent)) {
             try {
                 populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(parent);
@@ -332,6 +343,48 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             }
         }
         return parent;
+    }
+
+    /**
+     * This method is responsible for recursively tracing the properties parents to find the correct parent to apply
+     * the field update to.
+     *
+     * @param populateValueRequest the populate value request
+     * @param instance the entity that to populate a field value on
+     * @return the proper parent or original instance if no closer parent is found
+     * @throws FieldNotAvailableException
+     * @throws IllegalAccessException
+     */
+    protected Object recursivelyExtractParent(PopulateValueRequest populateValueRequest, Serializable instance)
+            throws FieldNotAvailableException, IllegalAccessException {
+        String propertyName = populateValueRequest.getProperty().getName();
+
+        while(StringUtils.contains(propertyName, ".")) {
+            propertyName = parseParentProperty(propertyName);
+
+            Object candidate = populateValueRequest.getFieldManager().getFieldValue(instance, propertyName);
+
+            if (candidate != null && !isEmbeddable(candidate.getClass())) {
+                return candidate;
+            }
+        }
+
+        return instance;
+    }
+
+    protected String parseParentProperty(String propertyName) {
+        return propertyName.substring(0, propertyName.lastIndexOf("."));
+    }
+
+    /**
+     * This method is responsible for determining whether the class is embeddable. If it is we don't want to check if
+     * the entity manager contains the instance since embeddables are not entities.
+     *
+     * @param clazz the parent class of the populate value request
+     * @return whether the class is embeddable
+     */
+    protected boolean isEmbeddable(Class<?> clazz) {
+        return AnnotationUtils.findAnnotation(clazz, Embeddable.class) != null;
     }
 
     protected boolean populateQuantityRule(PopulateValueRequest populateValueRequest, Serializable instance) throws FieldNotAvailableException, IllegalAccessException {

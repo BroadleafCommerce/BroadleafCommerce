@@ -599,14 +599,22 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             for (Long categoryId : cache.getParentCategoriesByProduct().get(cacheKey)) {
                 document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
+                // Make sure that we're always referencing the parent for the sort field
                 String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
+                // The issue here was the super category id is always what is stored in the cache, while the category
+                // by product id is the overridden versions. Need to always look at parent version for cache stuff, which
+                // is given from shs.getCategoryId
+                // First try the current level
                 String displayOrderKey = categoryId + "-" + cacheKey;
-                if (cache.getDisplayOrdersByCategoryProduct().containsKey(displayOrderKey)) {
-                    Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
-
-                    if (document.getField(categorySortFieldName) == null && displayOrder != null) {
-                        document.addField(categorySortFieldName, displayOrder);
-                    }
+                Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
+                if (displayOrder == null) {
+                    // Didn't find the cache at the current level, this might be an override so look upwards
+                    displayOrderKey = shs.getCategoryId(categoryId) + "-" + cacheKey;
+                    displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
+                }
+                
+                if (document.getField(categorySortFieldName) == null && displayOrder != null) {
+                    document.addField(categorySortFieldName, displayOrder);
                 }
 
                 // This is the entire tree of every category defined on the product
