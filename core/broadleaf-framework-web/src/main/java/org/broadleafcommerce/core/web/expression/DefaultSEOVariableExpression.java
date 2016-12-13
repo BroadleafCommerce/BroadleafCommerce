@@ -55,7 +55,7 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
             return title;
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            return null;
+            return "";
         }
     }
 
@@ -64,13 +64,20 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
     }
 
     public String getCategoryDescription(Category category) {
+        String result = "";
         try {
-            String description = category.getMetaDescription();
-            return StringUtils.isEmpty(description) ? "" : ". " + description;
+            String metaDescription = category.getMetaDescription();
+            String description = category.getDescription();
+
+            if (StringUtils.isNotEmpty(metaDescription)) {
+                result = metaDescription;
+            } else if (StringUtils.isNotEmpty(description)) {
+                result = description;
+            }
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            return null;
         }
+        return result;
     }
 
     public String getProductTitlePattern(Category category) {
@@ -82,7 +89,7 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
             return pattern;
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            return null;
+            return "";
         }
     }
 
@@ -95,7 +102,7 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
             return title;
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            return null;
+            return "";
         }
     }
 
@@ -108,18 +115,25 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
             return pattern;
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            return null;
+            return "";
         }
     }
 
     public String getProductDescription(Product product) {
+        String result = "";
         try {
-            String description = product.getMetaDescription();
-            return StringUtils.isEmpty(description) ? "" : ". " + description;
+            String metaDescription = product.getMetaDescription();
+            String description = product.getDescription();
+
+            if (StringUtils.isNotEmpty(metaDescription)) {
+                result = metaDescription;
+            } else if (StringUtils.isNotEmpty(description)) {
+                result = description;
+            }
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            return null;
         }
+        return result;
     }
 
     public String buildTitleString(List<String> titleElements, String elementDelimiter) {
