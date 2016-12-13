@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.geolocation;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ import java.util.Map;
 
 @Service("blGeolocationService")
 public class GeolocationServiceImpl implements GeolocationService {
+
+    private static final Log LOG = LogFactory.getLog(GeolocationServiceImpl.class);
 
     @Value("${geolocation.api}")
     protected String selectedAPI;
@@ -40,8 +44,9 @@ public class GeolocationServiceImpl implements GeolocationService {
         if (api != null) {
             try {
                 data = api.populate(ipAddress);
+                LOG.info("Successful call to " + data.getSource());
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.warn("Failed to retrieve geolocation", e);
             }
         }
 
