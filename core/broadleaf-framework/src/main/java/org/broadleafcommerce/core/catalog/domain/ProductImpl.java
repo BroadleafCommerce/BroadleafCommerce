@@ -245,16 +245,22 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     protected Boolean canSellWithoutOptions = false;
 
     @Column(name = "META_TITLE")
-    @AdminPresentation(friendlyName = "ProductImpl_Category_MetaTitle",
+    @AdminPresentation(friendlyName = "ProductImpl_MetaTitle",
             group = GroupName.Miscellaneous, order = 4000,
-            tooltip = "ProductImpl_Category_MetaTitle_Tooltip")
+            tooltip = "ProductImpl_MetaTitle_Tooltip")
     protected String metaTitle;
 
     @Column(name = "META_DESC")
-    @AdminPresentation(friendlyName = "ProductImpl_Category_MetaDescription",
+    @AdminPresentation(friendlyName = "ProductImpl_MetaDescription",
             group = GroupName.Miscellaneous, order = 5000,
-            tooltip = "ProductImpl_Category_MetaDescription_Tooltip")
+            tooltip = "ProductImpl_MetaDescription_Tooltip")
     protected String metaDescription;
+
+    @Column(name = "CANONICAL_URL")
+    @AdminPresentation(friendlyName = "ProductImpl_Canonical_Url",
+            group = GroupName.Miscellaneous, order = 6000,
+            tooltip = "ProductImpl_Canonical_Url_Tooltip")
+    protected String canonicalUrl;
 
     @Transient
     protected List<Sku> skus = new ArrayList<Sku>();
@@ -523,6 +529,16 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Override
     public void setMetaDescription(String metaDescription) {
         this.metaDescription = metaDescription;
+    }
+
+    @Override
+    public String getCanonicalUrl() {
+        return canonicalUrl;
+    }
+
+    @Override
+    public void setCanonicalUrl(String canonicalUrl) {
+        this.canonicalUrl = canonicalUrl;
     }
 
     @Override
