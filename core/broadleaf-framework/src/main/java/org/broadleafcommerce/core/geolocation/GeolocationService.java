@@ -18,6 +18,13 @@
 package org.broadleafcommerce.core.geolocation;
 
 public interface GeolocationService {
+
+    /**
+     * Gets the location data for the passed IP address
+     *
+     * @param ipAddress
+     * @return
+     */
     GeolocationDTO getLocationData(String ipAddress);
 }
 

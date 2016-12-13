@@ -20,5 +20,13 @@ package org.broadleafcommerce.core.geolocation;
 import java.io.IOException;
 
 public interface GeolocationAPI {
+
+    /**
+     * Makes an API call with the given ip address and returns a GeolocationDTO that has been populated with the results
+     *
+     * @param address
+     * @return
+     * @throws IOException
+     */
     GeolocationDTO populate(String address) throws IOException;
 }
