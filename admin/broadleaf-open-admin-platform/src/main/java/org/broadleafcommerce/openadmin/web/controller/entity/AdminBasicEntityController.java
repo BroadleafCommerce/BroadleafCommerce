@@ -389,6 +389,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("viewType", "modal/entityAdd");
             model.addAttribute("currentUrl", request.getRequestURL().toString());
             model.addAttribute("modalHeaderType", ModalHeaderType.ADD_ENTITY.getType());
+            model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
             setModelAttributes(model, sectionKey);
             return "modules/modalContainer";
         }
