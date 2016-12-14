@@ -73,7 +73,9 @@
                                 <div class="row">
 
                                     <th:block th:each="group, groupStat : ${tab.fieldGroups}" th:if="${group.column} == 0 or ${group.column} == null">
-                                        <div th:if="${group.customTemplate == null}" th:replace="components/partials/entityFormGroups"></div>
+                                        <th:block th:if="${group.customTemplate == null}">
+                                            <div th:replace="components/partials/entityFormGroups"></div>
+                                        </th:block>
                                         <th:block th:unless="${group.customTemplate == null}">
                                             <div th:replace="${group.customTemplate}"></div>
                                         </th:block>

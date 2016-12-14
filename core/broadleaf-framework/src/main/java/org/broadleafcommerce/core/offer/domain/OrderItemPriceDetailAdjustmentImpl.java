@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -30,12 +32,14 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.proxy.HibernateProxy;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -104,17 +108,14 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
     @Transient
     protected Money salesValue;
 
+    @Transient
+    protected Offer deproxiedOffer;
 
     @Override
     public void init(OrderItemPriceDetail orderItemPriceDetail, Offer offer, String reason) {
-        this.orderItemPriceDetail = orderItemPriceDetail;
+        setOrderItemPriceDetail(orderItemPriceDetail);
         setOffer(offer);
-        if (reason == null && offer != null) {
-            this.reason = offer.getName();
-        } else {
-            this.reason = reason;
-        }
-
+        setReason(reason);
     }
 
     @Override
@@ -134,7 +135,20 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
 
     @Override
     public Offer getOffer() {
-        return offer;
+        if (deproxiedOffer == null) {
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+
+            if (postLoaderDao != null) {
+                Long id = offer.getId();
+                deproxiedOffer = postLoaderDao.find(OfferImpl.class, id);
+            } else if (offer instanceof HibernateProxy) {
+                deproxiedOffer = HibernateUtils.deproxy(offer);
+            } else {
+                deproxiedOffer = offer;
+            }
+        }
+
+        return deproxiedOffer;
     }
 
     @Override
@@ -149,7 +163,11 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
 
     @Override
     public void setReason(String reason) {
-        this.reason = reason;
+        if (reason != null) {
+            this.reason = reason;
+        } else if (this.offerName != null) {
+            this.reason = this.offerName;
+        }
     }
 
     @Override
@@ -159,6 +177,7 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
 
     public void setOffer(Offer offer) {
         this.offer = offer;
+        deproxiedOffer = null;
         if (offer != null) {
             this.offerName = offer.getMarketingMessage() != null ? offer.getMarketingMessage() : offer.getName();
         }

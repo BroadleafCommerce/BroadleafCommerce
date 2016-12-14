@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
-import org.broadleafcommerce.common.presentation.client.CustomFieldSearchableTypes;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -41,7 +40,6 @@ import org.hibernate.type.Type;
 import org.hibernate.type.TypeResolver;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 
@@ -86,9 +84,6 @@ public class MapFieldsFieldMetadataProvider extends DefaultFieldMetadataProvider
                     throw new IllegalArgumentException("targetClass on @AdminPresentationMapField must be a concrete class");
                 }
                 basicFieldMetadata.setMapFieldValueClass(mapField.targetClass().getName());
-            }
-            if (mapField.searchable() != CustomFieldSearchableTypes.NOT_SPECIFIED) {
-                basicFieldMetadata.setSearchable(mapField.searchable() == CustomFieldSearchableTypes.YES);
             }
             if (!StringUtils.isEmpty(mapField.manyToField())) {
                 basicFieldMetadata.setManyToField(mapField.manyToField());
