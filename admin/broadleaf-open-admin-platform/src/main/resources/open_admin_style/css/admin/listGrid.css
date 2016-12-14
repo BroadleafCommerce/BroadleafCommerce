@@ -261,9 +261,6 @@ div.alert-box.list-grid-alert.save-alert a.close {
 tr {
     position: relative;
 }
-tr {
-    position: relative;
-}
 .table tbody > tr.list-grid-no-results > td {
     line-height: 28px;
 }
@@ -302,6 +299,9 @@ tr {
 }
 .list-grid-table tbody tr.progress {
     background-color: #E3F7D8 !important;
+}
+.list-grid-table tbody tr.progress td {
+    position: inherit;
 }
 .list-grid-table tbody tr.clickable {
     cursor: pointer;
