@@ -23,11 +23,14 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 
 import java.util.Arrays;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class DefaultSEOVariableExpression implements BroadleafVariableExpression {
 
@@ -40,6 +43,26 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
 
     public String getSiteSimpleURL() {
         return BLCMessageUtils.getMessage("seo.site.simple.url");
+    }
+
+    public String getCanonicalURL(Product product) {
+        try {
+            String canonicalUrl = product.getCanonicalUrl();
+            if (StringUtils.isEmpty(canonicalUrl)) {
+                canonicalUrl = product.getUrl();
+            }
+            return getBaseUrl() + canonicalUrl;
+        } catch (Exception e) {
+            LOG.warn(e.getMessage(), e);
+            return "";
+        }
+    }
+
+    protected String getBaseUrl() {
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        String requestUri = request.getRequestURI();
+        String requestUrl = request.getRequestURL().toString();
+        return request.getRequestURL().substring(0, (requestUrl.length() - requestUri.length()));
     }
 
     public String getCategoryTitlePattern() {
