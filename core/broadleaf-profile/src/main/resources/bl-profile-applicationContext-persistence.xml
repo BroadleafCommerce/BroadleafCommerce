@@ -53,43 +53,4 @@
         <property name="targetRef" value="blMergedEntityContexts"/>
     </bean>
     
-    <bean id="hibernateExporter" class="org.springframework.jmx.export.MBeanExporter" depends-on="entityManagerFactory">
-        <property name="autodetect" value="false" />
-        <property name="assembler">
-            <bean id="jmxAssembler"
-                class="org.broadleafcommerce.common.jmx.MetadataMBeanInfoAssembler">
-                <property name="attributeSource">
-                    <bean
-                        class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" />
-                </property>
-            </bean>
-        </property>
-        <property name="beans">
-            <map>
-                <entry>
-                    <key>
-                        <bean class="org.broadleafcommerce.common.jmx.ExplicitNameFactoryBean">
-                            <constructor-arg value="org.broadleafcommerce:name=hibernate.statistics"/>
-                            <constructor-arg ref="blJmxNamingBean"/>
-                        </bean>
-                    </key>
-                    <bean class="org.hibernate.jmx.StatisticsService">
-                        <property name="statisticsEnabled" value="false" />
-                        <property name="sessionFactory">
-                            <util:property-path
-                                path="entityManagerFactory.sessionFactory" />
-                        </property>
-                    </bean>
-                </entry>
-            </map>
-        </property>
-    </bean>
-
-    <bean id="blJmxNamingBean" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName">
-            <value>java:comp/env/appName</value>
-        </property>
-        <property name="defaultObject" value="broadleaf"/>
-    </bean>
-
 </beans>

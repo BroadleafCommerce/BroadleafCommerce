@@ -39,24 +39,6 @@
     <!-- Bean for encrypting PCI data -->
     <bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.PassthroughEncryptionModule"/>
     
-    <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
-        <property name="autodetect" value="true"/>
-        <property name="assembler" ref="blAssembler"/>
-        <property name="namingStrategy" ref="blNamingStrategy"/>
-    </bean>
-    
-    <bean id="blAttributeSource" class="org.broadleafcommerce.common.jmx.AnnotationJmxAttributeSource">
-        <constructor-arg ref="blJmxNamingBean"/>
-    </bean>
-    
-    <bean id="blAssembler" class="org.broadleafcommerce.common.jmx.MetadataMBeanInfoAssembler">
-        <property name="attributeSource" ref="blAttributeSource"/>
-    </bean>
-    
-    <bean id="blNamingStrategy" class="org.broadleafcommerce.common.jmx.MetadataNamingStrategy">
-        <property name="attributeSource" ref="blAttributeSource"/>
-    </bean>
-
     <bean id="blAccountNumberMask" class="org.broadleafcommerce.common.payment.AccountNumberMask">
         <constructor-arg>
             <list>

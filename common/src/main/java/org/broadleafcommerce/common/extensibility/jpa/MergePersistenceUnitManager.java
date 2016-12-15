@@ -26,6 +26,8 @@ import org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassT
 import org.broadleafcommerce.common.extensibility.jpa.copy.NullClassTransformer;
 import org.hibernate.ejb.AvailableSettings;
 import org.hibernate.ejb.instrument.InterceptFieldClassFileTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
@@ -81,11 +83,12 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     @Resource(name="blEntityMarkerClassTransformer")
     protected EntityMarkerClassTransformer entityMarkerClassTransformer;
     
-    @Resource(name="blAutoDDLStatusExporter")
+    @Autowired(required = false)
+    @Qualifier("blAutoDDLStatusExporter")
     protected MBeanExporter mBeanExporter;
 
     @Resource
-    Environment environment;
+    protected Environment environment;
     
     /**
      * This should only be used in a test context to deal with the Spring ApplicationContext refreshing between different
@@ -403,7 +406,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         String autoDDLStatus = pui.getProperties().getProperty("hibernate.hbm2ddl.auto");
         boolean isCreate = autoDDLStatus != null && (autoDDLStatus.equals("create") || autoDDLStatus.equals("create-drop"));
         boolean detectedCreate = false;
-        if (isCreate) {
+        if (isCreate && mBeanExporter != null) {
             try {
                 if (mBeanExporter.getServer().isRegistered(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"))) {
                     Boolean response = (Boolean) mBeanExporter.getServer().invoke(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"), "getStartedWithCreate",
