@@ -17,7 +17,9 @@
  */
 package org.broadleafcommerce.core.geolocation;
 
-public class GeolocationDTO {
+import java.io.Serializable;
+
+public class GeolocationDTO implements Serializable {
 
     protected String source;
     protected String ipAddress;
