@@ -114,14 +114,11 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     protected Set<Resource> overridableProperyLocations;
     protected StringValueResolver stringValueResolver;
 
-    public RuntimeEnvironmentPropertiesConfigurer() {
-        super();
-        setIgnoreUnresolvablePlaceholders(true); // This default will get overriden by user options if present
-        setNullValue("@null");
-    }
-
     @Override
     public void afterPropertiesSet() throws IOException {
+        setIgnoreUnresolvablePlaceholders(true); // This default will get overriden by user options if present
+        setNullValue("@null");
+        
         // If no environment override has been specified, used the default environments
         if (environments == null || environments.size() == 0) {
             environments = defaultEnvironments;

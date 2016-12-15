@@ -33,10 +33,6 @@
     <context:component-scan base-package="org.broadleafcommerce.core.web"/>
     <context:component-scan base-package="org.broadleafcommerce.cms.file"/>
     
-    <!-- Explicitly scan these packages since they are usually scanned in the servlet and not by default -->
-    <context:component-scan base-package="org.broadleafcommerce.profile.web.controller" />
-    <context:component-scan base-package="org.broadleafcommerce.profile.web.core.service.login" />
-    
     <bean id="blDefaultErrorHandler" class="org.broadleafcommerce.core.workflow.SilentErrorHandler"/>
 
     <bean id="blTestRollbackHandler" class="org.broadleafcommerce.core.workflow.state.test.TestRollbackHandler"/>
@@ -194,7 +190,7 @@
         <property name="persistenceUnitName" value="blCMSStorage"/>
     </bean>
 
-    <bean id="blMergedDataSources-it" class="org.springframework.beans.factory.config.MapFactoryBean">
+    <bean id="blMergedDataSources" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry key="jdbc/test" value-ref="blDS"/>
@@ -202,11 +198,6 @@
                 <entry key="jdbc/testSecure" value-ref="blDS"/>
             </map>
         </property>
-    </bean>
-
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedDataSources-it"/>
-        <property name="targetRef" value="blMergedDataSources"/>
     </bean>
 
     <bean id="blDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">

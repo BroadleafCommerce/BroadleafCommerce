@@ -828,7 +828,7 @@
             <dependency>
                 <groupId>com.icegreen</groupId>
                 <artifactId>greenmail</artifactId>
-                <version>1.3</version>
+                <version>1.5.2</version>
                 <type>jar</type>
                 <scope>test</scope>
             </dependency>

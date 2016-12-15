@@ -17,11 +17,13 @@
  */
 package org.broadleafcommerce.test;
 
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -36,20 +38,20 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * @author Jeff Fischer
  *
  */
-@TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
-@ContextHierarchy({
-@ContextConfiguration(name = "adminRoot",
-    locations = {"classpath:/bl-open-admin-contentClient-applicationContext.xml",
-            "classpath:/bl-open-admin-contentCreator-applicationContext.xml",
-            "classpath:/bl-admin-applicationContext.xml",
-            "classpath:/bl-cms-contentClient-applicationContext.xml",
-            "classpath:/bl-cms-contentCreator-applicationContext.xml"})
-})
+@Rollback
+@ContextConfiguration(name = "adminRoot")
 @WebAppConfiguration
+@ActiveProfiles("mbeansdisabled")
 @TestExecutionListeners(TransactionalTestExecutionListener.class)
 public class TestNGAdminIntegrationSetup extends AbstractTestNGSpringContextTests {
-    /*
-     * Intentionally left blank. Subclasses should be inheriting from
-     * the configuration annotations defined at the class level
+    
+    /**
+     * This is a nested configuration class so that you can do a mix of both {@link @}Configuration classes
+     * as well as XML configuration files at the same level of the 'siteRoot' {@link @}ContextConfiguration
      */
+    @Configuration
+    @ImportResource({"classpath*:/blc-config/admin/bl-*-applicationContext.xml",
+            "classpath:bl-applicationContext-test.xml"
+        })
+    public static class ContextConfig {}
 }

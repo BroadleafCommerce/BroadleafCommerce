@@ -37,8 +37,6 @@
         <sec:custom-filter after="REMEMBER_ME_FILTER" ref="blCustomerStateFilter"/>
     </sec:http>
     
-    <!--  bean id="passwordEncoder" class="org.springframework.security.providers.encoding.Md5PasswordEncoder"/ -->    
-
     <!--=============================================================================================== -->
     <!--  Override the authentication provider to use the JDBC authentication defined below.                                                -->
     <!--=============================================================================================== -->
@@ -49,5 +47,5 @@
     </sec:authentication-manager>
 
     <bean id="blCustomerStateFilter" class="org.broadleafcommerce.profile.web.core.security.CustomerStateFilter"/>
-                                                                          
+    
 </beans>
