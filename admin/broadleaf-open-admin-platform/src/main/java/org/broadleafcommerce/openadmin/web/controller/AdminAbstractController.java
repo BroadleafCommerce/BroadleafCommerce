@@ -44,7 +44,12 @@ import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.AdminSectionCustomCriteriaService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.entity.*;
+import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
+import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -52,14 +57,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for the Admin
@@ -104,13 +110,6 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     @Resource(name = "blAdminSectionCustomCriteriaService")
     protected AdminSectionCustomCriteriaService customCriteriaService;
 
-    /**
-     * Deprecated in favor of {@link org.broadleafcommerce.openadmin.web.controller.AdminAbstractControllerExtensionManager}
-     */
-    @Deprecated
-    @Resource(name = "blMainEntityActionsExtensionManager")
-    protected MainEntityActionsExtensionManager mainEntityActionsExtensionManager;
-
     @Resource(name = "blAdminAbstractControllerExtensionManager")
     protected AdminAbstractControllerExtensionManager extensionManager;
 
@@ -134,7 +133,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         SectionCrumb sc = new SectionCrumb();
         sc.setSectionId(id);
         sc.setSectionIdentifier("structured-content/all");
-        List<SectionCrumb> crumbs = new ArrayList<SectionCrumb>(1);
+        List<SectionCrumb> crumbs = new ArrayList<>(1);
         crumbs.add(sc);
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, crumbs, null);
@@ -291,7 +290,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         ppr.setCustomCriteria(new String[] { info.getCriteriaName(), entityId });
         Entity entity = service.getRecord(ppr, info.getPropertyValue(), cmd, true).getDynamicResultSet().getRecords()[0];
         
-        List<Field> fieldsToMove = new ArrayList<Field>();
+        List<Field> fieldsToMove = new ArrayList<>();
         // override the results of the entity with the dynamic form passed in
         if (dynamicFormOverride != null) {
             dynamicFormOverride.clearFieldsMap();
@@ -345,7 +344,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @param entityForm
      */
     protected void extractDynamicFormFields(ClassMetadata cmd, EntityForm entityForm) {
-        Map<String, Field> dynamicFields = new HashMap<String, Field>();
+        Map<String, Field> dynamicFields = new HashMap<>();
         
         // Find all of the dynamic form fields
         for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
@@ -427,16 +426,16 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         if (requestParams == null || requestParams.isEmpty()) {
             return null;
         }
-        Map<String, FilterAndSortCriteria> fasMap = new HashMap<String, FilterAndSortCriteria>();
+        Map<String, FilterAndSortCriteria> fasMap = new HashMap<>();
 
-        List<FilterAndSortCriteria> result = new ArrayList<FilterAndSortCriteria>();
+        List<FilterAndSortCriteria> result = new ArrayList<>();
         for (Entry<String, List<String>> entry : requestParams.entrySet()) {
             if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER)
                     && !entry.getKey().equals(FilterAndSortCriteria.SORT_DIRECTION_PARAMETER)
                     && !entry.getKey().equals(FilterAndSortCriteria.MAX_INDEX_PARAMETER)
                     && !entry.getKey().equals(FilterAndSortCriteria.START_INDEX_PARAMETER)) {
                 List<String> values = entry.getValue();
-                List<String> collapsedValues = new ArrayList<String>();
+                List<String> collapsedValues = new ArrayList<>();
                 for (String value : values) {
                     if (value.contains(FILTER_VALUE_SEPARATOR)) {
                         String[] vs = value.split(FILTER_VALUE_SEPARATOR_REGEX);
@@ -745,9 +744,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @return the same <b>result</b> that was passed in
      */
     protected JsonResponse populateJsonValidationErrors(EntityForm form, BindingResult result, JsonResponse json) {
-        List<Map<String, Object>> errors = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> errors = new ArrayList<>();
         for (FieldError e : result.getFieldErrors()){
-            Map<String, Object> errorMap = new HashMap<String, Object>();
+            Map<String, Object> errorMap = new HashMap<>();
             errorMap.put("errorType", "field");
             String fieldName = e.getField().substring(e.getField().indexOf("[") + 1, e.getField().indexOf("]")).replace("_", "-");
             errorMap.put("field", fieldName);
@@ -762,7 +761,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             errors.add(errorMap);
         }
         for (ObjectError e : result.getGlobalErrors()) {
-            Map<String, Object> errorMap = new HashMap<String, Object>();
+            Map<String, Object> errorMap = new HashMap<>();
             errorMap.put("errorType", "global");
             errorMap.put("code", e.getCode());
             errorMap.put("message", translateErrorMessage(e));

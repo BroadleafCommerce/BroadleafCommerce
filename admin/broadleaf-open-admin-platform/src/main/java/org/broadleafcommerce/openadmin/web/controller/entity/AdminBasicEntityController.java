@@ -19,7 +19,6 @@ package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -90,6 +89,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UrlPathHelper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -185,7 +185,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
     protected void setupViewEntityListBasicModel(HttpServletRequest request, ClassMetadata cmd, String sectionKey,
             String sectionClassName, Model model, MultiValueMap<String, String> requestParams) {
-        List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
+        List<EntityFormAction> mainActions = new ArrayList<>();
         addAddActionIfAllowed(sectionClassName, cmd, mainActions);
         extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
         extensionManager.getProxy().modifyMainActions(cmd, mainActions);
@@ -256,8 +256,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         if (isAddActionAllowed(sectionClassName, cmd)) {
             mainActions.add(DefaultMainActions.ADD);
         }
-
-        mainEntityActionsExtensionManager.getProxy().modifyMainActions(cmd, mainActions);
     }
     
     protected boolean isAddActionAllowed(String sectionClassName, ClassMetadata cmd) {
@@ -468,7 +466,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
     }
 
     private boolean isAddRequest(Entity entity) {
-        ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<Boolean>();
+        ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<>();
         ExtensionResultStatusType result = extensionManager.getProxy().isAddRequest(entity, resultHolder);
         if (result.equals(ExtensionResultStatusType.NOT_HANDLED)) {
             return false;
@@ -741,7 +739,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             ppr.addFilterAndSortCriteria(new FilterAndSortCriteria(idProp, filterValues));
             
             DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
-            Map<String, String> returnMap = new HashMap<String, String>();
+            Map<String, String> returnMap = new HashMap<>();
             
             for (Entity e : drs.getRecords()) {
                 String id = e.getPMap().get(idProp).getValue();
@@ -787,7 +785,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         AdminSection section = adminNavigationService.findAdminSectionByClassAndSectionId(md.getForeignKeyClass(), sectionKey);
         String sectionUrlKey = (section.getUrl().startsWith("/")) ? section.getUrl().substring(1) : section.getUrl();
-        Map<String, String> varsForField = new HashMap<String, String>();
+        Map<String, String> varsForField = new HashMap<>();
         varsForField.put("sectionKey", sectionUrlKey);
         return viewEntityForm(request, response, model, varsForField, id);
     }
@@ -956,7 +954,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
-        Map<String, Object> responseMap = new HashMap<String, Object>();
+        Map<String, Object> responseMap = new HashMap<>();
         if (md instanceof AdornedTargetCollectionMetadata) {
             adornedTargetAutoPopulateExtensionManager.getProxy().autoSetAdornedTargetManagedFields(md, mainClassName, id,
                     collectionField,
@@ -1461,7 +1459,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 populateTypeAndId = false;
             }
 
-            Map<String, Object> responseMap = new HashMap<String, Object>();
+            Map<String, Object> responseMap = new HashMap<>();
             adornedTargetAutoPopulateExtensionManager.getProxy().autoSetAdornedTargetManagedFields(md, mainClassName, id,
                     collectionField,
                     collectionItemId, responseMap);
@@ -1706,7 +1704,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             Field field = entityForm.findField(atl.getSortField());
             field.setValue(String.valueOf(sequenceValue));
             
-            Map<String, Object> responseMap = new HashMap<String, Object>();
+            Map<String, Object> responseMap = new HashMap<>();
             PersistenceResponse persistenceResponse = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, alternateId, sectionCrumbs);
             Property displayOrder = persistenceResponse.getEntity().findProperty(atl.getSortField());
 
@@ -1716,7 +1714,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             return responseMap;
         } else if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata cd = (BasicCollectionMetadata) md;
-            Map<String, Object> responseMap = new HashMap<String, Object>();
+            Map<String, Object> responseMap = new HashMap<>();
             Entity entity = service.getRecord(ppr, collectionItemId, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();

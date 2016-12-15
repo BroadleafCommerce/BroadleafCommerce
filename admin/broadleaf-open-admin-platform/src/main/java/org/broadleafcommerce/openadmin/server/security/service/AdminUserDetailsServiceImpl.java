@@ -17,28 +17,34 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Transformer;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.springframework.dao.DataAccessException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
 /**
  * @author Jeff Fischer
  */
+@Component("blAdminUserDetailsService")
 public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
     @Resource(name="blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
+    
+    public static final String LEGACY_ROLE_PREFIX = "PERMISSION_";
+    public static final String DEFAULT_SPRING_SECURITY_ROLE_PREFIX = "ROLE_";
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
@@ -47,7 +53,7 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("The user was not found");
         }
 
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         for (AdminRole role : adminUser.getAllRoles()) {
             for (AdminPermission permission : role.getAllPermissions()) {
                 if(permission.isFriendly()) {
@@ -71,6 +77,21 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
         for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
             authorities.add(new SimpleGrantedAuthority(perm));
         }
+        
+        // Spring security expects everything to begin with ROLE_, so this transforms all the PERMISSION_* into ROLE_*
+        CollectionUtils.transform(authorities, new Transformer<SimpleGrantedAuthority, SimpleGrantedAuthority>() {
+
+            @Override
+            public SimpleGrantedAuthority transform(SimpleGrantedAuthority input) {
+                String authority = input.getAuthority();
+                if (authority.startsWith(LEGACY_ROLE_PREFIX)) {
+                    return new SimpleGrantedAuthority(authority.replace(LEGACY_ROLE_PREFIX, DEFAULT_SPRING_SECURITY_ROLE_PREFIX));
+                } else {
+                    return input;
+                }
+            }
+        });
+        
         return new AdminUserDetails(adminUser.getId(), username, adminUser.getPassword(), true, true, true, true, authorities);
     }
 

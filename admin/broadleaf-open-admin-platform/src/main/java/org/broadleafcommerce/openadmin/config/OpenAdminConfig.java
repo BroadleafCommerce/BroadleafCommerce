@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Jeff Fischer
+ * @author Phillip Verheyden (phillipuniverse)
  */
 @Configuration
 public class OpenAdminConfig {

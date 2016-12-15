@@ -27,9 +27,9 @@ import org.broadleafcommerce.common.security.service.StaleStateServiceException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
@@ -62,6 +62,7 @@ import javax.servlet.http.HttpServletResponse;
  *     
  * @author trevorleffert, Jeff Fischer
  */
+@Component("blAdminCsrfFilter")
 public class AdminSecurityFilter extends SecurityFilter {
 
     private static final Log LOG = LogFactory.getLog(AdminSecurityFilter.class);
@@ -69,6 +70,7 @@ public class AdminSecurityFilter extends SecurityFilter {
     @Resource(name = "blAdminAuthenticationFailureHandler")
     protected AuthenticationFailureHandler failureHandler;
     
+    @Override
     public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
         try {
             super.doFilter(baseRequest, baseResponse, chain);
