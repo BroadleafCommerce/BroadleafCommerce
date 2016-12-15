@@ -31,6 +31,9 @@
     <context:component-scan base-package="org.broadleafcommerce.openadmin">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.web.controller.*"/>
     </context:component-scan>
+    
+    <context:component-scan base-package="org.broadleafcommerce.openadmin.config"/>
+    
 
     <bean id="blPersistenceManagerEventHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -278,6 +281,12 @@
             </list>
         </property>
     </bean>
+
+    <bean id="blAdminPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
+        <constructor-arg value="${password.admin.encoder}"/>
+    </bean>
+
+    
     
    <!--  Spring 4.1 Admin Resource Handling Base Classes -->
    <bean id="adminResourceHttpRequestHandlerBase" abstract="true" 

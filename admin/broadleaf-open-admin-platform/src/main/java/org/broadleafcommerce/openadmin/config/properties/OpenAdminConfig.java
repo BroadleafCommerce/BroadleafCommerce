@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.openadmin.config;
+package org.broadleafcommerce.openadmin.config.properties;
 
 import org.broadleafcommerce.common.config.FrameworkCommonPropertySource;
 import org.springframework.context.annotation.Bean;

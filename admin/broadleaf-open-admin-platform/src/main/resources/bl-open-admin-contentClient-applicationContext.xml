@@ -24,7 +24,7 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.common.persistence"/>
-    <context:component-scan base-package="org.broadleafcommerce.openadmin.config"/>
+    <context:component-scan base-package="org.broadleafcommerce.openadmin.config.properties"/>
     <context:component-scan base-package="org.broadleafcommerce.openadmin.server.dao"/>
     <context:component-scan base-package="org.broadleafcommerce.openadmin.server.service.artifact">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.server.service.artifact.upload.*"/>
@@ -142,10 +142,6 @@
             <list>
             </list>
         </property>
-    </bean>
-
-    <bean id="blAdminPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
-        <constructor-arg value="${password.admin.encoder}"/>
     </bean>
 
     <bean id="blMessageSourceBaseNames" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
