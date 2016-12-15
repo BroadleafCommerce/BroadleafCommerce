@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.geolocation;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.geolocation.GeolocationDTO;
@@ -40,15 +41,17 @@ public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProc
 
     @Override
     public void process(WebRequest request) {
-        if (request instanceof ServletWebRequest) {
-            ServletWebRequest servletWebRequest = (ServletWebRequest) request;
-
-            GeolocationDTO location = (GeolocationDTO) BLCRequestUtils.getSessionAttributeIfOk(request, GEOLOCATON_ATTRIBUTE_NAME);
-            if (location == null) {
-                location = geolocationService.getLocationData(getIPAddress(servletWebRequest));
-                BLCRequestUtils.setSessionAttributeIfOk(request, GEOLOCATON_ATTRIBUTE_NAME, location);
+        if (BLCSystemProperty.resolveBooleanSystemProperty("geolocation.api.enabled", false)) {
+            if (request instanceof ServletWebRequest) {
+                ServletWebRequest servletWebRequest = (ServletWebRequest) request;
+                GeolocationDTO location = (GeolocationDTO) BLCRequestUtils.getSessionAttributeIfOk(request, GEOLOCATON_ATTRIBUTE_NAME);
+                if (location == null) {
+                    String ipAddress = getIPAddress(servletWebRequest);
+                    location = geolocationService.getLocationData(ipAddress);
+                    BLCRequestUtils.setSessionAttributeIfOk(request, GEOLOCATON_ATTRIBUTE_NAME, location);
+                }
+                BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(GEOLOCATON_ATTRIBUTE_NAME, location);
             }
-            BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(GEOLOCATON_ATTRIBUTE_NAME, location);
         }
     }
 
