@@ -28,7 +28,7 @@ public class GeolocationDTO implements Serializable {
     protected String regionCode;
     protected String regionName;
     protected String city;
-    protected String zipCode;
+    protected String postalCode;
     protected Double latitude;
     protected Double longitude;
 
@@ -88,12 +88,12 @@ public class GeolocationDTO implements Serializable {
         this.city = city;
     }
 
-    public String getZipCode() {
-        return zipCode;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     public Double getLatitude() {
@@ -114,7 +114,7 @@ public class GeolocationDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "GeolocationDTO{" +
+        return "GeolocationCDTO{" +
                 "source='" + source + '\'' +
                 ", ipAddress='" + ipAddress + '\'' +
                 ", countryCode='" + countryCode + '\'' +
@@ -122,7 +122,7 @@ public class GeolocationDTO implements Serializable {
                 ", regionCode='" + regionCode + '\'' +
                 ", regionName='" + regionName + '\'' +
                 ", city='" + city + '\'' +
-                ", zipCode='" + zipCode + '\'' +
+                ", postalCode='" + postalCode + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 '}';
