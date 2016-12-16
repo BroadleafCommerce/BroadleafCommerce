@@ -61,6 +61,7 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
     public static final TranslatedEntity COUNTRY_SUBDIVISION = new TranslatedEntity("org.broadleafcommerce.profile.core.domain.CountrySubdivision", "CountrySubdivision");
     public static final TranslatedEntity COUNTRY_SUBDIVISION_CATEGORY = new TranslatedEntity("org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategory", "CountrySubdivisionCategory");
     public static final TranslatedEntity CATALOG = new TranslatedEntity("org.broadleafcommerce.common.site.domain.Catalog", "Catalog");
+    public static final TranslatedEntity STRUCTURED_CONTENT = new TranslatedEntity("org.broadleafcommerce.cms.structure.domain.StructuredContent", "StructuredContent");
 
     public static TranslatedEntity getInstance(final String type) {
         return TYPES.get(type);
