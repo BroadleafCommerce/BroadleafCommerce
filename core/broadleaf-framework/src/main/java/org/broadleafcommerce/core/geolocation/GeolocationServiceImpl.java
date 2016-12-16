@@ -17,19 +17,14 @@
  */
 package org.broadleafcommerce.core.geolocation;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Map;
 
 @Service("blGeolocationService")
 public class GeolocationServiceImpl implements GeolocationService {
-
-    private static final Log LOG = LogFactory.getLog(GeolocationServiceImpl.class);
 
     @Autowired
     protected Map<String, GeolocationAPI> geolocationMap;
@@ -39,14 +34,8 @@ public class GeolocationServiceImpl implements GeolocationService {
         GeolocationAPI api = getGeolocationAPI();
         GeolocationDTO data = null;
         if (api != null) {
-            try {
-                data = api.getLocationData(ipAddress);
-                LOG.info("Successful call to " + data.getSource());
-            } catch (IOException e) {
-                LOG.warn("Failed to retrieve geolocation", e);
-            }
+            data = api.getLocationData(ipAddress);
         }
-
         return data;
     }
 
