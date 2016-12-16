@@ -54,7 +54,7 @@
         <selenium.version>2.43.1</selenium.version>
         <groovy.version>2.3.11</groovy.version>
         <project.uri>${project.baseUri}</project.uri>
-        <broadleaf-presentation.version>1.0.0-SNAPSHOT</broadleaf-presentation.version>
+        <broadleaf-presentation.version>1.0.0-GA</broadleaf-presentation.version>
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</connection>
