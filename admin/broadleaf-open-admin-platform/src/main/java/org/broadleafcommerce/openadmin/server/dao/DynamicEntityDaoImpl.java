@@ -1068,9 +1068,26 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     protected Boolean testPropertyRecursion(String prefix, List<Class<?>> parentClasses, String propertyName, Class<?> targetClass,
                                             String ceilingEntityFullyQualifiedClassname, Boolean isComponentPrefix, String parentPrefix) {
-        Boolean includeField = true;
+
+        Boolean standardRecursionDetected = testStandardPropertyRecursion(prefix, parentClasses, propertyName, targetClass,
+                ceilingEntityFullyQualifiedClassname, isComponentPrefix);
+
+        Boolean multiLevelEmbeddableRecursionDetected = testMultiLevelEmbeddableRecursion(prefix, isComponentPrefix,
+                parentPrefix, propertyName);
+
+        return standardRecursionDetected || multiLevelEmbeddableRecursionDetected;
+    }
+
+    protected Boolean testMultiLevelEmbeddableRecursion(String prefix, Boolean isComponentPrefix, String parentPrefix, String propertyName) {
+        return isComponentPrefix && parentPrefix.contains("." + prefix + propertyName);
+    }
+
+    protected Boolean testStandardPropertyRecursion(String prefix, List<Class<?>> parentClasses, String
+            propertyName, Class<?> targetClass, String ceilingEntityFullyQualifiedClassname, Boolean
+            isComponentPrefix) {
+        Boolean response = false;
         //don't want to shun a self-referencing property in an @Embeddable
-        boolean shouldTest = !StringUtils.isEmpty(prefix) && (!isComponentPrefix || parentPrefix.split("\\.").length > 1);
+        boolean shouldTest = !StringUtils.isEmpty(prefix) && (!isComponentPrefix || prefix.split("\\.").length > 1);
         if (shouldTest) {
             Field testField = getFieldManager().getField(targetClass, propertyName);
             if (testField == null) {
@@ -1098,33 +1115,27 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                         }
                     }
                 }
-                String testParentPrefixProperty = parentPrefix + prefix + propertyName;
-                if (testField == null) {
-                    testField = getFieldManager().getField(targetClass, testParentPrefixProperty);
-                }
-                if (testField == null) {
-                    for (Class<?> clazz : entities) {
-                        testField = getFieldManager().getField(clazz, testParentPrefixProperty);
-                        if (testField != null) {
-                            break;
-                        }
-                    }
+            }
+            response = determineExclusionForField(parentClasses, targetClass, testField);
+        }
+        return response;
+    }
+
+    protected Boolean determineExclusionForField(List<Class<?>> parentClasses, Class<?> targetClass, Field testField) {
+        Boolean response = false;
+        if (testField != null) {
+            Class<?> testType = testField.getType();
+            for (Class<?> parentClass : parentClasses) {
+                if (parentClass.isAssignableFrom(testType) || testType.isAssignableFrom(parentClass)) {
+                    response = true;
+                    break;
                 }
             }
-            if (testField != null) {
-                Class<?> testType = testField.getType();
-                for (Class<?> parentClass : parentClasses) {
-                    if (parentClass.isAssignableFrom(testType) || testType.isAssignableFrom(parentClass)) {
-                        includeField = false;
-                        break;
-                    }
-                }
-                if (includeField && (targetClass.isAssignableFrom(testType) || testType.isAssignableFrom(targetClass))) {
-                    includeField = false;
-                }
+            if (!response && (targetClass.isAssignableFrom(testType) || testType.isAssignableFrom(targetClass))) {
+                response = true;
             }
         }
-        return includeField;
+        return response;
     }
 
     protected void buildBasicProperty(
@@ -1154,7 +1165,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             String parentPrefix) {
         FieldMetadata presentationAttribute = presentationAttributes.get(propertyName);
         Boolean amIExcluded = isParentExcluded || !testPropertyInclusion(presentationAttribute);
-        Boolean includeField = testPropertyRecursion(prefix, parentClasses, propertyName, targetClass,
+        Boolean includeField = !testPropertyRecursion(prefix, parentClasses, propertyName, targetClass,
             ceilingEntityFullyQualifiedClassname, isComponentPrefix, parentPrefix);
 
         SupportedFieldType explicitType = null;
