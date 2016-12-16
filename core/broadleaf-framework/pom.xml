@@ -104,6 +104,11 @@
             <artifactId>solr-core</artifactId>
             <groupId>org.apache.solr</groupId>
         </dependency>
+        <!-- Solr still needs this dependency, we'll just use the later version -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-smile</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.mvel</groupId>
             <artifactId>mvel2</artifactId>
