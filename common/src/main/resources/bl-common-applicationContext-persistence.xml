@@ -54,6 +54,8 @@
     <bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
+    <!-- Allows the use if @Transactional without any qualifiers -->
+    <alias alias="transactionManager" name="blTransactionManager"/>
 
     <tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
         <tx:attributes>
