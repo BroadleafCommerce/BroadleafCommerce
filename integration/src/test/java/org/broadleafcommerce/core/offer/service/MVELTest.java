@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import javax.annotation.Resource;
+
 public class MVELTest extends TestNGSiteIntegrationSetup {
 
     private StringBuffer functions = new StringBuffer();
@@ -85,7 +87,6 @@ public class MVELTest extends TestNGSiteIntegrationSetup {
         Product product = createProduct();
 
         DiscreteOrderItemImpl orderItem = new DiscreteOrderItemImpl();
-        ProductImpl product = new ProductImpl();
         ArrayList<CategoryProductXref> categories = new ArrayList<>();
         CategoryProductXref categoryXref = new CategoryProductXrefImpl();
         categoryXref.setProduct(product);
