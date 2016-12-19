@@ -60,7 +60,7 @@ public interface RecordHelper extends DataFormatProvider {
 
     Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records,
                                Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject,
-                               String[] customCriteria);
+                               PersistencePackage persistencePackage);
 
     Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records);
     

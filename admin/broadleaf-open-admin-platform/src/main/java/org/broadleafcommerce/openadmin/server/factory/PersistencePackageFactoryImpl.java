@@ -31,6 +31,7 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.ListGridFetchFactory;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +52,9 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
+
+    @Resource(name="blListGridFetchFactory")
+    protected ListGridFetchFactory listGridFetchFactory;
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
@@ -97,6 +101,8 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         }
 
         PersistencePackage pp = new PersistencePackage();
+        
+        pp.setListGridFetchRequest(listGridFetchFactory.getListGridFetchRequest(request));
         pp.setCeilingEntityFullyQualifiedClassname(request.getCeilingEntityClassname());
         if (!StringUtils.isEmpty(request.getSecurityCeilingEntityClassname())) {
             pp.setSecurityCeilingEntityFullyQualifiedClassname(request.getSecurityCeilingEntityClassname());

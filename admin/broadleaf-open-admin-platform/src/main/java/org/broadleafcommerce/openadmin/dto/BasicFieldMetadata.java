@@ -264,6 +264,9 @@ public class BasicFieldMetadata extends FieldMetadata {
     }
 
     public Boolean isProminent() {
+        if (prominent == null) {
+            return false;
+        }
         return prominent;
     }
 

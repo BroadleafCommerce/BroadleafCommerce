@@ -468,7 +468,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             AdornedTargetRetrieval adornedTargetRetrieval = new AdornedTargetRetrieval(persistencePackage, adornedTargetList, cto).invokeForFetch();
             List<Serializable> records = adornedTargetRetrieval.getRecords();
             Map<String, FieldMetadata> mergedProperties = adornedTargetRetrieval.getMergedProperties();
-            payload = getRecords(mergedPropertiesTarget, records, mergedProperties, adornedTargetList.getTargetObjectPath(), persistencePackage.getCustomCriteria());
+            payload = getRecords(mergedPropertiesTarget, records, mergedProperties, adornedTargetList.getTargetObjectPath(), persistencePackage);
             totalRecords = getTotalRecords(adornedTargetList.getAdornedTargetEntityClassname(), adornedTargetRetrieval.getFilterMappings());
         } catch (Exception e) {
             throw new ServiceException("Unable to fetch results for " + adornedTargetList.getAdornedTargetEntityClassname(), e);

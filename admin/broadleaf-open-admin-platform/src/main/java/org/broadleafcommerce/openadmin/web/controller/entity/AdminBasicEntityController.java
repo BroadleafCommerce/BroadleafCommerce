@@ -44,6 +44,7 @@ import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.dto.ListGridFetchRequest;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
@@ -74,6 +75,7 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StopWatch;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -157,7 +159,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> crumbs = getSectionCrumbs(request, null, null);
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams, crumbs, pathVars);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams, crumbs, pathVars)
+                .withIsListGridFetchRequest(true);
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
 

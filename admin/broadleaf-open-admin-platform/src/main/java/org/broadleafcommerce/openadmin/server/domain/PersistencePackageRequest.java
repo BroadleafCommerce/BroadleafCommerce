@@ -61,6 +61,16 @@ public class PersistencePackageRequest {
     protected List<String> customCriteria = new ArrayList<String>();
     protected List<FilterAndSortCriteria> filterAndSortCriteria = new ArrayList<FilterAndSortCriteria>();
 
+    protected boolean isListGridFetchRequest = false;
+
+    public boolean isListGridFetchRequest() {
+        return isListGridFetchRequest;
+    }
+
+    public void setListGridFetchRequest(boolean listGridFetchRequest) {
+        this.isListGridFetchRequest = listGridFetchRequest;
+    }
+
     public enum Type {
         STANDARD,
         ADORNED,
@@ -270,6 +280,11 @@ public class PersistencePackageRequest {
 
     public PersistencePackageRequest withIsUpdateLookupType(boolean isUpdateLookupType) {
         setUpdateLookupType(isUpdateLookupType);
+        return this;
+    }
+
+    public PersistencePackageRequest withIsListGridFetchRequest(boolean isListGridFetchRequest) {
+        setListGridFetchRequest(isListGridFetchRequest);
         return this;
     }
 

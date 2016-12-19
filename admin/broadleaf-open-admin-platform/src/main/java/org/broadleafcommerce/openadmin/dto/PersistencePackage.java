@@ -47,6 +47,8 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     protected boolean validateUnsubmittedProperties = true;
     protected SectionCrumb[] sectionCrumbs;
     protected Map<ChangeType, List<PersistencePackage>> deferredOperations = new LinkedHashMap<ChangeType, List<PersistencePackage>>();
+    
+    protected ListGridFetchRequest listGridFetchRequest;
 
     //internalUsage
     protected boolean isProcessedInternal = false;
@@ -360,5 +362,13 @@ public class PersistencePackage implements Serializable, StateDescriptor {
         result = 31 * result + (entity != null ? entity.hashCode() : 0);
         result = 31 * result + (csrfToken != null ? csrfToken.hashCode() : 0);
         return result;
+    }
+
+    public ListGridFetchRequest getListGridFetchRequest() {
+        return listGridFetchRequest;
+    }
+
+    public void setListGridFetchRequest(ListGridFetchRequest listGridFetchRequest) {
+        this.listGridFetchRequest = listGridFetchRequest;
     }
 }
