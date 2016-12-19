@@ -26,12 +26,16 @@ import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Service("blDefaultSEOVariableExpression")
+@ConditionalOnTemplating
 public class DefaultSEOVariableExpression implements BroadleafVariableExpression {
 
     private static final Log LOG = LogFactory.getLog(DefaultSEOVariableExpression.class);
