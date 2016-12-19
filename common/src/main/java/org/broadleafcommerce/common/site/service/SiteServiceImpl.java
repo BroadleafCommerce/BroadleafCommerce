@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.site.service;
 import org.broadleafcommerce.common.site.dao.SiteDao;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.site.domain.SiteCatalogXref;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
@@ -262,7 +263,17 @@ public class SiteServiceImpl implements SiteService {
         extensionManager.getProxy().contributeNonPersitentSiteProperties(persistentSite, clone);
         return clone;
     }
-    
+
+    @Override
+    public Catalog createCatalog() {
+        return siteDao.createCatalog();
+    }
+
+    @Override
+    public SiteCatalogXref createSiteCatalog() {
+        return siteDao.createSiteCatalog();
+    }
+
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Catalog save(Catalog catalog) {

@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.site.dao;
 
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.site.domain.SiteCatalogXref;
 
 import java.util.List;
 
@@ -74,6 +75,20 @@ public interface SiteDao {
      * @return the catalog
      */
     public Catalog retrieveCatalog(Long id);
+
+    /**
+     * Creates a catalog using {@link org.broadleafcommerce.common.persistence.EntityConfiguration}.
+     *
+     * @return the catalog
+     */
+    public Catalog createCatalog();
+
+    /**
+     * Creates a new instance of {@code SiteCatalogXref} using {@link org.broadleafcommerce.common.persistence.EntityConfiguration}.
+     *
+     * @return the site catalog
+     */
+    public SiteCatalogXref createSiteCatalog();
     
     public Catalog save(Catalog catalog);
 
