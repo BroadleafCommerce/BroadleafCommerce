@@ -41,7 +41,7 @@ public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProc
 
     @Override
     public void process(WebRequest request) {
-        if (BLCSystemProperty.resolveBooleanSystemProperty("geolocation.api.enabled", false)) {
+        if (isGeolocationEnabled()) {
             if (request instanceof ServletWebRequest) {
                 ServletWebRequest servletWebRequest = (ServletWebRequest) request;
                 GeolocationDTO location = (GeolocationDTO) BLCRequestUtils.getSessionAttributeIfOk(request, GEOLOCATON_ATTRIBUTE_NAME);
@@ -53,6 +53,10 @@ public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProc
                 BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(GEOLOCATON_ATTRIBUTE_NAME, location);
             }
         }
+    }
+
+    protected boolean isGeolocationEnabled() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("geolocation.api.enabled", false);
     }
 
     protected String getIPAddress(ServletWebRequest request) {
