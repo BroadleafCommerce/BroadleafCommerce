@@ -17,13 +17,16 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Chad Harchar (charchar)
  */
-public class ListGridFetchRequest {
+public class ListGridFetchRequest implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     protected List<String> fetchFields = new ArrayList<>();
     protected boolean useRefinedFetch = false;

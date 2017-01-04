@@ -494,7 +494,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         primaryMergedProperties = filterOutRefinedListGridFetch(primaryMergedProperties, persistencePackage);
         alternateMergedProperties = filterOutRefinedListGridFetch(alternateMergedProperties, persistencePackage);
 
-        return getEntities(records, pathToTargetObject, persistencePackage.getCustomCriteria(), primaryMergedProperties, alternateMergedProperties);
+        String[] customCriteria = null;
+        if (persistencePackage != null) {
+            customCriteria = persistencePackage.getCustomCriteria();
+        }
+        return getEntities(records, pathToTargetObject, customCriteria, primaryMergedProperties, alternateMergedProperties);
     }
 
     public Entity[] getEntities(List<? extends Serializable> records, String pathToTargetObject, String[] customCriteria, Map<String, FieldMetadata> primaryMergedProperties, Map<String, FieldMetadata> alternateMergedProperties) {
