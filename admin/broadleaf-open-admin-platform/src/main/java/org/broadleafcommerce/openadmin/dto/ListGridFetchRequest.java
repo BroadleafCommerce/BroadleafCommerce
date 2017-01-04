@@ -24,8 +24,6 @@ import java.util.List;
  * @author Chad Harchar (charchar)
  */
 public class ListGridFetchRequest {
-    
-    
 
     protected List<String> fetchFields = new ArrayList<>();
     protected boolean useRefinedFetch = false;

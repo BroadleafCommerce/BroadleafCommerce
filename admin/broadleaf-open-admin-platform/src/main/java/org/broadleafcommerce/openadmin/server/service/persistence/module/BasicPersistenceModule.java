@@ -411,7 +411,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 //completely sending over all checkbox/radio fields
                 List<Serializable> entityList = new ArrayList<Serializable>(1);
                 entityList.add(instance);
-                Entity invalid = getRecords(mergedProperties, entityList, null, null, null)[0];
+                Entity invalid = getRefinedRecords(mergedProperties, entityList, null, null, null)[0];
                 invalid.setPropertyValidationErrors(entity.getPropertyValidationErrors());
                 invalid.overridePropertyValues(entity);
 
@@ -436,7 +436,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     public Entity getRecord(Map<String, FieldMetadata> primaryMergedProperties, Serializable record, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject) {
         List<Serializable> records = new ArrayList<Serializable>(1);
         records.add(record);
-        Entity[] productEntities = getRecords(primaryMergedProperties, records, alternateMergedProperties, pathToTargetObject, null);
+        Entity[] productEntities = getRefinedRecords(primaryMergedProperties, records, alternateMergedProperties, pathToTargetObject, null);
         return productEntities[0];
     }
 
@@ -449,7 +449,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     @Override
     public Entity[] getRecords(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, List<? extends Serializable> records) {
         Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective);
-        return getRecords(mergedProperties, records, null, null, null);
+        return getRefinedRecords(mergedProperties, records, null, null, null);
     }
 
     @Override
@@ -459,7 +459,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records) {
-        return getRecords(primaryMergedProperties, records, null, null, null);
+        return getRefinedRecords(primaryMergedProperties, records, null, null, null);
     }
 
     @Override
@@ -467,7 +467,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                List<? extends Serializable> records,
                                Map<String, FieldMetadata> alternateUnfilteredMergedProperties,
                                String pathToTargetObject) {
-        return getRecords(primaryUnfilteredMergedProperties, records, alternateUnfilteredMergedProperties, pathToTargetObject, null);
+        return getRefinedRecords(primaryUnfilteredMergedProperties, records, alternateUnfilteredMergedProperties, pathToTargetObject, null);
     }
 
     @Override
@@ -475,9 +475,29 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                List<? extends Serializable> records,
                                Map<String, FieldMetadata> alternateUnfilteredMergedProperties,
                                String pathToTargetObject,
+                               String[] customCriteria) {
+        Map<String, FieldMetadata> primaryMergedProperties = filterOutCollectionMetadata(primaryUnfilteredMergedProperties);
+        Map<String, FieldMetadata> alternateMergedProperties = filterOutCollectionMetadata(alternateUnfilteredMergedProperties);
+
+        return getEntities(records, pathToTargetObject, customCriteria, primaryMergedProperties, alternateMergedProperties);
+    }
+
+    @Override
+    public Entity[] getRefinedRecords(Map<String, FieldMetadata> primaryUnfilteredMergedProperties,
+                               List<? extends Serializable> records,
+                               Map<String, FieldMetadata> alternateUnfilteredMergedProperties,
+                               String pathToTargetObject,
                                PersistencePackage persistencePackage) {
         Map<String, FieldMetadata> primaryMergedProperties = filterOutCollectionMetadata(primaryUnfilteredMergedProperties);
         Map<String, FieldMetadata> alternateMergedProperties = filterOutCollectionMetadata(alternateUnfilteredMergedProperties);
+
+        primaryMergedProperties = filterOutRefinedListGridFetch(primaryMergedProperties, persistencePackage);
+        alternateMergedProperties = filterOutRefinedListGridFetch(alternateMergedProperties, persistencePackage);
+
+        return getEntities(records, pathToTargetObject, persistencePackage.getCustomCriteria(), primaryMergedProperties, alternateMergedProperties);
+    }
+
+    public Entity[] getEntities(List<? extends Serializable> records, String pathToTargetObject, String[] customCriteria, Map<String, FieldMetadata> primaryMergedProperties, Map<String, FieldMetadata> alternateMergedProperties) {
         Entity[] entities = new Entity[records.size()];
         int j = 0;
         for (Serializable recordEntity : records) {
@@ -496,9 +516,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             entities[j] = entityItem;
 
             List<Property> props = new ArrayList<Property>(primaryMergedProperties.size());
-            extractPropertiesFromPersistentEntity(primaryMergedProperties, entity, props, persistencePackage);
+            extractPropertiesFromPersistentEntity(primaryMergedProperties, entity, props, customCriteria);
             if (alternateMergedProperties != null) {
-                extractPropertiesFromPersistentEntity(alternateMergedProperties, recordEntity, props, persistencePackage);
+                extractPropertiesFromPersistentEntity(alternateMergedProperties, recordEntity, props, customCriteria);
             }
 
             // Try to add the "main name" property. Log a debug message if we can't
@@ -521,7 +541,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             Map<String, FieldMetadata> alternateOnEntity = new HashMap<String, FieldMetadata>();
                             alternateOnEntity.put(entry.getKey(), entry.getValue());
                             List<Property> props2 = new ArrayList<Property>();
-                            extractPropertiesFromPersistentEntity(alternateOnEntity, recordEntity, props2, persistencePackage);
+                            extractPropertiesFromPersistentEntity(alternateOnEntity, recordEntity, props2, customCriteria);
                             if (props2.size() == 1 && !props2.get(0).getName().contains(".")) {
                                 Property alternateIdProp = props2.get(0);
                                 alternateIdProp.setName(ALTERNATE_ID_PROPERTY);
@@ -541,10 +561,44 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return entities;
     }
 
+    protected Map<String, FieldMetadata> filterOutRefinedListGridFetch(Map<String, FieldMetadata> metadata, PersistencePackage persistencePackage) {
+        if (metadata == null) {
+            return null;
+        }
+
+        Boolean isListGridPersistencePackage = persistencePackage != null && persistencePackage.getListGridFetchRequest() != null;
+        Boolean isUseRefinedFetch = isListGridPersistencePackage && persistencePackage.getListGridFetchRequest().isUseRefinedFetch();
+
+        if (!isUseRefinedFetch) {
+            return metadata;
+        }
+        
+        Map<String, FieldMetadata> newMap = new HashMap<String, FieldMetadata>();
+        for (Map.Entry<String, FieldMetadata> entry : metadata.entrySet()) {
+
+            if (addToMetadataMap(persistencePackage, entry)) {
+                newMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        
+        return newMap;
+    }
+
+    protected Boolean addToMetadataMap(PersistencePackage persistencePackage, Entry<String, FieldMetadata> entry) {
+        FieldMetadata entryValue = entry.getValue();
+        Boolean isProminent = entryValue instanceof BasicFieldMetadata && ((BasicFieldMetadata) entryValue).isProminent();
+
+        String fieldName = entryValue.getFieldName();
+
+        List<String> fetchFields = persistencePackage.getListGridFetchRequest().getFetchFields();
+        Boolean isFetchField = fetchFields.contains(fieldName);
+        return isProminent || isFetchField;
+    }
+
     protected void extractPropertiesFromPersistentEntity(Map<String, FieldMetadata> mergedProperties,
                                                          Serializable entity,
                                                          List<Property> props,
-                                                         PersistencePackage persistencePackage) {
+                                                         String[] customCriteria) {
         FieldManager fieldManager = getFieldManager();
         try {
             if (entity instanceof AdminMainEntity) {
@@ -563,9 +617,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 }
             }
             for (Entry<String, FieldMetadata> entry : mergedProperties.entrySet()) {
-                if (skipExtractProperty(entry, persistencePackage)) {
-                    continue;
-                }
                 String property = entry.getKey();
                 BasicFieldMetadata metadata = (BasicFieldMetadata) entry.getValue();
                 if (Class.forName(metadata.getInheritedFromType()).isAssignableFrom(entity.getClass()) || entity.getClass().isAssignableFrom(Class.forName(metadata.getInheritedFromType()))) {
@@ -619,10 +670,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             props.add(propertyItem);
                             String displayVal = propertyItem.getDisplayValue();
                             boolean handled = false;
-                            String[] customCriteria = null;
-                            if (persistencePackage != null) {
-                                customCriteria = persistencePackage.getCustomCriteria();
-                            }
                             for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
                                 MetadataProviderResponse response = fieldPersistenceProvider.extractValue(
                                         new ExtractValueRequest(props, fieldManager, metadata, value, displayVal, 
@@ -799,7 +846,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 List<Serializable> entityList = new ArrayList<Serializable>(1);
                 entityList.add(instance);
 
-                entity = getRecords(mergedProperties, entityList, null, null, null)[0];
+                entity = getRefinedRecords(mergedProperties, entityList, null, null, null)[0];
                 entityResult.setEntity(entity);
                 return entityResult;
             } else {
@@ -1046,7 +1093,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 List<Serializable> entityList = new ArrayList<Serializable>(1);
                 entityList.add(instance);
 
-                entity = getRecords(mergedProperties, entityList, null, null, null)[0];
+                entity = getRefinedRecords(mergedProperties, entityList, null, null, null)[0];
                 entityResult.setEntity(entity);
                 return entityResult;
             } else {
@@ -1194,7 +1241,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 //            persistencePackage.getPersistencePerspective().setShowArchivedFields(true);
             totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), countFilterMappings);
 
-            payload = getRecords(mergedProperties, records, null, null, persistencePackage);
+            payload = getRefinedRecords(mergedProperties, records, null, null, persistencePackage);
         } catch (Exception e) {
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
         }

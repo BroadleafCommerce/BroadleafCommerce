@@ -266,7 +266,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             List<FilterMapping> filterMappingsInserted = getAdornedTargetFilterMappings(persistencePerspective, ctoInserted, mergedProperties, adornedTargetList);
             List<Serializable> recordsInserted = getPersistentRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappingsInserted, ctoInserted.getFirstResult(), ctoInserted.getMaxResults());
             if (recordsInserted.size() > 0) {
-                payload = getRecords(mergedPropertiesTarget, recordsInserted, mergedProperties, adornedTargetList.getTargetObjectPath(), null)[0];
+                payload = getRefinedRecords(mergedPropertiesTarget, recordsInserted, mergedProperties, adornedTargetList.getTargetObjectPath(), null)[0];
             } else {
                 Serializable instance = createPopulatedAdornedTargetInstance(adornedTargetList, entity);
                 instance = createPopulatedInstance(instance, entity, mergedProperties, false, persistencePackage.isValidateUnsubmittedProperties());
@@ -390,7 +390,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             myRecord = persistenceManager.getDynamicEntityDao().merge(myRecord);
             List<Serializable> myList = new ArrayList<Serializable>();
             myList.add(myRecord);
-            Entity[] payload = getRecords(mergedPropertiesTarget, myList, mergedProperties, adornedTargetList.getTargetObjectPath(), null);
+            Entity[] payload = getRefinedRecords(mergedPropertiesTarget, myList, mergedProperties, adornedTargetList.getTargetObjectPath(), null);
             entity = payload[0];
 
             return entity;
@@ -468,7 +468,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             AdornedTargetRetrieval adornedTargetRetrieval = new AdornedTargetRetrieval(persistencePackage, adornedTargetList, cto).invokeForFetch();
             List<Serializable> records = adornedTargetRetrieval.getRecords();
             Map<String, FieldMetadata> mergedProperties = adornedTargetRetrieval.getMergedProperties();
-            payload = getRecords(mergedPropertiesTarget, records, mergedProperties, adornedTargetList.getTargetObjectPath(), persistencePackage);
+            payload = getRefinedRecords(mergedPropertiesTarget, records, mergedProperties, adornedTargetList.getTargetObjectPath(), persistencePackage);
             totalRecords = getTotalRecords(adornedTargetList.getAdornedTargetEntityClassname(), adornedTargetRetrieval.getFilterMappings());
         } catch (Exception e) {
             throw new ServiceException("Unable to fetch results for " + adornedTargetList.getAdornedTargetEntityClassname(), e);

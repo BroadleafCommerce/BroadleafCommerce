@@ -58,9 +58,34 @@ public interface RecordHelper extends DataFormatProvider {
     Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records,
                                    Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject);
 
+    /**
+     * 
+     * @param primaryMergedProperties
+     * @param records
+     * @param alternateMergedProperties
+     * @param pathToTargetObject
+     * @param customCriteria
+     * @deprecated use getRefinedRecords with persistencePackage parameter
+     * @return
+     */
+    @Deprecated
     Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records,
                                Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject,
-                               PersistencePackage persistencePackage);
+                               String[] customCriteria);
+
+    /**
+     * Refines (if a list grid fetch) and retrieves the entity records for the passed in properties
+     * 
+     * @param primaryMergedProperties
+     * @param records
+     * @param alternateMergedProperties
+     * @param pathToTargetObject
+     * @param persistencePackage
+     * @return
+     */
+    Entity[] getRefinedRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records,
+                        Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject,
+                        PersistencePackage persistencePackage);
 
     Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records);
     

@@ -268,16 +268,16 @@
         <property name="collectionRef" value="blAdminJsFileList" />
         <property name="targetRef" value="blJsFileList" />
     </bean>
-    
-    <bean id="blProductListGridFetchEntity" class="org.broadleafcommerce.openadmin.server.service.persistence.module.ListGridFetchEntity" />
+
+    <bean id="blProductListGridFetchEntity" class="org.broadleafcommerce.openadmin.server.service.persistence.module.ListGridFetchEntity">
+        <property name="entityTarget" value="org.broadleafcommerce.core.catalog.domain.Product" />
+    </bean>
 
     <bean id="blListGridFetchFactory" class="org.broadleafcommerce.openadmin.server.service.persistence.module.ListGridFetchFactory">
         <property name="entities">
-            <map>
-                <entry key="org.broadleafcommerce.core.catalog.domain.Product">
-                    <ref bean="blProductListGridFetchEntity"/>
-                </entry>
-            </map>
+            <list>
+                <ref bean="blProductListGridFetchEntity"/>
+            </list>
         </property>
         <property name="universalFetchFields">
             <list>

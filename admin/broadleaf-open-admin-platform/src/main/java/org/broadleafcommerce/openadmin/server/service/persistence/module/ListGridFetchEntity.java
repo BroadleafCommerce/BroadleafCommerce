@@ -17,16 +17,21 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Chad Harchar (charchar)
  */
-public class ListGridFetchEntity {
+public class ListGridFetchEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     
     protected String entityTarget;
-    
+
+    protected String regexTarget;
+
     protected List<String> additionalfetchFields = new ArrayList<>();
 
     public String getEntityTarget() {
@@ -35,6 +40,14 @@ public class ListGridFetchEntity {
 
     public void setEntityTarget(String entityTarget) {
         this.entityTarget = entityTarget;
+    }
+
+    public String getRegexTarget() {
+        return regexTarget;
+    }
+
+    public void setRegexTarget(String regexTarget) {
+        this.regexTarget = regexTarget;
     }
 
     public List<String> getAdditionalfetchFields() {

@@ -17,30 +17,36 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.openadmin.dto.ListGridFetchRequest;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * @author Chad Harchar (charchar)
  */
 public class ListGridFetchFactory {
     
-    protected Map<String, ListGridFetchEntity> entities = new HashMap<>();
+    protected List<ListGridFetchEntity> entities = new ArrayList<>();
     protected List<String> universalFetchFields = new ArrayList<>();
 
+    protected static String CACHE_NAME = "blStandardElements";
+    protected static String CACHE_KEY_PREFIX = "refineFetch:";
+    protected Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
 
     public ListGridFetchRequest getListGridFetchRequest(PersistencePackageRequest request) {
         if (request == null || !request.isListGridFetchRequest()) {
             return null;
         }
 
-        ListGridFetchRequest listGridFetchRequest = new ListGridFetchRequest();
+        ListGridFetchRequest listGridFetchRequest;
 
         String ceilingEntity = request.getCeilingEntityClassname();
 
@@ -49,22 +55,66 @@ public class ListGridFetchFactory {
             ceilingEntity = ceilingEntity.substring(0, pos);
         }
         
-        ListGridFetchEntity listGridFetchEntity = getEntities().get(ceilingEntity);
-        
-        if (listGridFetchEntity != null) {
-            
+        String cacheKey = CACHE_KEY_PREFIX + ceilingEntity;
+        Element cacheElement = cache.get(cacheKey);
+        if (cacheElement != null) {
+            listGridFetchRequest = (ListGridFetchRequest) cacheElement.getObjectValue();
+        } else {
+            listGridFetchRequest = createListGridFetchRequest(ceilingEntity);
+
+            cacheElement = new Element(cacheKey, listGridFetchRequest);
+            cache.put(cacheElement);
+        }
+
+        return listGridFetchRequest;
+    }
+
+    public ListGridFetchRequest createListGridFetchRequest(String ceilingEntity) {
+        ListGridFetchRequest listGridFetchRequest = new ListGridFetchRequest();
+        ListGridFetchEntity matchedEntity = null;
+
+        for (ListGridFetchEntity listGridFetchEntity : getEntities()) {
+            if (ceilingEntity.equals(listGridFetchEntity.getEntityTarget())) {
+                matchedEntity = listGridFetchEntity;
+                break;
+            }
+
+            matchedEntity = attemptToFindRegexTarget(ceilingEntity, listGridFetchEntity);
+
+            if (matchedEntity != null) {
+                break;
+            }
+        }
+
+        setAdditionalFieldsToListGridFetchRequest(listGridFetchRequest, matchedEntity);
+
+        return listGridFetchRequest;
+    }
+
+    public void setAdditionalFieldsToListGridFetchRequest(ListGridFetchRequest listGridFetchRequest, ListGridFetchEntity matchedEntity) {
+        if (matchedEntity != null) {
             List<String> fetchFields = new ArrayList<>();
-            
+
             fetchFields.addAll(getUniversalFetchFields());
-            fetchFields.addAll(listGridFetchEntity.getAdditionalfetchFields());
-            
+            fetchFields.addAll(matchedEntity.getAdditionalfetchFields());
+
             listGridFetchRequest.setFetchFields(fetchFields);
             listGridFetchRequest.setUseRefinedFetch(true);
         } else {
             listGridFetchRequest.setUseRefinedFetch(false);
         }
-        
-        return listGridFetchRequest;
+    }
+
+    public ListGridFetchEntity attemptToFindRegexTarget(String ceilingEntity, ListGridFetchEntity listGridFetchEntity) {
+        if (listGridFetchEntity.getRegexTarget() != null) {
+            Pattern pattern = Pattern.compile(listGridFetchEntity.getRegexTarget());
+            Matcher matcher = pattern.matcher(ceilingEntity);
+
+            if (matcher.matches()) {
+                return listGridFetchEntity;
+            }
+        }
+        return null;
     }
 
 
@@ -76,11 +126,11 @@ public class ListGridFetchFactory {
         this.universalFetchFields = universalFetchFields;
     }
 
-    public Map<String, ListGridFetchEntity> getEntities() {
+    public List<ListGridFetchEntity> getEntities() {
         return entities;
     }
 
-    public void setEntities(Map<String, ListGridFetchEntity> entities) {
+    public void setEntities(List<ListGridFetchEntity> entities) {
         this.entities = entities;
     }
 }
