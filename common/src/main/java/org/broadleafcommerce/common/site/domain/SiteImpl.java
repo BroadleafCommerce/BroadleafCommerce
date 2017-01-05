@@ -271,7 +271,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
             if (getCatalogs() != null) {
                 for (Catalog catalog : getCatalogs()) {
                     if (catalog != null) {
-                        Catalog cloneCatalog = new CatalogImpl();
+                        Catalog cloneCatalog = (Catalog) Class.forName(catalog.getClass().getName()).newInstance();
 
                         cloneCatalog.setId(catalog.getId());
                         cloneCatalog.setName(catalog.getName());

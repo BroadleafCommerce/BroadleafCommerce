@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.CatalogImpl;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.site.domain.SiteCatalogXref;
 import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
@@ -61,7 +62,17 @@ public class SiteDaoImpl implements SiteDao {
     public Catalog retrieveCatalog(Long id) {
         return em.find(CatalogImpl.class, id);
     }
-    
+
+    @Override
+    public Catalog createCatalog() {
+        return (Catalog) entityConfiguration.createEntityInstance(Catalog.class.getName());
+    }
+
+    @Override
+    public SiteCatalogXref createSiteCatalog() {
+        return (SiteCatalogXref) entityConfiguration.createEntityInstance(SiteCatalogXref.class.getName());
+    }
+
     @Override
     public List<Site> readAllActiveSites() {
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -149,6 +160,6 @@ public class SiteDaoImpl implements SiteDao {
         TypedQuery<Catalog> q = new TypedQueryBuilder<Catalog>(Catalog.class, "c")
                 .toQuery(em);
         return q.getResultList();
-    } 
+    }
 
 }
