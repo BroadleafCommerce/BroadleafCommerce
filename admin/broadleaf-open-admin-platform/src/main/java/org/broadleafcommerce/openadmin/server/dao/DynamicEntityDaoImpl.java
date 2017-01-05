@@ -46,7 +46,6 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManagerModifier;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.FieldNamePropertyValidator;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.hibernate.Criteria;
@@ -58,7 +57,6 @@ import org.hibernate.mapping.Property;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -423,36 +421,35 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     @Override
     public Map<String, FieldMetadata> getMergedProperties(
-        String ceilingEntityFullyQualifiedClassname,
-        Class<?>[] entities,
-        ForeignKey foreignField,
-        String[] additionalNonPersistentProperties,
-        ForeignKey[] additionalForeignFields,
-        MergedPropertyType mergedPropertyType,
-        Boolean populateManyToOneFields,
-        String[] includeFields,
-        String[] excludeFields,
-        String configurationKey,
-        String prefix
-    ) {
+            String ceilingEntityFullyQualifiedClassname,
+            Class<?>[] entities,
+            ForeignKey foreignField,
+            String[] additionalNonPersistentProperties,
+            ForeignKey[] additionalForeignFields,
+            MergedPropertyType mergedPropertyType,
+            Boolean populateManyToOneFields,
+            String[] includeFields,
+            String[] excludeFields,
+            String configurationKey,
+            String prefix) {
         Map<String, FieldMetadata> mergedProperties = getMergedPropertiesRecursively(
-            ceilingEntityFullyQualifiedClassname,
-            entities,
-            foreignField,
-            additionalNonPersistentProperties,
-            additionalForeignFields,
-            mergedPropertyType,
-            populateManyToOneFields,
-            includeFields,
-            excludeFields,
-            configurationKey,
-            new ArrayList<Class<?>>(),
-            prefix,
-            false
-        );
+                ceilingEntityFullyQualifiedClassname,
+                entities,
+                foreignField,
+                additionalNonPersistentProperties,
+                additionalForeignFields,
+                mergedPropertyType,
+                populateManyToOneFields,
+                includeFields,
+                excludeFields,
+                configurationKey,
+                new ArrayList<Class<?>>(),
+                prefix,
+                false,
+                "");
 
         final List<String> removeKeys = new ArrayList<>();
- 
+
         for (final String key : mergedProperties.keySet()) {
             if (mergedProperties.get(key).getExcluded() != null && mergedProperties.get(key).getExcluded()) {
                 removeKeys.add(key);
@@ -462,7 +459,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         for (String removeKey : removeKeys) {
             mergedProperties.remove(removeKey);
         }
-        
+
         // Allow field metadata providers to contribute additional fields here. These latestage handlers take place
         // after any cached lookups occur, and are ideal for adding in dynamic properties that are not globally cacheable
         // like properties gleaned from reflection typically are.
@@ -470,7 +467,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         for (Class<?> targetClass : entities) {
             for (String key : keys) {
                 LateStageAddMetadataRequest amr = new LateStageAddMetadataRequest(key, null, targetClass, this, "");
-                
+
                 boolean foundOneOrMoreHandlers = false;
                 for (FieldMetadataProvider fieldMetadataProvider : fieldMetadataProviders) {
                     MetadataProviderResponse response = fieldMetadataProvider.lateStageAddMetadata(amr, mergedProperties);
@@ -486,25 +483,25 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 }
             }
         }
-        
+
         return mergedProperties;
     }
 
     protected Map<String, FieldMetadata> getMergedPropertiesRecursively(
-        final String ceilingEntityFullyQualifiedClassname,
-        final Class<?>[] entities,
-        final ForeignKey foreignField,
-        final String[] additionalNonPersistentProperties,
-        final ForeignKey[] additionalForeignFields,
-        final MergedPropertyType mergedPropertyType,
-        final Boolean populateManyToOneFields,
-        final String[] includeFields,
-        final String[] excludeFields,
-        final String configurationKey,
-        final List<Class<?>> parentClasses,
-        final String prefix,
-        final Boolean isParentExcluded
-    ) {
+            final String ceilingEntityFullyQualifiedClassname,
+            final Class<?>[] entities,
+            final ForeignKey foreignField,
+            final String[] additionalNonPersistentProperties,
+            final ForeignKey[] additionalForeignFields,
+            final MergedPropertyType mergedPropertyType,
+            final Boolean populateManyToOneFields,
+            final String[] includeFields,
+            final String[] excludeFields,
+            final String configurationKey,
+            final List<Class<?>> parentClasses,
+            final String prefix,
+            final Boolean isParentExcluded,
+            final String parentPrefix) {
         PropertyBuilder propertyBuilder = new PropertyBuilder() {
             @Override
             public Map<String, FieldMetadata> execute(Boolean overridePopulateManyToOne) {
@@ -530,8 +527,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                     mergedProperties,
                     parentClasses,
                     prefix,
-                    isParentExcluded
-                );
+                    isParentExcluded,
+                    parentPrefix);
 
                 return mergedProperties;
             }
@@ -652,21 +649,21 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     protected void buildPropertiesFromPolymorphicEntities(
-        Class<?>[] entities,
-        ForeignKey foreignField, 
-        String[] additionalNonPersistentProperties, 
-        ForeignKey[] additionalForeignFields, 
-        MergedPropertyType mergedPropertyType, 
-        Boolean populateManyToOneFields, 
-        String[] includeFields, 
-        String[] excludeFields,
-        String configurationKey,
-        String ceilingEntityFullyQualifiedClassname,
-        Map<String, FieldMetadata> mergedProperties, 
-        List<Class<?>> parentClasses,
-        String prefix,
-        Boolean isParentExcluded
-    ) {
+            Class<?>[] entities,
+            ForeignKey foreignField,
+            String[] additionalNonPersistentProperties,
+            ForeignKey[] additionalForeignFields,
+            MergedPropertyType mergedPropertyType,
+            Boolean populateManyToOneFields,
+            String[] includeFields,
+            String[] excludeFields,
+            String configurationKey,
+            String ceilingEntityFullyQualifiedClassname,
+            Map<String, FieldMetadata> mergedProperties,
+            List<Class<?>> parentClasses,
+            String prefix,
+            Boolean isParentExcluded,
+            String parentPrefix) {
         for (Class<?> clazz : entities) {
             String cacheKey = getCacheKey(ceilingEntityFullyQualifiedClassname, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, clazz, configurationKey, isParentExcluded);
 
@@ -690,8 +687,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                         ceilingEntityFullyQualifiedClassname,
                         parentClasses,
                         prefix,
-                        isParentExcluded
-                    );
+                        isParentExcluded,
+                        parentPrefix);
                     //first check all the properties currently in there to see if my entity inherits from them
                     for (Class<?> clazz2 : entities) {
                         if (!clazz2.getName().equals(clazz.getName())) {
@@ -859,20 +856,20 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     protected Map<String, FieldMetadata> getPropertiesForEntityClass(
-        Class<?> targetClass,
-        ForeignKey foreignField,
-        String[] additionalNonPersistentProperties,
-        ForeignKey[] additionalForeignFields,
-        MergedPropertyType mergedPropertyType,
-        Boolean populateManyToOneFields,
-        String[] includeFields,
-        String[] excludeFields,
-        String configurationKey,
-        String ceilingEntityFullyQualifiedClassname,
-        List<Class<?>> parentClasses,
-        String prefix,
-        Boolean isParentExcluded
-    ) {
+            Class<?> targetClass,
+            ForeignKey foreignField,
+            String[] additionalNonPersistentProperties,
+            ForeignKey[] additionalForeignFields,
+            MergedPropertyType mergedPropertyType,
+            Boolean populateManyToOneFields,
+            String[] includeFields,
+            String[] excludeFields,
+            String configurationKey,
+            String ceilingEntityFullyQualifiedClassname,
+            List<Class<?>> parentClasses,
+            String prefix,
+            Boolean isParentExcluded,
+            String parentPrefix) {
         Map<String, FieldMetadata> presentationAttributes = metadata.getFieldMetadataForTargetClass(null, targetClass, this, "");
         if (isParentExcluded) {
             for (String key : presentationAttributes.keySet()) {
@@ -923,7 +920,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             parentClasses,
             prefix,
             isParentExcluded,
-            false
+            false,
+            parentPrefix
         );
         BasicFieldMetadata presentationAttribute = new BasicFieldMetadata();
         presentationAttribute.setExplicitFieldType(SupportedFieldType.STRING);
@@ -967,27 +965,27 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     protected void buildProperties(
-        Class<?> targetClass,
-        ForeignKey foreignField,
-        ForeignKey[] additionalForeignFields,
-        String[] additionalNonPersistentProperties,
-        MergedPropertyType mergedPropertyType,
-        Map<String, FieldMetadata> presentationAttributes,
-        List<Property> componentProperties,
-        Map<String, FieldMetadata> fields,
-        List<String> propertyNames,
-        List<Type> propertyTypes,
-        String idProperty,
-        Boolean populateManyToOneFields,
-        String[] includeFields,
-        String[] excludeFields,
-        String configurationKey,
-        String ceilingEntityFullyQualifiedClassname,
-        List<Class<?>> parentClasses,
-        String prefix,
-        Boolean isParentExcluded,
-        Boolean isComponentPrefix
-    ) {
+            Class<?> targetClass,
+            ForeignKey foreignField,
+            ForeignKey[] additionalForeignFields,
+            String[] additionalNonPersistentProperties,
+            MergedPropertyType mergedPropertyType,
+            Map<String, FieldMetadata> presentationAttributes,
+            List<Property> componentProperties,
+            Map<String, FieldMetadata> fields,
+            List<String> propertyNames,
+            List<Type> propertyTypes,
+            String idProperty,
+            Boolean populateManyToOneFields,
+            String[] includeFields,
+            String[] excludeFields,
+            String configurationKey,
+            String ceilingEntityFullyQualifiedClassname,
+            List<Class<?>> parentClasses,
+            String prefix,
+            Boolean isParentExcluded,
+            Boolean isComponentPrefix,
+            String parentPrefix) {
         int j = 0;
         Comparator<String> propertyComparator = new Comparator<String>() {
             @Override
@@ -1042,7 +1040,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                             additionalNonPersistentProperties, mergedPropertyType, presentationAttributes,
                             componentProperties, fields, idProperty, populateManyToOneFields, includeFields,
                             excludeFields, configurationKey, ceilingEntityFullyQualifiedClassname, parentClasses,
-                            prefix, isParentExcluded, propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition, isComponentPrefix);
+                            prefix, isParentExcluded, propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition, isComponentPrefix, parentPrefix);
                     }
                 }
             }
@@ -1069,8 +1067,25 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     protected Boolean testPropertyRecursion(String prefix, List<Class<?>> parentClasses, String propertyName, Class<?> targetClass,
-                                                String ceilingEntityFullyQualifiedClassname, Boolean isComponentPrefix) {
-        Boolean includeField = true;
+                                            String ceilingEntityFullyQualifiedClassname, Boolean isComponentPrefix, String parentPrefix) {
+
+        Boolean standardRecursionDetected = testStandardPropertyRecursion(prefix, parentClasses, propertyName, targetClass,
+                ceilingEntityFullyQualifiedClassname, isComponentPrefix);
+
+        Boolean multiLevelEmbeddableRecursionDetected = testMultiLevelEmbeddableRecursion(prefix, isComponentPrefix,
+                parentPrefix, propertyName);
+
+        return standardRecursionDetected || multiLevelEmbeddableRecursionDetected;
+    }
+
+    protected Boolean testMultiLevelEmbeddableRecursion(String prefix, Boolean isComponentPrefix, String parentPrefix, String propertyName) {
+        return isComponentPrefix && parentPrefix.contains("." + prefix + propertyName);
+    }
+
+    protected Boolean testStandardPropertyRecursion(String prefix, List<Class<?>> parentClasses, String
+            propertyName, Class<?> targetClass, String ceilingEntityFullyQualifiedClassname, Boolean
+            isComponentPrefix) {
+        Boolean response = false;
         //don't want to shun a self-referencing property in an @Embeddable
         boolean shouldTest = !StringUtils.isEmpty(prefix) && (!isComponentPrefix || prefix.split("\\.").length > 1);
         if (shouldTest) {
@@ -1101,20 +1116,26 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                     }
                 }
             }
-            if (testField != null) {
-                Class<?> testType = testField.getType();
-                for (Class<?> parentClass : parentClasses) {
-                    if (parentClass.isAssignableFrom(testType) || testType.isAssignableFrom(parentClass)) {
-                        includeField = false;
-                        break;
-                    }
-                }
-                if (includeField && (targetClass.isAssignableFrom(testType) || testType.isAssignableFrom(targetClass))) {
-                    includeField = false;
+            response = determineExclusionForField(parentClasses, targetClass, testField);
+        }
+        return response;
+    }
+
+    protected Boolean determineExclusionForField(List<Class<?>> parentClasses, Class<?> targetClass, Field testField) {
+        Boolean response = false;
+        if (testField != null) {
+            Class<?> testType = testField.getType();
+            for (Class<?> parentClass : parentClasses) {
+                if (parentClass.isAssignableFrom(testType) || testType.isAssignableFrom(parentClass)) {
+                    response = true;
+                    break;
                 }
             }
+            if (!response && (targetClass.isAssignableFrom(testType) || testType.isAssignableFrom(targetClass))) {
+                response = true;
+            }
         }
-        return includeField;
+        return response;
     }
 
     protected void buildBasicProperty(
@@ -1140,11 +1161,12 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             Type type,
             boolean propertyForeignKey,
             int additionalForeignKeyIndexPosition,
-            Boolean isComponentPrefix) {
+            Boolean isComponentPrefix,
+            String parentPrefix) {
         FieldMetadata presentationAttribute = presentationAttributes.get(propertyName);
         Boolean amIExcluded = isParentExcluded || !testPropertyInclusion(presentationAttribute);
-        Boolean includeField = testPropertyRecursion(prefix, parentClasses, propertyName, targetClass,
-            ceilingEntityFullyQualifiedClassname, isComponentPrefix);
+        Boolean includeField = !testPropertyRecursion(prefix, parentClasses, propertyName, targetClass,
+            ceilingEntityFullyQualifiedClassname, isComponentPrefix, parentPrefix);
 
         SupportedFieldType explicitType = null;
         if (presentationAttribute != null && presentationAttribute instanceof BasicFieldMetadata) {
@@ -1171,8 +1193,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                     returnedClass,
                     parentClasses,
                     amIExcluded,
-                    prefix
-                );
+                    prefix,
+                        parentPrefix);
                 break checkProp;
             }
             /*
@@ -1200,7 +1222,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                     targetClass,
                     parentClasses,
                     prefix,
-                    amIExcluded
+                    amIExcluded,
+                    parentPrefix
                 );
                 break checkProp;
             }
@@ -1251,7 +1274,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         Class<?> targetClass, 
         List<Class<?>> parentClasses,
         String prefix,
-        Boolean isParentExcluded
+        Boolean isParentExcluded,
+        String parentPrefix
     ) {
         Class<?>[] polymorphicEntities = getAllPolymorphicEntitiesFromCeiling(returnedClass);
         List<Class<?>> clonedParentClasses = new ArrayList<>();
@@ -1272,8 +1296,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             configurationKey,
             clonedParentClasses,
             prefix + propertyName + '.',
-            isParentExcluded
-        );
+            isParentExcluded,
+            parentPrefix);
         for (FieldMetadata newMetadata : newFields.values()) {
             newMetadata.setInheritedFromType(targetClass.getName());
             newMetadata.setAvailableToTypes(new String[]{targetClass.getName()});
@@ -1309,25 +1333,25 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     protected void buildComponentProperties(
-        Class<?> targetClass,
-        ForeignKey foreignField,
-        ForeignKey[] additionalForeignFields,
-        String[] additionalNonPersistentProperties,
-        MergedPropertyType mergedPropertyType,
-        Map<String, FieldMetadata> fields,
-        String idProperty,
-        Boolean populateManyToOneFields,
-        String[] includeFields,
-        String[] excludeFields,
-        String configurationKey,
-        String ceilingEntityFullyQualifiedClassname,
-        String propertyName,
-        Type type,
-        Class<?> returnedClass,
-        List<Class<?>> parentClasses,
-        Boolean isParentExcluded,
-        String prefix
-    ) {
+            Class<?> targetClass,
+            ForeignKey foreignField,
+            ForeignKey[] additionalForeignFields,
+            String[] additionalNonPersistentProperties,
+            MergedPropertyType mergedPropertyType,
+            Map<String, FieldMetadata> fields,
+            String idProperty,
+            Boolean populateManyToOneFields,
+            String[] includeFields,
+            String[] excludeFields,
+            String configurationKey,
+            String ceilingEntityFullyQualifiedClassname,
+            String propertyName,
+            Type type,
+            Class<?> returnedClass,
+            List<Class<?>> parentClasses,
+            Boolean isParentExcluded,
+            String prefix,
+            String parentPrefix) {
         String[] componentProperties = ((ComponentType) type).getPropertyNames();
         List<String> componentPropertyNames = Arrays.asList(componentProperties);
         Type[] componentTypes = ((ComponentType) type).getSubtypes();
@@ -1378,7 +1402,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             parentClasses,
             propertyName + ".",
             isParentExcluded,
-            true
+            true,
+            parentPrefix + prefix
         );
         Map<String, FieldMetadata> convertedFields = new HashMap<>();
         for (String key : newFields.keySet()) {

@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.site.dao.SiteDao;
 import org.broadleafcommerce.common.site.dao.SiteDaoImpl;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.site.domain.SiteCatalogXref;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 
 import java.util.List;
@@ -156,7 +157,21 @@ public interface SiteService {
      * @return the catalog
      */
     public Catalog findCatalogById(Long id);
-    
+
+    /**
+     * Creates an instance of {@code Catalog}.   Default implementation delegates to {@link SiteDao#createCatalog()}.
+     *
+     * @return the catalog
+     */
+    public Catalog createCatalog();
+
+    /**
+     * Creates an instance of {@code SiteCatalogXref}. Default implementation delegates to {@link SiteDao#createSiteCatalog()}
+     *
+     * @return the site catalog
+     */
+    public SiteCatalogXref createSiteCatalog();
+
     /**
      * Saves the given <b>catalog</b> and returns the merged instance
      * @param catalog
