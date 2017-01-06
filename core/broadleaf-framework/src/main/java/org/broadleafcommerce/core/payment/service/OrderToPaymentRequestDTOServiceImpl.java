@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayRequestType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -116,9 +117,12 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         // - If in a REFUND flow OR paying with multiple final payments OR this is a DETACHED_CREDIT request,
         //   you cannot use the total after applied payments convenience method.
         // - The amounts to be sent to the gateway are the amounts passed in.
+        // At this point in a checkout, CustomerCredit and GiftCards are still Unconfirmed,
+        // thus the check to prevent incorrect payment totals
         if (PaymentTransactionType.UNCONFIRMED.equals(paymentTransaction.getType()) &&
                 !orderContainsMultipleFinalPayments(order) &&
-                !transactionIsDetachedCreditRequest(paymentTransaction)) {
+                !transactionIsDetachedCreditRequest(paymentTransaction) &&
+                paymentTransaction.getOrderPayment().isFinalPayment()) {
             populateTotals(order, requestDTO);
             populateDefaultLineItemsAndSubtotal(order, requestDTO);
         }

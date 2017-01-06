@@ -3,7 +3,7 @@
     <input type="hidden" class="listgrid-criteria-input" th:attr="data-name=${fieldName}" />
     
     <div class="specific-input">
-        <a class="numeric-range-toggle" href="" th:text="#{numericInput.switchToRange}" />
+        <span class="filter-heading" th:text="#{numericInput.specificInputFilter}" ></span>
         <br />
     
         <input class="listgrid-criteria-input-range money range-single"
@@ -11,7 +11,7 @@
     </div>
     
     <div class="range-input hidden">
-        <a class="numeric-range-toggle" href="" th:text="#{numericInput.switchToSpecific}" />
+        <span class="filter-heading" th:text="#{numericInput.rangeInputFilter}" ></span>
         <br />
     
         <input class="listgrid-criteria-input-range money range range-low"

@@ -87,9 +87,17 @@ public class MVELTest extends BaseTest {
         //----------------------------------------------------------------------------------------------------
         // Mock up some order data
         OrderImpl order = new OrderImpl();
+        CategoryImpl category = new CategoryImpl();
+        category.setName("t-shirt");
         Product product = createProduct();
-        
+
         DiscreteOrderItemImpl orderItem = new DiscreteOrderItemImpl();
+        ArrayList<CategoryProductXref> categories = new ArrayList<CategoryProductXref>();
+        CategoryProductXref categoryXref = new CategoryProductXrefImpl();
+        categoryXref.setProduct(product);
+        categoryXref.setCategory(category);
+        categories.add(categoryXref);
+        product.setAllParentCategoryXrefs(categories);
         orderItem.setProduct(product);
 
         order.getOrderItems().add(orderItem);

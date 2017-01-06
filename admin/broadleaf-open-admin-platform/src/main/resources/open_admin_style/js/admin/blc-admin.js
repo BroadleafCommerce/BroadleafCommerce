@@ -636,6 +636,19 @@ var BLCAdmin = (function($) {
             });
             $(".alert-box").removeClass("success").addClass("alert");
             $(".alert-box-message").text(alertMessage);
+        },
+
+        updateAdminNavigation: function() {
+            // var url = window.location.pathname.replace("/admin", '');
+            BLC.ajax({
+                url: BLC.servletContext + '/update-navigation',
+                type: "GET",
+                error: function (error) {
+                }
+            }, function (data) {
+                var $nav = $('.secondary-nav').parent();
+                $nav.replaceWith($(data));
+            });
         }
 	};
 	
