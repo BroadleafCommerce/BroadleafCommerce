@@ -29,6 +29,8 @@ import java.io.InputStream;
  */
 public class BLCFileSystemUtils {
 
+    private static final String CLASSPATH = "classpath:";
+
     public static String getClasspathFileContents(String filePath) {
         String contents = null;
 
@@ -47,9 +49,9 @@ public class BLCFileSystemUtils {
 
     public static InputStream getClasspathFileInputStream(String filePath) {
         try {
-            if (filePath.contains("classpath:")) {
+            if (filePath.startsWith(CLASSPATH)) {
                 // remove "classpath:" from the file path as ClassPathResource does not recognize it
-                filePath = filePath.replace("classpath:", "");
+                filePath = filePath.substring(CLASSPATH.length());
             }
 
             org.springframework.core.io.Resource resource = new ClassPathResource(filePath);
