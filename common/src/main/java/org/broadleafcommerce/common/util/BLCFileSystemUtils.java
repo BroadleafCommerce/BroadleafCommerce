@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.util;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.PathResource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,22 @@ import java.io.InputStream;
  * @author Jon Fleschler (jfleschler)
  */
 public class BLCFileSystemUtils {
+
+    public static String getPathFileContents(String filePath) {
+        String contents = null;
+
+        try {
+            org.springframework.core.io.Resource resource = new PathResource(filePath);
+            if (resource.exists()) {
+                InputStream stream = resource.getInputStream();
+                contents = IOUtils.toString(stream);
+            }
+
+            return contents;
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
     public static String getClasspathFileContents(String filePath) {
         String contents = null;
