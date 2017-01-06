@@ -1260,7 +1260,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         // Set the parent id on the entity form
-        if(entityForm != null) {
+        if (entityForm != null) {
             entityForm.setParentId(id);
         }
 
