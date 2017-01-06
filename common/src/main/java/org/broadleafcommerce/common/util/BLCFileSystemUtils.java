@@ -29,29 +29,13 @@ import java.io.InputStream;
  */
 public class BLCFileSystemUtils {
 
-    public static String getPathFileContents(String filePath) {
-        String contents = null;
-
-        try {
-            org.springframework.core.io.Resource resource = new PathResource(filePath);
-            if (resource.exists()) {
-                InputStream stream = resource.getInputStream();
-                contents = IOUtils.toString(stream);
-            }
-
-            return contents;
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
     public static String getClasspathFileContents(String filePath) {
         String contents = null;
 
         try {
-            org.springframework.core.io.Resource resource = new ClassPathResource(filePath);
-            if (resource.exists()) {
-                InputStream stream = resource.getInputStream();
+            InputStream stream = getClasspathFileInputStream(filePath);
+
+            if (stream != null) {
                 contents = IOUtils.toString(stream);
             }
 
@@ -63,8 +47,17 @@ public class BLCFileSystemUtils {
 
     public static InputStream getClasspathFileInputStream(String filePath) {
         try {
+            if (filePath.contains("classpath:")) {
+                // remove "classpath:" from the file path as ClassPathResource does not recognize it
+                filePath = filePath.replace("classpath:", "");
+            }
+
             org.springframework.core.io.Resource resource = new ClassPathResource(filePath);
-            return resource.getInputStream();
+            if (resource.exists()) {
+                return resource.getInputStream();
+            }
+
+            return null;
         } catch (IOException e) {
             return null;
         }
