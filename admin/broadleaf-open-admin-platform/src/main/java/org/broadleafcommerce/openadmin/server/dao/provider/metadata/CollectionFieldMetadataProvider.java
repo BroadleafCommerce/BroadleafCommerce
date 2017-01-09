@@ -285,6 +285,8 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                 fieldMetadataOverride.setFriendlyName(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.ADDFRIENDLYNAME)) {
                 fieldMetadataOverride.setAddFriendlyName(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.GROUP)) {
+                fieldMetadataOverride.setGroup(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.MANYTOFIELD)) {
                 fieldMetadataOverride.setManyToField(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.OPERATIONTYPES)) {
