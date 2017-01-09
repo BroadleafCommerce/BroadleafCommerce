@@ -285,19 +285,14 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     }
 
     protected boolean hasSameCurrency(OrderItemRequestDTO orderItemRequestDTO, CartOperationRequest request, Sku sku) {
-        boolean isNDR = orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO;
-        boolean hasSameCurrency = false;
+        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO || sku == null || sku.getCurrency() == null) {
+            return true;
+        }
 
         BroadleafCurrency orderCurrency = request.getOrder().getCurrency();
         BroadleafCurrency skuCurrency = sku.getCurrency();
-        boolean hasOrderCurrency = request.getOrder().getCurrency() != null;
-        boolean hasSkuCurrency = sku.getCurrency() != null;
 
-        if (hasOrderCurrency && hasSkuCurrency) {
-            hasSameCurrency = orderCurrency.equals(skuCurrency);
-        }
-
-        return isNDR || !hasOrderCurrency || !hasSkuCurrency || hasSameCurrency;
+        return orderCurrency.equals(skuCurrency);
     }
 
     protected void validateIfParentOrderItemExists(OrderItemRequestDTO orderItemRequestDTO) {
