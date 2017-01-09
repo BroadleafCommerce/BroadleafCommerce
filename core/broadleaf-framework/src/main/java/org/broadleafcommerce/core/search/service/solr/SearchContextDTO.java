@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Framework
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,26 +15,31 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.extensibility.jpa;
+package org.broadleafcommerce.core.search.service.solr;
 
-public class ConditionalORMConfigDto extends ORMConfigDto {
+import java.util.HashMap;
+import java.util.Map;
 
-    protected String conditionalProperty;
-    protected String conditionalClassName;
+/**
+ * This contains a map of objects representing the context dtos for a search.
+ *
+ * @author Nick Crum ncrum
+ */
+public class SearchContextDTO {
 
-    public String getConditionalProperty() {
-        return conditionalProperty;
+    public static final String CUSTOMER_KEY = "customer";
+
+    protected Map<String, Object> attributes = new HashMap<>();
+
+    public Object get(String key) {
+        return getAttributes().get(key);
     }
 
-    public void setConditionalProperty(String conditionalProperty) {
-        this.conditionalProperty = conditionalProperty;
+    public Map<String, Object> getAttributes() {
+        return attributes;
     }
 
-    public String getConditionalClassName() {
-        return conditionalClassName;
-    }
-
-    public void setConditionalClassName(String conditionalClassName) {
-        this.conditionalClassName = conditionalClassName;
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
     }
 }

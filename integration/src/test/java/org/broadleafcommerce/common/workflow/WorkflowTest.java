@@ -57,8 +57,8 @@ public class WorkflowTest extends BaseTest {
         Assert.assertEquals(activities.get(0).getClass(), PassThroughActivity.class);
         Assert.assertEquals(activities.get(0).getOrder(), 100);
         
-        Assert.assertEquals(activities.get(4).getClass(), PassThroughActivity.class);
-        Assert.assertEquals(activities.get(4).getOrder(), 3000);
+        Assert.assertEquals(activities.get(5).getClass(), PassThroughActivity.class);
+        Assert.assertEquals(activities.get(5).getOrder(), 3000);
     }
     
     @Test
@@ -85,12 +85,12 @@ public class WorkflowTest extends BaseTest {
      */
     @Test
     public void testSameOrderingConfiguredActivity() {
-        Assert.assertEquals(activities.get(7).getClass(), TestRollbackActivity.class);
+        Assert.assertEquals(activities.get(8).getClass(), TestRollbackActivity.class);
     }
     
     @Test
     public void testInBetweenActivity() {
-        Assert.assertEquals(activities.get(4).getClass(), PassThroughActivity.class);
+        Assert.assertEquals(activities.get(5).getClass(), PassThroughActivity.class);
     }
     
 }

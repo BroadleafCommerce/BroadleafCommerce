@@ -242,7 +242,9 @@ public interface CatalogService {
      * @return
      */
     public Category findCategoryByURI(String uri);
-    
+
+    Category findOriginalCategoryByURI(String uri);
+
     /**
      * Returns a product associated with the passed in URI or null if no Product is
      * mapped to this URI.
@@ -251,7 +253,9 @@ public interface CatalogService {
      * @return
      */    
     public Product findProductByURI(String uri);
-    
+
+    Product findOriginalProductByURI(String uri);
+
     /**
      * Returns a sku associated with the passed in URI or null if no sku is
      * mapped to this URI.

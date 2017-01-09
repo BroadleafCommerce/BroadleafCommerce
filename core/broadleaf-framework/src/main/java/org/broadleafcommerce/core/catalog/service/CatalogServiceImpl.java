@@ -17,8 +17,10 @@
  */
 package org.broadleafcommerce.core.catalog.service;
 
+import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
@@ -334,15 +336,35 @@ public class CatalogServiceImpl implements CatalogService {
         return productOptionDao.readProductOptionValueById(productOptionValueId);
     }
 
+    protected CatalogContextDTO createCatalogContextDTO() {
+        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+        CatalogContextDTO context = new CatalogContextDTO();
+
+        if (ctx != null && ctx.getRequest() != null) {
+            Map<String, Object> ruleMap = (Map<String, Object>) ctx.getRequest().getAttribute("blRuleMap");
+
+            if (MapUtils.isNotEmpty(ruleMap)) {
+                context.setAttributes(ruleMap);
+            }
+        }
+
+        return context;
+    }
+
     @Override
     public Category findCategoryByURI(String uri) {
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().findCategoryByURI(uri, holder);
+            ExtensionResultStatusType result = extensionManager.getProxy().findCategoryByURI(createCatalogContextDTO(), uri, holder);
             if (ExtensionResultStatusType.HANDLED.equals(result)) {
                 return (Category) holder.getResult();
             }
         }
+        return findOriginalCategoryByURI(uri);
+    }
+
+    @Override
+    public Category findOriginalCategoryByURI(String uri) {
         return categoryDao.findCategoryByURI(uri);
     }
 
@@ -350,11 +372,17 @@ public class CatalogServiceImpl implements CatalogService {
     public Product findProductByURI(String uri) {
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().findProductByURI(uri, holder);
+            ExtensionResultStatusType result = extensionManager.getProxy().findProductByURI(createCatalogContextDTO(), uri, holder);
             if (ExtensionResultStatusType.HANDLED.equals(result)) {
                 return (Product) holder.getResult();
             }
         }
+
+        return findOriginalProductByURI(uri);
+    }
+
+    @Override
+    public Product findOriginalProductByURI(String uri) {
         List<Product> products = productDao.findProductByURI(uri);
         if (products == null || products.size() == 0) {
             return null;
@@ -367,14 +395,14 @@ public class CatalogServiceImpl implements CatalogService {
                     return product;
                 }
             }
-            
+
             for(Product product : products) {
                 // Next check for a direct hit on the generated URL.
                 if (uri.equals(product.getGeneratedUrl())) {
                     return product;
                 }
             }
-            
+
             // Otherwise, return the first product
             return products.get(0);
         }
@@ -384,7 +412,7 @@ public class CatalogServiceImpl implements CatalogService {
     public Sku findSkuByURI(String uri) {
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().findSkuByURI(uri, holder);
+            ExtensionResultStatusType result = extensionManager.getProxy().findSkuByURI(createCatalogContextDTO(), uri, holder);
             if (ExtensionResultStatusType.HANDLED.equals(result)) {
                 return (Sku) holder.getResult();
             }

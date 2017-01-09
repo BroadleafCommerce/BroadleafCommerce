@@ -15,26 +15,25 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.service;
+package org.broadleafcommerce.core.checkout.service.workflow.extension;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 
 /**
- * @author Jeff Fischer
+ * @author Nick Crum ncrum
  */
-public interface CatalogServiceExtensionHandler extends ExtensionHandler {
+public interface ValidateCheckoutActivityExtensionHandler extends ExtensionHandler {
 
-    public ExtensionResultStatusType findCategoryByURI(String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findProductByURI(String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findSkuByURI(String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findProductByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findCategoryByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findSkuByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
+    /**
+     * This extension allows one to validate a checkout request before it succeeds and specify an exception to throw
+     * if the request is found to be invalid.
+     *
+     * @param request
+     * @param resultHolder
+     * @return
+     */
+    public ExtensionResultStatusType validateCheckout(CheckoutSeed request, ExtensionResultHolder<Exception> resultHolder);
 }
