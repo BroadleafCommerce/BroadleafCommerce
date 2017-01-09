@@ -70,6 +70,18 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
             List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort);
 
     /**
+     * Provides an extension point to modify the SolrQuery.
+     * @param context
+     * @param query
+     * @param qualifiedSolrQuery
+     * @param facets
+     * @param searchCriteria
+     * @param defaultSort
+     */
+    ExtensionResultStatusType modifySolrQuery(SearchContextDTO context, SolrQuery query, String qualifiedSolrQuery,
+                                              List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort);
+
+    /**
      * In certain scenarios, the requested category id might not be the one that should be used in Solr.
      * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
      * in the returnContainer should be used.

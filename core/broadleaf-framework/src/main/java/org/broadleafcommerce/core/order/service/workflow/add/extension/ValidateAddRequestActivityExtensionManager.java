@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Framework
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,26 +15,18 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.extensibility.jpa;
+package org.broadleafcommerce.core.order.service.workflow.add.extension;
 
-public class ConditionalORMConfigDto extends ORMConfigDto {
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
-    protected String conditionalProperty;
-    protected String conditionalClassName;
+/**
+ * @author Nick Crum ncrum
+ */
+@Service("blValidateAddRequestActivityExtensionManager")
+public class ValidateAddRequestActivityExtensionManager extends ExtensionManager<ValidateAddRequestActivityExtensionHandler> {
 
-    public String getConditionalProperty() {
-        return conditionalProperty;
-    }
-
-    public void setConditionalProperty(String conditionalProperty) {
-        this.conditionalProperty = conditionalProperty;
-    }
-
-    public String getConditionalClassName() {
-        return conditionalClassName;
-    }
-
-    public void setConditionalClassName(String conditionalClassName) {
-        this.conditionalClassName = conditionalClassName;
+    public ValidateAddRequestActivityExtensionManager() {
+        super(ValidateAddRequestActivityExtensionHandler.class);
     }
 }

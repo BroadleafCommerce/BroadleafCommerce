@@ -15,26 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.service;
+package org.broadleafcommerce.core.checkout.service.workflow.extension;
 
-import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 
 /**
- * @author Jeff Fischer
+ * @author Nick Crum ncrum
  */
-public interface CatalogServiceExtensionHandler extends ExtensionHandler {
+public abstract class AbstractValidateCheckoutActivityExtensionHandler extends AbstractExtensionHandler
+        implements ValidateCheckoutActivityExtensionHandler {
 
-    public ExtensionResultStatusType findCategoryByURI(String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findProductByURI(String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findSkuByURI(String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findProductByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findCategoryByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findSkuByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
+    @Override
+    public ExtensionResultStatusType validateCheckout(CheckoutSeed request, ExtensionResultHolder<Exception> resultHolder) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }

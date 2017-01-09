@@ -68,14 +68,14 @@ import javax.annotation.Resource;
 public class ConditionalORMConfigPersistenceUnitPostProcessor implements org.springframework.orm.jpa.persistenceunit.PersistenceUnitPostProcessor, BeanFactoryAware {
 
     @Resource(name="blConditionalEntities")
-    protected Map<String, ConditionalORMConfigDto> entities;
+    protected Map<String, ORMConfigDto> entities;
 
-    protected Map<String, ConditionalORMConfigDto> enabledEntities = new HashMap<String, ConditionalORMConfigDto>();
+    protected Map<String, ORMConfigDto> enabledEntities = new HashMap<>();
 
     @Resource(name="blConditionalOrmFiles")
-    protected Map<String, ConditionalORMConfigDto> ormFiles;
+    protected Map<String, ORMConfigDto> ormFiles;
 
-    protected Map<String, ConditionalORMConfigDto> enabledOrmFiles = new HashMap<String, ConditionalORMConfigDto>();
+    protected Map<String, ORMConfigDto> enabledOrmFiles = new HashMap<>();
 
     protected ConfigurableBeanFactory beanFactory;
 
@@ -86,13 +86,13 @@ public class ConditionalORMConfigPersistenceUnitPostProcessor implements org.spr
 
     @PostConstruct
     public void init() {
-        for (Map.Entry<String, ConditionalORMConfigDto> entry : entities.entrySet()) {
-            if (isPropertyEnabled(entry.getValue().getConditionalProperty())) {
+        for (Map.Entry<String, ORMConfigDto> entry : entities.entrySet()) {
+            if (isEnabled(entry.getValue())) {
                 enabledEntities.put(entry.getKey(), entry.getValue());
             }
         }
-        for (Map.Entry<String, ConditionalORMConfigDto> entry : ormFiles.entrySet()) {
-            if (isPropertyEnabled(entry.getValue().getConditionalProperty())) {
+        for (Map.Entry<String, ORMConfigDto> entry : ormFiles.entrySet()) {
+            if (isEnabled(entry.getValue())) {
                 enabledOrmFiles.put(entry.getKey(), entry.getValue());
             }
         }
@@ -101,26 +101,38 @@ public class ConditionalORMConfigPersistenceUnitPostProcessor implements org.spr
     @Override
     public void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo pui) {
         String puName = pui.getPersistenceUnitName();
-        for (Map.Entry<String, ConditionalORMConfigDto> entry : enabledEntities.entrySet()) {
+        for (Map.Entry<String, ORMConfigDto> entry : enabledEntities.entrySet()) {
             if (puName.equals(entry.getValue().getPuName())) {
                 pui.getManagedClassNames().add(entry.getKey());
             }
         }
-        for (Map.Entry<String, ConditionalORMConfigDto> entry : enabledOrmFiles.entrySet()) {
+        for (Map.Entry<String, ORMConfigDto> entry : enabledOrmFiles.entrySet()) {
             if (puName.equals(entry.getValue().getPuName())) {
                 pui.getMappingFileNames().add(entry.getKey());
             }
         }
     }
 
-    protected Boolean isPropertyEnabled(String propertyName) {
-        Boolean shouldProceed;
-        try {
-            String value = beanFactory.resolveEmbeddedValue("${" + propertyName + ":false}");
-            shouldProceed = Boolean.parseBoolean(value);
-        } catch (Exception e) {
-            shouldProceed = false;
+    protected Boolean isEnabled(ORMConfigDto configDto) {
+        if (configDto.getClass().isAssignableFrom(ConditionalORMConfigDto.class)) {
+            ConditionalORMConfigDto conditionalConfigDto = (ConditionalORMConfigDto) configDto;
+            if (conditionalConfigDto.getConditionalProperty() != null) {
+                try {
+                    String value = beanFactory.resolveEmbeddedValue("${" + configDto + ":false}");
+                    return Boolean.parseBoolean(value);
+                } catch (Exception e) {
+                    return false;
+                }
+            } else if (conditionalConfigDto.getConditionalClassName() != null) {
+                try {
+                    Class.forName(conditionalConfigDto.getConditionalClassName());
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
         }
-        return shouldProceed;
+
+        return true;
     }
 }
