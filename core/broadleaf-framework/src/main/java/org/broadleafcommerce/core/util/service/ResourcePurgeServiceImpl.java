@@ -258,7 +258,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     }
 
     /**
-     * Get the count of carts to delete from the database. Subclasses may override for custom cart retrieval logic.
+     * Get the count of customers to delete from the database. Subclasses may override for custom customer retrieval logic.
      *
      * @param purgeParams configured parameters for the Customer purge process
      * @param customersInError list of customer ids to be ignored/excluded from the query
@@ -270,9 +270,9 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         Date dateCreatedMinThreshold = purgeParams.getDateCreatedMinThreshold();
         Boolean isPreview = purgeParams.getIsPreview();
         Long customerBatchSize = purgeParams.getBatchSize(); 
-        Long orderCount = resourcePurgeDao.findCustomersCount(dateCreatedMinThreshold, isRegistered, isDeactivated, isPreview, customersInError);
+        Long customersCount = resourcePurgeDao.findCustomersCount(dateCreatedMinThreshold, isRegistered, isDeactivated, isPreview, customersInError);
         //return the lesser of the parameter batch size of the count of the customers to purge
-        return customerBatchSize != null && customerBatchSize < orderCount ? customerBatchSize : orderCount; 
+        return customerBatchSize != null && customerBatchSize < customersCount ? customerBatchSize : customersCount;
     }
 
     /**
