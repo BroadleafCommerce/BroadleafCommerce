@@ -903,6 +903,11 @@ public class SkuImpl implements Sku {
     }
 
     @Override
+    public Map<String, SkuMediaXref> getSkuMediaXrefIgnoreDefaultSku() {
+        return skuMedia;
+    }
+
+    @Override
     public void setSkuMediaXref(Map<String, SkuMediaXref> skuMediaXref) {
         this.skuMedia = skuMediaXref;
     }
