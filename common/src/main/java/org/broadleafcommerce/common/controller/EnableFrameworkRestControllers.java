@@ -45,8 +45,16 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
  * {@code @SprintBootApplication} class like this:
  * <pre>
  * {@code
- * @literal @EnableFrameworkRestControllers
- * public static class EnableBroadleafRestControllers {}
+ * @literal @SpringBootApplication
+ * public class MyApplication {
+ *
+ *     @literal @EnableFrameworkRestControllers
+ *     public static class EnableBroadleafRestControllers {}
+ *
+ *     public static void main(String[] args) {
+ *         SpringApplication.run(MyApplication.class, args);
+ *     }
+ * }
  * }
  * </pre>
  *

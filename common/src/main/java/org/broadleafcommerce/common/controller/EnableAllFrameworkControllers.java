@@ -42,8 +42,16 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
  * composition.</b> Instead, you can create a nested class in your {@code @SprintBootApplication} class like this:
  * <pre>
  * {@code
- * @literal @EnableFrameworkControllers
- * public static class EnableBroadleafControllers {}
+ * @literal @SpringBootApplication
+ * public class MyApplication {
+ *
+ *     @literal @EnableAllFrameworkControllers
+ *     public static class EnableAllBroadleafControllers {}
+ *
+ *     public static void main(String[] args) {
+ *         SpringApplication.run(MyApplication.class, args);
+ *     }
+ * }
  * }
  * </pre>
  *
