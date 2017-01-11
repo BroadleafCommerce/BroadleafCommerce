@@ -277,35 +277,41 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     @Override
     public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
-
         Boolean response = null;
-        
-        String cacheKey = CACHE_KEY_PREFIX + "user:" + adminUser.getId() + ",permType:" 
-                + permissionType.getFriendlyType() + ",ceiling:" + ceilingEntityFullyQualifiedName;
+        String cacheKey = buildCacheKey(adminUser, permissionType, ceilingEntityFullyQualifiedName);
         Element cacheElement = cache.get(cacheKey);
+
         if (cacheElement != null) {
             response = (Boolean) cacheElement.getObjectValue();
+
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Admin Security Cache GET For: \"" + cacheKey + "\" = " + response);
             }
         }
         
         if (response == null) {
-
             response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntity(adminUser, permissionType, ceilingEntityFullyQualifiedName);
+
             if (!response) {
                 response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(ceilingEntityFullyQualifiedName);
             }
 
             cacheElement = new Element(cacheKey, response);
-            
             cache.put(cacheElement);
+
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Admin Security Cache PUT For: \"" + cacheKey + "\" = " + response);
             }
         }
         
         return response;
+    }
+
+    protected String buildCacheKey(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
+        return CACHE_KEY_PREFIX
+               + "user:" + adminUser.getId() + ","
+               + "permType:" + permissionType.getFriendlyType() + ","
+               + "ceiling:" + ceilingEntityFullyQualifiedName;
     }
 
     @Override
