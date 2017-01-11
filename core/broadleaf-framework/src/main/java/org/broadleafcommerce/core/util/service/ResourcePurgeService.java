@@ -41,19 +41,4 @@ public interface ResourcePurgeService {
 
     void purgeCustomers(final Map<String, String> config);
 
-    /**
-     * Override the default page size (set by property streaming.transaction.item.page.size) by which entities will be purged.
-     * Candidates are retrieved in pages and deleted a page at a time to minimize transaction times.
-     *
-     * @return the page size
-     */
-    Integer getPageSize();
-
-    /**
-     * Override the default page size (set by property streaming.transaction.item.page.size) by which entities will be purged.
-     * Candidates are retrieved in pages and deleted a page at a time to minimize transaction times.
-     *
-     * @param pageSize the page size
-     */
-    void setPageSize(Integer pageSize);
 }

@@ -41,57 +41,65 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.collect.Lists;
+
 /**
  * @author Jeff Fischer
  */
 @Repository("blResourcePurgeDao")
 public class ResourcePurgeDaoImpl implements ResourcePurgeDao {
 
+    public static final int RESTRICT_IN_CLAUSE_MAX_SIZE = 800;
+    
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
     @Override
-    public List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview) {
-        TypedQuery<Order> query = buildCartQuery(names, statuses, dateCreatedMinThreshold, isPreview, Order.class);
+    public List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview,
+            List<Long> excludedIds) {
+        TypedQuery<Order> query = buildCartQuery(names, statuses, dateCreatedMinThreshold, isPreview, Order.class, excludedIds);
         return query.getResultList();
     }
 
     @Override
-    public List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview, int startPos, int length) {
-        TypedQuery<Order> query = buildCartQuery(names, statuses, dateCreatedMinThreshold, isPreview, Order.class);
+    public List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview, int startPos, int length,
+            List<Long> excludedIds) {
+        TypedQuery<Order> query = buildCartQuery(names, statuses, dateCreatedMinThreshold, isPreview, Order.class, excludedIds);
         query.setFirstResult(startPos);
         query.setMaxResults(length);
         return query.getResultList();
     }
 
     @Override
-    public Long findCartsCount(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview) {
-        TypedQuery<Long> query = buildCartQuery(names, statuses, dateCreatedMinThreshold, isPreview, Long.class);
+    public Long findCartsCount(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview,
+            List<Long> excludedIds) {
+        TypedQuery<Long> query = buildCartQuery(names, statuses, dateCreatedMinThreshold, isPreview, Long.class, excludedIds);
         return query.getSingleResult();
     }
 
     @Override
-    public List<Customer> findCustomers(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview) {
-        TypedQuery<Customer> query = buildCustomerQuery(dateCreatedMinThreshold, registered, deactivated, isPreview, Customer.class);
+    public List<Customer> findCustomers(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, List<Long> excludedIds) {
+        TypedQuery<Customer> query = buildCustomerQuery(dateCreatedMinThreshold, registered, deactivated, isPreview, Customer.class, excludedIds);
         return query.getResultList();
     }
 
     @Override
-    public List<Customer> findCustomers(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, int startPos, int length) {
+    public List<Customer> findCustomers(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, int startPos, int length, List<Long> excludedIds) {
         TypedQuery<Customer> query = buildCustomerQuery(dateCreatedMinThreshold, registered, deactivated, isPreview,
-                Customer.class);
+                Customer.class, excludedIds);
         query.setFirstResult(startPos);
         query.setMaxResults(length);
         return query.getResultList();
     }
 
     @Override
-    public Long findCustomersCount(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview) {
-        TypedQuery<Long> query = buildCustomerQuery(dateCreatedMinThreshold, registered, deactivated, isPreview, Long.class);
+    public Long findCustomersCount(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, List<Long> excludedIds) {
+        TypedQuery<Long> query = buildCustomerQuery(dateCreatedMinThreshold, registered, deactivated, isPreview, Long.class, excludedIds);
         return query.getSingleResult();
     }
 
-    protected <T> TypedQuery<T> buildCustomerQuery(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, Class<T> returnType) {
+    protected <T> TypedQuery<T> buildCustomerQuery(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, Class<T> returnType,
+            List<Long> excludedIds) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> criteria = builder.createQuery(returnType);
         Root<CustomerImpl> root = criteria.from(CustomerImpl.class);
@@ -136,11 +144,24 @@ public class ResourcePurgeDaoImpl implements ResourcePurgeDao {
                         builder.isFalse(root.get("previewable").get("isPreview").as(Boolean.class))));
             }
         }
+        if (excludedIds != null && excludedIds.size() > 0) {
+                applyLimitedInClause(excludedIds, builder, root, restrictions);
+        }
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         return em.createQuery(criteria);
     }
 
-    protected <T> TypedQuery<T> buildCartQuery(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview, Class<T> returnType) {
+    protected <T> void applyLimitedInClause(List<Long> ids, CriteriaBuilder builder, Root<T> root, List<Predicate> restrictions) {
+        List<List<Long>> listsOfExcludeIds = Lists.partition(ids, RESTRICT_IN_CLAUSE_MAX_SIZE);
+        List<Predicate> inRestrictions = new ArrayList<Predicate>();
+        for (List<Long> idSetToExclude : listsOfExcludeIds) {
+            inRestrictions.add(builder.not(root.get("id").in(idSetToExclude)));
+        }
+        restrictions.add(builder.or(inRestrictions.toArray(new Predicate[inRestrictions.size()])));
+    }
+    
+    protected <T> TypedQuery<T> buildCartQuery(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview, Class<T> returnType,
+            List<Long> excludedIds) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> criteria = builder.createQuery(returnType);
         Root<OrderImpl> root = criteria.from(OrderImpl.class);
@@ -172,6 +193,9 @@ public class ResourcePurgeDaoImpl implements ResourcePurgeDao {
                 restrictions.add(builder.or(builder.isNull(root.get("previewable").get("isPreview")),
                         builder.isFalse(root.get("previewable").get("isPreview").as(Boolean.class))));
             }
+        }
+        if (excludedIds != null && excludedIds.size() > 0) {
+            applyLimitedInClause(excludedIds, builder, root, restrictions);
         }
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         return em.createQuery(criteria);

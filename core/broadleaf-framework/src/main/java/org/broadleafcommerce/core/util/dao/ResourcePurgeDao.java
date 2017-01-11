@@ -46,7 +46,8 @@ public interface ResourcePurgeDao {
      * @param isPreview whether or not the results should be preview orders. Can be null.
      * @return the list of found carts
      */
-    List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview);
+    List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview,
+            List<Long> excludedIds);
 
     /**
      * Finds carts from the database. Carts are generally considered orders that have
@@ -64,7 +65,8 @@ public interface ResourcePurgeDao {
      * @param length the max number of results to include in the returned list.
      * @return the list of found carts
      */
-    List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview, int startPos, int length);
+    List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview, int startPos, int length,
+            List<Long> excludedIds);
 
     /**
      * Finds the count of carts from the database. Carts are generally considered orders that have
@@ -79,7 +81,8 @@ public interface ResourcePurgeDao {
      * @param isPreview whether or not the results should be preview orders. Can be null.
      * @return the number of carts found
      */
-    Long findCartsCount(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview);
+    Long findCartsCount(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview,
+            List<Long> excludedIds);
 
     /**
      * Find customers in the database. The method parameters can be left null, or included to refine
@@ -92,7 +95,7 @@ public interface ResourcePurgeDao {
      * @param isPreview Whether or not the results should be preview customers. Can be null.
      * @return the list of found customers
      */
-    List<Customer> findCustomers(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview);
+    List<Customer> findCustomers(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, List<Long> excludedIds);
 
     /**
      * Find customers in the database. The method parameters can be left null, or included to refine
@@ -108,7 +111,7 @@ public interface ResourcePurgeDao {
      * @param length the max number of results to include in the returned list.
      * @return the list of found customers
      */
-    List<Customer> findCustomers(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, int startPos, int length);
+    List<Customer> findCustomers(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, int startPos, int length, List<Long> excludedIds);
 
     /**
      * Find count of customers in the database. The method parameters can be left null, or included to refine
@@ -121,5 +124,5 @@ public interface ResourcePurgeDao {
      * @param isPreview Whether or not the results should be preview customers. Can be null.
      * @return the count of found customers
      */
-    Long findCustomersCount(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview);
+    Long findCustomersCount(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, List<Long> excludedIds);
 }

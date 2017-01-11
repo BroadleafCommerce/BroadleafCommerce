@@ -19,20 +19,21 @@
  */
 package org.broadleafcommerce.core.util.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
-import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
@@ -42,6 +43,9 @@ import org.broadleafcommerce.core.util.service.type.PurgeCustomerVariableNames;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 
 /**
  * Service capable of deleting old or defunct entities from the persistence layer (e.g. Carts and anonymous Customers).
@@ -82,9 +86,15 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
 
     private static final Log LOG = LogFactory.getLog(ResourcePurgeServiceImpl.class);
 
-    @Resource(name="blStreamingTransactionCapableUtil")
-    protected StreamingTransactionCapableUtil transUtil;
+    private static final Long BATCH_SIZE = 50L;
+    private static final Long PURGE_ERROR_CACHE_RETRY_SECONDS = System.currentTimeMillis() - 172800; //48 HOURS
 
+    protected PurgeErrorCache customerPurgeErrors = new PurgeErrorCache();
+    protected PurgeErrorCache cartPurgeErrors = new PurgeErrorCache();
+
+    @Resource(name = "blTransactionManager")
+    protected PlatformTransactionManager transactionManager;
+    
     @Resource(name = "blResourcePurgeDao")
     protected ResourcePurgeDao resourcePurgeDao;
 
@@ -93,15 +103,6 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
 
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
-
-    protected Integer pageSize = 10;
-
-    @PostConstruct
-    public void init() {
-        if (pageSize != null) {
-            transUtil.setPageSize(pageSize);
-        }
-    }
 
     @Override
     public void purgeCarts(final Map<String, String> config) {
@@ -112,36 +113,29 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             throw new IllegalArgumentException("Cannot purge carts since there was no configuration provided. " +
                     "In the absence of config params, all carts would be candidates for deletion.");
         }
-        try {
-            //The removal will be performed in chunks based on page size. This minimizes transaction times.
-            transUtil.runStreamingTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
-                @Override
-                public void pagedExecute(Object[] param) throws Throwable {
-                    List<Order> orders = (List<Order>) param[0];
-                    for (Order cart : orders) {
-                        deleteCart(cart);
+        CartPurgeParams purgeParams = new CartPurgeParams(config).invoke();
+        int processedCount = 0, batchCount = 0;
+        synchronized(cartPurgeErrors) {
+            Set<Long> failedCartIds = getCartsInErrorToIgnore(purgeParams);
+            batchCount = getCartsToPurgeLength(purgeParams, new ArrayList<Long>(failedCartIds)).intValue();
+            List<Order> carts = getCartsToPurge(purgeParams, 0, batchCount, new ArrayList<Long>(failedCartIds));
+            for (Order cart : carts) {
+                TransactionStatus status = TransactionUtils.createTransaction("Cart Purge",
+                        TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, false);
+                try {
+                    deleteCart(cart);
+                    TransactionUtils.finalizeTransaction(status, transactionManager, false);
+                    processedCount++;
+                } catch (Exception e) {
+                    if (! status.isCompleted()) {
+                        TransactionUtils.finalizeTransaction(status, transactionManager, true);
                     }
+                    LOG.error(String.format("Not able to purge Cart ID: %d", cart.getId()), e);
+                    cartPurgeErrors.add(cart.getId());
                 }
-
-                @Override
-                public Object[] retrievePage(int startPos, int pageSize) {
-                    List<Order> results = getCartsToPurge(config, startPos, pageSize);
-                    return new Object[]{results};
-                }
-
-                @Override
-                public Long retrieveTotalCount() {
-                    return getCartsToPurgeLength(config);
-                }
-
-                @Override
-                public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
-                    return true;
-                }
-            }, RuntimeException.class);
-        } catch (Exception e) {
-            LOG.error("Unable to purge carts", e);
+            }
         }
+        LOG.info(String.format("Cart purge batch processed.  Purged %d from total batch size of %d, %d failures cached", processedCount, batchCount, cartPurgeErrors.size()));
     }
 
     @Override
@@ -153,76 +147,77 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             throw new IllegalArgumentException("Cannot purge customers since there was no configuration provided. " +
                     "In the absence of config params, all customers would be candidates for deletion.");
         }
-        try {
-            //The removal will be performed in chunks based on page size. This minimizes transaction times.
-            transUtil.runStreamingTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
-                @Override
-                public void pagedExecute(Object[] param) throws Throwable {
-                    List<Customer> customers = (List<Customer>) param[0];
-                    for (Customer customer : customers) {
-                        deleteCustomer(customer);
+        CustomerPurgeParams purgeParams = new CustomerPurgeParams(config).invoke();
+        int processedCount = 0, batchCount = 0;
+        synchronized(customerPurgeErrors) {
+            Set<Long> failedCustomerIds = getCustomersInErrorToIgnore(purgeParams);
+            batchCount = getCustomersToPurgeLength(purgeParams, new ArrayList<Long>(failedCustomerIds)).intValue();
+            List<Customer> customers = getCustomersToPurge(purgeParams, 0, batchCount, new ArrayList<Long>(failedCustomerIds));
+            for (Customer customer : customers) {
+                TransactionStatus status = TransactionUtils.createTransaction("Customer Purge",
+                        TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, false);
+                try {
+                    deleteCustomer(customer);
+                    TransactionUtils.finalizeTransaction(status, transactionManager, false);
+                    processedCount++;
+                } catch (Exception e) {
+                    if (! status.isCompleted()) {
+                        TransactionUtils.finalizeTransaction(status, transactionManager, true);
                     }
+                    LOG.error(String.format("Not able to purge Customer ID: %d", customer.getId()), e);
+                    customerPurgeErrors.add(customer.getId());
                 }
-
-                @Override
-                public Object[] retrievePage(int startPos, int pageSize) {
-                    List<Customer> results = getCustomersToPurge(config, startPos, pageSize);
-                    return new Object[]{results};
-                }
-
-                @Override
-                public Long retrieveTotalCount() {
-                    return getCustomersToPurgeLength(config);
-                }
-
-                @Override
-                public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
-                    return true;
-                }
-            }, RuntimeException.class);
-        } catch (Exception e) {
-            LOG.error("Unable to purge customers", e);
+            }
         }
-    }
-
-    @Override
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    @Override
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
+        LOG.info(String.format("Customer purge batch processed.  Purged %d from total batch size of %d, %d failures cached", processedCount, batchCount, customerPurgeErrors.size()));
     }
 
     /**
+     * Get the Carts Ids from cache that should be ignored due to errors in previous purge attempts.  Expired cached errors removed.
+     * 
+     * @param purgeParams configured parameters for the cart purge process
+     * @return set of cart ids to ignore/exclude from the next purge run
+     */
+    protected Set<Long> getCartsInErrorToIgnore(CartPurgeParams purgeParams) {
+        long ignoreFailedExpiration = purgeParams.getFailedRetryTime().longValue();
+        Set<Long> ignoreFailedCartIds = cartPurgeErrors.getEntriesSince(ignoreFailedExpiration);
+        return ignoreFailedCartIds;
+    }
+    
+    /**
      * Get the list of carts to delete from the database. Subclasses may override for custom cart retrieval logic.
      *
-     * @param config params for the query
+     * @param purgeParams configured parameters for the Cart purge process
+     * @param cartsInError list of cart ids to be ignored/excluded from the query
      * @return list of carts to delete
      */
-    protected List<Order> getCartsToPurge(Map<String, String> config, int startPos, int length) {
-        CartPurgeParams purgeParams = new CartPurgeParams(config).invoke();
+    protected List<Order> getCartsToPurge(CartPurgeParams purgeParams, int startPos, int length, List<Long> cartsInError) {
         String[] nameArray = purgeParams.getNameArray();
         OrderStatus[] statusArray = purgeParams.getStatusArray();
         Date dateCreatedMinThreshold = purgeParams.getDateCreatedMinThreshold();
         Boolean isPreview = purgeParams.getIsPreview();
-        return resourcePurgeDao.findCarts(nameArray, statusArray, dateCreatedMinThreshold, isPreview, startPos, length);
+        return resourcePurgeDao.findCarts(nameArray, statusArray, dateCreatedMinThreshold, isPreview, startPos, length, cartsInError);
     }
 
     /**
      * Get the count of carts to delete from the database. Subclasses may override for custom cart retrieval logic.
      *
-     * @param config params for the query
+     * @param purgeParams configured parameters for the Customer purge process used in the query
+     * @param cartsInError list of cart ids to ignore/exclude from the next purge run
      * @return count of carts to delete
      */
-    protected Long getCartsToPurgeLength(Map<String, String> config) {
-        CartPurgeParams purgeParams = new CartPurgeParams(config).invoke();
+    /**
+     * 
+     */
+    protected Long getCartsToPurgeLength(CartPurgeParams purgeParams, List<Long> cartsInError) {
         String[] nameArray = purgeParams.getNameArray();
         OrderStatus[] statusArray = purgeParams.getStatusArray();
         Date dateCreatedMinThreshold = purgeParams.getDateCreatedMinThreshold();
         Boolean isPreview = purgeParams.getIsPreview();
-        return resourcePurgeDao.findCartsCount(nameArray, statusArray, dateCreatedMinThreshold, isPreview);
+        Long cartBatchSize = purgeParams.getBatchSize(); 
+        Long orderCount = resourcePurgeDao.findCartsCount(nameArray, statusArray, dateCreatedMinThreshold, isPreview, cartsInError);
+        //return the lesser of the parameter batch size of the count of the orders to purge
+        return cartBatchSize != null && cartBatchSize < orderCount ? cartBatchSize : orderCount; 
     }
 
     /**
@@ -232,41 +227,52 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
      */
     protected void deleteCart(Order cart) {
         //We delete the order this way (rather than with a delete query) in order to ensure the cascades take place
-        try {
-            orderService.deleteOrder(cart);
-        } catch (Exception e) {
-            LOG.error("Unable to purge a cart", e);
-        }
+        orderService.deleteOrder(cart);
     }
 
+    /**
+     * Get the Customer Ids from cache that should be ignored due to errors in previous purge attempts
+     * 
+     * @param purgeParams configured parameters for the Customer purge process
+     * @return set of customer ids to ignore/exclude from the next purge run
+     */
+    protected Set<Long> getCustomersInErrorToIgnore(CustomerPurgeParams purgeParams) {
+        long ignoreFailedExpiration = purgeParams.getFailedRetryTime().longValue();
+        Set<Long> ignoreFailedCustomerIds = customerPurgeErrors.getEntriesSince(ignoreFailedExpiration);
+        return ignoreFailedCustomerIds;
+    }
+    
     /**
      * Get the list of carts to delete from the database. Subclasses may override for custom cart retrieval logic.
      *
-     * @param config params for the query
-     * @return list of carts to delete
+     * @param purgeParams configured parameters for the Customer purge process
+     * @param customersInError list of customer ids to be ignored/excluded from the query
+     * @return list of customers to delete
      */
-    protected List<Customer> getCustomersToPurge(Map<String, String> config, int startPos, int length) {
-        CustomerPurgeParams purgeParams = new CustomerPurgeParams(config).invoke();
+    protected List<Customer> getCustomersToPurge(CustomerPurgeParams purgeParams, int startPos, int length, List<Long> customersInError) {
         Boolean isRegistered = purgeParams.getIsRegistered();
         Boolean isDeactivated = purgeParams.getIsDeactivated();
         Date dateCreatedMinThreshold = purgeParams.getDateCreatedMinThreshold();
         Boolean isPreview = purgeParams.getIsPreview();
-        return resourcePurgeDao.findCustomers(dateCreatedMinThreshold, isRegistered, isDeactivated, isPreview, startPos, length);
+        return resourcePurgeDao.findCustomers(dateCreatedMinThreshold, isRegistered, isDeactivated, isPreview, startPos, length, customersInError);
     }
 
     /**
-     * Get the count of carts to delete from the database. Subclasses may override for custom cart retrieval logic.
+     * Get the count of customers to delete from the database. Subclasses may override for custom customer retrieval logic.
      *
-     * @param config params for the query
-     * @return count of carts to delete
+     * @param purgeParams configured parameters for the Customer purge process
+     * @param customersInError list of customer ids to be ignored/excluded from the query
+     * @return
      */
-    protected Long getCustomersToPurgeLength(Map<String, String> config) {
-        CustomerPurgeParams purgeParams = new CustomerPurgeParams(config).invoke();
+    protected Long getCustomersToPurgeLength(CustomerPurgeParams purgeParams, List<Long> customersInError) {
         Boolean isRegistered = purgeParams.getIsRegistered();
         Boolean isDeactivated = purgeParams.getIsDeactivated();
         Date dateCreatedMinThreshold = purgeParams.getDateCreatedMinThreshold();
         Boolean isPreview = purgeParams.getIsPreview();
-        return resourcePurgeDao.findCustomersCount(dateCreatedMinThreshold, isRegistered, isDeactivated, isPreview);
+        Long customerBatchSize = purgeParams.getBatchSize(); 
+        Long customersCount = resourcePurgeDao.findCustomersCount(dateCreatedMinThreshold, isRegistered, isDeactivated, isPreview, customersInError);
+        //return the lesser of the parameter batch size of the count of the customers to purge
+        return customerBatchSize != null && customerBatchSize < customersCount ? customerBatchSize : customersCount;
     }
 
     /**
@@ -276,11 +282,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
      */
     protected void deleteCustomer(Customer customer) {
         //We delete the customer this way (rather than with a delete query) in order to ensure the cascades take place
-        try {
-            customerService.deleteCustomer(customer);
-        } catch (Exception e) {
-            LOG.error("Unable to purge a customer", e);
-        }
+        customerService.deleteCustomer(customer);
     }
 
     private class CartPurgeParams {
@@ -290,6 +292,8 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         private OrderStatus[] statusArray;
         private Date dateCreatedMinThreshold;
         private Boolean isPreview;
+        private Long batchSize;
+        private Long failedRetryTime;
 
         public CartPurgeParams(Map<String, String> config) {
             this.config = config;
@@ -311,11 +315,22 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             return isPreview;
         }
 
+        public Long getBatchSize() {
+            return batchSize;
+        }
+
+        public Long getFailedRetryTime() {
+            return failedRetryTime;
+        }
+
         public CartPurgeParams invoke() {
             nameArray = null;
             statusArray = null;
             dateCreatedMinThreshold = null;
             isPreview = null;
+            batchSize = ResourcePurgeServiceImpl.BATCH_SIZE;
+            failedRetryTime = ResourcePurgeServiceImpl.PURGE_ERROR_CACHE_RETRY_SECONDS;
+            
             for (Map.Entry<String, String> entry : config.entrySet()) {
                 if (PurgeCartVariableNames.STATUS.toString().equals(entry.getKey())) {
                     String[] temp = entry.getValue().split(",");
@@ -337,6 +352,12 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
                 if (PurgeCartVariableNames.IS_PREVIEW.toString().equals(entry.getKey())) {
                     isPreview = Boolean.parseBoolean(entry.getValue());
                 }
+                if (PurgeCartVariableNames.BATCH_SIZE.toString().equals(entry.getKey())) {
+                    batchSize = Long.parseLong(entry.getValue());
+                }
+                if (PurgeCartVariableNames.RETRY_FAILED_SECONDS.toString().equals(entry.getKey())) {
+                    failedRetryTime = System.currentTimeMillis() - (Long.parseLong(entry.getValue()) * 1000);
+                }
             }
             return this;
         }
@@ -349,6 +370,8 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         private Boolean isPreview;
         private Boolean isRegistered;
         private Boolean isDeactivated;
+        private Long batchSize;
+        private Long failedRetryTime;
 
         public CustomerPurgeParams(Map<String, String> config) {
             this.config = config;
@@ -369,12 +392,23 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         public Boolean getIsDeactivated() {
             return isDeactivated;
         }
+        
+        public Long getBatchSize() {
+            return batchSize;
+        }
+
+        public Long getFailedRetryTime() {
+            return failedRetryTime;
+        }
 
         public CustomerPurgeParams invoke() {
             isRegistered = null;
             isDeactivated = null;
             dateCreatedMinThreshold = null;
             isPreview = null;
+            batchSize = ResourcePurgeServiceImpl.BATCH_SIZE;
+            failedRetryTime = ResourcePurgeServiceImpl.PURGE_ERROR_CACHE_RETRY_SECONDS;
+
             for (Map.Entry<String, String> entry : config.entrySet()) {
                 if (PurgeCustomerVariableNames.SECONDS_OLD.toString().equals(entry.getKey())) {
                     Long secondsOld = Long.parseLong(entry.getValue());
@@ -389,8 +423,42 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
                 if (PurgeCustomerVariableNames.IS_PREVIEW.toString().equals(entry.getKey())) {
                     isPreview = Boolean.parseBoolean(entry.getValue());
                 }
+                if (PurgeCustomerVariableNames.BATCH_SIZE.toString().equals(entry.getKey())) {
+                    batchSize = Long.parseLong(entry.getValue());
+                }
+                if (PurgeCustomerVariableNames.RETRY_FAILED_SECONDS.toString().equals(entry.getKey())) {
+                    failedRetryTime = System.currentTimeMillis() - (Long.parseLong(entry.getValue()) * 1000);
+                }
             }
             return this;
         }
     }
+    
+    private class PurgeErrorCache {
+
+        private Map<Long, Long> cache = new HashMap<Long, Long>();
+        
+        public Long add(Long entry) {
+            if (! cache.containsKey(entry)) {
+                return cache.put(entry, new Long(System.currentTimeMillis()));
+            }
+            return null;
+        }
+        
+        public Set<Long> getEntriesSince(long expiredTime) {
+            for(Iterator<Map.Entry<Long, Long>> item = cache.entrySet().iterator(); item.hasNext(); ) {
+                Map.Entry<Long, Long> entry = item.next();
+                if(entry.getValue().longValue() < expiredTime) {
+                  item.remove();
+                }
+            }
+            return cache.keySet();
+        }
+
+        public int size() {
+            return cache.size();
+        }
+        
+    }
+    
 }
