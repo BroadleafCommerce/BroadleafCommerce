@@ -28,30 +28,30 @@ import java.lang.annotation.Target;
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
 /**
- * Enables only {@link FrameworkController} annotations, which are the MVC controllers.
+ * Enables only {@link FrameworkRestController} annotations, which are the RESTful controllers.
  * <p>
- * If you desire all of Broadleaf's default controllers, including the RESTful ones, then use
- * {@link EnableAllFrameworkControllers} instead.
+ * If you desire all of Broadleaf's default controllers, including the MVC ones, then use {@link
+ * EnableAllFrameworkControllers} instead.
  * <p>
- * Scan all Broadleaf modules for {@link FrameworkController} so that their {@link FrameworkMapping}s will get included
- * in {@link FrameworkControllerHandlerMapping} to provide default implementations of web endpoints.
+ * Scan all Broadleaf modules for {@link FrameworkRestController} so that their {@link FrameworkMapping}s will get
+ * included in {@link FrameworkControllerHandlerMapping} to provide default implementations of web endpoints.
  * <p>
- * If only some {@link FrameworkController}s are desired, then use {@link #excludeFilters()} to disable undesired
+ * If only some {@link FrameworkRestController}s are desired, then use {@link #excludeFilters()} to disable undesired
  * default controllers.
  * <p>
  * <b>DO NOT place this annotation on the same class as another {@link ComponentScan} or other annotations that compose
- * {@link ComponentScan} such as {@code @SpringBootApplication} and {@link EnableFrameworkRestControllers} as they will
+ * {@link ComponentScan} such as {@code @SpringBootApplication} and {@link EnableFrameworkControllers} as they will
  * conflict when Spring performs annotation composition.</b> Instead, you can create a nested class in your
  * {@code @SprintBootApplication} class like this:
  * <pre>
  * {@code
- * @literal @EnableFrameworkControllers
- * public static class EnableBroadleafControllers {}
+ * @literal @EnableFrameworkRestControllers
+ * public static class EnableBroadleafRestControllers {}
  * }
  * </pre>
  *
  * @author Philip Baggett (pbaggett)
- * @see FrameworkController
+ * @see FrameworkRestController
  * @see FrameworkMapping
  * @see FrameworkControllerHandlerMapping
  * @since 5.2
@@ -62,15 +62,15 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
 @ComponentScan(
         useDefaultFilters = false,
         basePackages = {"org.broadleafcommerce", "com.broadleafcommerce"},
-        includeFilters = @Filter({FrameworkController.class}))
-public @interface EnableFrameworkControllers {
+        includeFilters = @Filter({FrameworkRestController.class}))
+public @interface EnableFrameworkRestControllers {
 
     /**
      * A set of {@link Filter}s that describe classes to exclude from component scanning.
      * <p>
      * This is most useful when you want to enable some framework controllers but exclude others. You can exclude
-     * classes annotated with {@link FrameworkController} by providing a filter like
-     * {@code @EnableFrameworkControllers(excludeFilters = @Filter(value = DefaultCustomerController.class, type =
+     * classes annotated with {@link FrameworkRestController} by providing a filter like {@code
+     * @EnableFrameworkRestControllers(excludeFilters = @Filter(value = DefaultCustomerRestController.class, type =
      * FilterType.ASSIGNABLE_TYPE))}
      *
      * @see ComponentScan#excludeFilters()
