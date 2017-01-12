@@ -24,6 +24,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
+import java.util.UUID;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -59,7 +61,13 @@ public class BroadleafSimpleMappingExceptionResolver extends SimpleMappingExcept
             applyStatusCodeIfPossible(request, response, statusCode);
         }
 
-        return getModelAndView(viewName, ex, request);
+        ModelAndView modelAndView = getModelAndView(viewName, ex, request);
+        String uuid = "";
+        if (request.getAttribute("exceptionUUID") != null) {
+            uuid = request.getAttribute("exceptionUUID").toString();
+        }
+        modelAndView.getModel().put("exceptionUUID", uuid);
+        return modelAndView;
     }
 
     @Override
@@ -67,9 +75,11 @@ public class BroadleafSimpleMappingExceptionResolver extends SimpleMappingExcept
             Object handler, Exception ex) {
 
         if (exceptionHandlerEnabled) {
+            String uuid = UUID.randomUUID().toString();
             if (LOG.isErrorEnabled()) {
-                LOG.error("Error caught and handled.", ex);
+                LOG.error(String.format("Error caught and handled.:%s", uuid), ex);
             }
+            request.setAttribute("exceptionUUID", uuid);
             return doResolveException(request, response, handler, ex);
         } else {
             return null;

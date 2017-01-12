@@ -51,6 +51,12 @@ public interface AdminSecurityService {
     AdminPermission readAdminPermissionById(Long id);
     AdminPermission saveAdminPermission(AdminPermission permission);
     void deleteAdminPermission(AdminPermission permission);
+
+    /**
+     * Clears the cache used for {@link #isUserQualifiedForOperationOnCeilingEntity(AdminUser, PermissionType, String)}
+     */
+    void clearAdminSecurityCache();
+
     AdminUser changePassword(PasswordChange passwordChange);
 
     boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName);
