@@ -32,11 +32,11 @@ import java.util.List;
  */
 public interface OrderServiceExtensionHandler extends ExtensionHandler {
     
-    public ExtensionResultStatusType attachAdditionalDataToNewNamedCart(Customer customer, Order cart);
+    ExtensionResultStatusType attachAdditionalDataToNewNamedCart(Customer customer, Order cart);
 
-    public ExtensionResultStatusType preValidateCartOperation(Order cart, ExtensionResultHolder erh);
+    ExtensionResultStatusType preValidateCartOperation(Order cart, ExtensionResultHolder erh);
 
-    public ExtensionResultStatusType preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto, 
+    ExtensionResultStatusType preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto,
             ExtensionResultHolder erh);
     
     /**
@@ -46,4 +46,26 @@ public interface OrderServiceExtensionHandler extends ExtensionHandler {
     public ExtensionResultStatusType attachAdditionalDataToOrder(Order order, boolean priceOrder);
 
     public ExtensionResultStatusType addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder);
+
+    /**
+     * Retrieve an enhanced version of the cart for the customer. Individual instances of {@link OrderServiceExtensionHandler}
+     * can provide one or more interesting enhancements.
+     *
+     * @param customer the user for whom the cart is retrieved
+     * @param erh the holder for the enhanced cart to be set by the handler
+     * @return whether or not the enhancement was performed
+     */
+    ExtensionResultStatusType findCartForCustomerWithEnhancements(Customer customer, ExtensionResultHolder erh);
+
+    /**
+     * Retrieve an enhanced version of the cart for the customer. Use the candidateCart as the source cart to be enhanced.
+     * Individual instances of {@link OrderServiceExtensionHandler} can provide one or more interesting enhancements.
+     *
+     * @param customer the user for whom the cart is enhanced
+     * @param candidateCart the source cart to enhance
+     * @param erh the holder for the enhanced cart to be set by the handler
+     * @return whether or not the enhancement was performed
+     */
+    ExtensionResultStatusType findCartForCustomerWithEnhancements(Customer customer, Order candidateCart, ExtensionResultHolder erh);
+
 }

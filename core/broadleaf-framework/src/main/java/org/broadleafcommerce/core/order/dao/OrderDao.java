@@ -58,6 +58,8 @@ public interface OrderDao {
 
     Order create();
 
+    void refresh(Order order);
+
     Order createNewCartForCustomer(Customer customer);
 
     Order readOrderByOrderNumber(String orderNumber);

@@ -448,8 +448,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 false,
                 "");
 
-        final List<String> removeKeys = new ArrayList<>();
-
+        final List<String> removeKeys = new ArrayList<String>();
+ 
         for (final String key : mergedProperties.keySet()) {
             if (mergedProperties.get(key).getExcluded() != null && mergedProperties.get(key).getExcluded()) {
                 removeKeys.add(key);
