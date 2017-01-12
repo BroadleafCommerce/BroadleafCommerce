@@ -33,9 +33,10 @@ import java.lang.annotation.Target;
  * <p>
  * This annotation is a temporary measure until all modules can be updated to not have admin and site specific
  * configuration files, but instead leverage {@link org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin} and
- * use {@link EnableBroadleafAutoConfiguration}.
+ * use {@link EnableBroadleafAutoConfiguration}. This is documented further on {@link EnableBroadleafAutoConfiguration}.
  *
  * @author Philip Baggett (pbaggett)
+ * @see EnableBroadleafAutoConfiguration
  * @since 5.2
  */
 @Target({ElementType.TYPE})
