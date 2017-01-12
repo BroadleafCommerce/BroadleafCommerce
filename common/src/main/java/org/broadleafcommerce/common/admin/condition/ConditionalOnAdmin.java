@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates that this bean should not be created unless the broadleaf-open-admin-platform exists on the classpath. This
- * can be used for beans that are designed to only exist in the admin (like customer persistence handlers, admin
+ * can be used for beans that are designed to only exist in the admin (like custom persistence handlers, admin
  * controllers, etc)
  *
  * @author Philip Baggett (pbaggett)
