@@ -253,7 +253,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing)
     protected Boolean isShippingPriceTaxable = Boolean.FALSE;
     
-    @ManyToOne(targetEntity = FulfillmentOptionImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(targetEntity = FulfillmentOptionImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "FULFILLMENT_OPTION_ID")
     protected FulfillmentOption fulfillmentOption;
     
@@ -266,7 +266,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     @Column(name = "FULFILLMENT_GROUP_SEQUNCE")
     protected Integer sequence;
 
-    @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "ADDRESS_ID")
     @Index(name="FG_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address address;
@@ -274,7 +274,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     /**
      * @deprecated uses the phonePrimary property on AddressImpl instead
      */
-    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "PHONE_ID")
     @Index(name="FG_PHONE_INDEX", columnNames={"PHONE_ID"})
     @Deprecated
