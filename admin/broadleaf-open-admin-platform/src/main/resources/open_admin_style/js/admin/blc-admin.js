@@ -898,7 +898,9 @@ var BLCAdmin = (function($) {
             if (value == null) {
                 $field.find('input[type="radio"]:checked').removeAttr('checked')
             } else {
-                $field.find('input[type="radio"][value="' + value + '"]').attr('checked', 'checked');
+                var $radio = $field.find('input[type="radio"][value="' + value + '"]');
+                $radio.attr('checked', 'checked');
+                $radio.next('label').click();
             }
 
             $field.find('select').val(value);
