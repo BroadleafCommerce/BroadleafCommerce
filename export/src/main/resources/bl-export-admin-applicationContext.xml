@@ -51,5 +51,41 @@
         <property name="collectionRef" value="blExportRowLevelSecurityProviders" />
         <property name="targetRef" value="blRowLevelSecurityProviders" />
     </bean>
+    
+    <bean id="blAdminExportJsFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>admin/export.js</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminExportJsFileList" />
+        <property name="targetRef" value="blJsFileList" />
+    </bean>
+
+    <bean id="blExportJsLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:/export_style/js/</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blExportJsLocations" />
+        <property name="targetRef" value="blJsLocations" />
+    </bean>
+    
+    <bean id="blAdminExportClasspathTemplateResolver" class="org.broadleafcommerce.presentation.resolver.BroadleafClasspathTemplateResolver">
+        <property name="prefix" value="export_style/templates/admin/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML" />
+        <property name="characterEncoding" value="UTF-8" />
+        <property name="cacheable" value="${cache.page.templates}"/>
+        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
+        <property name="order" value="250"/>
+    </bean>
 
 </beans>
