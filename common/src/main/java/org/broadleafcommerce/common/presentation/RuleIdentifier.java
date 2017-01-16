@@ -36,6 +36,7 @@ public class RuleIdentifier {
     public static final String PRICING_CONTEXT = "PRICING_CONTEXT_FIELDS";
     public static final String PRODUCT = "PRODUCT_FIELDS";
     public static final String CATEGORY = "CATEGORY_FIELDS";
+    public static final String TRANSACTION = "TRANSACTION_FIELDS";
 
     public static final String CUSTOMER_ENTITY_KEY = "customer";
     public static final String FULFILLMENTGROUP_ENTITY_KEY = "fulfillmentGroup";
@@ -48,6 +49,7 @@ public class RuleIdentifier {
     public static final String PRICING_CONTEXT_ENTITY_KEY = "pricingContext";
     public static final String PRODUCT_ENTITY_KEY = "product";
     public static final String CATEGORY_ENTITY_KEY = "category";
+    public static final String TRANSACTION_KEY = "transaction";
 
     public static final String CUSTOMER_FIELD_KEY = "CUSTOMER";
     public static final String LOCALE_FIELD_KEY = "LOCALE";
@@ -72,5 +74,6 @@ public class RuleIdentifier {
         ENTITY_KEY_MAP.put(PRODUCT, PRODUCT_ENTITY_KEY);
         ENTITY_KEY_MAP.put(CATEGORY, CATEGORY_ENTITY_KEY);
         ENTITY_KEY_MAP.put(PRICING_CONTEXT, PRICING_CONTEXT_ENTITY_KEY);
+        ENTITY_KEY_MAP.put(TRANSACTION, TRANSACTION_KEY);
     }
 }
