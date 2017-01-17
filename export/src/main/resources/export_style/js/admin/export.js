@@ -25,7 +25,19 @@ $('body').on('click', 'a.export-standard-action', function(e) {
     var $this = $(this);
     var link = $this.data('url');
     var data = {};
+    getExportPrompt(link, data);
+});
 
+$('body').on('click', 'button.export-standard-action', function(e) {
+    e.preventDefault();
+    console.log("hit the export button");
+    var $this = $(this);
+    var link = $this.data('actionurl');
+    var data = {};
+    getExportPrompt(link, data);
+});
+
+function getExportPrompt(link, data) {
     BLC.ajax({
         url: link,
         data: data,
@@ -40,8 +52,7 @@ $('body').on('click', 'a.export-standard-action', function(e) {
 
         BLCAdmin.showElementAsModal($(data));
     });
-
-});
+}
 
 /**
  * Upload the file
