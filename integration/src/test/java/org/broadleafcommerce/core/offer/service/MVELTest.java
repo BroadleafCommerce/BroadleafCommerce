@@ -52,6 +52,9 @@ import javax.annotation.Resource;
 
 public class MVELTest extends TestNGSiteIntegrationSetup {
 
+    @Resource
+    protected CatalogService catalogService;
+    
     private StringBuffer functions = new StringBuffer();
 
     public MVELTest() {
