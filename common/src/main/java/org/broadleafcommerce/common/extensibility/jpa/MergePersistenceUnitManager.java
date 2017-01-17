@@ -29,18 +29,14 @@ import org.hibernate.ejb.instrument.InterceptFieldClassFileTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,88 +132,11 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         }
         return (MutablePersistenceUnitInfo) mergedPus.get(persistenceUnitName);
     }
-
+    
     @Override
     @SuppressWarnings({ "unchecked", "ToArrayCallWithZeroLengthArrayArgument" })
     public void preparePersistenceUnitInfos() {
-        //Need to use reflection to try and execute the logic in the DefaultPersistenceUnitManager
-        //SpringSource added a block of code in version 3.1 to "protect" the user from having more than one PU with
-        //the same name.  Of course, in our case, this happens before a merge occurs.  They have added
-        //a block of code to throw an exception if more than one PU has the same name.  We want to
-        //use the logic of the DefaultPersistenceUnitManager without the exception in the case of
-        //a duplicate name. This will require reflection in order to do what we need.
-        try {
-            Set<String> persistenceUnitInfoNames = null;
-            Map<String, PersistenceUnitInfo> persistenceUnitInfos = null;
-            ResourcePatternResolver resourcePatternResolver = null;
-            Field[] fields = getClass().getSuperclass().getDeclaredFields();
-            for (Field field : fields) {
-                if ("persistenceUnitInfoNames".equals(field.getName())) {
-                    field.setAccessible(true);
-                    persistenceUnitInfoNames = (Set<String>) field.get(this);
-                } else if ("persistenceUnitInfos".equals(field.getName())) {
-                    field.setAccessible(true);
-                    persistenceUnitInfos = (Map<String, PersistenceUnitInfo>) field.get(this);
-                } else if ("resourcePatternResolver".equals(field.getName())) {
-                    field.setAccessible(true);
-                    resourcePatternResolver = (ResourcePatternResolver) field.get(this);
-                }
-            }
-
-            persistenceUnitInfoNames.clear();
-            persistenceUnitInfos.clear();
-
-            Method readPersistenceUnitInfos =
-                    getClass().
-                            getSuperclass().
-                            getDeclaredMethod("readPersistenceUnitInfos");
-            readPersistenceUnitInfos.setAccessible(true);
-
-            //In Spring 3.0 this returns an array
-            //In Spring 3.1 this returns a List
-            Object pInfosObject = readPersistenceUnitInfos.invoke(this);
-            Object[] puis;
-            if (pInfosObject.getClass().isArray()) {
-                puis = (Object[]) pInfosObject;
-            } else {
-                puis = ((Collection) pInfosObject).toArray();
-            }
-
-            for (Object pui : puis) {
-                MutablePersistenceUnitInfo mPui = (MutablePersistenceUnitInfo) pui;
-                if (mPui.getPersistenceUnitRootUrl() == null) {
-                    Method determineDefaultPersistenceUnitRootUrl =
-                            getClass().
-                                    getSuperclass().
-                                    getDeclaredMethod("determineDefaultPersistenceUnitRootUrl");
-                    determineDefaultPersistenceUnitRootUrl.setAccessible(true);
-                    mPui.setPersistenceUnitRootUrl((URL) determineDefaultPersistenceUnitRootUrl.invoke(this));
-                }
-                ConfigurationOnlyState state = ConfigurationOnlyState.getState();
-                if ((state == null || !state.isConfigurationOnly()) && mPui.getNonJtaDataSource() == null) {
-                    mPui.setNonJtaDataSource(getDefaultDataSource());
-                }
-                if (super.getLoadTimeWeaver() != null) {
-                    Method puiInitMethod = mPui.getClass().getDeclaredMethod("init", LoadTimeWeaver.class);
-                    puiInitMethod.setAccessible(true);
-                    puiInitMethod.invoke(pui, getLoadTimeWeaver());
-                }
-                else {
-                    Method puiInitMethod = mPui.getClass().getDeclaredMethod("init", ClassLoader.class);
-                    puiInitMethod.setAccessible(true);
-                    puiInitMethod.invoke(pui, resourcePatternResolver.getClassLoader());
-                }
-                postProcessPersistenceUnitInfo((MutablePersistenceUnitInfo) pui);
-                String name = mPui.getPersistenceUnitName();
-                persistenceUnitInfoNames.add(name);
-
-                persistenceUnitInfos.put(name, mPui);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("An error occured reflectively invoking methods on " +
-                    "class: " + getClass().getSuperclass().getName(), e);
-        }
-
+        super.preparePersistenceUnitInfos();
         try {
             List<String> managedClassNames = new ArrayList<>();
             
