@@ -13,6 +13,7 @@
     <url>http://www.broadleafcommerce.org</url>
     <properties>
         <project.uri>${project.baseUri}/../</project.uri>
+        <broadleaf-jobs-events.version>2.1.3-SNAPSHOT</broadleaf-jobs-events.version>
     </properties>
     <licenses>
         <license>
@@ -39,8 +40,19 @@
     </developers>
     <dependencies>
         <dependency>
+            <groupId>com.broadleafcommerce</groupId>
+            <artifactId>broadleaf-jobs-events</artifactId>
+            <version>${broadleaf-jobs-events.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-open-admin-platform</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-framework</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
