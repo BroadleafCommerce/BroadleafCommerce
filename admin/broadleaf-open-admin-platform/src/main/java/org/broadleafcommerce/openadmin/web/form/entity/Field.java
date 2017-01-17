@@ -69,7 +69,7 @@ public class Field {
     protected String help;
     protected String translationFieldName;
     protected Boolean allowNoValueEnumOption = false;
-    protected Boolean canLinkToExternalEntity = false;
+    protected Boolean canLinkToExternalEntity = true;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     /* ************ */
