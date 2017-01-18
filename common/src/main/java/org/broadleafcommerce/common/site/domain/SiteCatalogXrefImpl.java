@@ -71,9 +71,6 @@ public class SiteCatalogXrefImpl implements SiteCatalogXref {
     @JoinColumn(name = "CATALOG_ID")
     protected Catalog catalog = new CatalogImpl();
 
-    @Column(name = "PROPAGATION_MODE")
-    protected String propagationMode;
-
     @Override
     public Long getId() {
         return id;
@@ -104,15 +101,4 @@ public class SiteCatalogXrefImpl implements SiteCatalogXref {
         this.catalog = catalog;
     }
 
-    @Override
-    public void setPropagationMode(PropagationModeType mode) {
-        this.propagationMode = mode.getType();
-    }
-
-    @Override
-    public PropagationModeType getPropagationMode() {
-        //return this.propagationMode==null?null:PropagationModeType.getInstance(this.propagationMode);
-        return PropagationModeType.SANDBOX;
-    }
-    
 }

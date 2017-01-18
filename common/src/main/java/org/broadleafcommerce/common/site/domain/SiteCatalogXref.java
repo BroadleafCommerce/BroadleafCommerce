@@ -42,8 +42,4 @@ public interface SiteCatalogXref extends Serializable {
 
     void setId(Long id);
 
-    PropagationModeType getPropagationMode();
-
-    void setPropagationMode(PropagationModeType mode);
-
 }
