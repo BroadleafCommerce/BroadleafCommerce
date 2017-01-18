@@ -32,18 +32,19 @@ import com.broadleafcommerce.export.service.ExportInfoService;
 import com.broadleafcommerce.jobsevents.domain.SystemEvent;
 import com.broadleafcommerce.jobsevents.domain.SystemEventDetail;
 import com.broadleafcommerce.jobsevents.service.AbstractSystemEventConsumer;
+import com.broadleafcommerce.process.domain.Process;
+import com.broadleafcommerce.process.service.ProcessService;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
 
 import javax.annotation.Resource;
 
 public abstract class AbstractExportEventConsumer extends AbstractSystemEventConsumer {
 
-    protected abstract void export(SystemEvent event, OutputStream output) throws IOException;
+    protected abstract void export(ExportEventConsumerContext context) throws IOException;
     
     public abstract String getExportFileName();
     
@@ -70,7 +71,9 @@ public abstract class AbstractExportEventConsumer extends AbstractSystemEventCon
                 file.createNewFile();
             }
             output = new FileOutputStream(file);
-            export(event, output);
+            export(ExportEventConsumerContext.builder()
+                    .event(event)
+                    .outputStream(output).build());
             
             // We want to get the file size now because after it's moved via the fileService it won't exist anymore
             // Additionally we don't want to create the ExportInfo record before the file is moved in the case that
