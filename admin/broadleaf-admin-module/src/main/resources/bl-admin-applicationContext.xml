@@ -184,7 +184,7 @@
         </mo:overrideItem>
     </mo:override>
 
-    <bean id="blMessageSourceBaseNames-core-admin" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+    <bean id="blMessageSourceBaseNames-core-admin" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath:/messages/CustomerCareMessages</value>

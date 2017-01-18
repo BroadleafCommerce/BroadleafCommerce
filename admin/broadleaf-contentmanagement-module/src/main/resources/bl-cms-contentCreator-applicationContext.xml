@@ -102,7 +102,7 @@
         </mo:overrideItem>
     </mo:override>
 
-    <bean id="blMessageSourceBaseNames-cms" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+    <bean id="blMessageSourceBaseNames-cms" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath:/messages/ContentManagementMessages</value>
@@ -114,11 +114,6 @@
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
         <property name="collectionRef" value="blMessageSourceBaseNames-cms" />
         <property name="targetRef" value="blMessageSourceBaseNames" />
-    </bean>
-
-    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
-        <property name="useCodeAsDefaultMessage" value="${messages.useCodeAsDefaultMessage}" />
-        <property name="cacheSeconds" value="${messages.cacheSeconds}" />
     </bean>
 
 </beans>

@@ -82,10 +82,20 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blCustomPersistenceHandlerFilterClassnames" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
 
     <bean id="blCustomPersistenceHandlerFilters" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
+                <bean class="org.broadleafcommerce.openadmin.server.service.handler.DefaultCustomPersistenceHandlerFilter">
+                    <property name="filterCustomPersistenceHandlerClassnames" ref="blCustomPersistenceHandlerFilterClassnames" />
+                </bean>
             </list>
         </property>
     </bean>
@@ -174,10 +184,6 @@
             </map>
         </property>
     </bean>
-    
-    <bean id="blFormBuilderExtensionManager" class="org.broadleafcommerce.openadmin.web.service.FormBuilderExtensionManager">
-        <property name="handlers" ref="blFormBuilderExtensionHandlers" />
-    </bean>
 
     <bean id="blAdditionalSectionAuthorizations" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
@@ -216,13 +222,6 @@
     </bean>
     
     <bean id="blRuleBuilderFieldServices" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="blFormBuilderExtensionHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
             </list>

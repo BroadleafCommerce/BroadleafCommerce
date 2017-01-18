@@ -158,7 +158,8 @@
     </bean>
 
     <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
-        <property name="basenames" ref="blMessageSourceBaseNames"/>
+        <property name="useCodeAsDefaultMessage" value="${messages.useCodeAsDefaultMessage}" />
+        <property name="cacheSeconds" value="${messages.cacheSeconds}" />
     </bean>
 
 </beans>
