@@ -18,6 +18,7 @@
 package com.broadleafcommerce.export.event.consumer;
 
 import com.broadleafcommerce.jobsevents.domain.SystemEvent;
+import com.broadleafcommerce.process.domain.Process;
 
 import java.io.OutputStream;
 
@@ -35,4 +36,5 @@ import lombok.Data;
 public class ExportEventConsumerContext {
     protected SystemEvent event;
     protected OutputStream outputStream;
+    protected Process process;
 }
