@@ -903,6 +903,11 @@ public class SkuImpl implements Sku {
     }
 
     @Override
+    public Map<String, SkuMediaXref> getSkuMediaXrefIgnoreDefaultSku() {
+        return skuMedia;
+    }
+
+    @Override
     public void setSkuMediaXref(Map<String, SkuMediaXref> skuMediaXref) {
         this.skuMedia = skuMediaXref;
     }
@@ -1226,7 +1231,7 @@ public class SkuImpl implements Sku {
         }
         for(Map.Entry<String, SkuMediaXref> entry : skuMedia.entrySet()){
             SkuMediaXrefImpl clonedEntry = ((SkuMediaXrefImpl)entry.getValue()).createOrRetrieveCopyInstance(context).getClone();
-            cloned.getSkuMediaXref().put(entry.getKey(),clonedEntry);
+            cloned.getSkuMediaXrefIgnoreDefaultSku().put(entry.getKey(),clonedEntry);
         }
         for(FulfillmentOption entry : excludedFulfillmentOptions){
             FulfillmentOption clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();

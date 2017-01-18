@@ -141,14 +141,14 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
      * Sets the retail price for the Sku. This price will automatically be overridden if your system is utilizing
      * the DynamicSkuPricingService.
      * 
-     * @param retail price for the Sku
+     * @param retailPrice price for the Sku
      */
     public void setRetailPrice(Money retailPrice);
 
     /**
      * Provides a way of determining if a Sku has a retail price without getting an IllegalStateException. Returns true if 
      * retailPrice is not null.  Returns false otherwise.
-     * @see Sku.getRetailPrice()
+     * @see #getRetailPrice()
      * @return
      */
     public boolean hasRetailPrice();
@@ -346,6 +346,13 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
     Map<String, SkuMediaXref> getSkuMediaXref();
 
     /**
+     * Returns a map of key/value pairs where the key is a string for the name of a media object and the value
+     * is a cross-reference to a media object. This is intended to be used when cloning Skus and does not
+     * check the defaultSku unlike {@link #getSkuMediaXref()}.
+     */
+    Map<String, SkuMediaXref> getSkuMediaXrefIgnoreDefaultSku();
+
+    /**
      * Sets a map of key/value pairs where the key is a string for the name of a media object and the value
      * is a cross-reference object to type Media.
      */
@@ -363,8 +370,8 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
 
     /**
      * Denormalized set of key-value pairs to attach to a Sku. If you are looking for setting up
-     * a {@link ProductOption} scenario (like colors, sizes, etc) see {@link getProductOptionValues()}
-     * and {@link setProductOptionValues()}
+     * a {@link ProductOption} scenario (like colors, sizes, etc) see {@link #getProductOptionValues()}
+     * and {@link #setProductOptionValues(List)}
      *
      * @return the attributes for this Sku
      */
@@ -448,7 +455,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
      * <br />
      * <br />
      * If you are looking for a way to simply associate a Sku to a Product, the correct way would be to call
-     * {@link #setProduct(Product)} or {@link Product#setSkus(List<Sku>)} which would then cause this Sku to show up in the list of Skus for
+     * {@link #setProduct(Product)} or {@link Product#setAdditionalSkus(List)} which would then cause this Sku to show up in the list of Skus for
      * the given Product
      * 
      * @param product
@@ -459,7 +466,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
      * This will return the correct Product association that is being used on the Sku. If this Sku is a default Sku
      * for a Product (as in, {@link #getDefaultProduct()} != null) than this will return {@link #getDefaultProduct()}. If this is not
      * a default Sku for a Product, this will return the @ManyToOne Product relationship created by adding this Sku to a Product's
-     * list of Skus, or using {@link setProduct(Product)}.
+     * list of Skus, or using {@link #setProduct(Product)}.
      * <br />
      * <br />
      * In some implementations, it might make sense to have both the @OneToOne association set ({@link Product#setDefaultSku(Sku)})
