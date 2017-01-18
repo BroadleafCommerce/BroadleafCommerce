@@ -32,8 +32,6 @@ import com.broadleafcommerce.export.service.ExportInfoService;
 import com.broadleafcommerce.jobsevents.domain.SystemEvent;
 import com.broadleafcommerce.jobsevents.domain.SystemEventDetail;
 import com.broadleafcommerce.jobsevents.service.AbstractSystemEventConsumer;
-import com.broadleafcommerce.process.domain.Process;
-import com.broadleafcommerce.process.service.ProcessService;
 
 import java.io.File;
 import java.io.FileOutputStream;
