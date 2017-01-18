@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
-import org.broadleafcommerce.common.site.service.type.PropagationModeType;
-
 import java.io.Serializable;
 
 /**

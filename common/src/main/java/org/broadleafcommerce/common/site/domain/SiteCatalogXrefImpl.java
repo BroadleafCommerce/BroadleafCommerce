@@ -17,17 +17,12 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
-import org.broadleafcommerce.common.site.service.type.PropagationModeType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.springframework.transaction.annotation.Propagation;
-
-import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
