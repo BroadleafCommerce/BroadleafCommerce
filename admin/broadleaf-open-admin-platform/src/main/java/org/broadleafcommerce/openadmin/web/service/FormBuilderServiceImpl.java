@@ -1672,7 +1672,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         ef.setParentId(parentId);
 
-        extensionManager.getProxy().addAdditionalAdornedFormActions(ef);
+        extensionManager.getProxy().modifyAdornedListForm(collectionMetadata, adornedMd, adornedList, parentId, isViewCollectionItem, ef);
 
         return ef;
     }
