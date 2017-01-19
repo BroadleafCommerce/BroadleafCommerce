@@ -72,9 +72,9 @@ public class SkuFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_productCategory")
                 .name("product.allParentCategoryIds")
-                .operators("blcOperators_Selectize")
+                .operators(RuleOperatorType.SELECTIZE)
                 .selectizeSectionKey(AdminCategoryController.SECTION_KEY)
-                .options("[]")
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.COLLECTION)
                 .build());
     }
