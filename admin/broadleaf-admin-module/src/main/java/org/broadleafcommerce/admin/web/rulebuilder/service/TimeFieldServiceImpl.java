@@ -18,6 +18,8 @@
 package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
+import org.broadleafcommerce.common.presentation.RuleOperatorType;
+import org.broadleafcommerce.common.presentation.RuleOptionType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.AbstractRuleBuilderFieldService;
@@ -38,48 +40,48 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_timeHourOfDay")
                 .name("hour")
-                .operators("blcOperators_Selectize_Enumeration")
-                .options("blcOptions_HourOfDay")
+                .operators(RuleOperatorType.SELECTIZE_ENUMERATION)
+                .options(RuleOptionType.HOUR_OF_DAY)
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
         
         fields.add(new FieldData.Builder()
                 .label("rule_timeDayOfWeek")
                 .name("dayOfWeek")
-                .operators("blcOperators_Selectize_Enumeration")
-                .options("blcOptions_DayOfWeek")
+                .operators(RuleOperatorType.SELECTIZE_ENUMERATION)
+                .options(RuleOptionType.DAY_OF_WEEK)
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
         
         fields.add(new FieldData.Builder()
                 .label("rule_timeMonth")
                 .name("month")
-                .operators("blcOperators_Selectize_Enumeration")
-                .options("blcOptions_Month")
+                .operators(RuleOperatorType.SELECTIZE_ENUMERATION)
+                .options(RuleOptionType.MONTH)
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
         
         fields.add(new FieldData.Builder()
                 .label("rule_timeDayOfMonth")
                 .name("dayOfMonth")
-                .operators("blcOperators_Selectize_Enumeration")
-                .options("blcOptions_DayOfMonth")
+                .operators(RuleOperatorType.SELECTIZE_ENUMERATION)
+                .options(RuleOptionType.DAY_OF_MONTH)
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
         
         fields.add(new FieldData.Builder()
                 .label("rule_timeMinute")
                 .name("minute")
-                .operators("blcOperators_Selectize_Enumeration")
-                .options("blcOptions_Minute")
+                .operators(RuleOperatorType.SELECTIZE_ENUMERATION)
+                .options(RuleOptionType.MINUTE)
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
         
         fields.add(new FieldData.Builder()
                 .label("rule_timeDate")
                 .name("date")
-                .operators("blcOperators_Date")
-                .options("[]")
+                .operators(RuleOperatorType.DATE)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.DATE)
                 .build());
     }
