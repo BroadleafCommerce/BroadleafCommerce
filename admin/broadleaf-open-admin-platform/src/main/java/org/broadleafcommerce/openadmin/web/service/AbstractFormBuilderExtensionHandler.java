@@ -19,9 +19,6 @@ package org.broadleafcommerce.openadmin.web.service;
 
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
-import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
@@ -69,11 +66,6 @@ public abstract class AbstractFormBuilderExtensionHandler extends AbstractExtens
     @Override
     public ExtensionResultStatusType addAdditionalAdornedFormActions(EntityForm entityForm) {
         return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType modifyAdornedListForm(ClassMetadata collectionMetadata, AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList, String parentId, boolean isViewCollectionItem, EntityForm ef) {
-        return addAdditionalAdornedFormActions(ef);
     }
 
 }

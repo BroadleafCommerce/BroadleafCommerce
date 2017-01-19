@@ -19,9 +19,6 @@ package org.broadleafcommerce.openadmin.web.service;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
-import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -149,24 +146,6 @@ public interface FormBuilderExtensionHandler extends ExtensionHandler {
      * @param entityForm
      * @return whether or not it was handled
      */
-    @Deprecated
     public ExtensionResultStatusType addAdditionalAdornedFormActions(EntityForm entityForm);
-
-    /**
-     * <p>
-     *     Provides a hook to modify the adorned list form.
-     * </p>
-     *
-     *
-     * @param collectionMetadata
-     * @param adornedMd
-     * @param adornedList
-     * @param parentId
-     * @param isViewCollectionItem
-     * @param ef
-     * @return whether or not it was handled
-     */
-    public ExtensionResultStatusType modifyAdornedListForm(ClassMetadata collectionMetadata, AdornedTargetCollectionMetadata adornedMd,
-                                       AdornedTargetList adornedList, String parentId, boolean isViewCollectionItem, EntityForm ef);
 
 }
