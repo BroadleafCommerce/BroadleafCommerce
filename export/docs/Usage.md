@@ -146,11 +146,7 @@
         
         @Override 
         public boolean exportBatchCustomerSegmentsCsv(int start, int count, OutputStream output, boolean useHeaders) throws IOException {
-            CsvMapper mapper = new CsvMapper();
-            // This has to be configured to false so that the output stream isn't closed after writing the first batch to it
-            mapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
-            CsvSchema schema = mapper.schemaFor(CustomerSegmentExportDTO.class);
-            ObjectWriter writer = mapper.writer(schema.withUseHeader(useHeaders).withoutQuoteChar());
+            ObjectWriter writer = ExportWriterUtil.getCsvWriter(useHeaders, CustomerSegmentExportDTO.class);
             return exportBatchCustomerSegments(start, count, writer, output);
         }
         
@@ -169,4 +165,4 @@
     }
     ```
 
-NOTE: If you would wish for your export to support additional formats or encodings then it's advised to create classes extending `SupportedExportEncoding` and/or `SupportedExportType`
+NOTE: If you would wish for your export to support additional formats or encodings then it's advised to create classes extending `SupportedExportEncoding` and/or `SupportedExportType`.
