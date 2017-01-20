@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package com.broadleafcommerce.export.event.factory;
+package com.broadleafcommerce.export.event.scheduler;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.util.service.type.ContextVariableNames;
@@ -28,12 +28,12 @@ import com.broadleafcommerce.jobsevents.service.type.EventScopeType;
 import com.broadleafcommerce.jobsevents.service.type.EventWorkerType;
 
 /**
- * Base class for creating an export event factory for a domain
+ * Base class for creating an export event scheduler for a domain
  * 
  * @author Jay Aisenbrey (cja769)
  *
  */
-public abstract class AbstractExportEventFactory {
+public abstract class AbstractExportEventScheduler {
 
     public static final String ENCODING = "ENCODING";
     public static final String FORMAT = "FORMAT";
@@ -53,21 +53,21 @@ public abstract class AbstractExportEventFactory {
     protected void createEventContext(SystemEvent systemEvent, String formatType, String encodingType, boolean shareable) {
         SystemEventDetail encodingDetail = new SystemEventDetailImpl();
         encodingDetail.setEvent(systemEvent);
-        encodingDetail.setName(AbstractExportEventFactory.ENCODING);
+        encodingDetail.setName(AbstractExportEventScheduler.ENCODING);
         encodingDetail.setFriendlyName("Encoding");
         encodingDetail.setValue(encodingType);
         systemEvent.getEventDetails().put(encodingDetail.getName(), encodingDetail);
         
         SystemEventDetail formatDetail = new SystemEventDetailImpl();
         formatDetail.setEvent(systemEvent);
-        formatDetail.setName(AbstractExportEventFactory.FORMAT);
+        formatDetail.setName(AbstractExportEventScheduler.FORMAT);
         formatDetail.setFriendlyName("Format");
         formatDetail.setValue(formatType);
         systemEvent.getEventDetails().put(formatDetail.getName(), formatDetail);
         
         SystemEventDetail shareableDetail = new SystemEventDetailImpl();
         shareableDetail.setEvent(systemEvent);
-        shareableDetail.setName(AbstractExportEventFactory.SHAREABLE);
+        shareableDetail.setName(AbstractExportEventScheduler.SHAREABLE);
         shareableDetail.setFriendlyName("Shareable");
         shareableDetail.setValue(String.valueOf(shareable));
         systemEvent.getEventDetails().put(shareableDetail.getName(), shareableDetail);
@@ -76,7 +76,7 @@ public abstract class AbstractExportEventFactory {
         if (context.getAdminUserId() != null) {
             SystemEventDetail adminUserDetail = new SystemEventDetailImpl();
             adminUserDetail.setEvent(systemEvent);
-            adminUserDetail.setName(AbstractExportEventFactory.ADMIN_USER);
+            adminUserDetail.setName(AbstractExportEventScheduler.ADMIN_USER);
             adminUserDetail.setFriendlyName("Admin User Id");
             adminUserDetail.setValue(String.valueOf(context.getAdminUserId()));
             systemEvent.getEventDetails().put(adminUserDetail.getName(), adminUserDetail);
