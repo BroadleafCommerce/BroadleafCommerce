@@ -25,6 +25,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * An enum describing the supported format types of an export. Adding to this enum normally means it'll be an option
+ * when creating an export
+ * 
+ * @author Jay Aisenbrey (cja769)
+ *
+ */
 public class SupportedExportType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;

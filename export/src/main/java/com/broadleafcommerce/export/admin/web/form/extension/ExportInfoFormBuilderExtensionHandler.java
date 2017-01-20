@@ -45,6 +45,10 @@ public class ExportInfoFormBuilderExtensionHandler extends AbstractFormBuilderEx
         }
     }
     
+    /**
+     * Modifies the list grid records so that the size of the file (stored in the database in bytes) is converted
+     * to a more human readable format
+     */
     @Override
     public ExtensionResultStatusType modifyListGridRecord(String className, ListGridRecord record, Entity entity) {
         if (ExportInfo.class.getName().equals(className) || ExportInfoImpl.class.getName().equals(className)) {

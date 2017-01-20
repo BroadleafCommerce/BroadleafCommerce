@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.file.service.BroadleafFileService;
 import com.broadleafcommerce.export.domain.ExportInfo;
 import com.broadleafcommerce.export.domain.type.SupportedExportEncoding;
 import com.broadleafcommerce.export.domain.type.SupportedExportType;
-import com.broadleafcommerce.export.event.factory.AbstractExportEventFactory;
+import com.broadleafcommerce.export.event.scheduler.AbstractExportEventScheduler;
 import com.broadleafcommerce.export.service.ExportInfoService;
 import com.broadleafcommerce.jobsevents.domain.SystemEvent;
 import com.broadleafcommerce.jobsevents.domain.SystemEventDetail;
@@ -40,6 +40,15 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+/**
+ * Basic event consumer for exports. This class will deal with creating the export file and saving the necessary
+ * export domain to the database. Extensions of this class are required to implement a couple methods in order for
+ * that data to be correct along with the export method which handles the actual writing of the export to the 
+ * created file provided by this class.
+ * 
+ * @author Jay Aisenbrey (cja769)
+ *
+ */
 public abstract class AbstractExportEventConsumer extends AbstractSystemEventConsumer {
 
     protected abstract void export(ExportEventConsumerContext context) throws IOException;
@@ -102,7 +111,7 @@ public abstract class AbstractExportEventConsumer extends AbstractSystemEventCon
     }
     
     protected SupportedExportEncoding getEncoding(SystemEvent event) {
-        SystemEventDetail encodingDetail = event.getEventDetails().get(AbstractExportEventFactory.ENCODING);
+        SystemEventDetail encodingDetail = event.getEventDetails().get(AbstractExportEventScheduler.ENCODING);
         if (encodingDetail != null && SupportedExportEncoding.getInstance(encodingDetail.getValue()) != null) {
              return SupportedExportEncoding.getInstance(encodingDetail.getValue());
         }
@@ -110,7 +119,7 @@ public abstract class AbstractExportEventConsumer extends AbstractSystemEventCon
     }
     
     protected SupportedExportType getFormat(SystemEvent event) {
-        SystemEventDetail formatDetail = event.getEventDetails().get(AbstractExportEventFactory.FORMAT);
+        SystemEventDetail formatDetail = event.getEventDetails().get(AbstractExportEventScheduler.FORMAT);
         if (formatDetail != null && SupportedExportEncoding.getInstance(formatDetail.getValue()) != null) {
              return SupportedExportType.getInstance(formatDetail.getValue());
         }
@@ -118,7 +127,7 @@ public abstract class AbstractExportEventConsumer extends AbstractSystemEventCon
     }
     
     protected boolean getShareable(SystemEvent event) {
-        SystemEventDetail shareableDetail = event.getEventDetails().get(AbstractExportEventFactory.SHAREABLE);
+        SystemEventDetail shareableDetail = event.getEventDetails().get(AbstractExportEventScheduler.SHAREABLE);
         if (shareableDetail != null && shareableDetail.getValue() != null) {
             return Boolean.parseBoolean(shareableDetail.getValue());
         }
@@ -126,7 +135,7 @@ public abstract class AbstractExportEventConsumer extends AbstractSystemEventCon
     }
     
     protected Long getAdminUserId(SystemEvent event) {
-        SystemEventDetail adminUserDetail = event.getEventDetails().get(AbstractExportEventFactory.ADMIN_USER);
+        SystemEventDetail adminUserDetail = event.getEventDetails().get(AbstractExportEventScheduler.ADMIN_USER);
         if (adminUserDetail != null) {
             try {
                 return Long.parseLong(adminUserDetail.getValue());

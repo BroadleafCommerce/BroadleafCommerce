@@ -24,6 +24,12 @@ import java.io.OutputStream;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * Basic dto that's used to be sent to {@link AbstractExportEventConsumer.export} 
+ * 
+ * @author Jay Aisenbrey (cja769)
+ *
+ */
 @Data
 @Builder
 public class ExportEventConsumerContext {

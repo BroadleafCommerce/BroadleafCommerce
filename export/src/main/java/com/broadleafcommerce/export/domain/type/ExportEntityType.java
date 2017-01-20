@@ -24,6 +24,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Enum used for security purposes when determining if a user has the correct permissions to down load a shareable export
+ * When implementing an export for a domain a new enum must be made for that domain otherwise any user with privileges
+ * to view the export download page will have the ability to download that domain's exports
+ * 
+ * @author Jay Aisenbrey (cja769)
+ *
+ */
 public class ExportEntityType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;

@@ -38,12 +38,23 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+/**
+ * Security provider to alter the database query for the export info page (aka My Exports) 
+ * @author Jay Aisenbrey (cja769)
+ *
+ */
 @Component("blExportRowLevelSecurityProvider")
 public class ExportRowLevelSecurityProvider extends AbstractRowLevelSecurityProvider {
 
     @Resource(name = "blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
     
+    /**
+     * Adds sorting so that the most recently created ExportInfo row is shown first along with limiting the access
+     * to which rows the current user can see by if they have access to the domain represented in the exported file
+     * along with if the file is shareable or not. If it is not shareable then only the admin user that created the export
+     * can view/download that export
+     */
     @Override
     public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts, Root entityRoot, CriteriaQuery criteria, CriteriaBuilder criteriaBuilder) {
         if (ExportInfo.class.getName().equals(ceilingEntity)) {

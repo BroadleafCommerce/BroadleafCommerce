@@ -46,6 +46,15 @@ public class AdminExportDownloadController {
     @Resource(name = "blFileService")
     protected BroadleafFileService fileService;
     
+    /**
+     * Method created to override the admin's default "view details" page and instead have the export
+     * file this record represents downloaded as an attachment to the user's browser
+     * 
+     * @param response
+     * @param request
+     * @param id
+     * @throws IOException
+     */
     @RequestMapping("/{id}")
     public void downloadExportFile(HttpServletResponse response,
                                    HttpServletRequest request,
@@ -60,6 +69,8 @@ public class AdminExportDownloadController {
             response.setHeader("Content-Disposition", "attachment; filename="+info.getFriendlyResourcePath()); 
             stream.write(bytes);
         } else {
+            // This would not be expected to ever happen but in the event it does then the user will just be redirected
+            // to the page they came from
             response.sendRedirect(request.getHeader("referer"));
         }
         stream.close();
