@@ -143,6 +143,12 @@
             </list>
         </property>
     </bean>
+    
+    <!-- Required to be here for now instead of contentCreator because of some site-level services that depend on the presence
+        of AdminSecurityService -->
+    <bean id="blAdminPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
+        <constructor-arg value="${password.admin.encoder}"/>
+    </bean>
 
     <bean id="blMessageSourceBaseNames" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">

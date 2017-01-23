@@ -281,12 +281,6 @@
         </property>
     </bean>
 
-    <bean id="blAdminPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
-        <constructor-arg value="${password.admin.encoder}"/>
-    </bean>
-
-    
-    
    <!--  Spring 4.1 Admin Resource Handling Base Classes -->
    <bean id="adminResourceHttpRequestHandlerBase" abstract="true" 
         class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">   
