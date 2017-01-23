@@ -20,15 +20,27 @@ package org.broadleafcommerce.common.demo;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.util.ClassUtils;
 
 /**
+ * Condition to use if the Multi-Tenant module is available at runtime
+ * 
  * @author Jeff Fischer
+ * @author Phillip Verheyden (phillipuniverse)
  */
 public class MTCondition implements Condition {
-
+    
+    public static final String[] CONDITION_CLASSES = new String[] {"com.broadleafcommerce.tenant.persistence.CatalogFilterEnabler"};
+    
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        return Boolean.parseBoolean(context.getEnvironment().getProperty("mt.loaded.flag", "false"));
+        boolean present = false;
+        int i = 0;
+        while (!present && i < CONDITION_CLASSES.length) {
+            present = ClassUtils.isPresent(CONDITION_CLASSES[i], context.getClassLoader());
+            i++;
+        }
+        return present;
     }
 
 }
