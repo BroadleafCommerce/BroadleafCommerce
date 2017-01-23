@@ -541,11 +541,15 @@
                         var data = $selectize.$input.attr("data-hydrate");
 
                         var dataHydrate = BLCAdmin.stringToArray(data);
-                        for (var k=0; k<dataHydrate.length; k++) {
-                            if (!isNaN(dataHydrate[k])) {
-                                $selectize.addItem(Number(dataHydrate[k]), false);
+                        for (var k = 0; k < dataHydrate.length; k++) {
+                            var item = dataHydrate[k];
+                            if ($selectize.getOption(item).length === 0 && allowAdd) {
+                                $selectize.addOption({id: item, label: item});
+                            }
+                            if (!isNaN(item)) {
+                                $selectize.addItem(Number(item), false);
                             } else {
-                                $selectize.addItem(dataHydrate[k], false);
+                                $selectize.addItem(item, false);
                             }
                         }
                     },
@@ -581,11 +585,13 @@
                                 });
                                 callback(data);
                             });
+                        } else {
+                            callback();
                         }
                     },
                     onItemAdd: function(value, $item) {
                         var $selectize = $(this);
-                        if ("blcOperators_Text_List" === $selectize.opRef) {
+                        if ("blcOperators_Text_List" !== $selectize[0].opRef) {
                             $item.closest('.selectize-input').find('input').blur();
                         }
                     },
