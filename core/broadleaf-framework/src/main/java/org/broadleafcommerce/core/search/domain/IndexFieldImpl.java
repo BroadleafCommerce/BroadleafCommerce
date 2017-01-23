@@ -150,20 +150,4 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
                 .append(field)
                 .toHashCode();
     }
-
-    @Override
-    public <G extends IndexField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        IndexField cloned = createResponse.getClone();
-        cloned.setSearchable(searchable);
-        cloned.setField(field);
-        for(IndexFieldType entry : fieldTypes){
-            cloned.getFieldTypes().add(entry.createOrRetrieveCopyInstance(context).getClone());
-        }
-
-        return createResponse;
-    }
 }
