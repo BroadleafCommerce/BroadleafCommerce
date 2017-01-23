@@ -164,7 +164,7 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
             <type>jar</type>
             <scope>test</scope>
         </dependency>
