@@ -73,9 +73,9 @@ INSERT INTO BLC_SC_FLD_TMPLT(SC_FLD_TMPLT_ID, NAME) VALUES(-3, 'Message Template
 -----------------------------------------------------------------------------------------------------------------------------------
 -- Structured Content Step 3:   Add Field Groups to Templates
 -----------------------------------------------------------------------------------------------------------------------------------
-INSERT INTO BLC_SC_FLDGRP_XREF(SC_FLD_TMPLT_ID, FLD_GROUP_ID, GROUP_ORDER) VALUES (-1,4,0);
-INSERT INTO BLC_SC_FLDGRP_XREF(SC_FLD_TMPLT_ID, FLD_GROUP_ID, GROUP_ORDER) VALUES (-2,5,0);
-INSERT INTO BLC_SC_FLDGRP_XREF(SC_FLD_TMPLT_ID, FLD_GROUP_ID, GROUP_ORDER) VALUES (-3,6,0);
+INSERT INTO BLC_SC_FLDGRP_XREF(BLC_SC_FLDGRP_XREF_ID, SC_FLD_TMPLT_ID, FLD_GROUP_ID, GROUP_ORDER) VALUES (-1,-1,4,0);
+INSERT INTO BLC_SC_FLDGRP_XREF(BLC_SC_FLDGRP_XREF_ID, SC_FLD_TMPLT_ID, FLD_GROUP_ID, GROUP_ORDER) VALUES (-2,-2,5,0);
+INSERT INTO BLC_SC_FLDGRP_XREF(BLC_SC_FLDGRP_XREF_ID, SC_FLD_TMPLT_ID, FLD_GROUP_ID, GROUP_ORDER) VALUES (-3,-3,6,0);
 
 -----------------------------------------------------------------------------------------------------------------------------------
 -- Structured Content Step 4:   Create Types (These represent areas on a page or general types:  e.g 'Homepage Banner Ad')
