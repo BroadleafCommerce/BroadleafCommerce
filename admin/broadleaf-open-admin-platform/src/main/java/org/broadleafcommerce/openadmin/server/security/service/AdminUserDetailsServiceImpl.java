@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.Transformer;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -31,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.annotation.Resource;
 
@@ -55,42 +54,42 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         for (AdminRole role : adminUser.getAllRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
             for (AdminPermission permission : role.getAllPermissions()) {
-                if(permission.isFriendly()) {
+                authorities.add(new SimpleGrantedAuthority(permission.getName()));
+                if (permission.isFriendly()) {
                     for (AdminPermission childPermission : permission.getAllChildPermissions()) {
                         authorities.add(new SimpleGrantedAuthority(childPermission.getName()));
                     }
-                } else {
-                    authorities.add(new SimpleGrantedAuthority(permission.getName()));
                 }
             }
         }
         for (AdminPermission permission : adminUser.getAllPermissions()) {
-            if(permission.isFriendly()) {
+            authorities.add(new SimpleGrantedAuthority(permission.getName()));
+            if (permission.isFriendly()) {
                 for (AdminPermission childPermission : permission.getAllChildPermissions()) {
                     authorities.add(new SimpleGrantedAuthority(childPermission.getName()));
                 }
-            } else {
-                authorities.add(new SimpleGrantedAuthority(permission.getName()));
             }
         }
         for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
             authorities.add(new SimpleGrantedAuthority(perm));
         }
         
-        // Spring security expects everything to begin with ROLE_, so this transforms all the PERMISSION_* into ROLE_*
-        CollectionUtils.transform(authorities, new Transformer<SimpleGrantedAuthority, SimpleGrantedAuthority>() {
-
-            @Override
-            public SimpleGrantedAuthority transform(SimpleGrantedAuthority input) {
-                String authority = input.getAuthority();
-                if (authority.startsWith(LEGACY_ROLE_PREFIX)) {
-                    return new SimpleGrantedAuthority(authority.replace(LEGACY_ROLE_PREFIX, DEFAULT_SPRING_SECURITY_ROLE_PREFIX));
-                } else {
-                    return input;
-                }
+        // Spring security expects everything to begin with ROLE_ for things like hasRole() expressions so this adds additional
+        // authorities with those mappings, as well as new ones with ROLE_ instead of PERMISSION_.
+        // At the end of this, given a permission set like:
+        // PERMISSION_ALL_PRODUCT
+        // The following authorities will appear in the final list to Spring security:
+        // PERMISSION_ALL_PRODUCT, ROLE_PERMISSION_ALL_PRODUCT, ROLE_ALL_PRODUCT
+        ListIterator<SimpleGrantedAuthority> it = authorities.listIterator();
+        while (it.hasNext()) {
+            SimpleGrantedAuthority auth = it.next();
+            if (auth.getAuthority().startsWith(LEGACY_ROLE_PREFIX)) {
+                it.add(new SimpleGrantedAuthority(DEFAULT_SPRING_SECURITY_ROLE_PREFIX + auth.getAuthority()));
+                it.add(new SimpleGrantedAuthority(auth.getAuthority().replaceAll(LEGACY_ROLE_PREFIX, DEFAULT_SPRING_SECURITY_ROLE_PREFIX)));
             }
-        });
+        }
         
         return new AdminUserDetails(adminUser.getId(), username, adminUser.getPassword(), true, true, true, true, authorities);
     }
