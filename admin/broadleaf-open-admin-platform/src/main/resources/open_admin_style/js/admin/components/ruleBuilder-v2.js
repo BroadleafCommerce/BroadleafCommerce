@@ -584,6 +584,7 @@
                         }
                     },
                     onItemAdd: function(value, $item) {
+                        var $selectize = $(this);
                         if ("blcOperators_Text_List" === $selectize.opRef) {
                             $item.closest('.selectize-input').find('input').blur();
                         }
