@@ -51,7 +51,7 @@ public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProc
                 GeolocationDTO location = (GeolocationDTO) BLCRequestUtils.getSessionAttributeIfOk(request, GEOLOCATON_ATTRIBUTE_NAME);
                 if (location == null) {
                     String ipAddress = getIPAddress(servletWebRequest);
-                    location = geolocationService.getLocationData("72.48.96.90");//ipAddress);
+                    location = geolocationService.getLocationData(ipAddress);
                     BLCRequestUtils.setSessionAttributeIfOk(request, GEOLOCATON_ATTRIBUTE_NAME, location);
                 }
                 BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(GEOLOCATON_ATTRIBUTE_NAME, location);
