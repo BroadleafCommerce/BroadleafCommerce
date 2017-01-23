@@ -488,7 +488,7 @@
             //initialize selectize plugin
             var opRef = field.operators;
 
-            if (opRef && typeof opRef === 'string' && ("blcOperators_Selectize" === opRef || "blcOperators_Selectize_Enumeration" === opRef)) {
+            if (opRef && typeof opRef === 'string' && ("blcOperators_Selectize" === opRef || "blcOperators_Selectize_Enumeration" === opRef || "blcOperators_Text_List" === opRef)) {
 
                 //if the options are "pre-defined" as in the case of an enumeration, we'll need to convert
                 //this into an actual array since the system may pass that information back as a single string
@@ -497,6 +497,11 @@
                     valRef.startsWith('[') && valRef.endsWith("]")) {
                     console.log(valRef);
                     field.values = $.parseJSON(valRef);
+                }
+
+                var allowAdd = false;
+                if ("blcOperators_Text_List" === opRef) {
+                    allowAdd = true;
                 }
 
                 var sectionKey = field.selectizeSectionKey;
@@ -515,8 +520,10 @@
                     loadThrottle: 100,
                     preload: true,
                     hideSelected: true,
-                    closeAfterSelect: true,
+                    closeAfterSelect: !allowAdd,
                     placeholder: field.label + " +",
+                    create: allowAdd,
+                    createOnBlur: allowAdd,
                     onInitialize: function () {
                         var $selectize = this;
                         $selectize.sectionKey = sectionKey;
@@ -558,7 +565,7 @@
                                 }
                             });
                             callback(data);
-                        } else {
+                        } else if ("blcOperators_Selectize" === $selectize.opRef) {
                             BLC.ajax({
                                 url: BLC.servletContext + "/" + sectionKey + "/selectize",
                                 type: 'GET',
@@ -577,7 +584,9 @@
                         }
                     },
                     onItemAdd: function(value, $item) {
-                        $item.closest('.selectize-input').find('input').blur();
+                        if ("blcOperators_Text_List" === $selectize.opRef) {
+                            $item.closest('.selectize-input').find('input').blur();
+                        }
                     },
                     onItemRemove: function (value, $item) {
                         this.addOption({id: value, label: $item.html()});
