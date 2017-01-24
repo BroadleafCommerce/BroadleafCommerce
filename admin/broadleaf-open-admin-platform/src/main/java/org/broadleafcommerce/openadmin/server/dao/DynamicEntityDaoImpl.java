@@ -115,11 +115,10 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     
     protected EntityManager standardEntityManager;
 
+    protected EJB3ConfigurationDao ejb3ConfigurationDao;
+
     @Resource(name="blMetadata")
     protected Metadata metadata;
-
-    @Resource(name="blEJB3ConfigurationDao")
-    protected EJB3ConfigurationDao ejb3ConfigurationDao;
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
@@ -1484,6 +1483,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         return ejb3ConfigurationDao;
     }
 
+    @Override
     public void setEjb3ConfigurationDao(EJB3ConfigurationDao ejb3ConfigurationDao) {
         this.ejb3ConfigurationDao = ejb3ConfigurationDao;
     }

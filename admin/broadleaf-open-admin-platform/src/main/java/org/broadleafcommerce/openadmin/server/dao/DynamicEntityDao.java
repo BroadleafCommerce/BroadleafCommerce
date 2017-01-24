@@ -132,6 +132,8 @@ public interface DynamicEntityDao {
 
     EJB3ConfigurationDao getEjb3ConfigurationDao();
 
+    void setEjb3ConfigurationDao(EJB3ConfigurationDao ejb3ConfigurationDao);
+
     DynamicDaoHelper getDynamicDaoHelper();
 
     Map<String, TabMetadata> getTabAndGroupMetadata(Class<?>[] clazz, ClassMetadata cmd);
