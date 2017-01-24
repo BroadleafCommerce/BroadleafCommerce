@@ -30,8 +30,12 @@ public class ListGridFetchRequest implements Serializable {
 
     protected List<String> fetchFields = new ArrayList<>();
     protected boolean useRefinedFetch = false;
-    
+
+    protected Boolean isSandboxableEntity;
+
+    protected Class<?> entity;
     protected String joinType;
+    protected String idField;
 
     public List<String> getFetchFields() {
         return fetchFields;
@@ -55,5 +59,29 @@ public class ListGridFetchRequest implements Serializable {
 
     public void setJoinType(String joinType) {
         this.joinType = joinType;
+    }
+
+    public Boolean getIsSandboxableEntity() {
+        return isSandboxableEntity;
+    }
+
+    public void setIsSandboxableEntity(Boolean isSandboxableEntity) {
+        this.isSandboxableEntity = isSandboxableEntity;
+    }
+
+    public Class<?> getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Class<?> entity) {
+        this.entity = entity;
+    }
+
+    public String getIdField() {
+        return idField;
+    }
+
+    public void setIdField(String idField) {
+        this.idField = idField;
     }
 }

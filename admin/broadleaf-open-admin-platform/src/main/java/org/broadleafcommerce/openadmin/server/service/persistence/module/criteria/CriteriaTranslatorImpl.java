@@ -20,7 +20,9 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.criter
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -49,6 +51,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 
 /**
  * @author Jeff Fischer
@@ -65,6 +68,12 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminSecurityService;
 
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
+
+    @Resource(name="blGenericEntityDao")
+    protected GenericEntityDao genericEntityDao;
+
     @Override
     public TypedQuery<Serializable> translateCountQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings) {
         return constructQuery(dynamicEntityDao, ceilingEntity, filterMappings, true, false, null, null, null);
@@ -78,6 +87,16 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
     @Override
     public TypedQuery<Serializable> translateQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults) {
         return constructQuery(dynamicEntityDao, ceilingEntity, filterMappings, false, false, firstResult, maxResults, null);
+    }
+
+    @Override
+    public TypedQuery<Serializable> translateListGridQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults, Map<String, List<String>> propertyMap) {
+        return constructListGridQuery(dynamicEntityDao, ceilingEntity, filterMappings, false, false, firstResult, maxResults, propertyMap);
+    }
+
+    @Override
+    public TypedQuery<Serializable> translateListGridCountQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings) {
+        return constructListGridQuery(dynamicEntityDao, ceilingEntity, filterMappings, true, false, null, null, null);
     }
 
     /**
@@ -220,6 +239,107 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         }
 
         return response;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected TypedQuery<Serializable> constructListGridQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, boolean isCount, boolean isMax, Integer firstResult, Integer maxResults, Map<String, List<String>> propertyMap) {
+
+        CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
+
+        Class<Serializable> ceilingMarker;
+        try {
+            ceilingMarker = (Class<Serializable>) Class.forName(ceilingEntity);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        Class<Serializable> securityRoot = rowSecurityService.getFetchRestrictionRoot(adminSecurityService.getPersistentAdminUser(), ceilingMarker, filterMappings);
+        if (securityRoot != null) {
+            ceilingMarker = securityRoot;
+        }
+
+        Class<Serializable> ceilingClass = determineRoot(dynamicEntityDao, ceilingMarker, filterMappings);
+        CriteriaQuery criteria = criteriaBuilder.createQuery();
+        Root<Serializable> root = criteria.from(ceilingClass);
+
+        Class<?> impl = genericEntityDao.getCeilingImplClass(ceilingClass.getName());
+        Boolean isSandboxable = sandBoxHelper.isSandBoxable(impl.getName());
+
+        if (isCount) {
+            criteria.select(criteriaBuilder.count(root));
+        } else {
+            method(root, criteria, propertyMap, isSandboxable);
+        }
+        
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Order> sorts = new ArrayList<Order>();
+        addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, root, restrictions, sorts, criteria);
+
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        if (!isCount && !isMax) {
+            criteria.orderBy(sorts.toArray(new Order[sorts.size()]));
+            //If someone provides a firstResult value, then there is generally pagination going on.
+            //In order to produce consistent results, especially with certain databases such as PostgreSQL, 
+            //there has to be an "order by" clause.  We'll add one here if we can.
+            if (firstResult != null && sorts.isEmpty()) {
+                Map<String, Object> idMetaData = dynamicEntityDao.getIdMetadata(ceilingClass);
+                if (idMetaData != null) {
+                    Object idFldName = idMetaData.get("name");
+                    Object type = idMetaData.get("type");
+                    if ((idFldName instanceof String) && (type instanceof SingleColumnType)) {
+                        criteria.orderBy(criteriaBuilder.asc(root.get((String) idFldName)));
+                    }
+                }
+            }
+        }
+        TypedQuery<Serializable> response = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
+
+        if (!isCount && !isMax) {
+            addPaging(response, firstResult, maxResults);
+        }
+
+        return response;
+    }
+    
+    public void method(Root root, CriteriaQuery criteria, Map<String, List<String>> propertyMap, Boolean isSandboxable) {
+
+        List<Selection> selections = new ArrayList<>();
+
+        for (String propertyKey : propertyMap.keySet()) {
+            buildSelectionForPropertyKey(isSandboxable, propertyMap.get(propertyKey), root, selections, propertyKey);
+        }
+
+        criteria.multiselect(selections);
+    }
+
+    public void buildSelectionForPropertyKey(Boolean isSandboxable, List<String> propertyListForKey, Root root, List<Selection> selections, String propertyKey) {
+        Path selection = root;
+
+        if (isSandboxable && propertyKey.equals("embeddableSandBoxDiscriminator")) {
+
+            selection = selection.get(propertyKey).get(propertyListForKey.get(0));
+            selections.add(selection);
+
+            return;
+        }
+
+        for (String prop : propertyListForKey) {
+
+            Path propertySelection;
+
+            if (propertyKey != "root") {
+                propertySelection = selection.get(propertyKey);
+            } else {
+                propertySelection = root;
+            }
+            String[] pathParts = prop.split("\\.");
+
+            for (String part : pathParts) {
+                propertySelection = propertySelection.get(part);
+            }
+
+            selections.add(propertySelection);
+        }
     }
 
     protected void addPaging(Query response, Integer firstResult, Integer maxResults) {

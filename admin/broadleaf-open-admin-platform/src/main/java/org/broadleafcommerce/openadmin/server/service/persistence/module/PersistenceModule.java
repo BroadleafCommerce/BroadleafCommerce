@@ -26,6 +26,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 
 import java.util.List;
@@ -53,5 +54,6 @@ public interface PersistenceModule {
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
     
     public void setPersistenceManager(PersistenceManager persistenceManager);
-    
+
+    DynamicResultSet performListGridFetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao) throws ServiceException;
 }

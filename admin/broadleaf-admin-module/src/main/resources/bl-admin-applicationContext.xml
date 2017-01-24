@@ -269,21 +269,50 @@
         <property name="targetRef" value="blJsFileList" />
     </bean>
 
-    <bean id="blProductListGridFetchEntity" class="org.broadleafcommerce.openadmin.server.service.persistence.module.ListGridFetchEntity">
-        <property name="entityTarget" value="org.broadleafcommerce.core.catalog.domain.Product" />
-    </bean>
-
-    <bean id="blListGridFetchFactory" class="org.broadleafcommerce.openadmin.server.service.persistence.module.ListGridFetchFactory">
-        <property name="entities">
+    <bean id="blListGridUniversalFieldHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
             <list>
-                <ref bean="blProductListGridFetchEntity"/>
             </list>
         </property>
-        <property name="universalFetchFields">
+    </bean>
+
+    <bean id="blListGridPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blProductListGridPersistenceHandler" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blProductListGridFetchEntity" class="org.broadleafcommerce.openadmin.server.service.persistence.module.ListGridFetchEntity">
+        <property name="entityTarget" value="org.broadleafcommerce.core.catalog.domain.Product" />
+        <property name="additionalfetchFields">
+            <list>
+                <value>defaultSku.id</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blCustomFieldListGridFetchEntity" class="org.broadleafcommerce.openadmin.server.service.persistence.module.ListGridFetchEntity">
+        <property name="entityTarget" value="com.broadleafcommerce.customfield.domain.CustomField" />
+    </bean>
+
+    <bean id="blUniversalFetchFields" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
             <list>
                 <value>id</value>
             </list>
         </property>
+    </bean>
+
+    <bean id="blListGridFetchFactory" class="org.broadleafcommerce.openadmin.server.service.persistence.module.ListGridFetchFactoryImpl">
+        <property name="entities">
+            <list>
+                <ref bean="blProductListGridFetchEntity"/>
+                <ref bean="blCustomFieldListGridFetchEntity"/>
+            </list>
+        </property>
+        <property name="universalFetchFields" ref="blUniversalFetchFields" />
     </bean>
     
 </beans>

@@ -26,7 +26,6 @@ import org.broadleafcommerce.admin.server.service.extension.ProductCustomPersist
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;

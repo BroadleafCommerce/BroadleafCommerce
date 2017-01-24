@@ -83,6 +83,9 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
         if (value == null) {
             return null;
         }
+        if (value instanceof String) {
+            value = new BigDecimal(Double.parseDouble((String)value));
+        }
         BigDecimal decimalValue = (value instanceof Money) ? ((Money)value).getAmount() : (BigDecimal) value;
         return super.formatValue(decimalValue, extractValueRequest, property);
     }
@@ -90,6 +93,9 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
     protected String formatDisplayValue(Object value, ExtractValueRequest extractValueRequest, Property property) {
         if (value == null) {
             return null;
+        }
+        if (value instanceof String) {
+            value = new BigDecimal(Double.parseDouble((String)value));
         }
         BigDecimal decimalValue = (value instanceof Money) ? ((Money)value).getAmount() : (BigDecimal) value;
         return super.formatDisplayValue(decimalValue, extractValueRequest, property);

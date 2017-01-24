@@ -28,6 +28,7 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -37,9 +38,11 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.ValidationUtil;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.TQJoin;
 import org.broadleafcommerce.common.util.dao.TQOrder;
 import org.broadleafcommerce.common.util.dao.TQRestriction;
@@ -53,13 +56,16 @@ import org.broadleafcommerce.openadmin.dto.EntityResult;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.dto.ListGridFetchRequest;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.AdvancedCollectionFieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
+import org.broadleafcommerce.openadmin.server.service.handler.ListGridPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.persistence.ParentEntityPersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -118,6 +124,9 @@ import java.util.StringTokenizer;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * @author jfischer
@@ -155,6 +164,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Resource(name = "blBasicPersistenceModuleExtensionManager")
     protected BasicPersistenceModuleExtensionManager extensionManager;
+
+    @Resource(name="blListGridPersistenceHandlers")
+    protected List<ListGridPersistenceHandler> listGridPersistenceHandlers;
 
     @PostConstruct
     public void init() {
@@ -592,10 +604,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         FieldMetadata entryValue = entry.getValue();
         Boolean isProminent = entryValue instanceof BasicFieldMetadata && ((BasicFieldMetadata) entryValue).isProminent();
 
-        String fieldName = entryValue.getFieldName();
-
         List<String> fetchFields = persistencePackage.getListGridFetchRequest().getFetchFields();
-        Boolean isFetchField = fetchFields.contains(fieldName);
+        Boolean isFetchField = fetchFields.contains(entry.getKey());
         return isProminent || isFetchField;
     }
 
@@ -1252,6 +1262,239 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
         return new DynamicResultSet(null, payload, totalRecords);
     }
+
+    @Override
+    public Map<String, FieldMetadata> getFilteredProperties(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
+
+        Map<String, FieldMetadata> mergedProperties;
+        try {
+            mergedProperties = getMergedProperties(persistencePackage, cto);
+        } catch (ServiceException e) {
+            throw new ServiceException("Unable to fetch results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
+        }
+
+        Map<String, FieldMetadata> primaryMergedProperties = filterOutCollectionMetadata(mergedProperties);
+        primaryMergedProperties = filterOutRefinedListGridFetch(primaryMergedProperties, persistencePackage);
+
+        return primaryMergedProperties;
+    }
+
+    @Override
+    public DynamicResultSet performListGridFetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao) throws ServiceException {
+        
+        ListGridFetchRequest listGridFetchRequest = persistencePackage.getListGridFetchRequest();
+        
+        String idField = new DynamicDaoHelperImpl().getIdField(listGridFetchRequest.getEntity(), dynamicEntityDao.getStandardEntityManager()).getName();
+        listGridFetchRequest.setIdField(idField);
+
+        String classname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        
+        Map<String, FieldMetadata> filteredProperties = getFilteredProperties(persistencePackage, cto);
+
+        for (ListGridPersistenceHandler handler : listGridPersistenceHandlers) {
+            if (handler.canHandleEntity(persistencePackage)) {
+                filteredProperties = handler.stripHandledProperties(filteredProperties);
+            }
+        }
+
+        List<FilterMapping> filterMappings = getFilterMappings(persistencePackage.getPersistencePerspective(), cto, 
+                persistencePackage.getFetchTypeFullyQualifiedClassname(), filteredProperties);
+        Entity[] entities = getEntities(persistencePackage, cto, dynamicEntityDao, filteredProperties, filterMappings);
+
+        Long count = getCountForFetch(cto, dynamicEntityDao, classname, filterMappings);
+
+        return new DynamicResultSet(null, entities, count.intValue());
+    }
+
+    public Entity[] getEntities(PersistencePackage persistencePackage, CriteriaTransferObject cto, 
+                DynamicEntityDao dynamicEntityDao, Map<String, FieldMetadata> filteredProperties,
+                List<FilterMapping> filterMappings) {
+
+        String classname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+
+        Map<String, List<String>> propertyMap = new HashMap<>();
+
+        for (String propertyString : filteredProperties.keySet()) {
+            addPropertyToMap(propertyMap, propertyString);
+        }
+
+        List<String> propertyNames = new ArrayList<>();
+        Boolean isSandboxable = persistencePackage.getListGridFetchRequest().getIsSandboxableEntity();
+
+        for (String propertyKey : propertyMap.keySet()) {
+            buildPropertyNames(isSandboxable, propertyMap.get(propertyKey), propertyNames, propertyKey);
+        }
+        
+        List<FilterMapping> standardFilterMappings = new ArrayList(filterMappings);
+        if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
+            standardFilterMappings.addAll(cto.getAdditionalFilterMappings());
+        }
+        if (CollectionUtils.isNotEmpty(cto.getNonCountAdditionalFilterMappings())) {
+            standardFilterMappings.addAll(cto.getNonCountAdditionalFilterMappings());
+        }
+
+        TypedQuery response;
+        List results;
+        try {
+
+            response = criteriaTranslator.translateListGridQuery(dynamicEntityDao, classname, standardFilterMappings, 
+                    cto.getFirstResult(), cto.getMaxResults(), propertyMap);
+
+            response.setFirstResult(cto.getFirstResult());
+            response.setMaxResults(cto.getMaxResults());
+            results = response.getResultList();
+        } catch (CriteriaConversionException e) {
+            throw new RuntimeException(e);
+        }
+
+        Entity[] entities = getEntitiesFromStringResults(persistencePackage.getListGridFetchRequest(), results, propertyNames, filteredProperties);
+
+        for (ListGridPersistenceHandler handler : listGridPersistenceHandlers) {
+            if (handler.canHandleEntity(persistencePackage)) {
+                entities = handler.handleEntities(persistencePackage, entities, dynamicEntityDao, this);
+            }
+        }
+        return entities;
+    }
+
+    public Long getCountForFetch(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, String classname, List<FilterMapping> filterMappings) {
+        List<FilterMapping> countFilterMappings = new ArrayList<FilterMapping>(filterMappings);
+        if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
+            countFilterMappings.addAll(cto.getAdditionalFilterMappings());
+        }
+
+        Long count;
+
+        try {
+            count = (Long) criteriaTranslator.translateListGridCountQuery(dynamicEntityDao,
+                    classname, countFilterMappings).getSingleResult();
+        } catch (CriteriaConversionException e) {
+            throw new RuntimeException(e);
+        }
+        return count;
+    }
+
+    public void buildPropertyNames(Boolean isSandboxable, List<String> propertyListForKey, List<String> propertyNames, String propertyKey) {
+
+        if (isSandboxable && propertyKey.equals("embeddableSandBoxDiscriminator")) {
+            propertyNames.add(propertyKey + "." + propertyListForKey.get(0));
+
+            return;
+        }
+
+        for (String prop : propertyListForKey) {
+
+            String propertyName = "";
+
+            if (propertyKey != "root") {
+                propertyName += propertyKey + ".";
+            }
+
+            propertyName += prop;
+            propertyNames.add(propertyName);
+        }
+    }
+
+    public void addPropertyToMap(Map<String, List<String>> propertyMap, String propertyString) {
+        String[] propertyStringArray = propertyString.split("\\.");
+        if (!propertyString.contains(".")) {
+            List propertyList = propertyMap.get("root");
+            if (propertyList == null) {
+                propertyList = new ArrayList();
+            }
+            propertyList.add(propertyString);
+            propertyMap.put("root", propertyList);
+
+        } else {
+            List propertyList = propertyMap.get(propertyStringArray[0]);
+            if (propertyList == null) {
+                propertyList = new ArrayList();
+            }
+            propertyList.add(propertyString.substring((propertyStringArray[0] + ".").length()));
+            propertyMap.put(propertyStringArray[0], propertyList);
+        }
+    }
+
+    protected Entity[] getEntitiesFromStringResults(ListGridFetchRequest listGridFetchRequest, List results, List<String> propertyNames, Map<String, FieldMetadata> metadataMap) {
+
+        List<Entity> entities = new ArrayList<>();
+
+        Integer origItemIndex = null;
+
+        Boolean isSandboxableEntity = listGridFetchRequest.getIsSandboxableEntity();
+        if (isSandboxableEntity) {
+            origItemIndex = propertyNames.indexOf("embeddableSandBoxDiscriminator.originalItemId");
+        }
+
+        for (Object result : results) {
+
+            Entity entity = new Entity();
+            entity.setProperties(new Property[0]);
+
+            int i = 0;
+
+            for ( Object propertyValue : (Object[])result) {
+                
+                if (isSandboxableEntity && propertyNames.get(i).equals(listGridFetchRequest.getIdField()) && ((Object[])result)[origItemIndex] != null) {
+                    propertyValue = ((Object[])result)[origItemIndex];
+                }
+
+                Property property = createProperty(propertyNames, metadataMap, i, propertyValue);
+                entity.addProperty(property);
+                i++;
+            }
+
+            entities.add(entity);
+        }
+
+        return entities.toArray(new Entity[entities.size()]);
+    }
+
+    protected Property createProperty(List<String> propertyNames, Map<String, FieldMetadata> metadataMap, int i, Object propertyValue) {
+        Property property = new Property();
+
+        String name = propertyNames.get(i);
+        property.setName(name);
+
+        String propertyValueString = null;
+        if (propertyValue != null) {
+            propertyValueString = propertyValue.toString();
+        }
+        property.setValue(propertyValueString);
+
+        FieldMetadata fieldMetadata = metadataMap.get(name);
+        decorateProperty(property, propertyValueString, (BasicFieldMetadata) fieldMetadata);
+
+        property.setMetadata(fieldMetadata);
+        return property;
+    }
+
+    @Override
+    public void decorateProperty(Property property, String propertyValueString, BasicFieldMetadata fieldMetadata) {
+        boolean handled = false;
+        try {
+            for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
+                MetadataProviderResponse response = fieldPersistenceProvider.extractValue(
+                        new ExtractValueRequest(null, getFieldManager(), fieldMetadata, propertyValueString,
+                                propertyValueString, null, this, null, null), property);
+                if (MetadataProviderResponse.NOT_HANDLED != response) {
+                    handled = true;
+                }
+                if (MetadataProviderResponse.HANDLED_BREAK == response) {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            // If an exception occurs, just use the defaultFieldPersistenceProvider
+        } finally {
+            if (!handled) {
+                defaultFieldPersistenceProvider.extractValue(
+                        new ExtractValueRequest(null, getFieldManager(), fieldMetadata, propertyValueString,
+                                propertyValueString, null, this, null, null), property);
+            }
+        }
+    }
+
 
     @Override
     public Integer getTotalRecords(String ceilingEntity, List<FilterMapping> filterMappings) {

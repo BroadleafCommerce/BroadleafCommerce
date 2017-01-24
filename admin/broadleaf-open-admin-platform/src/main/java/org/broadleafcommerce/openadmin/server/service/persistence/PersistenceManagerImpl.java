@@ -268,21 +268,30 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 break;
             }
         }
-        //check to see if there is a custom handler registered
-        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
-            if (handler.canHandleFetch(persistencePackage)) {
-                if (!handler.willHandleSecurity(persistencePackage)) {
-                    adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.FETCH);
+
+        if (persistencePackage.getListGridFetchRequest() == null || !persistencePackage.getListGridFetchRequest().isUseRefinedFetch()) {
+
+            //check to see if there is a custom handler registered
+            for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+                if (handler.canHandleFetch(persistencePackage)) {
+                    if (!handler.willHandleSecurity(persistencePackage)) {
+                        adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.FETCH);
+                    }
+                    DynamicResultSet results = handler.fetch(persistencePackage, cto, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                    return executePostFetchHandlers(persistencePackage, cto, new PersistenceResponse().withDynamicResultSet(results));
                 }
-                DynamicResultSet results = handler.fetch(persistencePackage, cto, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
-                return executePostFetchHandlers(persistencePackage, cto, new PersistenceResponse().withDynamicResultSet(results));
             }
+            adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.FETCH);
         }
-        adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.FETCH);
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
 
         try {
-            DynamicResultSet results = myModule.fetch(persistencePackage, cto);
+            DynamicResultSet results;
+            if (persistencePackage.getListGridFetchRequest() != null && persistencePackage.getListGridFetchRequest().isUseRefinedFetch()) {
+                results = myModule.performListGridFetch(persistencePackage, cto, dynamicEntityDao);
+            } else {
+                results = myModule.fetch(persistencePackage, cto);
+            }
             return executePostFetchHandlers(persistencePackage, cto, new PersistenceResponse().withDynamicResultSet(results));
         } catch (ServiceException e) {
             if (e.getCause() instanceof NoPossibleResultsException) {

@@ -19,12 +19,16 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.EntityResult;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
@@ -153,6 +157,10 @@ public interface RecordHelper extends DataFormatProvider {
      * @see #validate(Entity, Serializable, Map, boolean)
      */
     boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties);
+
+    Map<String, FieldMetadata> getFilteredProperties(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
+
+    void decorateProperty(Property property, String propertyValueString, BasicFieldMetadata fieldMetadata);
 
     Integer getTotalRecords(String ceilingEntity, List<FilterMapping> filterMappings);
 
