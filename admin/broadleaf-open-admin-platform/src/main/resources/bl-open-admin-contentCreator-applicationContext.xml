@@ -91,11 +91,6 @@
         </property>
     </bean>
 
-    <bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-        <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
-    </bean>
-
     <bean id="blStringLikeRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
         <property name="filterValueConverter" ref="blStringLikeFilterValueConverter"/>
         <property name="predicateProvider" ref="blLikePredicateProvider"/>
@@ -285,7 +280,7 @@
     </bean>
 
     <!--  Spring 4.1 Admin Resource Handling Base Classes -->
-    <bean id="adminResourceHttpRequestHandlerBase" abstract="true" 
+    <bean id="adminResourceHttpRequestHandlerBase" abstract="true"
         class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">   
         <!--  property name="themesBaseDirectory" value="/WEB-INF/" / -->
         <property name="cacheSeconds" value="${staticResourceBrowserCacheSeconds}" />    
@@ -295,13 +290,13 @@
     <bean id="adminJsResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
         <property name="locations" ref="blJsLocations"/>
         <property name="resourceTransformers" ref="blJsResourceTransformers" />     
-    </bean>    
+    </bean>
     
     <bean id="adminCssResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
         <property name="locations" ref="blCssLocations"/>
         <property name="resourceTransformers" ref="blCssResourceTransformers" />             
     </bean>
-    
+
     <bean id="blMessageSourceBaseNames-openadmin" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
@@ -330,9 +325,9 @@
         <property name="emailTemplate" value="${adminResetPassword.emailTemplate}"/>
         <property name="subject" value="${adminResetPassword.subject}"/>
     </bean>
-    
+
     <mo:override id="blMetadataOverrides"/>
-    
+
     <bean id="blFieldMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean">
         <property name="sourceList">
             <list>
@@ -350,14 +345,14 @@
         <property name="sourceList">
             <list>
                 <ref bean="blBasicFieldPersistenceProvider"/>
-                <ref bean="blRuleFieldPersistenceProvider"/>                
+                <ref bean="blRuleFieldPersistenceProvider"/>
                 <ref bean="blMapFieldPersistenceProvider"/>
                 <ref bean="blMoneyFieldPersistenceProvider"/>
                 <ref bean="blMediaFieldPersistenceProvider"/>
             </list>
         </property>
     </bean>
-    
+
     <bean id="blAppConfigurationMap" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
@@ -365,14 +360,14 @@
             </map>
         </property>
     </bean>
-    
+
     <bean id="blRowLevelSecurityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
             </list>
         </property>
     </bean>
-    
+
     <bean id="blAdminPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
         <constructor-arg value="${password.admin.encoder}"/>
     </bean>

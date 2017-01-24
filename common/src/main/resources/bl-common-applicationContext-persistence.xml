@@ -36,9 +36,34 @@
         <property name="persistenceUnitName" value="blPU"/>
     </bean>
 
+    <bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
+    </bean>
+
+    <bean id="blTargetEntityManagers" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
+        <property name="sourceMap">
+            <map>
+                <entry key="sandbox" value="prodEntityManager"/>
+                <entry key="stage" value="prodEntityManager"/>
+                <entry key="production" value="prodEntityManager"/>
+            </map>
+        </property>
+    </bean>
+
     <bean id="blEJB3ConfigurationDao" class="org.broadleafcommerce.common.util.dao.EJB3ConfigurationDaoImpl">
         <property name="persistenceUnitInfo">
             <bean factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
+        </property>
+    </bean>
+
+    <bean id="blTargetEJB3ConfigurationDaos" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
+        <property name="sourceMap">
+            <map>
+                <entry key="sandbox" value="blEJB3ConfigurationDao"/>
+                <entry key="stage" value="blEJB3ConfigurationDao"/>
+                <entry key="production" value="blEJB3ConfigurationDao"/>
+            </map>
         </property>
     </bean>
     
