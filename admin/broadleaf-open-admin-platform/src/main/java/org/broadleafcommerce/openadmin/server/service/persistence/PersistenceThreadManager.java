@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.springframework.stereotype.Service;
 
 /**
