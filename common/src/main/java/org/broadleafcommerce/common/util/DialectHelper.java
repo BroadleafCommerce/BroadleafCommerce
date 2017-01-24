@@ -27,7 +27,6 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  * @author Jeff Fischer
@@ -35,38 +34,26 @@ import javax.persistence.PersistenceContext;
 @Repository("blDialectHelper")
 public class DialectHelper {
 
-    @PersistenceContext(unitName="blPU")
-    protected EntityManager em;
-
-    protected Dialect cachedDialect = null;
-
-    public synchronized Dialect getHibernateDialect() {
-        if (cachedDialect == null) {
-            SessionFactoryImplementor factory = (SessionFactoryImplementor) em.unwrap(Session.class).getSessionFactory();
-            cachedDialect = factory.getDialect();
-        }
-        return cachedDialect;
+    public synchronized Dialect getHibernateDialect(EntityManager em) {
+        SessionFactoryImplementor factory = (SessionFactoryImplementor) em.unwrap(Session.class).getSessionFactory();
+        return factory.getDialect();
     }
 
-    public boolean isOracle() {
+    public boolean isOracle(EntityManager em) {
         //Since should handle other Oracle dialects as well, since they derive from Oracle8iDialect
-        return getHibernateDialect() instanceof Oracle8iDialect;
+        return getHibernateDialect(em) instanceof Oracle8iDialect;
     }
 
-    public boolean isPostgreSql() {
+    public boolean isPostgreSql(EntityManager em) {
         //Since should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
-        return getHibernateDialect() instanceof PostgreSQL81Dialect;
+        return getHibernateDialect(em) instanceof PostgreSQL81Dialect;
     }
 
-    public boolean isSqlServer() {
-        return getHibernateDialect() instanceof SQLServerDialect;
+    public boolean isSqlServer(EntityManager em) {
+        return getHibernateDialect(em) instanceof SQLServerDialect;
     }
 
-    public boolean isMySql() {
-        return getHibernateDialect() instanceof MySQLDialect;
-    }
-
-    public void clear() {
-        cachedDialect = null;
+    public boolean isMySql(EntityManager em) {
+        return getHibernateDialect(em) instanceof MySQLDialect;
     }
 }
