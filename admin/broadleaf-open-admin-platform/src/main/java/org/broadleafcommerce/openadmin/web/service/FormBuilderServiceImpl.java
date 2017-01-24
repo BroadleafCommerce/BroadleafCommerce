@@ -307,7 +307,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
           .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
           .withForeignKeyClass(fmd.getForeignKeyClass())
           .withForeignKeySectionPath(getAdminSectionPath(fmd.getForeignKeyClass()))
-          .withOwningEntityClass(fmd.getOwningClass() != null ? fmd.getOwningClass() : fmd.getTargetClass());
+          .withOwningEntityClass(fmd.getOwningClass() != null ? fmd.getOwningClass() : fmd.getTargetClass())
+          .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity());
         String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
         hf.setFieldType(fieldType);
         
@@ -955,23 +956,24 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
 
                     f.withName(property.getName())
-                         .withFieldType(fieldType)
-                         .withFieldComponentRenderer(fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString())
-                         .withOrder(fmd.getOrder())
-                         .withFriendlyName(fmd.getFriendlyName())
-                         .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
-                         .withForeignKeyClass(fmd.getForeignKeyClass())
-                         .withForeignKeySectionPath(getAdminSectionPath(fmd.getForeignKeyClass()))
-                         .withOwningEntityClass(fmd.getOwningClass()!=null?fmd.getOwningClass():fmd.getInheritedFromType())
-                         .withRequired(required)
-                         .withReadOnly(fmd.getReadOnly())
-                         .withTranslatable(fmd.getTranslatable())
-                         .withAlternateOrdering((Boolean) fmd.getAdditionalMetadata().get(Field.ALTERNATE_ORDERING))
-                         .withLargeEntry(fmd.isLargeEntry())
-                         .withHint(fmd.getHint())
-                         .withTooltip(fmd.getTooltip())
-                         .withHelp(fmd.getHelpText())
-                         .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup());
+                     .withFieldType(fieldType)
+                     .withFieldComponentRenderer(fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString())
+                     .withOrder(fmd.getOrder())
+                     .withFriendlyName(fmd.getFriendlyName())
+                     .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
+                     .withForeignKeyClass(fmd.getForeignKeyClass())
+                     .withForeignKeySectionPath(getAdminSectionPath(fmd.getForeignKeyClass()))
+                     .withOwningEntityClass(fmd.getOwningClass()!=null?fmd.getOwningClass():fmd.getInheritedFromType())
+                     .withRequired(required)
+                     .withReadOnly(fmd.getReadOnly())
+                     .withTranslatable(fmd.getTranslatable())
+                     .withAlternateOrdering((Boolean) fmd.getAdditionalMetadata().get(Field.ALTERNATE_ORDERING))
+                     .withLargeEntry(fmd.isLargeEntry())
+                     .withHint(fmd.getHint())
+                     .withTooltip(fmd.getTooltip())
+                     .withHelp(fmd.getHelpText())
+                     .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup())
+                     .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity());
 
                     String defaultValue = fmd.getDefaultValue();
                     if (defaultValue != null) {

@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
@@ -68,6 +69,7 @@ public class Field {
     protected String help;
     protected String translationFieldName;
     protected Boolean allowNoValueEnumOption = false;
+    protected Boolean canLinkToExternalEntity = true;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     /* ************ */
@@ -219,6 +221,11 @@ public class Field {
         return this;
     }
 
+    public Field withCanLinkToExternalEntity(Boolean canLinkToExternalEntity) {
+        setCanLinkToExternalEntity(canLinkToExternalEntity);
+        return this;
+    }
+
     /* ************************ */
     /* CUSTOM GETTERS / SETTERS */
     /* ************************ */
@@ -257,13 +264,6 @@ public class Field {
      */
     public String getEntityViewPath() {
         return getForeignKeyClass() + "/" + getValue();
-    }
-    
-    /**
-     * Used for linking in toOneLookup fields as well as linking to the entity via a 'name' field
-     */
-    public boolean getCanLinkToExternalEntity() {
-        return SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString().equals(fieldType);
     }
 
     public Boolean getReadOnly() {
@@ -548,5 +548,19 @@ public class Field {
 
     public void setTranslationFieldName(String translationFieldName) {
         this.translationFieldName = translationFieldName;
+    }
+
+    /**
+     * Used for linking in toOneLookup fields as well as linking to the entity via a 'name' field
+     */
+    public boolean getCanLinkToExternalEntity() {
+        boolean isAddlFK = SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString().equals(fieldType);
+        boolean canLinkToExternalEntity = BooleanUtils.toBoolean(this.canLinkToExternalEntity);
+
+        return isAddlFK && canLinkToExternalEntity;
+    }
+
+    public void setCanLinkToExternalEntity(Boolean canLinkToExternalEntity) {
+        this.canLinkToExternalEntity = canLinkToExternalEntity;
     }
 }
