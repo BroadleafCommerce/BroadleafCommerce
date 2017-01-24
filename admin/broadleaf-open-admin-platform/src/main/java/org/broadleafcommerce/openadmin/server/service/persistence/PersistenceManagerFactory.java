@@ -17,7 +17,13 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.persistence.TargetModeType;
+import org.broadleafcommerce.common.service.EntityManagerIdentificationService;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
@@ -36,17 +42,50 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
     protected static String persistenceManagerRef = DEFAULTPERSISTENCEMANAGERREF;
 
+    protected static EntityManagerIdentificationService emIdentificationService;
+
+    @Autowired
+    public PersistenceManagerFactory(EntityManagerIdentificationService emIdentificationService) {
+        PersistenceManagerFactory.emIdentificationService = emIdentificationService;
+    }
+
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         PersistenceManagerFactory.applicationContext = applicationContext;
     }
 
+    /**
+     * @deprecated in favor of {@link #getPersistenceManager(String)} which configures the {@link PersistenceManager}
+     *  correctly, based on the provided className. If the {@link PersistenceManager} is configured with the
+     *  incorrect {@link javax.persistence.EntityManager} for the given class, then requests in the Admin are likely to fail.
+     */
+    @Deprecated
     public static PersistenceManager getPersistenceManager() {
-        if (PersistenceManagerContext.getPersistenceManagerContext() != null) {
-            return PersistenceManagerContext.getPersistenceManagerContext().getPersistenceManager();
+        return getDefaultPersistenceManager();
+    }
+
+    public static PersistenceManager getDefaultPersistenceManager() {
+        return getPersistenceManager(TargetModeType.SANDBOX);
+    }
+
+    public static PersistenceManager getPersistenceManager(PersistencePackageRequest ppr) {
+        String className = ppr.getCeilingEntityClassname();
+        return getPersistenceManager(className);
+    }
+
+    public static PersistenceManager getPersistenceManager(PersistencePackage pkg) {
+        String className = pkg.getCeilingEntityFullyQualifiedClassname();
+        return getPersistenceManager(className);
+    }
+
+    public static PersistenceManager getPersistenceManager(String className) {
+        try {
+            TargetModeType targetModeType = emIdentificationService.identifyTargetModeTypeForClass(className);
+            return PersistenceManagerFactory.getPersistenceManager(targetModeType);
+        } catch (ServiceException e) {
+            throw new RuntimeException(e);
         }
-        throw new IllegalStateException("PersistenceManagerContext is not set on ThreadLocal. If you want to use the " +
-                "non-cached version, try getPersistenceManager(TargetModeType)");
     }
 
     public static PersistenceManager getPersistenceManager(TargetModeType targetModeType) {
