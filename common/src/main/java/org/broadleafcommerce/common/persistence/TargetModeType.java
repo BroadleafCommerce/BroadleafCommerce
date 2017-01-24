@@ -35,7 +35,6 @@ public class TargetModeType implements Serializable {
     public static final TargetModeType SANDBOX  = new TargetModeType("sandbox", "entity manager target for the sandbox datasource");
     public static final TargetModeType STAGE  = new TargetModeType("stage", "entity manager target for the stage datasource");
     public static final TargetModeType PRODUCTION  = new TargetModeType("production", "entity manager target for the production datasource");
-    public static final TargetModeType EVENT  = new TargetModeType("event", "entity manager target for the production datasource");
 
     public static TargetModeType getInstance(final String type) {
         return TYPES.get(type);
