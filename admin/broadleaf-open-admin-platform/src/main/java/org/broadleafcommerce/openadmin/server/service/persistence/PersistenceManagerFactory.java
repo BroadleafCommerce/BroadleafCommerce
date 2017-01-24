@@ -19,7 +19,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.TargetModeType;
-import org.broadleafcommerce.common.service.EntityManagerIdentificationService;
+import org.broadleafcommerce.common.service.EntityManagerService;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.springframework.beans.BeansException;
@@ -42,11 +42,11 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
     protected static String persistenceManagerRef = DEFAULTPERSISTENCEMANAGERREF;
 
-    protected static EntityManagerIdentificationService emIdentificationService;
+    protected static EntityManagerService emService;
 
     @Autowired
-    public PersistenceManagerFactory(EntityManagerIdentificationService emIdentificationService) {
-        PersistenceManagerFactory.emIdentificationService = emIdentificationService;
+    public PersistenceManagerFactory(EntityManagerService emService) {
+        PersistenceManagerFactory.emService = emService;
     }
 
 
@@ -81,7 +81,7 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
 
     public static PersistenceManager getPersistenceManager(String className) {
         try {
-            TargetModeType targetModeType = emIdentificationService.identifyTargetModeTypeForClass(className);
+            TargetModeType targetModeType = emService.identifyTargetModeTypeForClass(className);
             return PersistenceManagerFactory.getPersistenceManager(targetModeType);
         } catch (ServiceException e) {
             throw new RuntimeException(e);

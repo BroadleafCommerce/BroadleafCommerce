@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.CleanStringException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
-import org.broadleafcommerce.common.service.EntityManagerIdentificationService;
+import org.broadleafcommerce.common.service.EntityManagerService;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.openadmin.dto.BatchDynamicResultSet;
@@ -59,8 +59,8 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
-    @Resource(name="blEntityManagerIdentificationService")
-    protected EntityManagerIdentificationService emIdentificationService;
+    @Resource(name="blEntityManagerService")
+    protected EntityManagerService emService;
 
     @Resource(name="blPersistenceThreadManager")
     protected PersistenceThreadManager persistenceThreadManager;
@@ -336,6 +336,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     protected TargetModeType identifyTargetModeType(PersistencePackage persistencePackage) throws ServiceException {
         String className = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return emIdentificationService.identifyTargetModeTypeForClass(className);
+        return emService.identifyTargetModeTypeForClass(className);
     }
 }

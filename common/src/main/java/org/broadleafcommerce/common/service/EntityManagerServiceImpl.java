@@ -24,7 +24,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,8 +39,8 @@ import javax.persistence.metamodel.EntityType;
 /**
  * @author Chris Kittrell (ckittrell)
  */
-@Service("blEntityManagerIdentificationService")
-public class EntityManagerIdentificationServiceImpl implements EntityManagerIdentificationService, ApplicationContextAware {
+@Service("blEntityManagerService")
+public class EntityManagerServiceImpl implements EntityManagerService, ApplicationContextAware {
 
     @Resource(name = "blTargetEntityManagers")
     protected Map<String, String> targetEntityManagers = new HashMap<>();
@@ -47,18 +51,9 @@ public class EntityManagerIdentificationServiceImpl implements EntityManagerIden
 
     @Override
     public EntityManager identifyEntityManagerForClass(String className) throws ServiceException {
-        TargetModeType targetModeType = getTargetModeTypeForClass(className);
+        TargetModeType targetModeType = identifyTargetModeTypeForClass(className);
         String entityManagerBeanName = targetEntityManagers.get(targetModeType.getType());
         return retrieveEntityManager(entityManagerBeanName);
-    }
-
-    protected TargetModeType getTargetModeTypeForClass(String className) throws ServiceException {
-        TargetModeType targetModeType = identifiedTargetModeTypeCache.get(className);
-
-        if (targetModeType == null) {
-            targetModeType = identifyTargetModeTypeForClass(className);
-        }
-        return targetModeType;
     }
 
     @Override
@@ -103,8 +98,34 @@ public class EntityManagerIdentificationServiceImpl implements EntityManagerIden
         }
     }
 
-    protected EntityManager retrieveEntityManager(String entityManagerBeanName) {
+    @Override
+    public EntityManager retrieveEntityManager(String entityManagerBeanName) {
         return (EntityManager) applicationContext.getBean(entityManagerBeanName);
+    }
+
+    @Override
+    public EntityManager retrieveEntityManager(TargetModeType targetModeType) {
+        String entityManagerBeanName = targetEntityManagers.get(targetModeType.getType());
+        return retrieveEntityManager(entityManagerBeanName);
+    }
+
+    @Override
+    public List<EntityManager> retrieveAllEntityManagers() {
+        List<EntityManager> entityManagers = new ArrayList<>();
+
+        Set<String> uniqueBeanNames = gatherUniqueEntityManagerBeanNames();
+        for (String uniqueBeanName : uniqueBeanNames) {
+            EntityManager entityManager = retrieveEntityManager(uniqueBeanName);
+            entityManagers.add(entityManager);
+        }
+
+        return entityManagers;
+    }
+
+    protected Set<String> gatherUniqueEntityManagerBeanNames() {
+        Collection<String> beanNames = targetEntityManagers.values();
+
+        return new HashSet<>(beanNames);
     }
 
     @Override

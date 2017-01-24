@@ -20,15 +20,54 @@ package org.broadleafcommerce.common.service;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.TargetModeType;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
 /**
  * @author Chris Kittrell (ckittrell)
  */
-public interface EntityManagerIdentificationService {
+public interface EntityManagerService {
 
+    /**
+     * Identifies the {@link EntityManager} for the given className
+     *
+     * @param className
+     * @return the {@link EntityManager}
+     */
     EntityManager identifyEntityManagerForClass(String className) throws ServiceException;
 
+    /**
+     * Identifies the {@link TargetModeType} for the given className
+     *
+     * @param className
+     * @return the {@link TargetModeType}
+     */
     TargetModeType identifyTargetModeTypeForClass(String className) throws ServiceException;
+
+    /**
+     * Gathers the EntityManager associated to the given beanName, according to the
+     *  `blTargetEntityManagers` bean list
+     *
+     * @param entityManagerBeanName
+     * @return the {@link EntityManager}
+     */
+    EntityManager retrieveEntityManager(String entityManagerBeanName);
+
+    /**
+     * Gathers the EntityManager associated to the given {@link TargetModeType}, according to the
+     *  `blTargetEntityManagers` bean list
+     *
+     * @param targetModeType
+     * @return the {@link EntityManager}
+     */
+    EntityManager retrieveEntityManager(TargetModeType targetModeType);
+
+    /**
+     * Gathers all EntityManagers registered with the `blTargetEntityManagers` bean list
+     *
+     * @return a list of {@link EntityManager}s
+     */
+    List<EntityManager> retrieveAllEntityManagers();
 
 }
