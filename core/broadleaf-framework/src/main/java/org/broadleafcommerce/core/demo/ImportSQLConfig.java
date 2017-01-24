@@ -24,8 +24,12 @@ import org.broadleafcommerce.common.demo.DemoCondition;
 import org.broadleafcommerce.common.demo.ImportCondition;
 import org.broadleafcommerce.common.demo.MTCondition;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.util.ClassUtils;
 
 /**
  * @author Jeff Fischer
@@ -55,6 +59,21 @@ public class ImportSQLConfig {
     @Bean
     @Conditional({MTCondition.class, DemoCondition.class})
     public AutoImportSql blFrameworkLateData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/fix_catalog_data.sql,config/bc/sql/demo/populate_asset_folders.sql", AutoImportStage.PRIMARY_LATE);
+        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/fix_catalog_data.sql", AutoImportStage.PRIMARY_LATE);
+    }
+    
+    @Bean
+    @Conditional({AssetFoldersExistCondition.class, DemoCondition.class})
+    public AutoImportSql blAssetFolderData() {
+        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/populate_asset_folders.sql", AutoImportStage.PRIMARY_LATE);
+    }
+    
+    public static class AssetFoldersExistCondition implements Condition {
+
+        @Override
+        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            return ClassUtils.isPresent("com.broadleafcommerce.enterprise.foldering.admin.domain.AssetFolder", context.getClassLoader());
+        }
+        
     }
 }
