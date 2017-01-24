@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;

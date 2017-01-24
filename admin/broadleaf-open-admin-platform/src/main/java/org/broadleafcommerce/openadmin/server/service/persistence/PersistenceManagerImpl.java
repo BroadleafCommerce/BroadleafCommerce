@@ -18,7 +18,6 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
@@ -27,8 +26,10 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.util.ValidationUtil;
+import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -51,7 +52,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Persist
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
-import org.hibernate.mapping.PersistentClass;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -88,6 +88,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     @Resource(name="blTargetEntityManagers")
     protected Map<String, String> targetEntityManagers = new HashMap<String, String>();
+
+    @Resource(name="blTargetEJB3ConfigurationDaos")
+    protected Map<String, String> targetEJB3ConfigurationDaos = new HashMap<String, String>();
 
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
@@ -728,13 +731,31 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     @Override
     public void setTargetMode(TargetModeType targetMode) {
+        EntityManager targetManager = getTargetEntityManager(targetMode);
+        dynamicEntityDao.setStandardEntityManager(targetManager);
+
+        EJB3ConfigurationDao targetEJB3ConfigurationDao = getTargetEJB3ConfigurationDao(targetMode);
+        dynamicEntityDao.setEjb3ConfigurationDao(targetEJB3ConfigurationDao);
+
+        this.targetMode = targetMode;
+    }
+
+    protected EntityManager getTargetEntityManager(TargetModeType targetMode) {
         String targetManagerRef = targetEntityManagers.get(targetMode.getType());
         EntityManager targetManager = (EntityManager) applicationContext.getBean(targetManagerRef);
         if (targetManager == null) {
             throw new RuntimeException("Unable to find a target entity manager registered with the key: " + targetMode + ". Did you add an entity manager with this key to the targetEntityManagers property?");
         }
-        dynamicEntityDao.setStandardEntityManager(targetManager);
-        this.targetMode = targetMode;
+        return targetManager;
+    }
+
+    protected EJB3ConfigurationDao getTargetEJB3ConfigurationDao(TargetModeType targetMode) {
+        String targetEJB3ConfigurationDaoRef = targetEJB3ConfigurationDaos.get(targetMode.getType());
+        EJB3ConfigurationDao ejb3ConfigurationDao = (EJB3ConfigurationDao) applicationContext.getBean(targetEJB3ConfigurationDaoRef);
+        if (ejb3ConfigurationDao == null) {
+            throw new RuntimeException("Unable to find a target ejb3ConfigurationDao registered with the key: " + targetMode + ". Did you add an ejb3ConfigurationDao with this key to the blTargetEJB3ConfigurationDaos bean?");
+        }
+        return ejb3ConfigurationDao;
     }
 
     @Override
