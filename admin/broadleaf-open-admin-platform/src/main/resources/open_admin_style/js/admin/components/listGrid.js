@@ -497,7 +497,7 @@ $(document).ready(function () {
             textWidth -= actionWidth;
             textWidth = textWidth + "px";
         } else {
-            textWidth = "90%";
+            textWidth = "88%";
         }
         $columnText.width(textWidth);
     }
