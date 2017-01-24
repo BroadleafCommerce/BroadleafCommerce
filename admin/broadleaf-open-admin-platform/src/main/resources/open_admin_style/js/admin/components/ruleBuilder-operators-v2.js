@@ -100,6 +100,8 @@ var blcOperators_Selectize_Enumeration = [
 ];
 
 var blcOperators_Text_List = [
+    "COLLECTION_IN",
+    "COLLECTION_NOT_IN",
     "CONTAINS",
     "NOT_CONTAINS",
     "COUNT_GREATER_THAN",
