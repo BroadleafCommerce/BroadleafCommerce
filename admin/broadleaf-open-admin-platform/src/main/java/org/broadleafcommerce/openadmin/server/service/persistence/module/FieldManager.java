@@ -26,9 +26,9 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.common.value.ValueAssignable;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
-import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
 
@@ -70,12 +70,12 @@ public class FieldManager {
     }
 
     public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        PersistenceManager persistenceManager = getPersistenceManager();
-        SessionFactory sessionFactory = persistenceManager.getDynamicEntityDao().getDynamicDaoHelper().
-                getSessionFactory((HibernateEntityManager) persistenceManager.getDynamicEntityDao().getStandardEntityManager());
-        BLCFieldUtils fieldUtils = new BLCFieldUtils(sessionFactory, true, persistenceManager.getDynamicEntityDao().useCache(),
-                persistenceManager.getDynamicEntityDao().getEjb3ConfigurationDao(), entityConfiguration,
-                persistenceManager.getDynamicEntityDao().getDynamicDaoHelper());
+        DynamicEntityDao dynamicEntityDao = getPersistenceManager(clazz.getName()).getDynamicEntityDao();
+        SessionFactory sessionFactory = dynamicEntityDao.getDynamicDaoHelper().
+                getSessionFactory((HibernateEntityManager) dynamicEntityDao.getStandardEntityManager());
+        BLCFieldUtils fieldUtils = new BLCFieldUtils(sessionFactory, true, dynamicEntityDao.useCache(),
+                dynamicEntityDao.getEjb3ConfigurationDao(), entityConfiguration,
+                dynamicEntityDao.getDynamicDaoHelper());
         return fieldUtils.getField(clazz, fieldName);
     }
 
@@ -168,7 +168,7 @@ public class FieldManager {
                         value = newEntity;
                     } catch (Exception e) {
                         //Use the most extended type based on the field type
-                        PersistenceManager persistenceManager = getPersistenceManager();
+                        PersistenceManager persistenceManager = getPersistenceManager(field.getType().getName());
                         Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
                         if (!ArrayUtils.isEmpty(entities)) {
                             Object newEntity = entities[entities.length-1].newInstance();
@@ -207,7 +207,7 @@ public class FieldManager {
             response = entityConfiguration.lookupEntityClass(field.getType().getName());
         } catch (Exception e) {
             //Use the most extended type based on the field type
-            PersistenceManager persistenceManager = getPersistenceManager();
+            PersistenceManager persistenceManager = getPersistenceManager(field.getType().getName());
             Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
             if (!ArrayUtils.isEmpty(entities)) {
                 response = entities[entities.length-1];
@@ -240,14 +240,12 @@ public class FieldManager {
         return entityConfiguration;
     }
 
-    protected PersistenceManager getPersistenceManager() {
-        PersistenceManager persistenceManager;
+    protected PersistenceManager getPersistenceManager(String className) {
         try {
-            persistenceManager = PersistenceManagerFactory.getPersistenceManager();
-        } catch (IllegalStateException e) {
-            persistenceManager = PersistenceManagerFactory.getPersistenceManager(TargetModeType.SANDBOX);
+            return PersistenceManagerFactory.getPersistenceManager(className);
+        } catch (RuntimeException e) {
+            return PersistenceManagerFactory.getDefaultPersistenceManager();
         }
-        return persistenceManager;
     }
 
     protected Object handleMapFieldExtraction(Object bean, String fieldName, Class<?> componentClass, Object value,
@@ -346,7 +344,7 @@ public class FieldManager {
             map.put(mapKey, newValue);
         }
     }
-    
+
     private class SortableValue implements Comparable<SortableValue> {
         
         private Integer pos;
