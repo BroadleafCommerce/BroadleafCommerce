@@ -119,6 +119,18 @@ public @interface AdminPresentation {
     RuleBuilderDisplayType displayType() default RuleBuilderDisplayType.NORMAL;
 
     /**
+     * Optional - only required if you want to explicity override whether a linkable field (e.g.,
+     * {@link SupportedFieldType#ADDITIONAL_FOREIGN_KEY}) should link to an external entity from
+     * a LisGrid (i.e., be a clickable link).
+     *
+     * This is only relevant on linkable fields and will otherwise be ignored.
+     *
+     * @return whether this field is allowed to link to an external entity from a ListGrid
+     *
+     */
+    boolean canLinkToExternalEntity() default true;
+
+    /**
      * Used to map the field to a group defined in AdminPresentationClass using AdminGroupPresentation.
      * If the group cannot be found in AdminPresentationClass, the group (and the tab, if not present) will be
      * created using the field-level AdminPresentation data.

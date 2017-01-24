@@ -499,6 +499,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                     params[j][2] = String.valueOf(optionFilterParams[j].paramType());
                 }
                 fieldMetadataOverride.setOptionFilterValues(params);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.CANLINKTOEXTERNALENTITY)) {
+                fieldMetadataOverride.setCanLinkToExternalEntity(StringUtils.isEmpty(stringValue) ? entry.getValue()
+                        .booleanOverrideValue() : Boolean.parseBoolean(stringValue));
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Unrecognized type: " + entry.getKey() + ". Not setting on basic field.");
@@ -543,6 +546,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setTranslatable(annot.translatable());
             override.setDefaultValue(annot.defaultValue());
             override.setAllowNoValueEnumOption(annot.allowNoValueEnumOption());
+            override.setCanLinkToExternalEntity(annot.canLinkToExternalEntity());
 
             if (annot.showIfFieldEquals().length != 0) {
                 processShowIfFieldEqualsAnnotations(annot.showIfFieldEquals(), override);
@@ -818,6 +822,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getDefaultValue() != null) {
             metadata.setDefaultValue(basicFieldMetadata.getDefaultValue());
+        }
+        if (basicFieldMetadata.getCanLinkToExternalEntity() != null) {
+            metadata.setCanLinkToExternalEntity(basicFieldMetadata.getCanLinkToExternalEntity());
         }
 
         attributes.put(field.getName(), metadata);

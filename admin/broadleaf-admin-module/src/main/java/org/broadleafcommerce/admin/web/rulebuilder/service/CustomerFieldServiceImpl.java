@@ -18,6 +18,8 @@
 package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
+import org.broadleafcommerce.common.presentation.RuleOperatorType;
+import org.broadleafcommerce.common.presentation.RuleOptionType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.AbstractRuleBuilderFieldService;
@@ -38,57 +40,57 @@ public class CustomerFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_customerLoggedIn")
                 .name("loggedIn")
-                .operators("blcOperators_Boolean")
-                .options("[]")
+                .operators(RuleOperatorType.BOOLEAN)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_customerRegistered")
                 .name("registered")
-                .operators("blcOperators_Boolean")
-                .options("[]")
+                .operators(RuleOperatorType.BOOLEAN)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_customerId")
                 .name("id")
-                .operators("blcOperators_Numeric")
-                .options("[]")
+                .operators(RuleOperatorType.NUMERIC)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.ID)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_customerReceiveEmail")
                 .name("receiveEmail")
-                .operators("blcOperators_Boolean")
-                .options("[]")
+                .operators(RuleOperatorType.BOOLEAN)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_customerUserName")
                 .name("username")
-                .operators("blcOperators_Text")
-                .options("[]")
+                .operators(RuleOperatorType.TEXT)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_customerEmailAddress")
                 .name("emailAddress")
-                .operators("blcOperators_Text")
-                .options("[]")
+                .operators(RuleOperatorType.TEXT)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_customerFirstName")
                 .name("firstName")
-                .operators("blcOperators_Text")
-                .options("[]")
+                .operators(RuleOperatorType.TEXT)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_customerLastName")
                 .name("lastName")
-                .operators("blcOperators_Text")
-                .options("[]")
+                .operators(RuleOperatorType.TEXT)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
                 .build());
     }

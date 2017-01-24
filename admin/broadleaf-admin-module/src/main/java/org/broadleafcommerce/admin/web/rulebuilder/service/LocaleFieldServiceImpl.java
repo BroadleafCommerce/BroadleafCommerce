@@ -18,6 +18,8 @@
 package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
+import org.broadleafcommerce.common.presentation.RuleOperatorType;
+import org.broadleafcommerce.common.presentation.RuleOptionType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.AbstractRuleBuilderFieldService;
@@ -38,15 +40,15 @@ public class LocaleFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_localeName")
                 .name("friendlyName")
-                .operators("blcOperators_Text")
-                .options("[]")
+                .operators(RuleOperatorType.TEXT)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_localeCode")
                 .name("localeCode")
-                .operators("blcOperators_Text")
-                .options("[]")
+                .operators(RuleOperatorType.TEXT)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
                 .build());
     }
