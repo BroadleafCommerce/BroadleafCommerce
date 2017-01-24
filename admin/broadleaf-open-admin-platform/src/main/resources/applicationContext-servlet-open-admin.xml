@@ -98,7 +98,9 @@
         <property name="order" value="300"/> 
     </bean>  
 
-    <bean id="blAdminMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
+    <bean id="blAdminMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver">
+        <property name="order" value="100" />
+    </bean>
     
     <bean id="blAdminWebTemplateResolvers" class="org.springframework.beans.factory.config.SetFactoryBean">
         <property name="sourceSet">
@@ -115,7 +117,9 @@
         <property name="messageResolvers">
             <set>
                 <ref bean="blAdminMessageResolver" />
-                <bean class="org.thymeleaf.spring4.messageresolver.SpringMessageResolver" />
+                <bean class="org.thymeleaf.spring4.messageresolver.SpringMessageResolver">
+                    <property name="order" value="200" />
+                </bean>
             </set>
         </property>
         <property name="templateResolvers" ref="blAdminWebTemplateResolvers" />
