@@ -19,6 +19,8 @@ package org.broadleafcommerce.common.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -36,12 +38,22 @@ public class TransactionUtils {
     public static final String DEFAULT_TRANSACTION_MANAGER = "blTransactionManager";
 
     /**
+     * Intended for use in all @Transactional definitions that operate against the <pre>blEventPU</pre> persistence unit. For instance:
+     * <pre>@Transactional(TransactionUtils.EVENT_TRANSACTION_MANAGER)</pre>
+     */
+    public static final String EVENT_TRANSACTION_MANAGER = "blTransactionManagerEventInfo";
+
+    /**
      * Intended for use in all @Transactional definitions that operate against the <pre>blSecurePU</pre> persistence unit. For instance:
      * <pre>@Transactional(TransactionUtils.SECURE_TRANSACTION_MANAGER)</pre>
      */
     public static final String SECURE_TRANSACTION_MANAGER = "blTransactionManagerSecureInfo";
     
     private static final Log LOG = LogFactory.getLog(TransactionUtils.class);
+
+    public static Transaction createTransaction(Session session) {
+        return session.beginTransaction();
+    }
 
     public static TransactionStatus createTransaction(String name, int propagationBehavior, PlatformTransactionManager transactionManager) {
         return createTransaction(name, propagationBehavior, transactionManager, false);
@@ -70,6 +82,18 @@ public class TransactionUtils {
         def.setPropagationBehavior(propagationBehavior);
         def.setIsolationLevel(isolationLevel);
         return transactionManager.getTransaction(def);
+    }
+
+    public static void finalizeTransaction(Transaction transaction, boolean isError) {
+        if (isError) {
+            try {
+                transaction.rollback();
+            } catch (Exception e) {
+                LOG.error("Rolling back caused exception. Logging and continuing.", e);
+            }
+        } else {
+            transaction.commit();
+        }
     }
 
     public static void finalizeTransaction(TransactionStatus status, PlatformTransactionManager transactionManager, boolean isError) {
