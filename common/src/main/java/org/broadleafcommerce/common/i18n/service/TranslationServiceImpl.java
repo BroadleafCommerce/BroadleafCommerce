@@ -17,17 +17,12 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ItemStatus;
 import org.broadleafcommerce.common.extension.ResultType;
@@ -52,6 +47,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 
 @Service("blTranslationService")
@@ -85,9 +84,6 @@ public class TranslationServiceImpl implements TranslationService {
 
     @Resource(name = "blLocaleService")
     protected LocaleService localeService;
-
-    @Resource(name="blGenericEntityDao")
-    protected GenericEntityDao genericEntityDao;
     
     @Override
     @Transactional("blTransactionManager")
