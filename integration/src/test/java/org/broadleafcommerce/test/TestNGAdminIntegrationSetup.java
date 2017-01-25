@@ -25,6 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.test.context.web.ServletTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
@@ -42,7 +43,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextConfiguration(name = "adminRoot")
 @WebAppConfiguration
 @ActiveProfiles("mbeansdisabled")
-@TestExecutionListeners(TransactionalTestExecutionListener.class)
+@TestExecutionListeners({TransactionalTestExecutionListener.class, ServletTestExecutionListener.class})
 public class TestNGAdminIntegrationSetup extends AbstractTestNGSpringContextTests {
     
     /**

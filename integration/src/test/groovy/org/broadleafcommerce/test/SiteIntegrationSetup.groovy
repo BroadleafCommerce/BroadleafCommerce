@@ -24,7 +24,9 @@ import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener
+import org.springframework.test.context.web.ServletTestExecutionListener
 import org.springframework.test.context.web.WebAppConfiguration
 
 import spock.lang.Specification
@@ -45,7 +47,7 @@ import spock.lang.Specification
 @ContextConfiguration(name="siteRoot")
 @WebAppConfiguration
 @ActiveProfiles("mbeansdisabled")
-@TestExecutionListeners(TransactionalTestExecutionListener.class)
+@TestExecutionListeners([TransactionalTestExecutionListener, ServletTestExecutionListener, DependencyInjectionTestExecutionListener])
 class SiteIntegrationSetup extends Specification {
     
     /**
