@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.test;
 
+import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.annotation.Rollback;
@@ -51,8 +52,8 @@ public class TestNGAdminIntegrationSetup extends AbstractTestNGSpringContextTest
      * as well as XML configuration files at the same level of the 'siteRoot' {@link @}ContextConfiguration
      */
     @Configuration
-    @ImportResource({"classpath*:/blc-config/admin/bl-*-applicationContext.xml",
+    @ImportResource(value = {"classpath*:/blc-config/admin/bl-*-applicationContext.xml",
             "classpath:bl-applicationContext-test.xml"
-        })
+        }, reader = FrameworkXmlBeanDefinitionReader.class)
     public static class ContextConfig {}
 }

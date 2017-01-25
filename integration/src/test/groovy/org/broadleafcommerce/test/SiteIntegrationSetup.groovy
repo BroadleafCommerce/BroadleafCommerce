@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.test
 
+import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportResource
@@ -55,10 +56,10 @@ class SiteIntegrationSetup extends Specification {
      * as well as XML configuration files at the same level of the 'siteRoot' {@link @}ContextConfiguration
      */
     @Configuration
-    @ImportResource(["classpath*:/blc-config/site/bl-*-applicationContext.xml",
+    @ImportResource(value = ["classpath*:/blc-config/site/bl-*-applicationContext.xml",
             "classpath:bl-applicationContext-test-security.xml",
             "classpath:bl-applicationContext-test.xml"
-    ])
+    ], reader = FrameworkXmlBeanDefinitionReader)
     @ComponentScan(["org.broadleafcommerce.profile.web.controller", "org.broadleafcommerce.profile.web.core.service.login"])
     static class ContextConfig {}
     
