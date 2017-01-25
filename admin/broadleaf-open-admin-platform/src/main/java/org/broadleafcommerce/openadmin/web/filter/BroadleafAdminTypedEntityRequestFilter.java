@@ -26,12 +26,14 @@ import org.broadleafcommerce.common.admin.domain.TypedEntity;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -63,12 +65,9 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
     @Resource(name="blAdminNavigationService")
     protected AdminNavigationService adminNavigationService;
 
-    @Resource(name = "blGenericEntityDao")
-    protected GenericEntityDao genericEntityDao;
-
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
-    
+
     @Resource(name = "blGenericEntityService")
     GenericEntityService genericEntityService;
 
@@ -95,7 +94,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
         if (typedEntitySection == null) {
             return false;
         }
-        
+
         // Check if the item requested matches the item section
         TypedEntity typedEntity = getTypedEntityFromServletPathId(servletPath, typedEntitySection.getCeilingEntity());
         if(typedEntity != null && !typeMatchesAdminSection(typedEntity, sectionKey)) {
@@ -103,7 +102,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
             response.sendRedirect(redirectUrl);
             return true;
         }
-        
+
 
         // Check if admin user has access to this section.
         if (!adminUserHasAccess(typedEntitySection)) {
@@ -173,7 +172,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
     private TypedEntity getTypedEntityFromServletPathId(String servletPath, String ceilingEntity) {
         int idBegIndex = servletPath.indexOf("/", 1);
         if (idBegIndex > 0) {
-            String id = servletPath.substring(idBegIndex + 1, servletPath.length()); 
+            String id = servletPath.substring(idBegIndex + 1, servletPath.length());
             if(StringUtils.isNumeric(id)) {
                 Object objectEntity = genericEntityService.readGenericEntity(ceilingEntity, Long.valueOf(id));
                 if (TypedEntity.class.isAssignableFrom(objectEntity.getClass())) {
@@ -246,10 +245,15 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
     protected String getTypeFieldName(AdminSection adminSection) {
         try {
-            Class<?> implClass = genericEntityDao.getCeilingImplClass(adminSection.getCeilingEntity());
+            DynamicEntityDao dynamicEntityDao = getDynamicEntityDao(adminSection.getCeilingEntity());
+            Class<?> implClass = dynamicEntityDao.getCeilingImplClass(adminSection.getCeilingEntity());
             return ((TypedEntity) implClass.newInstance()).getTypeFieldName();
         } catch (Exception e) {
             return null;
         }
+    }
+
+    protected DynamicEntityDao getDynamicEntityDao(String className) {
+        return PersistenceManagerFactory.getPersistenceManager(className).getDynamicEntityDao();
     }
 }

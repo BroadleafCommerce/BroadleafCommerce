@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -50,8 +49,10 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.exception.EntityNotFoundException;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
@@ -92,9 +93,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-    
-    @Resource(name = "blGenericEntityDao")
-    protected GenericEntityDao genericEntityDao;
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
@@ -934,15 +932,20 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         if (owningClass == null || id == null) {
             return null;
         }
-        
-        Class<?> clazz = genericEntityDao.getImplClass(owningClass);
-        Object foreignEntity = genericEntityDao.readGenericEntity(clazz, id);
+
+        DynamicEntityDao dynamicEntityDao = getDynamicEntityDao(owningClass);
+        Class<?> clazz = dynamicEntityDao.getImplClass(owningClass);
+        Object foreignEntity = dynamicEntityDao.find(clazz, id);
 
         if (foreignEntity instanceof AdminMainEntity) {
             return ((AdminMainEntity) foreignEntity).getMainEntityName();
         }
         
         return null;
+    }
+
+    protected DynamicEntityDao getDynamicEntityDao(String owningClass) {
+        return PersistenceManagerFactory.getPersistenceManager(owningClass).getDynamicEntityDao();
     }
 
     protected int getDefaultMaxResults() {

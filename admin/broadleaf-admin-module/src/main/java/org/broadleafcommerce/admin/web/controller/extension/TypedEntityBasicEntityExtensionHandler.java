@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.admin.domain.TypedEntity;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.web.controller.AbstractAdminAbstractControllerExtensionHandler;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractControllerExtensionManager;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -44,9 +46,6 @@ public class TypedEntityBasicEntityExtensionHandler extends AbstractAdminAbstrac
     @Resource(name = "blAdminAbstractControllerExtensionManager")
     protected AdminAbstractControllerExtensionManager extensionManager;
 
-    @Resource(name = "blGenericEntityDao")
-    protected GenericEntityDao genericEntityDao;
-
     @PostConstruct
     public void init() {
         if (isEnabled()) {
@@ -63,7 +62,7 @@ public class TypedEntityBasicEntityExtensionHandler extends AbstractAdminAbstrac
      */
     @Override
     public ExtensionResultStatusType modifyPreAddEntityForm(EntityForm entityForm, ClassMetadata cmd, Map<String, String> pathVars) {
-        Class<?> implClass = genericEntityDao.getCeilingImplClass(cmd.getCeilingType());
+        Class<?> implClass = getDynamicEntityDao(cmd.getCeilingType()).getCeilingImplClass(cmd.getCeilingType());
         if (TypedEntity.class.isAssignableFrom(implClass)) {
             // Set the Type on the Add entity form
             String type = getDefaultType(implClass);
@@ -81,6 +80,10 @@ public class TypedEntityBasicEntityExtensionHandler extends AbstractAdminAbstrac
             return ExtensionResultStatusType.HANDLED_CONTINUE;
         }
         return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    protected DynamicEntityDao getDynamicEntityDao(String className) {
+        return PersistenceManagerFactory.getPersistenceManager(className).getDynamicEntityDao();
     }
 
     protected String getDefaultType(Class implClass) {

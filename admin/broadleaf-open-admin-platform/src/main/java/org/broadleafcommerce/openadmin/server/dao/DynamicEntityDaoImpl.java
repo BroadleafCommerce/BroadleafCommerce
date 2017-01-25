@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -57,6 +58,7 @@ import org.hibernate.mapping.Property;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -87,6 +89,11 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  * 
@@ -248,6 +255,79 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     @Override
     public Class<?>[] getUpDownInheritance(Class<?> testClass) {
         return dynamicDaoHelper.getUpDownInheritance(testClass, getSessionFactory(), true, useCache(), ejb3ConfigurationDao);
+    }
+
+    @Override
+    public Class<?> getImplClass(String className) {
+        Class<?> clazz = null;
+        try {
+            clazz = entityConfiguration.lookupEntityClass(className);
+        } catch (NoSuchBeanDefinitionException e) {
+            //do nothing
+        }
+        if (clazz == null) {
+            try {
+                clazz = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
+        }
+        return clazz;
+    }
+
+    @Override
+    public Class<?> getCeilingImplClass(String className) {
+        Class<?> clazz;
+        try {
+            clazz = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Class<?>[] entitiesFromCeiling = getAllPolymorphicEntitiesFromCeiling(clazz, true);
+        if (entitiesFromCeiling == null || entitiesFromCeiling.length < 1) {
+            clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
+            entitiesFromCeiling = getAllPolymorphicEntitiesFromCeiling(clazz, true);
+        }
+        if (entitiesFromCeiling == null || entitiesFromCeiling.length < 1) {
+            throw new IllegalArgumentException(String.format("Unable to find ceiling implementation for the requested class name (%s)", className));
+        }
+        clazz = entitiesFromCeiling[entitiesFromCeiling.length - 1];
+        return clazz;
+    }
+
+    @Override
+    public List<Long> readOtherEntitiesWithPropertyValue(Serializable instance, String propertyName, String value) {
+        Class clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(instance.getClass());
+
+        CriteriaBuilder builder = standardEntityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root root = criteria.from(clazz);
+        Path idField = root.get(getIdField(clazz).getName());
+        criteria.select(idField.as(Long.class));
+
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(builder.equal(root.get(propertyName), value));
+        restrictions.add(builder.notEqual(idField, getIdentifier(instance)));
+
+        if (instance instanceof Status) {
+            restrictions.add(builder.or(
+                    builder.isNull(root.get("archiveStatus").get("archived")),
+                    builder.equal(root.get("archiveStatus").get("archived"), 'N')));
+        }
+
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        return standardEntityManager.createQuery(criteria).getResultList();
+    }
+
+    @Override
+    public Serializable getIdentifier(Object entity) {
+        return dynamicDaoHelper.getIdentifier(entity, standardEntityManager);
+    }
+
+    protected Field getIdField(Class<?> clazz) {
+        return dynamicDaoHelper.getIdField(clazz, standardEntityManager);
     }
 
     public Class<?>[] sortEntities(Class<?> ceilingClass, List<Class<?>> entities) {
