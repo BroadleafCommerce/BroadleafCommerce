@@ -20,12 +20,12 @@ package org.broadleafcommerce.openadmin.security;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.service.EntityManagerService;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.exception.SectionKeyValidationException;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
-import org.hibernate.Session;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 /**
@@ -52,16 +51,14 @@ public class ClassNameRequestParamValidationServiceImpl implements ClassNameRequ
     @Resource(name="blAdminNavigationService")
     protected AdminNavigationService adminNavigationService;
 
+    @Resource(name="blEntityManagerService")
+    protected EntityManagerService emService;
+
     protected DynamicDaoHelper helper = new DynamicDaoHelperImpl();
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        EntityManager em = factory.createEntityManager();
-        if (em != null) {
-            helper.initializeEntityWhiteList(em.unwrap(Session.class).getSessionFactory(), "blPU");
-        } else {
-            throw new RuntimeException("Unable to initialize the entity classname whitelist");
-        }
+        emService.initializeEntityWhiteList();
     }
 
     @Override
@@ -70,7 +67,7 @@ public class ClassNameRequestParamValidationServiceImpl implements ClassNameRequ
         for (Map.Entry<String, String> entry : requestParamToClassName.entrySet()) {
             validated = StringUtils.isEmpty(entry.getValue());
             if (!validated) {
-                validated = helper.validateEntityClassName(entry.getValue(), persistenceUnitName);
+                validated = emService.validateEntityClassName(entry.getValue());
                 if (!validated) {
                     LOG.warn(String.format("Non-whitelist %s specified. Rejecting.", entry.getKey()));
                 }
@@ -83,9 +80,9 @@ public class ClassNameRequestParamValidationServiceImpl implements ClassNameRequ
     }
 
     @Override
-    public String getClassNameForSection(String sectionKey, String persistenceUnitName) {
+    public String getClassNameForSection(String sectionKey) {
         String className = adminNavigationService.getClassNameForSection(sectionKey);
-        if (sectionKey.equals(className) && !helper.validateEntityClassName(className, persistenceUnitName)) {
+        if (sectionKey.equals(className) && !emService.validateEntityClassName(className)) {
             LOG.warn("Non-whitelist section key specified in request URI. Rejecting.");
             throw new SectionKeyValidationException("Non-whitelist section key specified. Rejecting.");
         }
@@ -93,13 +90,13 @@ public class ClassNameRequestParamValidationServiceImpl implements ClassNameRequ
     }
 
     @Override
-    public List<SectionCrumb> getSectionCrumbs(String crumbList, String persistenceUnitName) {
+    public List<SectionCrumb> getSectionCrumbs(String crumbList) {
         List<SectionCrumb> crumbs = adminNavigationService.getSectionCrumbs(crumbList);
         if (!crumbs.isEmpty()) {
             for (SectionCrumb crumb : crumbs) {
                 String test = adminNavigationService.getClassNameForSection(crumb.getSectionIdentifier());
                 if (crumb.getSectionIdentifier().equals(test)) {
-                    if (!helper.validateEntityClassName(test, persistenceUnitName)) {
+                    if (!emService.validateEntityClassName(test)) {
                         LOG.warn("Non-whitelist section key specified in sectionCrumbs param. Rejecting.");
                         throw new SectionKeyValidationException("Non-whitelist section key specified. Rejecting.");
                     }

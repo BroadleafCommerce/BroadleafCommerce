@@ -30,6 +30,22 @@ import javax.persistence.EntityManager;
 public interface EntityManagerService {
 
     /**
+     * Initializes the white list of entities that are registered with an available {@link EntityManager}
+     *
+     * This white list is stored as a {@code Map<String className, TargetModeType targetModeType>}. Using the
+     *  targetModeType and the `blTargetEntityManagers` map, we can gather an entity's relevant {@link EntityManager}.
+     */
+    void initializeEntityWhiteList();
+
+    /**
+     * Determine if a test class name represents a known entity class registered with Hibernate
+     *
+     * @param entityClassName
+     * @return
+     */
+    boolean validateEntityClassName(String entityClassName);
+
+    /**
      * Identifies the {@link EntityManager} for the given className
      *
      * @param className
@@ -69,5 +85,4 @@ public interface EntityManagerService {
      * @return a list of {@link EntityManager}s
      */
     List<EntityManager> retrieveAllEntityManagers();
-
 }

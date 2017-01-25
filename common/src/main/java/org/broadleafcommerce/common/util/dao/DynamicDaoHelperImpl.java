@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.util.dao;
 
-import javassist.util.proxy.ProxyFactory;
-
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
@@ -44,11 +42,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+
+import javassist.util.proxy.ProxyFactory;
 
 
 public class DynamicDaoHelperImpl implements DynamicDaoHelper {
@@ -81,9 +79,6 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         }
         return response;
     }
-
-    private final Object WHITELIST_LOCK = new Object();
-    private final Set<String> ENTITY_WHITELIST = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     
     @Override
     public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, SessionFactory sessionFactory,
@@ -314,33 +309,5 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         Field idField = ReflectionUtils.findField(clazz, metadata.getIdentifierPropertyName());
         idField.setAccessible(true);
         return idField;
-    }
-
-    @Override
-    public void initializeEntityWhiteList(SessionFactory sessionFactory, String persistenceUnitName) {
-        synchronized(WHITELIST_LOCK) {
-            if (ENTITY_WHITELIST.isEmpty()) {
-                for (Object item : sessionFactory.getAllClassMetadata().values()) {
-                    ClassMetadata metadata = (ClassMetadata) item;
-                    Class<?> mappedClass = metadata.getMappedClass();
-                    ENTITY_WHITELIST.add(persistenceUnitName + "_" + mappedClass.getName());
-                }
-            }
-        }
-    }
-
-    @Override
-    public boolean validateEntityClassName(String entityClassName, String persistenceUnitName) {
-        String key = persistenceUnitName + "_" + entityClassName;
-        boolean isValid = ENTITY_WHITELIST.contains(key);
-        if (!isValid) {
-            isValid = ENTITY_WHITELIST.contains(key + "Impl");
-        }
-
-        if (!isValid) {
-            LOG.warn("The system detected an entity class name submitted that is not present in the registered entities known to the system.");
-        }
-
-        return isValid;
     }
 }

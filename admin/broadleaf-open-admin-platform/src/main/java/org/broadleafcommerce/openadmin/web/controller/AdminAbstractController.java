@@ -509,7 +509,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @return the className for this sectionKey if found in the database or the sectionKey if not
      */
     protected String getClassNameForSection(String sectionKey) {
-        return validationService.getClassNameForSection(sectionKey, "blPU");
+        return validationService.getClassNameForSection(sectionKey);
     }
 
     /**
@@ -743,7 +743,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
     protected List<SectionCrumb> getSectionCrumbs(HttpServletRequest request, String currentSection, String currentSectionId) {
         String crumbs = request.getParameter("sectionCrumbs");
-        List<SectionCrumb> myCrumbs = validationService.getSectionCrumbs(crumbs, "blPU");
+        List<SectionCrumb> myCrumbs = validationService.getSectionCrumbs(crumbs);
         if (currentSection != null && currentSectionId != null) {
             SectionCrumb crumb = createSectionCrumb(currentSection, currentSectionId);
             if (!myCrumbs.contains(crumb)) {

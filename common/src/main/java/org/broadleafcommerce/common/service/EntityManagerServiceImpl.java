@@ -17,8 +17,13 @@
  */
 package org.broadleafcommerce.common.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.TargetModeType;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.metadata.ClassMetadata;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -31,10 +36,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.metamodel.EntityType;
 
 /**
  * @author Chris Kittrell (ckittrell)
@@ -42,12 +47,51 @@ import javax.persistence.metamodel.EntityType;
 @Service("blEntityManagerService")
 public class EntityManagerServiceImpl implements EntityManagerService, ApplicationContextAware {
 
+    protected static final Log LOG = LogFactory.getLog(EntityManagerServiceImpl.class);
+
     @Resource(name = "blTargetEntityManagers")
     protected Map<String, String> targetEntityManagers = new HashMap<>();
 
-    protected Map<String, TargetModeType> identifiedTargetModeTypeCache = new HashMap<>();
+    private final Object WHITELIST_LOCK = new Object();
+    private final Map<String, String> ENTITY_WHITELIST = new ConcurrentHashMap<>();
 
     protected ApplicationContext applicationContext;
+
+    @Override
+    public void initializeEntityWhiteList() {
+        synchronized(WHITELIST_LOCK) {
+            if (ENTITY_WHITELIST.isEmpty()) {
+                for (String targetMode : targetEntityManagers.keySet()) {
+                    String entityManagerBeanName = targetEntityManagers.get(targetMode);
+                    EntityManager em = retrieveEntityManager(entityManagerBeanName);
+
+                    SessionFactory sessionFactory = em.unwrap(Session.class).getSessionFactory();
+                    for (Object item : sessionFactory.getAllClassMetadata().values()) {
+                        ClassMetadata metadata = (ClassMetadata) item;
+                        Class<?> mappedClass = metadata.getMappedClass();
+
+                        if (!ENTITY_WHITELIST.containsKey(mappedClass.getName())) {
+                            ENTITY_WHITELIST.put(mappedClass.getName(), targetMode);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean validateEntityClassName(String entityClassName) {
+        boolean isValid = ENTITY_WHITELIST.containsKey(entityClassName);
+        if (!isValid) {
+            isValid = ENTITY_WHITELIST.containsKey(entityClassName + "Impl");
+        }
+
+        if (!isValid) {
+            LOG.warn("The system detected an entity class name submitted that is not present in the registered entities known to the system.");
+        }
+
+        return isValid;
+    }
 
     @Override
     public EntityManager identifyEntityManagerForClass(String className) throws ServiceException {
@@ -58,49 +102,23 @@ public class EntityManagerServiceImpl implements EntityManagerService, Applicati
 
     @Override
     public TargetModeType identifyTargetModeTypeForClass(String className) throws ServiceException {
-        TargetModeType targetModeType = identifiedTargetModeTypeCache.get(className);
+        String targetMode = ENTITY_WHITELIST.get(className);
+        if (targetMode == null) {
+            targetMode = ENTITY_WHITELIST.get(className + "Impl");
+        }
+        TargetModeType targetModeType = TargetModeType.getInstance(targetMode);
 
         if (targetModeType == null) {
-            targetModeType = searchCandidateEntityManagersForTargetModeType(className);
-            identifiedTargetModeTypeCache.put(className, targetModeType);
+            throw new ServiceException("Unable to determine the EntityManager that maintains the following class: " + className);
         }
 
         return targetModeType;
     }
 
-    protected TargetModeType searchCandidateEntityManagersForTargetModeType(String className) throws ServiceException {
-        Class<?> targetClass = getClassForName(className);
-
-        if (targetClass != null) {
-            for (String targetMode : targetEntityManagers.keySet()) {
-                String entityManagerBeanName = targetEntityManagers.get(targetMode);
-                EntityManager em = retrieveEntityManager(entityManagerBeanName);
-
-                Set<EntityType<?>> maintainedEntityTypes = em.getMetamodel().getEntities();
-                for (EntityType type : maintainedEntityTypes) {
-                    Class maintainedTypeClass = type.getJavaType();
-
-                    if (targetClass.isAssignableFrom(maintainedTypeClass)) {
-                        return TargetModeType.getInstance(targetMode);
-                    }
-                }
-            }
-        }
-
-        throw new ServiceException("Unable to determine the EntityManager that maintains the following class: " + className);
-    }
-
-    protected Class<?> getClassForName(String className) {
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
-    }
-
     @Override
     public EntityManager retrieveEntityManager(String entityManagerBeanName) {
-        return (EntityManager) applicationContext.getBean(entityManagerBeanName);
+        EntityManager bean = (EntityManager) applicationContext.getBean(entityManagerBeanName);
+        return bean.getEntityManagerFactory().createEntityManager();
     }
 
     @Override
@@ -125,7 +143,7 @@ public class EntityManagerServiceImpl implements EntityManagerService, Applicati
     protected Set<String> gatherUniqueEntityManagerBeanNames() {
         Collection<String> beanNames = targetEntityManagers.values();
 
-        return new HashSet<>(beanNames);
+        return new HashSet<String>(beanNames);
     }
 
     @Override
