@@ -340,12 +340,10 @@ public class CatalogServiceImpl implements CatalogService {
         BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
         CatalogContextDTO context = new CatalogContextDTO();
 
-        if (ctx != null && ctx.getRequest() != null) {
-            Map<String, Object> ruleMap = (Map<String, Object>) ctx.getRequest().getAttribute("blRuleMap");
+        Map<String, Object> ruleMap = (Map<String, Object>) ctx.getRequestAttribute("blRuleMap");
 
-            if (MapUtils.isNotEmpty(ruleMap)) {
-                context.setAttributes(ruleMap);
-            }
+        if (MapUtils.isNotEmpty(ruleMap)) {
+            context.setAttributes(ruleMap);
         }
 
         return context;
