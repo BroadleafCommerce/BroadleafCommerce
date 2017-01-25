@@ -24,13 +24,17 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceUnit;
 
+/**
+ * Provides methods to easily access entities managed by the 'blPU' {@link PersistenceUnit}.
+ */
 public interface GenericEntityDao {
 
     /**
      * Finds a generic entity by a classname and id
-     * 
-     * @param className
+     *
+     * @param clazz
      * @param id
      * @return the entity
      */
@@ -121,7 +125,7 @@ public interface GenericEntityDao {
     /**
      * Whether or not the current hibernate session (level 1) contains the object
      *
-     * @param temp
+     * @param object
      * @return
      */
     boolean sessionContains(Object object);
@@ -133,15 +137,10 @@ public interface GenericEntityDao {
      */
     boolean idAssigned(Object object);
 
-    EntityManager getEntityManager();
-
     /**
-     * Returns a list of ids for entities that share the property value of the entity passed in
+     * Gathers the {@link EntityManager} that is based on blPU
      *
-     * @param instance
-     * @param propertyName
-     * @param value
-     * @return
+     * @return the {@link EntityManager}
      */
-    List<Long> readOtherEntitiesWithPropertyValue(Serializable instance, String propertyName, String value);
+    EntityManager getEntityManager();
 }
