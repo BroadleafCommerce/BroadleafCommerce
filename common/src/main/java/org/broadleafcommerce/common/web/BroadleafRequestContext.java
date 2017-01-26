@@ -402,7 +402,7 @@ public class BroadleafRequestContext {
     }
 
     public Boolean getIgnoreSite() {
-        return ignoreSite;
+        return ignoreSite==null?false:ignoreSite;
     }
 
     public void setIgnoreSite(Boolean ignoreSite) {

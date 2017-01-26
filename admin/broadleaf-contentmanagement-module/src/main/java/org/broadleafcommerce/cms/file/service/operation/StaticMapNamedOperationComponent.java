@@ -22,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * @author Jeff Fischer
  */
@@ -48,6 +50,7 @@ public class StaticMapNamedOperationComponent implements NamedOperationComponent
         }
     }
 
+    @Resource(name="blStaticMapNamedOperations")
     protected LinkedHashMap<String, LinkedHashMap<String, String>> namedOperations = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 
     public LinkedHashMap<String, LinkedHashMap<String, String>> getNamedOperations() {

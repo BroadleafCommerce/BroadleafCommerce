@@ -63,7 +63,7 @@ import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
@@ -77,7 +77,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 @SuppressWarnings("deprecation")
-public class PricingTest extends BaseTest {
+public class PricingTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private CustomerService customerService;
@@ -153,7 +153,7 @@ public class PricingTest extends BaseTest {
         
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setAddress(address);
-        List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
+        List<FulfillmentGroup> groups = new ArrayList<>();
         group.setMethod("standard");
         group.setService(ShippingServiceType.BANDED_SHIPPING.getType());
         group.setOrder(order);
@@ -174,7 +174,7 @@ public class PricingTest extends BaseTest {
         fee.setName("fee test");
         fee.setAmount(new Money(10D));
         fee = catalogService.saveSkuFee(fee);
-        List<SkuFee> fees = new ArrayList<SkuFee>();
+        List<SkuFee> fees = new ArrayList<>();
         fees.add(fee);
         
         sku.setFees(fees);
@@ -298,7 +298,7 @@ public class PricingTest extends BaseTest {
         group2.setService(ShippingServiceType.BANDED_SHIPPING.getType());
         group2.setOrder(order);
 
-        List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
+        List<FulfillmentGroup> groups = new ArrayList<>();
         groups.add(group1);
         //groups.add(group2);
         order.setFulfillmentGroups(groups);
@@ -324,7 +324,7 @@ public class PricingTest extends BaseTest {
         
         item = (DiscreteOrderItem) orderItemService.saveOrderItem(item);
         
-        List<OrderItem> items = new ArrayList<OrderItem>();
+        List<OrderItem> items = new ArrayList<>();
         items.add(item);
         order.setOrderItems(items);
         for (OrderItem orderItem : items) {

@@ -17,29 +17,33 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
+import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
  */
+@Component("blAdminUserDetailsService")
 public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
     @Resource(name="blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
+    
+    public static final String LEGACY_ROLE_PREFIX = "PERMISSION_";
+    public static final String DEFAULT_SPRING_SECURITY_ROLE_PREFIX = "ROLE_";
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
@@ -48,30 +52,45 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("The user was not found");
         }
 
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         for (AdminRole role : adminUser.getAllRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
             for (AdminPermission permission : role.getAllPermissions()) {
-                if(permission.isFriendly()) {
+                authorities.add(new SimpleGrantedAuthority(permission.getName()));
+                if (permission.isFriendly()) {
                     for (AdminPermission childPermission : permission.getAllChildPermissions()) {
                         authorities.add(new SimpleGrantedAuthority(childPermission.getName()));
                     }
-                } else {
-                    authorities.add(new SimpleGrantedAuthority(permission.getName()));
                 }
             }
         }
         for (AdminPermission permission : adminUser.getAllPermissions()) {
-            if(permission.isFriendly()) {
+            authorities.add(new SimpleGrantedAuthority(permission.getName()));
+            if (permission.isFriendly()) {
                 for (AdminPermission childPermission : permission.getAllChildPermissions()) {
                     authorities.add(new SimpleGrantedAuthority(childPermission.getName()));
                 }
-            } else {
-                authorities.add(new SimpleGrantedAuthority(permission.getName()));
             }
         }
         for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
-            authorities.add(new GrantedAuthorityImpl(perm));
+            authorities.add(new SimpleGrantedAuthority(perm));
         }
+        
+        // Spring security expects everything to begin with ROLE_ for things like hasRole() expressions so this adds additional
+        // authorities with those mappings, as well as new ones with ROLE_ instead of PERMISSION_.
+        // At the end of this, given a permission set like:
+        // PERMISSION_ALL_PRODUCT
+        // The following authorities will appear in the final list to Spring security:
+        // PERMISSION_ALL_PRODUCT, ROLE_PERMISSION_ALL_PRODUCT, ROLE_ALL_PRODUCT
+        ListIterator<SimpleGrantedAuthority> it = authorities.listIterator();
+        while (it.hasNext()) {
+            SimpleGrantedAuthority auth = it.next();
+            if (auth.getAuthority().startsWith(LEGACY_ROLE_PREFIX)) {
+                it.add(new SimpleGrantedAuthority(DEFAULT_SPRING_SECURITY_ROLE_PREFIX + auth.getAuthority()));
+                it.add(new SimpleGrantedAuthority(auth.getAuthority().replaceAll(LEGACY_ROLE_PREFIX, DEFAULT_SPRING_SECURITY_ROLE_PREFIX)));
+            }
+        }
+        
         return new AdminUserDetails(adminUser.getId(), username, adminUser.getPassword(), true, true, true, true, authorities);
     }
 

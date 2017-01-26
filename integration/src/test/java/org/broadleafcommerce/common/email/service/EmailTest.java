@@ -17,21 +17,22 @@
  */
 package org.broadleafcommerce.common.email.service;
 
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.ServerSetup;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
+
 import javax.annotation.Resource;
 
-public class EmailTest extends BaseTest {
+public class EmailTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     EmailService emailService;
-
+    
     private GreenMail greenMail;
 
     @BeforeClass

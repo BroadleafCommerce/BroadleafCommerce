@@ -23,16 +23,17 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDaoTest extends BaseTest {
+import javax.annotation.Resource;
+
+public class ProductDaoTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private ProductDao productDao;
@@ -40,7 +41,7 @@ public class ProductDaoTest extends BaseTest {
     @Resource
     private CatalogService catalogService;
 
-    private List<Product> savedProducts = new ArrayList<Product>();
+    private List<Product> savedProducts = new ArrayList<>();
 
     private static RelatedProduct getRelatedUpSaleProduct(Product prod, Product prodToRelate, List<RelatedProduct> upSales){
         RelatedProduct rp1 = new UpSaleProductImpl();
@@ -76,7 +77,7 @@ public class ProductDaoTest extends BaseTest {
     @Transactional
     public void createUpSaleValues(){
         Product prod1 = savedProducts.get(0);
-        List<RelatedProduct> upSales = new ArrayList<RelatedProduct>();
+        List<RelatedProduct> upSales = new ArrayList<>();
         getRelatedUpSaleProduct(prod1, savedProducts.get(2), upSales);
         getRelatedUpSaleProduct(prod1, savedProducts.get(3), upSales);
         getRelatedUpSaleProduct(prod1, savedProducts.get(4), upSales);
@@ -85,7 +86,7 @@ public class ProductDaoTest extends BaseTest {
         assert(prod1.getId() != null);
 
         Product prod2 = savedProducts.get(1);
-        List<RelatedProduct> upSales2 = new ArrayList<RelatedProduct>();
+        List<RelatedProduct> upSales2 = new ArrayList<>();
         getRelatedUpSaleProduct(prod2, savedProducts.get(5), upSales2);
         getRelatedUpSaleProduct(prod2, savedProducts.get(6), upSales2);
         prod2.setUpSaleProducts(upSales2);
@@ -113,7 +114,7 @@ public class ProductDaoTest extends BaseTest {
     @Transactional
     public void createCrossSaleValues(){
         Product prod1 = savedProducts.get(0);
-        List<RelatedProduct> crossSale = new ArrayList<RelatedProduct>();
+        List<RelatedProduct> crossSale = new ArrayList<>();
         getRelatedCrossProduct(prod1, savedProducts.get(2), crossSale);
         getRelatedCrossProduct(prod1, savedProducts.get(3), crossSale);
         getRelatedCrossProduct(prod1, savedProducts.get(4), crossSale);
@@ -122,7 +123,7 @@ public class ProductDaoTest extends BaseTest {
         assert(prod1.getId() != null);
 
         Product prod2 = savedProducts.get(1);
-        List<RelatedProduct> crossSale2 = new ArrayList<RelatedProduct>();
+        List<RelatedProduct> crossSale2 = new ArrayList<>();
         getRelatedCrossProduct(prod2, savedProducts.get(5), crossSale2);
         getRelatedCrossProduct(prod2, savedProducts.get(6), crossSale2);
         prod2.setCrossSaleProducts(crossSale2);

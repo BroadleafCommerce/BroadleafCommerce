@@ -23,11 +23,11 @@
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:mo="http://schema.broadleafcommerce.org/mo"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+            http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/context
-            http://www.springframework.org/schema/context/spring-context-4.1.xsd
+            http://www.springframework.org/schema/context/spring-context.xsd
             http://www.springframework.org/schema/aop
-            http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+            http://www.springframework.org/schema/aop/spring-aop.xsd
             http://schema.broadleafcommerce.org/mo
             http://schema.broadleafcommerce.org/mo/mo-3.0.xsd">
 
@@ -35,7 +35,7 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.cms.admin.web.controller.*"/>
     </context:component-scan>
     
-    <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+    <bean id="blCustomPersistenceHandlers-cms" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <ref bean="blPageTemplateCustomPersistenceHandler" />
@@ -44,6 +44,11 @@
                 <ref bean="blRequestDTOCustomPersistenceHandler"/>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCustomPersistenceHandlers-cms"/>
+        <property name="targetRef" value="blCustomPersistenceHandlers"/>
     </bean>
     
     <bean id="blCMSPersistenceProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
@@ -97,15 +102,18 @@
         </mo:overrideItem>
     </mo:override>
 
-    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
-        <property name="useCodeAsDefaultMessage" value="${messages.useCodeAsDefaultMessage}" />
-        <property name="cacheSeconds" value="${messages.cacheSeconds}" />
-        <property name="basenames">
+    <bean id="blMessageSourceBaseNames-cms" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
             <list>
                 <value>classpath:/messages/ContentManagementMessages</value>
                 <value>classpath:/messages/GeneratedMessagesEntityCMS</value>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMessageSourceBaseNames-cms" />
+        <property name="targetRef" value="blMessageSourceBaseNames" />
     </bean>
 
 </beans>

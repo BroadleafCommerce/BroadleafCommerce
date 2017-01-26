@@ -29,7 +29,7 @@ import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -45,14 +45,14 @@ import javax.annotation.Resource;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class RollbackTest extends BaseTest {
+public class RollbackTest extends TestNGSiteIntegrationSetup {
     
     @Resource(name = "testRollbackWorkflow")
     protected SequenceProcessor testRollbackWorkflow;
 
     @Test
     public void testRollbackOrder() {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         boolean exceptionThrown = false;
         try {
             testRollbackWorkflow.doActivities(results);

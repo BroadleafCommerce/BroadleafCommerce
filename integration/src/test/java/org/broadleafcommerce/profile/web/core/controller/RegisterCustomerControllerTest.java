@@ -22,7 +22,7 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.RegisterCustomerController;
 import org.broadleafcommerce.profile.web.core.controller.dataprovider.RegisterCustomerDataProvider;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.Rollback;
@@ -38,7 +38,7 @@ import com.icegreen.greenmail.util.ServerSetup;
 
 import javax.annotation.Resource;
 
-public class RegisterCustomerControllerTest extends BaseTest {
+public class RegisterCustomerControllerTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private RegisterCustomerController registerCustomerController;

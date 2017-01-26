@@ -20,21 +20,24 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="org.broadleafcommerce.common.persistence"/>    
+    <context:component-scan base-package="org.broadleafcommerce.common.persistence"/>
+    <context:component-scan base-package="org.broadleafcommerce.openadmin.config.properties"/>
     <context:component-scan base-package="org.broadleafcommerce.openadmin.server.dao"/>
     <context:component-scan base-package="org.broadleafcommerce.openadmin.server.service.artifact">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.server.service.artifact.upload.*"/>
     </context:component-scan>
+
+    <bean id="blAdminLogoutSuccessHandler" class="org.broadleafcommerce.openadmin.security.BroadleafAdminLogoutSuccessHandler"/>
 
     <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
         <property name="xsrfProtectionEnabled" value="true" />
         <property name="xssProtectionEnabled" value="false" />
     </bean>
 
-    <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean id="blMergedEntityContexts-open-admin" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath:bl-open-admin-applicationContext-entity.xml</value>
@@ -42,12 +45,22 @@
         </property>
     </bean>
 
-    <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMergedEntityContexts-open-admin"/>
+        <property name="targetRef" value="blMergedEntityContexts"/>
+    </bean>
+
+    <bean id="blMergedPersistenceXmlLocations-open-admin" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath*:/META-INF/persistence-open-admin.xml</value>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMergedPersistenceXmlLocations-open-admin"/>
+        <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
     </bean>
 
     <bean id="blArtifactService" class="org.broadleafcommerce.openadmin.server.service.artifact.ArtifactServiceImpl">
@@ -130,7 +143,29 @@
             </list>
         </property>
     </bean>
+    
+    <!-- Required to be here for now instead of contentCreator because of some site-level services that depend on the presence
+        of AdminSecurityService -->
+    <bean id="blAdminPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
+        <constructor-arg value="${password.admin.encoder}"/>
+    </bean>
 
-    <bean id="blAdminPasswordEncoder" class="${password.admin.encoder}"/>
+    <bean id="blMessageSourceBaseNames" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <value>classpath:/messages/GeneratedMessagesEntityCommon</value>
+                <value>classpath:/messages/GeneratedMessagesEntityFramework</value>
+                <value>classpath:/messages/GeneratedMessagesEntityOpenAdmin</value>
+                <value>classpath:/messages/GeneratedMessagesEntityProfile</value>
+                <value>classpath:/messages/OpenAdminMessages</value>
+                <value>classpath:/messages/OpenAdminJavascriptMessages</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
+        <property name="useCodeAsDefaultMessage" value="${messages.useCodeAsDefaultMessage}" />
+        <property name="cacheSeconds" value="${messages.cacheSeconds}" />
+    </bean>
 
 </beans>

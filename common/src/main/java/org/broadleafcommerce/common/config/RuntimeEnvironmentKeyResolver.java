@@ -17,6 +17,11 @@
  */
 package org.broadleafcommerce.common.config;
 
+/**
+ * @deprecated Instead of using anything around the -Druntime-environment values, you should be using Spring profiles
+ * and properties activated with that via {@link ProfileAwarePropertiesBeanFactoryPostProcessor}.
+ */
+@Deprecated
 public interface RuntimeEnvironmentKeyResolver {
     /**
      * Determine and return the runtime environment; if an implementation is
