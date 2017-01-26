@@ -20,9 +20,12 @@
  */
 package org.broadleafcommerce.common.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 /**
  * Main configuration class for the broadleaf-common module
@@ -57,4 +60,13 @@ public class BroadleafCommonConfig {
         return new ProfileAwarePropertySource("runtime-properties");
     }
     
+    /**
+     * Other enterprise/mulititenant modules override this adapter to provide one that supports dynamic filtration
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "blJpaVendorAdapter")
+    public JpaVendorAdapter blJpaVendorAdapter() {
+        return new HibernateJpaVendorAdapter();
+    }
+
 }
