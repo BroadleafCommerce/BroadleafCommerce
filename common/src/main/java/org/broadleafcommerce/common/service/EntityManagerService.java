@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.TargetModeType;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.List;
 
@@ -52,6 +53,14 @@ public interface EntityManagerService {
      * @return the {@link EntityManager}
      */
     EntityManager identifyEntityManagerForClass(String className) throws ServiceException;
+
+    /**
+     * Identifies the {@link PlatformTransactionManager} for the given className
+     *
+     * @param className
+     * @return the {@link PlatformTransactionManager}
+     */
+    PlatformTransactionManager identifyTransactionManagerForClass(String className) throws ServiceException;
 
     /**
      * Identifies the {@link TargetModeType} for the given className

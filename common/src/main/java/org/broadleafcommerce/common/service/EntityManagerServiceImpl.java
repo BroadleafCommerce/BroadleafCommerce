@@ -28,6 +28,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,6 +52,9 @@ public class EntityManagerServiceImpl implements EntityManagerService, Applicati
 
     @Resource(name = "blTargetEntityManagers")
     protected Map<String, String> targetEntityManagers = new HashMap<>();
+
+    @Resource(name = "blTargetTransactionManagers")
+    protected Map<String, String> targetTransactionManagers = new HashMap<>();
 
     private final Object WHITELIST_LOCK = new Object();
     private final Map<String, String> ENTITY_WHITELIST = new ConcurrentHashMap<>();
@@ -101,6 +105,13 @@ public class EntityManagerServiceImpl implements EntityManagerService, Applicati
     }
 
     @Override
+    public PlatformTransactionManager identifyTransactionManagerForClass(String className) throws ServiceException {
+        TargetModeType targetModeType = identifyTargetModeTypeForClass(className);
+        String transactionManagerBeanName = targetTransactionManagers.get(targetModeType.getType());
+        return retrieveTransactionManager(transactionManagerBeanName);
+    }
+
+    @Override
     public TargetModeType identifyTargetModeTypeForClass(String className) throws ServiceException {
         String targetMode = ENTITY_WHITELIST.get(className);
         if (targetMode == null) {
@@ -119,6 +130,10 @@ public class EntityManagerServiceImpl implements EntityManagerService, Applicati
     public EntityManager retrieveEntityManager(String entityManagerBeanName) {
         EntityManager bean = (EntityManager) applicationContext.getBean(entityManagerBeanName);
         return bean.getEntityManagerFactory().createEntityManager();
+    }
+
+    protected PlatformTransactionManager retrieveTransactionManager(String transactionManagerBeanName) {
+        return (PlatformTransactionManager) applicationContext.getBean(transactionManagerBeanName);
     }
 
     @Override

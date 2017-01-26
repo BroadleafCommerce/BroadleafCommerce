@@ -51,6 +51,29 @@
         </property>
     </bean>
 
+    <bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+    <!-- Allows the use if @Transactional without any qualifiers -->
+    <alias alias="transactionManager" name="blTransactionManager"/>
+
+    <tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+            <tx:method name="findNextId" propagation="REQUIRES_NEW"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <bean id="blTargetTransactionManagers" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
+        <property name="sourceMap">
+            <map>
+                <entry key="sandbox" value="blTransactionManager"/>
+                <entry key="stage" value="blTransactionManager"/>
+                <entry key="production" value="blTransactionManager"/>
+            </map>
+        </property>
+    </bean>
+
     <bean id="blEJB3ConfigurationDao" class="org.broadleafcommerce.common.util.dao.EJB3ConfigurationDaoImpl">
         <property name="persistenceUnitInfo">
             <bean factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
@@ -78,19 +101,6 @@
             </list>
         </property>
     </bean>
-    
-    <bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
-    </bean>
-    <!-- Allows the use if @Transactional without any qualifiers -->
-    <alias alias="transactionManager" name="blTransactionManager"/>
-
-    <tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
-        <tx:attributes>
-          <tx:method name="*" propagation="REQUIRED"/>
-          <tx:method name="findNextId" propagation="REQUIRES_NEW"/>
-        </tx:attributes>
-    </tx:advice>
 
     <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">

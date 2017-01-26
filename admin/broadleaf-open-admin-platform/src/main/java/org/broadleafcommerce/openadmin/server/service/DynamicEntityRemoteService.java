@@ -40,6 +40,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceRes
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
 import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.lang.reflect.Constructor;
 import java.util.Collections;
@@ -187,6 +188,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     public PersistenceResponse add(final PersistencePackage persistencePackage) throws ServiceException {
         final PersistenceResponse[] response = new PersistenceResponse[1];
         try {
+            PlatformTransactionManager transactionManager = identifyTransactionManager(persistencePackage);
             transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
                 @Override
                 public void execute() throws Throwable {
@@ -197,7 +199,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                 public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
                     return super.shouldRetryOnTransactionLockAcquisitionFailure();
                 }
-            }, RuntimeException.class);
+            }, RuntimeException.class, transactionManager);
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ServiceException) {
                 throw (ServiceException) e.getCause();
@@ -211,6 +213,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     public PersistenceResponse update(final PersistencePackage persistencePackage) throws ServiceException {
         final PersistenceResponse[] response = new PersistenceResponse[1];
         try {
+            PlatformTransactionManager transactionManager = identifyTransactionManager(persistencePackage);
             transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
                 @Override
                 public void execute() throws Throwable {
@@ -221,7 +224,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                 public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
                     return super.shouldRetryOnTransactionLockAcquisitionFailure();
                 }
-            }, RuntimeException.class);
+            }, RuntimeException.class, transactionManager);
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ServiceException) {
                 throw (ServiceException) e.getCause();
@@ -235,6 +238,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     public PersistenceResponse remove(final PersistencePackage persistencePackage) throws ServiceException {
         final PersistenceResponse[] response = new PersistenceResponse[1];
         try {
+            PlatformTransactionManager transactionManager = identifyTransactionManager(persistencePackage);
             transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
                 @Override
                 public void execute() throws Throwable {
@@ -245,7 +249,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                 public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
                     return super.shouldRetryOnTransactionLockAcquisitionFailure();
                 }
-            }, RuntimeException.class);
+            }, RuntimeException.class, transactionManager);
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ServiceException) {
                 throw (ServiceException) e.getCause();
@@ -332,6 +336,11 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                 }
             }
         });
+    }
+
+    protected PlatformTransactionManager identifyTransactionManager(PersistencePackage persistencePackage) throws ServiceException {
+        String className = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        return emService.identifyTransactionManagerForClass(className);
     }
 
     protected TargetModeType identifyTargetModeType(PersistencePackage persistencePackage) throws ServiceException {
