@@ -47,4 +47,22 @@ public interface IndexStatusInfo {
 
     void setAdditionalInfo(Map<String, String> additionalInfo);
 
+    /**
+     * Error information about previously attempted events
+     *
+     * @return
+     */
+    Map<Long, IndexStatusError> getIndexErrors();
+
+    void setIndexErrors(Map<Long, IndexStatusError> errors);
+
+    /**
+     * Events that exceeded the retry limit and are considered dead
+     *
+     * @return
+     */
+    Map<Long, Date> getDeadIndexEvents();
+
+    void setDeadIndexEvents(Map<Long, Date> deadIndexEvents);
+    
 }
