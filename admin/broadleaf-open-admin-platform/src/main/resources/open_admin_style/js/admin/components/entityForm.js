@@ -178,7 +178,7 @@
             $tabsContent.find('input').prop('disabled', true).addClass('disabled');
 
             // Redactor fields
-            $tabsContent.find('textarea').prop('disabled', true).addClass('disabled').show();
+            $tabsContent.find('textarea').not('.description-field textarea').prop('disabled', true).addClass('disabled').show();
             $tabsContent.find('textarea').css({color: 'rgb(84, 84, 84)', padding: 'padding: 12px', border: 'none'});
             $tabsContent.find('.redactor-box').css('border', 'none');
             $tabsContent.find('.redactor-toolbar').hide();
