@@ -88,6 +88,7 @@ public class SolrIndexStatusServiceImpl implements SolrIndexStatusService {
                     indexError.setErrorDate(new Date());
                 }
             } else {
+                status.setLastIndexDate(eventCreatedDate);
                 status.getIndexErrors().put(eventId, new IndexStatusErrorImpl(eventId));
             }
         }
