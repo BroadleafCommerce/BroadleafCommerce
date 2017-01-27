@@ -24,18 +24,19 @@ import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.broadleafcommerce.profile.core.service.CustomerPhoneService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.dataprovider.CustomerPhoneDataProvider;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerPhoneTest extends BaseTest {
+import javax.annotation.Resource;
 
-    List<Long> customerPhoneIds = new ArrayList<Long>();
+public class CustomerPhoneTest extends TestNGSiteIntegrationSetup {
+
+    List<Long> customerPhoneIds = new ArrayList<>();
     String userName = new String();
     Long userId;
 

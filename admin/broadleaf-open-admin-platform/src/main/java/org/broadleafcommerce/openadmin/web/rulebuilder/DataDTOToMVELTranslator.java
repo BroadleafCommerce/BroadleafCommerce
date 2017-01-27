@@ -89,6 +89,11 @@ public class DataDTOToMVELTranslator {
             BLCOperator operator, RuleBuilderFieldService fieldService)
             throws MVELTranslationException {
         String field = expressionDTO.getId();
+        String overrideEntityKey = fieldService.getOverrideFieldEntityKey(field);
+        if (overrideEntityKey != null) {
+            entityKey = overrideEntityKey;
+        }
+
         SupportedFieldType type = fieldService.getSupportedFieldType(field);
         SupportedFieldType secondaryType = fieldService.getSecondaryFieldType(field);
         Object[] value;

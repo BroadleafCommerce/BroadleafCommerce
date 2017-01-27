@@ -21,7 +21,10 @@ package org.broadleafcommerce.common.config;
  * Determines the current runtime environment by reading a system property
  * (specified in environmentKey); if no system property is specified, a
  * (reasonable) default of "runtime.environment" is used.
+ * @deprecated Instead of using anything around the -Druntime-environment values, you should be using Spring profiles
+ * and properties activated with that via {@link ProfileAwarePropertiesBeanFactoryPostProcessor}.
  */
+@Deprecated
 public class SystemPropertyRuntimeEnvironmentKeyResolver implements RuntimeEnvironmentKeyResolver {
 
     protected String environmentKey = "runtime.environment";
@@ -30,6 +33,7 @@ public class SystemPropertyRuntimeEnvironmentKeyResolver implements RuntimeEnvir
         // EMPTY
     }
 
+    @Override
     public String resolveRuntimeEnvironmentKey() {
         return System.getProperty(environmentKey);
     }

@@ -20,12 +20,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:tx="http://www.springframework.org/schema/tx"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx.xsd
+                        http://www.springframework.org/schema/util
+                        http://www.springframework.org/schema/util/spring-util.xsd">
 
     <tx:annotation-driven/>
-
-    <bean id="blJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
         <property name="jpaVendorAdapter" ref="blJpaVendorAdapter"/>
@@ -84,16 +87,6 @@
         <property name="persistenceUnitPostProcessors" ref="blPersistenceUnitPostProcessors"/>
     </bean>
 
-    <bean id="blAutoDDLStatusExporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
-        <property name="beans">
-            <map>
-                <entry key="bean:name=autoDDLCreateStatusTestBean" value-ref="blAutoDDLStatusTestBean"/>
-            </map>
-        </property>
-        <property name="registrationPolicy" value="IGNORE_EXISTING"/>
-    </bean>
-
-    <bean id="blAutoDDLStatusTestBean" class="org.broadleafcommerce.common.extensibility.jpa.AutoDDLCreateStatusTestBeanImpl"/>
 
     <bean id="blPersistenceUnitPostProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -105,5 +98,7 @@
     </bean>
     
     <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration"/>
-
+    
+    <import resource="bl-common-applicationContext-mbeans.xml" />
+    
 </beans>

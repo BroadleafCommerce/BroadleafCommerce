@@ -45,14 +45,15 @@
     </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>4.1.9.RELEASE</spring.version>
-        <spring.security.version>3.2.9.RELEASE</spring.security.version>
+        <spring.version>4.3.5.RELEASE</spring.version>
+        <spring.security.version>4.2.1.RELEASE</spring.security.version>
+        <spring.boot.autoconfigure.version>1.4.4.RELEASE</spring.boot.autoconfigure.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
-        <geb.version>0.10.0</geb.version>
-        <spock.core.version>1.0-groovy-2.3</spock.core.version>
-        <spock.spring.version>1.0-groovy-2.3</spock.spring.version>
+        <geb.version>1.0</geb.version>
+        <spock.core.version>1.1-groovy-2.4-rc-3</spock.core.version>
+        <spock.spring.version>1.1-groovy-2.4-rc-3</spock.spring.version>
         <selenium.version>2.43.1</selenium.version>
-        <groovy.version>2.3.11</groovy.version>
+        <groovy.version>2.4.8</groovy.version>
         <project.uri>${project.baseUri}</project.uri>
         <broadleaf-presentation.version>1.0.2-SNAPSHOT</broadleaf-presentation.version>
     </properties>
@@ -686,27 +687,7 @@
                 <version>1.2.12</version>
                 <type>jar</type>
                 <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>1.6.1</version>
-                <type>jar</type>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>1.6.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.6.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
+                <optional>true</optional>
             </dependency>
 
             <!--Email System Libraries -->
@@ -782,13 +763,18 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <version>2.5.0</version>
+                <version>2.8.5</version>
             </dependency>
             <!-- Add in Jackson's XML converter along with a faster serializer (Woodstox) -->
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
-                <version>2.5.0</version>
+                <version>2.8.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-smile</artifactId>
+                <version>2.8.5</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
@@ -796,26 +782,11 @@
                 <version>4.1.4</version>
             </dependency>
             
-            <!-- Added for JAXRS backwards compatibility with the Broadleaf REST APIs in Broadleaf 4.0 -->
-            <dependency>
-                <groupId>javax.ws.rs</groupId>
-                <artifactId>jsr311-api</artifactId>
-                <version>1.1.1</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>2.1</version>
-                <scope>provided</scope>
-            </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <version>2.5.0</version>
+                <version>2.8.5</version>
             </dependency>
-            
-
             <!-- JMS Libraries -->
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
@@ -828,8 +799,8 @@
             <!-- Servlet API -->
             <dependency>
                 <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>2.5</version>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.0.1</version>
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
@@ -847,14 +818,14 @@
             <dependency>
                 <groupId>com.icegreen</groupId>
                 <artifactId>greenmail</artifactId>
-                <version>1.3</version>
+                <version>1.5.2</version>
                 <type>jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.11</version>
+                <version>4.12</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -936,6 +907,10 @@
                         <groupId>org.codehaus.woodstox</groupId>
                         <artifactId>wstx-asl</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson</groupId>
+                        <artifactId>jackson-core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -966,6 +941,14 @@
                     <exclusion>
                         <groupId>org.codehaus.woodstox</groupId>
                         <artifactId>wstx-asl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.dataformat</groupId>
+                        <artifactId>jackson-dataformat-smile</artifactId>
                     </exclusion>
                     <!-- The jdk.tools transitive dependency uses system scope -->
                         <!-- which has to be resolved in a platform agnostic way -->
@@ -1174,6 +1157,18 @@
                 <version>${spring.version}</version>
                 <type>jar</type>
                 <scope>test</scope>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring.boot.autoconfigure.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- Spring Plugins -->

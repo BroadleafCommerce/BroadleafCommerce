@@ -54,11 +54,12 @@ import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
-public abstract class CommonSetupBaseTest extends BaseTest {
+import javax.annotation.Resource;
+
+public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     protected ISOService isoService;

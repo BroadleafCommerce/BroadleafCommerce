@@ -26,15 +26,16 @@ import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryDaoTest extends BaseTest {
+import javax.annotation.Resource;
+
+public class CategoryDaoTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private CategoryDao categoryDao;
@@ -60,7 +61,7 @@ public class CategoryDaoTest extends BaseTest {
         featuredProduct.setCategory(category);
         featuredProduct.setProduct(product);
         featuredProduct.setPromotionMessage("BUY ME NOW!!!!");
-        List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
+        List<FeaturedProduct> featuredProducts = new ArrayList<>();
         featuredProducts.add(featuredProduct);
         category.setFeaturedProducts(featuredProducts);
         category = catalogService.saveCategory(category);

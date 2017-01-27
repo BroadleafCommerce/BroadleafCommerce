@@ -17,14 +17,28 @@
  */
 package org.broadleafcommerce.common.config;
 
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManagerTest.RuntimeEnvironmentPropertiesTestConfig;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
 
-public class RuntimeEnvironmentPropertiesManagerTest extends BaseTest {
+@ContextHierarchy(@ContextConfiguration(name="siteRoot", classes = RuntimeEnvironmentPropertiesTestConfig.class ))
+public class RuntimeEnvironmentPropertiesManagerTest extends TestNGSiteIntegrationSetup {
 
+    @Configuration
+    public static class RuntimeEnvironmentPropertiesTestConfig {
+        @Bean
+        public RuntimeEnvironmentPropertiesManager blConfigurationManager() {
+            return new RuntimeEnvironmentPropertiesManager();
+        }
+    }
+    
     @Resource(name = "blConfigurationManager")
     RuntimeEnvironmentPropertiesManager configurationManager;
 

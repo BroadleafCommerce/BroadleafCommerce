@@ -25,7 +25,15 @@
         overflowToDisk="true"
         timeToLiveSeconds="60"
         timeToIdleSeconds="30"/>
-    
+
+    <cache
+        name="blSandBoxElements"
+        maxElementsInMemory="100000"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="60">
+    </cache>
+
     <cache
         name="blStandardElements"
         maxElementsInMemory="100000"

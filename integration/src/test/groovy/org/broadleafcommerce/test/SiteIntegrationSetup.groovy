@@ -17,12 +17,22 @@
  */
 package org.broadleafcommerce.test
 
+import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.ImportResource
+import org.springframework.test.annotation.Rollback
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.ContextHierarchy
-import org.springframework.test.context.transaction.TransactionConfiguration
+import org.springframework.test.context.TestExecutionListeners
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener
+import org.springframework.test.context.web.ServletTestExecutionListener
 import org.springframework.test.context.web.WebAppConfiguration
 
 import spock.lang.Specification
+
+
 /**
  * Base Integration Test Setup groovy file for Site based integration tests. This base class has all the
  * applicationContext's shared by Integration tests for Site based testing. Extend from this class on a
@@ -34,17 +44,23 @@ import spock.lang.Specification
  * @author austinrooke
  *
  */
-@TransactionConfiguration(transactionManager = "blTransactionManager")
-@ContextHierarchy([
-@ContextConfiguration(name = "siteRoot", 
-    locations = ["classpath:/bl-open-admin-contentClient-applicationContext.xml",
-        "classpath:/bl-cms-contentClient-applicationContext.xml"],
-    loader = BroadleafGenericGroovyXmlWebContextLoader.class)
-])
+@Rollback
+@ContextConfiguration(name="siteRoot")
 @WebAppConfiguration
+@ActiveProfiles("mbeansdisabled")
+@TestExecutionListeners([TransactionalTestExecutionListener, ServletTestExecutionListener, DependencyInjectionTestExecutionListener])
 class SiteIntegrationSetup extends Specification {
-    /*
-     * Intentionally left blank. Subclasses should be inheriting from
-     * the configuration annotations defined at the class level
+    
+    /**
+     * This is a nested configuration class so that you can do a mix of both {@link @}Configuration classes
+     * as well as XML configuration files at the same level of the 'siteRoot' {@link @}ContextConfiguration
      */
+    @Configuration
+    @ImportResource(value = ["classpath*:/blc-config/site/bl-*-applicationContext.xml",
+            "classpath:bl-applicationContext-test-security.xml",
+            "classpath:bl-applicationContext-test.xml"
+    ], reader = FrameworkXmlBeanDefinitionReader)
+    @ComponentScan(["org.broadleafcommerce.profile.web.controller", "org.broadleafcommerce.profile.web.core.service.login"])
+    static class ContextConfig {}
+    
 }

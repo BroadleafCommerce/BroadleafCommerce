@@ -17,6 +17,15 @@
  */
 package org.broadleafcommerce.common.extensibility.context.merge;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,16 +43,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
-import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * This class serves to parse any passed in source application context files and

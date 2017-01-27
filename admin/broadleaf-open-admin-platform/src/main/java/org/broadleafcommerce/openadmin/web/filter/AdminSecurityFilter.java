@@ -24,14 +24,15 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.handler.SecurityFilter;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -62,13 +63,16 @@ import javax.servlet.http.HttpServletResponse;
  *     
  * @author trevorleffert, Jeff Fischer
  */
+@Component("blAdminCsrfFilter")
 public class AdminSecurityFilter extends SecurityFilter {
 
     private static final Log LOG = LogFactory.getLog(AdminSecurityFilter.class);
     
-    @Resource(name = "blAdminAuthenticationFailureHandler")
+    @Autowired(required = false)
+    @Qualifier("blAdminAuthenticationFailureHandler")
     protected AuthenticationFailureHandler failureHandler;
     
+    @Override
     public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
         try {
             super.doFilter(baseRequest, baseResponse, chain);
@@ -81,7 +85,7 @@ public class AdminSecurityFilter extends SecurityFilter {
             } else if (e.getCause() instanceof ServiceException) {
                 HttpServletRequest baseHttpRequest = (HttpServletRequest) baseRequest;
                 //if authentication is null and CSRF token is invalid, must be session time out
-                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (SecurityContextHolder.getContext().getAuthentication() == null && failureHandler != null) {
                     baseHttpRequest.setAttribute("sessionTimeout", true);
                     failureHandler.onAuthenticationFailure((HttpServletRequest) baseRequest, (HttpServletResponse)
                             baseResponse, new SessionAuthenticationException("Session Time Out"));

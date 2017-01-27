@@ -83,6 +83,11 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
+    /**
+     *
+     * @deprecated in favor of {@link #attachFacet(SolrQuery, String, SearchFacetDTO, SearchCriteria)}
+     *
+     */
     @Override
     @Deprecated
     public ExtensionResultStatusType attachFacet(SolrQuery query, String indexField, SearchFacetDTO dto) {
@@ -91,7 +96,7 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
 
     @Override
     public ExtensionResultStatusType attachFacet(SolrQuery query, String indexField, SearchFacetDTO dto, SearchCriteria searchCriteria) {
-        return ExtensionResultStatusType.NOT_HANDLED;
+        return attachFacet(query, indexField, dto);
     }
 
     @Override

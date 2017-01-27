@@ -17,8 +17,10 @@
  */
 package org.broadleafcommerce.common.extensibility.context.merge;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -27,9 +29,11 @@ import org.springframework.beans.factory.config.MapFactoryBean;
 import org.springframework.beans.factory.config.SetFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.DependsOn;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,14 +76,62 @@ import java.util.Set;
  * @author Jeff Fischer
  */
 public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
+
+    public static class BeanPackage {
+
+        protected String sourceRef;
+        protected String targetRef;
+        protected Placement placement = Placement.APPEND;
+        protected int position;
+        protected MergeBeanStatusProvider statusProvider;
+        protected boolean bySource = false;
+
+        public String getSourceRef() {
+            return sourceRef;
+        }
+
+        public void setSourceRef(String sourceRef) {
+            this.sourceRef = sourceRef;
+        }
+
+        public String getTargetRef() {
+            return targetRef;
+        }
+
+        public void setTargetRef(String targetRef) {
+            this.targetRef = targetRef;
+        }
+
+        public Placement getPlacement() {
+            return placement;
+        }
+
+        public void setPlacement(Placement placement) {
+            this.placement = placement;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
+
+        public MergeBeanStatusProvider getStatusProvider() {
+            return statusProvider;
+        }
+
+        public void setStatusProvider(MergeBeanStatusProvider statusProvider) {
+            this.statusProvider = statusProvider;
+        }
+
+    }
+
     protected static final Log LOG = LogFactory.getLog(AbstractMergeBeanPostProcessor.class);
 
-    protected String collectionRef;
-    protected String targetRef;
-    protected Placement placement = Placement.APPEND;
-    protected int position;
     protected ApplicationContext applicationContext;
-    protected MergeBeanStatusProvider statusProvider;
+    protected BeanPackage defaultBeanPackage = new BeanPackage();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -93,109 +145,93 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if (statusProvider != null && !statusProvider.isProcessingEnabled(bean, beanName, applicationContext)) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace(String.format("Not performing post-processing on targetRef [%s] because the registered " +
-                		"status provider [%s] returned false", targetRef, statusProvider.getClass().getSimpleName()));
+        return processPackage(defaultBeanPackage, bean, beanName);
+    }
+
+    protected BeanPackage constructBeanPackage(String beanName, Map<String, Object> methodAnnotationAttributes) {
+        BeanPackage beanPackage = new BeanPackage();
+        beanPackage.setSourceRef(beanName);
+        beanPackage.setTargetRef((String) methodAnnotationAttributes.get("targetRef"));
+        beanPackage.setPlacement((Placement) methodAnnotationAttributes.get("placement"));
+        beanPackage.setPosition((Integer) methodAnnotationAttributes.get("position"));
+        Class<MergeBeanStatusProvider> clazz = (Class<MergeBeanStatusProvider>) methodAnnotationAttributes.get("statusProvider");
+        if (MergeBeanStatusProvider.class != clazz) {
+            try {
+                beanPackage.setStatusProvider(clazz.newInstance());
+            } catch (InstantiationException e) {
+                throw ExceptionHelper.refineException(e);
+            } catch (IllegalAccessException e) {
+                throw ExceptionHelper.refineException(e);
             }
-            
-            return bean;
         }
-        
-        if (beanName.equals(targetRef)) {
-            Object mergeCollection = applicationContext.getBean(collectionRef);
-            if (bean instanceof ListFactoryBean || bean instanceof List) {
+        return beanPackage;
+    }
+
+    protected Object processPackage(BeanPackage beanPackage, Object bean, String beanName) {
+        String sourceRef = beanPackage.getSourceRef();
+        String targetRef = beanPackage.getTargetRef();
+        Placement placement = beanPackage.getPlacement();
+        int position = beanPackage.getPosition();
+        MergeBeanStatusProvider statusProvider = beanPackage.getStatusProvider();
+        Object sourceItem = null;
+        Object targetItem = null;
+        if (beanName.equals(targetRef)){
+            targetItem = bean;
+            if (!StringUtils.isEmpty(sourceRef)) {
+                sourceItem = applicationContext.getBean(sourceRef);
+            } else {
+                throw new IllegalArgumentException("Must declare an source reference value. See #setCollectionRef()");
+            }
+        }
+        if (sourceItem != null && targetItem != null) {
+            if (statusProvider != null && !statusProvider.isProcessingEnabled(targetItem, beanName, applicationContext)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace(String.format("Not performing post-processing on targetRef [%s] because the registered " +
+                            "status provider [%s] returned false", targetRef, statusProvider.getClass().getSimpleName()));
+                }
+
+                return bean;
+            }
+
+            if (targetItem instanceof ListFactoryBean || targetItem instanceof List) {
                 try {
-                    List mergeList = (List) mergeCollection;
-                    List sourceList;
-                    if (bean instanceof ListFactoryBean) {
-                        Field field = ListFactoryBean.class.getDeclaredField("sourceList");
-                        field.setAccessible(true);
-                        sourceList = (List) field.get(bean);
+                    if (sourceItem instanceof List) {
+                        addListToList(targetItem, sourceItem, placement, position);
                     } else {
-                        sourceList = (List) bean;
-                    }
-                    switch (placement) {
-                        case APPEND:
-                            sourceList.addAll(mergeList);
-                            break;
-                        case PREPEND:
-                            sourceList.addAll(0, mergeList);
-                            break;
-                        case SPECIFIC:
-                            sourceList.addAll(position, mergeList);
-                            break;
+                        if (sourceItem instanceof Collection) {
+                            throw new IllegalArgumentException(String.format("Attempting to merge a collection of type " +
+                                    "%s into a target list. Only source collections of type ListFactoryBean or List " +
+                                    "may be used.", sourceItem.getClass().getName()));
+                        }
+                        addItemToList(targetItem, sourceItem, placement, position);
                     }
                 } catch (Exception e) {
                     throw new BeanCreationException(e.getMessage());
                 }
-            } else if (bean instanceof SetFactoryBean || bean instanceof Set) {
+            } else if (targetItem instanceof SetFactoryBean || targetItem instanceof Set) {
                 try {
-                    Set mergeSet = (Set) mergeCollection;
-                    Set sourceSet;
-                    if (bean instanceof SetFactoryBean) {
-                        Field field = SetFactoryBean.class.getDeclaredField("sourceSet");
-                        field.setAccessible(true);
-                        sourceSet = (Set) field.get(bean);
+                    if (sourceItem instanceof Set) {
+                        addSetToSet(targetItem, sourceItem, placement, position);
                     } else {
-                        sourceSet = (Set)bean;
+                        if (sourceItem instanceof Collection) {
+                            throw new IllegalArgumentException(String.format("Attempting to merge a collection of type " +
+                                    "%s into a target set. Only source collections of type SetFactoryBean or Set " +
+                                    "may be used.", sourceItem.getClass().getName()));
+                        }
+                        addItemToSet(targetItem, sourceItem, placement, position);
                     }
-                    List tempList = new ArrayList(sourceSet);
-                    switch (placement) {
-                        case APPEND:
-                            tempList.addAll(mergeSet);
-                            break;
-                        case PREPEND:
-                            tempList.addAll(0, mergeSet);
-                            break;
-                        case SPECIFIC:
-                            tempList.addAll(position, mergeSet);
-                            break;
-                    }
-                    sourceSet.clear();
-                    sourceSet.addAll(tempList);
                 } catch (Exception e) {
                     throw new BeanCreationException(e.getMessage());
                 }
-            } else if (bean instanceof MapFactoryBean || bean instanceof Map) {
+            } else if (targetItem instanceof MapFactoryBean || targetItem instanceof Map) {
                 try {
-                    Map mergeMap = (Map) mergeCollection;
-                    Map sourceMap;
-                    if (bean instanceof MapFactoryBean) {
-                        Field field = MapFactoryBean.class.getDeclaredField("sourceMap");
-                        field.setAccessible(true);
-                        sourceMap = (Map) field.get(bean);
+                    if (sourceItem instanceof Map) {
+                        addMapToMap(targetItem, (Map) sourceItem, placement, position);
                     } else {
-                        sourceMap = (Map) bean;
+                        throw new IllegalArgumentException(String.format("Attempting to merge an item of type " +
+                                    "%s into a target map. Only source items of type MapFactoryBean or Map " +
+                                    "may be used.", sourceItem.getClass().getName()));
                     }
-                    LinkedHashMap tempMap = new LinkedHashMap();
-                    switch (placement) {
-                        case APPEND:
-                            tempMap.putAll(sourceMap);
-                            tempMap.putAll(mergeMap);
-                            break;
-                        case PREPEND:
-                            tempMap.putAll(mergeMap);
-                            tempMap.putAll(sourceMap);
-                            break;
-                        case SPECIFIC:
-                            boolean added = false;
-                            int j = 0;
-                            for (Object key : sourceMap.keySet()) {
-                                if (j == position) {
-                                    tempMap.putAll(mergeMap);
-                                    added = true;
-                                }
-                                tempMap.put(key, sourceMap.get(key));
-                                j++;
-                            }
-                            if (!added) {
-                                tempMap.putAll(mergeMap);
-                            }
-                            break;
-                    }
-                    sourceMap.clear();
-                    sourceMap.putAll(tempMap);
                 } catch (Exception e) {
                     throw new BeanCreationException(e.getMessage());
                 }
@@ -209,22 +245,185 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
         return bean;
     }
 
+    protected Object processPackage(Map<String, Object> methodAnnotationAttributes, Object bean, String beanName) {
+        BeanPackage beanPackage = constructBeanPackage(beanName, methodAnnotationAttributes);
+        return processPackage(beanPackage, bean, beanName);
+    }
+
+    protected void addMapToMap(Object bean, Map sourceItem, Placement placement, int position) throws NoSuchFieldException, IllegalAccessException {
+        Map sourcerMap = sourceItem;
+        Map targetMap;
+        if (bean instanceof MapFactoryBean) {
+            Field field = MapFactoryBean.class.getDeclaredField("sourceMap");
+            field.setAccessible(true);
+            targetMap = (Map) field.get(bean);
+        } else {
+            targetMap = (Map) bean;
+        }
+        LinkedHashMap tempMap = new LinkedHashMap();
+        switch (placement) {
+            case APPEND:
+                tempMap.putAll(targetMap);
+                tempMap.putAll(sourcerMap);
+                break;
+            case PREPEND:
+                tempMap.putAll(sourcerMap);
+                tempMap.putAll(targetMap);
+                break;
+            case SPECIFIC:
+                boolean added = false;
+                int j = 0;
+                for (Object key : targetMap.keySet()) {
+                    if (j == position) {
+                        tempMap.putAll(sourcerMap);
+                        added = true;
+                    }
+                    tempMap.put(key, targetMap.get(key));
+                    j++;
+                }
+                if (!added) {
+                    tempMap.putAll(sourcerMap);
+                }
+                break;
+        }
+        targetMap.clear();
+        targetMap.putAll(tempMap);
+    }
+
+    protected void addSetToSet(Object bean, Object sourceItem, Placement placement, int position) throws NoSuchFieldException, IllegalAccessException {
+        Set sourceSet = (Set) sourceItem;
+        Set targetSet;
+        if (bean instanceof SetFactoryBean) {
+            Field field = SetFactoryBean.class.getDeclaredField("sourceSet");
+            field.setAccessible(true);
+            targetSet = (Set) field.get(bean);
+        } else {
+            targetSet = (Set)bean;
+        }
+        List tempList = new ArrayList(targetSet);
+        switch (placement) {
+            case APPEND:
+                tempList.addAll(sourceSet);
+                break;
+            case PREPEND:
+                tempList.addAll(0, sourceSet);
+                break;
+            case SPECIFIC:
+                tempList.addAll(position, sourceSet);
+                break;
+        }
+        targetSet.clear();
+        targetSet.addAll(tempList);
+    }
+
+    protected void addItemToSet(Object bean, Object sourceItem, Placement placement, int position) throws NoSuchFieldException, IllegalAccessException {
+        Set targetSet;
+        if (bean instanceof SetFactoryBean) {
+            Field field = SetFactoryBean.class.getDeclaredField("sourceSet");
+            field.setAccessible(true);
+            targetSet = (Set) field.get(bean);
+        } else {
+            targetSet = (Set)bean;
+        }
+        List tempList = new ArrayList(targetSet);
+        switch (placement) {
+            case APPEND:
+                tempList.add(sourceItem);
+                break;
+            case PREPEND:
+                tempList.add(0, sourceItem);
+                break;
+            case SPECIFIC:
+                tempList.add(position, sourceItem);
+                break;
+        }
+        targetSet.clear();
+        targetSet.addAll(tempList);
+    }
+
+    protected void addListToList(Object bean, Object sourceItem, Placement placement, int position) throws NoSuchFieldException, IllegalAccessException {
+        List sourceList = (List) sourceItem;
+        List targetList;
+        if (bean instanceof ListFactoryBean) {
+            Field field = ListFactoryBean.class.getDeclaredField("sourceList");
+            field.setAccessible(true);
+            targetList = (List) field.get(bean);
+        } else {
+            targetList = (List) bean;
+        }
+        switch (placement) {
+            case APPEND:
+                targetList.addAll(sourceList);
+                break;
+            case PREPEND:
+                targetList.addAll(0, sourceList);
+                break;
+            case SPECIFIC:
+                targetList.addAll(position, sourceList);
+                break;
+        }
+    }
+
+    protected void addItemToList(Object bean, Object sourceItem, Placement placement, int position) throws NoSuchFieldException, IllegalAccessException {
+        List targetList;
+        if (bean instanceof ListFactoryBean) {
+            Field field = ListFactoryBean.class.getDeclaredField("sourceList");
+            field.setAccessible(true);
+            targetList = (List) field.get(bean);
+        } else {
+            targetList = (List) bean;
+        }
+        switch (placement) {
+            case APPEND:
+                targetList.add(sourceItem);
+                break;
+            case PREPEND:
+                targetList.add(0, sourceItem);
+                break;
+            case SPECIFIC:
+                targetList.add(position, sourceItem);
+                break;
+        }
+    }
+
     /**
      * Retrieve the id of the collection to be merged
      *
+     * @deprecated use {@link #getSourceRef()} instead
      * @return the id of the collection to be merged
      */
+    @Deprecated
     public String getCollectionRef() {
-        return collectionRef;
+        return defaultBeanPackage.getSourceRef();
     }
 
     /**
      * Set the id of the collection to be merged
      *
+     * @deprecated use {@link #setSourceRef(String)} instead
      * @param collectionRef the id of the collection to be merged
      */
+    @Deprecated
     public void setCollectionRef(String collectionRef) {
-        this.collectionRef = collectionRef;
+        defaultBeanPackage.setSourceRef(collectionRef);
+    }
+
+    /**
+     * Retrieve the id of the collection (or individual bean) to be merged
+     *
+     * @return the id of the item to be merged
+     */
+    public String getSourceRef() {
+        return defaultBeanPackage.getSourceRef();
+    }
+
+    /**
+     * Set the id of the collection (or individual bean) to be merged
+     *
+     * @param sourceRef the id of the item to be merged
+     */
+    public void setSourceRef(String sourceRef) {
+        defaultBeanPackage.setSourceRef(sourceRef);
     }
 
     /**
@@ -233,7 +432,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
      * @return the id of the collection receiving the merge
      */
     public String getTargetRef() {
-        return targetRef;
+        return defaultBeanPackage.getTargetRef();
     }
 
     /**
@@ -242,7 +441,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
      * @param targetRef the id of the collection receiving the merge
      */
     public void setTargetRef(String targetRef) {
-        this.targetRef = targetRef;
+        defaultBeanPackage.setTargetRef(targetRef);
     }
 
     /**
@@ -252,7 +451,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
      * @return the position in the target collection to place the merge
      */
     public Placement getPlacement() {
-        return placement;
+        return defaultBeanPackage.getPlacement();
     }
 
     /**
@@ -262,7 +461,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
      * @param placement the position in the target collection to place the merge
      */
     public void setPlacement(Placement placement) {
-        this.placement = placement;
+        defaultBeanPackage.setPlacement(placement);
     }
 
     /**
@@ -272,7 +471,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
      * @return the specific position in the target collection
      */
     public int getPosition() {
-        return position;
+        return defaultBeanPackage.getPosition();
     }
 
     /**
@@ -282,7 +481,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
      * @param position the specific position in the target collection
      */
     public void setPosition(int position) {
-        this.position = position;
+        defaultBeanPackage.setPosition(position);
     }
 
     /**
@@ -291,7 +490,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
      * @return the MergeStatusBeanProvider
      */
     public MergeBeanStatusProvider getStatusProvider() {
-        return statusProvider;
+        return defaultBeanPackage.getStatusProvider();
     }
     
     /**
@@ -301,7 +500,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
      * @param statusProvider
      */
     public void setStatusProvider(MergeBeanStatusProvider statusProvider) {
-        this.statusProvider = statusProvider;
+        defaultBeanPackage.setStatusProvider(statusProvider);
     }
-    
+
 }

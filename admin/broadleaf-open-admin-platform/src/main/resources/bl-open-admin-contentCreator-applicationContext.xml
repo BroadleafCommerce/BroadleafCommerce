@@ -22,17 +22,18 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mo="http://schema.broadleafcommerce.org/mo"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+           http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-4.1.xsd
+           http://www.springframework.org/schema/context/spring-context.xsd
            http://schema.broadleafcommerce.org/mo
            http://schema.broadleafcommerce.org/mo/mo-3.0.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.openadmin">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.web.controller.*"/>
     </context:component-scan>
-
-    <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
+    
+    <context:component-scan base-package="org.broadleafcommerce.openadmin.config"/>
+    
 
     <bean id="blPersistenceManagerEventHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -81,10 +82,20 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blCustomPersistenceHandlerFilterClassnames" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
 
     <bean id="blCustomPersistenceHandlerFilters" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
+                <bean class="org.broadleafcommerce.openadmin.server.service.handler.DefaultCustomPersistenceHandlerFilter">
+                    <property name="filterCustomPersistenceHandlerClassnames" ref="blCustomPersistenceHandlerFilterClassnames" />
+                </bean>
             </list>
         </property>
     </bean>
@@ -95,19 +106,6 @@
     </bean>
 
     <mo:override id="blMetadataOverrides"/>
-    
-    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
-        <property name="basenames">
-            <list>
-                <value>classpath:/messages/GeneratedMessagesEntityCommon</value>
-                <value>classpath:/messages/GeneratedMessagesEntityFramework</value>
-                <value>classpath:/messages/GeneratedMessagesEntityOpenAdmin</value>
-                <value>classpath:/messages/GeneratedMessagesEntityProfile</value>
-                <value>classpath:/messages/OpenAdminMessages</value>
-                <value>classpath:/messages/OpenAdminJavascriptMessages</value>
-            </list>
-        </property>
-    </bean>
 
     <bean id="blStringLikeRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
         <property name="filterValueConverter" ref="blStringLikeFilterValueConverter"/>
@@ -186,10 +184,6 @@
             </map>
         </property>
     </bean>
-    
-    <bean id="blFormBuilderExtensionManager" class="org.broadleafcommerce.openadmin.web.service.FormBuilderExtensionManager">
-        <property name="handlers" ref="blFormBuilderExtensionHandlers" />
-    </bean>
 
     <bean id="blAdditionalSectionAuthorizations" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
@@ -228,13 +222,6 @@
     </bean>
     
     <bean id="blRuleBuilderFieldServices" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="blFormBuilderExtensionHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
             </list>
@@ -293,7 +280,7 @@
             </list>
         </property>
     </bean>
-    
+
    <!--  Spring 4.1 Admin Resource Handling Base Classes -->
    <bean id="adminResourceHttpRequestHandlerBase" abstract="true" 
         class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">   

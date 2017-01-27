@@ -32,15 +32,16 @@ import org.broadleafcommerce.profile.core.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.List;
 
-public class FulfillmentGroupItemDaoTest extends BaseTest {
+import javax.annotation.Resource;
+
+public class FulfillmentGroupItemDaoTest extends TestNGSiteIntegrationSetup {
 
     private FulfillmentGroup fulfillmentGroup;
     private Order salesOrder;

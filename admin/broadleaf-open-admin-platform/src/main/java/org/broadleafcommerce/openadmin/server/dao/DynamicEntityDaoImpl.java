@@ -63,6 +63,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -188,6 +189,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
     
     @Override
+    @Transactional
     public void refresh(Serializable entity) {
         standardEntityManager.refresh(entity);
     }
@@ -449,7 +451,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 false,
                 "");
 
-        final List<String> removeKeys = new ArrayList<String>();
+        final List<String> removeKeys = new ArrayList<>();
  
         for (final String key : mergedProperties.keySet()) {
             if (mergedProperties.get(key).getExcluded() != null && mergedProperties.get(key).getExcluded()) {

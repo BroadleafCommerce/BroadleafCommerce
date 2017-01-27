@@ -38,6 +38,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
@@ -71,7 +72,6 @@ import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityS
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -159,9 +159,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Resource(name = "blAdminNavigationService")
     protected AdminNavigationService adminNavigationService;
-
-    @Resource
-    protected DataFormatProvider dataFormatProvider;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN
@@ -307,7 +304,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
           .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
           .withForeignKeyClass(fmd.getForeignKeyClass())
           .withForeignKeySectionPath(getAdminSectionPath(fmd.getForeignKeyClass()))
-          .withOwningEntityClass(fmd.getOwningClass() != null ? fmd.getOwningClass() : fmd.getTargetClass());
+          .withOwningEntityClass(fmd.getOwningClass() != null ? fmd.getOwningClass() : fmd.getTargetClass())
+          .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity());
         String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
         hf.setFieldType(fieldType);
         
@@ -959,23 +957,24 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
 
                     f.withName(property.getName())
-                         .withFieldType(fieldType)
-                         .withFieldComponentRenderer(fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString())
-                         .withOrder(fmd.getOrder())
-                         .withFriendlyName(fmd.getFriendlyName())
-                         .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
-                         .withForeignKeyClass(fmd.getForeignKeyClass())
-                         .withForeignKeySectionPath(getAdminSectionPath(fmd.getForeignKeyClass()))
-                         .withOwningEntityClass(fmd.getOwningClass()!=null?fmd.getOwningClass():fmd.getInheritedFromType())
-                         .withRequired(required)
-                         .withReadOnly(fmd.getReadOnly())
-                         .withTranslatable(fmd.getTranslatable())
-                         .withAlternateOrdering((Boolean) fmd.getAdditionalMetadata().get(Field.ALTERNATE_ORDERING))
-                         .withLargeEntry(fmd.isLargeEntry())
-                         .withHint(fmd.getHint())
-                         .withTooltip(fmd.getTooltip())
-                         .withHelp(fmd.getHelpText())
-                         .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup());
+                     .withFieldType(fieldType)
+                     .withFieldComponentRenderer(fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString())
+                     .withOrder(fmd.getOrder())
+                     .withFriendlyName(fmd.getFriendlyName())
+                     .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
+                     .withForeignKeyClass(fmd.getForeignKeyClass())
+                     .withForeignKeySectionPath(getAdminSectionPath(fmd.getForeignKeyClass()))
+                     .withOwningEntityClass(fmd.getOwningClass()!=null?fmd.getOwningClass():fmd.getInheritedFromType())
+                     .withRequired(required)
+                     .withReadOnly(fmd.getReadOnly())
+                     .withTranslatable(fmd.getTranslatable())
+                     .withAlternateOrdering((Boolean) fmd.getAdditionalMetadata().get(Field.ALTERNATE_ORDERING))
+                     .withLargeEntry(fmd.isLargeEntry())
+                     .withHint(fmd.getHint())
+                     .withTooltip(fmd.getTooltip())
+                     .withHelp(fmd.getHelpText())
+                     .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup())
+                     .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity());
 
                     String defaultValue = fmd.getDefaultValue();
                     if (defaultValue != null) {
@@ -1068,7 +1067,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 return null;
             }
         } else if (fieldType.equals(SupportedFieldType.DATE.toString())) {
-            DateFormat format = dataFormatProvider.getSimpleDateFormatter();
+            DateFormat format = FormatUtil.getDateFormat();
             if (defaultValue.toLowerCase().contains("today")) {
                 defaultValue = format.format(new Date());
             } else {

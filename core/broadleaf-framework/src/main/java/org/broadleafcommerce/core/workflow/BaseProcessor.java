@@ -27,11 +27,12 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
@@ -48,12 +49,12 @@ import java.util.List;
  * @see Activity
  * 
  */
-public abstract class BaseProcessor implements InitializingBean, BeanNameAware, BeanFactoryAware, Processor {
+public abstract class BaseProcessor implements BeanNameAware, BeanFactoryAware, Processor, ApplicationListener<ContextRefreshedEvent> {
 
     protected BeanFactory beanFactory;
     protected String beanName;
-    protected List<Activity<ProcessContext<? extends Object>>> activities = new ArrayList<Activity<ProcessContext<? extends Object>>>();
-    protected List<ModuleActivity> moduleActivities = new ArrayList<ModuleActivity>();
+    protected List<Activity<ProcessContext<? extends Object>>> activities = new ArrayList<>();
+    protected List<ModuleActivity> moduleActivities = new ArrayList<>();
     
     protected ErrorHandler defaultErrorHandler;
 
@@ -125,14 +126,11 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
     }
 
     /**
-     * Called after the properties have been set, Ensures the list of activities
-     *  is not empty and each activity is supported by this Workflow Processor
-     *
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     * Ensures the the list of activities is properly merged and sorted after all activities have been initialized
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
-
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        
         if (!(beanFactory instanceof ListableBeanFactory)) {
             throw new BeanInitializationException("The workflow processor ["+beanName+"] " +
                     "is not managed by a ListableBeanFactory, please re-deploy using some derivative of ListableBeanFactory such as" +
@@ -147,7 +145,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
         //sort the activities based on their configured order
         OrderComparator.sort(activities);
 
-        HashSet<String> moduleNames = new HashSet<String>();
+        HashSet<String> moduleNames = new HashSet<>();
         for (Iterator<Activity<ProcessContext<? extends Object>>> iter = activities.iterator(); iter.hasNext();) {
             Activity<? extends ProcessContext<? extends Object>> activity = iter.next();
             if ( !supports(activity)) {
@@ -168,7 +166,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
             message.append(Arrays.toString(moduleNames.toArray()));
             message.append("\n");            
             message.append("The final ordering of activities for the " + getBeanName() + " workflow is: \n");
-            ArrayList<String> activityNames = new ArrayList<String>();
+            ArrayList<String> activityNames = new ArrayList<>();
             CollectionUtils.collect(activities, new Transformer() {
 
                 @Override

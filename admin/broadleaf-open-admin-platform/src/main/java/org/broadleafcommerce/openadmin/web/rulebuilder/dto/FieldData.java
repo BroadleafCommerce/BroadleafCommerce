@@ -36,6 +36,8 @@ public class FieldData {
     protected String operators;
     protected String options;
     protected String selectizeSectionKey;
+    protected String overrideEntityKey;
+    protected String overrideDtoClassName;
     protected SupportedFieldType fieldType;
     protected SupportedFieldType secondaryFieldType;
     protected boolean skipValidation;
@@ -46,6 +48,8 @@ public class FieldData {
         this.operators = builder.operators;
         this.options = builder.options;
         this.selectizeSectionKey = builder.selectizeSectionKey;
+        this.overrideEntityKey = builder.overrideEntityKey;
+        this.overrideDtoClassName = builder.overrideDtoClassName;
         this.fieldType = builder.fieldType;
         this.secondaryFieldType = builder.secondaryFieldType;
         this.skipValidation = builder.skipValidation;
@@ -58,6 +62,8 @@ public class FieldData {
         protected String operators = null;
         protected String options = null;
         protected String selectizeSectionKey = null;
+        protected String overrideEntityKey = null;
+        protected String overrideDtoClassName = null;
         protected SupportedFieldType fieldType = null;
         protected SupportedFieldType secondaryFieldType = null;
         protected boolean skipValidation;
@@ -91,6 +97,16 @@ public class FieldData {
 
         public Builder selectizeSectionKey(String selectizeSectionKey) {
             this.selectizeSectionKey = selectizeSectionKey;
+            return this;
+        }
+
+        public Builder overrideEntityKey(String overrideEntityKey) {
+            this.overrideEntityKey = overrideEntityKey;
+            return this;
+        }
+
+        public Builder overrideDtoClassName(String overrideDtoClassName) {
+            this.overrideDtoClassName = overrideDtoClassName;
             return this;
         }
 
@@ -128,6 +144,14 @@ public class FieldData {
 
     public String getSelectizeSectionKey() {
         return selectizeSectionKey;
+    }
+
+    public String getOverrideEntityKey() {
+        return overrideEntityKey;
+    }
+
+    public String getOverrideDtoClassName() {
+        return overrideDtoClassName;
     }
 
     public SupportedFieldType getFieldType() {

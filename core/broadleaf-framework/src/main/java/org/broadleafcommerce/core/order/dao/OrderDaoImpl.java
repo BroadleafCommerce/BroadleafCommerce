@@ -85,6 +85,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public Order readOrderById(final Long orderId, boolean refresh) {
         Order order = readOrderById(orderId);
         if (refresh) {

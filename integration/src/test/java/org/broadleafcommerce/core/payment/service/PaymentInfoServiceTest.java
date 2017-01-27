@@ -27,7 +27,7 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
@@ -36,7 +36,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-public class PaymentInfoServiceTest extends BaseTest {
+public class PaymentInfoServiceTest extends TestNGSiteIntegrationSetup {
 
     String userName = new String();
     private OrderPayment paymentInfo;

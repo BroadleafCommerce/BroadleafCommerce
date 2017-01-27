@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This filter adds security response headers to help protect against MIME type confusion, Cross-Site-Scripting and Clickjacking attacks.
+ * This filter adds security response headers to help protect against MIME type confusion and Cross-Site-Scripting attacks. 
  * 
  * @author Chad Harchar (charchar)
  */
@@ -40,7 +40,6 @@ public class SecurityHeaderFilter extends OncePerRequestFilter {
 
         response.setHeader("X-Content-Type-Options", "nosniff");
         response.setHeader("X-XSS-Protection", "1; mode=block");
-        response.setHeader("X-Frame-Options", "SAMEORIGIN");
         
         filterChain.doFilter(request, response);
         return;

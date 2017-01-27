@@ -711,4 +711,8 @@ $(document).ready(function() {
         $(field).find('.description-text').html(descriptionText);
         $(field).find('.description-text').show();
     });
+
+    $('body').on('click', '.tooltip', function(event) {
+       event.preventDefault();
+    });
 });

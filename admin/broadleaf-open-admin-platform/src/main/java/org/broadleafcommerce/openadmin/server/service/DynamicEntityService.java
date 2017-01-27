@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * Rather than using this clas directly, it might be more appropraite to utilize {@link AdminEntityService} instead. The
@@ -42,10 +42,10 @@ public interface DynamicEntityService {
      * metadata of the built properties for this particular entity
      * @throws ServiceException wraps whatever internal exception that might have occurred as a result of the inspect
      */
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public PersistenceResponse inspect(PersistencePackage persistencePackage) throws ServiceException;
 
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public PersistenceResponse fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
     
     /**
@@ -57,7 +57,7 @@ public interface DynamicEntityService {
      * @throws ServiceException
      * @see {@link AdminEntityService#add(org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest)}
      */
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public PersistenceResponse add(PersistencePackage persistencePackage) throws ServiceException;
 
     /**
@@ -68,10 +68,10 @@ public interface DynamicEntityService {
      * @return
      * @throws ServiceException
      */
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public PersistenceResponse nonTransactionalAdd(PersistencePackage persistencePackage) throws ServiceException;
 
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public PersistenceResponse update(PersistencePackage persistencePackage) throws ServiceException;
 
     /**
@@ -82,10 +82,10 @@ public interface DynamicEntityService {
      * @return
      * @throws ServiceException
      */
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public PersistenceResponse nonTransactionalUpdate(PersistencePackage persistencePackage) throws ServiceException;
 
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public PersistenceResponse remove(PersistencePackage persistencePackage) throws ServiceException;
     
     /**
@@ -96,7 +96,7 @@ public interface DynamicEntityService {
      * @return
      * @throws ServiceException
      */
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public PersistenceResponse nonTransactionalRemove(PersistencePackage persistencePackage) throws ServiceException;
     
 }
