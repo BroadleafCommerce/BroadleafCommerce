@@ -17,6 +17,13 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.demo.CompositeAutoImportSql;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -24,11 +31,6 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-
-import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.demo.CompositeAutoImportSql;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 
 /**
  *   This class allows us to override Persistence Unit properties on a per-environment basis. Spring's
@@ -67,8 +69,10 @@ import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
  */
 public class JPAPropertiesPersistenceUnitPostProcessor implements org.springframework.orm.jpa.persistenceunit.PersistenceUnitPostProcessor {
 
-    protected Map<String, String> persistenceUnitProperties = new HashMap<String, String>();
-    protected Map<String, String> overrideProperties = new HashMap<String, String>();
+    private static final Log LOG = LogFactory.getLog(JPAPropertiesPersistenceUnitPostProcessor.class);
+    
+    protected Map<String, String> persistenceUnitProperties = new HashMap<>();
+    protected Map<String, String> overrideProperties = new HashMap<>();
 
     @Resource(name="blCompositeAutoImportSql")
     protected CompositeAutoImportSql compositeAutoImportSql;
@@ -129,6 +133,9 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
             persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files", blPUHibernateHbm2ddlImport_files);
         } else {
             String autoImportSql = compositeAutoImportSql.compileSqlFilePathList("blPU");
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Auto-importing the following SQL files in order: " + autoImportSql);
+            }
             if (!StringUtils.isEmpty(autoImportSql)) {
                 persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files", autoImportSql);
             }
