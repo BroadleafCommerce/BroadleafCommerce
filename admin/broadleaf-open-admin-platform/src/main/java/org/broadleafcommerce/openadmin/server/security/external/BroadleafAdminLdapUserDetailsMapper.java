@@ -20,7 +20,7 @@ package org.broadleafcommerce.openadmin.server.security.external;
 import org.broadleafcommerce.common.security.BroadleafExternalAuthenticationUserDetails;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
-import org.broadleafcommerce.openadmin.server.security.service.AdminUserProvisioningService;
+import org.broadleafcommerce.openadmin.server.security.service.user.AdminUserProvisioningService;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
