@@ -23,8 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.core.search.service.SearchService;
-import org.broadleafcommerce.core.search.service.solr.index.IndexStatusError;
-import org.broadleafcommerce.core.search.service.solr.index.IndexStatusErrorImpl;
 import org.broadleafcommerce.core.search.service.solr.index.IndexStatusInfo;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexStatusProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -147,6 +145,8 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
             throw ExceptionHelper.refineException(e);
         } catch (TransformerException e) {
             throw ExceptionHelper.refineException(e);
+        } catch (ParseException e) {
+            throw ExceptionHelper.refineException(e);
         }
     }
 
@@ -157,7 +157,7 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
      * @param status
      * @throws XPathExpressionException
      */
-    protected void updateIndexSegment(Document document, Element rootElement, IndexStatusInfo status) throws XPathExpressionException {
+    protected void updateIndexSegment(Document document, Element rootElement, IndexStatusInfo status) throws XPathExpressionException, ParseException {
         Element indexElement;
         NodeList indexNodeList = (NodeList) xPath.evaluate("/status/index", document, XPathConstants.NODESET);
         if (indexNodeList.getLength() > 0) {
@@ -167,10 +167,16 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
             indexElement.setAttribute("dateProcessed", "");
             rootElement.appendChild(indexElement);
         }
-        String dateString = format.format(status.getLastIndexDate());
-        if (!dateString.equals(indexElement.getAttribute("dateProcessed"))) {
-            indexElement.setAttribute("dateProcessed", dateString);
-            clearNode(indexElement, "info");
+        String lastProcessed = indexElement.getAttribute("dateProcessed");
+        //if we have a last processed from file and the new status index date is newer, update it.
+        if (lastProcessed != null && ! lastProcessed.equals("")) {
+            Date lastProcessedDate = format.parse(lastProcessed);
+            if (status.getLastIndexDate().compareTo(lastProcessedDate) > 0) {
+                indexElement.setAttribute("dateProcessed", format.format(status.getLastIndexDate()));
+                clearNode(indexElement, "info");
+            }
+        } else {
+            indexElement.setAttribute("dateProcessed", format.format(status.getLastIndexDate()));
         }
         for (Map.Entry<String, String> entry : status.getAdditionalInfo().entrySet()) {
             NodeList infos = (NodeList) xPath.evaluate("info[@key='" + entry.getKey() + "']", indexElement, XPathConstants.NODESET);
@@ -203,15 +209,14 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
                 rootElement.appendChild(errorsElement);
             }
         }
-        for (Map.Entry<Long, IndexStatusError> entry : status.getIndexErrors().entrySet()) {
+        for (Map.Entry<Long, Integer> entry : status.getIndexErrors().entrySet()) {
             NodeList errors = (NodeList) xPath.evaluate("error[@key='" + entry.getKey() + "']", errorsElement, XPathConstants.NODESET);
             if (errors.getLength() == 0) { //add the error
                 Element anError = document.createElement("error");
-                anError.setAttribute("key", entry.getValue().getEventId().toString());
-                anError.setAttribute("retry", entry.getValue().getRetryCount().toString());
-                anError.setAttribute("dateAttempted",  format.format(entry.getValue().getErrorDate()));
+                anError.setAttribute("key", entry.getKey().toString());
+                anError.setAttribute("retry", entry.getValue().toString());
                 errorsElement.appendChild(anError);
-                LOG.debug(String.format("Adding/Updating solr index ERROR entry %d with retry count = %d", entry.getValue().getEventId(), entry.getValue().getRetryCount()));
+                LOG.debug(String.format("Adding/Updating solr index ERROR entry %d with retry count = %d", entry.getKey(), entry.getValue()));
             }
         }
     }
@@ -235,7 +240,7 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
             if (status.getDeadIndexEvents().size() > 0) {
                 deadEventElement = document.createElement("dead-events");
                 //if we are creating this attribute, either a purge occurred or we are creating this element for the first time
-                deadEventElement.setAttribute("lastPurgeTime", String.valueOf(new Date().getTime()));
+                deadEventElement.setAttribute("lastPurgeDate", format.format(new Date()));
                 rootElement.appendChild(deadEventElement);
             }
         }
@@ -305,8 +310,7 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
                             Element anError = (Element) errors.item(j);
                             Long eventId = Long.valueOf(anError.getAttribute("key"));
                             Integer retries = Integer.valueOf(anError.getAttribute("retry"));
-                            Date dateAttempted = format.parse(anError.getAttribute("dateAttempted"));
-                            status.getIndexErrors().put(eventId, new IndexStatusErrorImpl(eventId, retries, dateAttempted));
+                            status.getIndexErrors().put(eventId, retries);
                         }
                     }
                     purgeDeadEvents(document, status);
@@ -338,29 +342,32 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
         NodeList deadEventNodeList = (NodeList) xPath.evaluate("/status/dead-events", document, XPathConstants.NODESET);
         if (deadEventNodeList.getLength() > 0) {
             Element deadEventsElement = (Element) deadEventNodeList.item(0);
-            String lastPurgeTime = deadEventsElement.getAttribute("lastPurgeTime");
-            if (Long.valueOf(lastPurgeTime) <= new Date().getTime() - deadEventPurgeCycleSeconds * 1000) {
-                NodeList deadEvents = (NodeList) xPath.evaluate("event", deadEventsElement, XPathConstants.NODESET);
-                Long deadEventExpiration = new Date().getTime() - deadEventTTLSeconds * 1000;
-                for (int j = 0; j < deadEvents.getLength(); j++) {
-                    Element anEvent = (Element) deadEvents.item(j);
-                    Date dateAttempted = format.parse(anEvent.getAttribute("val"));
-                    Long eventTimeInMs = dateAttempted.getTime();
-                    if (eventTimeInMs > deadEventExpiration) { //keep these events
-                        Long eventId = Long.valueOf(anEvent.getAttribute("key"));
-                        status.getDeadIndexEvents().put(eventId, dateAttempted);
-                    } else {
-                        eventsPurged = true;
+            String lastPurge = deadEventsElement.getAttribute("lastPurgeDate");
+            if (lastPurge != null && ! lastPurge.equals("")) {
+                Date lastPurgeDate = format.parse(lastPurge);
+                if (Long.valueOf(lastPurgeDate.getTime()) <= new Date().getTime() - deadEventPurgeCycleSeconds * 1000) {
+                    NodeList deadEvents = (NodeList) xPath.evaluate("event", deadEventsElement, XPathConstants.NODESET);
+                    Long deadEventExpiration = new Date().getTime() - deadEventTTLSeconds * 1000;
+                    for (int j = 0; j < deadEvents.getLength(); j++) {
+                        Element anEvent = (Element) deadEvents.item(j);
+                        Date dateAttempted = format.parse(anEvent.getAttribute("val"));
+                        Long eventTimeInMs = dateAttempted.getTime();
+                        if (eventTimeInMs > deadEventExpiration) { //keep these events
+                            Long eventId = Long.valueOf(anEvent.getAttribute("key"));
+                            status.getDeadIndexEvents().put(eventId, dateAttempted);
+                        } else {
+                            eventsPurged = true;
+                        }
                     }
+                    LOG.debug(String.format("Purging solr index dead error entries - kept %d of %d", status.getDeadIndexEvents().size(), deadEvents.getLength()));
                 }
-                LOG.debug(String.format("Purging solr index dead error entries - kept %d of %d", status.getDeadIndexEvents().size(), deadEvents.getLength()));
             }
         }
         if (eventsPurged) {
             handleUpdateIndexStatus(status, true);
         }
     }
-    
+
     protected File getStatusFile(SolrSearchServiceImpl searchService) {
         String statusDirectory = getStatusDirectory(searchService);
         File statusFile = new File(new File(statusDirectory), "solr_status.xml");

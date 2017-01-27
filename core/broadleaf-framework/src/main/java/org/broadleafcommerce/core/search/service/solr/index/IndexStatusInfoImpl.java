@@ -30,7 +30,7 @@ public class IndexStatusInfoImpl implements IndexStatusInfo {
 
     private Date lastIndexDate;
     private Map<String, String> additionalInfo = new HashMap<String, String>();
-    private Map<Long, IndexStatusError> indexErrors = new HashMap<Long, IndexStatusError>();
+    private Map<Long, Integer> indexErrors = new HashMap<Long, Integer>();
     private Map<Long, Date> deadIndexEvents = new HashMap<Long, Date>();
 
     @Override
@@ -54,12 +54,12 @@ public class IndexStatusInfoImpl implements IndexStatusInfo {
     }
 
     @Override
-    public Map<Long, IndexStatusError> getIndexErrors() {
+    public Map<Long, Integer> getIndexErrors() {
         return indexErrors;
     }
 
     @Override
-    public void setIndexErrors(Map<Long, IndexStatusError> indexErrors) {
+    public void setIndexErrors(Map<Long, Integer> indexErrors) {
         this.indexErrors = indexErrors;
     }
 

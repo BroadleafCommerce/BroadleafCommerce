@@ -52,9 +52,9 @@ public interface IndexStatusInfo {
      *
      * @return
      */
-    Map<Long, IndexStatusError> getIndexErrors();
+    Map<Long, Integer> getIndexErrors();
 
-    void setIndexErrors(Map<Long, IndexStatusError> errors);
+    void setIndexErrors(Map<Long, Integer> errors);
 
     /**
      * Events that exceeded the retry limit and are considered dead

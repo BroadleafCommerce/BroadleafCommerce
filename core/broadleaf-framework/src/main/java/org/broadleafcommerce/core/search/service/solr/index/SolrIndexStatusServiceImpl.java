@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -75,21 +76,20 @@ public class SolrIndexStatusServiceImpl implements SolrIndexStatusService {
     public synchronized void addIndexErrorStatus(Long eventId, Integer eventRetryCount, Date eventCreatedDate) {
         IndexStatusInfo status = getIndexStatus();
         if (status != null) {
-            IndexStatusError indexError = status.getIndexErrors().get(eventId);
-            if (indexError != null) {
+            Integer retryCount = status.getIndexErrors().get(eventId);
+            if (retryCount != null) {
                 Integer allowedRetryAttempts = eventRetryCount != null && eventRetryCount > 0 ? eventRetryCount : solrIndexStatusErrorRetryCount;
-                if (indexError.getRetryCount() >= allowedRetryAttempts) {
+                if (retryCount >= allowedRetryAttempts) {
                     status.getDeadIndexEvents().put(eventId, new Date());
                     status.setLastIndexDate(eventCreatedDate);
                     status.getAdditionalInfo().put(String.format("SystemEventId%s", eventId), String.valueOf(eventId));
                     status.getIndexErrors().remove(eventId);
                 } else {
-                    indexError.setRetryCount(indexError.getRetryCount() + 1);
-                    indexError.setErrorDate(new Date());
+                    status.getIndexErrors().put(eventId, retryCount + 1);
                 }
             } else {
                 status.setLastIndexDate(eventCreatedDate);
-                status.getIndexErrors().put(eventId, new IndexStatusErrorImpl(eventId));
+                status.getIndexErrors().put(eventId, 0);//start with a retry count of 0
             }
         }
         updateIndexStatus(status);
