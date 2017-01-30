@@ -4,7 +4,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>5.1.1-SNAPSHOT</version>
+        <version>5.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>broadleaf-export</artifactId>
     <packaging>jar</packaging>
@@ -13,7 +13,8 @@
     <url>http://www.broadleafcommerce.org</url>
     <properties>
         <project.uri>${project.baseUri}/../</project.uri>
-        <broadleaf-jobs-events.version>2.1.3-SNAPSHOT</broadleaf-jobs-events.version>
+        <!-- TODO: work to remove this dependency to not cause circular dependency issues -->
+        <broadleaf-jobs-events.version>2.1.2-GA</broadleaf-jobs-events.version>
         <lombok.version>1.16.10</lombok.version>
     </properties>
     <licenses>
@@ -57,13 +58,13 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
-            <version>2.4.5</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

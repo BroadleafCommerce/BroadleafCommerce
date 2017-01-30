@@ -18,11 +18,13 @@
 package com.broadleafcommerce.export.admin.server.security.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AbstractRowLevelSecurityProvider;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
 
 import com.broadleafcommerce.export.domain.ExportInfo;
 import com.broadleafcommerce.export.domain.type.ExportEntityType;
@@ -43,6 +45,7 @@ import javax.persistence.criteria.Root;
  * @author Jay Aisenbrey (cja769)
  *
  */
+@ConditionalOnAdmin
 @Component("blExportRowLevelSecurityProvider")
 public class ExportRowLevelSecurityProvider extends AbstractRowLevelSecurityProvider {
 
@@ -57,7 +60,8 @@ public class ExportRowLevelSecurityProvider extends AbstractRowLevelSecurityProv
      */
     @Override
     public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts, Root entityRoot, CriteriaQuery criteria, CriteriaBuilder criteriaBuilder) {
-        if (ExportInfo.class.getName().equals(ceilingEntity)) {
+        Class<?> ceiling = ClassUtils.resolveClassName(ceilingEntity, getClass().getClassLoader());
+        if (ExportInfo.class.isAssignableFrom(ceiling)) {
             sorts.add(criteriaBuilder.desc(entityRoot.get("dateCreated")));
             Expression<Boolean> isShared = entityRoot.get("shared");
             Expression<Long> rowAdminUser = entityRoot.get("adminUserId");

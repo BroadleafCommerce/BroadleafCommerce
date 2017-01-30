@@ -17,6 +17,8 @@
  */
 package com.broadleafcommerce.export.util;
 
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -28,9 +30,10 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
  * @author Jay Aisenbrey (cja769)
  *
  */
-public class ExportWriterUtil {
+@Component("blExportWriterProvider")
+public class ExportWriterProvider {
     
-    public static ObjectWriter getCsvWriter(boolean useHeaders, Class<?> schemaClass) {
+    public ObjectWriter getCsvWriter(boolean useHeaders, Class<?> schemaClass) {
         CsvMapper mapper = new CsvMapper();
         // This has to be configured to false so that the output stream isn't closed after writing the first batch to it
         mapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);

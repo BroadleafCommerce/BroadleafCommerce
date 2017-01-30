@@ -18,6 +18,9 @@
 package com.broadleafcommerce.export.admin.web.controller;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.common.file.service.BroadleafFileService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,10 +39,13 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@ConditionalOnAdmin
 @Component("blAdminExportDownloadController")
 @RequestMapping("/export-info")
 public class AdminExportDownloadController {
 
+    private static final Log LOG = LogFactory.getLog(AdminExportDownloadController.class);
+    
     @Resource(name = "blExportInfoService")
     protected ExportInfoService exportInfoService;
     
@@ -66,12 +72,13 @@ public class AdminExportDownloadController {
             InputStream fileStream = new FileInputStream(f);
             byte[] bytes = IOUtils.toByteArray(fileStream);
             response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment; filename="+info.getFriendlyResourcePath()); 
+            response.setHeader("Content-Disposition", "attachment; filename=" + info.getFriendlyResourcePath()); 
             stream.write(bytes);
         } else {
             // This would not be expected to ever happen but in the event it does then the user will just be redirected
             // to the page they came from
             response.sendRedirect(request.getHeader("referer"));
+            LOG.error("Could not find an export with the given id " + id);
         }
         stream.close();
         stream.flush();
