@@ -18,7 +18,6 @@
 package com.broadleafcommerce.export.event.scheduler;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.util.service.type.ContextVariableNames;
 
 import com.broadleafcommerce.jobsevents.domain.SystemEvent;
 import com.broadleafcommerce.jobsevents.domain.SystemEventDetail;
@@ -85,7 +84,9 @@ public abstract class AbstractExportEventScheduler {
         if (context.getNonPersistentSite() != null && context.getNonPersistentSite().getId() != null) {
             SystemEventDetail siteDetail = new SystemEventDetailImpl();
             siteDetail.setEvent(systemEvent);
-            siteDetail.setName(ContextVariableNames.SITE);
+            // Comes from org.broadleafcommerce.core.util.service.type.ContextVariableNames. Not using that directly in order to exclude the
+            // broadleaf-framework dependency
+            siteDetail.setName("SITE");
             siteDetail.setFriendlyName("Site");
             siteDetail.setValue(String.valueOf(context.getNonPersistentSite().getId()));
             systemEvent.getEventDetails().put(siteDetail.getName(), siteDetail);

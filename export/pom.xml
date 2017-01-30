@@ -53,10 +53,6 @@
             <artifactId>broadleaf-open-admin-platform</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-framework</artifactId>
-        </dependency>
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
