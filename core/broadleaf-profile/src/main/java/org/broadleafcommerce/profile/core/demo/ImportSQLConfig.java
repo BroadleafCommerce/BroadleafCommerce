@@ -36,7 +36,7 @@ public class ImportSQLConfig {
     @Bean
     @Conditional(DemoCondition.class)
     public AutoImportSql blProfileBasicData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_code_tables.sql", AutoImportStage.PRIMARY_BASIC_DATA);
+        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_code_tables.sql", AutoImportStage.PRIMARY_PRE_BASIC_DATA);
     }
 
     @Bean

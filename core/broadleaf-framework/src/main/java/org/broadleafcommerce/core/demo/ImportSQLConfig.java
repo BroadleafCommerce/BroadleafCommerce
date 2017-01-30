@@ -65,7 +65,7 @@ public class ImportSQLConfig {
     @Bean
     @Conditional({AssetFoldersExistCondition.class, DemoCondition.class})
     public AutoImportSql blAssetFolderData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/populate_asset_folders.sql", AutoImportStage.PRIMARY_LATE);
+        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/populate_asset_folders.sql", AutoImportStage.PRIMARY_POST_BASIC_DATA);
     }
     
     public static class AssetFoldersExistCondition implements Condition {

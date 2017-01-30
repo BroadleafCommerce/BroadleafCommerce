@@ -24,9 +24,13 @@ public class AutoImportStage {
 
     public static final int PRIMARY_EARLY = -100000;
     public static final int PRIMARY_FRAMEWORK_SECURITY = 1000;
-    public static final int PRIMARY_MODULE_SECURITY = 2000;
-    public static final int PRIMARY_BASIC_DATA = 3000;
-    public static final int ALL_TABLE_SEQUENCE = 4000;
+    public static final int PRIMARY_PRE_MODULE_SECURITY = 2000;
+    public static final int PRIMARY_MODULE_SECURITY = 3000;
+    public static final int PRIMARY_POST_MODULE_SECURITY = 4000;
+    public static final int PRIMARY_PRE_BASIC_DATA = 5000;
+    public static final int PRIMARY_BASIC_DATA = 6000;
+    public static final int PRIMARY_POST_BASIC_DATA = 7000;
+    public static final int ALL_TABLE_SEQUENCE = 8000;
     public static final int PRIMARY_LATE = 100000;
 
 }

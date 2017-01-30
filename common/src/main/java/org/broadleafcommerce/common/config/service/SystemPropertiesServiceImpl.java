@@ -17,7 +17,9 @@
  */
 package org.broadleafcommerce.common.config.service;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.config.dao.SystemPropertiesDao;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
@@ -26,9 +28,12 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertySource;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import net.sf.ehcache.Cache;
@@ -44,6 +49,14 @@ import net.sf.ehcache.Element;
 @Service("blSystemPropertiesService")
 public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
+    public static final String PROPERTY_SOURCE_NAME = "systemPropertySource";
+    
+    /**
+     * If the property resoltion comes from the Spring Environment I don't want to try to re-resolve a property from the Environment. This
+     * ensures that we don't get a StackOverflowException
+     */
+    private static final ThreadLocal<Boolean> originatedFromEnvironment = ThreadLocalManager.createThreadLocal(Boolean.class, false);
+    
     protected Cache systemPropertyCache;
 
     @Resource(name="blSystemPropertiesDao")
@@ -57,6 +70,36 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     @Autowired
     protected Environment env;
+    
+    /**
+     * Hook up our custom property source to the first property source of the Spring Environment so that it overrides all others
+     */
+    @PostConstruct
+    public void init() {
+        ConfigurableEnvironment mutableEnv = (ConfigurableEnvironment) env;
+        mutableEnv.getPropertySources().addFirst(new SystemPropertyPropertySource(PROPERTY_SOURCE_NAME, this));
+    }
+    
+    /**
+     * Hook point for our database-backed properties to the Spring Environment
+     * 
+     * @author Phillip Verheyden (phillipuniverse)
+     */
+    protected static class SystemPropertyPropertySource extends PropertySource<SystemPropertiesService> {
+
+        public SystemPropertyPropertySource(String name, SystemPropertiesService source) {
+            super(name, source);
+        }
+
+        @Override
+        public Object getProperty(String name) {
+            originatedFromEnvironment.set(true);
+            Object property = source.resolveSystemProperty(name);
+            originatedFromEnvironment.set(false);
+            return property;
+        }
+        
+    }
 
     @Override
     public String resolveSystemProperty(String name, String defaultValue) {
@@ -90,8 +133,13 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
         }
 
         SystemProperty property = systemPropertiesDao.readSystemPropertyByName(name);
+        boolean envOrigination = BooleanUtils.isTrue(originatedFromEnvironment.get());
         if (property == null || StringUtils.isEmpty(property.getValue())) {
-            result = env.getProperty(name);
+            if (envOrigination) {
+                result = null;
+            } else {
+                result = env.getProperty(name);
+            }
         } else {
             if ("_blank_".equals(property.getValue())) {
                 result = "";
