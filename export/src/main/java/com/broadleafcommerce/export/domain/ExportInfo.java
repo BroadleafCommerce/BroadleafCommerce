@@ -17,11 +17,9 @@
  */
 package com.broadleafcommerce.export.domain;
 
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-
 import java.util.Date;
 
-public interface ExportInfo extends MultiTenantCloneable<ExportInfo> {
+public interface ExportInfo {
 
     Long getId();
     

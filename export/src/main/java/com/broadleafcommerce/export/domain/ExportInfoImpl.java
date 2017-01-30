@@ -18,8 +18,6 @@
 package com.broadleafcommerce.export.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -198,12 +196,6 @@ public class ExportInfoImpl implements ExportInfo, AdminMainEntity {
     @Override
     public void setShared(boolean shared) {
         this.shared = shared;
-    }
-
-    @Override
-    public <G extends ExportInfo> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
