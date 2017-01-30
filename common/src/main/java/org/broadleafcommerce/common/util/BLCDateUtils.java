@@ -17,7 +17,12 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.text.DateFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -29,6 +34,8 @@ import java.util.TimeZone;
  * @author Chris Kittrell (ckittrell)
  */
 public class BLCDateUtils {
+
+    private static final Log LOG = LogFactory.getLog(BLCDateUtils.class);
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.s";
     
@@ -53,5 +60,22 @@ public class BLCDateUtils {
         formatter.setDateFormatSymbols(symbols);
 
         return formatter.format(date);
+    }
+
+    public static Date parseStringToDate(String dateString) {
+        return parseStringToDate(dateString, DEFAULT_DATE_FORMAT);
+    }
+
+    public static Date parseStringToDate(String dateString, String dateFormat) {
+        Date parsedDate = null;
+        try {
+            if (StringUtils.isNotEmpty(dateString)) {
+                SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+                parsedDate = formatter.parse(dateString);
+            }
+        } catch (ParseException e) {
+            LOG.warn("The date string could not be parsed into the given format: " + dateFormat, e);
+        }
+        return parsedDate;
     }
 }

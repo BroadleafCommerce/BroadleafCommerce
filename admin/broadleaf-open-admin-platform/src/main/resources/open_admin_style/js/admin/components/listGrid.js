@@ -329,7 +329,7 @@
             }
 
             // update date fields
-            $($.find("[data-fieldname='dateLabel']")).each(function () {
+            $("[data-fieldname='dateLabel']").find('.column-text').each(function () {
                 var day = moment.utc($(this).html()).local();
                 if (day.isValid()) {
                     $(this).html(day.fromNow());
@@ -337,7 +337,7 @@
             });
 
             // update duration fields
-            $($.find("[data-fieldname='durationLabel']")).each(function () {
+            $("[data-fieldname='durationLabel']").find('.column-text').each(function () {
                 var day = moment.duration(parseInt($(this).html())).format('h[h] m[m] s[s]');
                 $(this).html(day);
             });
