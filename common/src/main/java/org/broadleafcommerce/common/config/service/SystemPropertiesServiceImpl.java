@@ -28,12 +28,9 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertySource;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import net.sf.ehcache.Cache;
@@ -55,7 +52,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
      * If the property resoltion comes from the Spring Environment I don't want to try to re-resolve a property from the Environment. This
      * ensures that we don't get a StackOverflowException
      */
-    private static final ThreadLocal<Boolean> originatedFromEnvironment = ThreadLocalManager.createThreadLocal(Boolean.class, false);
+    protected static final ThreadLocal<Boolean> originatedFromEnvironment = ThreadLocalManager.createThreadLocal(Boolean.class, false);
     
     protected Cache systemPropertyCache;
 
@@ -71,36 +68,6 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     @Autowired
     protected Environment env;
     
-    /**
-     * Hook up our custom property source to the first property source of the Spring Environment so that it overrides all others
-     */
-    @PostConstruct
-    public void init() {
-        ConfigurableEnvironment mutableEnv = (ConfigurableEnvironment) env;
-        mutableEnv.getPropertySources().addFirst(new SystemPropertyPropertySource(PROPERTY_SOURCE_NAME, this));
-    }
-    
-    /**
-     * Hook point for our database-backed properties to the Spring Environment
-     * 
-     * @author Phillip Verheyden (phillipuniverse)
-     */
-    protected static class SystemPropertyPropertySource extends PropertySource<SystemPropertiesService> {
-
-        public SystemPropertyPropertySource(String name, SystemPropertiesService source) {
-            super(name, source);
-        }
-
-        @Override
-        public Object getProperty(String name) {
-            originatedFromEnvironment.set(true);
-            Object property = source.resolveSystemProperty(name);
-            originatedFromEnvironment.set(false);
-            return property;
-        }
-        
-    }
-
     @Override
     public String resolveSystemProperty(String name, String defaultValue) {
         String result = resolveSystemProperty(name);
