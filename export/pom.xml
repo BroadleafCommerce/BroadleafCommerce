@@ -76,6 +76,12 @@
             <artifactId>broadleaf-open-admin-platform</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.broadleafcommerce</groupId>
+            <artifactId>broadleaf-process</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>

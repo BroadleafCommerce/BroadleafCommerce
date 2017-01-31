@@ -17,6 +17,7 @@
  */
 package com.broadleafcommerce.export.event.consumer;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -32,6 +33,8 @@ import com.broadleafcommerce.export.service.ExportInfoService;
 import com.broadleafcommerce.jobsevents.domain.SystemEvent;
 import com.broadleafcommerce.jobsevents.domain.SystemEventDetail;
 import com.broadleafcommerce.jobsevents.service.AbstractSystemEventConsumer;
+import com.broadleafcommerce.process.domain.Process;
+import com.broadleafcommerce.process.service.ProcessService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,8 +70,16 @@ public abstract class AbstractExportEventConsumer extends AbstractSystemEventCon
     @Resource(name = "blExportInfoService")
     protected ExportInfoService exportInfoService;
     
+    @Resource(name = "blProcessService")
+    protected ProcessService processService;
+    
     @Override
     public void consumeEvent(SystemEvent event) {
+        Process process = processService.register(getEventType(), getExportFriendlyName(), event.getId(), MapUtils.EMPTY_MAP);
+        process = processService.save(process);
+        process = processService.start(process, "Starting Export");
+        process = processService.updateProgress(process, 0d);
+
         Date currentDate = new Date();
         FileWorkArea workArea = fileService.initializeWorkArea();
         File file = new File(FilenameUtils.concat(workArea.getFilePathLocation(), getExportFileName() + "-" + currentDate.getTime()));
@@ -80,7 +91,8 @@ public abstract class AbstractExportEventConsumer extends AbstractSystemEventCon
             output = new FileOutputStream(file);
             export(ExportEventConsumerContext.builder()
                     .event(event)
-                    .outputStream(output).build());
+                    .outputStream(output)
+                    .process(process).build());
             
             // We want to get the file size now because after it's moved via the fileService it won't exist anymore
             // Additionally we don't want to create the ExportInfo record before the file is moved in the case that
@@ -93,6 +105,7 @@ public abstract class AbstractExportEventConsumer extends AbstractSystemEventCon
         } finally {
             fileService.closeWorkArea(workArea);
             IOUtils.closeQuietly(output);
+            process = processService.complete(process, "Completed Export");
         }
     }
     
