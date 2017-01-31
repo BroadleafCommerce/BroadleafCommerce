@@ -68,8 +68,16 @@ public class StringUtil {
         if (StringUtils.isEmpty(bigger) || StringUtils.isEmpty(included)) {
             return false;
         }
-        
-        return bigger.equals(included) || bigger.startsWith(included + ".");
+        return (bigger.equals(included)) || validateStartsWith(bigger, included);
+    }
+
+    private static boolean validateStartsWith(String value, String prefix) {
+        boolean isIncluded = value.startsWith(prefix);
+        // We check against a false positive where it mismatches sku.date into sku.dateExtra
+        if (isIncluded && !prefix.endsWith(".")) {
+            isIncluded = value.startsWith(prefix + ".");
+        }
+        return isIncluded;
     }
 
     public static double determineSimilarity(String test1, String test2) {
