@@ -21,6 +21,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -42,9 +43,17 @@ import java.lang.annotation.Target;
 public @interface Merge {
 
     /**
+     * Alias for {@link #targetRef()}
+     * @see {@link #targetRef()}
+     */
+    @AliasFor("targetRef")
+    String value() default "";
+    
+    /**
      * The Spring bean id of the target collection or map to receive the merge
      */
-    String targetRef();
+    @AliasFor("value")
+    String targetRef() default "";
 
     /**
      * Specifies how the annotated collection, map or single bean should be inserted into the target collection or map.
