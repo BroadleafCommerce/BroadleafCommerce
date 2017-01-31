@@ -96,7 +96,7 @@ public class ExportsModuleAdminConfig {
         
         @Bean
         public AutoImportSql blExportsImportSql() {
-            return new AutoImportSql(AutoImportPersistenceUnit.BL_PU, "config/bc/sql/load_export_admin_security.sql", AutoImportStage.PRIMARY_FRAMEWORK_SECURITY);
+            return new AutoImportSql(AutoImportPersistenceUnit.BL_PU, "config/bc/sql/load_export_admin_security.sql", AutoImportStage.PRIMARY_MODULE_SECURITY);
         }
     }
 
