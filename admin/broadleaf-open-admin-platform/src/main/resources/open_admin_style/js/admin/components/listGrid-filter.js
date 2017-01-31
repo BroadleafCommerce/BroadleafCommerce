@@ -434,10 +434,12 @@ $(document).ready(function() {
         if (hiddenId) {
             var filteredValues = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
             filteredValues = $.param(filteredValues);
-            if (url.indexOf('?') >= 0) {
-                url += '&' + filteredValues;
-            } else {
-                url += '?' + filteredValues;
+            if (filteredValues.length > 0) {
+                if (url.indexOf('?') >= 0) {
+                    url += '&' + filteredValues;
+                } else {
+                    url += '?' + filteredValues;
+                }
             }
         }
         return url;

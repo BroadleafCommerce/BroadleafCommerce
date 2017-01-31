@@ -20,11 +20,13 @@ package org.broadleafcommerce.common.extensibility.jpa;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.demo.AutoImportSql;
 import org.broadleafcommerce.common.demo.CompositeAutoImportSql;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -134,8 +136,16 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
         } else {
             String autoImportSql = compositeAutoImportSql.compileSqlFilePathList("blPU");
             if (LOG.isInfoEnabled()) {
-                LOG.info("Auto-importing the following SQL files in order: " + autoImportSql);
+                Map<String, List<AutoImportSql>> loggingMap = compositeAutoImportSql.constructAutoImportSqlMapForPU("blPU");
+                LOG.info("Auto-importing the following SQL files in order:");
+                for (String stage : loggingMap.keySet()) {
+                    LOG.info(stage);
+                    for (AutoImportSql sqlFile : loggingMap.get(stage)) {
+                        LOG.info("[order:" + sqlFile.getOrder() + "] " + sqlFile.getSqlFilePath());
+                    }
+                }
             }
+
             if (!StringUtils.isEmpty(autoImportSql)) {
                 persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files", autoImportSql);
             }

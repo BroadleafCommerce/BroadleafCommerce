@@ -355,9 +355,16 @@ public class PersistencePackageRequest {
     /* STATUS METHODS */
     /* ************** */
 
-    public boolean hasFilterAndSortCriteria() {
+    public boolean hasSortCriteria() {
         FilterAndSortCriteria[] fascs = getFilterAndSortCriteria();
-        return ArrayUtils.isNotEmpty(fascs);
+
+        for (FilterAndSortCriteria criteria : fascs) {
+            if (criteria.getSortDirection() != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /* ************************ */

@@ -693,6 +693,30 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     }
 
     /**
+     * Returns a PersistencePackageRequest for the given sectionClassName. Will also invoke the
+     * {@link #getSectionCustomCriteria()} and {@link #attachSectionSpecificInfo(PersistencePackageRequest)} to allow
+     * specialized controllers to manipulate the request for every action in this controller.
+     *
+     * @param requestParams
+     * @param ceilingEntityClass
+     * @return
+     */
+    protected PersistencePackageRequest getPersistencePackageRequest(MultiValueMap<String, String> requestParams,
+            Class<?> ceilingEntityClass) {
+        FilterAndSortCriteria[] fascs = getCriteria(requestParams);
+        Integer startIndex = getStartIndex(requestParams);
+        Integer maxIndex = getMaxIndex(requestParams);
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(ceilingEntityClass.getName(), getSectionCustomCriteria());
+
+        return PersistencePackageRequest.standard()
+                .withCeilingEntityClassname(ceilingEntityClass.getName())
+                .withCustomCriteria(sectionCriteria)
+                .withFilterAndSortCriteria(fascs)
+                .withStartIndex(startIndex)
+                .withMaxIndex(maxIndex);
+    }
+
+    /**
      * Returns the result of a call to {@link #getSectionPersistencePackageRequest(String)} with the additional filter
      * and sort criteria attached.
      * 

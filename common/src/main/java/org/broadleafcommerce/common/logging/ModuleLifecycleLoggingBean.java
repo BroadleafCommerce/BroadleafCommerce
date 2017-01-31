@@ -29,6 +29,14 @@ public class ModuleLifecycleLoggingBean {
 
     private String moduleName;
     private LifeCycleEvent lifeCycleEvent;
+    
+    public ModuleLifecycleLoggingBean() {
+    }
+    
+    public ModuleLifecycleLoggingBean(String moduleName, LifeCycleEvent lifeCycleEvent) {
+        this.moduleName = moduleName;
+        this.lifeCycleEvent = lifeCycleEvent;
+    }
 
     @PostConstruct
     /**

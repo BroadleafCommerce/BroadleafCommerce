@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @Conditional(ImportCondition.class)
 public class ImportSQLConfig {
 
-    public static final int BASIC_DATA_SPECIAL = AutoImportStage.PRIMARY_BASIC_DATA - 30;
+    public static final int BASIC_DATA_SPECIAL = AutoImportStage.PRIMARY_PRE_BASIC_DATA + 200;
 
     @Bean
     @Conditional(DemoCondition.class)

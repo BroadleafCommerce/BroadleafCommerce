@@ -1,0 +1,101 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>broadleaf</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>5.2.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>broadleaf-export</artifactId>
+    <packaging>jar</packaging>
+    <name>BroadleafCommerce Export Module</name>
+    <description>BroadleafCommerce Module For Exporting Domain</description>
+    <url>http://www.broadleafcommerce.org</url>
+    <properties>
+        <project.uri>${project.baseUri}/../</project.uri>
+        <!-- TODO: work to remove this dependency to not cause circular dependency issues -->
+        <broadleaf-jobs-events.version>2.1.2-GA</broadleaf-jobs-events.version>
+        <lombok.version>1.16.10</lombok.version>
+    </properties>
+    <licenses>
+        <license>
+            <name>Broadleaf Fair Use 1.0</name>
+            <url>http://license.broadleafcommerce.org/fair_use_license-1.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>Fair Use Community License</comments>
+        </license>
+        <license>
+            <name>Broadleaf End User License Agreement 1.1</name>
+            <url>http://license.broadleafcommerce.org/commercial_license-1.1.txt</url>
+            <distribution>repo</distribution>
+            <comments>Commercial License Applicable When Bounds of Fair Use License Are Exceeded</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>architect</id>
+            <email>architect@broadleafcommerce.org</email>
+            <organization>Broadleaf Commerce</organization>
+            <organizationUrl>http://www.broadleafcommerce.org</organizationUrl>
+            <timezone>-6</timezone>
+        </developer>
+    </developers>
+    <profiles>
+        <profile>
+            <id>blc-development</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.zeroturnaround</groupId>
+                        <artifactId>jrebel-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-rebel-xml</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                      
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <dependencies>
+        <dependency>
+            <groupId>com.broadleafcommerce</groupId>
+            <artifactId>broadleaf-jobs-events</artifactId>
+            <version>${broadleaf-jobs-events.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-open-admin-platform</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.broadleafcommerce</groupId>
+            <artifactId>broadleaf-process</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-csv</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
