@@ -312,8 +312,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, null, null);
-        ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars))
-                .getDynamicResultSet().getClassMetaData();
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars);
+        ppr.setAddOperationInspect(true);
+        ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 
         // If the entity type isn't specified, we need to determine if there are various polymorphic types for this entity.
         if (StringUtils.isBlank(entityType)) {
@@ -1173,6 +1174,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         // fixes all cases.
         String mainClassName = getClassNameForSection(sectionKey);
         ppr.addCustomCriteria("owningClass=" + mainClassName);
+        ppr.setAddOperationInspect(true);
         
         if (entityForm != null) {
             entityForm.clearFieldsMap();
@@ -1227,10 +1229,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
             listGrid.setPathOverride(request.getRequestURL().toString());
             listGrid.setFriendlyName(collectionMetadata.getPolymorphicEntities().getFriendlyName());
             if (entityForm == null) {
-                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false);
+                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false, sectionCrumbs, true);
                 entityForm.setCeilingEntityClassname(ppr.getAdornedList().getAdornedTargetEntityClassname());
             } else {
-                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false, entityForm);
+                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false, entityForm, sectionCrumbs, true);
                 formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm);
             }
             
@@ -1448,13 +1450,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
             boolean populateTypeAndId = true;
             boolean isViewCollectionItem = ModalHeaderType.VIEW_COLLECTION_ITEM.getType().equals(modalHeaderType);
             if (entityForm == null) {
-                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, isViewCollectionItem);
+                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, isViewCollectionItem, sectionCrumbs, false);
                 entityForm.removeAction(DefaultAdornedEntityFormActions.Add);
                 entityForm.addAction(DefaultAdornedEntityFormActions.Save);
             } else {
                 entityForm.clearFieldsMap();
                 String entityType = entityForm.getEntityType();
-                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, isViewCollectionItem, entityForm);
+                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, isViewCollectionItem, entityForm, sectionCrumbs, false);
                 entityForm.setEntityType(entityType);
                 populateTypeAndId = false;
             }
@@ -1692,7 +1694,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             AdornedTargetList atl = ppr.getAdornedList();
             
             // Get an entity form for the entity
-            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false);
+            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false, sectionCrumbs, false);
             Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty, 
                     collectionItemId, sectionCrumbs, alternateId, new String[]{"reorderChildEntityFetch"})
                     .getDynamicResultSet().getRecords()[0];
