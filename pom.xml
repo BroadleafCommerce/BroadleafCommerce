@@ -325,7 +325,6 @@
         <module>core</module>
         <module>integration</module>
         <module>admin</module>
-        <module>export</module>
   </modules>
     <dependencies>
     </dependencies>
