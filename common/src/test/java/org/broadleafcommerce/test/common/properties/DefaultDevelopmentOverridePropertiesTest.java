@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -34,6 +35,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @RunWith(SpringRunner.class)
+@DirtiesContext
 public class DefaultDevelopmentOverridePropertiesTest {
     
     @Configuration
