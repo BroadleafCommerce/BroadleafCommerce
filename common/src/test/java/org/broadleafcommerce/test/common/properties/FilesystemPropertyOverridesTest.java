@@ -53,6 +53,7 @@ public class FilesystemPropertyOverridesTest {
     @BeforeClass
     public static void setOverrideProperty() {
         String overridePropertiesPath = FilesystemPropertyOverridesTest.class.getClassLoader().getResource("overridestest.properties").getFile();
+        overridePropertiesPath = overridePropertiesPath.replace("%20", " ");
         System.setProperty(ProfileAwarePropertiesBeanFactoryPostProcessor.PROPERTY_OVERRIDES_PROPERTY, overridePropertiesPath);
     }
     
