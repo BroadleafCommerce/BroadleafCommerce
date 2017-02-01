@@ -144,7 +144,6 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     
     protected Sku findMatchingSku(Product product, Map<String, String> attributeValues, ActivityMessages messages) {
         Map<String, String> attributesRelevantToFindMatchingSku = new HashMap<>();
-        Sku matchingSku = null;
 
         // Verify that required product-option values were set.
         if (product != null) {
@@ -156,13 +155,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                 boolean hasStrategy = productOptionValidationService.hasProductOptionValidationStrategy(productOption);
                 boolean isAddOrNoneTypes = productOptionValidationService.isAddOrNoneType(productOption);
 
-                if (isRequiredAttributeNotProvided(isRequired, hasStrategy, isAddOrNoneTypes, attributeValue)) {
-                    String message = "Unable to add product (" + product.getId() + ") to cart. Required attribute was not provided: "
-                                     + attributeName;
-                    throw new RequiredAttributeNotProvidedException(message, attributeName);
-                }
-
-                if (shouldValidateWithException(isRequired, isAddOrNoneTypes, attributeValue)) {
+                if (shouldValidateWithException(isRequired, isAddOrNoneTypes, attributeValue, hasStrategy)) {
                     productOptionValidationService.validate(productOption, attributeValue);
                 }
 
@@ -176,18 +169,14 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                 }
             }
 
-            matchingSku = findMatchingSku(product, attributesRelevantToFindMatchingSku);
+            return findMatchingSku(product, attributesRelevantToFindMatchingSku);
         }
 
-        return matchingSku;
+        return null;
     }
 
-    protected boolean isRequiredAttributeNotProvided(boolean isRequired, boolean hasStrategy, boolean isAddOrNoneTypes, String attributeValue) {
-        return isRequired && isAddOrNoneTypes && StringUtils.isEmpty(attributeValue);
-    }
-
-    protected boolean shouldValidateWithException(boolean isRequired, boolean isAddOrNoneType, String attributeValue) {
-        return isAddOrNoneType && (isRequired || !StringUtils.isEmpty(attributeValue));
+    protected boolean shouldValidateWithException(boolean isRequired, boolean isAddOrNoneType, String attributeValue, boolean hasStrategy) {
+        return (!hasStrategy || isAddOrNoneType) && (isRequired || StringUtils.isNotEmpty(attributeValue));
     }
 
     protected Sku findMatchingSku(Product product, Map<String, String> attributeValuesForSku) {

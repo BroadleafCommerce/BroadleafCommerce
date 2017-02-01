@@ -74,17 +74,9 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
                         String attributeName = productOption.getAttributeName();
                         OrderItemAttribute attribute = attributeValues.get(attributeName);
                         String attributeValue = (attribute != null) ? attribute.getValue() : null;
-                        boolean isRequired = productOption.getRequired();
                         boolean hasStrategy = productOptionValidationService.hasProductOptionValidationStrategy(productOption);
                         boolean isAddOrNoneType = productOptionValidationService.isAddOrNoneType(productOption);
                         boolean isSubmitType = productOptionValidationService.isSubmitType(productOption);
-
-                        if (isMissingRequiredAttribute(isRequired, hasStrategy, isAddOrNoneType, isSubmitType, attributeValue)) {
-                            String message = "Unable to validate cart, product  (" + product.getId() + ") required"
-                                             + " attribute was not provided: " + attributeName;
-                            throw new RequiredAttributeNotProvidedException(message, attributeName);
-                        }
-
                         boolean hasValidationType = productOption.getProductOptionValidationType() != null;
 
                         if (shouldValidateWithException(hasValidationType, hasStrategy, isAddOrNoneType, isSubmitType)) {
@@ -119,13 +111,8 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
     }
 
     protected boolean shouldValidateWithException(boolean hasValidationType, boolean hasStrategy, boolean isAddOrNoneType, boolean isSubmitType) {
-        boolean passesStrategyValidation = !hasStrategy || (hasStrategy && (isAddOrNoneType || isSubmitType));
+        boolean passesStrategyValidation = !hasStrategy || (isAddOrNoneType || isSubmitType);
         return hasValidationType && (passesStrategyValidation);
-    }
-
-    protected boolean isMissingRequiredAttribute(boolean isRequired, boolean hasStrategy, boolean isAddOrNoneType, boolean isSubmitType, String attributeValue) {
-        boolean passesStrategyValidation = !hasStrategy || (hasStrategy && (isAddOrNoneType || isSubmitType));
-        return isRequired && passesStrategyValidation && StringUtils.isEmpty(attributeValue);
     }
 
     public ProductOptionValidationStrategyType getProductOptionValidationStrategyType() {

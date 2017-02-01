@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.StringUtil;
@@ -25,6 +26,7 @@ import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationSt
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.exception.ProductOptionValidationException;
+import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.type.MessageType;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.springframework.stereotype.Service;
@@ -43,28 +45,43 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
      */
     @Override
     public Boolean validate(ProductOption productOption, String value) {
-        if (requiresValidation(productOption) && !validateRegex(productOption.getValidationString(), value)) {
-            String message = StringUtil.sanitize(productOption.getErrorMessage()) + ". Value [" + StringUtil.sanitize(value)
-                    + "] does not match regex string [" + productOption.getValidationString() + "]";
+        String attributeName = productOption.getAttributeName();
+
+        if (isRequiredAttributeNotProvided(productOption, value)) {
+            String message = "Required attribute, " + StringUtil.sanitize(attributeName) + ", not provided";
+
             LOG.error(message);
-            String exceptionMessage = productOption.getAttributeName() + " " + productOption.getErrorMessage()
-                    + ". Value [" + value + "] does not match regex string ["
-                    + productOption.getValidationString() + "]";
-            throw new ProductOptionValidationException(exceptionMessage, productOption.getErrorCode(),
-                    productOption.getAttributeName(), value, productOption.getValidationString(),
-                    productOption.getErrorMessage());
+            throw new RequiredAttributeNotProvidedException(message, attributeName);
+        } else {
+            String validationString = productOption.getValidationString();
+
+            if (requiresValidation(productOption, value) && !validateRegex(validationString, value)) {
+                String errorMessage = productOption.getErrorMessage();
+                String message = StringUtil.sanitize(errorMessage) + ". Value [" + StringUtil.sanitize(value)
+                                 + "] does not match regex string [" + validationString + "]";
+
+                LOG.error(message);
+                throw new ProductOptionValidationException(message, productOption.getErrorCode(),
+                                                           attributeName, value, validationString,
+                                                           errorMessage);
+            }
         }
 
         return true;
     }
 
-    protected Boolean requiresValidation(ProductOption productOption) {
+    protected boolean isRequiredAttributeNotProvided(ProductOption productOption, String attributeValue) {
+        return productOption.getRequired() && StringUtils.isEmpty(attributeValue);
+    }
+
+    protected boolean requiresValidation(ProductOption productOption, String value) {
         ProductOptionValidationType validationType = productOption.getProductOptionValidationType();
+        boolean typeRequiresValidation = validationType != null && validationType == ProductOptionValidationType.REGEX;
+        boolean validationStringExists = productOption.getValidationString() != null;
+        boolean isRequired = productOption.getRequired();
+        boolean hasValue = StringUtils.isNotEmpty(value);
 
-        Boolean typeRequiresValidation = validationType == null || validationType == ProductOptionValidationType.REGEX;
-        Boolean validationStringExists = productOption.getValidationString() != null;
-
-        return typeRequiresValidation && validationStringExists;
+        return (isRequired || hasValue) && typeRequiresValidation && validationStringExists;
     }
 
     protected Boolean validateRegex(String regex, String value) {
@@ -94,9 +111,15 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
     public void validateWithoutException(ProductOption productOption, String attributeValue, ActivityMessages messages) {
         try {
             validate(productOption, attributeValue);
-        } catch (ProductOptionValidationException e) {
+        } catch (ProductOptionValidationException | RequiredAttributeNotProvidedException e) {
             ActivityMessageDTO msg = new ActivityMessageDTO(MessageType.PRODUCT_OPTION.getType(), 1, e.getMessage());
-            msg.setErrorCode(productOption.getErrorCode());
+
+            if (e instanceof ProductOptionValidationException) {
+                msg.setErrorCode(productOption.getErrorCode());
+            } else {
+                msg.setErrorCode(RequiredAttributeNotProvidedException.ERROR_CODE);
+            }
+
             messages.getActivityMessages().add(msg);
         }
     }
