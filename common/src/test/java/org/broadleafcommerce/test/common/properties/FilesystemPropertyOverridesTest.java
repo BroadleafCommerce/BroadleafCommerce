@@ -43,6 +43,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = PropertyTestConfig.class)
 @ActiveProfiles("production")
+@DirtiesContext
 public class FilesystemPropertyOverridesTest {
     
     @Autowired
