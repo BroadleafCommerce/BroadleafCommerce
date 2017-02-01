@@ -25,8 +25,11 @@ import org.broadleafcommerce.common.logging.SupportLogManager;
 import org.broadleafcommerce.common.logging.SupportLogger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -40,6 +43,8 @@ import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
 
 /**
  * A property resource configurer that chooses the property file at runtime
@@ -113,6 +118,16 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     protected Set<Resource> propertyLocations;
     protected Set<Resource> overridableProperyLocations;
     protected StringValueResolver stringValueResolver;
+
+    @Autowired
+    protected ApplicationContext applicationContext;
+    
+    @PostConstruct
+    public void init() {
+        String originatingFile = ((BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory()).getBeanDefinition("blConfiguration").getResourceDescription();
+        LOG.error("A blConfiguration bean was detected in " + originatingFile + ". Any use of blConfiguration and the RuntimeEnvironmentProperitesConfigurer is deprecated and has unknown side-effects. Remove "
+            + "all instances blConfiguration from all applicationContext.xml files. Use either a FrameworkCommonPropertySource, ProfileAwarePropertySource or a @PropertySource annotation on an @Configuration class");
+    }
 
     @Override
     public void afterPropertiesSet() throws IOException {
