@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.config;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -35,11 +36,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePropertySource;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -58,6 +61,12 @@ import java.util.List;
  * @see {@link FrameworkCommonPropertySource}
  */
 public class ProfileAwarePropertiesBeanFactoryPostProcessor implements BeanFactoryPostProcessor, EnvironmentAware, PriorityOrdered {
+    
+    /**
+     * A -D argument representing a path to a file that overrides all of the other properties resolved from internal property files
+     */
+    public static final String PROPERTY_OVERRIDES_PROPERTY = "property-override";
+    public static final String DEPRECATED_RUNTIME_ENVIRONMENT_KEY = "runtime.environment";
 
     private static final Log LOG = LogFactory.getLog(ProfileAwarePropertiesBeanFactoryPostProcessor.class);
     
@@ -74,6 +83,7 @@ public class ProfileAwarePropertiesBeanFactoryPostProcessor implements BeanFacto
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         ConfigurableEnvironment env = (ConfigurableEnvironment) environment;
 
+        // Manually looking up these beans because you can't @Autowire inside of BeanFactoryPostProcessor
         List<FrameworkCommonPropertySource> frameworkSources = new ArrayList<>(beanFactory.getBeansOfType(FrameworkCommonPropertySource.class).values());
         Collections.sort(frameworkSources, AnnotationAwareOrderComparator.INSTANCE);
         
@@ -84,58 +94,85 @@ public class ProfileAwarePropertiesBeanFactoryPostProcessor implements BeanFacto
             
             Resource commonProp = createClasspathResource(configLocation, "common", null);
             if (commonProp.exists()) {
-                lastAddedResourceName = addToEnvironment(env, commonProp, lastAddedResourceName);
+                lastAddedResourceName = addToEnvironment(env, Arrays.asList(commonProp), lastAddedResourceName);
             }
         }
         
+        String deprecatedRuntimeEnvironment = env.getProperty(DEPRECATED_RUNTIME_ENVIRONMENT_KEY);
+        if (ArrayUtils.isEmpty(env.getActiveProfiles()) && StringUtils.isNotBlank(deprecatedRuntimeEnvironment)) {
+            LOG.warn("The use of -Druntime.environment is deprecated in favor of Spring Profiles and will be removed in a future release. To specify a profile as a -D argument use -Dspring.profiles.active as a drop-in replacement"
+                + " for -Druntime.environment. Adding " + deprecatedRuntimeEnvironment + " to the list of active Spring profiles.");
+            env.addActiveProfile(deprecatedRuntimeEnvironment);
+        }
+        
+        // Manually looking up these beans because you can't @Autowire inside of BeanFactoryPostProcessor
         List<ProfileAwarePropertySource> profileAwareSources = new ArrayList<>(beanFactory.getBeansOfType(ProfileAwarePropertySource.class).values());
         Collections.sort(profileAwareSources, AnnotationAwareOrderComparator.INSTANCE);
+        
+        List<Resource> commonSharedResources = new ArrayList<>();
+        List<Resource> commonResources = new ArrayList<>();
+        List<Resource> profileSpecificSharedResources = new ArrayList<>();
+        List<Resource> profileSpecificResources = new ArrayList<>();
         for (ProfileAwarePropertySource source : profileAwareSources) {
             // then add all of the user property sources
             String configLocation = source.getClasspathFolder();
             
             Resource commonSharedProp = createClasspathResource(configLocation, "common", "shared");
-            lastAddedResourceName = addToEnvironment(env, commonSharedProp, lastAddedResourceName);
-            
+            commonSharedResources.add(commonSharedProp);
             Resource commonProp = createClasspathResource(configLocation, "common", null);
-            lastAddedResourceName = addToEnvironment(env, commonProp, lastAddedResourceName);
+            commonResources.add(commonProp);
             
             String[] activeProfiles = env.getActiveProfiles();
             if (ArrayUtils.isNotEmpty(activeProfiles)) {
                 for (String profile : activeProfiles) {
-                    lastAddedResourceName = addProfileSpecificSources(env, configLocation, profile, lastAddedResourceName);
+                    Resource profileSpecificSharedProps = createClasspathResource(configLocation, profile, "shared");
+                    profileSpecificSharedResources.add(profileSpecificSharedProps);
+                   
+                    Resource profileSpecificProps = createClasspathResource(configLocation, profile, null);
+                    profileSpecificResources.add(profileSpecificProps);
                 }
             } else {
                 String[] defaultProfiles = env.getDefaultProfiles();
                 
                 for (String defaultProfile : defaultProfiles) {
-                    lastAddedResourceName = addProfileSpecificSources(env, configLocation, defaultProfile, lastAddedResourceName);
+                    Resource profileSpecificSharedProps = createClasspathResource(configLocation, defaultProfile, "shared");
+                    profileSpecificSharedResources.add(profileSpecificSharedProps);
+                   
+                    Resource profileSpecificProps = createClasspathResource(configLocation, defaultProfile, null);
+                    profileSpecificResources.add(profileSpecificProps);
+                    
                 }
                 
                 String deprecatedDefaultProfile = getDeprecatedDefaultProfileKey();
                 if (!ArrayUtils.contains(defaultProfiles, deprecatedDefaultProfile)) {
-                    String deprecatedLastAddedResourceName = addProfileSpecificSources(env, configLocation, deprecatedDefaultProfile, lastAddedResourceName);
-                    boolean deprecatedDefaultProfileFound = (!deprecatedLastAddedResourceName.equals(lastAddedResourceName));
+                    Resource developmentSharedProps = createClasspathResource(configLocation, deprecatedDefaultProfile, "shared");
+                    profileSpecificSharedResources.add(developmentSharedProps);
+                   
+                    Resource developmentProps = createClasspathResource(configLocation, deprecatedDefaultProfile, null);
+                    profileSpecificResources.add(developmentProps);
                     
-                    lastAddedResourceName = deprecatedLastAddedResourceName;
+                    boolean deprecatedDefaultProfileFound = developmentSharedProps.exists() || developmentProps.exists();
                     
                     if (deprecatedDefaultProfileFound) {
-                        LOG.info("The usage of " + getDeprecatedDefaultProfileKey() + ".properties is deprecated, use Spring's default profiles instead");
+                        LOG.warn("The usage of " + getDeprecatedDefaultProfileKey() + ".properties is deprecated and will be removed in a future release. Use Spring's default profile properties of 'default.properties'."
+                            + " Alternatively, set the 'spring.profiles.default' system property with -Dspring.profiles.default=development to change the default profile name that Spring runs in.");
                         env.setDefaultProfiles(ArrayUtils.add(defaultProfiles, deprecatedDefaultProfile));
                     }
                 }
             }
         }
-    }
-    
-    protected String addProfileSpecificSources(ConfigurableEnvironment env, String configLocation, String profile, String lastAddedResourceName) {
-        Resource profileSharedProp = createClasspathResource(configLocation, profile, "shared");
-        lastAddedResourceName = addToEnvironment(env, profileSharedProp, lastAddedResourceName);
         
-        Resource profileProp = createClasspathResource(configLocation, profile, null);
-        lastAddedResourceName = addToEnvironment(env, profileProp, lastAddedResourceName);
+        lastAddedResourceName = addToEnvironment(env, commonSharedResources, lastAddedResourceName);
+        lastAddedResourceName = addToEnvironment(env, commonResources, lastAddedResourceName);
+        lastAddedResourceName = addToEnvironment(env, profileSpecificSharedResources, lastAddedResourceName);
+        lastAddedResourceName = addToEnvironment(env, profileSpecificResources, lastAddedResourceName);
         
-        return lastAddedResourceName;
+        // At the very end of all of it, look at the property-override location
+        String overrideFileLocation = env.getProperty(PROPERTY_OVERRIDES_PROPERTY);
+        if (StringUtils.isNotBlank(overrideFileLocation)) {
+            Resource overrideFileResource = new FileSystemResource(overrideFileLocation);
+            addToEnvironment(env, Arrays.asList(overrideFileResource), lastAddedResourceName);
+        }
     }
     
     protected Resource createClasspathResource(String rootLocation, String propertyName, String suffix) {
@@ -152,23 +189,26 @@ public class ProfileAwarePropertiesBeanFactoryPostProcessor implements BeanFacto
      * <p>
      * If <b>addBeforeResourceName</b> is null, the given <b>resource</b> will be added last via {@link MutablePropertySources#addLast(PropertySource)}.
      */
-    protected String addToEnvironment(ConfigurableEnvironment environment, Resource resource, String addBeforeResourceName) {
+    protected String addToEnvironment(ConfigurableEnvironment environment, List<Resource> resources, String addBeforeResourceName) {
         try {
-            if (!resource.exists()) {
-                LOG.debug(resource.getDescription() + " does not exist, skipping adding to the Environment");
-                return addBeforeResourceName;
+            for (Resource resource : resources) {
+                if (!resource.exists()) {
+                    LOG.debug(resource.getDescription() + " does not exist, skipping adding to the Environment");
+                    continue;
+                }
+                PropertySource<?> props = new ResourcePropertySource(resource);
+    
+                if (addBeforeResourceName == null) {
+                    environment.getPropertySources().addLast(props);
+                    LOG.debug("Added property source " + props.getName() + " to the environment");
+                } else {
+                    environment.getPropertySources().addBefore(addBeforeResourceName, props);
+                    LOG.debug("Added property source " + props.getName() + " to the environment with a higher priority than " + addBeforeResourceName);
+                }
+                
+                addBeforeResourceName = props.getName();
             }
-            PropertySource<?> props = new ResourcePropertySource(resource);
-
-            if (addBeforeResourceName == null) {
-                environment.getPropertySources().addLast(props);
-                LOG.debug("Added property source " + props.getName() + " to the environment");
-            } else {
-                environment.getPropertySources().addBefore(addBeforeResourceName, props);
-                LOG.debug("Added property source " + props.getName() + " to the environment with a higher priority than " + addBeforeResourceName);
-            }
-            
-            return props.getName();
+            return addBeforeResourceName;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
