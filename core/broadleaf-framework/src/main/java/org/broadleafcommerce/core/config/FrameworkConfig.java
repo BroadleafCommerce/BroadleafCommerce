@@ -29,7 +29,7 @@ public class FrameworkConfig {
 
     @Bean
     public static FrameworkCommonPropertySource blFrameworkProperties() {
-        return new FrameworkCommonPropertySource("config/bc/fw/");
+        return new FrameworkCommonPropertySource("config/bc/fw/", FrameworkCommonPropertySource.FRAMEWORK_ORDER);
     }
     
 }

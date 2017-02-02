@@ -29,6 +29,6 @@ public class FrameworkWebConfig {
 
     @Bean
     public static FrameworkCommonPropertySource blFrameworkWebProperties() {
-        return new FrameworkCommonPropertySource("config/bc/web/");
+        return new FrameworkCommonPropertySource("config/bc/web/", FrameworkCommonPropertySource.FRAMEWORK_WEB_ORDER);
     }
 }

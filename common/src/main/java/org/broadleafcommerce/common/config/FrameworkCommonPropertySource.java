@@ -58,10 +58,25 @@ import org.springframework.core.io.ClassPathResource;
  */
 public class FrameworkCommonPropertySource implements Ordered {
 
+    /**
+     * All of the property configurations registered by the core framework (e.g. broadleaf-framework, broadleaf-common, broadleaf-open-admin-platform, etc)
+     * have this ordering.
+     * 
+     * This ordering is mainly for backwards-compatibilty's sake, as this was the ordering essentially defined in the old StandardConfigLocations
+     */
+    public static final int BROADLEAF_COMMON_ORDER = -8000;
+    public static final int PROFILE_ORDER = -7000;
+    public static final int PROFILE_WEB_ORDER = -6000;
+    public static final int FRAMEWORK_ORDER = -5000;
+    public static final int FRAMEWORK_WEB_ORDER = -4000;
+    public static final int OPEN_ADMIN_ORDER = -3000;
+    public static final int ADMIN_MODULE_ORDER = -2000;
+    public static final int CMS_ORDER = -1000;
+    
     public static final int DEFAULT_ORDER = 1000;
     
     protected String classpathFolder;
-    protected int order = 1000;
+    protected int order = DEFAULT_ORDER;
     
     public FrameworkCommonPropertySource(String classpathFolder) {
         this.classpathFolder = classpathFolder;
