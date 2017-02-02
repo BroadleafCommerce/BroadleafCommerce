@@ -280,6 +280,20 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blAdminAdditionalBundleFiles" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map value-type="java.util.List">
+                <entry key="adminlib.js" value-ref="blAdminJsLibFileList"/>
+                <entry key="admin.js" value-ref="blJsFileList"/>
+                <entry key="admin/admin.css" value-ref="blCssFileList"/>
+            </map>
+        </property>  
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminAdditionalBundleFiles" />
+        <property name="targetRef" value="blAdditionalBundleFiles" />
+    </bean>
 
    <!--  Spring 4.1 Admin Resource Handling Base Classes -->
    <bean id="adminResourceHttpRequestHandlerBase" abstract="true" 
@@ -287,7 +301,6 @@
         <!--  property name="themesBaseDirectory" value="/WEB-INF/" / -->
         <property name="cacheSeconds" value="${staticResourceBrowserCacheSeconds}" />    
         <property name="resourceResolvers" ref="blAdminResourceResolvers" />
-        
     </bean>
     
    <bean id="adminJsResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
