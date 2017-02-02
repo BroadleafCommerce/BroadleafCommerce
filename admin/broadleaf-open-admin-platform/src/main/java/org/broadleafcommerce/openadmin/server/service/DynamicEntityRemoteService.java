@@ -345,6 +345,11 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     protected TargetModeType identifyTargetModeType(PersistencePackage persistencePackage) throws ServiceException {
         String className = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+
+        if (className == null) {
+            return TargetModeType.SANDBOX;
+        }
+
         return emService.identifyTargetModeTypeForClass(className);
     }
 }

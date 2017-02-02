@@ -31,6 +31,7 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -178,6 +179,13 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
     }
 
     protected EntityManager getEntityManager(String className) {
-        return PersistenceManagerFactory.getPersistenceManager(className).getDynamicEntityDao().getStandardEntityManager();
+        PersistenceManager persistenceManager;
+        if (className == null) {
+            persistenceManager = PersistenceManagerFactory.getDefaultPersistenceManager();
+        } else {
+            persistenceManager = PersistenceManagerFactory.getPersistenceManager(className);
+        }
+
+        return persistenceManager.getDynamicEntityDao().getStandardEntityManager();
     }
 }
