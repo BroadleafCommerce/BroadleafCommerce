@@ -31,7 +31,7 @@ public class CmsConfig {
 
     @Bean
     public static FrameworkCommonPropertySource blCmsProperties() {
-        return new FrameworkCommonPropertySource("config/bc/cms/");
+        return new FrameworkCommonPropertySource("config/bc/cms/", FrameworkCommonPropertySource.CMS_ORDER);
     }
     
 }

@@ -30,7 +30,7 @@ public class OpenAdminConfig {
     
     @Bean
     public static FrameworkCommonPropertySource blOpenAdminProperties() {
-        return new FrameworkCommonPropertySource("config/bc/admin/");
+        return new FrameworkCommonPropertySource("config/bc/admin/", FrameworkCommonPropertySource.OPEN_ADMIN_ORDER);
     }
     
 }

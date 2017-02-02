@@ -25,6 +25,19 @@
 
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
     
+    <!-- IMPORTANT -->
+    <!-- IMPORTANT -->
+    <!-- IMPORTANT -->
+    <!-- IMPORTANT -->
+        <!-- This file is named weirdly because of the glob auto-import in the web.xml. At time of writing it is set to
+            classpath*:/blc-config/admin/bl-*-admin-applicationContext-servlet.xml  -->
+    <!-- IMPORTANT -->
+    <!-- IMPORTANT -->
+    <!-- IMPORTANT -->
+    <!-- IMPORTANT -->
+
+
+    
     <import resource="classpath:bl-admin-applicationContext-servlet.xml"/>
 
 </beans>

@@ -29,8 +29,11 @@ import org.broadleafcommerce.common.resource.BundledResourceInfo;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.resource.BroadleafDefaultResourceResolverChain;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -39,10 +42,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
-import de.jkeylockmanager.manager.KeyLockManager;
-import de.jkeylockmanager.manager.KeyLockManagers;
-import de.jkeylockmanager.manager.LockCallback;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,7 +49,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +56,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
+
+import de.jkeylockmanager.manager.KeyLockManager;
+import de.jkeylockmanager.manager.KeyLockManagers;
+import de.jkeylockmanager.manager.LockCallback;
 
 /**
  * @see ResourceBundlingService
@@ -69,28 +71,65 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     protected static final Log LOG = LogFactory.getLog(ResourceBundlingServiceImpl.class);
 
     // Map of known unversioned bundle names ==> additional files that should be included
-    // Configured via XML
     // ex: "global.js" ==> ["classpath:/file1.js", "/js/file2.js"]
-    protected Map<String, List<String>> additionalBundleFiles = new HashMap<String, List<String>>();
+    /**
+     *  This has to use an @Resource annotation because Spring's @Autowired cannot work with the type erasure from the
+     *  Map<String, List<String>> type.
+     */
+    @javax.annotation.Resource(name = "blAdditionalBundleFiles")
+    protected Map<String, List<String>> additionalBundleFiles;
             
     @javax.annotation.Resource(name = "blFileService")
     protected BroadleafFileService fileService;
 
-    @Autowired(required = false)
-    @Qualifier("blJsResources")
+    /**
+     * These properties are looked up manually within {@link #initializeResources(ContextRefreshedEvent)}
+     */
     protected ResourceHttpRequestHandler jsResourceHandler;
-
-    @Autowired(required = false)
-    @Qualifier("blCssResources")
     protected ResourceHttpRequestHandler cssResourceHandler;
+    
+    @Autowired
+    protected ApplicationContext appctx;
 
     @javax.annotation.Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
 
     private KeyLockManager keyLockManager = KeyLockManagers.newLock();
 
-    private ConcurrentHashMap<String, BundledResourceInfo> createdBundles = new ConcurrentHashMap<String, BundledResourceInfo>();
-
+    private ConcurrentHashMap<String, BundledResourceInfo> createdBundles = new ConcurrentHashMap<>();
+    
+    /**
+     * Initalize the blJsResources and blCssResources. The reason that we are doing it this way and not via the normal
+     * autowiring process is because there is technically a circular dependency here:
+     *   ResourceBundlingService
+     *      -> blJsResources
+     *          -> blSiteResourceResolvers/blAdminResourceResolvers
+     *              -> blBundleResourceResolver
+     *                  -> ResourceBundlingService
+     *                      -> ...
+     * We can easily hit an IllegalStateException depending on the order in which things are initialized. This essentially breaks
+     * the circular dependency in Spring's auto-initialization and grabs those resources when they are initialized, since this
+     * should only be used at runtime in a web request anyway.
+     */
+    @EventListener
+    public void initializeResources(ContextRefreshedEvent event) {
+        if (jsResourceHandler == null) {
+            try {
+                jsResourceHandler = appctx.getBean("blJsResources", ResourceHttpRequestHandler.class);
+            } catch (NoSuchBeanDefinitionException e) {
+                // do nothing, this bean is optional
+            }
+        }
+        
+        if (cssResourceHandler == null) {
+            try {
+                cssResourceHandler = appctx.getBean("blCssResources", ResourceHttpRequestHandler.class);
+            } catch (NoSuchBeanDefinitionException e) {
+                // do nothing, this bean is optional
+            }
+        }
+    }
+    
     @Override
     public Resource rebuildBundledResource(String requestedBundleName) {
         String resourceName = lookupBundlePath(requestedBundleName);
@@ -118,7 +157,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             List<Resource> locations = resourceRequestHandler.getLocations();
                     
             StringBuilder combinedPathString = new StringBuilder();
-            List<String> filePaths = new ArrayList<String>();
+            List<String> filePaths = new ArrayList<>();
             for (String file : files) {
                 String resourcePath = resolverChain.resolveUrlPath(file, locations);
                 if (resourcePath == null) {

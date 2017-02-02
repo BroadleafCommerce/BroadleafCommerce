@@ -250,6 +250,13 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blAdditionalBundleFiles" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map value-type="java.util.List">
+            </map>
+        </property>  
+    </bean>
 
     <!--  Spring 4.1 Resource Resolvers -->
     <bean id="blJsResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >

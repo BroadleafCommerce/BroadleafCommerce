@@ -52,7 +52,7 @@ public class BroadleafCommonConfig {
     
     @Bean
     public static FrameworkCommonPropertySource blCommonProperties() {
-        return new FrameworkCommonPropertySource("config/bc/");
+        return new FrameworkCommonPropertySource("config/bc/", FrameworkCommonPropertySource.BROADLEAF_COMMON_ORDER);
     }
     
     @Bean

@@ -25,4 +25,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ProfileWebConfig {
     
+    // If you add any FrameworkCommonProeprtySource, make sure that it has
+    // the order FrameworkCommonPropertySource.PROFILE_WEB_ORDER
+    
 }
