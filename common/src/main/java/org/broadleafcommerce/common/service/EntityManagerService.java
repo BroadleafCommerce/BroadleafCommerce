@@ -36,7 +36,7 @@ public interface EntityManagerService {
      * This white list is stored as a {@code Map<String className, TargetModeType targetModeType>}. Using the
      *  targetModeType and the `blTargetEntityManagers` map, we can gather an entity's relevant {@link EntityManager}.
      */
-    void initializeEntityWhiteList();
+    void initializeEntityManagerCache();
 
     /**
      * Determine if a test class name represents a known entity class registered with Hibernate

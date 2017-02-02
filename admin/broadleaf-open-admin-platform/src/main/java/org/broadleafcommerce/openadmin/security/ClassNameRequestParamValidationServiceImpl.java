@@ -41,7 +41,7 @@ import javax.persistence.EntityManagerFactory;
  * @author Jeff Fischer
  */
 @Service("blClassNameRequestParamValidationService")
-public class ClassNameRequestParamValidationServiceImpl implements ClassNameRequestParamValidationService, ApplicationListener<ContextRefreshedEvent> {
+public class ClassNameRequestParamValidationServiceImpl implements ClassNameRequestParamValidationService {
 
     private static final Log LOG = LogFactory.getLog(ClassNameRequestParamValidationServiceImpl.class);
 
@@ -55,11 +55,6 @@ public class ClassNameRequestParamValidationServiceImpl implements ClassNameRequ
     protected EntityManagerService emService;
 
     protected DynamicDaoHelper helper = new DynamicDaoHelperImpl();
-
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        emService.initializeEntityWhiteList();
-    }
 
     @Override
     public boolean validateClassNameParams(Map<String, String> requestParamToClassName, String persistenceUnitName) {

@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 
@@ -56,15 +57,20 @@ public class EntityManagerServiceImpl implements EntityManagerService, Applicati
     @Resource(name = "blTargetTransactionManagers")
     protected Map<String, String> targetTransactionManagers = new HashMap<>();
 
-    private final Object WHITELIST_LOCK = new Object();
-    private final Map<String, String> ENTITY_WHITELIST = new ConcurrentHashMap<>();
+    private final Object ENTITY_MANAGER_CACHE_LOCK = new Object();
+    private final Map<String, String> ENTITY_MANAGER_CACHE = new ConcurrentHashMap<>();
 
     protected ApplicationContext applicationContext;
 
+    @PostConstruct
+    public void init() {
+        initializeEntityManagerCache();
+    }
+
     @Override
-    public void initializeEntityWhiteList() {
-        synchronized(WHITELIST_LOCK) {
-            if (ENTITY_WHITELIST.isEmpty()) {
+    public void initializeEntityManagerCache() {
+        synchronized(ENTITY_MANAGER_CACHE_LOCK) {
+            if (ENTITY_MANAGER_CACHE.isEmpty()) {
                 for (String targetMode : targetEntityManagers.keySet()) {
                     String entityManagerBeanName = targetEntityManagers.get(targetMode);
                     EntityManager em = retrieveEntityManager(entityManagerBeanName);
@@ -74,8 +80,8 @@ public class EntityManagerServiceImpl implements EntityManagerService, Applicati
                         ClassMetadata metadata = (ClassMetadata) item;
                         Class<?> mappedClass = metadata.getMappedClass();
 
-                        if (!ENTITY_WHITELIST.containsKey(mappedClass.getName())) {
-                            ENTITY_WHITELIST.put(mappedClass.getName(), targetMode);
+                        if (!ENTITY_MANAGER_CACHE.containsKey(mappedClass.getName())) {
+                            ENTITY_MANAGER_CACHE.put(mappedClass.getName(), targetMode);
                         }
                     }
                 }
@@ -85,9 +91,9 @@ public class EntityManagerServiceImpl implements EntityManagerService, Applicati
 
     @Override
     public boolean validateEntityClassName(String entityClassName) {
-        boolean isValid = ENTITY_WHITELIST.containsKey(entityClassName);
+        boolean isValid = ENTITY_MANAGER_CACHE.containsKey(entityClassName);
         if (!isValid) {
-            isValid = ENTITY_WHITELIST.containsKey(entityClassName + "Impl");
+            isValid = ENTITY_MANAGER_CACHE.containsKey(entityClassName + "Impl");
         }
 
         if (!isValid) {
@@ -113,9 +119,9 @@ public class EntityManagerServiceImpl implements EntityManagerService, Applicati
 
     @Override
     public TargetModeType identifyTargetModeTypeForClass(String className) throws ServiceException {
-        String targetMode = ENTITY_WHITELIST.get(className);
+        String targetMode = ENTITY_MANAGER_CACHE.get(className);
         if (targetMode == null) {
-            targetMode = ENTITY_WHITELIST.get(className + "Impl");
+            targetMode = ENTITY_MANAGER_CACHE.get(className + "Impl");
         }
         TargetModeType targetModeType = TargetModeType.getInstance(targetMode);
 
