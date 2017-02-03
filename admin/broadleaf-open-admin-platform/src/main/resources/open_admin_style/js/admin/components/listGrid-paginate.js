@@ -711,7 +711,7 @@
                     maxHeight -= $wrapper.parent().find('.listgrid-toolbar').outerHeight(true);
                 }
                 
-                var minHeight = $wrapper.find('table tr:not(.width-control-header)').outerHeight() + 1;
+                var minHeight = Math.max($wrapper.find('table tr:not(.width-control-header)').outerHeight() + 1, maxSubCollectionListGridHeight);;
                 if (maxHeight < minHeight) {
                     maxHeight = minHeight;
                 }
