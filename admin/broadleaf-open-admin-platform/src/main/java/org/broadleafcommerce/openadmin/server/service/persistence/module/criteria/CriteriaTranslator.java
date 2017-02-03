@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 
 import javax.persistence.TypedQuery;
@@ -36,7 +37,7 @@ public interface CriteriaTranslator {
 
     TypedQuery<Serializable> translateMaxQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, String maxField);
 
-    TypedQuery<Serializable> translateListGridQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults, Map<String, List<String>> propertyMap);
+    TypedQuery<Serializable> translateListGridQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults, Map<String, List<String>> propertyMap, Map<String, FieldMetadata> filteredProperties);
 
-    TypedQuery<Serializable> translateListGridCountQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings);
+    TypedQuery<Serializable> translateListGridCountQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, Map<String, FieldMetadata> filteredProperties);
 }

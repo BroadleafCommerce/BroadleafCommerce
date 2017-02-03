@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +49,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -90,13 +94,13 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
     }
 
     @Override
-    public TypedQuery<Serializable> translateListGridQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults, Map<String, List<String>> propertyMap) {
-        return constructListGridQuery(dynamicEntityDao, ceilingEntity, filterMappings, false, false, firstResult, maxResults, propertyMap);
+    public TypedQuery<Serializable> translateListGridQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults, Map<String, List<String>> propertyMap, Map<String, FieldMetadata> filteredProperties) {
+        return constructListGridQuery(dynamicEntityDao, ceilingEntity, filterMappings, false, false, firstResult, maxResults, propertyMap, filteredProperties);
     }
 
     @Override
-    public TypedQuery<Serializable> translateListGridCountQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings) {
-        return constructListGridQuery(dynamicEntityDao, ceilingEntity, filterMappings, true, false, null, null, null);
+    public TypedQuery<Serializable> translateListGridCountQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, Map<String, FieldMetadata> filteredProperties) {
+        return constructListGridQuery(dynamicEntityDao, ceilingEntity, filterMappings, true, false, null, null, null, filteredProperties);
     }
 
     /**
@@ -242,7 +246,9 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
     }
 
     @SuppressWarnings("unchecked")
-    protected TypedQuery<Serializable> constructListGridQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, boolean isCount, boolean isMax, Integer firstResult, Integer maxResults, Map<String, List<String>> propertyMap) {
+    protected TypedQuery<Serializable> constructListGridQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, 
+                  List<FilterMapping> filterMappings, boolean isCount, boolean isMax, Integer firstResult, 
+                  Integer maxResults, Map<String, List<String>> propertyMap, Map<String, FieldMetadata> filteredProperties) {
 
         CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
 
@@ -268,7 +274,7 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         if (isCount) {
             criteria.select(criteriaBuilder.count(root));
         } else {
-            method(root, criteria, propertyMap, isSandboxable);
+            buildSelections(root, criteria, propertyMap, isSandboxable, filteredProperties);
         }
         
         List<Predicate> restrictions = new ArrayList<Predicate>();
@@ -301,18 +307,22 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         return response;
     }
     
-    public void method(Root root, CriteriaQuery criteria, Map<String, List<String>> propertyMap, Boolean isSandboxable) {
+    public void buildSelections(Root root, CriteriaQuery criteria, Map<String, List<String>> propertyMap, 
+                    Boolean isSandboxable, Map<String, FieldMetadata> filteredProperties) {
 
         List<Selection> selections = new ArrayList<>();
 
         for (String propertyKey : propertyMap.keySet()) {
-            buildSelectionForPropertyKey(isSandboxable, propertyMap.get(propertyKey), root, selections, propertyKey);
+            buildSelectionForPropertyKey(isSandboxable, propertyMap.get(propertyKey), root, selections, propertyKey, 
+                    filteredProperties);
         }
 
         criteria.multiselect(selections);
     }
 
-    public void buildSelectionForPropertyKey(Boolean isSandboxable, List<String> propertyListForKey, Root root, List<Selection> selections, String propertyKey) {
+    public void buildSelectionForPropertyKey(Boolean isSandboxable, List<String> propertyListForKey, Root root, 
+                 List<Selection> selections, String propertyKey, 
+                 Map<String, FieldMetadata> filteredProperties) {
         Path selection = root;
 
         if (isSandboxable && propertyKey.equals("embeddableSandBoxDiscriminator")) {

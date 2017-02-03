@@ -28,7 +28,6 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -38,7 +37,6 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.ValidationUtil;
@@ -125,8 +123,6 @@ import java.util.StringTokenizer;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 /**
  * @author jfischer
@@ -1301,7 +1297,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 persistencePackage.getFetchTypeFullyQualifiedClassname(), filteredProperties);
         Entity[] entities = getEntities(persistencePackage, cto, dynamicEntityDao, filteredProperties, filterMappings);
 
-        Long count = getCountForFetch(cto, dynamicEntityDao, classname, filterMappings);
+        Long count = getCountForFetch(cto, dynamicEntityDao, classname, filterMappings, filteredProperties);
 
         return new DynamicResultSet(null, entities, count.intValue());
     }
@@ -1338,7 +1334,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         try {
 
             response = criteriaTranslator.translateListGridQuery(dynamicEntityDao, classname, standardFilterMappings, 
-                    cto.getFirstResult(), cto.getMaxResults(), propertyMap);
+                    cto.getFirstResult(), cto.getMaxResults(), propertyMap, filteredProperties);
 
             response.setFirstResult(cto.getFirstResult());
             response.setMaxResults(cto.getMaxResults());
@@ -1351,13 +1347,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
         for (ListGridPersistenceHandler handler : listGridPersistenceHandlers) {
             if (handler.canHandleEntity(persistencePackage)) {
-                entities = handler.handleEntities(persistencePackage, entities, dynamicEntityDao, this);
+                entities = handler.handleEntities(persistencePackage, entities, dynamicEntityDao, this, filteredProperties);
             }
         }
         return entities;
     }
 
-    public Long getCountForFetch(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, String classname, List<FilterMapping> filterMappings) {
+    public Long getCountForFetch(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, String classname, List<FilterMapping> filterMappings, Map<String, FieldMetadata> filteredProperties) {
         List<FilterMapping> countFilterMappings = new ArrayList<FilterMapping>(filterMappings);
         if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
             countFilterMappings.addAll(cto.getAdditionalFilterMappings());
@@ -1367,7 +1363,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
         try {
             count = (Long) criteriaTranslator.translateListGridCountQuery(dynamicEntityDao,
-                    classname, countFilterMappings).getSingleResult();
+                    classname, countFilterMappings, filteredProperties).getSingleResult();
         } catch (CriteriaConversionException e) {
             throw new RuntimeException(e);
         }

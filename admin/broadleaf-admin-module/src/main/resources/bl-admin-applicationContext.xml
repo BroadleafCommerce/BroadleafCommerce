@@ -293,10 +293,6 @@
         </property>
     </bean>
 
-    <bean id="blCustomFieldListGridFetchEntity" class="org.broadleafcommerce.openadmin.server.service.persistence.module.ListGridFetchEntity">
-        <property name="entityTarget" value="com.broadleafcommerce.customfield.domain.CustomField" />
-    </bean>
-
     <bean id="blUniversalFetchFields" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
@@ -309,7 +305,6 @@
         <property name="entities">
             <list>
                 <ref bean="blProductListGridFetchEntity"/>
-                <ref bean="blCustomFieldListGridFetchEntity"/>
             </list>
         </property>
         <property name="universalFetchFields" ref="blUniversalFetchFields" />

@@ -34,5 +34,5 @@ public interface ListGridPersistenceHandler {
 
     Map<String, FieldMetadata> stripHandledProperties(Map<String, FieldMetadata> properties);
 
-    Entity[] handleEntities(PersistencePackage persistencePackage, Entity[] entities, DynamicEntityDao dynamicEntityDao, RecordHelper recordHelper);
+    Entity[] handleEntities(PersistencePackage persistencePackage, Entity[] entities, DynamicEntityDao dynamicEntityDao, RecordHelper recordHelper, Map<String, FieldMetadata> filteredProperties);
 }

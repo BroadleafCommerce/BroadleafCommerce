@@ -19,13 +19,10 @@ package org.broadleafcommerce.admin.server.service.handler;
 
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
-import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.broadleafcommerce.core.catalog.domain.SkuImpl;
-import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ListGridFetchRequest;
@@ -33,12 +30,9 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.AbstractListGridPersistenceHandler;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,55 +89,14 @@ public class ProductListGridPersistenceHandler extends AbstractListGridPersisten
     }
 
     @Override
-    public Entity[] handleEntities(PersistencePackage persistencePackage, Entity[] entities, DynamicEntityDao dynamicEntityDao, RecordHelper recordHelper) {
+    public Entity[] handleEntities(PersistencePackage persistencePackage, Entity[] entities, DynamicEntityDao dynamicEntityDao, RecordHelper recordHelper, Map<String, FieldMetadata> filteredProperties) {
 
         ListGridFetchRequest listGridFetchRequest = persistencePackage.getListGridFetchRequest();
         setIdField(listGridFetchRequest.getIdField());
 
-        for (Entity entity : entities) {
-            Property originalIdProperty = entity.getPMap().get("embeddableSandBoxDiscriminator.originalItemId");
-            if (originalIdProperty != null && originalIdProperty.getValue() != null) {
-                updateSandboxEntityData(dynamicEntityDao, entity, recordHelper);
-            }
-        }
-
         entities = populateCategoryDataForEntities(listGridFetchRequest, entities, dynamicEntityDao);
 
         return entities;
-    }
-
-
-    public void updateSandboxEntityData(DynamicEntityDao dynamicEntityDao, Entity entity, RecordHelper recordHelper) {
-        Long sandboxId = sandBoxHelper.getSandBoxVersionId(SkuImpl.class, new Long(entity.getPMap().get("defaultSku.id").getValue()));
-
-        Session session = dynamicEntityDao.getStandardEntityManager().unwrap(Session.class);
-        Object original = session.get(SkuImpl.class, sandboxId);
-
-        for (String pMapKey : entity.getPMap().keySet()) {
-            if (pMapKey.startsWith("defaultSku.")) {
-                updateSandboxPropertyData(entity, original, pMapKey, recordHelper);
-            }
-        }
-    }
-
-    public void updateSandboxPropertyData(Entity entity, Object original, String pMapKey, RecordHelper recordHelper) {
-        String propString = pMapKey.replace("defaultSku.", "");
-
-        Property property = entity.getPMap().get(pMapKey);
-        try {
-            Object fieldValue = recordHelper.getFieldManager().getFieldValue(original, propString);
-
-            if (fieldValue != null) {
-                property.setValue(fieldValue.toString());
-                property.setDisplayValue(fieldValue.toString());
-
-                recordHelper.decorateProperty(property, fieldValue.toString(), (BasicFieldMetadata) property.getMetadata());
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (FieldNotAvailableException e) {
-            e.printStackTrace();
-        }
     }
 
     public Entity[] populateCategoryDataForEntities(ListGridFetchRequest listGridFetchRequest, Entity[] entities, DynamicEntityDao dynamicEntityDao) {

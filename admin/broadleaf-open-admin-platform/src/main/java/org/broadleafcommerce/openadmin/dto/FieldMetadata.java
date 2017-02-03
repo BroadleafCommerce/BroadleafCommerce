@@ -35,6 +35,7 @@ public abstract class FieldMetadata implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String inheritedFromType;
+    private String originalInheritedFromType;
     private String[] availableToTypes;
     private Boolean excluded;
     private String friendlyName;
@@ -347,5 +348,13 @@ public abstract class FieldMetadata implements Serializable {
         result = 31 * result + (currencyCodeField != null ? currencyCodeField.hashCode() : 0);
         result = 31 * result + (additionalMetadata != null ? additionalMetadata.hashCode() : 0);
         return result;
+    }
+
+    public String getOriginalInheritedFromType() {
+        return originalInheritedFromType;
+    }
+
+    public void setOriginalInheritedFromType(String originalInheritedFromType) {
+        this.originalInheritedFromType = originalInheritedFromType;
     }
 }

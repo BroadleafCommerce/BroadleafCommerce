@@ -24,7 +24,7 @@ public class AbstractListGridPersistenceHandler implements ListGridPersistenceHa
     }
 
     @Override
-    public Entity[] handleEntities(PersistencePackage persistencePackage, Entity[] entities, DynamicEntityDao dynamicEntityDao, RecordHelper recordHelper) {
+    public Entity[] handleEntities(PersistencePackage persistencePackage, Entity[] entities, DynamicEntityDao dynamicEntityDao, RecordHelper recordHelper, Map<String, FieldMetadata> filteredProperties) {
         return entities;
     }
 }
