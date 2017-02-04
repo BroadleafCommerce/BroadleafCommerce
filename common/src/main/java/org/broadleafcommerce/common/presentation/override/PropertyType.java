@@ -66,6 +66,7 @@ public class PropertyType {
         public static final String GROUP = "group";
         public static final String TAB = "tab";
         public static final String CANLINKTOEXTERNALENTITY = "canLinkToExternalEntity";
+        public static final String TRANSLATABLE = "translatable";
 
         @Deprecated
         public static final String GROUPORDER = "groupOrder";
