@@ -38,6 +38,8 @@ import java.util.Map;
 @Component("blAdminComponentIdProcessor")
 public class AdminComponentIdProcessor extends AbstractAttributeModifierAttrProcessor {
 
+    public static final String ASSOCIATED_FIELDS = "associated_fields";
+
     /**
      * Sets the name of this processor to be used in Thymeleaf template
      */
@@ -69,6 +71,12 @@ public class AdminComponentIdProcessor extends AbstractAttributeModifierAttrProc
         } else if (component instanceof Field) {
             Field field = (Field) component;
             fieldName = "field-" + field.getName();
+            if (ASSOCIATED_FIELDS.equals(field.getFieldComponentRenderer())) {
+                if (field.getSkipInitialIdProcessing()) {
+                    field.setSkipInitialIdProcessing(false);
+                    fieldName = "";
+                }
+            }
         }
         
         if (StringUtils.isNotBlank(fieldName)) {

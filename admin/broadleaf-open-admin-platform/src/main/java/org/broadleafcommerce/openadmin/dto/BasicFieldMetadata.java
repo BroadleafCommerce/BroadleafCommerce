@@ -92,6 +92,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String defaultValue;
     protected Boolean isFilter;
     protected Boolean canLinkToExternalEntity;
+    protected String associatedFieldName;
 
     //for MapFields
     protected String mapFieldValueClass;
@@ -558,6 +559,14 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.defaultValue = defaultValue;
     }
 
+    public String getAssociatedFieldName() {
+        return associatedFieldName;
+    }
+
+    public void setAssociatedFieldName(String associatedFieldName) {
+        this.associatedFieldName = associatedFieldName;
+    }
+
     public Boolean getIsFilter() {
         return isFilter;
     }
@@ -662,6 +671,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.translatable = translatable;
         metadata.isDerived = isDerived;
         metadata.defaultValue = defaultValue;
+        metadata.associatedFieldName = associatedFieldName;
         metadata.canLinkToExternalEntity = canLinkToExternalEntity;
 
         metadata = (BasicFieldMetadata) populate(metadata);
