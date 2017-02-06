@@ -21,22 +21,12 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 
 /**
  * @author Chris Kittrell (ckittrell)
  */
 public interface EntityManagerService {
-
-    /**
-     * Initializes the white list of entities that are registered with an available {@link EntityManager}
-     *
-     * This white list is stored as a {@code Map<String className, TargetModeType targetModeType>}. Using the
-     *  targetModeType and the `blTargetEntityManagers` map, we can gather an entity's relevant {@link EntityManager}.
-     */
-    void initializeEntityManagerCache();
 
     /**
      * Determine if a test class name represents a known entity class registered with Hibernate
@@ -69,29 +59,4 @@ public interface EntityManagerService {
      * @return the {@link TargetModeType}
      */
     TargetModeType identifyTargetModeTypeForClass(String className) throws ServiceException;
-
-    /**
-     * Gathers the EntityManager associated to the given beanName, according to the
-     *  `blTargetEntityManagers` bean list
-     *
-     * @param entityManagerBeanName
-     * @return the {@link EntityManager}
-     */
-    EntityManager retrieveEntityManager(String entityManagerBeanName);
-
-    /**
-     * Gathers the EntityManager associated to the given {@link TargetModeType}, according to the
-     *  `blTargetEntityManagers` bean list
-     *
-     * @param targetModeType
-     * @return the {@link EntityManager}
-     */
-    EntityManager retrieveEntityManager(TargetModeType targetModeType);
-
-    /**
-     * Gathers all EntityManagers registered with the `blTargetEntityManagers` bean list
-     *
-     * @return a list of {@link EntityManager}s
-     */
-    List<EntityManager> retrieveAllEntityManagers();
 }

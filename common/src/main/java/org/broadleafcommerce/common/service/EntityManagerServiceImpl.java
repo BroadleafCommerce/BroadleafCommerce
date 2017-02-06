@@ -21,25 +21,20 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.TargetModeType;
+import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
+import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 
@@ -47,44 +42,53 @@ import javax.persistence.EntityManager;
  * @author Chris Kittrell (ckittrell)
  */
 @Service("blEntityManagerService")
-public class EntityManagerServiceImpl implements EntityManagerService, ApplicationContextAware {
+public class EntityManagerServiceImpl implements EntityManagerService {
 
     protected static final Log LOG = LogFactory.getLog(EntityManagerServiceImpl.class);
 
     @Resource(name = "blTargetEntityManagers")
-    protected Map<String, String> targetEntityManagers = new HashMap<>();
+    protected Map<String, EntityManager> targetEntityManagers = new HashMap<>();
 
     @Resource(name = "blTargetTransactionManagers")
-    protected Map<String, String> targetTransactionManagers = new HashMap<>();
+    protected Map<String, PlatformTransactionManager> targetTransactionManagers = new HashMap<>();
+
+    @Resource(name="blStreamingTransactionCapableUtil")
+    protected StreamingTransactionCapableUtil transUtil;
 
     private final Object ENTITY_MANAGER_CACHE_LOCK = new Object();
     private final Map<String, String> ENTITY_MANAGER_CACHE = new ConcurrentHashMap<>();
 
-    protected ApplicationContext applicationContext;
-
-    @PostConstruct
-    public void init() {
-        initializeEntityManagerCache();
-    }
-
-    @Override
-    public void initializeEntityManagerCache() {
+    @EventListener
+    public void init(ContextRefreshedEvent event) {
         synchronized(ENTITY_MANAGER_CACHE_LOCK) {
             if (ENTITY_MANAGER_CACHE.isEmpty()) {
-                for (String targetMode : targetEntityManagers.keySet()) {
-                    String entityManagerBeanName = targetEntityManagers.get(targetMode);
-                    EntityManager em = retrieveEntityManager(entityManagerBeanName);
+                initializeEntityManagerCache();
+            }
+        }
+    }
 
-                    SessionFactory sessionFactory = em.unwrap(Session.class).getSessionFactory();
-                    for (Object item : sessionFactory.getAllClassMetadata().values()) {
-                        ClassMetadata metadata = (ClassMetadata) item;
-                        Class<?> mappedClass = metadata.getMappedClass();
-
-                        if (!ENTITY_MANAGER_CACHE.containsKey(mappedClass.getName())) {
-                            ENTITY_MANAGER_CACHE.put(mappedClass.getName(), targetMode);
-                        }
-                    }
+    protected void initializeEntityManagerCache() {
+        for (final String targetMode : targetTransactionManagers.keySet()) {
+            PlatformTransactionManager txManager = targetTransactionManagers.get(targetMode);
+            transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+                @Override
+                public void execute() throws Throwable {
+                    populateEntityManagerCache(targetMode);
                 }
+            }, RuntimeException.class, txManager);
+        }
+    }
+
+    protected void populateEntityManagerCache(String targetMode) {
+        EntityManager em = targetEntityManagers.get(targetMode);
+
+        SessionFactory sessionFactory = em.unwrap(Session.class).getSessionFactory();
+        for (Object item : sessionFactory.getAllClassMetadata().values()) {
+            ClassMetadata metadata = (ClassMetadata) item;
+            Class<?> mappedClass = metadata.getMappedClass();
+
+            if (!ENTITY_MANAGER_CACHE.containsKey(mappedClass.getName())) {
+                ENTITY_MANAGER_CACHE.put(mappedClass.getName(), targetMode);
             }
         }
     }
@@ -106,15 +110,13 @@ public class EntityManagerServiceImpl implements EntityManagerService, Applicati
     @Override
     public EntityManager identifyEntityManagerForClass(String className) throws ServiceException {
         TargetModeType targetModeType = identifyTargetModeTypeForClass(className);
-        String entityManagerBeanName = targetEntityManagers.get(targetModeType.getType());
-        return retrieveEntityManager(entityManagerBeanName);
+        return targetEntityManagers.get(targetModeType.getType());
     }
 
     @Override
     public PlatformTransactionManager identifyTransactionManagerForClass(String className) throws ServiceException {
         TargetModeType targetModeType = identifyTargetModeTypeForClass(className);
-        String transactionManagerBeanName = targetTransactionManagers.get(targetModeType.getType());
-        return retrieveTransactionManager(transactionManagerBeanName);
+        return targetTransactionManagers.get(targetModeType.getType());
     }
 
     @Override
@@ -130,45 +132,5 @@ public class EntityManagerServiceImpl implements EntityManagerService, Applicati
         }
 
         return targetModeType;
-    }
-
-    @Override
-    public EntityManager retrieveEntityManager(String entityManagerBeanName) {
-        EntityManager bean = (EntityManager) applicationContext.getBean(entityManagerBeanName);
-        return bean.getEntityManagerFactory().createEntityManager();
-    }
-
-    protected PlatformTransactionManager retrieveTransactionManager(String transactionManagerBeanName) {
-        return (PlatformTransactionManager) applicationContext.getBean(transactionManagerBeanName);
-    }
-
-    @Override
-    public EntityManager retrieveEntityManager(TargetModeType targetModeType) {
-        String entityManagerBeanName = targetEntityManagers.get(targetModeType.getType());
-        return retrieveEntityManager(entityManagerBeanName);
-    }
-
-    @Override
-    public List<EntityManager> retrieveAllEntityManagers() {
-        List<EntityManager> entityManagers = new ArrayList<>();
-
-        Set<String> uniqueBeanNames = gatherUniqueEntityManagerBeanNames();
-        for (String uniqueBeanName : uniqueBeanNames) {
-            EntityManager entityManager = retrieveEntityManager(uniqueBeanName);
-            entityManagers.add(entityManager);
-        }
-
-        return entityManagers;
-    }
-
-    protected Set<String> gatherUniqueEntityManagerBeanNames() {
-        Collection<String> beanNames = targetEntityManagers.values();
-
-        return new HashSet<String>(beanNames);
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 }
