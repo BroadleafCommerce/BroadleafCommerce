@@ -87,10 +87,10 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     protected List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters = new ArrayList<CustomPersistenceHandlerFilter>();
 
     @Resource(name="blTargetEntityManagers")
-    protected Map<String, String> targetEntityManagers = new HashMap<String, String>();
+    protected Map<String, EntityManager> targetEntityManagers = new HashMap<>();
 
     @Resource(name="blTargetEJB3ConfigurationDaos")
-    protected Map<String, String> targetEJB3ConfigurationDaos = new HashMap<String, String>();
+    protected Map<String, EJB3ConfigurationDao> targetEJB3ConfigurationDaos = new HashMap<>();
 
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
@@ -715,12 +715,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     @Override
-    public Map<String, String> getTargetEntityManagers() {
+    public Map<String, EntityManager> getTargetEntityManagers() {
         return targetEntityManagers;
     }
 
     @Override
-    public void setTargetEntityManagers(Map<String, String> targetEntityManagers) {
+    public void setTargetEntityManagers(Map<String, EntityManager> targetEntityManagers) {
         this.targetEntityManagers = targetEntityManagers;
     }
 
@@ -741,8 +741,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     protected EntityManager getTargetEntityManager(TargetModeType targetMode) {
-        String targetManagerRef = targetEntityManagers.get(targetMode.getType());
-        EntityManager targetManager = (EntityManager) applicationContext.getBean(targetManagerRef);
+        EntityManager targetManager = targetEntityManagers.get(targetMode.getType());
         if (targetManager == null) {
             throw new RuntimeException("Unable to find a target entity manager registered with the key: " + targetMode + ". Did you add an entity manager with this key to the targetEntityManagers property?");
         }
@@ -750,8 +749,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     protected EJB3ConfigurationDao getTargetEJB3ConfigurationDao(TargetModeType targetMode) {
-        String targetEJB3ConfigurationDaoRef = targetEJB3ConfigurationDaos.get(targetMode.getType());
-        EJB3ConfigurationDao ejb3ConfigurationDao = (EJB3ConfigurationDao) applicationContext.getBean(targetEJB3ConfigurationDaoRef);
+        EJB3ConfigurationDao ejb3ConfigurationDao = targetEJB3ConfigurationDaos.get(targetMode.getType());
         if (ejb3ConfigurationDao == null) {
             throw new RuntimeException("Unable to find a target ejb3ConfigurationDao registered with the key: " + targetMode + ". Did you add an ejb3ConfigurationDao with this key to the blTargetEJB3ConfigurationDaos bean?");
         }

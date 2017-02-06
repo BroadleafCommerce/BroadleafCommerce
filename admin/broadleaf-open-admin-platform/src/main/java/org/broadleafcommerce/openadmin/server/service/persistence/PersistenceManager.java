@@ -32,6 +32,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 public interface PersistenceManager {
 
     public abstract Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass);
@@ -56,9 +58,9 @@ public interface PersistenceManager {
 
     public abstract void setDynamicEntityDao(DynamicEntityDao dynamicEntityDao);
 
-    public abstract Map<String, String> getTargetEntityManagers();
+    public abstract Map<String, EntityManager> getTargetEntityManagers();
 
-    public abstract void setTargetEntityManagers(Map<String, String> targetEntityManagers);
+    public abstract void setTargetEntityManagers(Map<String, EntityManager> targetEntityManagers);
 
     public abstract TargetModeType getTargetMode();
 

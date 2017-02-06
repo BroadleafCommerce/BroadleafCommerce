@@ -44,9 +44,9 @@
     <bean id="blTargetEntityManagers" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
         <property name="sourceMap">
             <map>
-                <entry key="sandbox" value="prodEntityManager"/>
-                <entry key="stage" value="prodEntityManager"/>
-                <entry key="production" value="prodEntityManager"/>
+                <entry key="sandbox" value-ref="prodEntityManager"/>
+                <entry key="stage" value-ref="prodEntityManager"/>
+                <entry key="production" value-ref="prodEntityManager"/>
             </map>
         </property>
     </bean>
@@ -67,9 +67,9 @@
     <bean id="blTargetTransactionManagers" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
         <property name="sourceMap">
             <map>
-                <entry key="sandbox" value="blTransactionManager"/>
-                <entry key="stage" value="blTransactionManager"/>
-                <entry key="production" value="blTransactionManager"/>
+                <entry key="sandbox" value-ref="blTransactionManager"/>
+                <entry key="stage" value-ref="blTransactionManager"/>
+                <entry key="production" value-ref="blTransactionManager"/>
             </map>
         </property>
     </bean>
@@ -83,9 +83,9 @@
     <bean id="blTargetEJB3ConfigurationDaos" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
         <property name="sourceMap">
             <map>
-                <entry key="sandbox" value="blEJB3ConfigurationDao"/>
-                <entry key="stage" value="blEJB3ConfigurationDao"/>
-                <entry key="production" value="blEJB3ConfigurationDao"/>
+                <entry key="sandbox" value-ref="blEJB3ConfigurationDao"/>
+                <entry key="stage" value-ref="blEJB3ConfigurationDao"/>
+                <entry key="production" value-ref="blEJB3ConfigurationDao"/>
             </map>
         </property>
     </bean>
