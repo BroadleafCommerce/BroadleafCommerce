@@ -21,13 +21,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.service.EntityManagerService;
 import org.broadleafcommerce.common.util.BLCNumberUtils;
-import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
+import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.metadata.ClassMetadata;
@@ -35,9 +34,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -54,8 +56,14 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
 
     private static final Log LOG = LogFactory.getLog(SequenceGeneratorCorruptionDetection.class);
 
-    @Resource(name="blEntityManagerService")
-    protected EntityManagerService emService;
+    @Resource(name = "blTargetEntityManagers")
+    protected Map<String, EntityManager> targetEntityManagers = new HashMap<>();
+
+    @Resource(name = "blTargetTransactionManagers")
+    protected Map<String, PlatformTransactionManager> targetTransactionManagers = new HashMap<>();
+
+    @Resource(name="blStreamingTransactionCapableUtil")
+    protected StreamingTransactionCapableUtil transUtil;
 
     @Value("${detect.sequence.generator.inconsistencies}")
     protected boolean detectSequenceGeneratorInconsistencies = true;
@@ -69,20 +77,17 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (detectSequenceGeneratorInconsistencies) {
-            List<EntityManager> entityManagers = emService.retrieveAllEntityManagers();
-            for (EntityManager em : entityManagers) {
-                Session hibernateSession = em.unwrap(Session.class);
-                Transaction tx = TransactionUtils.createTransaction(hibernateSession);
+            for (final String targetMode : targetTransactionManagers.keySet()) {
+                PlatformTransactionManager txManager = targetTransactionManagers.get(targetMode);
+                transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+                    @Override
+                    public void execute() throws Throwable {
+                        EntityManager em = targetEntityManagers.get(targetMode);
+                        Session hibernateSession = em.unwrap(Session.class);
 
-                try {
-                    patchSequenceGeneratorInconsistencies(em, hibernateSession);
-                } finally {
-                    TransactionUtils.finalizeTransaction(tx, false);
-
-                    if (hibernateSession != null) {
-                        hibernateSession.close();
+                        patchSequenceGeneratorInconsistencies(em, hibernateSession);
                     }
-                }
+                }, RuntimeException.class, txManager);
             }
         }
     }
