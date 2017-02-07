@@ -201,6 +201,48 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     public Sku getDefaultSku();
 
     /**
+     * Gets the meta data title of the product
+     *
+     * @return
+     */
+    String getMetaTitle();
+
+    /**
+     * Sets the meta data title of the product
+     *
+     * @param metaTitle
+     */
+    void setMetaTitle(String metaTitle);
+
+    /**
+     * Gets the meta data description of the product
+     *
+     * @return
+     */
+    String getMetaDescription();
+
+    /**
+     * Sets the meta data description of the product
+     *
+     * @param metaDescription
+     */
+    void setMetaDescription(String metaDescription);
+
+    /**
+     * Gets the canonical URL of the product
+     *
+     * @return
+     */
+    String getCanonicalUrl();
+
+    /**
+     * Sets the canonical URL of the product
+     *
+     * @param canonicalUrl
+     */
+    void setCanonicalUrl(String canonicalUrl);
+
+    /**
      * Sets the default Sku for this Product
      * <br />
      * <br />
