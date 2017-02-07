@@ -30,10 +30,8 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
-import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
-import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
@@ -81,7 +79,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -385,23 +382,19 @@ public class OrderServiceImpl implements OrderService {
     @Transactional("blTransactionManager")
     public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferException {
         preValidateCartOperation(order);
-        Set<Offer> addedOffers = offerService.getUniqueOffersFromOrder(order);
         if (extensionManager != null) {
             extensionManager.getProxy().addOfferCodes(order, offerCodes, priceOrder);
         }
         if (offerCodes != null && !offerCodes.isEmpty()) {
             for (OfferCode offerCode : offerCodes) {
                 
-                if (order.getAddedOfferCodes().contains(offerCode) || addedOffers.contains(offerCode.getOffer())) {
-                    throw new OfferAlreadyAddedException("The offer has already been added.");
-                } else if (!offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode)) {
+                if (!offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode)) {
                     throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
                 } else if (!offerCode.isActive() || !offerCode.getOffer().isActive()) {
                     throw new OfferExpiredException("The offer has expired.");
+                } else if (!order.getAddedOfferCodes().contains(offerCode)){
+                    order.getAddedOfferCodes().add(offerCode);
                 }
-                
-                order.getAddedOfferCodes().add(offerCode);
-                
             }
             order = save(order, priceOrder);
         }
@@ -422,7 +415,7 @@ public class OrderServiceImpl implements OrderService {
     public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException {
          order.getAddedOfferCodes().clear();
          order = save(order, priceOrder);
-         return order;  
+         return order;
     }
 
     @Override
