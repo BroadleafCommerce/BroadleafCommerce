@@ -31,7 +31,6 @@ import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
-import org.broadleafcommerce.common.extensibility.jpa.copy.AbstractClassTransformer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -62,7 +61,7 @@ import javax.persistence.QueryHint;
  *
  * @author Jeff Fischer
  */
-public class QueryConfigurationClassTransformer extends AbstractClassTransformer implements BroadleafClassTransformer {
+public class QueryConfigurationClassTransformer implements BroadleafClassTransformer {
 
     private static boolean isExecuted = false;
     protected List<NamedQuery> namedQueries;
