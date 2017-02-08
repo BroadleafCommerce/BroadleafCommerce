@@ -45,6 +45,7 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
     public static final FieldEntity ORDER = new FieldEntity("ORDER", "Order");
     public static final FieldEntity ORDERITEM = new FieldEntity("ORDER_ITEM", "Order Item");
     public static final FieldEntity OFFER = new FieldEntity("OFFER", "Offer");
+    public static final FieldEntity FULFILLMENT_ORDER = new FieldEntity("FULFILLMENT_ORDER", "Fulfillment Order");
 
     public static FieldEntity getInstance(final String type) {
         return TYPES.get(type);
