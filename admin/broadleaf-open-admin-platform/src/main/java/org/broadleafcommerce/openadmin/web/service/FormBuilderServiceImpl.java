@@ -132,7 +132,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     private static final Log LOG = LogFactory.getLog(FormBuilderServiceImpl.class);
 
     public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
-    public static final String ASSOCIATED_FIELDS = "associated_fields";
 
     @Resource(name = "blAdminEntityService")
     protected AdminEntityService adminEntityService;
@@ -1016,8 +1015,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (associatedField != null) {
                 associatedField.setShouldRender(false);
                 f.setAssociatedFieldName(associatedField.getName());
-                f.setFieldComponentRenderer(ASSOCIATED_FIELDS);
-                f.setSkipInitialIdProcessing(true);
+            } else {
+                f.setAssociatedFieldName(null);
             }
         }
     }

@@ -4,7 +4,7 @@
 <!-- *** IMPORTANT *** -->
 </comment>
 <th:block th:if="${groupItem.isField()}" th:with="field=${groupItem.field}">
-    <div th:if="${field.name} and ${field.shouldRender}"
+    <div th:if="${field.name} and ${field.shouldRender} and ${#strings.isEmpty(field.associatedFieldName)}"
          th:class="'field-group' + ${(field.isDirty ? ' dirty' : '')} + ${(field.disabled ? ' disabled' : '')} + ${(#fields.hasErrors('fields[__${field.name}__].value') ? ' has-error' : '')}"
          blc_admin:component_id="${field}"
          th:classappend="${!field.isVisible}? 'hidden'">
@@ -17,7 +17,25 @@
         </th:block>
 
         <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}"></span>
+    </div>
 
+    <div th:if="${field.name} and ${field.shouldRender} and not ${#strings.isEmpty(field.associatedFieldName)}"
+         class="row associated-fields">
+        <div th:if="${field.name}"
+             th:class="'col6 field-group' + ${(field.isDirty ? ' dirty' : '')} + ${(field.disabled ? ' disabled' : '')} + ${(#fields.hasErrors('fields[__${field.name}__].value') ? ' has-error' : '')}"
+             blc_admin:component_id="${field}"
+             th:classappend="${!field.isVisible}? 'hidden'">
+            <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldType)}"></div>
+        </div>
+        <th:block th:with="associatedFieldName=${field.associatedFieldName}">
+            <div th:class="'col6 field-group' + ${(field.isDirty ? ' dirty' : '')} + ${(field.disabled ? ' disabled' : '')} + ${(#fields.hasErrors('fields[__${field.name}__].value') ? ' has-error' : '')}"
+                 th:classappend="${!field.isVisible}? 'hidden'"
+                 blc_admin:component_id="${field}"
+                 th:unless="*{fields['__${associatedFieldName}__']} == null"
+                 th:with="field=*{fields['__${associatedFieldName}__']}">
+                <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldType)}"></div>
+            </div>
+        </th:block>
     </div>
 </th:block>
 

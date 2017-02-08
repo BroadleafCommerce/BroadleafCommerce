@@ -71,7 +71,6 @@ public class Field {
     protected Boolean allowNoValueEnumOption = false;
     protected Boolean canLinkToExternalEntity = true;
     protected String associatedFieldName;
-    protected Boolean skipInitialIdProcessing = false;
     protected Boolean shouldRender = true;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
 
@@ -572,14 +571,6 @@ public class Field {
 
     public void setShouldRender(Boolean shouldRender) {
         this.shouldRender = shouldRender;
-    }
-
-    public Boolean getSkipInitialIdProcessing() {
-        return skipInitialIdProcessing;
-    }
-
-    public void setSkipInitialIdProcessing(Boolean skipInitialIdProcessing) {
-        this.skipInitialIdProcessing = skipInitialIdProcessing;
     }
 
     /**
