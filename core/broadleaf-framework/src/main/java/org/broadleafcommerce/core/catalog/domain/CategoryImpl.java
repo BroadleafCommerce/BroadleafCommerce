@@ -257,6 +257,30 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected BigDecimal rootDisplayOrder;
 
+    @Column(name = "META_TITLE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_MetaTitle",
+            group = GroupName.Miscellaneous, order = 3000,
+            tooltip = "CategoryImpl_Category_MetaTitle_Tooltip")
+    protected String metaTitle;
+
+    @Column(name = "META_DESC")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_MetaDescription",
+            group = GroupName.Miscellaneous, order = 4000,
+            tooltip = "CategoryImpl_Category_MetaDescription_Tooltip")
+    protected String metaDescription;
+
+    @Column(name = "PRODUCT_TITLE_PATTERN_OVERRIDE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_ProductTitlePatternOverride",
+            group = GroupName.Miscellaneous, order = 5000,
+            tooltip = "CategoryImpl_Category_ProductTitlePatternOverride_Tooltip")
+    protected String productTitlePatternOverride;
+
+    @Column(name = "PRODUCT_DESC_PATTERN_OVERRIDE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_ProductDescriptionPatternOverride",
+            group = GroupName.Miscellaneous, order = 6000,
+            tooltip = "CategoryImpl_Category_ProductDescriptionPatternOverride_Tooltip")
+    protected String productDescriptionPatternOverride;
+
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
@@ -608,6 +632,46 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Override
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
+    }
+
+    @Override
+    public String getMetaTitle() {
+        return metaTitle;
+    }
+
+    @Override
+    public void setMetaTitle(String metaTitle) {
+        this.metaTitle = metaTitle;
+    }
+
+    @Override
+    public String getMetaDescription() {
+        return metaDescription;
+    }
+
+    @Override
+    public void setMetaDescription(String metaDescription) {
+        this.metaDescription = metaDescription;
+    }
+
+    @Override
+    public String getProductTitlePatternOverride() {
+        return productTitlePatternOverride;
+    }
+
+    @Override
+    public void setProductTitlePatternOverride(String productTitlePatternOverride) {
+        this.productTitlePatternOverride = productTitlePatternOverride;
+    }
+
+    @Override
+    public String getProductDescriptionPatternOverride() {
+        return productDescriptionPatternOverride;
+    }
+
+    @Override
+    public void setProductDescriptionPatternOverride(String productDescriptionPatternOverride) {
+        this.productDescriptionPatternOverride = productDescriptionPatternOverride;
     }
 
     @Override
