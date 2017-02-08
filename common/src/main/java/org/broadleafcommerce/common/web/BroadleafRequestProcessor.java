@@ -165,6 +165,11 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             brc.setBroadleafCurrency(currencyDto.getCurrencyToUse());
             brc.setRequestedBroadleafCurrency(currencyDto.getRequestedCurrency());
         }
+        //We do this to prevent lazy init exceptions when this context/sandbox combination
+        // is used in a different session that it was initiated in. see QA#2576
+        if(currentSandbox != null && currentSandbox.getChildSandBoxes() != null) {
+            currentSandbox.getChildSandBoxes().size();
+        }
 
         brc.setSandBox(currentSandbox);
         brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
