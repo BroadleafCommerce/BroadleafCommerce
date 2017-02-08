@@ -192,7 +192,10 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         }
         //We do this to prevent lazy init exceptions when this context/sandbox combination
         // is used in a different session that it was initiated in. see QA#2576
-        currentSandbox.getChildSandBoxes().size();
+        if(currentSandbox != null && currentSandbox.getChildSandBoxes() != null) {
+            currentSandbox.getChildSandBoxes().size();
+        }
+
         brc.setSandBox(currentSandbox);
         brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
 

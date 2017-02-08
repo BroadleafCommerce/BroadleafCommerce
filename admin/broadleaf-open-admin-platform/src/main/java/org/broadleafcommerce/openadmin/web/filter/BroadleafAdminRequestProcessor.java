@@ -365,7 +365,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             }
             //We do this to prevent lazy init exceptions when this context/sandbox combination
             // is used in a different session that it was initiated in. see QA#2576
-            sandBox.getChildSandBoxes().size();
+            if(sandBox != null && sandBox.getChildSandBoxes() != null) {
+                sandBox.getChildSandBoxes().size();
+            }
             brc.setSandBox(sandBox);
             brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
             brc.getAdditionalProperties().put("adminUser", adminUser);
