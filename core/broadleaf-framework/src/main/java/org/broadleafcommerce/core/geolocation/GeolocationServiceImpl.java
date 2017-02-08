@@ -21,13 +21,14 @@ import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service("blGeolocationService")
 public class GeolocationServiceImpl implements GeolocationService {
 
-    @Autowired
-    protected Map<String, GeolocationAPI> geolocationMap;
+    @Autowired(required = false)
+    protected Map<String, GeolocationAPI> geolocationMap = new HashMap<>();
 
     @Override
     public GeolocationDTO getLocationData(String ipAddress) {
