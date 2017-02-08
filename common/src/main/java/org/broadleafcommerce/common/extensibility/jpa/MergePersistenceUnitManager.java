@@ -46,6 +46,10 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.management.ObjectName;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
 
@@ -82,6 +86,9 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     @Autowired(required = false)
     @Qualifier("blAutoDDLStatusExporter")
     protected MBeanExporter mBeanExporter;
+
+    @Resource
+    protected List<QueryConfiguration> queryConfigurations;
 
     @Resource
     protected Environment environment;
@@ -145,22 +152,42 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 if (pui.getProperties().containsKey(AvailableSettings.USE_CLASS_ENHANCER) && "true".equalsIgnoreCase(pui.getProperties().getProperty(AvailableSettings.USE_CLASS_ENHANCER))) {
                     pui.addTransformer(new InterceptFieldClassFileTransformer(pui.getManagedClassNames()));
                 }
+
                 for (BroadleafClassTransformer transformer : classTransformers) {
                     try {
                         if (!(transformer instanceof NullClassTransformer) && pui.getPersistenceUnitName().equals("blPU")) {
                             pui.addTransformer(transformer);
                         }
                     } catch (Exception e) {
-                        Exception refined = ExceptionHelper.refineException(IllegalStateException.class, RuntimeException.class, e);
-                        if (refined instanceof IllegalStateException) {
-                            LOG.warn("A BroadleafClassTransformer is configured for this persistence unit, but Spring " +
-                                    "reported a problem (likely that a LoadTimeWeaver is not registered). As a result, " +
-                                    "the Broadleaf Commerce ClassTransformer ("+transformer.getClass().getName()+") is " +
-                                    "not being registered with the persistence unit.");
-                            weaverRegistered = false;
-                        } else {
-                            throw refined;
+                        weaverRegistered = handleClassTransformerRegistrationProblem(transformer, e);
+                    }
+                }
+            }
+
+            //Do this last in case any of the query config classes happens to cause an entity class to be loaded - they will
+            // still be transformed by the previous registered transformers
+            for (PersistenceUnitInfo pui : mergedPus.values()) {
+                //Add annotated named query support from QueryConfiguration beans
+                List<NamedQuery> namedQueries = new ArrayList<NamedQuery>();
+                List<NamedNativeQuery> nativeQueries = new ArrayList<NamedNativeQuery>();
+                for (QueryConfiguration config : queryConfigurations) {
+                    if (pui.getPersistenceUnitName().equals(config.getPersistenceUnit())) {
+                        NamedQueries annotation = config.getClass().getAnnotation(NamedQueries.class);
+                        if (annotation != null) {
+                            namedQueries.addAll(Arrays.asList(annotation.value()));
                         }
+                        NamedNativeQueries annotation2 = config.getClass().getAnnotation(NamedNativeQueries.class);
+                        if (annotation2 != null) {
+                            nativeQueries.addAll(Arrays.asList(annotation2.value()));
+                        }
+                    }
+                }
+                if (!namedQueries.isEmpty() || !nativeQueries.isEmpty()) {
+                    QueryConfigurationClassTransformer transformer = new QueryConfigurationClassTransformer(namedQueries, nativeQueries, pui.getManagedClassNames());
+                    try {
+                        pui.addTransformer(transformer);
+                    } catch (Exception e) {
+                        weaverRegistered = handleClassTransformerRegistrationProblem(transformer, e);
                     }
                 }
             }
@@ -231,7 +258,20 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             throw new RuntimeException(e);
         }
     }
-    
+
+    protected boolean handleClassTransformerRegistrationProblem(BroadleafClassTransformer transformer, Exception e) throws Exception {
+        Exception refined = ExceptionHelper.refineException(IllegalStateException.class, RuntimeException.class, e);
+        if (refined instanceof IllegalStateException) {
+            LOG.warn("A BroadleafClassTransformer is configured for this persistence unit, but Spring " +
+                    "reported a problem (likely that a LoadTimeWeaver is not registered). As a result, " +
+                    "the Broadleaf Commerce ClassTransformer ("+transformer.getClass().getName()+") is " +
+                    "not being registered with the persistence unit.");
+        } else {
+            throw refined;
+        }
+        return false;
+    }
+
     @Override
     protected void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo newPU) {
         super.postProcessPersistenceUnitInfo(newPU);
