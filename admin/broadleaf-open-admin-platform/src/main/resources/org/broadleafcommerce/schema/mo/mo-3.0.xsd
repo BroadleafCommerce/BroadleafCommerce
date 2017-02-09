@@ -232,6 +232,7 @@
             <xsd:enumeration value="defaultValue"/>
             <xsd:enumeration value="fieldComponentRenderer"/>
             <xsd:enumeration value="canLinkToExternalEntity"/>
+            <xsd:enumeration value="associatedFieldName"/>
         </xsd:restriction>
     </xsd:simpleType>
 

@@ -398,4 +398,13 @@ public @interface AdminPresentation {
      * @return the defaultValue set for the field.
      */
     String defaultValue() default "";
+
+    /**
+     * <p>Optional - identifies another field on this entity which is associated with this one.</p>
+     *
+     * <p>The associated field will be rendered next to this field in the admin interface.</p>
+     *
+     * @return the associatedFieldName set for the field.
+     */
+    String associatedFieldName() default "";
 }

@@ -405,6 +405,15 @@ fieldset:not(.untitledGroup) {
     content: ' *';
     color: #D20A33;
 }
+.modal-body .row .col6:first-child {
+    padding-left: 0;
+}
+.modal-body .row .col6:last-child {
+    padding-right: 0;
+}
+.associated-fields .field-group {
+    margin-bottom: 0;
+}
 /****************************************
  ADMIN RADIO BUTTON STYLES
 ****************************************/
