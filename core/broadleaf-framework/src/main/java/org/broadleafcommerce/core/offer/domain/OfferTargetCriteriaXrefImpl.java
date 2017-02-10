@@ -17,6 +17,10 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -29,8 +33,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Polymorphism;
-import org.hibernate.annotations.PolymorphismType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -149,5 +151,45 @@ public class OfferTargetCriteriaXrefImpl implements OfferTargetCriteriaXref, Qua
         if (offerItemCriteria == null) {
             offerItemCriteria = new OfferItemCriteriaImpl();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .append(offer)
+                .append(offerItemCriteria)
+                .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o != null && getClass().isAssignableFrom(o.getClass())) {
+            OfferTargetCriteriaXrefImpl that = (OfferTargetCriteriaXrefImpl) o;
+            return new EqualsBuilder()
+                    .append(this.id, that.id)
+                    .append(this.offer, that.offer)
+                    .append(this.offerItemCriteria, that.offerItemCriteria)
+                    .build();
+        }
+
+        return false;
+    }
+
+    @Override
+    public <G extends OfferTargetCriteriaXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+            throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        OfferTargetCriteriaXref cloned = createResponse.getClone();
+        if (offer != null) {
+            cloned.setOffer(offer.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (offerItemCriteria != null) {
+            cloned.setOfferItemCriteria(offerItemCriteria.createOrRetrieveCopyInstance(context).getClone());
+        }
+        return createResponse;
     }
 }

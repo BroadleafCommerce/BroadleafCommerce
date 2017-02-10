@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -114,39 +116,25 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((orderItemMatchRule == null) ? 0 : orderItemMatchRule.hashCode());
-        result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
-        return result;
+        return new HashCodeBuilder()
+            .append(id)
+            .append(orderItemMatchRule)
+            .append(quantity)
+            .build();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!getClass().isAssignableFrom(obj.getClass()))
-            return false;
-        OfferItemCriteriaImpl other = (OfferItemCriteriaImpl) obj;
-        
-        if (id != null && other.id != null) {
-            return id.equals(other.id);
+    public boolean equals(Object o) {
+        if (o != null && getClass().isAssignableFrom(o.getClass())) {
+            OfferItemCriteriaImpl that = (OfferItemCriteriaImpl) o;
+            return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.orderItemMatchRule, that.orderItemMatchRule)
+                .append(this.quantity, that.quantity)
+                .build();
         }
-        
-        if (orderItemMatchRule == null) {
-            if (other.orderItemMatchRule != null)
-                return false;
-        } else if (!orderItemMatchRule.equals(other.orderItemMatchRule))
-            return false;
-        if (quantity == null) {
-            if (other.quantity != null)
-                return false;
-        } else if (!quantity.equals(other.quantity))
-            return false;
-        return true;
+
+        return false;
     }
 
     @Override
