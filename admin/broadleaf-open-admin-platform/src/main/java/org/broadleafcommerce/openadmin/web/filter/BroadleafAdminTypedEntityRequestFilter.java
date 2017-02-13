@@ -19,10 +19,12 @@ package org.broadleafcommerce.openadmin.web.filter;
 
 import org.apache.commons.collections4.iterators.IteratorEnumeration;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.TypedEntity;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
+import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
@@ -66,6 +68,9 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
+    
+    @Resource(name = "blGenericEntityService")
+    GenericEntityService genericEntityService;
 
     @Override
     public void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
@@ -90,6 +95,15 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
         if (typedEntitySection == null) {
             return false;
         }
+        
+        // Check if the item requested matches the item section
+        TypedEntity typedEntity = getTypedEntityFromServletPathId(servletPath, typedEntitySection.getCeilingEntity());
+        if(typedEntity != null && !typeMatchesAdminSection(typedEntity, sectionKey)) {
+            String redirectUrl = getTypeAdminSectionMismatchUrl(typedEntity, typedEntitySection.getCeilingEntity(), request.getRequestURI(), sectionKey);
+            response.sendRedirect(redirectUrl);
+            return true;
+        }
+        
 
         // Check if admin user has access to this section.
         if (!adminUserHasAccess(typedEntitySection)) {
@@ -153,6 +167,38 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
         // Forward the wrapper to the appropriate path
         wrapper.getRequestDispatcher(wrapper.getServletPath()).forward(wrapper, response);
+        return true;
+    }
+
+    private TypedEntity getTypedEntityFromServletPathId(String servletPath, String ceilingEntity) {
+        int idBegIndex = servletPath.indexOf("/", 1);
+        if (idBegIndex > 0) {
+            String id = servletPath.substring(idBegIndex + 1, servletPath.length()); 
+            if(StringUtils.isNumeric(id)) {
+                Object objectEntity = genericEntityService.readGenericEntity(ceilingEntity, Long.valueOf(id));
+                if (TypedEntity.class.isAssignableFrom(objectEntity.getClass())) {
+                    return (TypedEntity) objectEntity;
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getTypeAdminSectionMismatchUrl(TypedEntity typedEntity, String ceilingEntity, String uri, String sectionKey) {
+        int lastDotIndex = StringUtils.lastIndexOf(ceilingEntity, ".");
+        String ceilingEntityType = StringUtils.substring(ceilingEntity, lastDotIndex + 1).toLowerCase();
+        String entityType = typedEntity.getType().getType().toLowerCase();
+        if (StringUtils.equals(entityType, "standard") || StringUtils.equals(ceilingEntityType, entityType)) {
+            return StringUtils.replace(uri, sectionKey, "/" + ceilingEntityType);
+        }
+        return StringUtils.replace(uri, sectionKey, "/" + ceilingEntityType + ":" + entityType);
+    }
+
+    private boolean typeMatchesAdminSection(TypedEntity typedEntity, String sectionKey) {
+        String urlType = StringUtils.substring(sectionKey, sectionKey.indexOf(":") + 1);
+        if(!StringUtils.equalsIgnoreCase(typedEntity.getType().getType(), urlType)) {
+            return false;
+        }
         return true;
     }
 
