@@ -99,7 +99,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
         // Check if the item requested matches the item section
         TypedEntity typedEntity = getTypedEntityFromServletPathId(servletPath, typedEntitySection.getCeilingEntity());
         if(typedEntity != null && !typeMatchesAdminSection(typedEntity, sectionKey)) {
-            String redirectUrl = getTypeAdminSectionMistmatchUrl(typedEntity, typedEntitySection.getCeilingEntity(), request.getRequestURI(), sectionKey);
+            String redirectUrl = getTypeAdminSectionMismatchUrl(typedEntity, typedEntitySection.getCeilingEntity(), request.getRequestURI(), sectionKey);
             response.sendRedirect(redirectUrl);
             return true;
         }
@@ -184,7 +184,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
         return null;
     }
 
-    private String getTypeAdminSectionMistmatchUrl(TypedEntity typedEntity, String ceilingEntity, String uri, String sectionKey) {
+    private String getTypeAdminSectionMismatchUrl(TypedEntity typedEntity, String ceilingEntity, String uri, String sectionKey) {
         int lastDotIndex = StringUtils.lastIndexOf(ceilingEntity, ".");
         String ceilingEntityType = StringUtils.substring(ceilingEntity, lastDotIndex + 1).toLowerCase();
         String entityType = typedEntity.getType().getType().toLowerCase();
