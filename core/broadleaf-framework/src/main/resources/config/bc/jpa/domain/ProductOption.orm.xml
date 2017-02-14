@@ -24,5 +24,24 @@
     <named-query name="BC_READ_ALL_PRODUCT_OPTIONS" >
         <query>SELECT productOption FROM org.broadleafcommerce.core.catalog.domain.ProductOption productOption</query>
     </named-query>
+
+    <named-query name="BC_READ_SKU_IDS_FOR_VALUES" >
+        <query>
+            SELECT sov.sku.id FROM org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl sov
+            WHERE sov.sku.product.id IN (:productIds)
+            AND sov.productOptionValue.productOption.attributeName = :attributeName
+            AND sov.productOptionValue.attributeValue = :attributeValue
+        </query>
+    </named-query>
+
+    <named-query name="BC_READ_SKU_IDS_FOR_VALUES_LIMITED" >
+        <query>
+            SELECT sov.sku.id FROM org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl sov
+            WHERE sov.sku.product.id IN (:productIds)
+            AND sov.productOptionValue.productOption.attributeName = :attributeName
+            AND sov.productOptionValue.attributeValue = :attributeValue
+            AND sov.sku.id IN (:possibleSkuIds)
+        </query>
+    </named-query>
     
 </entity-mappings>

@@ -17,9 +17,12 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -31,6 +34,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.ejb.QueryHints;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
@@ -126,6 +130,24 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
         TypedQuery<Long> query = em.createQuery(criteria);
         return query.getSingleResult();
+    }
+
+    @Override
+    public List<Long> readSkuIdsForProductOptionValues(Long productId, String attributeName, String attributeValue, List<Long> possibleSkuIds) {
+        TypedQuery<Long> query = em.createNamedQuery(
+                CollectionUtils.isNotEmpty(possibleSkuIds) ? "BC_READ_SKU_IDS_FOR_VALUES_LIMITED" : "BC_READ_SKU_IDS_FOR_VALUES",
+                Long.class);
+
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+        query.setParameter("productIds", sandBoxHelper.mergeCloneIds(ProductImpl.class, productId));
+        query.setParameter("attributeName", attributeName);
+        query.setParameter("attributeValue", attributeValue);
+        if (CollectionUtils.isNotEmpty(possibleSkuIds)) {
+            query.setParameter("possibleSkuIds", possibleSkuIds);
+        }
+
+        return query.getResultList();
     }
 
 }
