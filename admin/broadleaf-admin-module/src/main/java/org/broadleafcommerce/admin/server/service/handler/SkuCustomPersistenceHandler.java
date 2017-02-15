@@ -98,6 +98,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     private static final Log LOG = LogFactory.getLog(SkuCustomPersistenceHandler.class);
 
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
+    public static String INVENTORY_ONLY_CRITERIA = "onlyInventoryProperties";
+
 
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
@@ -666,7 +668,10 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 return entity;
             }
 
-            associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
+            // Only modify product options if this isn't an update for inventory properties
+            if (persistencePackage.containsCriteria(INVENTORY_ONLY_CRITERIA) < 0) {
+                associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
+            }
 
             adminInstance = dynamicEntityDao.merge(adminInstance);
 
