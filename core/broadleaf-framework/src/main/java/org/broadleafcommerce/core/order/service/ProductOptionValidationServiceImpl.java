@@ -134,28 +134,6 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
 
     @Override
     public List<Long> findSkuIdsForProductOptionValues(Long productId, String attributeName, String attributeValue, List<Long> possibleSkuIds) {
-        if (CollectionUtils.isNotEmpty(possibleSkuIds)) {
-            List<Long> skuIds = new ArrayList<>();
-            int page = 0;
-            int pageSize = 1000;
-
-            while ((page * pageSize) < possibleSkuIds.size()) {
-                int startIndex = page*pageSize;
-                int endIndex = Math.min(page*pageSize + pageSize, possibleSkuIds.size());
-
-                List<Long> pagedSkuIds = productOptionDao.readSkuIdsForProductOptionValues(productId, attributeName, attributeValue, possibleSkuIds.subList(startIndex, endIndex));
-
-                if (CollectionUtils.isNotEmpty(pagedSkuIds)) {
-                    skuIds.addAll(pagedSkuIds);
-                }
-
-                page++;
-            }
-
-            return skuIds;
-        } else {
-            return productOptionDao.readSkuIdsForProductOptionValues(productId, attributeName, attributeValue, possibleSkuIds);
-        }
-
+        return productOptionDao.readSkuIdsForProductOptionValues(productId, attributeName, attributeValue, possibleSkuIds);
     }
 }

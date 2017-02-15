@@ -39,6 +39,7 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -47,11 +48,14 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 @Repository("blProductOptionDao")
 public class ProductOptionDaoImpl implements ProductOptionDao {
+
+    private static final int IN_CLAUSE_LIMIT = 999;
     
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -134,20 +138,57 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
     @Override
     public List<Long> readSkuIdsForProductOptionValues(Long productId, String attributeName, String attributeValue, List<Long> possibleSkuIds) {
-        TypedQuery<Long> query = em.createNamedQuery(
-                CollectionUtils.isNotEmpty(possibleSkuIds) ? "BC_READ_SKU_IDS_FOR_VALUES_LIMITED" : "BC_READ_SKU_IDS_FOR_VALUES",
-                Long.class);
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = cb.createQuery(Long.class);
+        Root<SkuProductOptionValueXrefImpl> root = criteria.from(SkuProductOptionValueXrefImpl.class);
+        criteria.select(root.get("sku").get("id").as(Long.class));
 
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-        query.setParameter("productIds", sandBoxHelper.mergeCloneIds(ProductImpl.class, productId));
-        query.setParameter("attributeName", attributeName);
-        query.setParameter("attributeValue", attributeValue);
-        if (CollectionUtils.isNotEmpty(possibleSkuIds)) {
-            query.setParameter("possibleSkuIds", possibleSkuIds);
+        List<Predicate> predicates = new ArrayList<>();
+
+        // restrict archived values
+        predicates.add(cb.notEqual(root.get("sku").get("archiveStatus").get("archived"), 'Y'));
+
+        // restrict to skus that match the product
+        predicates.add(root.get("sku").get("product").get("id").in(sandBoxHelper.mergeCloneIds(ProductImpl.class, productId)));
+
+        // restrict to skus that match the attributeName
+        predicates.add(cb.equal(root.get("productOptionValue").get("productOption").get("attributeName"), attributeName));
+
+        // restrict to skus that match the attributeValue
+        predicates.add(cb.equal(root.get("productOptionValue").get("attributeValue"), attributeValue));
+
+        // restrict to skus that have ids within the given list of skus ids
+        Predicate skuDomainPredicate = buildSkuDomainPredicate(cb, root.get("sku").get("id"), possibleSkuIds);
+        if (skuDomainPredicate != null) {
+            predicates.add(skuDomainPredicate);
         }
 
+        criteria.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
+
+        TypedQuery<Long> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Predicate buildSkuDomainPredicate(CriteriaBuilder cb, Path fieldName, List<Long> possibleSkuIds) {
+        int listSize = possibleSkuIds.size();
+        Predicate predicate = null;
+        for (int i = 0; i < listSize; i += IN_CLAUSE_LIMIT) {
+            List subList;
+            if (listSize > i + IN_CLAUSE_LIMIT) {
+                subList = possibleSkuIds.subList(i, (i + IN_CLAUSE_LIMIT));
+            } else {
+                subList = possibleSkuIds.subList(i, listSize);
+            }
+            if (predicate == null) {
+                predicate = fieldName.in(subList);
+            } else {
+                predicate = cb.or(predicate, fieldName.in(subList));
+            }
+        }
+        return predicate;
     }
 
 }
