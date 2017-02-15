@@ -33,11 +33,6 @@
     <!-- Override Spring's default ApplicationEventMultiCaster with one that is a little smarter about asynchronous -->
     <bean id="applicationEventMulticaster" class="org.broadleafcommerce.common.event.BroadleafApplicationEventMulticaster"/>
 
-    <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
-        <property name="xsrfProtectionEnabled" value="${exploitProtection.xsrfEnabled}" />
-        <property name="xssProtectionEnabled" value="${exploitProtection.xssEnabled}" />
-    </bean>
-
     <bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.NullMessageCreator">
         <constructor-arg ref="blMailSender"/>
     </bean>
