@@ -149,26 +149,21 @@
     <bean id="blSpringCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
         <property name="cacheManager" ref="blCacheManager"/>
     </bean>    
-
+    
+    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
+        <property name="useCodeAsDefaultMessage" value="${messages.useCodeAsDefaultMessage}" />
+        <property name="cacheSeconds" value="${messages.cacheSeconds}" />
+    </bean>
+    
+    <bean id="blMessageSourceBaseNames" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
     <!-- This mail sender will log the html content generated for the email to the console  -->
     <!-- To enable logging set log level in Log4j to INFO  -->
     <bean id="blLoggingMailSender" class="org.broadleafcommerce.common.email.service.LoggingMailSender" />
-
-    <bean id="blVelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
-      <property name="velocityProperties">
-         <value>
-            resource.loader=class
-            class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-            <!-- class.resource.loader.path=classpath:/config/velocity/templates/ -->
-            <!-- Note that jar specification for the .path configuration property conforms to the same rules for the java.net.JarUrlConnection class-->
-            <!-- jar.resource.loader.class =org.apache.velocity.runtime.resource.loader.JarResourceLoader
-            jar.resource.loader.path = jar:file:/broadleaf-profile.jar/emailTemplates
-            file.resource.loader.class=org.apache.velocity.runtime.resource.loader.FileResourceLoader
-            file.resource.loader.cache = false
-            file.resource.loader.path=${file.root}/WEB-INF/config/velocity/templates-->
-         </value>
-      </property>
-   </bean>
     
     <bean id="blEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo" />
     <bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />

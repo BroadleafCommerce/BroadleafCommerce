@@ -24,7 +24,6 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.openadmin.config.properties"/>
-    <context:component-scan base-package="org.broadleafcommerce.openadmin.server.dao"/>
     <context:component-scan base-package="org.broadleafcommerce.openadmin.server.service.artifact">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.server.service.artifact.upload.*"/>
     </context:component-scan>
@@ -53,100 +52,6 @@
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
         <property name="collectionRef" value="blMergedPersistenceXmlLocations-open-admin"/>
         <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
-    </bean>
-
-    <!--Additional listeners are added in the cms contentClient applicationContext -->
-    <bean id="blSandboxItemListeners" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
-        <property name="sourceList">
-            <list>
-            </list>
-        </property>
-    </bean>
-    
-    <!--<bean id="blSandBoxEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
-        <property name="jpaVendorAdapter" ref="blJpaVendorAdapter"/>
-        <property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
-        <property name="persistenceUnitName" value="blSandboxPU"/>
-    </bean>
-    
-    <bean id="blTransactionManagerSandBox" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="blSandBoxEntityManagerFactory" />
-    </bean>
-
-    <tx:advice id="blTxAdviceSandBox" transaction-manager="blTransactionManagerSandBox">
-        <tx:attributes>
-          <tx:method name="*" propagation="REQUIRED"/>
-        </tx:attributes>
-    </tx:advice>-->
-
-    <bean id="blSendAdminUsernameEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
-        <property name="fromAddress" value="${adminUserNameEmail.fromAddress}"/>
-        <property name="emailTemplate" value="${adminUserNameEmail.emailTemplate}"/>
-        <property name="subject" value="${adminUserNameEmail.subject}"/>
-    </bean>
-
-    <bean id="blSendAdminResetPasswordEmail" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
-        <property name="fromAddress" value="${adminResetPassword.fromAddress}"/>
-        <property name="emailTemplate" value="${adminResetPassword.emailTemplate}"/>
-        <property name="subject" value="${adminResetPassword.subject}"/>
-    </bean>
-
-    <bean id="blFieldMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
-        <property name="sourceList">
-            <list>
-                <ref bean="blBasicFieldMetadataProvider"/>
-                <ref bean="blCollectionFieldMetadataProvider"/>
-                <ref bean="blAdornedTargetCollectionFieldMetadataProvider"/>
-                <ref bean="blMapFieldMetadataProvider"/>
-                <ref bean="blMapFieldsFieldMetadataProvider"/>
-                <ref bean="blPasswordFieldMetadataProvider"/>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="blPersistenceProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
-        <property name="sourceList">
-            <list>
-                <ref bean="blBasicFieldPersistenceProvider"/>
-                <ref bean="blRuleFieldPersistenceProvider"/>                
-                <ref bean="blMapFieldPersistenceProvider"/>
-                <ref bean="blMoneyFieldPersistenceProvider"/>
-                <ref bean="blMediaFieldPersistenceProvider"/>
-            </list>
-        </property>
-    </bean>
-    
-    <!-- Some front-facing modules rely on admin-level security as well; ensure that the row level security providers
-        are included in the client-side portion of the admin -->
-    <bean id="blRowLevelSecurityProviders" class="org.springframework.beans.factory.config.ListFactoryBean" >
-        <property name="sourceList">
-            <list>
-            </list>
-        </property>
-    </bean>
-    
-    <!-- Required to be here for now instead of contentCreator because of some site-level services that depend on the presence
-        of AdminSecurityService -->
-    <bean id="blAdminPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
-        <constructor-arg value="${password.admin.encoder}"/>
-    </bean>
-
-    <bean id="blMessageSourceBaseNames" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
-        <property name="sourceList">
-            <list>
-                <value>classpath:/messages/GeneratedMessagesEntityCommon</value>
-                <value>classpath:/messages/GeneratedMessagesEntityFramework</value>
-                <value>classpath:/messages/GeneratedMessagesEntityOpenAdmin</value>
-                <value>classpath:/messages/GeneratedMessagesEntityProfile</value>
-                <value>classpath:/messages/OpenAdminMessages</value>
-                <value>classpath:/messages/OpenAdminJavascriptMessages</value>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
-        <property name="useCodeAsDefaultMessage" value="${messages.useCodeAsDefaultMessage}" />
-        <property name="cacheSeconds" value="${messages.cacheSeconds}" />
     </bean>
 
 </beans>

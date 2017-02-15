@@ -77,20 +77,6 @@
         <property name="targetRef" value="blMergedEntityContexts"/>
     </bean>
 
-    <bean id="blSandboxItemListeners-cms" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
-        <property name="sourceList">
-            <list>
-                <ref bean="blPageService"/>
-                <ref bean="blStructuredContentService"/>
-                <ref bean="blStaticAssetService"/>
-            </list>
-        </property>
-    </bean>
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blSandboxItemListeners-cms"/>
-        <property name="targetRef" value="blSandboxItemListeners"/>
-    </bean>
-
     <bean id="blContentRuleProcessors-cms" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
