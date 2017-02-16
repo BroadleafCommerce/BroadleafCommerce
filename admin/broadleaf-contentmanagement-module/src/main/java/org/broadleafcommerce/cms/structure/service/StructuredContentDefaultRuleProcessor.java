@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.rule.AbstractRuleProcessor;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -47,6 +48,7 @@ public class StructuredContentDefaultRuleProcessor extends AbstractRuleProcessor
      * @param vars - a map of objects used by the rule MVEL expressions
      * @return the result of the rule checks
      */
+    @Override
     public boolean checkForMatch(StructuredContentDTO sc, Map<String, Object> vars) {
         String ruleExpression = sc.getRuleExpression();
 
@@ -67,4 +69,16 @@ public class StructuredContentDefaultRuleProcessor extends AbstractRuleProcessor
             return true;
         }
     }
+    
+    @Override
+    @SuppressWarnings("serial")
+    public Map<String, String> getContextClassNames() {
+        return new HashMap<String, String>(){{
+            put("customer", "org.broadleafcommerce.profile.core.domain.Customer");
+            put("product", "org.broadleafcommerce.core.catalog.domain.Product");
+            put("time", "org.broadleafcommerce.common.TimeDTO");
+            put("request", "org.broadleafcommerce.common.RequestDTO");
+        }};
+    }
+    
 }
