@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 @Component("blCookieUtils")
 public class GenericCookieUtilsImpl implements CookieUtils {
 
+    private static final String COOKIE_INVALIDATION_PLACEHOLDER_VALUE = "CookieInvalidationPlaceholderValue";
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.web.CookieUtils#getCookieValue(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
@@ -74,9 +76,13 @@ public class GenericCookieUtilsImpl implements CookieUtils {
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.web.CookieUtils#invalidateCookie(javax.servlet.http.HttpServletResponse, java.lang.String)
+     *
+     * Note, this method uses a cookieValue of "CookieInvalidationPlaceholderValue" simply because the later call to
+     *  `ESAPI.httpUtilities().addHeader()` fails if the value is null or an empty String. Additionally, calls to
+     *  `ESAPI.httpUtilities().killCookie()` are ineffective.
      */
     public void invalidateCookie(HttpServletResponse response, String cookieName) {
-        setCookieValue(response, cookieName, "", "/", 0, false);
+        setCookieValue(response, cookieName, COOKIE_INVALIDATION_PLACEHOLDER_VALUE, "/", 0, false);
     }
 
 }
