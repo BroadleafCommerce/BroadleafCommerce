@@ -53,16 +53,6 @@
         </property>
     </bean>
 
-    <bean id="blTargetEntityManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="sandbox" value="prodEntityManager"/>
-                <entry key="stage" value="prodEntityManager"/>
-                <entry key="production" value="prodEntityManager"/>
-            </map>
-        </property>
-    </bean>
-
     <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
