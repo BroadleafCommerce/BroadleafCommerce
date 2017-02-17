@@ -45,7 +45,6 @@ import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
-import org.broadleafcommerce.openadmin.server.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.FieldNamePropertyValidator;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
@@ -131,8 +130,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     @Resource(name= "blDefaultFieldMetadataProvider")
     protected FieldMetadataProvider defaultFieldMetadataProvider;
 
-    @Resource(name="blAppConfigurationRemoteService")
-    protected AppConfigurationService appConfigurationRemoteService;
+    @Resource(name = "blAppConfigurationMap")
+    protected Map<String, String> propertyConfigurations = new HashMap<>();
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
@@ -1057,16 +1056,15 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     }
 
-    protected boolean setExcludedBasedOnShowIfProperty(FieldMetadata fieldMetadata) {
-        if(fieldMetadata != null && fieldMetadata.getShowIfProperty()!=null && !fieldMetadata.getShowIfProperty().equals("")
-                && appConfigurationRemoteService.getBooleanPropertyValue(fieldMetadata.getShowIfProperty())!=null
-                && !appConfigurationRemoteService.getBooleanPropertyValue(fieldMetadata.getShowIfProperty())
-                ) {
+    protected void setExcludedBasedOnShowIfProperty(FieldMetadata fieldMetadata) {
+        if (fieldMetadata != null
+            && StringUtils.isNotEmpty(fieldMetadata.getShowIfProperty())
+            && propertyConfigurations.get(fieldMetadata.getShowIfProperty()) != null
+            && !Boolean.valueOf(propertyConfigurations.get(fieldMetadata.getShowIfProperty()))) {
+            
             //do not include this in the display if it returns false.
             fieldMetadata.setExcluded(true);
-            return false;
         }
-        return true;
     }
 
     protected Boolean testPropertyRecursion(String prefix, List<Class<?>> parentClasses, String propertyName, Class<?> targetClass,

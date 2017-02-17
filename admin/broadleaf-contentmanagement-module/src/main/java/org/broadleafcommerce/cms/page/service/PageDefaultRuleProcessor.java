@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.rule.AbstractRuleProcessor;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -48,6 +49,7 @@ public class PageDefaultRuleProcessor extends AbstractRuleProcessor<PageDTO> {
      * @param vars - a map of objects used by the rule MVEL expressions
      * @return the result of the rule checks
      */
+    @Override
     public boolean checkForMatch(PageDTO page, Map<String, Object> vars) {
         String ruleExpression = page.getRuleExpression();
 
@@ -68,4 +70,14 @@ public class PageDefaultRuleProcessor extends AbstractRuleProcessor<PageDTO> {
             return true;
         }
     }
+    
+    @Override
+    @SuppressWarnings("serial")
+    public Map<String, String> getContextClassNames() {
+        return new HashMap<String, String>(){{
+            put("customer", "org.broadleafcommerce.profile.core.domain.Customer");
+            put("time", "org.broadleafcommerce.common.TimeDTO");
+            put("request", "org.broadleafcommerce.common.RequestDTO");
+        }};
+    }    
 }

@@ -28,6 +28,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 @Component("blGeolocationRequestProcessor")
@@ -35,6 +38,7 @@ public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProc
 
     public static final String FORWARD_HEADER = "X-FORWARDED-FOR";
     public static final String GEOLOCATON_ATTRIBUTE_NAME = "_blGeolocationAttribute";
+    protected static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
     @Resource(name="blGeolocationService")
     protected GeolocationService geolocationService;
@@ -51,6 +55,10 @@ public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProc
                     BLCRequestUtils.setSessionAttributeIfOk(request, GEOLOCATON_ATTRIBUTE_NAME, location);
                 }
                 BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(GEOLOCATON_ATTRIBUTE_NAME, location);
+
+                Map<String, Object> ruleMap = getRuleMapFromRequest(request);
+                ruleMap.put(GEOLOCATON_ATTRIBUTE_NAME, location);
+                request.setAttribute(BLC_RULE_MAP_PARAM, ruleMap, WebRequest.SCOPE_REQUEST);
             }
         }
     }
@@ -65,5 +73,13 @@ public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProc
             ipAddress = request.getRequest().getRemoteAddr();
         }
         return ipAddress;
+    }
+
+    protected Map<String,Object> getRuleMapFromRequest(WebRequest request) {
+        Map<String,Object> ruleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM, WebRequest.SCOPE_REQUEST);
+        if (ruleMap == null) {
+            ruleMap = new HashMap<>();
+        }
+        return ruleMap;
     }
 }
