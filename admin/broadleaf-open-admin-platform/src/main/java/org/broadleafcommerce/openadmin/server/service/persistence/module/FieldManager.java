@@ -18,12 +18,11 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.common.value.ValueAssignable;
@@ -37,7 +36,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -99,33 +98,8 @@ public class FieldManager {
                 field.setAccessible(true);
                 value = field.get(value);
 
-                if (value instanceof List) {
-
-                    String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
-                    String fullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
-                    try {
-                        value = PropertyUtils.getProperty(bean, fullFieldName);
-                    } catch (InvocationTargetException|NoSuchMethodException e) {
-                        if (fieldNamePrefix.isEmpty()) {
-                            fullFieldName =  fieldNamePart;
-                        } else {
-                            fullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
-                        }
-                        try {
-                            value = PropertyUtils.getProperty(bean, fullFieldName);
-                        } catch (InvocationTargetException|NoSuchMethodException n) {
-                            throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class (" + componentClass + ")");
-                        }
-                    }
-                }
-
-                if (value != null && mapKey != null) {
-                    value = ((Map) value).get(mapKey);
-                    // This handles gathering the first element of a list that came from a MultiValue Map
-                    // used for single-value CustomFields
-                    if (value instanceof List && !((List) value).isEmpty()) {
-                        value = ((List) value).get(0);
-                    }
+                if (mapKey != null) {
+                    value = handleMapFieldExtraction(bean, fieldName, componentClass, value, fieldNamePart, mapKey);
                 }
 
                 if (value != null) {
@@ -145,7 +119,7 @@ public class FieldManager {
         return value;
 
     }
-    
+
     public Object setFieldValue(Object bean, String fieldName, Object newValue) throws IllegalAccessException, InstantiationException {
         StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
@@ -169,36 +143,7 @@ public class FieldManager {
             field.setAccessible(true);
             if (j == count - 1) {
                 if (mapKey != null) {
-                    Map<String, Object> map;
-                    if (field.get(value) instanceof List) {
-
-                        String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
-                        String fullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1) + fieldNamePart.substring(1);
-                        try {
-                            map = (Map<String, Object>)PropertyUtils.getProperty(bean, fullFieldName);
-                        } catch (InvocationTargetException|NoSuchMethodException e) {
-                            fullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1) + fieldNamePart.substring(1);
-                            try {
-                                map = (Map<String, Object>) PropertyUtils.getProperty(bean, fullFieldName);
-                            } catch (InvocationTargetException|NoSuchMethodException n) {
-                                LOG.info("Unable to find a reference to (" + field.getType().getName() + ") in the EntityConfigurationManager. " +
-                                        "Using the type of this class.");
-                                throw new IllegalAccessException("Unable to save field (" + fieldNamePart + ") on the class (" + componentClass + ")");
-                            }
-                        }
-                    } else {
-                        map = (Map<String, Object>) field.get(value);
-                    }
-                    if (newValue == null) {
-                        Object currentValue = map.get(mapKey);
-                        if (currentValue != null && currentValue instanceof ValueAssignable) {
-                            ((ValueAssignable) currentValue).setValue(null);
-                        } else {
-                            map.remove(mapKey);
-                        }
-                    } else {
-                        map.put(mapKey, newValue);
-                    }
+                    handleMapFieldPopulation(bean, fieldName, newValue, componentClass, field, value, fieldNamePart, mapKey);
                 } else {
                     FieldModifierManager modifierManager = FieldModifierManager.getFieldModifierManager();
                     if (modifierManager != null) {
@@ -303,6 +248,103 @@ public class FieldManager {
             persistenceManager = PersistenceManagerFactory.getPersistenceManager(TargetModeType.SANDBOX);
         }
         return persistenceManager;
+    }
+
+    protected Object handleMapFieldExtraction(Object bean, String fieldName, Class<?> componentClass, Object value,
+                                              String fieldNamePart, String mapKey) throws IllegalAccessException, FieldNotAvailableException {
+        String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
+        String multiValueMapFullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+        String standardMapFullFieldName = null;
+        if (!StringUtils.isEmpty(fieldNamePrefix)) {
+            standardMapFullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+        }
+
+        if (value instanceof List) {
+            try {
+                value = PropertyUtils.getProperty(bean, multiValueMapFullFieldName);
+            } catch (InvocationTargetException | NoSuchMethodException e) {
+                if (!StringUtils.isEmpty(standardMapFullFieldName)) {
+                    try {
+                        value = PropertyUtils.getProperty(bean, standardMapFullFieldName);
+                    } catch (InvocationTargetException | NoSuchMethodException n) {
+                        throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class (" + componentClass + ")");
+
+                    }
+                }
+            }
+        }
+
+        if (value != null && !(value instanceof Map)) {
+            List<String> names = Arrays.asList(fieldNamePart, multiValueMapFullFieldName);
+            if (!StringUtils.isEmpty(standardMapFullFieldName)) {
+                names.add(standardMapFullFieldName);
+            }
+            String combined = StringUtils.join(names, ",");
+            throw new IllegalArgumentException(String.format("A field containing a map field separator was requested " +
+                    "(%s), but no Map type field or method returning a Map was found using the following tests (%s)",
+                    fieldName, combined));
+        }
+
+        if (value != null) {
+            value = ((Map) value).get(mapKey);
+            // This handles gathering the first element of a list that came from a MultiValue Map
+            // used for single-value CustomFields
+            if (value instanceof List && !((List) value).isEmpty()) {
+                value = ((List) value).get(0);
+            }
+        }
+        return value;
+    }
+
+    protected void handleMapFieldPopulation(Object bean, String fieldName, Object newValue, Class<?> componentClass,
+                                            Field field, Object value, String fieldNamePart, String mapKey) throws IllegalAccessException {
+        String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
+        String multiValueMapFullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+        String standardMapFullFieldName = null;
+        if (!StringUtils.isEmpty(fieldNamePrefix)) {
+            standardMapFullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+        }
+
+        Map<String, Object> map = null;
+        Object fieldValue = field.get(value);
+        if (fieldValue instanceof List) {
+            try {
+                map = (Map<String, Object>) PropertyUtils.getProperty(bean, multiValueMapFullFieldName);
+            } catch (InvocationTargetException |NoSuchMethodException e) {
+                if (!StringUtils.isEmpty(standardMapFullFieldName)) {
+                    try {
+                        map = (Map<String, Object>) PropertyUtils.getProperty(bean, standardMapFullFieldName);
+                    } catch (InvocationTargetException | NoSuchMethodException n) {
+                        LOG.info("Unable to find a reference to (" + field.getType().getName() + ") in the EntityConfigurationManager. " +
+                                "Using the type of this class.");
+                        throw new IllegalAccessException("Unable to save field (" + fieldNamePart + ") on" +
+                                " the class (" + componentClass + ")");
+                    }
+                }
+            }
+        } else {
+            map = (Map<String, Object>) fieldValue;
+        }
+        if (fieldValue != null && map == null) {
+            List<String> names = Arrays.asList(fieldNamePart, multiValueMapFullFieldName);
+            if (!StringUtils.isEmpty(standardMapFullFieldName)) {
+                names.add(standardMapFullFieldName);
+            }
+            String combined = StringUtils.join(names, ",");
+            throw new IllegalArgumentException(String.format("A field containing a map field separator was requested " +
+                    "(%s), but no Map type field or method returning a Map was found using the following tests (%s)",
+                    fieldName, combined));
+        }
+        if (newValue == null) {
+            Object currentValue = map.get(mapKey);
+            if (currentValue != null && currentValue instanceof ValueAssignable) {
+                ((ValueAssignable) currentValue).setValue(null);
+            } else {
+                map.remove(mapKey);
+            }
+        } else {
+            map.put(mapKey, newValue);
+        }
     }
     
     private class SortableValue implements Comparable<SortableValue> {
