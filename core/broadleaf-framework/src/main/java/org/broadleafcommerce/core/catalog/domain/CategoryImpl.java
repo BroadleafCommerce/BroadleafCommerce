@@ -1218,6 +1218,17 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
+    public Map<String, CategoryAttribute> getMultiValueCategoryAttributes() {
+        Map<String, CategoryAttribute> multiValueMap = new MultiValueMap();
+
+        for (CategoryAttribute categoryAttribute : categoryAttributes) {
+            multiValueMap.put(categoryAttribute.getName(), categoryAttribute);
+        }
+
+        return multiValueMap;
+    }
+
+    @Override
     public Character getArchived() {
        ArchiveStatus temp;
        if (archiveStatus == null) {
