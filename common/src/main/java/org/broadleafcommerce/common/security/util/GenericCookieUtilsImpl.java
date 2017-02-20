@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.security.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.esapi.ESAPI;
 import org.springframework.stereotype.Component;
 
@@ -27,20 +28,20 @@ import javax.servlet.http.HttpServletResponse;
 @Component("blCookieUtils")
 public class GenericCookieUtilsImpl implements CookieUtils {
 
-    private static final String COOKIE_INVALIDATION_PLACEHOLDER_VALUE = "CookieInvalidationPlaceholderValue";
-
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.web.CookieUtils#getCookieValue(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
     public String getCookieValue(HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
+
         if (cookies != null) {
-            for (int i = 0; i < cookies.length; i++) {
-                Cookie cookie = cookies[i];
-                if (cookieName.equals(cookie.getName()))
+            for (Cookie cookie : cookies) {
+                if (cookieName.equals(cookie.getName())) {
                     return (cookie.getValue());
+                }
             }
         }
+
         return null;
     }
 
@@ -48,6 +49,10 @@ public class GenericCookieUtilsImpl implements CookieUtils {
      * @see org.broadleafcommerce.profile.web.CookieUtils#setCookieValue(javax.servlet.http.HttpServletResponse, java.lang.String, java.lang.String, java.lang.String, java.lang.Integer)
      */
     public void setCookieValue(HttpServletResponse response, String cookieName, String cookieValue, String path, Integer maxAge, Boolean isSecure) {
+        if (StringUtils.isBlank(cookieValue)) {
+            cookieValue = COOKIE_INVALIDATION_PLACEHOLDER_VALUE;
+        }
+
         Cookie cookie = new Cookie(cookieName, cookieValue);
         cookie.setPath(path);
         if (maxAge != null) {
