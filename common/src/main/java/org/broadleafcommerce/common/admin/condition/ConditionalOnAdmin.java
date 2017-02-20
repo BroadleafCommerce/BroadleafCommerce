@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.admin.condition;
 
-import org.springframework.context.annotation.Conditional;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -38,6 +38,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Conditional(AdminExistsCondition.class)
+@ConditionalOnBean(name = "blBasicPersistenceModule")
 public @interface ConditionalOnAdmin {
 }
