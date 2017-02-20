@@ -23,10 +23,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-import org.springframework.test.context.web.ServletTestExecutionListener;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
@@ -42,8 +39,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextConfiguration(name = "adminRoot")
 @WebAppConfiguration
 @ActiveProfiles("mbeansdisabled")
-@TestExecutionListeners({TransactionalTestExecutionListener.class, ServletTestExecutionListener.class})
-public class JUnitAdminIntegrationSetup extends AbstractJUnit4SpringContextTests {
+public class JUnitAdminIntegrationSetup extends AbstractTransactionalJUnit4SpringContextTests {
 
     /**
      * This is a nested configuration class so that you can do a mix of both {@link @}Configuration classes

@@ -24,10 +24,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-import org.springframework.test.context.web.ServletTestExecutionListener;
+import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
@@ -45,8 +42,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextConfiguration(name="siteRoot")
 @WebAppConfiguration
 @ActiveProfiles("mbeansdisabled")
-@TestExecutionListeners({TransactionalTestExecutionListener.class, ServletTestExecutionListener.class})
-public class TestNGSiteIntegrationSetup extends AbstractTestNGSpringContextTests {
+public class TestNGSiteIntegrationSetup extends AbstractTransactionalTestNGSpringContextTests {
     
     /**
      * This is a nested configuration class so that you can do a mix of both {@link @}Configuration classes

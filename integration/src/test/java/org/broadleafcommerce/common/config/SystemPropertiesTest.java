@@ -21,7 +21,6 @@
 package org.broadleafcommerce.common.config;
 
 import org.broadleafcommerce.common.cache.AbstractCacheMissAware;
-import org.broadleafcommerce.common.config.SystemPropertiesTest.SystemPropertiesTestConfig;
 import org.broadleafcommerce.common.config.dao.SystemPropertiesDao;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.config.domain.SystemPropertyImpl;
@@ -48,7 +47,7 @@ import net.sf.ehcache.Cache;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-@ContextHierarchy(@ContextConfiguration(name="siteRoot", classes = SystemPropertiesTestConfig.class ))
+@ContextHierarchy(@ContextConfiguration(name="siteRoot"))
 public class SystemPropertiesTest extends TestNGSiteIntegrationSetup {
     
     @Configuration

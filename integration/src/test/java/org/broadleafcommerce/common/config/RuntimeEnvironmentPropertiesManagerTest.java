@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.config;
 
-import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManagerTest.RuntimeEnvironmentPropertiesTestConfig;
 import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +27,7 @@ import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
 
-@ContextHierarchy(@ContextConfiguration(name="siteRoot", classes = RuntimeEnvironmentPropertiesTestConfig.class ))
+@ContextHierarchy(@ContextConfiguration(name="siteRoot"))
 public class RuntimeEnvironmentPropertiesManagerTest extends TestNGSiteIntegrationSetup {
 
     @Configuration
