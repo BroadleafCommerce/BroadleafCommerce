@@ -21,6 +21,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -38,6 +40,7 @@ import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
@@ -76,6 +79,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -446,13 +450,10 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryAttributeImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
-    @MapKey(name="name")
     @BatchSize(size = 50)
-    @AdminPresentationMap(friendlyName = "categoryAttributesTitle",
-        tab = TabName.General, order = FieldOrder.CustomAttributes,
-        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
-    )
-    protected Map<String, CategoryAttribute> categoryAttributes = new HashMap<String, CategoryAttribute>();
+    @AdminPresentationCollection(friendlyName = "categoryAttributesTitle",
+            tab = TabName.General, order = FieldOrder.CustomAttributes)
+    protected List<CategoryAttribute> categoryAttributes = new ArrayList<CategoryAttribute>();
 
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", order = 2000,
@@ -1228,26 +1229,37 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public Map<String, CategoryAttribute> getCategoryAttributesMap() {
-        return categoryAttributes;
+        return getMappedCategoryAttributes();
     }
 
     @Override
     public void setCategoryAttributesMap(Map<String, CategoryAttribute> categoryAttributes) {
-        this.categoryAttributes = categoryAttributes;
+        List<CategoryAttribute> categoryAttributeList = new ArrayList<CategoryAttribute>();
+
+        if (categoryAttributes instanceof MultiValueMap) {
+            Iterator<String> it = categoryAttributes.keySet().iterator();
+
+            while (it.hasNext()) {
+                String theKey = it.next();
+                categoryAttributeList.addAll((List) categoryAttributes.get(theKey));
+            }
+        } else {
+            for (Map.Entry<String, CategoryAttribute> entry : categoryAttributes.entrySet()) {
+                categoryAttributeList.add(entry.getValue());
+            }
+        }
+
+        this.categoryAttributes = categoryAttributeList;
     }
 
     @Override
     public List<CategoryAttribute> getCategoryAttributes() {
-        List<CategoryAttribute> ca = new ArrayList<CategoryAttribute>(categoryAttributes.values());
-        return Collections.unmodifiableList(ca);
+        return categoryAttributes;
     }
 
     @Override
     public void setCategoryAttributes(List<CategoryAttribute> categoryAttributes) {
-        this.categoryAttributes = new HashMap<String, CategoryAttribute>();
-        for (CategoryAttribute categoryAttribute : categoryAttributes) {
-            this.categoryAttributes.put(categoryAttribute.getName(), categoryAttribute);
-        }
+        this.categoryAttributes = categoryAttributes;
     }
 
     @Override
@@ -1267,6 +1279,17 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             map.put(attr.getName(), attr);
         }
         return map;
+    }
+
+    @Override
+    public Map<String, CategoryAttribute> getMultiValueCategoryAttributes() {
+        Map<String, CategoryAttribute> multiValueMap = new MultiValueMap();
+
+        for (CategoryAttribute categoryAttribute : categoryAttributes) {
+            multiValueMap.put(categoryAttribute.getName(), categoryAttribute);
+        }
+
+        return multiValueMap;
     }
 
     @Override
@@ -1382,9 +1405,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             CategoryXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getAllChildCategoryXrefs().add(clonedEntry);
         }
-        for(Map.Entry<String,CategoryAttribute> entry : categoryAttributes.entrySet()){
-            CategoryAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-            cloned.getCategoryAttributesMap().put(entry.getKey(),clonedEntry);
+        for(CategoryAttribute entry : categoryAttributes){
+            CategoryAttribute clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            cloned.getCategoryAttributes().add(clonedEntry);
         }
         for(CategorySearchFacet entry : searchFacets){
             CategorySearchFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();

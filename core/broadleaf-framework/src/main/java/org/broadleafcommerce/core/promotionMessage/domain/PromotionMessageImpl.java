@@ -133,7 +133,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     protected Long id;
 
     @Column(name = "NAME")
-    @Index(name="PROMOTION_MESSAGE_NAME_INDEX", columnNames={"PROMOTION_MESSAGE_NAME"})
+    @Index(name="PROMOTION_MESSAGE_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "PromotionMessageImpl_Name",
         tab = TabName.General, tabOrder = TabOrder.General,
         group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Name,

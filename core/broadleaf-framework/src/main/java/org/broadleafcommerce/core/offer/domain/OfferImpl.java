@@ -811,6 +811,12 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             OfferQualifyingCriteriaXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getQualifyingItemCriteriaXref().add(clonedEntry);
         }
+        Set<OfferTargetCriteriaXref> offerTargetCriteriaXrefs = new HashSet<>();
+        for(OfferTargetCriteriaXref entry : targetItemCriteria){
+            OfferTargetCriteriaXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            offerTargetCriteriaXrefs.add(clonedEntry);
+        }
+        cloned.setTargetItemCriteriaXref(offerTargetCriteriaXrefs);
         for(Map.Entry<String, OfferOfferRuleXref> entry : offerMatchRules.entrySet()){
             OfferOfferRuleXref clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
             cloned.getOfferMatchRulesXref().put(entry.getKey(),clonedEntry);

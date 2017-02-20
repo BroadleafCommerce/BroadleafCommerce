@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.search.service.solr.index;
 
+import java.util.Date;
+
 /**
  * Responsible for reading and writing the status using one or more {@link org.broadleafcommerce.core.search.service.solr.index.SolrIndexStatusProvider}
  * instances. {@link #getSeedStatusInstance()} can be used to provide a custom {@link org.broadleafcommerce.core.search.service.solr.index.IndexStatusInfo}
@@ -26,8 +28,22 @@ package org.broadleafcommerce.core.search.service.solr.index;
  */
 public interface SolrIndexStatusService {
 
+    /**
+     * Adds an IndexStatusInfo entry into the status providers
+     * @param status
+     */
     void setIndexStatus(IndexStatusInfo status);
 
+    /**
+     * Adds a new IndexStatusInfo given the eventId and the create date
+     * @param status
+     */
+    void addIndexStatus(Long eventId, Date eventCreatedDate);
+
+    /**
+     * Returns a populated IndexStatusInfo instance from the provider(s)
+     * @return the index status information 
+     */
     IndexStatusInfo getIndexStatus();
 
     /**
@@ -37,4 +53,11 @@ public interface SolrIndexStatusService {
      */
     IndexStatusInfo getSeedStatusInstance();
 
+    /**
+     * Adds an error into the index status
+     * @param eventId the Id of the event that has erred
+     * @param retryCount the pre-set retry count defined in the event
+     * @param eventCreatedDate the date that the event was created
+     */
+    void addIndexErrorStatus(Long eventId, Integer retryCount, Date eventCreatedDate);
 }

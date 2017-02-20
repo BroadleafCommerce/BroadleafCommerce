@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
@@ -140,6 +142,29 @@ public class OfferQualifyingCriteriaXrefImpl implements OfferQualifyingCriteriaX
         if (offerItemCriteria == null) {
             offerItemCriteria = new OfferItemCriteriaImpl();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .append(offer)
+                .append(offerItemCriteria)
+                .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o != null && getClass().isAssignableFrom(o.getClass())) {
+            OfferTargetCriteriaXrefImpl that = (OfferTargetCriteriaXrefImpl) o;
+            return new EqualsBuilder()
+                    .append(this.id, that.id)
+                    .append(this.offer, that.offer)
+                    .append(this.offerItemCriteria, that.offerItemCriteria)
+                    .build();
+        }
+
+        return false;
     }
 
     @Override

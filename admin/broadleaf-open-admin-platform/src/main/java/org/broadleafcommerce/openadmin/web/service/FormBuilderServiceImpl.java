@@ -884,6 +884,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     protected void setEntityFormFields(ClassMetadata cmd, EntityForm ef, List<Property> properties) {
         List<Field> homelessFields = new ArrayList<>();
+        List<Field> fieldsWithAssociations = new ArrayList<>();
 
         for (Property property : properties) {
             if (property.getMetadata() instanceof BasicFieldMetadata) {
@@ -974,7 +975,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                      .withTooltip(fmd.getTooltip())
                      .withHelp(fmd.getHelpText())
                      .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup())
-                     .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity());
+                     .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity())
+                     .withAssociatedFieldName(fmd.getAssociatedFieldName());
 
                     String defaultValue = fmd.getDefaultValue();
                     if (defaultValue != null) {
@@ -997,6 +999,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     } else {
                         ef.addField(cmd, f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
                     }
+
+                    if (StringUtils.isNotEmpty(fmd.getAssociatedFieldName())) {
+                        fieldsWithAssociations.add(f);
+                    }
                 }
             }
         }
@@ -1004,6 +1010,37 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         for (Field f : homelessFields) {
             ef.addField(cmd, f, null, null, null, null);
         }
+
+        for (Field f : fieldsWithAssociations) {
+            Field associatedField = findAssociatedField(ef, f);
+            if (associatedField != null) {
+                associatedField.setShouldRender(false);
+                f.setAssociatedFieldName(associatedField.getName());
+            } else {
+                f.setAssociatedFieldName(null);
+            }
+        }
+    }
+
+    private Field findAssociatedField(EntityForm ef, Field f) {
+        // Try on the parent object
+        Field associatedField = ef.findField(f.getAssociatedFieldName());
+
+        if (associatedField == null) {
+            // Check the field's path
+            String[] fieldPathParts = f.getName().split("\\.");
+            String testPath = "";
+
+            for (String path : fieldPathParts) {
+                testPath += path + ".";
+
+                associatedField = ef.findField(testPath + f.getAssociatedFieldName());
+                if (associatedField != null) {
+                    break;
+                }
+            }
+        }
+        return associatedField;
     }
 
     /**

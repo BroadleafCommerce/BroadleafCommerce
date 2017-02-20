@@ -26,9 +26,10 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -57,6 +58,7 @@ public class JSFieldNameCompatibilityInterceptor extends HandlerInterceptorAdapt
                 for (Map.Entry<String, Field> field : entityForm.getFields().entrySet()) {
                     if (field.getKey().contains(".")) {
                         field.getValue().setName(JSCompatibilityHelper.encode(field.getValue().getName()));
+                        field.getValue().setAssociatedFieldName(JSCompatibilityHelper.encode(field.getValue().getAssociatedFieldName()));
                         if (field.getValue() instanceof RuleBuilderField) {
                             ((RuleBuilderField) field.getValue()).setJsonFieldName(JSCompatibilityHelper.encode((
                                     (RuleBuilderField) field.getValue()).getJsonFieldName()));

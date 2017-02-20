@@ -119,7 +119,7 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
     }
 
     protected boolean shouldValidateWithException(boolean hasValidationType, boolean hasStrategy, boolean isAddOrNoneType, boolean isSubmitType) {
-        boolean passesStrategyValidation = !hasStrategy || (hasStrategy && (isAddOrNoneType || isSubmitType));
+        boolean passesStrategyValidation = !hasStrategy || (isAddOrNoneType || isSubmitType);
         return hasValidationType && (passesStrategyValidation);
     }
 

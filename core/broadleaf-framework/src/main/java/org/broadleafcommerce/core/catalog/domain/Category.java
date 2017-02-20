@@ -574,6 +574,8 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
     @Deprecated
     public Map<String, CategoryAttribute> getMappedCategoryAttributes();
 
+    Map<String, CategoryAttribute> getMultiValueCategoryAttributes();
+
     /**
      * Used to determine availability for all of the products/skus in this category
      * @return the {@link InventoryType} for this category
