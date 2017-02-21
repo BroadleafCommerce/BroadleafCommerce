@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.util.BLCAnnotationUtils;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
+import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
@@ -1326,7 +1327,15 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                         }
                     }
                 }
-
+            }
+            if (key.getValue() instanceof BasicCollectionMetadata
+                    && !((BasicCollectionMetadata) key.getValue()).getPersistencePerspective().getPersistencePerspectiveItems().isEmpty()
+                    && ((BasicCollectionMetadata) key.getValue()).getPersistencePerspective().getPersistencePerspectiveItems().containsKey(PersistencePerspectiveItemType.FOREIGNKEY)) {
+                //There may be multiple pathways to this foreign key which may have come from a cached source. Since ForeignKey contains a
+                //originating field concept that is occurrence specific, we need to make sure it is set appropriately here.
+                //A known use case is vendorPortal.embeddableMultitenantSite.adminUsers and owningSite.embeddableMultitenantSite.adminUsers
+                ForeignKey foreignKey = (ForeignKey) ((BasicCollectionMetadata) key.getValue()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+                foreignKey.setOriginatingField(propertyName + '.' + key.getKey());
             }
         }
         fields.putAll(convertedFields);
@@ -1408,6 +1417,14 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         Map<String, FieldMetadata> convertedFields = new HashMap<>();
         for (String key : newFields.keySet()) {
             convertedFields.put(propertyName + "." + key, newFields.get(key));
+            if (newFields.get(key) instanceof BasicCollectionMetadata
+                    && !((BasicCollectionMetadata) newFields.get(key)).getPersistencePerspective().getPersistencePerspectiveItems().isEmpty()
+                    && ((BasicCollectionMetadata) newFields.get(key)).getPersistencePerspective().getPersistencePerspectiveItems().containsKey(PersistencePerspectiveItemType.FOREIGNKEY)) {
+                //There may be multiple pathways to this foreign key which may have come from a cached source. Since ForeignKey contains a
+                //originating field concept that is occurrence specific, we need to make sure it is set appropriately here.
+                ForeignKey foreignKey = (ForeignKey) ((BasicCollectionMetadata) newFields.get(key)).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+                foreignKey.setOriginatingField(propertyName + "." + key);
+            }
         }
         fields.putAll(convertedFields);
     }

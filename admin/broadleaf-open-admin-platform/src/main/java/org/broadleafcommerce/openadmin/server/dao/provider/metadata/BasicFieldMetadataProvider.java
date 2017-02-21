@@ -504,6 +504,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.CANLINKTOEXTERNALENTITY)) {
                 fieldMetadataOverride.setCanLinkToExternalEntity(StringUtils.isEmpty(stringValue) ? entry.getValue()
                         .booleanOverrideValue() : Boolean.parseBoolean(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.TRANSLATABLE)) {
+                fieldMetadataOverride.setTranslatable(StringUtils.isEmpty(stringValue) ? entry.getValue()
+                        .booleanOverrideValue() : Boolean.parseBoolean(stringValue));
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Unrecognized type: " + entry.getKey() + ". Not setting on basic field.");

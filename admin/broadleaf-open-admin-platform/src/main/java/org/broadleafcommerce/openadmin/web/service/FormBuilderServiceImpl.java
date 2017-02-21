@@ -1651,22 +1651,24 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
-            String parentId, boolean isViewCollectionItem)
+            String parentId, boolean isViewCollectionItem, List<SectionCrumb> sectionCrumbs, boolean isAdd)
             throws ServiceException {
         EntityForm ef = createStandardAdornedEntityForm();
-        return buildAdornedListForm(adornedMd, adornedList, parentId, isViewCollectionItem, ef);
+        return buildAdornedListForm(adornedMd, adornedList, parentId, isViewCollectionItem, ef, sectionCrumbs, isAdd);
     }
     
     @Override
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
-            String parentId, boolean isViewCollectionItem, EntityForm ef)
+            String parentId, boolean isViewCollectionItem, EntityForm ef, List<SectionCrumb> sectionCrumbs, boolean isAdd)
             throws ServiceException {
         ef.setEntityType(adornedList.getAdornedTargetEntityClassname());
 
         // Get the metadata for this adorned field
         PersistencePackageRequest request = PersistencePackageRequest.adorned()
                 .withCeilingEntityClassname(adornedMd.getCollectionCeilingEntity())
-                .withAdornedList(adornedList);
+                .withAdornedList(adornedList)
+                .withSectionCrumbs(sectionCrumbs);
+        request.setAddOperationInspect(isAdd);
         ClassMetadata collectionMetadata = adminEntityService.getClassMetadata(request).getDynamicResultSet().getClassMetaData();
 
         List<Property> entityFormProperties = new ArrayList<>();

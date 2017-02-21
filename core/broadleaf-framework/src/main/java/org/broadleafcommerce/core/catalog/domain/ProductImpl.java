@@ -1188,5 +1188,4 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     public FieldEntity getFieldEntityType() {
         return FieldEntity.PRODUCT;
     }
-
 }

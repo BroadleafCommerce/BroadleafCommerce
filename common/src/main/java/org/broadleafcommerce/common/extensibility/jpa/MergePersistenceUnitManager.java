@@ -52,6 +52,10 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.management.ObjectName;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
 
@@ -94,6 +98,9 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
     @Resource
     protected Environment environment;
+
+    @Resource
+    protected List<QueryConfiguration> queryConfigurations;
     
     /**
      * This should only be used in a test context to deal with the Spring ApplicationContext refreshing between different
@@ -187,22 +194,62 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                         pui.addTransformer(transformer);
                     }
                 } catch (Exception e) {
-                    Exception refined = ExceptionHelper.refineException(IllegalStateException.class, RuntimeException.class, e);
-                    if (refined instanceof IllegalStateException) {
-                        LOG.warn("A BroadleafClassTransformer is configured for this persistence unit, but Spring " +
-                                "reported a problem (likely that a LoadTimeWeaver is not registered). As a result, " +
-                                "the Broadleaf Commerce ClassTransformer ("+transformer.getClass().getName()+") is " +
-                                "not being registered with the persistence unit. To resove this add a -javaagent:/path/to/spring-instrument.jar to the JVM args of the server");
-                        weaverRegistered = false;
-                    } else {
-                        throw refined;
+                    weaverRegistered = handleClassTransformerRegistrationProblem(transformer, e);
+                }
+            }
+        }
+        weaverRegistered = addNamedQueriesToPersistenceUnits(weaverRegistered);
+
+
+        return weaverRegistered;
+    }
+
+    protected boolean addNamedQueriesToPersistenceUnits(boolean weaverRegistered) throws Exception {
+        //Do this last in case any of the query config classes happens to cause an entity class to be loaded - they will
+        // still be transformed by the previous registered transformers
+        for (PersistenceUnitInfo pui : mergedPus.values()) {
+            //Add annotated named query support from QueryConfiguration beans
+            List<NamedQuery> namedQueries = new ArrayList<NamedQuery>();
+            List<NamedNativeQuery> nativeQueries = new ArrayList<NamedNativeQuery>();
+            for (QueryConfiguration config : queryConfigurations) {
+                if (pui.getPersistenceUnitName().equals(config.getPersistenceUnit())) {
+                    NamedQueries annotation = config.getClass().getAnnotation(NamedQueries.class);
+                    if (annotation != null) {
+                        namedQueries.addAll(Arrays.asList(annotation.value()));
                     }
+                    NamedNativeQueries annotation2 = config.getClass().getAnnotation(NamedNativeQueries.class);
+                    if (annotation2 != null) {
+                        nativeQueries.addAll(Arrays.asList(annotation2.value()));
+                    }
+                }
+            }
+            if (!namedQueries.isEmpty() || !nativeQueries.isEmpty()) {
+                QueryConfigurationClassTransformer transformer = new QueryConfigurationClassTransformer(namedQueries, nativeQueries, pui.getManagedClassNames());
+                try {
+                    pui.addTransformer(transformer);
+                } catch (Exception e) {
+                    weaverRegistered = handleClassTransformerRegistrationProblem(transformer, e);
                 }
             }
         }
         return weaverRegistered;
     }
-    
+
+    protected boolean handleClassTransformerRegistrationProblem(BroadleafClassTransformer transformer, Exception e) throws Exception {
+        boolean weaverRegistered;
+        Exception refined = ExceptionHelper.refineException(IllegalStateException.class, RuntimeException.class, e);
+        if (refined instanceof IllegalStateException) {
+            LOG.warn("A BroadleafClassTransformer is configured for this persistence unit, but Spring " +
+                    "reported a problem (likely that a LoadTimeWeaver is not registered). As a result, " +
+                    "the Broadleaf Commerce ClassTransformer ("+transformer.getClass().getName()+") is " +
+                    "not being registered with the persistence unit. To resove this add a -javaagent:/path/to/spring-instrument.jar to the JVM args of the server");
+            weaverRegistered = false;
+        } else {
+            throw refined;
+        }
+        return weaverRegistered;
+    }
+
     /**
      * 
      * @param nonTransformedClasses the classes that were detected as having not been transformed

@@ -263,7 +263,7 @@ public interface FormBuilderService {
      * @throws ServiceException
      */
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
-            String parentId, boolean isViewCollectionItem)
+            String parentId, boolean isViewCollectionItem, List<SectionCrumb> sectionCrumbs, boolean isAdd)
             throws ServiceException;
 
     /**
@@ -284,7 +284,7 @@ public interface FormBuilderService {
      * @throws ServiceException
      */
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
-            String parentId, boolean isViewCollectionItem, EntityForm ef)
+            String parentId, boolean isViewCollectionItem, EntityForm ef, List<SectionCrumb> sectionCrumbs, boolean isAdd)
             throws ServiceException;
 
     /**

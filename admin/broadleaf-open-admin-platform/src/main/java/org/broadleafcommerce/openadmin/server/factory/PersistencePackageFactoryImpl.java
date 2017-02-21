@@ -132,7 +132,7 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         pp.setRequestingEntityName(request.getRequestingEntityName());
         pp.setValidateUnsubmittedProperties(request.isValidateUnsubmittedProperties());
         pp.setIsTreeCollection(request.isTreeCollection());
-
+        pp.setAddOperationInspect(request.isAddOperationInspect());
 
         if (request.getEntity() != null) {
             pp.setEntity(request.getEntity());

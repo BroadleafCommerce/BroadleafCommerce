@@ -52,6 +52,7 @@ public class PersistencePackageRequest {
     protected boolean validateUnsubmittedProperties = true;
     protected boolean isUpdateLookupType = false;
     protected boolean isTreeCollection = false;
+    protected boolean isAddOperationInspect = false;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -576,5 +577,13 @@ public class PersistencePackageRequest {
 
     public void setIsTreeCollection(boolean isTreeCollection) {
         this.isTreeCollection = isTreeCollection;
+    }
+
+    public boolean isAddOperationInspect() {
+        return isAddOperationInspect;
+    }
+
+    public void setAddOperationInspect(boolean addOperationInspect) {
+        isAddOperationInspect = addOperationInspect;
     }
 }

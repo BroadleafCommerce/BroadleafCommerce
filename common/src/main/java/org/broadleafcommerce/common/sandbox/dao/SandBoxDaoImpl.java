@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.sandbox.dao;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxManagement;
@@ -24,7 +25,6 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
-import org.hibernate.ejb.QueryHints;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionDefinition;
@@ -51,7 +51,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager sandBoxEntityManager;
-    
+
     @Resource(name = "blTransactionManager")
     protected JpaTransactionManager transactionManager;
 
@@ -74,8 +74,6 @@ public class SandBoxDaoImpl implements SandBoxDao {
                         builder.notEqual(sandbox.get("sandBox").get("archiveStatus").get("archived").as(Character.class), 'Y'))
         );
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.blSandBoxElements");
         return query.getResultList();
     }
 
@@ -91,8 +89,6 @@ public class SandBoxDaoImpl implements SandBoxDao {
                                 builder.notEqual(sandbox.get("sandBox").get("archiveStatus").get("archived").as(Character.class), 'Y')))
         );
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.blSandBoxElements");
         return query.getResultList();
     }
 
@@ -105,8 +101,6 @@ public class SandBoxDaoImpl implements SandBoxDao {
             .addRestriction("sb.archiveStatus.archived", "==", null)
             .addRestriction("sb.archiveStatus.archived", "!=", "Y")
             .toQuery(sandBoxEntityManager);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.blSandBoxElements");
         return query.getResultList();
     }
 
@@ -130,8 +124,6 @@ public class SandBoxDaoImpl implements SandBoxDao {
         );
 
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.blSandBoxElements");
 
         return query.getResultList();
     }
@@ -144,7 +136,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
         criteria.select(sandbox.get("sandBox").as(SandBox.class));
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(builder.equal(sandbox.get("sandBox").get("sandboxType"), SandBoxType.USER.getType()));
-        restrictions.add(builder.equal(sandbox.get("sandBox").get("author"), authorId));
+        restrictions.add(builder.or(builder.equal(sandbox.get("sandBox").get("author"), authorId), builder.isNull(sandbox.get("sandBox").get("author"))));
         restrictions.add(builder.equal(sandbox.get("sandBox").get("parentSandBox").get("id"), parentSandBoxId));
         restrictions.add(
                 builder.or(
@@ -154,15 +146,16 @@ public class SandBoxDaoImpl implements SandBoxDao {
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.blSandBoxElements");
 
         List<SandBox> results = query.getResultList();
-        
+
+        SandBox response;
         if (results == null || results.size() == 0) {
-            return null;
+            response = null;
+        } else {
+            response = results.get(0);
         }
-        return results.get(0);
+        return response;
     }
     
     public SandBox retrieveSandBoxManagementById(Long sandBoxId) {
@@ -176,8 +169,6 @@ public class SandBoxDaoImpl implements SandBoxDao {
                                 builder.notEqual(sandbox.get("sandBox").get("archiveStatus").get("archived").as(Character.class), 'Y')))
         );
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.blSandBoxElements");
 
         List<SandBox> results = query.getResultList();
 
@@ -213,8 +204,6 @@ public class SandBoxDaoImpl implements SandBoxDao {
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.blSandBoxElements");
         if (query.getResultList() != null && query.getResultList().size() == 1) {
             return query.getSingleResult();
         } else {
@@ -232,8 +221,6 @@ public class SandBoxDaoImpl implements SandBoxDao {
                 "AND sb.sandBox.id IN :sandBoxIds " +
                 "AND (sb.sandBox.archiveStatus.archived IS NULL OR sb.sandBox.archiveStatus.archived = 'N')");
         query.setParameter("sandBoxIds", sandBoxIds);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.blSandBoxElements");
         List<Object[]> results = query.getResultList();
 
         Map<Long, String> map = new HashMap<Long, String>();
@@ -257,8 +244,6 @@ public class SandBoxDaoImpl implements SandBoxDao {
                         builder.notEqual(sandbox.get("sandBox").get("archiveStatus").get("archived").as(Character.class), 'Y')))
         );
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.blSandBoxElements");
         List<SandBox> results = query.getResultList();
 
         Map<Long, String> map = new HashMap<Long, String>();
@@ -291,8 +276,6 @@ public class SandBoxDaoImpl implements SandBoxDao {
         );
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.blSandBoxElements");
         return query.getResultList();
     }
 
