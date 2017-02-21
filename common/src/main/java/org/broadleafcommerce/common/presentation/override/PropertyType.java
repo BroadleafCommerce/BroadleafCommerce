@@ -67,6 +67,7 @@ public class PropertyType {
         public static final String TAB = "tab";
         public static final String CANLINKTOEXTERNALENTITY = "canLinkToExternalEntity";
         public static final String TRANSLATABLE = "translatable";
+        public static final String ASSOCIATEDFIELDNAME = "associatedFieldName";
 
         @Deprecated
         public static final String GROUPORDER = "groupOrder";

@@ -70,6 +70,8 @@ public class Field {
     protected String translationFieldName;
     protected Boolean allowNoValueEnumOption = false;
     protected Boolean canLinkToExternalEntity = true;
+    protected String associatedFieldName;
+    protected Boolean shouldRender = true;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     /* ************ */
@@ -223,6 +225,11 @@ public class Field {
 
     public Field withCanLinkToExternalEntity(Boolean canLinkToExternalEntity) {
         setCanLinkToExternalEntity(canLinkToExternalEntity);
+        return this;
+    }
+
+    public Field withAssociatedFieldName(String associatedFieldName) {
+        setAssociatedFieldName(associatedFieldName);
         return this;
     }
 
@@ -548,6 +555,22 @@ public class Field {
 
     public void setTranslationFieldName(String translationFieldName) {
         this.translationFieldName = translationFieldName;
+    }
+
+    public String getAssociatedFieldName() {
+        return associatedFieldName;
+    }
+
+    public void setAssociatedFieldName(String associatedFieldName) {
+        this.associatedFieldName = associatedFieldName;
+    }
+
+    public Boolean getShouldRender() {
+        return shouldRender;
+    }
+
+    public void setShouldRender(Boolean shouldRender) {
+        this.shouldRender = shouldRender;
     }
 
     /**

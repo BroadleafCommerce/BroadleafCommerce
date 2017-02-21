@@ -28,6 +28,8 @@ public class RequiredAttributeNotProvidedException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     protected String productId;
+    public static final String ERROR_CODE = "REQUIRED_ATTRIBUTE";
+
     protected String attributeName;
 
     public RequiredAttributeNotProvidedException(String message, String attributeName, String productId) {

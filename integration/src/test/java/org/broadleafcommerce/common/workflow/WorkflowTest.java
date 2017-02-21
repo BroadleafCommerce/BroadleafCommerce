@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.workflow;
 
-import org.broadleafcommerce.common.workflow.WorkflowTest.WorkflowTestConfig;
 import org.broadleafcommerce.core.pricing.service.workflow.TotalActivity;
 import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ModuleActivity;
@@ -45,7 +44,7 @@ import javax.annotation.Resource;
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
-@ContextHierarchy(@ContextConfiguration(name = "siteRoot", classes = WorkflowTestConfig.class))
+@ContextHierarchy(@ContextConfiguration(name = "siteRoot"))
 public class WorkflowTest extends TestNGSiteIntegrationSetup {
     
     

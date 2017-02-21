@@ -493,16 +493,19 @@ $(document).ready(function () {
     function modifyTextColumnWidth($workflowAction, removeSpacing) {
         var $td = $workflowAction.closest('td');
         var $columnText = $td.find('.column-text');
-        var textWidth = $columnText.width();
-        var actionWidth = $workflowAction.width() + ACTION_PADDING;
-
         if (removeSpacing) {
+            // Add 'hovered' class as it effects the selectors width
+            $columnText.addClass('hovered');
+            var textWidth = $columnText.width();
+            var actionWidth = $workflowAction.width() + ACTION_PADDING;
+
             textWidth -= actionWidth;
-            textWidth = textWidth + "px";
+            $columnText.width(textWidth + "px");
         } else {
-            textWidth = "88%";
+            // Remove 'hovered' class and reset selectors width
+            $columnText.removeClass('hovered');
+            $columnText.width("88%");
         }
-        $columnText.width(textWidth);
     }
 
     $('body').on({

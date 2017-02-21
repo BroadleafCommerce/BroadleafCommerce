@@ -17,12 +17,14 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 
 /**
  * @author Jeff Fischer
  */
-public interface OfferTargetCriteriaXref extends Serializable {
+public interface OfferTargetCriteriaXref extends Serializable, MultiTenantCloneable<OfferTargetCriteriaXref> {
 
     Long getId();
 
