@@ -96,11 +96,11 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     @Autowired
     protected ApplicationContext applicationContext;
 
-    @Resource
+    @Autowired
     protected Environment environment;
 
-    @Resource
-    protected List<QueryConfiguration> queryConfigurations;
+    @Autowired(required = false)
+    protected List<QueryConfiguration> queryConfigurations = new ArrayList<>();
     
     /**
      * This should only be used in a test context to deal with the Spring ApplicationContext refreshing between different
@@ -209,8 +209,8 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         // still be transformed by the previous registered transformers
         for (PersistenceUnitInfo pui : mergedPus.values()) {
             //Add annotated named query support from QueryConfiguration beans
-            List<NamedQuery> namedQueries = new ArrayList<NamedQuery>();
-            List<NamedNativeQuery> nativeQueries = new ArrayList<NamedNativeQuery>();
+            List<NamedQuery> namedQueries = new ArrayList<>();
+            List<NamedNativeQuery> nativeQueries = new ArrayList<>();
             for (QueryConfiguration config : queryConfigurations) {
                 if (pui.getPersistenceUnitName().equals(config.getPersistenceUnit())) {
                     NamedQueries annotation = config.getClass().getAnnotation(NamedQueries.class);
