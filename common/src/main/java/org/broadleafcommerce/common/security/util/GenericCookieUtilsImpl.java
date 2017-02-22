@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 @Component("blCookieUtils")
 public class GenericCookieUtilsImpl implements CookieUtils {
 
+    protected final String COOKIE_INVALIDATION_PLACEHOLDER_VALUE = "CookieInvalidationPlaceholderValue";
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.web.CookieUtils#getCookieValue(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
@@ -51,6 +53,7 @@ public class GenericCookieUtilsImpl implements CookieUtils {
     public void setCookieValue(HttpServletResponse response, String cookieName, String cookieValue, String path, Integer maxAge, Boolean isSecure) {
         if (StringUtils.isBlank(cookieValue)) {
             cookieValue = COOKIE_INVALIDATION_PLACEHOLDER_VALUE;
+            maxAge = 0;
         }
 
         Cookie cookie = new Cookie(cookieName, cookieValue);
@@ -87,7 +90,7 @@ public class GenericCookieUtilsImpl implements CookieUtils {
      *  `ESAPI.httpUtilities().killCookie()` are ineffective.
      */
     public void invalidateCookie(HttpServletResponse response, String cookieName) {
-        setCookieValue(response, cookieName, COOKIE_INVALIDATION_PLACEHOLDER_VALUE, "/", 0, false);
+        setCookieValue(response, cookieName, "", "/", 0, false);
     }
 
 }

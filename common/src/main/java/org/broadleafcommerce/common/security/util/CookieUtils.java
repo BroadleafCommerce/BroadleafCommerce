@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public interface CookieUtils {
-    String COOKIE_INVALIDATION_PLACEHOLDER_VALUE = "CookieInvalidationPlaceholderValue";
     String CUSTOMER_COOKIE_NAME = "customerId";
 
     String getCookieValue(HttpServletRequest request, String cookieName);
