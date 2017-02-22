@@ -94,7 +94,7 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
         String result = "";
         try {
             String metaDescription = category.getMetaDescription();
-            String description = category.getDescription();
+            String description = category.getLongDescription();
 
             if (StringUtils.isNotEmpty(metaDescription)) {
                 result = metaDescription;
@@ -150,7 +150,7 @@ public class DefaultSEOVariableExpression implements BroadleafVariableExpression
         String result = "";
         try {
             String metaDescription = product.getMetaDescription();
-            String description = product.getDescription();
+            String description = product.getLongDescription();
 
             if (StringUtils.isNotEmpty(metaDescription)) {
                 result = metaDescription;
