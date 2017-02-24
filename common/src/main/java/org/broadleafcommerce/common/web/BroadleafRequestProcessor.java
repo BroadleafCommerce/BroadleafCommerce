@@ -65,7 +65,6 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     
     private static final String SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "site.strict.validate.production.changes";
     public static final String SITE_DISABLE_SANDBOX_PREVIEW = "site.disable.sandbox.preview";
-    public static final String SITE_DISABLE_FIND_VALIDATION = "site.disable.find.validation";
 
     private static final String SANDBOX_ID_PARAM = "blSandboxId";
 
@@ -105,9 +104,6 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     @Value("${" + SITE_DISABLE_SANDBOX_PREVIEW + ":false}")
     protected boolean siteDisableSandboxPreview = false;
 
-    @Value("${" + SITE_DISABLE_FIND_VALIDATION + ":false}")
-    protected boolean siteDisableFindValidation = false;
-
     @Resource(name = "blDeployBehaviorUtil")
     protected DeployBehaviorUtil deployBehaviorUtil;
     
@@ -118,9 +114,6 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     public void process(WebRequest request) {
         BroadleafRequestContext brc = new BroadleafRequestContext();
         brc.getAdditionalProperties().putAll(entityExtensionManagers);
-        if (!siteDisableFindValidation) {
-            brc.setInternalValidateFind(true);
-        }
         
         Site site = siteResolver.resolveSite(request);
         
