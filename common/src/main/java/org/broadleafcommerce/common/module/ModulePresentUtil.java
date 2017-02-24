@@ -15,43 +15,39 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.util;
+package org.broadleafcommerce.common.module;
 
-import org.broadleafcommerce.common.condition.BroadleafModuleCondition;
 import org.broadleafcommerce.common.condition.ConditionalOnBroadleafModule;
-import org.broadleafcommerce.common.condition.ConditionalOnBroadleafModule.BroadleafModuleEnum;
+import org.broadleafcommerce.common.condition.OnBroadleafModuleCondition;
 import org.broadleafcommerce.common.logging.ModuleLifecycleLoggingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
+import org.broadleafcommerce.common.module.BroadleafModuleRegistration.BroadleafModuleEnum;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 
-import java.util.Map;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
 /**
  * <p>
- * Component class that checks for the presence of a specified module, by verifying their registration via {@link ModuleLifecycleLoggingBean}.
+ * Utility class that checks for the presence of registered Broadleaf modules.
  *
  * @see {@link ConditionalOnBroadleafModule}
- * @see {@link BroadleafModuleCondition}
+ * @see {@link OnBroadleafModuleCondition}
  * @author Nathan Moore (nathanmoore).
  * @author Phillip Verheyden (phillipuniverse)
  */
-@Component("blModulePresentUtil")
 public class ModulePresentUtil {
 
-    @Autowired
-    protected ApplicationContext applicationContext;
+    public static final List<BroadleafModuleRegistration> MODULE_REGISTRATIONS = SpringFactoriesLoader.loadFactories(BroadleafModuleRegistration.class, null);
     
     /**
-     * Tre
+     * Checks if the given module is registered
      *
      * @param moduleInQuestion the module that should be checked
      * @return whether the module in question has registered itself at runtime
      * @see {@link #isPresent(String)}
      */
-    public boolean isPresent(@Nonnull final BroadleafModuleEnum moduleInQuestion) {
+    public static boolean isPresent(@Nonnull final BroadleafModuleEnum moduleInQuestion) {
         return isPresent(moduleInQuestion.getName());
     }
 
@@ -60,13 +56,10 @@ public class ModulePresentUtil {
      * a particular Broadleaf module has registered itself
      *
      * @param moduleInQuestion a String that maps to {@link ModuleLifecycleLoggingBean#getModuleName()}
-     * @return
      */
-    public boolean isPresent(@Nonnull final String moduleInQuestion) {
-        Map<String, ModuleLifecycleLoggingBean> beanMap = applicationContext.getBeansOfType(ModuleLifecycleLoggingBean.class);
-        for (ModuleLifecycleLoggingBean module : beanMap.values()) {
-            String moduleName = module.getModuleName();
-
+    public static boolean isPresent(@Nonnull final String moduleInQuestion) {
+        for (BroadleafModuleRegistration registration : MODULE_REGISTRATIONS) {
+            String moduleName = registration.getModuleName();
             if (moduleInQuestion.equals(moduleName)) {
                 return true;
             }

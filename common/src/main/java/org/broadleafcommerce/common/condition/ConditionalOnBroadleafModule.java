@@ -20,8 +20,9 @@
  */
 package org.broadleafcommerce.common.condition;
 
-import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.logging.ModuleLifecycleLoggingBean;
+import org.broadleafcommerce.common.module.BroadleafModuleRegistration;
+import org.broadleafcommerce.common.module.BroadleafModuleRegistration.BroadleafModuleEnum;
+import org.broadleafcommerce.common.module.ModulePresentUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Conditional;
 
@@ -33,24 +34,23 @@ import java.lang.annotation.Target;
 
 /**
  * <p>
- * Allows for conditional registration of beans depending on if a particular Broadleaf module is present, which
- * by default checks if they have been registered via a {@link ModuleLifecycleLoggingBean#getModuleName()}, which every module should
- * have.
+ * Allows for conditional registration of beans depending only if a particular Broadleaf module is present. By default, this checks for the presence of
+ * an implementation entry for a {@link BroadleafModuleRegistration} in {@code spring.factories}.
  * 
  * <p>
  * There are 2 options for checking these registrations:
  * <ol>
  *  <li>The type-safe {@link #value()} which assumes that this class is kept up to date with different modules that are added</li>
- *  <li>The {@link #moduleName()} which maps directly to the {@link ModuleLifecycleLoggingBean#getModuleName()}</li>
+ *  <li>The {@link #moduleName()} which maps directly to the {@link BroadleafModuleRegistration#getModuleName()}</li>
  * </ol>
  * 
  * <p>
  * Generally you should use the {@link #value()} attribute to give you a type-safe way to reference the registrations but it is possible
  * that you need to reference a module that has not yet been added to this class. In that case, use the {@link #moduleName()} parameter
- * which alows
+ * which allows for more dynamic checking of module names.
  * 
  * <p>
- * If the module has not registered itself with the {@link ModuleLifecycleLoggingBean} then this annotation will do nothing. In this case,
+ * If the module has not registered itself via {@code spring.factories} then this will always return false. In this case,
  * utilize one of the Spring {@code ConditionalOn...} annotations like {@link ConditionalOnClass} and consider making your own composed
  * annotation that utilizes it. For instance:
  * 
@@ -64,13 +64,27 @@ import java.lang.annotation.Target;
  * }
  * </pre>
  * 
+ * <p>
+ * This annotation can be used as a composed meta-annotation for module-specific annotations. Example:
+ * 
+ * <pre>
+ * {@literal @}Target({ ElementType.TYPE, ElementType.METHOD })
+ * {@literal @}Retention(RetentionPolicy.RUNTIME)
+ * {@literal @}Documented
+ * {@literal @}ConditionalOnBroadleafModule(BroadleafModuleEnum.ACCOUNT)
+ * public {@literal @}interface ConditionalOnAccountModule {
+ * 
+ * }
+ * </pre>
+ * 
  * @author Phillip Verheyden (phillipuniverse)
  * @since 5.2
+ * @see {@link ModulePresentUtil}
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Conditional(BroadleafModuleCondition.class)
+@Conditional(OnBroadleafModuleCondition.class)
 public @interface ConditionalOnBroadleafModule {
     
     /**
@@ -85,63 +99,4 @@ public @interface ConditionalOnBroadleafModule {
      */
     public String moduleName() default "";
     
-    /**
-     * List of modules that are known to have declared {@link ModuleLifecycleLoggingBean} in their applicationContext.xml
-     */
-    public enum BroadleafModuleEnum {
-        ACCOUNT ("Account"),
-        ADVANCED_CMS ("AdvancedCMS"),
-        ADVANCED_INVENTORY ("broadleaf-advanced-inventory"),
-        ADVANCED_OFFER ("AdvancedOffer"),
-        AFFILIATE ("Affilliate"),
-        CART_RULES ("broadleaf-cart-rules"),
-        CATALOG_ACCESS_POLICY ("CatalogAccessPolicy"),
-        CUSTOMER_SEGMENT ("CustomerSegment"),
-        CUSTOM_FIELD ("CustomField"),
-        GIFT_CARD_AND_CUSTOMER_CREDIT ("GiftCardAndCustomerCredit (AccountCredit)"),
-        ENTERPRISE ("Enterprise"),
-        ENTERPRISE_SEARCH ("Enterprise Search"),
-        EXPORT ("Export"),
-        I18N_ENTERPRISE ("i18n Enterprise"),
-        IMPORT ("Import"),
-        JOBS_AND_EVENTS ("Jobs and Events"),
-        MENU ("Menu"),
-        MARKETPLACE ("Marketplace"),
-        MERCHANDISING_GROUP ("MerchandisingGroup"),
-        MULTI_TENANT_SINGLE_SCHEMA ("MultiTenant-SingeSchema"),
-        OMS ("broadleaf-oms"),
-        PRICE_LIST ("PriceList"),
-        PROCESS ("Process"),
-        PRODUCT_TYPE ("broadleaf-product-type"),
-        QUOTE ("Quote"),
-        REST_API ("Broadleaf REST APIs"),
-        SUBSCRIPTION ("Subscription"),
-        THEME ("Theme"),
-        THYMELEAF2 ("Broadleaf Thymeleaf 2 Support"),
-        THYMELEAF3 ("Broadleaf Thymeleaf 3 Support"),
-        
-        /**
-         * Added in order to provide an optional default value to {@link ConditionalOnBroadleafModule}
-         */
-        IGNORED ("IGNORED");
-
-        private final String name;
-
-        BroadleafModuleEnum(String name) {
-            this.name = name;
-        }
-
-        public boolean equalsModuleName(String name) {
-            return StringUtils.equals(name, this.name);
-        }
-        
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String toString() {
-            return this.name;
-        }
-    }
 }

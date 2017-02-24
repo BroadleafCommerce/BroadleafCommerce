@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.logging;
 
+import org.broadleafcommerce.common.module.BroadleafModuleRegistration;
+
 import javax.annotation.PostConstruct;
 
 /**
@@ -24,6 +26,7 @@ import javax.annotation.PostConstruct;
  * logging message to appear in the logging output.
  *
  * @author Jeff Fischer
+ * @see {@link BroadleafModuleRegistration}
  */
 public class ModuleLifecycleLoggingBean {
 
@@ -38,10 +41,10 @@ public class ModuleLifecycleLoggingBean {
         this.lifeCycleEvent = lifeCycleEvent;
     }
 
-    @PostConstruct
     /**
      * Initialize the bean and cause the logging message to take place
      */
+    @PostConstruct
     public void init() {
         if (moduleName == null || lifeCycleEvent == null) {
             throw new IllegalArgumentException("Must supply the moduleName and lifeCycleEvent properties!");

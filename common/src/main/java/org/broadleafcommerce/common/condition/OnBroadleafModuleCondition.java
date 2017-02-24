@@ -21,8 +21,9 @@
 package org.broadleafcommerce.common.condition;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.condition.ConditionalOnBroadleafModule.BroadleafModuleEnum;
-import org.broadleafcommerce.common.logging.ModuleLifecycleLoggingBean;
+import org.broadleafcommerce.common.module.BroadleafModuleRegistration;
+import org.broadleafcommerce.common.module.BroadleafModuleRegistration.BroadleafModuleEnum;
+import org.broadleafcommerce.common.module.ModulePresentUtil;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -30,29 +31,21 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 import java.util.Map;
 
 /**
- * Detects whether or not a Broadleaf module has been registered by checking through registered {@link ModuleLifecycleLoggingBean} beans
+ * Detects whether or not a Broadleaf module has been registered via am {@link spring.factories} entry for {@link BroadleafModuleRegistration}
  * 
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link ConditionalOnBroadleafModule}
  * @since 5.2
  */
-public class BroadleafModuleCondition implements Condition {
+public class OnBroadleafModuleCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        Map<String, ModuleLifecycleLoggingBean> moduleBeans = context.getBeanFactory().getBeansOfType(ModuleLifecycleLoggingBean.class);
         Map<String, Object> attributes = metadata.getAnnotationAttributes(ConditionalOnBroadleafModule.class.getName());
         BroadleafModuleEnum module = (BroadleafModuleEnum) attributes.get("value");
         String moduleName = (BroadleafModuleEnum.IGNORED != module) ? module.getName() : (String) attributes.get("moduleName");
         
-        if (StringUtils.isNotEmpty(moduleName)) {
-            for (ModuleLifecycleLoggingBean registeredModule : moduleBeans.values()) {
-                if (registeredModule.getModuleName().equals(moduleName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return StringUtils.isNotEmpty(moduleName) && ModulePresentUtil.isPresent(moduleName);
     }
-
+    
 }
