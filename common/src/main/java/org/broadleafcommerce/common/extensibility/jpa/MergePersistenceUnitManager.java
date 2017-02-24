@@ -264,9 +264,10 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 + "\n1. Session persistence is enabled in your servlet container (like Tomcat) and an entity object has been loaded by the container before"
                 + " being loaded by the application's classloader. Ensure that session persistence is disabled; in Tomcat ensure that a <Manager pathname=\"\" /> element exists in your context.xml."
                 + "\n2. You are inadvertently using class scanning to find a ServletContainerInitializer class, triggering a class load of all classes before transformers have been registered."
-                + " If you are using a web.xml, ensure that there is an <absolute-ordering /> element somewhere in that file.";
+                + " If you are using a web.xml, ensure that there is an <absolute-ordering /> element somewhere in that file."
+                + "\n3. The classes are being used as apart of an @Bean method or in some other runtime capacity that is initialized prior to persistence manager startup";
         if (devtoolsFound) {
-            msg += "\n3. Spring Boot Devtools is on the classpath and the Restarter capabilities are interfering. Spring Boot Devtools restarter functionality works by creating multiple ClassLoaders"
+            msg += "\n4. Spring Boot Devtools is on the classpath and the Restarter capabilities are interfering. Spring Boot Devtools restarter functionality works by creating multiple ClassLoaders"
                 + " and there is a check in InstrumentationLoadTimeWeaver to ensure that the ClassLoader for that class is the same as the ClassLoader for the entity class before"
                 + " performing transformation. These ClassLoaders are different with Spring Devtools. You can attempt to disable just the Devtools restarter functionality while still utilizing"
                 + " the other Devtools features by setting a JVM argument for spring.devtools.restart.enabled=false. See http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-devtools-restart-disable"
