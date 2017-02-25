@@ -43,10 +43,16 @@ public interface DynamicEntityService {
      * @throws ServiceException wraps whatever internal exception that might have occurred as a result of the inspect
      */
     @PreAuthorize("isAuthenticated()")
-    public PersistenceResponse inspect(PersistencePackage persistencePackage) throws ServiceException;
+    PersistenceResponse inspect(PersistencePackage persistencePackage) throws ServiceException;
 
     @PreAuthorize("isAuthenticated()")
-    public PersistenceResponse fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
+    PersistenceResponse nonTransactionalInspect(final PersistencePackage persistencePackage) throws ServiceException;
+
+    @PreAuthorize("isAuthenticated()")
+    PersistenceResponse fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
+
+    @PreAuthorize("isAuthenticated()")
+    PersistenceResponse nonTransactionalFetch(final PersistencePackage persistencePackage, final CriteriaTransferObject cto) throws ServiceException;
     
     /**
      * This will throw a {@link ValidationException} and not attempt to swallow them and wrap any other exceptions within
@@ -58,7 +64,7 @@ public interface DynamicEntityService {
      * @see {@link AdminEntityService#add(org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest)}
      */
     @PreAuthorize("isAuthenticated()")
-    public PersistenceResponse add(PersistencePackage persistencePackage) throws ServiceException;
+    PersistenceResponse add(PersistencePackage persistencePackage) throws ServiceException;
 
     /**
      * The exact same as {@link #add(PersistencePackage)} except this is not bound to a transaction. This is useful when
@@ -69,10 +75,10 @@ public interface DynamicEntityService {
      * @throws ServiceException
      */
     @PreAuthorize("isAuthenticated()")
-    public PersistenceResponse nonTransactionalAdd(PersistencePackage persistencePackage) throws ServiceException;
+    PersistenceResponse nonTransactionalAdd(PersistencePackage persistencePackage) throws ServiceException;
 
     @PreAuthorize("isAuthenticated()")
-    public PersistenceResponse update(PersistencePackage persistencePackage) throws ServiceException;
+    PersistenceResponse update(PersistencePackage persistencePackage) throws ServiceException;
 
     /**
      * The exact same as {@link #update(PersistencePackage)} except this is not bound to a transaction. This is useful when
@@ -83,10 +89,10 @@ public interface DynamicEntityService {
      * @throws ServiceException
      */
     @PreAuthorize("isAuthenticated()")
-    public PersistenceResponse nonTransactionalUpdate(PersistencePackage persistencePackage) throws ServiceException;
+    PersistenceResponse nonTransactionalUpdate(PersistencePackage persistencePackage) throws ServiceException;
 
     @PreAuthorize("isAuthenticated()")
-    public PersistenceResponse remove(PersistencePackage persistencePackage) throws ServiceException;
+    PersistenceResponse remove(PersistencePackage persistencePackage) throws ServiceException;
     
     /**
      * The exact same as {@link #remove(PersistencePackage)} except this is not bound to a transaction. This is useful when
@@ -97,6 +103,6 @@ public interface DynamicEntityService {
      * @throws ServiceException
      */
     @PreAuthorize("isAuthenticated()")
-    public PersistenceResponse nonTransactionalRemove(PersistencePackage persistencePackage) throws ServiceException;
+    PersistenceResponse nonTransactionalRemove(PersistencePackage persistencePackage) throws ServiceException;
     
 }
