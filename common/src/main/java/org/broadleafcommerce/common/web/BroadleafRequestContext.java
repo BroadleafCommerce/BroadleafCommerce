@@ -129,6 +129,7 @@ public class BroadleafRequestContext {
     protected Boolean internalIgnoreFilters = false;
     protected ValidateProductionChangesState validateProductionChangesState = ValidateProductionChangesState.UNDEFINED;
     protected EnforceEnterpriseCollectionBehaviorState enforceEnterpriseCollectionBehaviorState = EnforceEnterpriseCollectionBehaviorState.UNDEFINED;
+    protected Boolean internalValidateFind = false;
 
     /**
      * Gets the current request on the context
@@ -469,6 +470,20 @@ public class BroadleafRequestContext {
      */
     public void setInternalIgnoreFilters(Boolean internalIgnoreFilters) {
         this.internalIgnoreFilters = internalIgnoreFilters;
+    }
+
+    /**
+     * Intended for internal use only
+     */
+    public Boolean getInternalValidateFind() {
+        return internalValidateFind;
+    }
+
+    /**
+     * Intended for internal use only
+     */
+    public void setInternalValidateFind(Boolean internalValidateFind) {
+        this.internalValidateFind = internalValidateFind;
     }
 
     public DeployState getDeployState() {
