@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.service.PersistenceService;
 import org.broadleafcommerce.common.util.BLCNumberUtils;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
@@ -37,7 +38,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,11 +56,11 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
 
     private static final Log LOG = LogFactory.getLog(SequenceGeneratorCorruptionDetection.class);
 
-    @Resource(name = "blTargetEntityManagers")
-    protected Map<String, EntityManager> targetEntityManagers = new HashMap<>();
+    @Resource(name = "blTargetModeMaps")
+    protected List<Map<String, Map<String, Object>>> targetModeMaps;
 
-    @Resource(name = "blTargetTransactionManagers")
-    protected Map<String, PlatformTransactionManager> targetTransactionManagers = new HashMap<>();
+    @Resource(name="blPersistenceService")
+    protected PersistenceService persistenceService;
 
     @Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
@@ -77,17 +77,21 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (detectSequenceGeneratorInconsistencies) {
-            for (final String targetMode : targetTransactionManagers.keySet()) {
-                PlatformTransactionManager txManager = targetTransactionManagers.get(targetMode);
-                transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
-                    @Override
-                    public void execute() throws Throwable {
-                        EntityManager em = targetEntityManagers.get(targetMode);
-                        Session hibernateSession = em.unwrap(Session.class);
+            for (Map<String, Map<String, Object>> targetModeMap : targetModeMaps) {
+                for (final String targetMode : targetModeMap.keySet()) {
+                    final Map<String, Object> managerMap = targetModeMap.get(targetMode);
+                    PlatformTransactionManager txManager = persistenceService.getTransactionManager(managerMap);
 
-                        patchSequenceGeneratorInconsistencies(em, hibernateSession);
-                    }
-                }, RuntimeException.class, txManager);
+                    transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+                        @Override
+                        public void execute() throws Throwable {
+                            EntityManager em = persistenceService.getEntityManager(managerMap);
+                            Session hibernateSession = em.unwrap(Session.class);
+
+                            patchSequenceGeneratorInconsistencies(em, hibernateSession);
+                        }
+                    }, RuntimeException.class, txManager);
+                }
             }
         }
     }
