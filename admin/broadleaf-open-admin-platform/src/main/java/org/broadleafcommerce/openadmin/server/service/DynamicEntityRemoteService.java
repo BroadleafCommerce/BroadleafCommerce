@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.CleanStringException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
-import org.broadleafcommerce.common.service.EntityManagerService;
+import org.broadleafcommerce.common.service.PersistenceService;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.openadmin.dto.BatchDynamicResultSet;
@@ -60,8 +60,8 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
-    @Resource(name="blEntityManagerService")
-    protected EntityManagerService emService;
+    @Resource(name="blPersistenceService")
+    protected PersistenceService persistenceService;
 
     @Resource(name="blPersistenceThreadManager")
     protected PersistenceThreadManager persistenceThreadManager;
@@ -112,7 +112,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
             public PersistenceResponse execute() throws ServiceException {
                 String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
                 try {
-                    PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(targetModeType);
+                    PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
                     return persistenceManager.inspect(persistencePackage);
                 } catch (ServiceException e) {
                     String message = exploitProtectionService.cleanString(e.getMessage());
@@ -150,7 +150,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 try {
-                    PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(targetModeType);
+                    PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
                     return persistenceManager.fetch(persistencePackage, cto);
                 } catch (ServiceException e) {
                     LOG.error("Problem fetching results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
@@ -261,8 +261,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Override
     public PersistenceResponse nonTransactionalAdd(final PersistencePackage persistencePackage) throws ServiceException {
-        final TargetModeType targetModeType = identifyTargetModeType(persistencePackage);
-        return persistenceThreadManager.operation(targetModeType, new Persistable <PersistenceResponse, ServiceException>() {
+        return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable <PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 cleanEntity(persistencePackage.getEntity());
@@ -270,7 +269,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                     return new PersistenceResponse().withEntity(persistencePackage.getEntity());
                 }
                 try {
-                    PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(targetModeType);
+                    PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
                     return persistenceManager.add(persistencePackage);
                 } catch (ServiceException e) {
                     //immediately throw validation exceptions without printing a stack trace
@@ -288,8 +287,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Override
     public PersistenceResponse nonTransactionalUpdate(final PersistencePackage persistencePackage) throws ServiceException {
-        final TargetModeType targetModeType = identifyTargetModeType(persistencePackage);
-        return persistenceThreadManager.operation(targetModeType, new Persistable <PersistenceResponse, ServiceException>() {
+        return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable <PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 cleanEntity(persistencePackage.getEntity());
@@ -297,7 +295,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                     return new PersistenceResponse().withEntity(persistencePackage.getEntity());
                 }
                 try {
-                    PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(targetModeType);
+                    PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
                     return persistenceManager.update(persistencePackage);
                 } catch (ServiceException e) {
                     //immediately throw validation exceptions without printing a stack trace
@@ -316,12 +314,11 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Override
     public PersistenceResponse nonTransactionalRemove(final PersistencePackage persistencePackage) throws ServiceException {
-        final TargetModeType targetModeType = identifyTargetModeType(persistencePackage);
-        return persistenceThreadManager.operation(targetModeType, new Persistable <PersistenceResponse, ServiceException>() {
+        return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable <PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 try {
-                    PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(targetModeType);
+                    PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
                     return persistenceManager.remove(persistencePackage);
                 } catch (ServiceException e) {
                     //immediately throw validation exceptions without printing a stack trace
@@ -340,16 +337,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     protected PlatformTransactionManager identifyTransactionManager(PersistencePackage persistencePackage) throws ServiceException {
         String className = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return emService.identifyTransactionManagerForClass(className);
-    }
-
-    protected TargetModeType identifyTargetModeType(PersistencePackage persistencePackage) throws ServiceException {
-        String className = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-
-        if (className == null) {
-            return TargetModeType.SANDBOX;
-        }
-
-        return emService.identifyTargetModeTypeForClass(className);
+        return persistenceService.identifyTransactionManager(className, TargetModeType.SANDBOX);
     }
 }
