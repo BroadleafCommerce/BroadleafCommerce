@@ -19,8 +19,7 @@ package org.broadleafcommerce.common.persistence;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.service.EntityManagerService;
+import org.broadleafcommerce.common.service.PersistenceService;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -40,8 +39,8 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
     private static ApplicationContext applicationContext;
     private static PostLoaderDao postLoaderDao;
 
-    @Resource(name="blEntityManagerService")
-    protected EntityManagerService emService;
+    @Resource(name="blPersistenceService")
+    protected PersistenceService persistenceService;
 
     public static PostLoaderDao getPostLoaderDao() {
         if (applicationContext == null) {
@@ -76,11 +75,6 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
     }
 
     protected EntityManager getEntityManager(Class clazz) {
-        try {
-            return emService.identifyEntityManagerForClass(clazz.getName());
-        } catch (ServiceException e) {
-            LOG.warn(e.getMessage(), e);
-            return null;
-        }
+        return persistenceService.identifyEntityManager(clazz);
     }
 }
