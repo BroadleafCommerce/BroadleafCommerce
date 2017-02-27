@@ -41,16 +41,6 @@
         <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
     </bean>
 
-    <bean id="blTargetEntityManagers" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
-        <property name="sourceMap">
-            <map>
-                <entry key="sandbox" value-ref="prodEntityManager"/>
-                <entry key="stage" value-ref="prodEntityManager"/>
-                <entry key="production" value-ref="prodEntityManager"/>
-            </map>
-        </property>
-    </bean>
-
     <bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
@@ -64,31 +54,49 @@
         </tx:attributes>
     </tx:advice>
 
-    <bean id="blTargetTransactionManagers" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
-        <property name="sourceMap">
-            <map>
-                <entry key="sandbox" value-ref="blTransactionManager"/>
-                <entry key="stage" value-ref="blTransactionManager"/>
-                <entry key="production" value-ref="blTransactionManager"/>
-            </map>
-        </property>
-    </bean>
-
     <bean id="blEJB3ConfigurationDao" class="org.broadleafcommerce.common.util.dao.EJB3ConfigurationDaoImpl">
         <property name="persistenceUnitInfo">
             <bean factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
         </property>
     </bean>
 
-    <bean id="blTargetEJB3ConfigurationDaos" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
+    <!-- EntityManager,TransactionManager, & EJB3ConfigurationDao sets -->
+    <bean id="blDefaultTargetModeMap" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
-                <entry key="sandbox" value-ref="blEJB3ConfigurationDao"/>
-                <entry key="stage" value-ref="blEJB3ConfigurationDao"/>
-                <entry key="production" value-ref="blEJB3ConfigurationDao"/>
+                <entry key="sandbox">
+                    <map>
+                        <entry key="entityManager" value-ref="prodEntityManager"/>
+                        <entry key="transactionManager" value-ref="blTransactionManager"/>
+                        <entry key="ejb3ConfigurationDao" value-ref="blEJB3ConfigurationDao"/>
+                    </map>
+                </entry>
+                <entry key="stage">
+                    <map>
+                        <entry key="entityManager" value-ref="prodEntityManager"/>
+                        <entry key="transactionManager" value-ref="blTransactionManager"/>
+                        <entry key="ejb3ConfigurationDao" value-ref="blEJB3ConfigurationDao"/>
+                    </map>
+                </entry>
+                <entry key="production">
+                    <map>
+                        <entry key="entityManager" value-ref="prodEntityManager"/>
+                        <entry key="transactionManager" value-ref="blTransactionManager"/>
+                        <entry key="ejb3ConfigurationDao" value-ref="blEJB3ConfigurationDao"/>
+                    </map>
+                </entry>
             </map>
         </property>
     </bean>
+
+    <bean id="blTargetModeMaps" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blDefaultTargetModeMap"/>
+            </list>
+        </property>
+    </bean>
+
     
     <bean id="blCacheManager" class="org.broadleafcommerce.common.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
         <property name="shared" value="true"/>
