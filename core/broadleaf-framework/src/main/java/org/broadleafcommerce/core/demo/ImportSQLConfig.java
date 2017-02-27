@@ -67,6 +67,12 @@ public class ImportSQLConfig {
     public AutoImportSql blAssetFolderData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/populate_asset_folders.sql", AutoImportStage.PRIMARY_POST_BASIC_DATA);
     }
+
+    @Bean
+    @Conditional({AssetFoldersExistCondition.class, GiftCardAndCustomerCreditExistCondition.class, DemoCondition.class})
+    public AutoImportSql blAssetFolderGiftCardData() {
+        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/populate_asset_folders_gift_cards.sql", AutoImportStage.PRIMARY_POST_BASIC_DATA);
+    }
     
     public static class AssetFoldersExistCondition implements Condition {
 
@@ -75,5 +81,14 @@ public class ImportSQLConfig {
             return ClassUtils.isPresent("com.broadleafcommerce.enterprise.foldering.admin.domain.AssetFolder", context.getClassLoader());
         }
         
+    }
+
+    public static class GiftCardAndCustomerCreditExistCondition implements Condition {
+
+        @Override
+        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            return ClassUtils.isPresent("com.broadleafcommerce.accountcredit.profile.core.domain.GiftCardAccount", context.getClassLoader());
+        }
+
     }
 }
