@@ -27,6 +27,7 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * @author Jeff Fischer
@@ -34,23 +35,49 @@ import javax.persistence.EntityManager;
 @Repository("blDialectHelper")
 public class DialectHelper {
 
-    public synchronized Dialect getHibernateDialect(EntityManager em) {
+    @PersistenceContext(unitName="blPU")
+    protected EntityManager defaultEntityManager;
+
+
+    public Dialect getHibernateDialect() {
+        return getHibernateDialect(defaultEntityManager);
+    }
+
+    public Dialect getHibernateDialect(EntityManager em) {
         SessionFactoryImplementor factory = (SessionFactoryImplementor) em.unwrap(Session.class).getSessionFactory();
         return factory.getDialect();
     }
 
+    public boolean isOracle() {
+        //This should handle other Oracle dialects as well, since they derive from Oracle8iDialect
+        return getHibernateDialect(defaultEntityManager) instanceof Oracle8iDialect;
+    }
+
     public boolean isOracle(EntityManager em) {
-        //Since should handle other Oracle dialects as well, since they derive from Oracle8iDialect
+        //This should handle other Oracle dialects as well, since they derive from Oracle8iDialect
         return getHibernateDialect(em) instanceof Oracle8iDialect;
     }
 
+    public boolean isPostgreSql() {
+        //This should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
+        return getHibernateDialect(defaultEntityManager) instanceof PostgreSQL81Dialect;
+    }
+
     public boolean isPostgreSql(EntityManager em) {
-        //Since should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
+        //This should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
         return getHibernateDialect(em) instanceof PostgreSQL81Dialect;
+    }
+
+    public boolean isSqlServer() {
+        return getHibernateDialect(defaultEntityManager) instanceof SQLServerDialect;
     }
 
     public boolean isSqlServer(EntityManager em) {
         return getHibernateDialect(em) instanceof SQLServerDialect;
+    }
+
+    public boolean isMySql() {
+        return getHibernateDialect(defaultEntityManager) instanceof MySQLDialect;
     }
 
     public boolean isMySql(EntityManager em) {
