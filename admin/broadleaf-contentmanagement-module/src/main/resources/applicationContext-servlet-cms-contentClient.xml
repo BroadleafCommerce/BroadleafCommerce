@@ -30,7 +30,7 @@
 
     <!-- This resolver locates the "blStaticAssetView" ViewResolver using its bean name. -->
     <bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
-        <property name="order" value="1"/>
+        <property name="order" value="-1"/>
     </bean>
 
     <bean id="blStaticAssetView" class="org.broadleafcommerce.cms.web.file.StaticAssetView"/>
