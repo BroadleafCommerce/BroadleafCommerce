@@ -90,12 +90,13 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     public PersistenceResponse inspect(final PersistencePackage persistencePackage) throws ServiceException {
         final PersistenceResponse[] response = new PersistenceResponse[1];
         try {
+            PlatformTransactionManager transactionManager = identifyTransactionManager(persistencePackage);
             transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
                 @Override
                 public void execute() throws Throwable {
                     response[0] = nonTransactionalInspect(persistencePackage);
                 }
-            }, RuntimeException.class);
+            }, RuntimeException.class, transactionManager);
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ServiceException) {
                 throw (ServiceException) e.getCause();
@@ -107,7 +108,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Override
     public PersistenceResponse nonTransactionalInspect(final PersistencePackage persistencePackage) throws ServiceException {
-        return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable <PersistenceResponse, ServiceException>() {
+        return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable <PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -129,12 +130,13 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     public PersistenceResponse fetch(final PersistencePackage persistencePackage, final CriteriaTransferObject cto) throws ServiceException {
         final PersistenceResponse[] response = new PersistenceResponse[1];
         try {
+            PlatformTransactionManager transactionManager = identifyTransactionManager(persistencePackage);
             transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
                 @Override
                 public void execute() throws Throwable {
                     response[0] = nonTransactionalFetch(persistencePackage, cto);
                 }
-            }, RuntimeException.class);
+            }, RuntimeException.class, transactionManager);
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ServiceException) {
                 throw (ServiceException) e.getCause();
@@ -146,7 +148,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Override
     public PersistenceResponse nonTransactionalFetch(final PersistencePackage persistencePackage, final CriteriaTransferObject cto) throws ServiceException {
-        return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable<PersistenceResponse, ServiceException>() {
+        return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 try {
