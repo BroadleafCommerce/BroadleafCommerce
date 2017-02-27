@@ -20,14 +20,12 @@ package org.broadleafcommerce.openadmin.security;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.service.EntityManagerService;
+import org.broadleafcommerce.common.service.PersistenceService;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.exception.SectionKeyValidationException;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,8 +49,8 @@ public class ClassNameRequestParamValidationServiceImpl implements ClassNameRequ
     @Resource(name="blAdminNavigationService")
     protected AdminNavigationService adminNavigationService;
 
-    @Resource(name="blEntityManagerService")
-    protected EntityManagerService emService;
+    @Resource(name="blPersistenceService")
+    protected PersistenceService persistenceService;
 
     protected DynamicDaoHelper helper = new DynamicDaoHelperImpl();
 
@@ -62,7 +60,7 @@ public class ClassNameRequestParamValidationServiceImpl implements ClassNameRequ
         for (Map.Entry<String, String> entry : requestParamToClassName.entrySet()) {
             validated = StringUtils.isEmpty(entry.getValue());
             if (!validated) {
-                validated = emService.validateEntityClassName(entry.getValue());
+                validated = persistenceService.validateEntityClassName(entry.getValue());
                 if (!validated) {
                     LOG.warn(String.format("Non-whitelist %s specified. Rejecting.", entry.getKey()));
                 }
@@ -77,7 +75,7 @@ public class ClassNameRequestParamValidationServiceImpl implements ClassNameRequ
     @Override
     public String getClassNameForSection(String sectionKey) {
         String className = adminNavigationService.getClassNameForSection(sectionKey);
-        if (sectionKey.equals(className) && !emService.validateEntityClassName(className)) {
+        if (sectionKey.equals(className) && !persistenceService.validateEntityClassName(className)) {
             LOG.warn("Non-whitelist section key specified in request URI. Rejecting.");
             throw new SectionKeyValidationException("Non-whitelist section key specified. Rejecting.");
         }
@@ -91,7 +89,7 @@ public class ClassNameRequestParamValidationServiceImpl implements ClassNameRequ
             for (SectionCrumb crumb : crumbs) {
                 String test = adminNavigationService.getClassNameForSection(crumb.getSectionIdentifier());
                 if (crumb.getSectionIdentifier().equals(test)) {
-                    if (!emService.validateEntityClassName(test)) {
+                    if (!persistenceService.validateEntityClassName(test)) {
                         LOG.warn("Non-whitelist section key specified in sectionCrumbs param. Rejecting.");
                         throw new SectionKeyValidationException("Non-whitelist section key specified. Rejecting.");
                     }
