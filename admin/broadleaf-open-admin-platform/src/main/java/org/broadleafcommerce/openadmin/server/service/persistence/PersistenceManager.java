@@ -32,8 +32,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-
 public interface PersistenceManager {
 
     public abstract Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass);
@@ -54,13 +52,17 @@ public interface PersistenceManager {
 
     public abstract PersistenceResponse remove(PersistencePackage persistencePackage) throws ServiceException;
 
+    public abstract void configureDynamicEntityDao(Class entityClass, TargetModeType targetMode);
+
+    /**
+     * This method produces a {@link DynamicEntityDao} with a blPU-based standardEntityManager and EJB3ConfigurationDao
+     *  using the passed in {@link TargetModeType}
+     */
+    public abstract void configureDefaultDynamicEntityDao(TargetModeType targetModeType);
+
     public abstract DynamicEntityDao getDynamicEntityDao();
 
     public abstract void setDynamicEntityDao(DynamicEntityDao dynamicEntityDao);
-
-    public abstract Map<String, EntityManager> getTargetEntityManagers();
-
-    public abstract void setTargetEntityManagers(Map<String, EntityManager> targetEntityManagers);
 
     public abstract TargetModeType getTargetMode();
 
@@ -73,5 +75,4 @@ public interface PersistenceManager {
     public abstract Class<?>[] getUpDownInheritance(Class<?> testClass);
 
     public abstract Class<?>[] getUpDownInheritance(String testClassname) throws ClassNotFoundException;
-
 }
