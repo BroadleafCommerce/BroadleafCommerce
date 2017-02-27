@@ -70,7 +70,7 @@ public class FieldManager {
     }
 
     public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        DynamicEntityDao dynamicEntityDao = getPersistenceManager(clazz.getName()).getDynamicEntityDao();
+        DynamicEntityDao dynamicEntityDao = getPersistenceManager(clazz).getDynamicEntityDao();
         SessionFactory sessionFactory = dynamicEntityDao.getDynamicDaoHelper().
                 getSessionFactory((HibernateEntityManager) dynamicEntityDao.getStandardEntityManager());
         BLCFieldUtils fieldUtils = new BLCFieldUtils(sessionFactory, true, dynamicEntityDao.useCache(),
@@ -168,7 +168,7 @@ public class FieldManager {
                         value = newEntity;
                     } catch (Exception e) {
                         //Use the most extended type based on the field type
-                        PersistenceManager persistenceManager = getPersistenceManager(field.getType().getName());
+                        PersistenceManager persistenceManager = getPersistenceManager(field.getType());
                         Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
                         if (!ArrayUtils.isEmpty(entities)) {
                             Object newEntity = entities[entities.length-1].newInstance();
@@ -207,7 +207,7 @@ public class FieldManager {
             response = entityConfiguration.lookupEntityClass(field.getType().getName());
         } catch (Exception e) {
             //Use the most extended type based on the field type
-            PersistenceManager persistenceManager = getPersistenceManager(field.getType().getName());
+            PersistenceManager persistenceManager = getPersistenceManager(field.getType());
             Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
             if (!ArrayUtils.isEmpty(entities)) {
                 response = entities[entities.length-1];
@@ -240,9 +240,9 @@ public class FieldManager {
         return entityConfiguration;
     }
 
-    protected PersistenceManager getPersistenceManager(String className) {
+    protected PersistenceManager getPersistenceManager(Class entityClass) {
         try {
-            return PersistenceManagerFactory.getPersistenceManager(className);
+            return PersistenceManagerFactory.getPersistenceManager(entityClass);
         } catch (RuntimeException e) {
             return PersistenceManagerFactory.getDefaultPersistenceManager();
         }
