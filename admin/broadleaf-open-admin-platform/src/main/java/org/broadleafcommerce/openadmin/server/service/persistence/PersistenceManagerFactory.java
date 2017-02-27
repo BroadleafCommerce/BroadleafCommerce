@@ -17,11 +17,9 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.TargetModeType;
-import org.broadleafcommerce.common.service.EntityManagerService;
-import org.broadleafcommerce.openadmin.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
+import org.broadleafcommerce.common.service.PersistenceService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -31,6 +29,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 /**
  * @author Jeff Fischer
  */
@@ -38,17 +38,19 @@ import java.util.Map;
 public class PersistenceManagerFactory implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
-    private static final Map<TargetModeType, PersistenceManager> persistenceManagers = new HashMap<TargetModeType, PersistenceManager>();
+    private static final Map<TargetModeType, PersistenceManager> defaultPersistenceManagers = new HashMap<>();
+    private static final Map<String, PersistenceManager> persistenceManagers = new HashMap<>();
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
     protected static String persistenceManagerRef = DEFAULTPERSISTENCEMANAGERREF;
 
-    protected static EntityManagerService emService;
+    protected static PersistenceService persistenceService;
+    protected static EntityConfiguration entityConfiguration;
 
     @Autowired
-    public PersistenceManagerFactory(EntityManagerService emService) {
-        PersistenceManagerFactory.emService = emService;
+    public PersistenceManagerFactory(PersistenceService persistenceService, EntityConfiguration entityConfiguration) {
+        PersistenceManagerFactory.persistenceService = persistenceService;
+        PersistenceManagerFactory.entityConfiguration = entityConfiguration;
     }
-
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -56,47 +58,80 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
     }
 
     /**
-     * @deprecated in favor of {@link #getPersistenceManager(String)} which configures the {@link PersistenceManager}
-     *  correctly, based on the provided className. If the {@link PersistenceManager} is configured with the
-     *  incorrect {@link javax.persistence.EntityManager} for the given class, then requests in the Admin are likely to fail.
+     * This method should only be used within the context of a thread with an established {@link PersistenceManagerContext}
+     *  and the operation to be performed is on an entity that is managed by the {@link EntityManager} identified
+     *  by {@link #startPersistenceManager(TargetModeType)}.
+     *
+     * See {@link PersistenceThreadManager#operation(TargetModeType, Persistable)} and {@link #startPersistenceManager(TargetModeType)}
+     *  for an example of how the context is established.
      */
-    @Deprecated
     public static PersistenceManager getPersistenceManager() {
-        return getDefaultPersistenceManager();
-    }
-
-    public static PersistenceManager getDefaultPersistenceManager() {
-        return getPersistenceManager(TargetModeType.SANDBOX);
-    }
-
-    public static PersistenceManager getPersistenceManager(PersistencePackageRequest ppr) {
-        String className = ppr.getCeilingEntityClassname();
-        return getPersistenceManager(className);
-    }
-
-    public static PersistenceManager getPersistenceManager(PersistencePackage pkg) {
-        String className = pkg.getCeilingEntityFullyQualifiedClassname();
-        return getPersistenceManager(className);
+        if (PersistenceManagerContext.getPersistenceManagerContext() != null) {
+            return PersistenceManagerContext.getPersistenceManagerContext().getPersistenceManager();
+        }
+        throw new IllegalStateException("PersistenceManagerContext is not set on ThreadLocal. If you want to use the " +
+                "non-cached version, try getPersistenceManager(Class, TargetModeType)");
     }
 
     public static PersistenceManager getPersistenceManager(String className) {
-        try {
-            TargetModeType targetModeType = emService.identifyTargetModeTypeForClass(className);
-            return PersistenceManagerFactory.getPersistenceManager(targetModeType);
-        } catch (ServiceException e) {
-            throw new RuntimeException(e);
+        return getPersistenceManager(className, TargetModeType.SANDBOX);
+    }
+
+    public static PersistenceManager getPersistenceManager(String className, TargetModeType targetModeType) {
+        Class entityClass = getClassForName(className);
+        return getPersistenceManager(entityClass, targetModeType);
+    }
+
+    public static PersistenceManager getPersistenceManager(Class entityClass) {
+        return getPersistenceManager(entityClass, TargetModeType.SANDBOX);
+    }
+
+    /**
+     * This method produces a {@link PersistenceManager} with a blPU-based standardEntityManager and EJB3ConfigurationDao.
+     *  It also uses a {@link TargetModeType} of {@link TargetModeType#SANDBOX}
+     */
+    public static PersistenceManager getDefaultPersistenceManager() {
+        return getDefaultPersistenceManager(TargetModeType.SANDBOX);
+    }
+
+    /**
+     * This method produces a {@link PersistenceManager} with a blPU-based standardEntityManager and EJB3ConfigurationDao
+     *  using the passed in {@link TargetModeType}
+     */
+    public static PersistenceManager getDefaultPersistenceManager(TargetModeType targetModeType) {
+        synchronized (defaultPersistenceManagers) {
+            if (!defaultPersistenceManagers.containsKey(targetModeType)) {
+                PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+                persistenceManager.setTargetMode(targetModeType);
+                persistenceManager.configureDefaultDynamicEntityDao(targetModeType);
+
+                defaultPersistenceManagers.put(targetModeType, persistenceManager);
+            }
+            return defaultPersistenceManagers.get(targetModeType);
         }
     }
 
-    public static PersistenceManager getPersistenceManager(TargetModeType targetModeType) {
+    public static PersistenceManager getPersistenceManager(Class entityClass, TargetModeType targetModeType) {
         synchronized (persistenceManagers) {
-            if (!persistenceManagers.containsKey(targetModeType)) {
+            String cacheKey = buildCacheKey(targetModeType, entityClass);
+            if (!persistenceManagers.containsKey(cacheKey)) {
                 PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
                 persistenceManager.setTargetMode(targetModeType);
-                persistenceManagers.put(targetModeType, persistenceManager);
+                persistenceManager.configureDynamicEntityDao(entityClass, targetModeType);
+                persistenceManagers.put(cacheKey, persistenceManager);
             }
-            return persistenceManagers.get(targetModeType);
+            return persistenceManagers.get(cacheKey);
         }
+    }
+
+    protected static String buildCacheKey(TargetModeType targetModeType, Class<?> entityClass) {
+        String managedClassName = getManagedClassName(entityClass.getName());
+
+        return targetModeType.getType() + "|" + managedClassName;
+    }
+
+    protected static String getManagedClassName(String className) {
+        return entityConfiguration.lookupEntityClass(className).getName();
     }
 
     public static boolean isPersistenceManagerActive() {
@@ -109,7 +144,16 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
             context = new PersistenceManagerContext();
             PersistenceManagerContext.addPersistenceManagerContext(context);
         }
-        context.addPersistenceManager(getPersistenceManager(targetModeType));
+        context.addPersistenceManager(getDefaultPersistenceManager(targetModeType));
+    }
+
+    public static void startPersistenceManager(String entityClassName, TargetModeType targetModeType) {
+        PersistenceManagerContext context = PersistenceManagerContext.getPersistenceManagerContext();
+        if (context == null) {
+            context = new PersistenceManagerContext();
+            PersistenceManagerContext.addPersistenceManagerContext(context);
+        }
+        context.addPersistenceManager(getPersistenceManager(entityClassName, targetModeType));
     }
 
     public static void endPersistenceManager() {
@@ -125,5 +169,13 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
 
     public static void setPersistenceManagerRef(String persistenceManagerRef) {
         PersistenceManagerFactory.persistenceManagerRef = persistenceManagerRef;
+    }
+
+    protected static Class getClassForName(String className) {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
