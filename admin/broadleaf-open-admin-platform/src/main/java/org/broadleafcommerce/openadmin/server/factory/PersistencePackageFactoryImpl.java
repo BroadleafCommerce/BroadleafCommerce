@@ -169,6 +169,10 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
             AdminSection section = adminNavigationService.findAdminSectionByURI("/" + sectionKey);
             String className = (section == null) ? sectionKey : section.getCeilingEntity();
 
+            if (className == null) {
+                throw new RuntimeException("Could not determine the class related to the following Section: " + section.getName());
+            }
+
             SessionFactory sessionFactory = getEntityManager(className).unwrap(Session.class).getSessionFactory();
             Class<?>[] entities = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(Class.forName(className), sessionFactory, true, true);
 
@@ -179,13 +183,7 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
     }
 
     protected EntityManager getEntityManager(String className) {
-        PersistenceManager persistenceManager;
-        if (className == null) {
-            persistenceManager = PersistenceManagerFactory.getDefaultPersistenceManager();
-        } else {
-            persistenceManager = PersistenceManagerFactory.getPersistenceManager(className);
-        }
-
+        PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(className);
         return persistenceManager.getDynamicEntityDao().getStandardEntityManager();
     }
 }
