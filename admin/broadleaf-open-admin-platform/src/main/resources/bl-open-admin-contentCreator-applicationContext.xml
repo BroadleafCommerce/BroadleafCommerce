@@ -43,7 +43,7 @@
         </property>
     </bean>
     
-    <bean id="blPersistenceModules" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean id="blPersistenceModules" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <ref bean="blBasicPersistenceModule"/>
