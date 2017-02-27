@@ -53,8 +53,8 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
 
     private static final Log LOG = LogFactory.getLog(DynamicDaoHelperImpl.class);
     public static final Object LOCK_OBJECT = new Object();
-    public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE = new LRUMap<Class<?>, Class<?>[]>(1000);
-    public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<Class<?>, Class<?>[]>(1000);
+    public static final Map<SessionFactory, Map<Class<?>, Class<?>[]>> POLYMORPHIC_ENTITY_CACHE = new LRUMap<>(1000);
+    public static final Map<SessionFactory, Map<Class<?>, Class<?>[]>> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<>(1000);
     public static final String JAVASSIST_PROXY_KEY_PHRASE = "_$$_";
 
     public static Class<?> getNonProxyImplementationClassIfNecessary(Class<?> candidate) {
@@ -88,9 +88,9 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         synchronized(LOCK_OBJECT) {
             if (useCache) {
                 if (includeUnqualifiedPolymorphicEntities) {
-                    cache = POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
+                    cache = getCachedPolymorphicEntityList(POLYMORPHIC_ENTITY_CACHE, sessionFactory, ceilingClass);
                 } else {
-                    cache = POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.get(ceilingClass);
+                    cache = getCachedPolymorphicEntityList(POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS, sessionFactory, ceilingClass);
                 }
             }
             if (cache == null) {
@@ -123,14 +123,33 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
                 filteredEntities = filteredSortedEntities.toArray(filteredEntities);
                 cache = filteredEntities;
                 if (includeUnqualifiedPolymorphicEntities) {
-                    POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, filteredEntities);
+                    Map<Class<?>, Class<?>[]> polymorphicEntityMap = buildPolymorphicEntityMap(POLYMORPHIC_ENTITY_CACHE.get(sessionFactory), ceilingClass, filteredEntities);
+                    POLYMORPHIC_ENTITY_CACHE.put(sessionFactory, polymorphicEntityMap);
                 } else {
-                    POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.put(ceilingClass, filteredEntities);
+                    Map<Class<?>, Class<?>[]> polymorphicEntityMap = buildPolymorphicEntityMap(POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.get(sessionFactory), ceilingClass, filteredEntities);
+                    POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.put(sessionFactory, polymorphicEntityMap);
                 }
             }
         }
 
         return cache;
+    }
+
+    protected Class<?>[] getCachedPolymorphicEntityList(Map<SessionFactory, Map<Class<?>, Class<?>[]>> polymorphicEntityCache,
+            SessionFactory sessionFactory, Class<?> ceilingClass) {
+        Map<Class<?>, Class<?>[]> polymorphicEntityMap = polymorphicEntityCache.get(sessionFactory);
+
+        return polymorphicEntityMap == null ? null : polymorphicEntityMap.get(ceilingClass);
+    }
+
+    protected Map<Class<?>, Class<?>[]> buildPolymorphicEntityMap(Map<Class<?>, Class<?>[]> polymorphicEntityMap,
+            Class<?> ceilingClass, Class<?>[] filteredEntities) {
+        if (polymorphicEntityMap == null) {
+            polymorphicEntityMap = new LRUMap<>(1000);
+        }
+
+        polymorphicEntityMap.put(ceilingClass, filteredEntities);
+        return polymorphicEntityMap;
     }
 
     @Override
