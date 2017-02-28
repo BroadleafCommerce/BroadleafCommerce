@@ -60,8 +60,10 @@ import javax.annotation.Resource;
  */
 @Component("blCategoryCustomPersistenceHandler")
 public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-    
+
     private static final Log LOG = LogFactory.getLog(CategoryCustomPersistenceHandler.class);
+    
+    protected static final String DEFAULT_PARENT_CATEGORY = "defaultParentCategory";
 
     @Resource(name = "blCategoryCustomPersistenceHandlerExtensionManager")
     protected CategoryCustomPersistenceHandlerExtensionManager extensionManager;
@@ -90,7 +92,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         if (!isDefaultCategoryLegacyMode()) {
             md.remove("allParentCategoryXrefs");
 
-            BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) md.get("defaultParentCategory"));
+            BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) md.get(DEFAULT_PARENT_CATEGORY));
             defaultCategory.setFriendlyName("CategoryImpl_ParentCategory");
         }
 
@@ -130,12 +132,12 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
     }
 
     protected Entity validateParentCategory(Entity entity, boolean isAdd) {
-        Long defaultParentCategoryId = (entity.findProperty("defaultParentCategory") != null)
-                ? Long.valueOf(entity.findProperty("defaultParentCategory").getValue()) : null;
-        Long categoryId = Long.valueOf(entity.findProperty("id").getValue());
+        String defaultParentCategoryId = (entity.findProperty(DEFAULT_PARENT_CATEGORY) != null)
+                ? entity.findProperty(DEFAULT_PARENT_CATEGORY).getValue() : null;
+        String categoryId = entity.findProperty("id").getValue();
 
         if (Objects.equals(defaultParentCategoryId, categoryId)) {
-            entity.addValidationError("defaultParentCategory", "admin.cantMakeCategoryOwnParent");
+            entity.addValidationError(DEFAULT_PARENT_CATEGORY, "admin.cantAddCategoryAsOwnParent");
         }
 
         return entity;
@@ -188,7 +190,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         //Make sure we get the actual field value - not something manipulated in the getter
         Category parentCategory;
         try {
-            Field defaultCategory = CategoryImpl.class.getDeclaredField("defaultParentCategory");
+            Field defaultCategory = CategoryImpl.class.getDeclaredField(DEFAULT_PARENT_CATEGORY);
             defaultCategory.setAccessible(true);
             parentCategory = (Category) defaultCategory.get(category);
         } catch (NoSuchFieldException e) {
@@ -201,7 +203,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     protected void removeOldDefault(Category adminInstance, CategoryXref oldDefault, Entity entity) {
         if (!isDefaultCategoryLegacyMode()) {
-            if (entity.findProperty("defaultParentCategory") != null && StringUtils.isEmpty(entity.findProperty("defaultParentCategory").getValue())) {
+            if (entity.findProperty(DEFAULT_PARENT_CATEGORY) != null && StringUtils.isEmpty(entity.findProperty(DEFAULT_PARENT_CATEGORY).getValue())) {
                 adminInstance.setParentCategory(null);
             }
             CategoryXref newDefault = getCurrentDefaultXref(adminInstance);
