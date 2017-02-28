@@ -57,33 +57,37 @@ public interface BroadleafModuleRegistration {
     public String getModuleName();
     
     /**
-     * List of modules that are known to have declared a {@link BroadleafModuleRegistration} in their {@code spring.factories}
+     * List of modules that are known to have declared a {@link BroadleafModuleRegistration} in their {@code spring.factories}.
+     * 
+     * Note that any changes here should also be done in the respective module
      */
     public enum BroadleafModuleEnum {
         ACCOUNT ("Account"),
-        ADVANCED_CMS ("AdvancedCMS"),
-        ADVANCED_INVENTORY ("broadleaf-advanced-inventory"),
-        ADVANCED_OFFER ("AdvancedOffer"),
+        ADVANCED_CMS ("Advanced CMS"),
+        ADVANCED_INVENTORY ("Advanced Inventory"),
+        ADVANCED_OFFER ("Advanced Offer"),
         AFFILIATE ("Affilliate"),
-        CART_RULES ("broadleaf-cart-rules"),
-        CATALOG_ACCESS_POLICY ("CatalogAccessPolicy"),
-        CUSTOMER_SEGMENT ("CustomerSegment"),
-        CUSTOM_FIELD ("CustomField"),
-        GIFT_CARD_AND_CUSTOMER_CREDIT ("GiftCardAndCustomerCredit (AccountCredit)"),
+        CART_RULES ("Cart Rules"),
+        CATALOG_ACCESS_POLICY ("Catalog Access Policies"),
+        CUSTOMER_SEGMENT ("Customer Segment"),
+        CUSTOM_FIELD ("Custom Field"),
+        GIFT_CARD_AND_CUSTOMER_CREDIT ("Gift Cards and Customer Credit (AccountCredit)"),
         ENTERPRISE ("Enterprise"),
         ENTERPRISE_SEARCH ("Enterprise Search"),
         EXPORT ("Export"),
+        FREE_GEO_IP ("Free Geo IP"),
         I18N_ENTERPRISE ("i18n Enterprise"),
         IMPORT ("Import"),
         JOBS_AND_EVENTS ("Jobs and Events"),
         MARKETPLACE ("Marketplace"),
         MENU ("Menu"),
-        MERCHANDISING_GROUP ("MerchandisingGroup"),
-        MULTI_TENANT_SINGLE_SCHEMA ("MultiTenant-SingeSchema"),
-        OMS ("broadleaf-oms"),
+        MERCHANDISING_GROUP ("Merchandising Group"),
+        MULTI_TENANT_SINGLE_SCHEMA ("MultiTenant - SingleSchema"),
+        OMS ("OMS"),
         PRICE_LIST ("PriceList"),
         PROCESS ("Process"),
-        PRODUCT_TYPE ("broadleaf-product-type"),
+        PRODUCT_TYPE ("Product Type"),
+        PUNCHOUT2GO ("PunchOut2Go"),
         QUOTE ("Quote"),
         REST_API ("Broadleaf REST APIs"),
         SUBSCRIPTION ("Subscription"),
