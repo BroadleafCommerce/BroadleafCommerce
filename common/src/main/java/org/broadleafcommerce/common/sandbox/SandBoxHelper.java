@@ -160,6 +160,13 @@ public interface SandBoxHelper {
     boolean isReject();
 
     /**
+     * Is the current thread involved in a replay operation (i.e. promote, revert, reject, approve and sync).
+     *
+     * @return whether or not there is a replay operation in progress
+     */
+    boolean isReplayOperation();
+
+    /**
      * For the passed in code block (Runnable), whether or not sandbox entities marked
      * as deleted should be included in any results from queries or lazy collection
      * retrievals.
