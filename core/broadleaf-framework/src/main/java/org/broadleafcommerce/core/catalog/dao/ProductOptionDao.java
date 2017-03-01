@@ -58,4 +58,6 @@ public interface ProductOptionDao {
     public List<AssignedProductOptionDTO> findAssignedProductOptionsByProduct(Product product);
 
     Long countAllowedValuesForProductOptionById(Long productOptionId);
+
+    List<Long> readSkuIdsForProductOptionValues(Long productId, String attributeName, String attributeValue, List<Long> possibleSkuIds);
 }
