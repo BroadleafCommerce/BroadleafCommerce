@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * 
  * <p>
  * Since this annotation is a meta-annotation for {@literal @}ImportResource, this <b>cannot</b> be placed on a {@literal @}Configuration class
- * that contains an {@literal @}ImportResource annotation.
+ * that contains an {@literal @}ImportResource annotation directly or on a meta-annotation.
  *  
  * <p>
  * Since this does not include any of the servlet-specific Broadleaf beans, this is generally only used when you are not running in a 

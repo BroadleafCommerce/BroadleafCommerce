@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.config;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ImportResource;
 
 import java.lang.annotation.Documented;
@@ -27,27 +26,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.servlet.ServletContainerInitializer;
-
 /**
+ * <b>STOP. This is probably not the annotation you want currently.</b>
  * <p>
- * Bootstraps Broadleaf admin configuration XML for both servlet and non-servlet. As a result, this annotation should only be placed
- * on an {@literal @}Configuration class within a servlet. If there are no custom {@link ServletContainerInitializer}s with
- * a servlet-specific {@link ApplicationContext} (like in a non-servlet spring boot application) then this can be placed on the main
- * {@literal @}SpringBootApplication class
- * 
- * <p>
- * Since this annotation is a meta-annotation for {@literal @}ImportResource, this <b>cannot</b> be placed on a {@literal @}Configuration class
- * that contains an {@literal @}ImportResource annotation directly or on a meta-annotation.
- *  
- * <p>
- * This import utilizes the {@link FrameworkXmlBeanDefinitionReader} so that framework XML bean definitions will not
- * overwrite beans defined in a project.
- *
+ * The same rules apply here as with {@link EnableBroadleafAutoConfiguration} but this is for only the servlet-level Broadleaf beans
  * @author Philip Baggett (pbaggett)
- * @author Phillip Verheyden (phillipuniverse)
+ * @author Brandon Hines (bhines)
+ * @see EnableBroadleafSiteServletAutoConfiguration
  * @see EnableBroadleafAdminRootAutoConfiguration
- * @see EnableBroadleafAdminServletAutoConfiguration
+ * @see EnableBroadleafRootAutoConfiguration
  * @see EnableBroadleafAutoConfiguration
  * @since 5.2
  */
@@ -55,10 +42,7 @@ import javax.servlet.ServletContainerInitializer;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ImportResource(locations = {
-    "classpath*:/blc-config/bl-*-applicationContext.xml",
-    "classpath*:/blc-config/admin/bl-*-applicationContext.xml",
-    "classpath*:/blc-config/bl-*-applicationContext-servlet.xml",
-    "classpath*:/blc-config/admin/bl-*-applicationContext-servlet.xml"
+        "classpath*:/blc-config/bl-*-applicationContext-servlet.xml"
 }, reader = FrameworkXmlBeanDefinitionReader.class)
-public @interface EnableBroadleafAdminAutoConfiguration {
+public @interface EnableBroadleafServletAutoConfiguration {
 }

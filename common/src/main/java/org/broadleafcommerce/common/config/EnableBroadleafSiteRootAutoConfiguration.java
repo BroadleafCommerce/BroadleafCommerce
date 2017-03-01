@@ -29,8 +29,8 @@ import java.lang.annotation.Target;
 
 /**
  * <p>
- * Bootstraps Broadleaf <b>root</b> admin configuration XML for only non-servlet beans. This can be placed on any {@literal @}Configuration
- * class (except ones with additional {@literal @}ImportResource) to make the root Broadleaf beans apart of the {@link ApplicationContext}.
+ * Bootstraps Broadleaf <b>root</b> site configuration XML for only non-servlet beans. This can be placed on any {@literal @}Configuration
+ * class (except ones with additional {@literal @}ImportResource) to make the core Broadleaf beans apart of the {@link ApplicationContext}.
  * 
  * <p>
  * Since this annotation is a meta-annotation for {@literal @}ImportResource, this <b>cannot</b> be placed on a {@literal @}Configuration class

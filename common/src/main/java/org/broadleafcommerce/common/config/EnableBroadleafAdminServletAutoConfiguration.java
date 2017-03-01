@@ -38,10 +38,11 @@ import javax.servlet.ServletContainerInitializer;
  * 
  * <p>
  * Since this annotation is a meta-annotation for {@literal @}ImportResource, this <b>cannot</b> be placed on a {@literal @}Configuration class
- * that contains an {@literal @}ImportResource annotation.
+ * that contains an {@literal @}ImportResource annotation directly or on a meta-annotation.
  * 
  * <p>
- * Rather than utilizing this annotation in a parent-child configuration consider using {@link EnableBroadleafAdminAutoConfiguration} to
+ * This annotation assumes that you have activated the root configuration via {@link EnableBroadleafAdminRootAutoConfiguration} in a parent
+ * context. Rather than utilizing this annotation in a parent-child configuration consider using {@link EnableBroadleafAdminAutoConfiguration} to
  * ensure that only a single {@link ApplicationContext} is present.
  * 
  * <p>
@@ -50,6 +51,7 @@ import javax.servlet.ServletContainerInitializer;
  *
  * @author Phillip Verheyden (phillipuniverse)
  * @see EnableBroadleafAdminAutoConfiguration
+ * @see EnableBroadleafAdminRootAutoConfiguration
  * @see EnableBroadleafAutoConfiguration
  * @since 5.2
  */

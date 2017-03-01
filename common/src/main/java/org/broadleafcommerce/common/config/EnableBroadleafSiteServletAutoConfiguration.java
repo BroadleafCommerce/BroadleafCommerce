@@ -36,7 +36,9 @@ import javax.servlet.ServletContainerInitializer;
 
 /**
  * <p>
- * Bootstraps Broadleaf site configuration XML for <b>only</b> servlet beans. If you have a customized {@link ServletContainerInitializer}
+ * Bootstraps Broadleaf site configuration XML for <b>only</b> servlet beans in use with a traditional MVC application. If you are deploying Broadleaf in a
+ * REST-API-only capacity or any other way then this annotation is probably not for you, and instead just {@link EnableBroadleafSiteRootAutoConfiguration}
+ * is sufficient.If you have a customized {@link ServletContainerInitializer}
  * with a servlet-specific {@link ApplicationContext}, this annotation should only be placed on an {@literal @}Configuration class within
  * <b>that</b> servlet-specific {@lnk ApplicationContext}. If this is not the case and no servlet-specific {@link ApplicationContext} exists in your
  * project and you are using Spring Boot, this can be placed on the {@literal @}SpringBootApplication class.
@@ -46,7 +48,8 @@ import javax.servlet.ServletContainerInitializer;
  * that contains an {@literal @}ImportResource annotation.
  *  
  * <p>
- * However, rather than using this annotation in a parent-child configuration consider using {@link EnableBroadleafAdminAutoConfiguration} to
+ * This annotation assumes that you have activated the root configuration via {@link EnableBroadleafAdminRootAutoConfiguration} in a parent
+ * context. However, rather than using this annotation in a parent-child configuration consider using {@link EnableBroadleafSiteAutoConfiguration} to
  * ensure that only a single {@link ApplicationContext} is present, or just use the {@link EnableBroadleafAutoConfiguration}
  * 
  * <p>
