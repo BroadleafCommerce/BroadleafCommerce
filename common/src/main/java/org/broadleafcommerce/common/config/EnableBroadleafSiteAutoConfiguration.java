@@ -18,35 +18,42 @@
 package org.broadleafcommerce.common.config;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.ApplicationContext;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.servlet.ServletContainerInitializer;
+
 /**
- * Bootstraps Broadleaf site configuration XML using a glob import.
+ * <p>
+ * Bootstraps Broadleaf customer-facing configuration XML for both servlet and non-servlet beans. If you have a customized {@link ServletContainerInitializer}
+ * with a servlet-specific {@link ApplicationContext}, this annotation should only be placed on an {@literal @}Configuration class within
+ * <b>that</b> servlet-specific {@lnk ApplicationContext}. If this is not the case and no servlet-specific {@link ApplicationContext} exists in your
+ * project and you are using Spring Boot, this can be placed on the {@literal @}SpringBootApplication class.
+ *
+ * <p>
+ * Since this annotation is a meta-annotation for {@literal @}ImportResource, this <b>cannot</b> be placed on a {@literal @}Configuration class
+ * that contains an {@literal @}ImportResource annotation.
+ * 
  * <p>
  * This import utilizes the {@link FrameworkXmlBeanDefinitionReader} so that framework XML bean definitions will not
  * overwrite beans defined in a project.
- * <p>
- * This annotation is a temporary measure until all modules can be updated to not have admin and site specific
- * configuration files, but instead leverage {@link org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin} and
- * use {@link EnableBroadleafAutoConfiguration}. This is documented further on {@link EnableBroadleafAutoConfiguration}.
  *
  * @author Philip Baggett (pbaggett)
+ * @author Phillip Verheyden (phillipuniverse)
+ * @see EnableBroadleafSiteRootAutoConfiguration
+ * @see EnableBroadleafSiteServletAutoConfiguration
  * @see EnableBroadleafAutoConfiguration
  * @since 5.2
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@ImportResource(locations = {
-        "classpath*:/blc-config/bl-*-applicationContext.xml",
-        "classpath*:/blc-config/bl-*-applicationContext-servlet.xml",
-        "classpath*:/blc-config/site/bl-*-applicationContext.xml",
-        "classpath*:/blc-config/site/bl-*-applicationContext-servlet.xml"
-}, reader = FrameworkXmlBeanDefinitionReader.class)
+@EnableBroadleafSiteRootAutoConfiguration
+@EnableBroadleafSiteServletAutoConfiguration
 public @interface EnableBroadleafSiteAutoConfiguration {
 }

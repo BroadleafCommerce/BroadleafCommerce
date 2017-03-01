@@ -15,45 +15,56 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+/**
+ * 
+ */
 package org.broadleafcommerce.common.config;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ImportResource;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import javax.servlet.ServletContainerInitializer;
 
+
 /**
  * <p>
- * Bootstraps Broadleaf admin configuration XML for both servlet and non-servlet. As a result, this annotation should only be placed
- * on an {@literal @}Configuration class within a servlet. If there are no custom {@link ServletContainerInitializer}s with
- * a servlet-specific {@link ApplicationContext} (like in a non-servlet spring boot application) then this can be placed on the main
- * {@literal @}SpringBootApplication class
+ * Bootstraps Broadleaf site configuration XML for <b>only</b> servlet beans. If you have a customized {@link ServletContainerInitializer}
+ * with a servlet-specific {@link ApplicationContext}, this annotation should only be placed on an {@literal @}Configuration class within
+ * <b>that</b> servlet-specific {@lnk ApplicationContext}. If this is not the case and no servlet-specific {@link ApplicationContext} exists in your
+ * project and you are using Spring Boot, this can be placed on the {@literal @}SpringBootApplication class.
  * 
  * <p>
  * Since this annotation is a meta-annotation for {@literal @}ImportResource, this <b>cannot</b> be placed on a {@literal @}Configuration class
  * that contains an {@literal @}ImportResource annotation.
  *  
  * <p>
+ * However, rather than using this annotation in a parent-child configuration consider using {@link EnableBroadleafAdminAutoConfiguration} to
+ * ensure that only a single {@link ApplicationContext} is present, or just use the {@link EnableBroadleafAutoConfiguration}
+ * 
+ * <p>
  * This import utilizes the {@link FrameworkXmlBeanDefinitionReader} so that framework XML bean definitions will not
  * overwrite beans defined in a project.
  *
- * @author Philip Baggett (pbaggett)
  * @author Phillip Verheyden (phillipuniverse)
- * @see EnableBroadleafAdminRootAutoConfiguration
- * @see EnableBroadleafAdminServletAutoConfiguration
+ * @see EnableBroadleafSiteAutoConfiguration
  * @see EnableBroadleafAutoConfiguration
  * @since 5.2
  */
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
 @Documented
-@EnableBroadleafAdminRootAutoConfiguration
-@EnableBroadleafAdminServletAutoConfiguration
-public @interface EnableBroadleafAdminAutoConfiguration {
+@Retention(RUNTIME)
+@Target(TYPE)
+@ImportResource(locations = {
+    "classpath*:/blc-config/bl-*-applicationContext-servlet.xml",
+    "classpath*:/blc-config/site/bl-*-applicationContext-servlet.xml"
+}, reader = FrameworkXmlBeanDefinitionReader.class)
+public @interface EnableBroadleafSiteServletAutoConfiguration {
+
 }

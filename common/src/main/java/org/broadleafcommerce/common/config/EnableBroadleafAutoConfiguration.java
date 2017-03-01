@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.config;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.annotation.ImportResource;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -75,10 +76,6 @@ import java.lang.annotation.Target;
  * <p>
  * This import utilizes the {@link FrameworkXmlBeanDefinitionReader} so that framework XML bean definitions will not
  * overwrite beans defined in a project.
- * <p>
- * Files ending with "-servlet" are included for backwards compatibility reasons. These are no longer necessary as of
- * Spring 4.0 since controllers can now be included in the regular application context. Eventually, when all modules
- * have been updated to not use "-servlet" files, the "-servlet" import location can be removed.
  *
  * @author Philip Baggett (pbaggett)
  * @author Brandon Hines (bhines)
