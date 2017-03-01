@@ -17,28 +17,20 @@
  */
 package org.broadleafcommerce.common.persistence;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.StringUtil;
-import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
-import org.hibernate.Session;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
-
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
 
 @Component("blEntityConfiguration")
 public class EntityConfiguration implements ApplicationContextAware {
@@ -52,11 +44,6 @@ public class EntityConfiguration implements ApplicationContextAware {
 
     @javax.annotation.Resource(name="blMergedEntityContexts")
     protected Set<String> mergedEntityContexts;
-
-    @Autowired
-    protected List<EntityManager> entityManagers;
-
-    protected DynamicDaoHelperImpl daoHelper = new DynamicDaoHelperImpl();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -80,15 +67,13 @@ public class EntityConfiguration implements ApplicationContextAware {
         applicationcontext = new GenericXmlApplicationContext(entityContexts);
     }
 
-    public String[] getEntityBeanNames() {
-        return applicationcontext.getBeanDefinitionNames();
-    }
-
     public Class<?> lookupEntityClass(String beanId) {
-        Class<?> clazz = entityMap.get(beanId);
-
-        if (clazz == null) {
-            clazz = retrieveEntityClass(beanId);
+        Class<?> clazz;
+        if (entityMap.containsKey(beanId)) {
+            clazz = entityMap.get(beanId);
+        } else {
+            Object object = applicationcontext.getBean(beanId);
+            clazz = object.getClass();
             entityMap.put(beanId, clazz);
         }
         if (LOG.isDebugEnabled()) {
@@ -96,49 +81,24 @@ public class EntityConfiguration implements ApplicationContextAware {
         }
         return clazz;
     }
+    
+    public String[] getEntityBeanNames() {
+        return applicationcontext.getBeanDefinitionNames();
+    }
 
     public <T> Class<T> lookupEntityClass(String beanId, Class<T> resultClass) {
-        Class<T> clazz = (Class<T>) entityMap.get(beanId);
-
-        if (clazz == null) {
-            clazz = (Class<T>) retrieveEntityClass(beanId);
+        Class<T> clazz;
+        if (entityMap.containsKey(beanId)) {
+            clazz = (Class<T>) entityMap.get(beanId);
+        } else {
+            Object object = applicationcontext.getBean(beanId);
+            clazz = (Class<T>) object.getClass();
             entityMap.put(beanId, clazz);
         }
-
         if (LOG.isDebugEnabled()) {
             LOG.debug("Returning class (" + clazz.getName() + ") configured with bean id (" + beanId + ')');
         }
         return clazz;
-    }
-
-    protected Class<?> retrieveEntityClass(String beanId) {
-        try {
-            return applicationcontext.getBean(beanId).getClass();
-        } catch (NoSuchBeanDefinitionException e) {
-            return retrieveEntityClassFromEntityManagers(beanId);
-        }
-    }
-
-    protected Class<?> retrieveEntityClassFromEntityManagers(String beanId) {
-        Class<?> beanIdClass = getClassForName(beanId);
-
-        for (EntityManager em : entityManagers) {
-            Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(beanIdClass, em.unwrap(Session.class).getSessionFactory(), true, true);
-
-            if (ArrayUtils.isNotEmpty(entitiesFromCeiling)) {
-                return entitiesFromCeiling[entitiesFromCeiling.length - 1];
-            }
-        }
-
-        throw new RuntimeException("Unable to retrieve the entity class for the given bean id: " + beanId);
-    }
-
-    protected Class<?> getClassForName(String beanId) {
-        try {
-            return Class.forName(beanId);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public Object createEntityInstance(String beanId) {
