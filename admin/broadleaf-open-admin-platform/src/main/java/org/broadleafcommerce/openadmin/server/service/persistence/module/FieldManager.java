@@ -41,9 +41,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
+import javax.persistence.metamodel.EntityType;
 
 /**
  * 
@@ -241,11 +243,28 @@ public class FieldManager {
     }
 
     protected PersistenceManager getPersistenceManager(Class entityClass) {
+        if (!isPersistentClass(entityClass)) {
+            return PersistenceManagerFactory.getDefaultPersistenceManager();
+        }
+
         try {
-            return PersistenceManagerFactory.getPersistenceManager(entityClass);
+            return PersistenceManagerFactory.getPersistenceManager();
         } catch (RuntimeException e) {
             return PersistenceManagerFactory.getDefaultPersistenceManager();
         }
+    }
+
+    protected boolean isPersistentClass(Class entityClass) {
+        if (entityManager != null) {
+            Set<EntityType<?>> managedEntities = entityManager.getMetamodel().getEntities();
+            for (EntityType managedEntity : managedEntities) {
+                if (managedEntity.getJavaType().equals(entityClass)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     protected Object handleMapFieldExtraction(Object bean, String fieldName, Class<?> componentClass, Object value,
