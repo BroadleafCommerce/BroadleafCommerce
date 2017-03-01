@@ -24,5 +24,4 @@
     <named-query name="BC_READ_ALL_PRODUCT_OPTIONS" >
         <query>SELECT productOption FROM org.broadleafcommerce.core.catalog.domain.ProductOption productOption</query>
     </named-query>
-    
 </entity-mappings>
