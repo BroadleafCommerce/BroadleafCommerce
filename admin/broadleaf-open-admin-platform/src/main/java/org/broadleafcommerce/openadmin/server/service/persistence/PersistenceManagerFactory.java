@@ -113,7 +113,7 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
 
     public static PersistenceManager getPersistenceManager(Class entityClass, TargetModeType targetModeType) {
         synchronized (persistenceManagers) {
-            String cacheKey = buildCacheKey(targetModeType, entityClass);
+            String cacheKey = persistenceService.buildManagerCacheKey(targetModeType.getType(), entityClass);
             if (!persistenceManagers.containsKey(cacheKey)) {
                 PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
                 persistenceManager.setTargetMode(targetModeType);
@@ -122,16 +122,6 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
             }
             return persistenceManagers.get(cacheKey);
         }
-    }
-
-    protected static String buildCacheKey(TargetModeType targetModeType, Class<?> entityClass) {
-        String managedClassName = getManagedClassName(entityClass.getName());
-
-        return targetModeType.getType() + "|" + managedClassName;
-    }
-
-    protected static String getManagedClassName(String className) {
-        return entityConfiguration.lookupEntityClass(className).getName();
     }
 
     public static boolean isPersistenceManagerActive() {

@@ -17,16 +17,20 @@
  */
 package org.broadleafcommerce.common.service;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -63,10 +67,15 @@ public class PersistenceServiceImpl implements PersistenceService {
     @Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
+    @Autowired
+    protected List<EntityManager> entityManagers;
+
     private final Object CACHE_LOCK = new Object();
     private final Map<String, EntityManager> ENTITY_MANAGER_CACHE = new ConcurrentHashMap<>();
     private final Map<String, PlatformTransactionManager> TRANSACTION_MANAGER_CACHE = new ConcurrentHashMap<>();
     private final Map<String, EJB3ConfigurationDao> EJB3_CONFIG_DAO_CACHE = new ConcurrentHashMap<>();
+
+    private DynamicDaoHelperImpl daoHelper = new DynamicDaoHelperImpl();
 
     @EventListener
     public void init(ContextRefreshedEvent event) {
@@ -201,11 +210,13 @@ public class PersistenceServiceImpl implements PersistenceService {
         return (EJB3ConfigurationDao) managerMap.get(EJB3_CONFIG_DAO_KEY);
     }
 
-    protected String buildManagerCacheKey(String targetMode, Class<?> clazz) {
+    @Override
+    public String buildManagerCacheKey(String targetMode, Class<?> clazz) {
         return buildManagerCacheKey(targetMode, clazz.getName());
     }
 
-    protected String buildManagerCacheKey(String targetMode, String className) {
+    @Override
+    public String buildManagerCacheKey(String targetMode, String className) {
         String managedClassName = getManagedClassName(className);
 
         return targetMode + "|" + managedClassName;
@@ -216,6 +227,32 @@ public class PersistenceServiceImpl implements PersistenceService {
     }
 
     protected String getManagedClassName(String className) {
-        return entityConfiguration.lookupEntityClass(className).getName();
+        try {
+            return entityConfiguration.lookupEntityClass(className).getName();
+        } catch (NoSuchBeanDefinitionException e) {
+            return retrieveEntityClassFromEntityManagers(className).getName();
+        }
+    }
+
+    protected Class<?> retrieveEntityClassFromEntityManagers(String beanId) {
+        Class<?> beanIdClass = getClassForName(beanId);
+
+        for (EntityManager em : entityManagers) {
+            Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(beanIdClass, em.unwrap(Session.class).getSessionFactory(), true, true);
+
+            if (ArrayUtils.isNotEmpty(entitiesFromCeiling)) {
+                return entitiesFromCeiling[entitiesFromCeiling.length - 1];
+            }
+        }
+
+        throw new RuntimeException("Unable to retrieve the entity class for the given bean id: " + beanId);
+    }
+
+    protected Class<?> getClassForName(String beanId) {
+        try {
+            return Class.forName(beanId);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -125,4 +125,22 @@ public interface PersistenceService {
      * @return the {@link EJB3ConfigurationDao}
      */
     EJB3ConfigurationDao getEJB3ConfigurationDao(Map<String, Object> managerMap);
+
+    /**
+     * Builds a cache key based on the {@link TargetModeType} and the provided Class
+     *
+     * @param targetMode
+     * @param clazz
+     * @return the cache key
+     */
+    String buildManagerCacheKey(String targetMode, Class<?> clazz);
+
+    /**
+     * Builds a cache key based on the {@link TargetModeType} and className
+     *
+     * @param targetMode
+     * @param className
+     * @return the cache key
+     */
+    String buildManagerCacheKey(String targetMode, String className);
 }
