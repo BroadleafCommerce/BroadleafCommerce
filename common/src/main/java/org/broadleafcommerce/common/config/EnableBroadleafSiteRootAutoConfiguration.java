@@ -27,29 +27,28 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.servlet.ServletContainerInitializer;
-
 /**
  * <p>
- * Bootstraps Broadleaf customer-facing configuration XML for both servlet and non-servlet beans in use with a traditional MVC application. If you are deploying Broadleaf in a
- * REST-API-only capacity or any other way then this annotation is probably not for you, and instead just {@link EnableBroadleafSiteRootAutoConfiguration}
- * is sufficient. If you have a customized {@link ServletContainerInitializer}
- * with a servlet-specific {@link ApplicationContext}, this annotation should only be placed on an {@literal @}Configuration class within
- * <b>that</b> servlet-specific {@lnk ApplicationContext}. If this is not the case and no servlet-specific {@link ApplicationContext} exists in your
- * project and you are using Spring Boot, this can be placed on the {@literal @}SpringBootApplication class.
- *
+ * Bootstraps Broadleaf <b>root</b> site configuration XML for only non-servlet beans. This can be placed on any {@literal @}Configuration
+ * class (except ones with additional {@literal @}ImportResource) to make the core Broadleaf beans apart of the {@link ApplicationContext}.
+ * 
  * <p>
  * Since this annotation is a meta-annotation for {@literal @}ImportResource, this <b>cannot</b> be placed on a {@literal @}Configuration class
  * that contains an {@literal @}ImportResource annotation.
+ *  
+ * <p>
+ * Since this does not include any of the servlet-specific Broadleaf beans, this is generally only used when you are not running in a 
+ * servlet environment at all or there is a parent-child relationship between a root {@link ApplicationContext} and you want to
+ * configure multiple servlets that share much of the same beans. In general, rather than create multiple servlets with shared
+ * configuration you should instead create separate deployments and utilize {@link EnableBroadleafSiteAutoConfiguration} in a single place.
  * 
  * <p>
  * This import utilizes the {@link FrameworkXmlBeanDefinitionReader} so that framework XML bean definitions will not
  * overwrite beans defined in a project.
- *
+ * 
  * @author Philip Baggett (pbaggett)
  * @author Phillip Verheyden (phillipuniverse)
- * @see EnableBroadleafSiteRootAutoConfiguration
- * @see EnableBroadleafSiteServletAutoConfiguration
+ * @see EnableBroadleafSiteAutoConfiguration
  * @see EnableBroadleafAutoConfiguration
  * @since 5.2
  */
@@ -57,10 +56,8 @@ import javax.servlet.ServletContainerInitializer;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ImportResource(locations = {
-    "classpath*:/blc-config/bl-*-applicationContext.xml",
-    "classpath*:/blc-config/site/bl-*-applicationContext.xml",
-    "classpath*:/blc-config/bl-*-applicationContext-servlet.xml",
-    "classpath*:/blc-config/site/bl-*-applicationContext-servlet.xml"
+        "classpath*:/blc-config/bl-*-applicationContext.xml",
+        "classpath*:/blc-config/site/bl-*-applicationContext.xml"
 }, reader = FrameworkXmlBeanDefinitionReader.class)
-public @interface EnableBroadleafSiteAutoConfiguration {
+public @interface EnableBroadleafSiteRootAutoConfiguration {
 }
