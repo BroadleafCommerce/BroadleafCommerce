@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.common.i18n.domain;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
@@ -43,6 +44,7 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
     public static final TranslatedEntity CATEGORY = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.Category", "Category");
     public static final TranslatedEntity PRODUCT_OPTION = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.ProductOption", "ProdOption");
     public static final TranslatedEntity PRODUCT_OPTION_VALUE = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.ProductOptionValue", "ProdOptionVal");
+    public static final TranslatedEntity SITE = new TranslatedEntity("org.broadleafcommerce.common.site.domain.Site", "Site");
     public static final TranslatedEntity STATIC_ASSET = new TranslatedEntity("org.broadleafcommerce.cms.file.domain.StaticAsset", "StaticAsset");
     public static final TranslatedEntity SEARCH_FACET = new TranslatedEntity("org.broadleafcommerce.core.search.domain.SearchFacet", "SearchFacet");
     public static final TranslatedEntity FULFILLMENT_OPTION = new TranslatedEntity("org.broadleafcommerce.core.order.domain.FulfillmentOption", "FulfillmentOption");
@@ -58,18 +60,19 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
     public static final TranslatedEntity COUNTRY = new TranslatedEntity("org.broadleafcommerce.profile.core.domain.Country", "Country");
     public static final TranslatedEntity COUNTRY_SUBDIVISION = new TranslatedEntity("org.broadleafcommerce.profile.core.domain.CountrySubdivision", "CountrySubdivision");
     public static final TranslatedEntity COUNTRY_SUBDIVISION_CATEGORY = new TranslatedEntity("org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategory", "CountrySubdivisionCategory");
+    public static final TranslatedEntity CATALOG = new TranslatedEntity("org.broadleafcommerce.common.site.domain.Catalog", "Catalog");
 
     public static TranslatedEntity getInstance(final String type) {
         return TYPES.get(type);
     }
-    
+
     public static TranslatedEntity getInstanceFromFriendlyType(final String friendlyType) {
         for (Entry<String, TranslatedEntity> entry : TYPES.entrySet()) {
             if (entry.getValue().getFriendlyType().equals(friendlyType)) {
                 return entry.getValue();
             }
         }
-        
+
         return null;
     }
 
@@ -98,7 +101,7 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
     public static Map<String, TranslatedEntity> getTypes() {
         return TYPES;
     }
-    
+
     private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {

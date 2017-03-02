@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -24,6 +25,7 @@ import org.broadleafcommerce.openadmin.dto.SortDirection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -41,6 +43,12 @@ public class FilterMapping {
     protected FieldPath fieldPath;
     protected Class<?> inheritedFromClass;
     protected Boolean nullsLast = true;
+    protected Integer order;
+
+    public FilterMapping withOrder(Integer order) {
+        setOrder(order);
+        return this;
+    }
 
     public FilterMapping withFullPropertyName(String fullPropertyName) {
         setFullPropertyName(fullPropertyName);
@@ -51,7 +59,7 @@ public class FilterMapping {
         setFilterValues(filterValues);
         return this;
     }
-    
+
     public FilterMapping withDirectFilterValues(List directFilterValues) {
         setDirectFilterValues(directFilterValues);
         return this;
@@ -71,7 +79,7 @@ public class FilterMapping {
         setFieldPath(fieldPath);
         return this;
     }
-    
+
     public FilterMapping withInheritedFromClass(Class<?> inheritedFromClass) {
         setInheritedFromClass(inheritedFromClass);
         return this;
@@ -93,7 +101,7 @@ public class FilterMapping {
         if (CollectionUtils.isNotEmpty(directFilterValues)) {
             throw new IllegalArgumentException("Cannot set both filter values and direct filter values");
         }
-        
+
         List<String> parsedValues = new ArrayList<String>();
         for (String unfiltered : filterValues) {
             parsedValues.addAll(Arrays.asList(parseFilterValue(unfiltered)));
@@ -124,18 +132,18 @@ public class FilterMapping {
     public void setFieldPath(FieldPath fieldPath) {
         this.fieldPath = fieldPath;
     }
-    
+
     public List getDirectFilterValues() {
         return directFilterValues;
     }
-    
+
     public void setDirectFilterValues(List directFilterValues) {
         if (CollectionUtils.isNotEmpty(filterValues)) {
             throw new IllegalArgumentException("Cannot set both filter values and direct filter values");
         }
         this.directFilterValues = directFilterValues;
     }
-    
+
     public Class<?> getInheritedFromClass() {
         return inheritedFromClass;
     }
@@ -150,13 +158,13 @@ public class FilterMapping {
         //in this case.
         String[] vals;
         if (filterValue.contains(RANGE_SPECIFIER_REGEX)) {
-            vals = new String[]{filterValue.substring(0, filterValue.indexOf(RANGE_SPECIFIER_REGEX)),
-                filterValue.substring(filterValue.indexOf(RANGE_SPECIFIER_REGEX) + RANGE_SPECIFIER_REGEX.length(),
-                filterValue.length())};
+            vals = new String[] { filterValue.substring(0, filterValue.indexOf(RANGE_SPECIFIER_REGEX)),
+                    filterValue.substring(filterValue.indexOf(RANGE_SPECIFIER_REGEX) + RANGE_SPECIFIER_REGEX.length(),
+                            filterValue.length()) };
         } else {
-            vals = new String[]{filterValue};
+            vals = new String[] { filterValue };
         }
-        for (int j=0;j<vals.length;j++) {
+        for (int j = 0; j < vals.length; j++) {
             vals[j] = vals[j].trim();
         }
         return vals;
@@ -168,5 +176,33 @@ public class FilterMapping {
 
     public void setNullsLast(Boolean nullsLast) {
         this.nullsLast = nullsLast;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+
+    public static class ComparatorByOrder implements Comparator<FilterMapping> {
+
+        @Override
+        public int compare(FilterMapping o1, FilterMapping o2) {
+            Integer firstValue = o1.getOrder();
+            Integer secondValue = o2.getOrder();
+            //a null value is considered to be a "bigger" than any other sort order
+            if (firstValue == null && secondValue == null) {
+                return 0;
+            } else if (firstValue == null) {
+                return 1;
+            } else if (secondValue == null) {
+                return -1;
+            } else {
+                return firstValue.compareTo(secondValue);
+            }
+        }
+
     }
 }

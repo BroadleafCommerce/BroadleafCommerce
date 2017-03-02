@@ -22,7 +22,7 @@ package org.broadleafcommerce.core.payment.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.payment.PaymentType;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -82,6 +82,17 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
             .taxTotal(ZERO_TOTAL)
             .orderCurrencyCode(paymentTransaction.getOrderPayment().getCurrency().getCurrencyCode())
             .orderId(paymentTransaction.getOrderPayment().getOrder().getId().toString());
+        
+        Order order = paymentTransaction.getOrderPayment().getOrder();
+        populateCustomerInfo(order, requestDTO);
+        populateShipTo(order, requestDTO);
+        populateBillTo(order, requestDTO);
+
+        // Only set totals and line items when in a Payment flow
+        if (PaymentTransactionType.UNCONFIRMED.equals(paymentTransaction.getType())) {
+            populateTotals(order, requestDTO);
+            populateDefaultLineItemsAndSubtotal(order, requestDTO);
+        }
         
         //Copy Additional Fields from PaymentTransaction into the Request DTO.
         //This will contain any gateway specific information needed to perform actions on this transaction
@@ -196,7 +207,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     @Override
     public void populateBillTo(Order order, PaymentRequestDTO requestDTO) {
         for (OrderPayment payment : order.getPayments()) {
-            if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
+            if (payment.isActive()) {
                 Address billAddress = payment.getBillingAddress();
                 if (billAddress != null) {
                     String stateAbbr = null;

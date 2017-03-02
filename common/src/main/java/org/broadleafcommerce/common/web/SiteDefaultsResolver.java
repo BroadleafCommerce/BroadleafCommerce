@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce CMS Module
+ * broadleaf-multitenant-singleschema
  * %%
- * Copyright (C) 2009 - 2014 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,21 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.file.service;
 
+package org.broadleafcommerce.common.web;
+
+import org.broadleafcommerce.common.SiteDefaultsDTO;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.site.domain.Site;
-import org.springframework.ui.Model;
 
 /**
- * 
- * @author Chris Kittrell (ckittrell)
+ * interface that defines what generic behavior I want from any particular EM implementation
+ * (in this case, retrieve default information from a site)
+ * @author gdiaz
+ *
  */
-public interface BroadleafStaticAssetExtensionHandler extends ExtensionHandler {
+public interface SiteDefaultsResolver extends ExtensionHandler {
 
-    public ExtensionResultStatusType removeShareOptionsForMTStandardSite(Model model, Site currentSite);
-
-    /**
-     * Provide an extension point to modify the url for a StaticAsset in the case
-     * where multiple assets have the same url.
-     * @param urlBuilder
-     * @return
-     */
-    public ExtensionResultStatusType modifyDuplicateAssetURL(StringBuilder urlBuilder);
+    public ExtensionResultStatusType retrieveDefaults(SiteDefaultsDTO defautlsDTO);
 
 }

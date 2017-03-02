@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.time;
 
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -28,7 +30,7 @@ public class SystemTime {
 
     private static final TimeSource defaultTimeSource = new DefaultTimeSource();
     private static TimeSource globalTimeSource = null;
-    private static final InheritableThreadLocal<TimeSource> localTimeSource = new InheritableThreadLocal<TimeSource>();
+    private static final ThreadLocal<TimeSource> localTimeSource = ThreadLocalManager.createThreadLocal(TimeSource.class, false);
 
     public static TimeSource getTimeSource() {
         TimeSource applicableTimeSource;

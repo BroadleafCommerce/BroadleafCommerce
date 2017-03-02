@@ -11,12 +11,12 @@
             <legend th:text="#{${group.title}}" />
         
             <div th:each="field : ${group.fields}" 
-                 th:if="${field.name}" 
+                 th:if="${field.name}"
                  th:class="${'field-box' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}" 
                  blc_admin:component_id="${field}"
                  th:classappend="${!field.isVisible}? 'hidden'">
                  
-                 <div th:if="${renderOriginalValue}" 
+                 <div th:if="${renderOriginalValue}"
                       class="original-value"
                       th:attr="data-original-value=${field.attributes['originalValue']},
                                data-original-overriden-value=${field.attributes['originalOverridenValue']}" />
@@ -30,11 +30,13 @@
     
                 <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
             </div>
-            
-            <div th:if="${dynamicFormActionsTemplate}" th:remove="tag">
-                <div th:substituteby="${dynamicFormActionsTemplate}" />
+
+            <div th:unless="${#strings.containsIgnoreCase(group.title, 'master')}" th:remove="tag">
+                <div th:if="${dynamicFormActionsTemplate}" th:remove="tag">
+                    <div th:substituteby="${dynamicFormActionsTemplate}" />
+                </div>
             </div>
-            
+
         </fieldset>
     </div>
     

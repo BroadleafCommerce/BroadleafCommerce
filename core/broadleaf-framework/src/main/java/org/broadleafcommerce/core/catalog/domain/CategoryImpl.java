@@ -45,6 +45,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnum
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.OptionFilterParam;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
@@ -231,7 +232,13 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Column(name = "ACTIVE_END_DATE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order = 2000,
-            group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange)
+        group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange,
+        validationConfigurations = { 
+            @ValidationConfiguration(validationImplementation = "blAfterStartDateValidator",
+                configurationItems = { 
+                    @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
+            }) 
+        })
     protected Date activeEndDate;
 
     @Column(name = "DISPLAY_TEMPLATE")
@@ -1051,8 +1058,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
         // Add in parent facets unless they are excluded
         List<CategorySearchFacet> parentFacets = null;
-        if (defaultParentCategory != null) {
-            parentFacets = defaultParentCategory.getCumulativeSearchFacets();   
+        if (getDefaultParentCategory() != null) {
+            parentFacets = getDefaultParentCategory().getCumulativeSearchFacets();   
             CollectionUtils.filter(parentFacets, new Predicate() {
                 @Override
                 public boolean evaluate(Object arg) {
@@ -1250,8 +1257,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             CategoryXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getAllParentCategoryXrefs().add(clonedEntry);
         }
-        if (defaultParentCategory != null) {
-            cloned.setDefaultParentCategory(defaultParentCategory.createOrRetrieveCopyInstance(context).getClone());
+        if (getDefaultParentCategory() != null) {
+            cloned.setDefaultParentCategory(getDefaultParentCategory().createOrRetrieveCopyInstance(context).getClone());
         }
         for(CategoryXref entry : allChildCategoryXrefs){
             CategoryXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
