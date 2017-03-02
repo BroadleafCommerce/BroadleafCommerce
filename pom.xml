@@ -46,7 +46,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.3.7.RELEASE</spring.version>
-        <spring.security.version>4.2.1.RELEASE</spring.security.version>
+        <spring.security.version>4.2.2.RELEASE</spring.security.version>
         <spring.boot.autoconfigure.version>1.5.1.RELEASE</spring.boot.autoconfigure.version>
         <jackson.version>2.8.6</jackson.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
