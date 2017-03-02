@@ -66,7 +66,12 @@ public class BroadleafCommonConfig {
     @Bean
     @ConditionalOnMissingBean(name = "blJpaVendorAdapter")
     public JpaVendorAdapter blJpaVendorAdapter() {
-        return new HibernateJpaVendorAdapter();
+        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        //TODO see https://jira.spring.io/browse/SPR-13269. Since we're still on Hibernate 4.1, we want to revert to the previous
+        // Spring behavior, which was not to prepare the connection. This avoids some warnings and extra connection acquisitions
+        // for read only transactions. When we advance Hibernate, we should look at not blocking Spring's connection preparation.
+        vendorAdapter.setPrepareConnection(false);
+        return vendorAdapter;
     }
 
 }
