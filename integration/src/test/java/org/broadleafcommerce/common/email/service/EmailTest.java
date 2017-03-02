@@ -55,6 +55,7 @@ public class EmailTest extends BaseTest {
     public void testSynchronousEmail() throws Exception {
         EmailInfo info = new EmailInfo();
         info.setFromAddress("me@test.com");
+        info.setReplyTo("reply@test.com");
         info.setSubject("test");
         info.setEmailTemplate("org/broadleafcommerce/common/email/service/template/default.vm");
         info.setSendEmailReliableAsync("false");

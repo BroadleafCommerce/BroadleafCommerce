@@ -60,6 +60,9 @@ public abstract class MessageCreator {
                 message.setTo(emailUser.getEmailAddress());
                 message.setFrom(info.getFromAddress());
                 message.setSubject(info.getSubject());
+                if (info.getReplyTo() != null && !info.getReplyTo().isEmpty()) {
+                    message.setReplyTo(info.getReplyTo());
+                }
                 if (emailUser.getBCCAddresses() != null && emailUser.getBCCAddresses().length > 0) {
                     message.setBcc(emailUser.getBCCAddresses());
                 }

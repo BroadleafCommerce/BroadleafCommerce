@@ -37,6 +37,7 @@ public class EmailInfo implements Serializable {
     private String emailTemplate;
     private String subject;
     private String fromAddress;
+    private String replyTo;
     private String messageBody;
     private String encoding = "UTF8";
     private List<Attachment> attachments = new ArrayList<Attachment>();
@@ -84,6 +85,22 @@ public class EmailInfo implements Serializable {
      */
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    /**
+     *
+     * @return the reply to address
+     */
+    public String getReplyTo() {
+        return replyTo;
+    }
+
+    /**
+     *
+     * @param replyTo the reply to address to set
+     */
+    public void setReplyTo(String replyTo) {
+        this.replyTo = replyTo;
     }
 
     /**
@@ -158,6 +175,7 @@ public class EmailInfo implements Serializable {
         info.setEmailTemplate(emailTemplate);
         info.setEmailType(emailType);
         info.setFromAddress(fromAddress);
+        info.setReplyTo(replyTo);
         info.setMessageBody(messageBody);
         info.setSendAsyncPriority(sendAsyncPriority);
         info.setSendEmailReliableAsync(sendEmailReliableAsync);
