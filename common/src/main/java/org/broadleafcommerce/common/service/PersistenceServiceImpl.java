@@ -44,6 +44,12 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 
 /**
+ * Service to help gather the correct {@link EntityManager}, {@link PlatformTransactionManager},
+ *  or {@link EJB3ConfigurationDao} based on a class and {@link TargetModeType}. This functionality is
+ *  especially useful when multiple {@link javax.persistence.PersistenceUnit}s are in use.
+ *
+ * Note: All "default" items reference blPU, which is used to manage most Broadleaf entities in the Admin.
+ *
  * @author Chris Kittrell (ckittrell)
  */
 @Service("blPersistenceService")
@@ -230,11 +236,12 @@ public class PersistenceServiceImpl implements PersistenceService {
         try {
             return entityConfiguration.lookupEntityClass(className).getName();
         } catch (NoSuchBeanDefinitionException e) {
-            return retrieveEntityClassFromEntityManagers(className).getName();
+            return getCeilingImplClassFromEntityManagers(className).getName();
         }
     }
 
-    protected Class<?> retrieveEntityClassFromEntityManagers(String beanId) {
+    @Override
+    public Class<?> getCeilingImplClassFromEntityManagers(String beanId) {
         Class<?> beanIdClass = getClassForName(beanId);
 
         for (EntityManager em : entityManagers) {

@@ -143,4 +143,12 @@ public interface PersistenceService {
      * @return the cache key
      */
     String buildManagerCacheKey(String targetMode, String className);
+
+    /**
+     * Retrieves the ceiling implementation for the given className by checking each registered {@link EntityManager}
+     *
+     * @param className
+     * @return the cache key
+     */
+    Class<?> getCeilingImplClassFromEntityManagers(String className);
 }
