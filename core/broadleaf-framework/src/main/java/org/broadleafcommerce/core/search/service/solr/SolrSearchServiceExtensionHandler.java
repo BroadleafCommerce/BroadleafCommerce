@@ -169,9 +169,21 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param solrKey
      * @param selectedValues
      * @param valueStrings
+     * @deprecated use {@link SolrSearchServiceExtensionHandler#buildActiveFacetFilter(SearchFacet, String[], List)}
      * @return
      */
     ExtensionResultStatusType buildActiveFacetFilter(FieldEntity entityType, String solrKey, String[] selectedValues, List<String> valueStrings);
+
+    /**
+     * Builds the active facet filter query string for the given entity type and values. Typically this is only used when you
+     * are doing faceting on nested child documents.
+     *
+     * @param facet
+     * @param selectedValues
+     * @param valueStrings
+     * @return
+     */
+    ExtensionResultStatusType buildActiveFacetFilter(SearchFacet facet, String[] selectedValues, List<String> valueStrings);
 
     /**
      * Adds any additional category ids to filter by when category browsing or searching.
@@ -212,4 +224,13 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     ExtensionResultStatusType batchFetchCatalogData(List<Product> products);
 
+    /**
+     * Attaches the sort field, if able, to the given {@code SolrQuery}.
+     *
+     * @param solrQuery
+     * @param requestedSortFieldName
+     * @param order
+     * @return
+     */
+    ExtensionResultStatusType attachSortField(SolrQuery solrQuery, String requestedSortFieldName, SolrQuery.ORDER order);
 }

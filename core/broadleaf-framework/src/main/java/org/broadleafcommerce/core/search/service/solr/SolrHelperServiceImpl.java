@@ -271,6 +271,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
+    public String getPrimaryDocumentType() {
+        return (useSku) ? FieldEntity.SKU.getType() : FieldEntity.PRODUCT.getType();
+    }
+
+    @Override
     public Long getCurrentProductId(Indexable indexable) {
         if (Sku.class.isAssignableFrom(indexable.getClass())) {
             return ((Sku) indexable).getProduct().getId();
@@ -687,6 +692,14 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             for (String sortField : sortFields) {
                 String[] sortFieldsSegments = sortField.split(" ");
                 String requestedSortFieldName = sortFieldsSegments[0];
+                ORDER order = getSortOrder(sortFieldsSegments, sortQuery);
+
+                ExtensionResultStatusType result = searchExtensionManager.getProxy().attachSortField(query, requestedSortFieldName, order);
+
+                if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+                    // if an index field was not found, or the extension handler handled attaching the sort field, move to the next field
+                    continue;
+                }
                 
                 List<IndexFieldType> fieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviation(requestedSortFieldName);
                 
@@ -708,8 +721,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     if (fieldType.getIndexField().getField().getAbbreviation().equals(requestedSortFieldName)) {
                         requestedSortFieldAdded = true;
                     }
-                    
-                    ORDER order = getSortOrder(sortFieldsSegments, sortQuery);
+
                     query.addSort(new SortClause(field, order));
                 }
                 
@@ -717,7 +729,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 // database in the list of index fields and their types. If that's the case, go ahead and add it as a sort
                 // field anyway since we're trusting that the field was actually added to the index by some programmatic means
                 if (!requestedSortFieldAdded) {
-                    query.addSort(new SortClause(requestedSortFieldName, getSortOrder(sortFieldsSegments, sortQuery)));
+                    query.addSort(new SortClause(requestedSortFieldName, order));
                 }
             }
         }
@@ -793,9 +805,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                         }
                     }
 
-                    FieldEntity entityType = namedFacetMap.get(solrKey).getFacet().getFieldType().getIndexField().getField().getEntityType();
                     List<String> valueStrings = new ArrayList<>();
-                    ExtensionResultStatusType status = searchExtensionManager.getProxy().buildActiveFacetFilter(entityType, solrKey, selectedValues, valueStrings);
+                    ExtensionResultStatusType status = searchExtensionManager.getProxy().buildActiveFacetFilter(namedFacetMap.get(solrKey).getFacet(), selectedValues, valueStrings);
 
                     if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
                         StringBuilder valueString = new StringBuilder();
