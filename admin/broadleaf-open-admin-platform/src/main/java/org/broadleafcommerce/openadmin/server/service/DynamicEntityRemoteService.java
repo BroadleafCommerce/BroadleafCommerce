@@ -39,6 +39,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceRes
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 
 import java.lang.reflect.Constructor;
 import java.util.Collections;
@@ -84,12 +85,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     public PersistenceResponse inspect(final PersistencePackage persistencePackage) throws ServiceException {
         final PersistenceResponse[] response = new PersistenceResponse[1];
         try {
-            transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+            transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
                 @Override
                 public void execute() throws Throwable {
                     response[0] = nonTransactionalInspect(persistencePackage);
                 }
-            }, RuntimeException.class);
+            }, RuntimeException.class, true, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT, true);
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ServiceException) {
                 throw (ServiceException) e.getCause();
@@ -123,12 +124,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     public PersistenceResponse fetch(final PersistencePackage persistencePackage, final CriteriaTransferObject cto) throws ServiceException {
         final PersistenceResponse[] response = new PersistenceResponse[1];
         try {
-            transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+            transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
                 @Override
                 public void execute() throws Throwable {
                     response[0] = nonTransactionalFetch(persistencePackage, cto);
                 }
-            }, RuntimeException.class);
+            }, RuntimeException.class, true, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT, true);
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ServiceException) {
                 throw (ServiceException) e.getCause();
