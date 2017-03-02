@@ -53,7 +53,7 @@ public class StreamTransactionCapableUtilFailureSimulator extends StreamingTrans
     }
 
     @Override
-    protected TransactionStatus startTransaction(int propagationBehavior, int isolationLevel) {
+    protected TransactionStatus startTransaction(int propagationBehavior, int isolationLevel, boolean readOnly) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context.getAdditionalProperties().containsKey(FAILURE_MODE_KEY)) {
             String failureModePU = (String) context.getAdditionalProperties().get(FAILURE_MODE_PU);
@@ -63,7 +63,7 @@ public class StreamTransactionCapableUtilFailureSimulator extends StreamingTrans
                 throw (RuntimeException) context.getAdditionalProperties().get(FAILURE_MODE_EXCEPTION);
             }
         }
-        return super.startTransaction(propagationBehavior, isolationLevel);
+        return super.startTransaction(propagationBehavior, isolationLevel, readOnly);
     }
 
     protected void checkPU(String persistenceUnit) {

@@ -119,7 +119,13 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
 
     @Override
     public <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                        Class<G> exceptionType, boolean useTransaction, int transactionBehavior, int isolationLevel) throws G {
+                                            Class<G> exceptionType, boolean useTransaction, int transactionBehavior, int isolationLevel) throws G {
+        runOptionalTransactionalOperation(operation, exceptionType, useTransaction, transactionBehavior, isolationLevel, false);
+    }
+
+    @Override
+    public <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
+                                        Class<G> exceptionType, boolean useTransaction, int transactionBehavior, int isolationLevel, boolean readOnly) throws G {
         int maxCount = operation.retryMaxCountOverrideForLockAcquisitionFailure();
         if (maxCount == -1) {
             maxCount = retryMax;
@@ -131,7 +137,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
             try {
                 TransactionStatus status = null;
                 if (useTransaction) {
-                    status = startTransaction(transactionBehavior, isolationLevel);
+                    status = startTransaction(transactionBehavior, isolationLevel, readOnly);
                 }
                 boolean isError = false;
                 try {
@@ -210,11 +216,11 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
         }
     }
 
-    protected TransactionStatus startTransaction(int propagationBehavior, int isolationLevel) {
+    protected TransactionStatus startTransaction(int propagationBehavior, int isolationLevel, boolean isReadOnly) {
         TransactionStatus status;
         try {
             status = TransactionUtils.createTransaction(propagationBehavior, isolationLevel,
-                    getTransactionManager(), false);
+                    getTransactionManager(), isReadOnly);
         } catch (RuntimeException e) {
             LOG.error("Could not start transaction", e);
             throw e;
