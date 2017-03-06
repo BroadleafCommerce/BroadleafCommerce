@@ -209,4 +209,22 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
         }
         return 'Y' != getArchived();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CatalogImpl)) return false;
+
+        CatalogImpl catalog = (CatalogImpl) o;
+
+        if (id != null ? !id.equals(catalog.id) : catalog.id != null) return false;
+        return name != null ? name.equals(catalog.name) : catalog.name == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
 }
