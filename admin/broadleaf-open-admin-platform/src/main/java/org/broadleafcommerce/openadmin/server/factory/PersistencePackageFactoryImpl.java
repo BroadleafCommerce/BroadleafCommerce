@@ -123,6 +123,8 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
                 index++;
             }
             pp.setSectionCrumbs(converted);
+        } else {
+            pp.setSectionCrumbs(new SectionCrumb[0]);
         }
         pp.setSectionEntityField(request.getSectionEntityField());
         pp.setFetchTypeFullyQualifiedClassname(null);
