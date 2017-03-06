@@ -26,9 +26,10 @@ import org.broadleafcommerce.cms.file.service.operation.NamedOperationComponent;
 import org.broadleafcommerce.cms.file.service.operation.NamedOperationManager;
 import org.broadleafcommerce.cms.file.service.operation.StaticMapNamedOperationComponent;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -59,6 +60,9 @@ public class StaticAssetViewController extends AbstractController {
 
     @Resource
     protected NamedOperationManager namedOperationManager;
+    
+    @Autowired
+    protected Environment env;
 
     @PostConstruct
     protected void init() {
@@ -79,7 +83,7 @@ public class StaticAssetViewController extends AbstractController {
      * @return
      */
     protected Map<String, String> convertParameterMap(Map<String, String[]> parameterMap) {
-        Map<String, String> convertedMap = new LinkedHashMap<String, String>(parameterMap.size());
+        Map<String, String> convertedMap = new LinkedHashMap<>(parameterMap.size());
         for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
             if (isAllowedUrlParameter(entry.getKey())) {
                 convertedMap.put(entry.getKey(), StringUtils.join(entry.getValue(), ','));
@@ -160,9 +164,7 @@ public class StaticAssetViewController extends AbstractController {
     }
     
     public boolean getAllowUnnamedImageManipulation() {
-        boolean allowUnnamedImageManipulation = 
-                BLCSystemProperty.resolveBooleanSystemProperty("asset.server.allow.unnamed.image.manipulation");
-        return allowUnnamedImageManipulation;
+        return env.getProperty("asset.server.allow.unnamed.image.manipulation", Boolean.class);
     }
 
     public String getAssetServerUrlPrefix() {
