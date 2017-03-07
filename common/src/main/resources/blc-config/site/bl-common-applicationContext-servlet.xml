@@ -21,6 +21,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <import resource="classpath:bl-common-applicationContext-servlet.xml"/>
+
     <!-- Bean Post-processors that need to activated in the servlet context  -->
     
     <!-- Ensures the @Value annotations are resolved -->
