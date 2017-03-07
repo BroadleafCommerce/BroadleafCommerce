@@ -146,7 +146,9 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         List<Predicate> predicates = new ArrayList<>();
 
         // restrict archived values
-        predicates.add(cb.notEqual(root.get("sku").get("archiveStatus").get("archived"), 'Y'));
+        predicates.add(cb.or(
+                cb.isNull(root.get("archiveStatus").get("archived")),
+                cb.equal(root.get("archiveStatus").get("archived"), 'N')));
 
         // restrict to skus that match the product
         predicates.add(root.get("sku").get("product").get("id").in(sandBoxHelper.mergeCloneIds(ProductImpl.class, productId)));
