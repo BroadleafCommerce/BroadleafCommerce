@@ -37,6 +37,8 @@ public class EntityInformationDto {
     private Long profileId;
     private Long catalogId;
     private Long owningSiteId;
+    private Long catalogOwner;
+    private Boolean isOwnerToCatalogRelationshipActive;
 
     /**
      * For entities that implement {@link ProfileEntity}, returns the value of the profile with which 
@@ -110,5 +112,41 @@ public class EntityInformationDto {
      */
     public boolean isCatalogEntity() {
         return getCatalogId() != null;
+    }
+
+    /**
+     * Returns the site id of the site that manages the catalog id ({@link #getCatalogId()}), if applicable
+     *
+     * @return
+     */
+    public Long getCatalogOwner() {
+        return catalogOwner;
+    }
+
+    /**
+     * Set the site id of the site that manages the catalog id, if applicable
+     *
+     * @param catalogOwner
+     */
+    public void setCatalogOwner(Long catalogOwner) {
+        this.catalogOwner = catalogOwner;
+    }
+
+    /**
+     * Retrieve whether or not the relationship to the owned catalog is active for this site
+     *
+     * @return
+     */
+    public Boolean getOwnerToCatalogRelationshipActive() {
+        return isOwnerToCatalogRelationshipActive;
+    }
+
+    /**
+     * Set whether or not the relationship to the owned catalog is active for this site
+     *
+     * @param ownerToCatalogRelationshipActive
+     */
+    public void setOwnerToCatalogRelationshipActive(Boolean ownerToCatalogRelationshipActive) {
+        isOwnerToCatalogRelationshipActive = ownerToCatalogRelationshipActive;
     }
 }

@@ -40,21 +40,21 @@ public class EntityInformationServiceImpl implements EntityInformationService {
 
     public EntityInformationDto buildEntityInformationForObject(Object o) {
         EntityInformationDto dto = createEntityInformationDto(o);
-        extensionManager.getProxy().updateEntityInformationDto(dto, o);
+        extensionManager.updateEntityInformationDto(dto, o);
         return dto;
     }
 
     @Override
     public Long getBaseProfileIdForSite(Site site) {
         ExtensionResultHolder<Long> erh = new ExtensionResultHolder<Long>();
-        extensionManager.getProxy().getBaseProfileIdForSite(site, erh);
+        extensionManager.getBaseProfileIdForSite(site, erh);
         return erh.getResult();
     }
 
     @Override
     public Site getParentSiteForProfile(Site profile) {
         ExtensionResultHolder<Site> erh = new ExtensionResultHolder<Site>();
-        extensionManager.getProxy().getParentSiteForProfile(profile, erh);
+        extensionManager.getParentSiteForProfile(profile, erh);
         return erh.getResult();
     }
 
@@ -62,14 +62,21 @@ public class EntityInformationServiceImpl implements EntityInformationService {
     public boolean getOkayToUseSiteDiscriminator(Object o) {
         ExtensionResultHolder<Boolean> erh = new ExtensionResultHolder<Boolean>();
         erh.setResult(Boolean.FALSE);
-        extensionManager.getProxy().getOkayToUseSiteDiscriminator(o, erh);
+        extensionManager.getOkayToUseSiteDiscriminator(o, erh);
         return erh.getResult();
     }
 
     @Override
     public Long getDefaultCatalogIdForSite(Site site) {
         ExtensionResultHolder<Long> erh = new ExtensionResultHolder<Long>();
-        extensionManager.getProxy().getDefaultCatalogIdForSite(site, erh);
+        extensionManager.getDefaultCatalogIdForSite(site, erh);
+        return erh.getResult();
+    }
+
+    @Override
+    public List<Catalog> findAllCatalogs() {
+        ExtensionResultHolder<List<Catalog>> erh = new ExtensionResultHolder<List<Catalog>>();
+        extensionManager.findAllCatalogs(erh);
         return erh.getResult();
     }
 
@@ -80,12 +87,4 @@ public class EntityInformationServiceImpl implements EntityInformationService {
     protected EntityInformationDto createEntityInformationDto(Object o) {
         return new EntityInformationDto();
     }
-
-    @Override
-    public List<Catalog> findAllCatalogs() {
-        ExtensionResultHolder<List<Catalog>> erh = new ExtensionResultHolder<List<Catalog>>();
-        extensionManager.getProxy().findAllCatalogs(erh);
-        return erh.getResult();
-    }
-
 }
