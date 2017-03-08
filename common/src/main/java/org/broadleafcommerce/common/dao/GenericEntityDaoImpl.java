@@ -139,12 +139,7 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
             //do nothing
         }
         if (clazz == null) {
-            try {
-                clazz = Class.forName(className);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
+            clazz = getCeilingImplClass(className);
         }
         return clazz;
     }
@@ -252,4 +247,5 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
 
         return em.createQuery(criteria).getResultList();
     }
+
 }
