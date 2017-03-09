@@ -34,15 +34,6 @@ import java.util.List;
 public interface SearchService {
 
     /**
-     * This method delegates to {@link SolrIndexService#rebuildIndex()}. It is here to preserve backwards-compatibility
-     * with sites that were originally configured to run Broadleaf with Solr before 2.2.0.
-     * 
-     * @throws ServiceException
-     * @throws IOException
-     */
-    public void rebuildIndex() throws ServiceException, IOException;
-    
-    /**
      * Performs a search for search results in the given category, taking into consideration the SearchCriteria
      * 
      * This method will return search results that are in any sub-level of a given category. For example, if you had a 

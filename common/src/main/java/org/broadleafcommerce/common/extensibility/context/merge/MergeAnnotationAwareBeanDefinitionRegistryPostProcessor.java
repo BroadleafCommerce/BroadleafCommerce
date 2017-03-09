@@ -32,6 +32,19 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
+ * TODO: There is an issue with using this and the {@link Merge} annotation for entity configuration setup. Since this is
+ * a {@code BeanDefinitionRegistryPostProcessor} it runs after the ordinary beans have already been registered and then registers
+ * the Early/LateStageMergeBeanPostProcessors for the @Merge entity configuration contexts. This is an issue since this results
+ * in the following order for the entity configuration contexts:
+ *
+ * 1. XML defined Framework Entity Contexts
+ * 2. XML defined Client Entity Contexts
+ * 3. Java defined @Merge Framework Entity Contexts
+ * 4. Java defined @Merge Client Entity Contexts
+ *
+ * Under this current ordering we are prevented from being able to use @Merge within modules since it doesn't
+ * adhere to the correcting ordering of the original bean registrations.
+ *
  * @author Jeff Fischer
  */
 @Component

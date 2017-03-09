@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.config;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
 import java.lang.annotation.Documented;
@@ -30,11 +31,12 @@ import java.lang.annotation.Target;
 /**
  * <p>
  * Bootstraps Broadleaf <b>root</b> site configuration XML for only non-servlet beans. This can be placed on any {@literal @}Configuration
- * class (except ones with additional {@literal @}ImportResource) to make the core Broadleaf beans apart of the {@link ApplicationContext}.
+ * class to make the core Broadleaf beans apart of the {@link ApplicationContext}.
  * 
  * <p>
- * Since this annotation is a meta-annotation for {@literal @}ImportResource, this <b>cannot</b> be placed on a {@literal @}Configuration class
- * that contains an {@literal @}ImportResource annotation.
+ * Since this annotation is a meta-annotation for {@literal @}Import, this <b>can</b> be placed on a {@literal @}Configuration class
+ * that contains an {@literal @}Import annotation, <b>but</b> this {@literal @}Import's beans will take precedence over
+ * any additional {@literal @}Import applied.
  *  
  * <p>
  * Since this does not include any of the servlet-specific Broadleaf beans, this is generally only used when you are not running in a 
@@ -46,8 +48,8 @@ import java.lang.annotation.Target;
  * This import utilizes the {@link FrameworkXmlBeanDefinitionReader} so that framework XML bean definitions will not
  * overwrite beans defined in a project.
  * 
- * @author Philip Baggett (pbaggett)
  * @author Phillip Verheyden (phillipuniverse)
+ * @author Nick Crum (ncrum)
  * @see EnableBroadleafSiteAutoConfiguration
  * @see EnableBroadleafAutoConfiguration
  * @since 5.2
@@ -55,9 +57,17 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@ImportResource(locations = {
-        "classpath*:/blc-config/bl-*-applicationContext.xml",
-        "classpath*:/blc-config/site/bl-*-applicationContext.xml"
-}, reader = FrameworkXmlBeanDefinitionReader.class)
+@Import({
+    EnableBroadleafRootAutoConfiguration.BroadleafRootAutoConfiguration.class,
+    EnableBroadleafSiteRootAutoConfiguration.BroadleafSiteRootAutoConfiguration.class
+})
 public @interface EnableBroadleafSiteRootAutoConfiguration {
+
+    @ImportResource(locations = {
+            "classpath*:/blc-config/site/framework/bl-*-applicationContext.xml",
+            "classpath*:/blc-config/site/early/bl-*-applicationContext.xml",
+            "classpath*:/blc-config/site/bl-*-applicationContext.xml",
+            "classpath*:/blc-config/site/late/bl-*-applicationContext.xml"
+    }, reader = FrameworkXmlBeanDefinitionReader.class)
+    class BroadleafSiteRootAutoConfiguration {}
 }

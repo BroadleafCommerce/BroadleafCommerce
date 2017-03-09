@@ -102,9 +102,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Resource(name = "blSolrHelperService")
     protected SolrHelperService shs;
 
-    @Resource(name = "blSolrIndexService")
-    protected SolrIndexService solrIndexService;
-
     @Resource(name = "blIndexFieldDao")
     protected IndexFieldDao indexFieldDao;
 
@@ -113,11 +110,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     @Value("${solr.global.facets.category.search:false}")
     protected boolean globalFacetsForCategorySearch;
-
-    @Override
-    public void rebuildIndex() throws ServiceException, IOException {
-        solrIndexService.rebuildIndex();
-    }
 
     @Override
     public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {

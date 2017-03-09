@@ -15,12 +15,13 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.config;
+package org.broadleafcommerce.common.context.override.entityconfig;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
+import org.broadleafcommerce.common.extensibility.context.merge.MergeAnnotationAwareBeanDefinitionRegistryPostProcessor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,29 +29,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <b>STOP. This is probably not the annotation you want currently.</b>
- * <p>
- * The same rules apply here as with {@link EnableBroadleafAutoConfiguration} but this is for only the root-level Broadleaf beans
- *
- * @author Philip Baggett (pbaggett)
- * @author Brandon Hines (bhines)
- * @author Nick Crum (ncrum)
- * @see EnableBroadleafAdminRootAutoConfiguration
- * @see EnableBroadleafSiteRootAutoConfiguration
- * @see EnableBroadleafAutoConfiguration
- * @since 5.2
+ * @author Nick Crum ncrum
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(EnableBroadleafRootAutoConfiguration.BroadleafRootAutoConfiguration.class)
-public @interface EnableBroadleafRootAutoConfiguration {
+@Import(EnableFrameworkConfiguration.FrameworkEntityConfiguration.class)
+public @interface EnableFrameworkConfiguration {
 
-    @ImportResource(locations = {
-            "classpath*:/blc-config/framework/bl-*-applicationContext.xml",
-            "classpath*:/blc-config/early/bl-*-applicationContext.xml",
-            "classpath*:/blc-config/bl-*-applicationContext.xml",
-            "classpath*:/blc-config/late/bl-*-applicationContext.xml"
+    @ImportResource(value = {
+            "classpath:context/entityconfig/import-framework.xml",
     }, reader = FrameworkXmlBeanDefinitionReader.class)
-    class BroadleafRootAutoConfiguration {}
+    class FrameworkEntityConfiguration {}
 }
