@@ -67,6 +67,11 @@ import javax.servlet.ServletContainerInitializer;
 })
 public @interface EnableBroadleafAdminServletAutoConfiguration {
 
+    /**
+     * We are deliberately leaving off the {@link org.springframework.context.annotation.Configuration} annotation since
+     * this inner class is being included in the {@code Import} above, which interprets this as a
+     * {@link org.springframework.context.annotation.Configuration}. We do this to avoid component scanning this inner class.
+     */
     @ImportResource(locations = {
             "classpath*:/blc-config/admin/framework/bl-*-applicationContext-servlet.xml",
             "classpath*:/blc-config/admin/early/bl-*-applicationContext-servlet.xml",

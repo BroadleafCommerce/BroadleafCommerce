@@ -92,17 +92,4 @@ import java.lang.annotation.Target;
     EnableBroadleafRootAutoConfiguration.BroadleafRootAutoConfiguration.class,
     EnableBroadleafServletAutoConfiguration.BroadleafServletAutoConfiguration.class
 })
-public @interface EnableBroadleafAutoConfiguration {
-
-    @ImportResource(locations = {
-            "classpath*:/blc-config/framework/bl-*-applicationContext.xml",
-            "classpath*:/blc-config/early/bl-*-applicationContext.xml",
-            "classpath*:/blc-config/bl-*-applicationContext.xml",
-            "classpath*:/blc-config/late/bl-*-applicationContext.xml",
-            "classpath*:/blc-config/framework/bl-*-applicationContext-servlet.xml",
-            "classpath*:/blc-config/early/bl-*-applicationContext-servlet.xml",
-            "classpath*:/blc-config/bl-*-applicationContext-servlet.xml",
-            "classpath*:/blc-config/late/bl-*-applicationContext-servlet.xml"
-    }, reader = FrameworkXmlBeanDefinitionReader.class)
-    class BroadleafAutoConfiguration {}
-}
+public @interface EnableBroadleafAutoConfiguration {}
