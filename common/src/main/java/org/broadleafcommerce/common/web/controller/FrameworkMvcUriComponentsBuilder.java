@@ -36,6 +36,7 @@ package org.broadleafcommerce.common.web.controller;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.controller.annotation.AdminFrameworkController;
 import org.broadleafcommerce.common.web.controller.annotation.FrameworkMapping;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.target.EmptyTargetSource;
@@ -60,6 +61,7 @@ import org.springframework.util.PathMatcher;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodFilter;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -435,11 +437,26 @@ public class FrameworkMvcUriComponentsBuilder {
 
     private static String getTypeRequestMapping(Class<?> controllerType) {
         Assert.notNull(controllerType, "'controllerType' must not be null");
+
+        String[] paths;
+
         FrameworkMapping frameworkMapping = controllerType.getAnnotation(FrameworkMapping.class);
-        if (frameworkMapping == null) {
+        RequestMapping requestMapping = controllerType.getAnnotation(RequestMapping.class);
+        AdminFrameworkController adminFrameworkController = controllerType.getAnnotation(AdminFrameworkController.class);
+
+        if (frameworkMapping != null) {
+            paths = frameworkMapping.path();
+
+        } else if (requestMapping != null) {
+            paths = requestMapping.path();
+
+        } else if (adminFrameworkController != null && adminFrameworkController.requestMapping().length > 0) {
+            paths = adminFrameworkController.requestMapping()[0].path();
+
+        } else {
             return "/";
         }
-        String[] paths = frameworkMapping.path();
+
         if (ObjectUtils.isEmpty(paths) || StringUtils.isEmpty(paths[0])) {
             return "/";
         }
@@ -451,11 +468,22 @@ public class FrameworkMvcUriComponentsBuilder {
 
     private static String getMethodRequestMapping(Method method) {
         Assert.notNull(method, "'method' must not be null");
+
+        String[] paths;
+
         FrameworkMapping frameworkMapping = method.getAnnotation(FrameworkMapping.class);
-        if (frameworkMapping == null) {
-            throw new IllegalArgumentException("No @RequestMapping on: " + method.toGenericString());
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+
+        if (frameworkMapping != null) {
+            paths = frameworkMapping.path();
+
+        } else if (requestMapping != null) {
+            paths = requestMapping.path();
+
+        } else {
+            throw new IllegalArgumentException("No @RequestMapping or @FrameworkMapping on: " + method.toGenericString());
         }
-        String[] paths = frameworkMapping.path();
+
         if (ObjectUtils.isEmpty(paths) || StringUtils.isEmpty(paths[0])) {
             return "/";
         }
