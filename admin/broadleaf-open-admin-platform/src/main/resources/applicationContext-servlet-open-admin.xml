@@ -43,10 +43,6 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
     
-    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
-        <property name="useSuffixPatternMatch" value="false" />
-    </bean>
-
     <bean id="blAdminExceptionResolver" class="org.broadleafcommerce.openadmin.web.handler.AdminMappingExceptionResolver">
         <property name="showDebugMessage" value="${exception.showDebugMessage}" />
     </bean>

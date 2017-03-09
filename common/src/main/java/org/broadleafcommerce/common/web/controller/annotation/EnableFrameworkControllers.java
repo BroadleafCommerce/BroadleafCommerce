@@ -15,8 +15,9 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.controller;
+package org.broadleafcommerce.common.web.controller.annotation;
 
+import org.broadleafcommerce.common.web.controller.FrameworkControllerHandlerMapping;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.Documented;

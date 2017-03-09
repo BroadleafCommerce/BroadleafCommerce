@@ -15,8 +15,11 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.controller;
+package org.broadleafcommerce.common.web.controller.annotation;
 
+import org.broadleafcommerce.common.web.controller.AdminFrameworkControllerHandlerMapping;
+import org.broadleafcommerce.common.web.controller.FrameworkControllerHandlerMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,29 +27,35 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that an annotated class is a "Framework Controller" (default MVC controller).
+ * Indicates that an annotated class is a "Framework REST Controller" (default RESTful controller).
  * <p>
- * This means that if {@link EnableFrameworkControllers} or {@link EnableAllFrameworkControllers} is included in the
- * application configuration then classes annotated with {@link FrameworkController} will be component scanned and
+ * This means that if {@link EnableFrameworkRestControllers} or {@link EnableAllFrameworkControllers} is included in the
+ * application configuration then classes annotated with {@link FrameworkRestController} will be component scanned and
  * included in the application context and that {@link FrameworkMapping}s will be added to handler mappings with a lower
  * priority than {@link org.springframework.web.bind.annotation.RequestMapping}s found within a class annotated with
- * {@link org.springframework.stereotype.Controller}. This priority is achieved through {@link
+ * {@link org.springframework.web.bind.annotation.RestController}. This priority is achieved through {@link
  * FrameworkControllerHandlerMapping} having a higher order value than {@link org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping}.
  * <p>
- * The intention is that you are able to specify MVC controllers and mappings within a framework module as the default
- * MVC mappings and a client application can essentially override those mappings without causing an ambiguous mapping
- * exception.
+ * The intention is that you are able to specify RESTful controllers and mappings within a framework module as the
+ * default REST endpoints and a client application can essentially override those mappings without causing an ambiguous
+ * mapping exception.
  * <p>
- * This concept was adapted from {@code @FrameworkEndpoint} from Spring Security OAuth 2.
+ * The handler mappings in play in order of precedence from highest to lowest are:
+ * <ol>
+ * <li>{@link RequestMappingHandlerMapping}</li>
+ * <li>{@link FrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminFrameworkControllerHandlerMapping}</li>
+ * </ol>
  *
  * @author Philip Baggett (pbaggett)
  * @see FrameworkMapping
- * @see EnableFrameworkControllers
+ * @see EnableFrameworkRestControllers
  * @see EnableAllFrameworkControllers
  * @since 5.2
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface FrameworkController {
+@ResponseBody
+public @interface FrameworkRestController {
 }

@@ -15,8 +15,14 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.controller;
+package org.broadleafcommerce.common.web.controller;
 
+import org.broadleafcommerce.common.web.controller.annotation.EnableAllFrameworkControllers;
+import org.broadleafcommerce.common.web.controller.annotation.EnableFrameworkControllers;
+import org.broadleafcommerce.common.web.controller.annotation.EnableFrameworkRestControllers;
+import org.broadleafcommerce.common.web.controller.annotation.FrameworkController;
+import org.broadleafcommerce.common.web.controller.annotation.FrameworkMapping;
+import org.broadleafcommerce.common.web.controller.annotation.FrameworkRestController;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
@@ -41,6 +47,13 @@ import java.lang.reflect.Method;
  * org.springframework.stereotype.Controller} or {@link org.springframework.web.bind.annotation.RestController} will
  * have a higher priority and be found before {@link FrameworkMapping}s found within a {@link FrameworkController} or
  * {@link FrameworkRestController}.
+ * <p>
+ * The handler mappings in play in order of precedence from highest to lowest are:
+ * <ol>
+ * <li>{@link RequestMappingHandlerMapping}</li>
+ * <li>{@link FrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminFrameworkControllerHandlerMapping}</li>
+ * </ol>
  *
  * @author Philip Baggett (pbaggett)
  * @see EnableAllFrameworkControllers
