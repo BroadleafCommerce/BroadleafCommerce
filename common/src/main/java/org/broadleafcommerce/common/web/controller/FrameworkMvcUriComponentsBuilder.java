@@ -31,12 +31,12 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.controller.annotation;
+package org.broadleafcommerce.common.web.controller;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.controller.FrameworkMapping;
+import org.broadleafcommerce.common.web.controller.annotation.FrameworkMapping;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.target.EmptyTargetSource;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;

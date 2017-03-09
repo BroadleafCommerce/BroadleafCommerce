@@ -15,9 +15,10 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.controller;
+package org.broadleafcommerce.common.web.controller;
 
 import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
+import org.broadleafcommerce.common.web.controller.annotation.AdminFrameworkController;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;

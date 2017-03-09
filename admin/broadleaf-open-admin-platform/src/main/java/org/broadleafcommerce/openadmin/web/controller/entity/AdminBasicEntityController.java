@@ -22,7 +22,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.controller.AdminFrameworkController;
+import org.broadleafcommerce.common.web.controller.annotation.AdminFrameworkController;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -34,6 +34,8 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.web.JsonResponse;
+import org.broadleafcommerce.common.web.controller.AdminFrameworkControllerHandlerMapping;
+import org.broadleafcommerce.common.web.controller.FrameworkControllerHandlerMapping;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -111,8 +113,8 @@ import javax.servlet.http.HttpServletResponse;
  * org.springframework.web.servlet.HandlerMapping} to provide client applications a simple way to override mappings
  * without causing an ambiguous mapping exception. If this controller is registered in the default {@link
  * org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping} then it will match any otherwise
- * unmatched request and the mappings registered in {@link org.broadleafcommerce.common.controller.FrameworkControllerHandlerMapping}
- * and {@link org.broadleafcommerce.common.controller.AdminFrameworkControllerHandlerMapping} will never get a chance to
+ * unmatched request and the mappings registered in {@link FrameworkControllerHandlerMapping}
+ * and {@link AdminFrameworkControllerHandlerMapping} will never get a chance to
  * check for matches as they have a lower precedence.
  *
  * @author Andre Azzolini (apazzolini)

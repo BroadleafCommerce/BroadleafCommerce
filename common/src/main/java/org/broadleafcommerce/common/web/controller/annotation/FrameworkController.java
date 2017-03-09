@@ -15,8 +15,10 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.controller;
+package org.broadleafcommerce.common.web.controller.annotation;
 
+import org.broadleafcommerce.common.web.controller.AdminFrameworkControllerHandlerMapping;
+import org.broadleafcommerce.common.web.controller.FrameworkControllerHandlerMapping;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
