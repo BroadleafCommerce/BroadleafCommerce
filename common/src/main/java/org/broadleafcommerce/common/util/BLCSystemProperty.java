@@ -17,10 +17,13 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.broadleafcommerce.common.config.service.SystemPropertiesPropertySourceRegistrar;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertySource;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,7 +33,11 @@ import org.springframework.stereotype.Service;
  * this class provides should be invoked statically.
  * 
  * @author Andre Azzolini (apazzolini)
+ * @deprecated this class should not be used to statically obtain referenes to properties. Instead, you should either inject
+ * an instead of the {@link SystemPropertiesService} directly _or_ inject an {@link Environment} to get properties that way,
+ * since {@link SystemPropertiesPropertySourceRegistrar} adds a {@link SystemPropertiesService} {@link PropertySource}
  */
+@Deprecated
 @Service("blBLCSystemProperty")
 public class BLCSystemProperty implements ApplicationContextAware {
 
