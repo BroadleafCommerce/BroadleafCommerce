@@ -41,6 +41,13 @@ import java.lang.reflect.Method;
  * org.springframework.stereotype.Controller} or {@link org.springframework.web.bind.annotation.RestController} will
  * have a higher priority and be found before {@link FrameworkMapping}s found within a {@link FrameworkController} or
  * {@link FrameworkRestController}.
+ * <p>
+ * The handler mappings in play in order of precedence from highest to lowest are:
+ * <ol>
+ * <li>{@link RequestMappingHandlerMapping}</li>
+ * <li>{@link FrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminFrameworkControllerHandlerMapping}</li>
+ * </ol>
  *
  * @author Philip Baggett (pbaggett)
  * @see EnableAllFrameworkControllers

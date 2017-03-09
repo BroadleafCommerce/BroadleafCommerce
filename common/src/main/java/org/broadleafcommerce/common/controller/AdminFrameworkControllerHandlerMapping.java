@@ -30,6 +30,13 @@ import java.lang.reflect.Method;
  * This class registers controllers annotated with {@link AdminFrameworkController} so they will be registered in a
  * separate {@link org.springframework.web.servlet.HandlerMapping} therefore lowering the precedence and allowing client
  * applications to create identical override mappings without causing an ambiguous mapping exception.
+ * <p>
+ * The handler mappings in play in order of precedence from highest to lowest are:
+ * <ol>
+ * <li>{@link RequestMappingHandlerMapping}</li>
+ * <li>{@link FrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminFrameworkControllerHandlerMapping}</li>
+ * </ol>
  *
  * @author Philip Baggett (pbaggett)
  * @see AdminFrameworkController

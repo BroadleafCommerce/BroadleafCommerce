@@ -37,6 +37,13 @@ import java.lang.annotation.Target;
  * The intention is that you are able to specify RESTful controllers and mappings within a framework module as the
  * default REST endpoints and a client application can essentially override those mappings without causing an ambiguous
  * mapping exception.
+ * <p>
+ * The handler mappings in play in order of precedence from highest to lowest are:
+ * <ol>
+ * <li>{@link RequestMappingHandlerMapping}</li>
+ * <li>{@link FrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminFrameworkControllerHandlerMapping}</li>
+ * </ol>
  *
  * @author Philip Baggett (pbaggett)
  * @see FrameworkMapping

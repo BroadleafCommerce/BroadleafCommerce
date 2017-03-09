@@ -43,6 +43,13 @@ import java.lang.annotation.Target;
  * the way Broadleaf does bean overriding by ID currently. So bean registration must be done by another means such as
  * adding {@link org.springframework.stereotype.Component} or an XML definition. In other words, this annotation behaves
  * more like {@link RequestMapping} than {@link org.springframework.stereotype.Controller}.
+ * <p>
+ * The handler mappings in play in order of precedence from highest to lowest are:
+ * <ol>
+ * <li>{@link RequestMappingHandlerMapping}</li>
+ * <li>{@link FrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminFrameworkControllerHandlerMapping}</li>
+ * </ol>
  *
  * @author Philip Baggett (pbaggett)
  * @see AdminFrameworkControllerHandlerMapping

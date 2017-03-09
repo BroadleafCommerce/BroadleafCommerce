@@ -37,6 +37,13 @@ import java.lang.annotation.Target;
  * MVC mappings and a client application can essentially override those mappings without causing an ambiguous mapping
  * exception.
  * <p>
+ * The handler mappings in play in order of precedence from highest to lowest are:
+ * <ol>
+ * <li>{@link RequestMappingHandlerMapping}</li>
+ * <li>{@link FrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminFrameworkControllerHandlerMapping}</li>
+ * </ol>
+ * <p>
  * This concept was adapted from {@code @FrameworkEndpoint} from Spring Security OAuth 2.
  *
  * @author Philip Baggett (pbaggett)
