@@ -165,8 +165,9 @@ public class MvelHelper {
 
                 synchronized (expressionCache) {
                     exp = MVEL.compileExpression(rule, context);
+                    expressionCache.put(rule, exp);
                 }
-                expressionCache.put(rule, exp);
+
 
             }
 
