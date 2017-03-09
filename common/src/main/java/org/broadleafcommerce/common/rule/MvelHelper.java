@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.rule;
 
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -55,6 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 public class MvelHelper {
 
     private static final Map<String, Serializable> DEFAULT_EXPRESSION_CACHE = new EfficientLRUMap<String, Serializable>(5000);
+
     private static final Log LOG = LogFactory.getLog(MvelHelper.class);
 
     private static boolean TEST_MODE = false;
@@ -111,7 +113,7 @@ public class MvelHelper {
      * @return
      */
     public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters) {
-        return evaluateRule(rule, ruleParameters, DEFAULT_EXPRESSION_CACHE);
+        return evaluateRuleUsingCache(rule, ruleParameters, DEFAULT_EXPRESSION_CACHE);
     }
 
     /**
@@ -121,9 +123,14 @@ public class MvelHelper {
      * @param ruleParameters
      * @return
      */
-    public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
+    public static boolean evaluateRuleUsingCache(String rule, Map<String, Object> ruleParameters,
             Map<String, Serializable> expressionCache) {
         return evaluateRule(rule, ruleParameters, expressionCache, null);
+    }
+
+    public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
+                                       Map<String, Class<?>> additionalContextImports) {
+        return evaluateRule(rule, ruleParameters, DEFAULT_EXPRESSION_CACHE, additionalContextImports);
     }
     
     /**
@@ -158,8 +165,8 @@ public class MvelHelper {
 
                 synchronized (expressionCache) {
                     exp = MVEL.compileExpression(rule, context);
-                    expressionCache.put(rule, exp);
                 }
+                expressionCache.put(rule, exp);
 
             }
 

@@ -62,8 +62,7 @@ import javax.annotation.Resource;
 public abstract class AbstractBaseProcessor implements BaseProcessor {
 
     private static final Log LOG = LogFactory.getLog(AbstractBaseProcessor.class);
-    private static final Map EXPRESSION_CACHE = new LRUMap(1000);
-    
+
     @Resource(name = "blOfferTimeZoneProcessor")
     protected OfferTimeZoneProcessor offerTimeZoneProcessor;
     
@@ -241,7 +240,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         expression = usePriceBeforeAdjustments(expression);
         contextImports.put("OfferType", OfferType.class);
         contextImports.put("FulfillmentType", FulfillmentType.class);
-        return MvelHelper.evaluateRule(expression, vars, EXPRESSION_CACHE, contextImports);
+        return MvelHelper.evaluateRule(expression, vars, contextImports);
 
     }
 
