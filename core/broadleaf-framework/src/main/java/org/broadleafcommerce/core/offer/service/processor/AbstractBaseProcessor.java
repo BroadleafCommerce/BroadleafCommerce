@@ -237,13 +237,12 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      */
     public Boolean executeExpression(String expression, Map<String, Object> vars) {
         Map<String, Class<?>> contextImports = new HashMap<>();
-        synchronized (EXPRESSION_CACHE) {
-            expression = usePriceBeforeAdjustments(expression);
-            contextImports.put("OfferType", OfferType.class);
-            contextImports.put("FulfillmentType", FulfillmentType.class);
-        }
+
+        expression = usePriceBeforeAdjustments(expression);
+        contextImports.put("OfferType", OfferType.class);
+        contextImports.put("FulfillmentType", FulfillmentType.class);
         return MvelHelper.evaluateRule(expression, vars, EXPRESSION_CACHE, contextImports);
-        
+
     }
 
     protected String usePriceBeforeAdjustments(String expression) {

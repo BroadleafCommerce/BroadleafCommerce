@@ -116,7 +116,7 @@ public class MvelHelper {
 
     /**
      * Evaluates the passed in rule given the passed in parameters.   
-     * 
+     *
      * @param rule
      * @param ruleParameters
      * @return
@@ -155,9 +155,12 @@ public class MvelHelper {
                 }
                 
                 rule = modifyExpression(rule, ruleParameters, context);
-                
-                exp = MVEL.compileExpression(rule, context);
-                expressionCache.put(rule, exp);
+
+                synchronized (expressionCache) {
+                    exp = MVEL.compileExpression(rule, context);
+                    expressionCache.put(rule, exp);
+                }
+
             }
 
             Map<String, Object> mvelParameters = new HashMap<String, Object>();
