@@ -71,22 +71,26 @@ import org.springframework.web.method.annotation.RequestParamMethodArgumentResol
 import org.springframework.web.method.support.CompositeUriComponentsContributor;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.method.annotation.PathVariableMethodArgumentResolver;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class has been copied from spring-webmvc:4.3.7-RELEASE in order to provide URI building functionality for
  * {@link FrameworkMapping} annotations. Since this class isn't extensible due to heavy usage of {@code private}
- * we had to copy and modify the whole class.
+ * we had to copy and modify the whole class. Spring version updates should seek to take in changes from {@link MvcUriComponentsBuilder}
+ * into this class.
  *
  * Creates instances of {@link org.springframework.web.util.UriComponentsBuilder}
  * by pointing to Spring MVC controllers and {@code @RequestMapping} methods.
@@ -106,6 +110,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Rossen Stoyanchev
  * @author Sam Brannen
  * @author Philip Baggett (pbaggett)
+ * @see MvcUriComponentsBuilder
  * @since 5.2
  */
 public class FrameworkMvcUriComponentsBuilder {
@@ -531,7 +536,7 @@ public class FrameworkMvcUriComponentsBuilder {
                     " does not match number of argument values " + argCount);
         }
 
-        final Map<String, Object> uriVars = new HashMap<String, Object>();
+        final Map<String, Object> uriVars = new HashMap<>();
         for (int i = 0; i < paramCount; i++) {
             MethodParameter param = new SynthesizingMethodParameter(method, i);
             param.initParameterNameDiscovery(parameterNameDiscoverer);
