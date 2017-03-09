@@ -53,7 +53,6 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.jms.IllegalStateException;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**

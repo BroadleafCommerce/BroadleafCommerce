@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.web.config;
+package org.broadleafcommerce.profile.web.core.config;
 
 import org.springframework.context.annotation.Configuration;
 
