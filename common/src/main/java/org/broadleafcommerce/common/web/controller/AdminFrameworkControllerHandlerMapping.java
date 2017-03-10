@@ -46,8 +46,10 @@ import java.lang.reflect.Method;
 @ConditionalOnAdmin
 public class AdminFrameworkControllerHandlerMapping extends RequestMappingHandlerMapping {
 
+    public static final int REQUEST_MAPPING_ORDER =  Ordered.LOWEST_PRECEDENCE - 1;
+
     public AdminFrameworkControllerHandlerMapping() {
-        setOrder(Ordered.LOWEST_PRECEDENCE - 1);
+        setOrder(REQUEST_MAPPING_ORDER);
     }
 
     @Override
