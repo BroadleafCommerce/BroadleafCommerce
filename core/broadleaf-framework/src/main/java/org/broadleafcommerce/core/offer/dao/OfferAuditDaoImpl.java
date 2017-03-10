@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.offer.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.dao.TQRestriction;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferAuditImpl;
@@ -49,9 +50,11 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     @Override
     public void delete(final OfferAudit offerAudit) {
         OfferAudit loa = offerAudit;
+        
         if (!em.contains(loa)) {
             loa = readAuditById(offerAudit.getId());
         }
+        
         em.remove(loa);
     }
 
@@ -66,31 +69,63 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     }
 
     @Override
+    public Long countUsesByCustomer(Long orderId, Long customerId, Long offerId) {
+        TQRestriction isNotAlreadyAppliedToOrder = new TQRestriction("offerAudit.orderId", "<>", orderId);
+        TQRestriction orderIdIsNull = new TQRestriction("offerAudit.orderId", "is", null);
+        TQRestriction isNotAlreadyAppliedToOrderOrOrderIdIsNull = new TQRestriction(TQRestriction.Mode.OR)
+                .addChildRestriction(isNotAlreadyAppliedToOrder)
+                .addChildRestriction(orderIdIsNull);
+        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
+                .addRestriction("offerAudit.customerId", "=", customerId)
+                .addRestriction("offerAudit.offerId", "=", offerId)
+                .addRestriction(isNotAlreadyAppliedToOrderOrOrderIdIsNull)
+                .toCountQuery(em);
+
+        return query.getSingleResult();
+    }
+    
+    @Deprecated
+    @Override
     public Long countUsesByCustomer(Long customerId, Long offerId) {
-        TypedQuery<Long> query = new TypedQueryBuilder<OfferAudit>(OfferAudit.class, "offerAudit")
+        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
                 .addRestriction("offerAudit.customerId", "=", customerId)
                 .addRestriction("offerAudit.offerId", "=", offerId)
                 .toCountQuery(em);
 
-        Long result = query.getSingleResult();
-        return result;
+        return query.getSingleResult();
+    }
+
+    @Override
+    public Long countOfferCodeUses(Long orderId, Long offerCodeId) {
+        TQRestriction isNotAlreadyAppliedToOrder = new TQRestriction("offerAudit.orderId", "<>", orderId);
+        TQRestriction orderIdIsNull = new TQRestriction("offerAudit.orderId", "is", null);
+        TQRestriction isNotAlreadyAppliedToOrderOrOrderIdIsNull = new TQRestriction(TQRestriction.Mode.OR)
+                .addChildRestriction(isNotAlreadyAppliedToOrder)
+                .addChildRestriction(orderIdIsNull);
+        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
+                .addRestriction("offerAudit.offerCodeId", "=", offerCodeId)
+                .addRestriction(isNotAlreadyAppliedToOrderOrOrderIdIsNull)
+                .toCountQuery(em);
+
+        return query.getSingleResult();
     }
     
+    @Deprecated
     @Override
     public Long countOfferCodeUses(Long offerCodeId) {
-        TypedQuery<Long> query = new TypedQueryBuilder<OfferAudit>(OfferAudit.class, "offerAudit")
+        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
                 .addRestriction("offerAudit.offerCodeId", "=", offerCodeId)
                 .toCountQuery(em);
 
-        Long result =  query.getSingleResult();
-        return result;
+        return query.getSingleResult();
     }
 
     @Override
     public List<OfferAudit> readOfferAuditsByOrderId(Long orderId) {
-        TypedQuery<OfferAudit> query = new TypedQueryBuilder<OfferAudit>(OfferAudit.class, "offerAudit")
+        TypedQuery<OfferAudit> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
                 .addRestriction("offerAudit.orderId", "=", orderId)
                 .toQuery(em);
+        
         return query.getResultList();
     }
 
