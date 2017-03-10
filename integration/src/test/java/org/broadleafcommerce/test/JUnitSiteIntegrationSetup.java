@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.test;
 
+import org.broadleafcommerce.common.config.EnableBroadleafSiteRootAutoConfiguration;
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -46,10 +47,11 @@ public class JUnitSiteIntegrationSetup extends AbstractTransactionalJUnit4Spring
      * as well as XML configuration files at the same level of the 'siteRoot' {@link @}ContextConfiguration
      */
     @Configuration
-    @ImportResource(value = {"classpath*:/blc-config/site/bl-*-applicationContext.xml",
+    @EnableBroadleafSiteRootAutoConfiguration
+    @ImportResource(value = {
             "classpath:bl-applicationContext-test-security.xml",
             "classpath:bl-applicationContext-test.xml"
-        }, reader = FrameworkXmlBeanDefinitionReader.class)
+        })
     @ComponentScan({"org.broadleafcommerce.profile.web.controller", "org.broadleafcommerce.profile.web.core.service.login"})
     public static class ContextConfig {}
 }

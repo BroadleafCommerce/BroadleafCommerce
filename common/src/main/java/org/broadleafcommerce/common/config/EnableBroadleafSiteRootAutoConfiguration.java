@@ -47,7 +47,8 @@ import java.lang.annotation.Target;
  * <p>
  * This import utilizes the {@link FrameworkXmlBeanDefinitionReader} so that framework XML bean definitions will not
  * overwrite beans defined in a project.
- * 
+ *
+ * @author Philip Bagget (pbaggett)
  * @author Phillip Verheyden (phillipuniverse)
  * @author Nick Crum (ncrum)
  * @see EnableBroadleafSiteAutoConfiguration
