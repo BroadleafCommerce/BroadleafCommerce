@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.rule;
 
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -55,6 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 public class MvelHelper {
 
     private static final Map<String, Serializable> DEFAULT_EXPRESSION_CACHE = new EfficientLRUMap<String, Serializable>(5000);
+
     private static final Log LOG = LogFactory.getLog(MvelHelper.class);
 
     private static boolean TEST_MODE = false;
@@ -116,7 +118,7 @@ public class MvelHelper {
 
     /**
      * Evaluates the passed in rule given the passed in parameters.   
-     * 
+     *
      * @param rule
      * @param ruleParameters
      * @return
@@ -125,7 +127,7 @@ public class MvelHelper {
             Map<String, Serializable> expressionCache) {
         return evaluateRule(rule, ruleParameters, expressionCache, null);
     }
-    
+
     /**
      * @param rule
      * @param ruleParameters
@@ -155,9 +157,13 @@ public class MvelHelper {
                 }
                 
                 rule = modifyExpression(rule, ruleParameters, context);
-                
-                exp = MVEL.compileExpression(rule, context);
-                expressionCache.put(rule, exp);
+
+                synchronized (expressionCache) {
+                    exp = MVEL.compileExpression(rule, context);
+                    expressionCache.put(rule, exp);
+                }
+
+
             }
 
             Map<String, Object> mvelParameters = new HashMap<String, Object>();
