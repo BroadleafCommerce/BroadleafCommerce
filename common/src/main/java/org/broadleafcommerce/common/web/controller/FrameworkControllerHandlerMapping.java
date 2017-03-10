@@ -67,8 +67,10 @@ import java.lang.reflect.Method;
 @Component
 public class FrameworkControllerHandlerMapping extends RequestMappingHandlerMapping {
 
+    public static final int REQUEST_MAPPING_ORDER =  Ordered.LOWEST_PRECEDENCE - 2;
+
     public FrameworkControllerHandlerMapping() {
-        setOrder(Ordered.LOWEST_PRECEDENCE - 2);
+        setOrder(REQUEST_MAPPING_ORDER);
     }
 
     @Override
