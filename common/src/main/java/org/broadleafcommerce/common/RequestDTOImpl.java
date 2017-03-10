@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.web.context.request.WebRequest;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +44,8 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
 
     @AdminPresentation(friendlyName = "RequestDTOImpl_Is_Secure")
     private Boolean secure;
+
+    Map<String, String> requestContextAttributes = new HashMap<String, String>();
 
     public RequestDTOImpl() {
     }
@@ -85,6 +88,14 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
         return secure;
     }
 
+    public Map<String, String> getRequestContextAttributes() {
+        return requestContextAttributes;
+    }
+
+    public void setRequestContextAttributes(Map<String, String> requestContextAttributes) {
+        this.requestContextAttributes = requestContextAttributes;
+    }
+
     public String getFullUrlWithQueryString() {
         return fullUrlWithQueryString;
     }
@@ -112,5 +123,4 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
             return null;
         }
     }
-
 }
