@@ -113,7 +113,7 @@ public class MvelHelper {
      * @return
      */
     public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters) {
-        return evaluateRuleUsingCache(rule, ruleParameters, DEFAULT_EXPRESSION_CACHE);
+        return evaluateRule(rule, ruleParameters, DEFAULT_EXPRESSION_CACHE);
     }
 
     /**
@@ -123,16 +123,11 @@ public class MvelHelper {
      * @param ruleParameters
      * @return
      */
-    public static boolean evaluateRuleUsingCache(String rule, Map<String, Object> ruleParameters,
+    public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
             Map<String, Serializable> expressionCache) {
         return evaluateRule(rule, ruleParameters, expressionCache, null);
     }
 
-    public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
-                                       Map<String, Class<?>> additionalContextImports) {
-        return evaluateRule(rule, ruleParameters, DEFAULT_EXPRESSION_CACHE, additionalContextImports);
-    }
-    
     /**
      * @param rule
      * @param ruleParameters

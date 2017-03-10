@@ -32,7 +32,6 @@ public abstract class AbstractRuleProcessor<T> implements RuleProcessor<T> {
     
     protected final Log LOG = LogFactory.getLog(this.getClass());
 
-    @SuppressWarnings("unchecked")
     protected ParserContext parserContext;
     protected Map<String, String> contextClassNames = new HashMap<String, String> ();
 
