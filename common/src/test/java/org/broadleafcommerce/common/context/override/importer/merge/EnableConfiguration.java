@@ -15,9 +15,11 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.context.override.merge;
+package org.broadleafcommerce.common.context.override.importer.merge;
 
+import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,5 +32,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import({EnableConfiguration.InnerConfiguration.class, EnableServletConfiguration.InnerConfiguration.class})
-public @interface EnableMergedConfigurations {}
+@Import(EnableConfiguration.InnerConfiguration.class)
+public @interface EnableConfiguration {
+
+    @ImportResource(value = "classpath:context/importer/merge/applicationContext.xml",
+            reader = FrameworkXmlBeanDefinitionReader.class)
+    class InnerConfiguration {}
+}

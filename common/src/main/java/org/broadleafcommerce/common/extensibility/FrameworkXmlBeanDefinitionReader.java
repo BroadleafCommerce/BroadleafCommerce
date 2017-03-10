@@ -51,12 +51,11 @@ public class FrameworkXmlBeanDefinitionReader extends XmlBeanDefinitionReader {
     @Override
     public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
         // First compile any @Bean definitions that have already been registered via @Configuration classes (which happen prior
-        // to the XML bean definition import). This code makes the assumption that Broadleaf Framework bean will be the only bean
-        // definitions to start with "bl"
+        // to the XML bean definition import).
         Map<String, BeanDefinition> implementationBeanDefinitions = new HashMap<>();
         for (String name : getRegistry().getBeanDefinitionNames()) {
             BeanDefinition definition = getRegistry().getBeanDefinition(name);
-            if (isConfigurationClassBean(definition) && name.startsWith("bl")) {
+            if (isConfigurationClassBean(definition)) {
                 implementationBeanDefinitions.put(name, definition);
             }
         }

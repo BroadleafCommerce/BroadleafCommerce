@@ -15,27 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.context.override.merge;
+package org.broadleafcommerce.common.test.merge.config.framework;
 
-import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.broadleafcommerce.common.extensibility.context.merge.Merge;
+import org.springframework.context.annotation.Configuration;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Nick Crum ncrum
  */
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Import(EnableServletConfiguration.InnerConfiguration.class)
-public @interface EnableServletConfiguration {
+@Configuration
+public class FrameworkConfiguration {
 
-    @ImportResource(value = "classpath:context/merge/applicationContext-servlet.xml",
-            reader = FrameworkXmlBeanDefinitionReader.class)
-    class InnerConfiguration {}
+    @Merge(targetRef = "mergedList", early = true)
+    public List<String> blFrameworkMerge() {
+        return Arrays.asList("framework-config1", "framework-config2");
+    }
 }
