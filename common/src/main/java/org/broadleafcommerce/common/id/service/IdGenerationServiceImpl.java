@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.service;
+package org.broadleafcommerce.common.id.service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +25,8 @@ import javax.persistence.OptimisticLockException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.core.dao.IdGenerationDao;
-import org.broadleafcommerce.profile.core.domain.IdGeneration;
+import org.broadleafcommerce.common.id.dao.IdGenerationDao;
+import org.broadleafcommerce.common.id.domain.IdGeneration;
 import org.springframework.stereotype.Service;
 
 @Service("blIdGenerationService")

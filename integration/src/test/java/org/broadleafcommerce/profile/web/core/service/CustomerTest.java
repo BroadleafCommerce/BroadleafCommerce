@@ -18,8 +18,8 @@
 package org.broadleafcommerce.profile.web.core.service;
 
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.IdGeneration;
-import org.broadleafcommerce.profile.core.domain.IdGenerationImpl;
+import org.broadleafcommerce.common.id.domain.IdGeneration;
+import org.broadleafcommerce.common.id.domain.IdGenerationImpl;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.dataprovider.CustomerDataProvider;
 import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
