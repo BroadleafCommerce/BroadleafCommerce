@@ -29,8 +29,6 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
         <property name="ignoreUnresolvablePlaceholders" value="true" />
     </bean>
-    <!-- Activates @Merge bean methods -->
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.MergeAnnotationAwareBeanDefinitionRegistryPostProcessor" />
     
 
 </beans>

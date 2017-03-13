@@ -43,6 +43,8 @@ import java.util.Map;
 @Component
 public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor {
 
+    private static final String ANNOTATED_POST_PROCESSOR_SUFFIX = "AnnotatedMergePostProcessor";
+
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         Map<String, BeanDefinition> clientAnnotatedBeanPostProcessors = new LinkedHashMap<>();
@@ -78,7 +80,7 @@ public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements 
                                 "_" +
                                 attributes.get("targetRef") +
                                 (isEarly?"Early":"Late") +
-                                "AnnotatedMergePostProcessor";
+                                ANNOTATED_POST_PROCESSOR_SUFFIX;
                         if (isBroadleafAnnotationBean(metadata)) {
                             registry.registerBeanDefinition(beanName, definition);
                         } else {
@@ -121,7 +123,13 @@ public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements 
     }
 
     protected boolean isBroadleafBean(BeanDefinition beanDefinition) {
-        return ((GenericBeanDefinition) beanDefinition).getResource().getFilename().startsWith("bl-");
+        if (beanDefinition instanceof AnnotatedBeanDefinition){
+            return isBroadleafAnnotationBean(((AnnotatedBeanDefinition) beanDefinition).getFactoryMethodMetadata());
+        } else if (beanDefinition instanceof GenericBeanDefinition && ((GenericBeanDefinition) beanDefinition).getResource() != null) {
+            return ((GenericBeanDefinition) beanDefinition).getResource().getFilename().startsWith("bl-");
+        }
+
+        return false;
     }
 
     @Override

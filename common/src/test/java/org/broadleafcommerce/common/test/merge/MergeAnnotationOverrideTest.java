@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.test.merge;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
-import org.broadleafcommerce.common.extensibility.context.merge.Merge;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,9 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.junit4.SpringRunner;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import javax.annotation.Resource;
 
@@ -39,11 +36,11 @@ import javax.annotation.Resource;
 public class MergeAnnotationOverrideTest {
 
     @Configuration
-    @Import({MainConfiguration.BroadleafFrameworkConfiguration.class})
-    @ImportResource("classpath:context/merge/local.xml")
+    @Import({MainConfiguration.BroadleafFrameworkConfiguration.class}) // import our Broadleaf configurations
+    @ImportResource("classpath:context/merge/local.xml") // import our local xml configuration
     public static class MainConfiguration {
 
-        @ImportResource(value = {
+        @ImportResource(value = {                               // define our Broadleaf xml configurations
                 "classpath:context/merge/bl-framework.xml",
                 "classpath:context/merge/bl-module.xml"
         }, reader = FrameworkXmlBeanDefinitionReader.class)
