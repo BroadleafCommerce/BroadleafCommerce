@@ -35,6 +35,7 @@
         initialize : function($element) {
             // Set the value of this datepicker to be the appropriately formatted one
             $element.val($element.val().indexOf(adminFormats.displayDateDelimiter)>=0?this.getDisplayDate(this.getServerDate($element.val())):this.getDisplayDate($element.val()));
+            
             // Make it a date-time picker
             $element.datetimepicker({
                 showSecond: true,
@@ -48,7 +49,7 @@
          */
         getDisplayDate : function(serverDate) {
             var display = BLC.dates.getDisplayDate(serverDate, adminFormats);
-            return display == null ? null : display.displayDate + " " + display.displayTime;
+            return display === null || display === undefined || display.constructor !== {}.constructor ? display : display.displayDate + " " + display.displayTime;
         },
         
         /**
@@ -57,7 +58,7 @@
          */
         getServerDate : function(displayDate) {
             var server = BLC.dates.getServerDate(displayDate, adminFormats);
-            return server == null ? null : server.serverDate + " " + server.serverTime;
+            return server === null || server === undefined || server.constructor !== {}.constructor ? server : server.serverDate + " " + server.serverTime;
         },
         
         initializationHandler : function($container) {
