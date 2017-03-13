@@ -106,7 +106,11 @@ business users to dynamically drive the most appropriate content to users.
 
 Broadleaf Commerce recommends JDK 1.7, but will build/run with JDK 1.6 or 1.7. At this time Broadleaf has not been tested with Java 8.
 
-The easiest way to get the Broadleaf framework locally set up with the DemoSite is to clone this repository and execute a clean install via Maven:
+Most developers won't need to modify the framework code and instead should rely on the [Getting Started guide](http://docs.broadleafcommerce.org/current/Getting-Started.html) to quickly kick off your Broadleaf-enabled website.
+
+If you do want to fix a bug or contribute to Broadleaf, see our [CONTRIBUTING.md](CONTRIBUTING.md) guidelines.
+
+The easiest way to make changes to the core framework (again not typical) is to clone this repository and execute a clean install via Maven:
 
 ```sh
 mvn clean install
@@ -126,20 +130,17 @@ mvn clean install -Pblc-development -DskipTests
 
 > Note: all contributed code must have passing tests via Maven
 
-If you need to use a specific version of Broadleaf, simply check out that version using either the branch or tag. All releases are tagged 'broadleaf-<version>' whereas all active development versions are tagged 'BroadleafCommerce-<major.minor>.x'. For instance, if you would like to actively develop on the Broadleaf 2.2 line in order for your changes to be in the next GA patch release of Broadleaf 2.2, you would check out the 'BroadleafCommerce-2.2.x' branch.
+If you need to use a specific version of Broadleaf, simply check out that version using either the branch or tag. All releases are tagged 'broadleaf-<version>' whereas all active development versions are tagged 'BroadleafCommerce-<major.minor>.x'. For instance, if you would like to actively develop on the Broadleaf 3.0 line in order for your changes to be in the next GA patch release of Broadleaf 3.0, you would check out the 'BroadleafCommerce-3.0.x' branch.
 
 ```sh
 git clone git@github.com:BroadleafCommerce/BroadleafCommerce
 cd BroadleafCommerce
 
-# use 2.2.x-SNAPSHOT
-git checkout BroadleafCommerce-2.2.x
-mvn clean install -Pblc-development
-
-# switch to a GA version
-git checkout broadleaf-2.2.0-GA
+# use 3.0.x-SNAPSHOT
+git checkout BroadleafCommerce-3.0.x
 mvn clean install -Pblc-development
 ```
+
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md)
