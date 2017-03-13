@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -31,15 +32,24 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -47,43 +57,42 @@ import java.math.BigDecimal;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @AdminPresentationOverrides({
-        @AdminPresentationOverride(name = "priceList.friendlyName", value = @AdminPresentation(excluded = false, friendlyName = "PriceListImpl_Friendly_Name", order=1, group = "SearchFacetRangeImpl_Description", prominent=true, visibility = VisibilityEnum.FORM_HIDDEN))
+        @AdminPresentationOverride(name = "priceList.friendlyName", value = @AdminPresentation(excluded = false, friendlyName = "PriceListImpl_Friendly_Name", order = 1, gridOrder = 1, group = "SearchFacetRangeImpl_Description", prominent = true, visibility = VisibilityEnum.FORM_HIDDEN))
 })
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
+public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "SearchFacetRangeId")
     @GenericGenerator(
-        name="SearchFacetRangeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="SearchFacetRangeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl")
-        }
-    )
+            name = "SearchFacetRangeId",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SearchFacetRangeImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl")
+            })
     @Column(name = "SEARCH_FACET_RANGE_ID")
     protected Long id;
-    
+
     @ManyToOne(targetEntity = SearchFacetImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SEARCH_FACET_ID")
-    @Index(name="SEARCH_FACET_INDEX", columnNames={"SEARCH_FACET_ID"})
+    @Index(name = "SEARCH_FACET_INDEX", columnNames = { "SEARCH_FACET_ID" })
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected SearchFacet searchFacet = new SearchFacetImpl();
-    
-    @Column(name = "MIN_VALUE", precision=19, scale=5, nullable = false) 
-    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_minValue", order=2, group = "SearchFacetRangeImpl_Description", prominent=true)
+
+    @Column(name = "MIN_VALUE", precision = 19, scale = 5, nullable = false)
+    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_minValue", order = 2, gridOrder = 2, group = "SearchFacetRangeImpl_Description", prominent = true)
     protected BigDecimal minValue;
-    
-    @Column(name = "MAX_VALUE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_maxValue", order=3, group = "SearchFacetRangeImpl_Description", prominent=true)
+
+    @Column(name = "MAX_VALUE", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_maxValue", order = 3, gridOrder = 3, group = "SearchFacetRangeImpl_Description", prominent = true)
     protected BigDecimal maxValue;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -93,7 +102,7 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public SearchFacet getSearchFacet() {
         return searchFacet;
@@ -136,6 +145,6 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
         if (searchFacet != null) {
             cloned.setSearchFacet(searchFacet.createOrRetrieveCopyInstance(context).getClone());
         }
-        return  createResponse;
+        return createResponse;
     }
 }
