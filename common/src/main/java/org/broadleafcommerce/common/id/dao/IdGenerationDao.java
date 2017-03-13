@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Profile
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,19 +15,17 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.util.service.type;
+package org.broadleafcommerce.common.id.dao;
+
+import org.broadleafcommerce.common.id.domain.IdGeneration;
+
+import javax.persistence.OptimisticLockException;
 
 
-/**
- * ContextVariableNames can be added as a Job or Event detail in order to establish the context.
- * 
- * @see MultiTenantScheduledJobThreadInitializer in the BLC MultiTenant module.
- * @author bpolster
- *
- */
-public class ContextVariableNames {
+public interface IdGenerationDao {
 
-    public static String SITE = "SITE";
-    public static String PROFILE = "PROFILE";
-    public static String CATALOG = "CATALOG";
+    public IdGeneration findNextId(String idType) throws OptimisticLockException, Exception;
+
+    public IdGeneration findNextId(String idType, Long batchSize) throws OptimisticLockException, Exception;
+
 }

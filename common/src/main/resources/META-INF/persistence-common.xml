@@ -27,6 +27,7 @@
         <mapping-file>config/bc/jpa/domain/BroadleafCurrency.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Locale.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ISOCountry.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/IdGeneration.orm.xml</mapping-file>
         <class>org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl</class>
         <class>org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl</class>
         <class>org.broadleafcommerce.common.email.domain.EmailTrackingImpl</class>
@@ -48,6 +49,7 @@
         <class>org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl</class>
         <class>org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntryImpl</class>
         <class>org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfigurationImpl</class>
+        <class>org.broadleafcommerce.common.id.domain.IdGenerationImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>

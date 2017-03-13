@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.common.id.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

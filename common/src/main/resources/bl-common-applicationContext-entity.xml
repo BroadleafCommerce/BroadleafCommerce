@@ -41,5 +41,6 @@
     <bean id="org.broadleafcommerce.common.site.domain.Site" class="org.broadleafcommerce.common.site.domain.SiteImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.site.domain.Catalog" class="org.broadleafcommerce.common.site.domain.CatalogImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.site.domain.SiteCatalogXref" class="org.broadleafcommerce.common.site.domain.SiteCatalogXrefImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.profile.core.domain.IdGeneration" class="org.broadleafcommerce.common.id.domain.IdGenerationImpl" scope="prototype"/>
 
 </beans>
