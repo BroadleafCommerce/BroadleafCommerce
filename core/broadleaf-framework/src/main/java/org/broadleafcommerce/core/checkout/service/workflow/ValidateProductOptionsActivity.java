@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -73,8 +74,9 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
             Map<String, OrderItemAttribute> attributeValues = i.getOrderItemAttributes();
             Product product = i.getProduct();
 
-            if (product != null && product.getProductOptions() != null && product.getProductOptions().size() > 0) {
-                for (ProductOption productOption : product.getProductOptions()) {
+            if (product != null && product.getProductOptionXrefs() != null && product.getProductOptionXrefs().size() > 0) {
+                for (ProductOptionXref productOptionXref : product.getProductOptionXrefs()) {
+                    ProductOption productOption = productOptionXref.getProductOption();
                     if (productOption.getRequired() && (productOption.getProductOptionValidationStrategyType() == null ||
                             productOption.getProductOptionValidationStrategyType().getRank() <= getProductOptionValidationStrategyType().getRank())) {
                         if (attributeValues.get(productOption.getAttributeName()) == null || StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()).getValue())) {
