@@ -26,6 +26,10 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
+ * Provides a convenient annotation for declaring an override of a target bean. This addition was made to allow client
+ * beans to override framework beans that were defined in XML.
+ *
+ * @see OverrideBeanAnnotationAwareBeanDefinitionRegistryPostProcessor
  * @author Nick Crum ncrum
  */
 @Target(ElementType.METHOD)

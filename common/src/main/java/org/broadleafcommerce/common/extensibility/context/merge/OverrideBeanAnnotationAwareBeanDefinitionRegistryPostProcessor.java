@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.extensibility.context.merge;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -30,6 +29,10 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
+ * This processor is responsible for handling the replacement of {@code Bean}s targeted by other {@code Bean}s that are
+ * annotated with {@link OverrideBean}. This addition was made to allow for clients to always override beans in java configuration,
+ * even those that were defined in XML.
+ *
  * @author Nick Crum ncrum
  */
 @Component
@@ -47,10 +50,6 @@ public class OverrideBeanAnnotationAwareBeanDefinitionRegistryPostProcessor impl
                     if (!MapUtils.isEmpty(attributes)) {
                         String targetBeanName = (String) attributes.get("target");
                         if (targetBeanName != null) {
-                            if (ArrayUtils.contains(beanDefinitionNames, targetBeanName)) {
-                                registry.removeBeanDefinition(targetBeanName);
-                            }
-
                             registry.removeBeanDefinition(name);
                             registry.registerBeanDefinition(targetBeanName, beanDefinition);
                         }

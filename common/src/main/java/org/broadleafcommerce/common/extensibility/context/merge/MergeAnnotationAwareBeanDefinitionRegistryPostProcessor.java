@@ -39,6 +39,7 @@ import java.util.Map;
  * will be Framework XML, Framework Merge, Client XML, and the Client Merge.
  *
  * @author Jeff Fischer
+ * @author Nick Crum (ncrum)
  */
 @Component
 public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor {
