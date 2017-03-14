@@ -141,9 +141,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
     @Resource(name = "blAdminUserDao")
     protected AdminUserDao adminUserDao;
 
-    @Resource(name = "blGenericEntityDao")
-    protected GenericEntityDao genericEntityDao;
-
     @Resource(name="blDynamicEntityDao")
     protected DynamicEntityDao dynamicEntityDao;
 

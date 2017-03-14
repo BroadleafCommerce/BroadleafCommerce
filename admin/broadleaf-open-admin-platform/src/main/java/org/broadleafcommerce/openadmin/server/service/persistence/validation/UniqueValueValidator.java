@@ -19,18 +19,17 @@ package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -43,9 +42,6 @@ public class UniqueValueValidator implements PropertyValidator {
 
     protected static final Log LOG = LogFactory.getLog(UniqueValueValidator.class);
 
-    @Resource(name = "blGenericEntityDao")
-    protected GenericEntityDao genericEntityDao;
-
     @Override
     public PropertyValidationResult validate(Entity entity,
             Serializable instance,
@@ -55,7 +51,9 @@ public class UniqueValueValidator implements PropertyValidator {
             String propertyName,
             String value) {
 
-        List<Long> responseIds = genericEntityDao.readOtherEntitiesWithPropertyValue(instance, propertyName, value);
+        String instanceClassName = instance.getClass().getName();
+        DynamicEntityDao dynamicEntityDao = getDynamicEntityDao(instanceClassName);
+        List<Long> responseIds = dynamicEntityDao.readOtherEntitiesWithPropertyValue(instance, propertyName, value);
 
         String message = validationConfiguration.get(ConfigurationItem.ERROR_MESSAGE);
         if (message == null) {
@@ -68,5 +66,9 @@ public class UniqueValueValidator implements PropertyValidator {
         } else {
             return new PropertyValidationResult(false, message);
         }
+    }
+
+    protected DynamicEntityDao getDynamicEntityDao(String className) {
+        return PersistenceManagerFactory.getPersistenceManager(className).getDynamicEntityDao();
     }
 }

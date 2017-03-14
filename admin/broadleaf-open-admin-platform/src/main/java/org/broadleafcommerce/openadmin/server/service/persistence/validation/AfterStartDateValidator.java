@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
@@ -51,7 +52,7 @@ public class AfterStartDateValidator extends ValidationConfigurationBasedPropert
         
 
         String otherField = validationConfiguration.get("otherField");
-        FieldManager fm = PersistenceManagerFactory.getPersistenceManager().getDynamicEntityDao().getFieldManager();
+        FieldManager fm = getFieldManager(propertyMetadata);
         boolean valid = true;
         String message = "";
         Date startDate = null;
@@ -75,6 +76,11 @@ public class AfterStartDateValidator extends ValidationConfigurationBasedPropert
         }
 
         return new PropertyValidationResult(valid, message);
+    }
+
+    protected FieldManager getFieldManager(BasicFieldMetadata propertyMetadata) {
+        PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(propertyMetadata.getTargetClass());
+        return persistenceManager.getDynamicEntityDao().getFieldManager();
     }
 
 

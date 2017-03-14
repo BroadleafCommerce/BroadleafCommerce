@@ -160,21 +160,4 @@ public interface DynamicDaoHelper {
     Class<?>[] getUpDownInheritance(Class<?> testClass, SessionFactory sessionFactory,
                     boolean includeUnqualifiedPolymorphicEntities, boolean useCache, EJB3ConfigurationDao ejb3ConfigurationDao);
 
-    /**
-     * Setup the white list cache for known entities registered with Hibernate
-     *
-     * @param sessionFactory
-     * @param persistenceUnitName
-     */
-    void initializeEntityWhiteList(SessionFactory sessionFactory, String persistenceUnitName);
-
-    /**
-     * Determine if a test class name represents a known entity class registered with Hibernate
-     *
-     * @param entityClassName
-     * @param persistenceUnitName
-     * @return
-     */
-    boolean validateEntityClassName(String entityClassName, String persistenceUnitName);
-
 }

@@ -35,6 +35,9 @@ public interface StreamingTransactionCapable {
     <G extends Throwable> void runStreamingTransactionalOperation(StreamCapableTransactionalOperation
                                                                           streamOperation, Class<G> exceptionType) throws G;
 
+    <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
+                Class<G> exceptionType, PlatformTransactionManager transactionManager) throws G;
+
     <G extends Throwable> void runStreamingTransactionalOperation(StreamCapableTransactionalOperation streamOperation,
                                                                   Class<G> exceptionType, int transactionBehavior,
                                                                   int isolationLevel) throws G;

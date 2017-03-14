@@ -30,7 +30,7 @@ import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
 import org.broadleafcommerce.openadmin.security.ClassNameRequestParamValidationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.Persistable;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
-import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 

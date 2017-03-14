@@ -21,12 +21,8 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  * @author Jeff Fischer
@@ -34,31 +30,27 @@ import javax.persistence.PersistenceContext;
 @Component("blPolymorphicEntityCheckSectionAuthorization")
 public class PolymorphicEntitySectionAuthorizationImpl implements SectionAuthorization {
 
-    @Resource(name="blDynamicEntityDao")
-    protected DynamicEntityDao dynamicEntityDao;
-
-    @PersistenceContext(unitName = "blPU")
-    protected EntityManager em;
-
-    @PostConstruct
-    public void init() {
-        dynamicEntityDao.setStandardEntityManager(em);
-    }
-
     @Override
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section) {
-        if (StringUtils.isBlank(section.getCeilingEntity())) {
+        String ceilingEntity = section.getCeilingEntity();
+        if (StringUtils.isBlank(ceilingEntity)) {
             return true;
         }
 
         try {
-            //Only display this section if there are 1 or more entities relative to the ceiling 
+            DynamicEntityDao dynamicEntityDao = getDynamicEntityDao(ceilingEntity);
+
+            //Only display this section if there are 1 or more entities relative to the ceiling
             //for this section that are qualified to be created by the admin
             return dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(
-                    Class.forName(section.getCeilingEntity()), false).length > 0;
+                    Class.forName(ceilingEntity), false).length > 0;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected DynamicEntityDao getDynamicEntityDao(String ceilingEntityName) {
+        return PersistenceManagerFactory.getPersistenceManager(ceilingEntityName).getDynamicEntityDao();
     }
 
 }

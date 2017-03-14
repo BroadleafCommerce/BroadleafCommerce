@@ -107,6 +107,14 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
 
     @Override
     public <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
+            Class<G> exceptionType, PlatformTransactionManager transactionManager) throws G {
+        setTransactionManager(transactionManager);
+
+        runTransactionalOperation(operation, exceptionType, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT);
+    }
+
+    @Override
+    public <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
                                         Class<G> exceptionType, int transactionBehavior, int isolationLevel) throws G {
         runOptionalTransactionalOperation(operation, exceptionType, true, transactionBehavior, isolationLevel);
     }

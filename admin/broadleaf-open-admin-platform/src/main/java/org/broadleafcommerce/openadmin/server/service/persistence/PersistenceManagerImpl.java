@@ -18,7 +18,6 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
@@ -27,8 +26,11 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.service.PersistenceService;
 import org.broadleafcommerce.common.util.ValidationUtil;
+import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -51,7 +53,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Persist
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
-import org.hibernate.mapping.PersistentClass;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -80,14 +81,14 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     @Resource(name="blDynamicEntityDao")
     protected DynamicEntityDao dynamicEntityDao;
 
+    @Resource(name="blPersistenceService")
+    protected PersistenceService persistenceService;
+
     @Resource(name="blCustomPersistenceHandlers")
     protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
 
     @Resource(name="blCustomPersistenceHandlerFilters")
     protected List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters = new ArrayList<CustomPersistenceHandlerFilter>();
-
-    @Resource(name="blTargetEntityManagers")
-    protected Map<String, String> targetEntityManagers = new HashMap<String, String>();
 
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
@@ -702,6 +703,40 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     @Override
+    public void configureDynamicEntityDao(Class entityClass, TargetModeType targetModeType) {
+        EntityManager entityManager = getEntityManager(entityClass, targetModeType);
+        dynamicEntityDao.setStandardEntityManager(entityManager);
+
+        EJB3ConfigurationDao ejb3ConfigurationDao = getEJB3ConfigurationDao(entityClass);
+        dynamicEntityDao.setEjb3ConfigurationDao(ejb3ConfigurationDao);
+    }
+
+    protected EntityManager getEntityManager(Class entityClass, TargetModeType targetModeType) {
+        return persistenceService.identifyEntityManager(entityClass, targetModeType);
+    }
+
+    protected EJB3ConfigurationDao getEJB3ConfigurationDao(Class entityClass) {
+        return persistenceService.identifyEJB3ConfigurationDao(entityClass);
+    }
+
+    @Override
+    public void configureDefaultDynamicEntityDao(TargetModeType targetModeType) {
+        EntityManager entityManager = getDefaultEntityManager(targetModeType);
+        dynamicEntityDao.setStandardEntityManager(entityManager);
+
+        EJB3ConfigurationDao ejb3ConfigurationDao = getDefaultEJB3ConfigurationDao(targetModeType);
+        dynamicEntityDao.setEjb3ConfigurationDao(ejb3ConfigurationDao);
+    }
+
+    protected EntityManager getDefaultEntityManager(TargetModeType targetModeType) {
+        return persistenceService.identifyDefaultEntityManager(targetModeType);
+    }
+
+    protected EJB3ConfigurationDao getDefaultEJB3ConfigurationDao(TargetModeType targetModeType) {
+        return persistenceService.identifyDefaultEJB3ConfigurationDao(targetModeType);
+    }
+
+    @Override
     public DynamicEntityDao getDynamicEntityDao() {
         return dynamicEntityDao;
     }
@@ -712,28 +747,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     @Override
-    public Map<String, String> getTargetEntityManagers() {
-        return targetEntityManagers;
-    }
-
-    @Override
-    public void setTargetEntityManagers(Map<String, String> targetEntityManagers) {
-        this.targetEntityManagers = targetEntityManagers;
-    }
-
-    @Override
     public TargetModeType getTargetMode() {
         return targetMode;
     }
 
     @Override
     public void setTargetMode(TargetModeType targetMode) {
-        String targetManagerRef = targetEntityManagers.get(targetMode.getType());
-        EntityManager targetManager = (EntityManager) applicationContext.getBean(targetManagerRef);
-        if (targetManager == null) {
-            throw new RuntimeException("Unable to find a target entity manager registered with the key: " + targetMode + ". Did you add an entity manager with this key to the targetEntityManagers property?");
-        }
-        dynamicEntityDao.setStandardEntityManager(targetManager);
         this.targetMode = targetMode;
     }
 
