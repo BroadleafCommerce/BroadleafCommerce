@@ -57,11 +57,18 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
             fullUrlWithQueryString += "?" + request.getQueryString();
         }
         secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
+        for(Object key : request.getParameterMap().keySet()) {
+            String paramKey = key.toString();
+            requestContextAttributes.put(paramKey, request.getParameter(paramKey));
+        }
     }
 
     public RequestDTOImpl(WebRequest request) {
         // Page level targeting does not work for WebRequest.
         secure = request.isSecure();
+        for(String key : request.getParameterMap().keySet()) {
+            requestContextAttributes.put(key, request.getParameter(key));
+        }
     }
 
     /**
