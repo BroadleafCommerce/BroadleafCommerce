@@ -19,12 +19,10 @@ package org.broadleafcommerce.common.context.override.config.client;
 
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
-import org.broadleafcommerce.common.extensibility.context.merge.OverrideBeanAnnotationAwareBeanDefinitionRegistryPostProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
@@ -42,13 +40,7 @@ public class ClientOverrideTest {
 
         @Configuration
         @ImportResource(value = "classpath:context/config/client-override.xml", reader = FrameworkXmlBeanDefinitionReader.class)
-        public static class FrameworkConfig {
-
-            @Bean
-            public static OverrideBeanAnnotationAwareBeanDefinitionRegistryPostProcessor overrideBeanAnnotationAwareBeanDefinitionRegistryPostProcessor() {
-                return new OverrideBeanAnnotationAwareBeanDefinitionRegistryPostProcessor();
-            }
-        }
+        public static class FrameworkConfig {}
     }
 
     @Autowired

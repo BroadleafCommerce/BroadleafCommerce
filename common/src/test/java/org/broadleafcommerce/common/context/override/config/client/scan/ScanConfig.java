@@ -18,10 +18,8 @@
 package org.broadleafcommerce.common.context.override.config.client.scan;
 
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
-import org.broadleafcommerce.common.extensibility.context.merge.OverrideBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 
 /**
  * @author Nick Crum ncrum
@@ -29,8 +27,8 @@ import org.springframework.context.annotation.DependsOn;
 @Configuration
 public class ScanConfig {
 
-    @OverrideBean("blEmailInfo")
-    public EmailInfo myEmailInfo() {
+    @Bean
+    public EmailInfo blEmailInfo() {
         EmailInfo info = new EmailInfo();
         info.setFromAddress("client");
         return info;
