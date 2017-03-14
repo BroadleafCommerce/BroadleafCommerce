@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.config;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
 import java.lang.annotation.Documented;
@@ -79,6 +80,7 @@ import java.lang.annotation.Target;
  *
  * @author Philip Baggett (pbaggett)
  * @author Brandon Hines (bhines)
+ * @author Nick Crum (ncrum)
  * @see EnableBroadleafAdminAutoConfiguration
  * @see EnableBroadleafSiteAutoConfiguration
  * @since 5.2
@@ -86,9 +88,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@ImportResource(locations = {
-        "classpath*:/blc-config/bl-*-applicationContext.xml",
-        "classpath*:/blc-config/bl-*-applicationContext-servlet.xml"
-}, reader = FrameworkXmlBeanDefinitionReader.class)
-public @interface EnableBroadleafAutoConfiguration {
-}
+@Import({
+    EnableBroadleafRootAutoConfiguration.BroadleafRootAutoConfiguration.class,
+    EnableBroadleafServletAutoConfiguration.BroadleafServletAutoConfiguration.class
+})
+public @interface EnableBroadleafAutoConfiguration {}

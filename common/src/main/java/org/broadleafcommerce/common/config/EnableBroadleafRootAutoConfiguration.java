@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.config;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
 import java.lang.annotation.Documented;
@@ -33,6 +34,7 @@ import java.lang.annotation.Target;
  *
  * @author Philip Baggett (pbaggett)
  * @author Brandon Hines (bhines)
+ * @author Nick Crum (ncrum)
  * @see EnableBroadleafAdminRootAutoConfiguration
  * @see EnableBroadleafSiteRootAutoConfiguration
  * @see EnableBroadleafAutoConfiguration
@@ -41,8 +43,19 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@ImportResource(locations = {
-        "classpath*:/blc-config/bl-*-applicationContext.xml"
-}, reader = FrameworkXmlBeanDefinitionReader.class)
+@Import(EnableBroadleafRootAutoConfiguration.BroadleafRootAutoConfiguration.class)
 public @interface EnableBroadleafRootAutoConfiguration {
+
+    /**
+     * We are deliberately leaving off the {@link org.springframework.context.annotation.Configuration} annotation since
+     * this inner class is being included in the {@code Import} above, which interprets this as a
+     * {@link org.springframework.context.annotation.Configuration}. We do this to avoid component scanning this inner class.
+     */
+    @ImportResource(locations = {
+            "classpath*:/blc-config/framework/bl-*-applicationContext.xml",
+            "classpath*:/blc-config/early/bl-*-applicationContext.xml",
+            "classpath*:/blc-config/bl-*-applicationContext.xml",
+            "classpath*:/blc-config/late/bl-*-applicationContext.xml"
+    }, reader = FrameworkXmlBeanDefinitionReader.class)
+    class BroadleafRootAutoConfiguration {}
 }

@@ -26,20 +26,30 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
+ * This processor is responsible for registering Early/LateStageMergeBeanPostProcessors for {@link Merge} annotated
+ * beans and ensuring the correct prioritization of these post processors. The current ordering of the post processors
+ * will be Framework XML, Framework Merge, Client XML, and the Client Merge.
+ *
  * @author Jeff Fischer
  */
 @Component
 public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor {
 
+    private static final String ANNOTATED_POST_PROCESSOR_SUFFIX = "AnnotatedMergePostProcessor";
+
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-        
+        Map<String, BeanDefinition> clientAnnotatedBeanPostProcessors = new LinkedHashMap<>();
+        Map<String, BeanDefinition> clientBeanPostProcessors = new LinkedHashMap<>();
+
         for (String name : registry.getBeanDefinitionNames()) {
             BeanDefinition beanDefinition = registry.getBeanDefinition(name);
             if (beanDefinition instanceof AnnotatedBeanDefinition) {
@@ -66,19 +76,62 @@ public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements 
                             }
                         }
                         BeanDefinition definition = builder.getBeanDefinition();
-                        registry.registerBeanDefinition(
-                                name +
+                        String beanName = name +
                                 "_" +
                                 attributes.get("targetRef") +
                                 (isEarly?"Early":"Late") +
-                                "AnnotatedMergePostProcessor",
-                        definition);
+                                ANNOTATED_POST_PROCESSOR_SUFFIX;
+                        if (isBroadleafAnnotationBean(metadata)) {
+                            registry.registerBeanDefinition(beanName, definition);
+                        } else {
+                            clientAnnotatedBeanPostProcessors.put(beanName, definition);
+                        }
                     }
                 }
             }
+
+            /*
+                If this is a client bean post processor, then remove it and store it away until we register all
+                framework post processors.
+             */
+            if (beanDefinition.getBeanClassName() != null
+                    && (beanDefinition.getBeanClassName().equals(EarlyStageMergeBeanPostProcessor.class.getName())
+                    || beanDefinition.getBeanClassName().equals(LateStageMergeBeanPostProcessor.class.getName()))) {
+                if (!isBroadleafBean(beanDefinition)) {
+                    registry.removeBeanDefinition(name);
+                    clientBeanPostProcessors.put(name, beanDefinition);
+                }
+            }
+        }
+
+        if (org.apache.commons.collections4.MapUtils.isNotEmpty(clientBeanPostProcessors)) {
+            for (Map.Entry<String, BeanDefinition> entry : clientBeanPostProcessors.entrySet()) {
+                registry.registerBeanDefinition(entry.getKey(), entry.getValue());
+            }
+        }
+
+        if (org.apache.commons.collections4.MapUtils.isNotEmpty(clientAnnotatedBeanPostProcessors)) {
+            for (Map.Entry<String, BeanDefinition> entry : clientAnnotatedBeanPostProcessors.entrySet()) {
+                registry.registerBeanDefinition(entry.getKey(), entry.getValue());
+            }
         }
     }
-    
+
+    protected boolean isBroadleafAnnotationBean(MethodMetadata metadata) {
+        return metadata.getDeclaringClassName().contains("org.broadleafcommerce")
+                || metadata.getDeclaringClassName().contains("com.broadleafcommerce");
+    }
+
+    protected boolean isBroadleafBean(BeanDefinition beanDefinition) {
+        if (beanDefinition instanceof AnnotatedBeanDefinition){
+            return isBroadleafAnnotationBean(((AnnotatedBeanDefinition) beanDefinition).getFactoryMethodMetadata());
+        } else if (beanDefinition instanceof GenericBeanDefinition && ((GenericBeanDefinition) beanDefinition).getResource() != null) {
+            return ((GenericBeanDefinition) beanDefinition).getResource().getFilename().startsWith("bl-");
+        }
+
+        return false;
+    }
+
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) throws BeansException {
         // intentionally unimplemented

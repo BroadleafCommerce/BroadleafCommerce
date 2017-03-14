@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.config;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
 import java.lang.annotation.Documented;
@@ -37,8 +38,9 @@ import javax.servlet.ServletContainerInitializer;
  * {@literal @}SpringBootApplication class
  * 
  * <p>
- * Since this annotation is a meta-annotation for {@literal @}ImportResource, this <b>cannot</b> be placed on a {@literal @}Configuration class
- * that contains an {@literal @}ImportResource annotation directly or on a meta-annotation.
+ * Since this annotation is a meta-annotation for {@literal @}Import, this <b>can</b> be placed on a {@literal @}Configuration class
+ * that contains an {@literal @}Import annotation, <b>but</b> this {@literal @}Import's beans will take precedence over
+ * any additional {@literal @}Import applied.
  *  
  * <p>
  * This import utilizes the {@link FrameworkXmlBeanDefinitionReader} so that framework XML bean definitions will not
@@ -46,6 +48,7 @@ import javax.servlet.ServletContainerInitializer;
  *
  * @author Philip Baggett (pbaggett)
  * @author Phillip Verheyden (phillipuniverse)
+ * @author Nick Crum (ncrum)
  * @see EnableBroadleafAdminRootAutoConfiguration
  * @see EnableBroadleafAdminServletAutoConfiguration
  * @see EnableBroadleafAutoConfiguration
@@ -54,11 +57,8 @@ import javax.servlet.ServletContainerInitializer;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@ImportResource(locations = {
-    "classpath*:/blc-config/bl-*-applicationContext.xml",
-    "classpath*:/blc-config/admin/bl-*-applicationContext.xml",
-    "classpath*:/blc-config/bl-*-applicationContext-servlet.xml",
-    "classpath*:/blc-config/admin/bl-*-applicationContext-servlet.xml"
-}, reader = FrameworkXmlBeanDefinitionReader.class)
-public @interface EnableBroadleafAdminAutoConfiguration {
-}
+@Import({
+    EnableBroadleafAdminRootAutoConfiguration.BroadleafAdminRootAutoConfiguration.class,
+    EnableBroadleafAdminServletAutoConfiguration.BroadleafAdminServletAutoConfiguration.class,
+})
+public @interface EnableBroadleafAdminAutoConfiguration {}

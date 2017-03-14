@@ -18,6 +18,8 @@
 
 package org.broadleafcommerce.common.extensibility;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -28,6 +30,7 @@ import org.w3c.dom.Document;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -51,12 +54,12 @@ public class FrameworkXmlBeanDefinitionReader extends XmlBeanDefinitionReader {
     @Override
     public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
         // First compile any @Bean definitions that have already been registered via @Configuration classes (which happen prior
-        // to the XML bean definition import). This code makes the assumption that Broadleaf Framework bean will be the only bean
-        // definitions to start with "bl"
+        // to the XML bean definition import).
         Map<String, BeanDefinition> implementationBeanDefinitions = new HashMap<>();
         for (String name : getRegistry().getBeanDefinitionNames()) {
             BeanDefinition definition = getRegistry().getBeanDefinition(name);
-            if (isConfigurationClassBean(definition) && name.startsWith("bl")) {
+
+            if (isConfigurationClassBean(definition)) {
                 implementationBeanDefinitions.put(name, definition);
             }
         }
@@ -68,7 +71,10 @@ public class FrameworkXmlBeanDefinitionReader extends XmlBeanDefinitionReader {
         // the ones that were defined _prior_ to importing this XML file, which actualy registers the same beans a 3rd time.
         // But, since we are registering these beans at the Framework level, anything defined previously should take precedence
         for (Map.Entry<String, BeanDefinition> entry : implementationBeanDefinitions.entrySet()) {
-            getRegistry().registerBeanDefinition(entry.getKey(), entry.getValue());
+            BeanDefinition registeredBeanDefinition = getRegistry().getBeanDefinition(entry.getKey());
+            if (registeredBeanDefinition == null || !Objects.equals(registeredBeanDefinition, entry.getValue())) {
+                getRegistry().registerBeanDefinition(entry.getKey(), entry.getValue());
+            }
         }
 
         return processedCount;

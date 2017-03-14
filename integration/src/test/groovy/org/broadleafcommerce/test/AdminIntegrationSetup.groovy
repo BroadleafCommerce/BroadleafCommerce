@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.test
 
+import org.broadleafcommerce.common.config.EnableBroadleafAdminRootAutoConfiguration
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportResource
@@ -49,8 +50,9 @@ class AdminIntegrationSetup extends Specification {
      * as well as XML configuration files at the same level of the 'siteRoot' {@link @}ContextConfiguration
      */
     @Configuration
-    @ImportResource(value = ["classpath*:/blc-config/admin/bl-*-applicationContext.xml",
+    @EnableBroadleafAdminRootAutoConfiguration
+    @ImportResource(value = [
             "classpath:bl-applicationContext-test.xml"
-    ], reader = FrameworkXmlBeanDefinitionReader)
+    ])
     public static class ContextConfig {}
 }

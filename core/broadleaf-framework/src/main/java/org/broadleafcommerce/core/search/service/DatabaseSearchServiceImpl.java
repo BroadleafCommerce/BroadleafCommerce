@@ -296,11 +296,6 @@ public class DatabaseSearchServiceImpl implements SearchService {
         
         return results;
     }
-    
-    @Override
-    public void rebuildIndex() {
-        throw new UnsupportedOperationException("Indexes are not supported by this implementation");
-    }
 
     @Override
     public boolean isActive() {
