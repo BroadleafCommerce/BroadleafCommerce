@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.web.context.request.WebRequest;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +45,8 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
     @AdminPresentation(friendlyName = "RequestDTOImpl_Is_Secure")
     private Boolean secure;
 
+    Map<String, String> requestContextAttributes = new HashMap<String, String>();
+
     public RequestDTOImpl() {
     }
 
@@ -54,11 +57,18 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
             fullUrlWithQueryString += "?" + request.getQueryString();
         }
         secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
+        for(Object key : request.getParameterMap().keySet()) {
+            String paramKey = key.toString();
+            requestContextAttributes.put(paramKey, request.getParameter(paramKey));
+        }
     }
 
     public RequestDTOImpl(WebRequest request) {
         // Page level targeting does not work for WebRequest.
         secure = request.isSecure();
+        for(String key : request.getParameterMap().keySet()) {
+            requestContextAttributes.put(key, request.getParameter(key));
+        }
     }
 
     /**
@@ -83,6 +93,14 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
     @Override
     public Boolean isSecure() {
         return secure;
+    }
+
+    public Map<String, String> getRequestContextAttributes() {
+        return requestContextAttributes;
+    }
+
+    public void setRequestContextAttributes(Map<String, String> requestContextAttributes) {
+        this.requestContextAttributes = requestContextAttributes;
     }
 
     public String getFullUrlWithQueryString() {
@@ -112,5 +130,4 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
             return null;
         }
     }
-
 }
