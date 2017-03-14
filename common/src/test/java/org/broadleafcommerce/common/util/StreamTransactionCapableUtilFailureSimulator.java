@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.util;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 
 /**
@@ -53,7 +54,7 @@ public class StreamTransactionCapableUtilFailureSimulator extends StreamingTrans
     }
 
     @Override
-    protected TransactionStatus startTransaction(int propagationBehavior, int isolationLevel, boolean readOnly) {
+    protected TransactionStatus startTransaction(int propagationBehavior, int isolationLevel, boolean readOnly, PlatformTransactionManager transactionManager) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context.getAdditionalProperties().containsKey(FAILURE_MODE_KEY)) {
             String failureModePU = (String) context.getAdditionalProperties().get(FAILURE_MODE_PU);
@@ -63,7 +64,7 @@ public class StreamTransactionCapableUtilFailureSimulator extends StreamingTrans
                 throw (RuntimeException) context.getAdditionalProperties().get(FAILURE_MODE_EXCEPTION);
             }
         }
-        return super.startTransaction(propagationBehavior, isolationLevel, readOnly);
+        return super.startTransaction(propagationBehavior, isolationLevel, readOnly, transactionManager);
     }
 
     protected void checkPU(String persistenceUnit) {

@@ -31,6 +31,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.SmartLifecycle;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,7 @@ import javax.persistence.EntityManager;
  * @author Chris Kittrell (ckittrell)
  */
 @Service("blPersistenceService")
-public class PersistenceServiceImpl implements PersistenceService {
+public class PersistenceServiceImpl implements PersistenceService, SmartLifecycle {
 
     protected static final Log LOG = LogFactory.getLog(PersistenceServiceImpl.class);
 
@@ -76,20 +77,40 @@ public class PersistenceServiceImpl implements PersistenceService {
     @Autowired
     protected List<EntityManager> entityManagers;
 
-    private final Object CACHE_LOCK = new Object();
     private final Map<String, EntityManager> ENTITY_MANAGER_CACHE = new ConcurrentHashMap<>();
     private final Map<String, PlatformTransactionManager> TRANSACTION_MANAGER_CACHE = new ConcurrentHashMap<>();
     private final Map<String, EJB3ConfigurationDao> EJB3_CONFIG_DAO_CACHE = new ConcurrentHashMap<>();
 
     private DynamicDaoHelperImpl daoHelper = new DynamicDaoHelperImpl();
 
-    @EventListener
-    public void init(ContextRefreshedEvent event) {
-        synchronized(CACHE_LOCK) {
-            if (ENTITY_MANAGER_CACHE.isEmpty()) {
-                initializeEntityManagerCache();
-            }
-        }
+    @Override
+    public boolean isAutoStartup() {
+        return true;
+    }
+
+    @Override
+    public void stop(Runnable callback) {
+        callback.run();
+    }
+
+    @Override
+    public void start() {
+        initializeEntityManagerCache();
+    }
+
+    @Override
+    public void stop() {
+        //do nothing
+    }
+
+    @Override
+    public boolean isRunning() {
+        return false;
+    }
+
+    @Override
+    public int getPhase() {
+        return 0;
     }
 
     protected void initializeEntityManagerCache() {
@@ -217,12 +238,25 @@ public class PersistenceServiceImpl implements PersistenceService {
     }
 
     @Override
-    public String buildManagerCacheKey(String targetMode, Class<?> clazz) {
+    public Class<?> getCeilingImplClassFromEntityManagers(String beanId) {
+        Class<?> beanIdClass = getClassForName(beanId);
+
+        for (EntityManager em : entityManagers) {
+            Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(beanIdClass, em.unwrap(Session.class).getSessionFactory(), true, true);
+
+            if (ArrayUtils.isNotEmpty(entitiesFromCeiling)) {
+                return entitiesFromCeiling[entitiesFromCeiling.length - 1];
+            }
+        }
+
+        throw new RuntimeException("Unable to retrieve the entity class for the given bean id: " + beanId);
+    }
+
+    protected String buildManagerCacheKey(String targetMode, Class<?> clazz) {
         return buildManagerCacheKey(targetMode, clazz.getName());
     }
 
-    @Override
-    public String buildManagerCacheKey(String targetMode, String className) {
+    protected String buildManagerCacheKey(String targetMode, String className) {
         String managedClassName = getManagedClassName(className);
 
         return targetMode + "|" + managedClassName;
@@ -238,21 +272,6 @@ public class PersistenceServiceImpl implements PersistenceService {
         } catch (NoSuchBeanDefinitionException e) {
             return getCeilingImplClassFromEntityManagers(className).getName();
         }
-    }
-
-    @Override
-    public Class<?> getCeilingImplClassFromEntityManagers(String beanId) {
-        Class<?> beanIdClass = getClassForName(beanId);
-
-        for (EntityManager em : entityManagers) {
-            Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(beanIdClass, em.unwrap(Session.class).getSessionFactory(), true, true);
-
-            if (ArrayUtils.isNotEmpty(entitiesFromCeiling)) {
-                return entitiesFromCeiling[entitiesFromCeiling.length - 1];
-            }
-        }
-
-        throw new RuntimeException("Unable to retrieve the entity class for the given bean id: " + beanId);
     }
 
     protected Class<?> getClassForName(String beanId) {

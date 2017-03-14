@@ -38,8 +38,7 @@ import javax.persistence.EntityManager;
 public class PersistenceManagerFactory implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
-    private static final Map<TargetModeType, PersistenceManager> defaultPersistenceManagers = new HashMap<>();
-    private static final Map<String, PersistenceManager> persistenceManagers = new HashMap<>();
+    private static final Map<Integer, PersistenceManager> persistenceManagers = new HashMap<Integer, PersistenceManager>();
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
     protected static String persistenceManagerRef = DEFAULTPERSISTENCEMANAGERREF;
 
@@ -99,21 +98,22 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
      *  using the passed in {@link TargetModeType}
      */
     public static PersistenceManager getDefaultPersistenceManager(TargetModeType targetModeType) {
-        synchronized (defaultPersistenceManagers) {
-            if (!defaultPersistenceManagers.containsKey(targetModeType)) {
+        synchronized (persistenceManagers) {
+            Integer cacheKey = persistenceService.identifyDefaultEntityManager(targetModeType).hashCode();
+            if (!persistenceManagers.containsKey(cacheKey)) {
                 PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
                 persistenceManager.setTargetMode(targetModeType);
                 persistenceManager.configureDefaultDynamicEntityDao(targetModeType);
 
-                defaultPersistenceManagers.put(targetModeType, persistenceManager);
+                persistenceManagers.put(cacheKey, persistenceManager);
             }
-            return defaultPersistenceManagers.get(targetModeType);
+            return persistenceManagers.get(cacheKey);
         }
     }
 
     public static PersistenceManager getPersistenceManager(Class entityClass, TargetModeType targetModeType) {
         synchronized (persistenceManagers) {
-            String cacheKey = persistenceService.buildManagerCacheKey(targetModeType.getType(), entityClass);
+            Integer cacheKey = persistenceService.identifyEntityManager(entityClass, targetModeType).hashCode();
             if (!persistenceManagers.containsKey(cacheKey)) {
                 PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
                 persistenceManager.setTargetMode(targetModeType);

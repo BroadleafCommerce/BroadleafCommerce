@@ -59,7 +59,7 @@ public interface StreamingTransactionCapable {
     <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
                                                                 Class<G> exceptionType, boolean useTransaction,
                                                                 int transactionBehavior, int isolationLevel,
-                                                                boolean readOnly) throws G;
+                                                                boolean readOnly, PlatformTransactionManager transactionManager) throws G;
 
     PlatformTransactionManager getTransactionManager();
 

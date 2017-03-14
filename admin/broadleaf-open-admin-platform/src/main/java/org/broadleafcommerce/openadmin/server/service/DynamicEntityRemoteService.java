@@ -98,7 +98,8 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                 public void execute() throws Throwable {
                     response[0] = nonTransactionalInspect(persistencePackage);
                 }
-            }, RuntimeException.class, true, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT, true);
+            }, RuntimeException.class, true, TransactionDefinition.PROPAGATION_REQUIRED,
+                    TransactionDefinition.ISOLATION_DEFAULT, true, transactionManager);
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ServiceException) {
                 throw (ServiceException) e.getCause();
@@ -138,7 +139,8 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                 public void execute() throws Throwable {
                     response[0] = nonTransactionalFetch(persistencePackage, cto);
                 }
-            }, RuntimeException.class, true, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT, true);
+            }, RuntimeException.class, true, TransactionDefinition.PROPAGATION_REQUIRED,
+                    TransactionDefinition.ISOLATION_DEFAULT, true, transactionManager);
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ServiceException) {
                 throw (ServiceException) e.getCause();
