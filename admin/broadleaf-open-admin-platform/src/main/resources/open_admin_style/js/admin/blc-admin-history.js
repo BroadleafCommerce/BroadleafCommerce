@@ -101,7 +101,7 @@
                         + decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\""))) + '"}');
                 }
             }
-            return null;
+            return {};
         },
         
         replaceUrlParameter : function(param, value, state) {
