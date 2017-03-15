@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -66,6 +67,14 @@ public class FrameworkXmlBeanDefinitionReader extends XmlBeanDefinitionReader {
         
         // Now register the bean definitions in this XML file, which overrides any bean definitions defined previously
         int processedCount = super.registerBeanDefinitions(doc, resource);
+
+        // Now mark framework xml beans with ROLE_SUPPORT so that later configuration class beans can override them.
+        for (String beanName : getRegistry().getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = getRegistry().getBeanDefinition(beanName);
+            if (isXMLBean(beanDefinition)) {
+                ((GenericBeanDefinition) beanDefinition).setRole(BeanDefinition.ROLE_SUPPORT);
+            }
+        }
         
         // Now that all beans in this XML file (and any <import>s from this XML file) have been registered, go ahead and re-apply
         // the ones that were defined _prior_ to importing this XML file, which actualy registers the same beans a 3rd time.
@@ -78,6 +87,12 @@ public class FrameworkXmlBeanDefinitionReader extends XmlBeanDefinitionReader {
         }
 
         return processedCount;
+    }
+
+    protected boolean isXMLBean(BeanDefinition beanDefinition) {
+        return beanDefinition instanceof GenericBeanDefinition
+                && ((GenericBeanDefinition) beanDefinition).getResource() != null
+                && ((GenericBeanDefinition) beanDefinition).getResource().getFilename().endsWith(".xml");
     }
     
     protected boolean isConfigurationClassBean(BeanDefinition definition) {

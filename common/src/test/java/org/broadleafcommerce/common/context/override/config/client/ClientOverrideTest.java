@@ -15,41 +15,39 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.context.override.crossmodule;
+package org.broadleafcommerce.common.context.override.config.client;
 
+import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * This test is showing that you are NOT able to override an early framework xml bean definition with a late framework
- * configuration class bean definition.
- *
  * @author Nick Crum ncrum
  */
 @RunWith(SpringRunner.class)
-public class CrossModuleConfigurationXMLOverrideTest {
+public class ClientOverrideTest {
 
     @Configuration
-    @ImportResource(value = {
-            "classpath:context/crossmodule/early-xml-applicationContext.xml",
-            "classpath:context/crossmodule/late-applicationContext.xml"
-    }, reader = FrameworkXmlBeanDefinitionReader.class)
-    static class CrossModuleConfiguration {}
+    @Import(MainRootConfig.class)
+    public static class MainConfiguration {
+
+        @Configuration
+        @ImportResource(value = "classpath:context/config/client-override.xml", reader = FrameworkXmlBeanDefinitionReader.class)
+        public static class FrameworkConfig {}
+    }
 
     @Autowired
-    protected PasswordEncoder passwordEncoder;
+    protected EmailInfo emailInfo;
 
     @Test
-    public void testCrossModuleConfigurationBeanOverride() {
-        Assert.assertEquals(BCryptPasswordEncoder.class, passwordEncoder.getClass());
+    public void testOverride() {
+        Assert.assertEquals("client", emailInfo.getFromAddress());
     }
 }

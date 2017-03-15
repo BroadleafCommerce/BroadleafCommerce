@@ -47,7 +47,6 @@ public class DuplicateImportConfigurationTest {
     @EnableAutoConfigurationForImportTest
     static class DuplicateImportConfiguration {}
 
-    @Configuration
     static class OtherConfiguration {
 
         /**
@@ -73,6 +72,6 @@ public class DuplicateImportConfigurationTest {
     @Test
     public void testDuplicateImport() {
         Assert.assertEquals(ObjectMapper.class, objectMapper.getClass());
-        Assert.assertEquals(NoOpPasswordEncoder.class, passwordEncoder.getClass());
+        Assert.assertEquals(BCryptPasswordEncoder.class, passwordEncoder.getClass());
     }
 }
