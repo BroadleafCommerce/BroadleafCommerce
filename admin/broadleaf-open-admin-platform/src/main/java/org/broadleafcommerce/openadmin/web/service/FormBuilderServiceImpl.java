@@ -481,7 +481,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             Property p2 = cmd.getPMap().get("key");
             BasicFieldMetadata keyMd = (BasicFieldMetadata) p2.getMetadata();
-            keyMd.setFriendlyName(p2.getMetadata().getFriendlyName());
+            keyMd.setFriendlyName(getMapKeyFriendlyName(p2));
             Field hf = createHeaderField(p2, keyMd);
             headerFields.add(hf);
             wrapper.getFields().add(constructFieldDTOFromFieldData(hf, keyMd));
@@ -655,6 +655,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
         return listGrid;
+    }
+
+    protected String getMapKeyFriendlyName(Property property) {
+        String friendlyNameFromMetadata = property.getMetadata().getFriendlyName();
+
+        return (friendlyNameFromMetadata == null) ? "Key" : friendlyNameFromMetadata;
     }
 
     @Override
