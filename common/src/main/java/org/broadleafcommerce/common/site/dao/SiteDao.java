@@ -47,6 +47,13 @@ public interface SiteDao {
      * @return
      */
     public Site retrieveSiteByDomainOrDomainPrefix(String domain, String prefix);
+    
+    /**
+     * Finds a site by its {@link Site#getSiteIdentifierValue()}.
+     * @param identifier
+     * @return
+     */
+    public Site retrieveSiteByIdentifier(String identifier);
 
     /**
      * Persists the site changes.
