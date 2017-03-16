@@ -641,8 +641,8 @@
             var listGridsCount = BLCAdmin.listGrid.getListGridCount($);
             if (listGridsCount == 1 && $wrapper.parents('.entity-form').length == 0 &&
                 $table.data('listgridtype') !== 'tree' &&
-                $table.data('listgridtype') !== 'asset_grid' &&
-                $table.data('listgridtype') !== 'asset_grid_folder') {
+                ($table.data('listgridtype') !== 'asset_grid' && $table.data('listgridtype') !== 'asset_grid_folder') ||
+                (BLCAdmin.assetGrid == undefined && ($table.data('listgridtype') === 'asset_grid' || $table.data('listgridtype') === 'asset_grid_folder'))) {
 
                 var $window = $(window);
                 
@@ -663,9 +663,10 @@
                 if ($wrapper.find('.mCS_no_scrollbar').length > 0 && $modalBody.length === 0) {
                     BLCAdmin.listGrid.paginate.updateUrlFromScroll($wrapper.find('tbody'));
                 }
-            } else if ($table.data('listgridtype') === 'asset_grid'
+            } else if (BLCAdmin.assetGrid != undefined
+                && ($table.data('listgridtype') === 'asset_grid'
                 || $table.data('listgridtype') === 'asset_grid_folder'
-                || $table.data('listgridtype') === 'tree') {
+                || $table.data('listgridtype') === 'tree')) {
                 var $window = $(window);
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
 
