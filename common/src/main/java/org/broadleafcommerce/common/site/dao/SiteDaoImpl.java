@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.site.dao;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.CatalogImpl;
@@ -28,7 +29,6 @@ import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -100,28 +100,7 @@ public class SiteDaoImpl implements SiteDao {
             return null;
         }
 
-        List<String> siteIdentifiers = new ArrayList<String>();
-        siteIdentifiers.add(domain);
-        siteIdentifiers.add(domainPrefix);
-
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Site> criteria = builder.createQuery(Site.class);
-        Root<SiteImpl> site = criteria.from(SiteImpl.class);
-        criteria.select(site);
-
-        criteria.where(builder.and(site.get("siteIdentifierValue").as(String.class).in(siteIdentifiers),
-                builder.and(
-                    builder.or(builder.isNull(site.get("archiveStatus").get("archived").as(String.class)),
-                        builder.notEqual(site.get("archiveStatus").get("archived").as(Character.class), 'Y')),
-                    builder.or(builder.isNull(site.get("deactivated").as(Boolean.class)),
-                        builder.notEqual(site.get("deactivated").as(Boolean.class), true))
-                )
-            )
-        );
-        TypedQuery<Site> query = em.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-
-        List<Site> results = query.getResultList();
+        List<Site> results = retrieveSitesByPotentialIdentifiers(domain, domainPrefix);
         
         for (Site currentSite : results) {
             if (SiteResolutionType.DOMAIN.equals(currentSite.getSiteResolutionType())) {
@@ -138,6 +117,32 @@ public class SiteDaoImpl implements SiteDao {
         }
 
         return null;
+    }
+    
+    @Override
+    public Site retrieveSiteByIdentifier(String identifier) {
+        List<Site> sites = retrieveSitesByPotentialIdentifiers(identifier);
+        return CollectionUtils.isNotEmpty(sites) ? sites.get(0) : null;
+    }
+    
+    public List<Site> retrieveSitesByPotentialIdentifiers(String... potentialIdentifiers) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Site> criteria = builder.createQuery(Site.class);
+        Root<SiteImpl> site = criteria.from(SiteImpl.class);
+        criteria.select(site);
+
+        criteria.where(builder.and(site.get("siteIdentifierValue").as(String.class).in(potentialIdentifiers),
+                builder.and(
+                    builder.or(builder.isNull(site.get("archiveStatus").get("archived").as(String.class)),
+                        builder.notEqual(site.get("archiveStatus").get("archived").as(Character.class), 'Y')),
+                    builder.or(builder.isNull(site.get("deactivated").as(Boolean.class)),
+                        builder.notEqual(site.get("deactivated").as(Boolean.class), true))
+                )
+            )
+        );
+        TypedQuery<Site> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getResultList();
     }
 
     @Override
@@ -157,7 +162,7 @@ public class SiteDaoImpl implements SiteDao {
     
     @Override
     public List<Catalog> retrieveAllCatalogs() {
-        TypedQuery<Catalog> q = new TypedQueryBuilder<Catalog>(Catalog.class, "c")
+        TypedQuery<Catalog> q = new TypedQueryBuilder<>(Catalog.class, "c")
                 .toQuery(em);
         return q.getResultList();
     }

@@ -39,6 +39,10 @@ public interface RequestDTO {
      */
     public Boolean isSecure();
 
+    Map<String, String> getRequestContextAttributes();
+
+    void setRequestContextAttributes(Map<String, String> requestContextAttributes);
+
     /**
      * By default, converts the properties on 
      * @return
