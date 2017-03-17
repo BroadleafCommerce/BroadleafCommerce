@@ -15,17 +15,17 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.web.controller;
+package org.broadleafcommerce.openadmin.web.controller;
 
 import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
-import org.broadleafcommerce.common.web.controller.annotation.AdminFrameworkController;
+import org.broadleafcommerce.common.web.controller.FrameworkControllerHandlerMapping;
+import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import java.lang.reflect.Method;
 
 /**
  * This class registers controllers annotated with {@link AdminFrameworkController} so they will be registered in a
@@ -36,7 +36,7 @@ import java.lang.reflect.Method;
  * <ol>
  * <li>{@link RequestMappingHandlerMapping}</li>
  * <li>{@link FrameworkControllerHandlerMapping}</li>
- * <li>{@link AdminFrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminControllerHandlerMapping}</li>
  * </ol>
  *
  * @author Philip Baggett (pbaggett)
@@ -44,35 +44,18 @@ import java.lang.reflect.Method;
  */
 @Component
 @ConditionalOnAdmin
-public class AdminFrameworkControllerHandlerMapping extends RequestMappingHandlerMapping {
+public class AdminControllerHandlerMapping extends RequestMappingHandlerMapping {
 
     public static final int REQUEST_MAPPING_ORDER =  Ordered.LOWEST_PRECEDENCE - 1;
 
-    public AdminFrameworkControllerHandlerMapping() {
+    public AdminControllerHandlerMapping() {
         setOrder(REQUEST_MAPPING_ORDER);
     }
 
     @Override
     protected boolean isHandler(Class<?> beanType) {
-        return beanType.getAnnotation(AdminFrameworkController.class) != null;
-    }
-
-    @Override
-    protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
-
-        RequestMappingInfo requestMappingInfo = super.getMappingForMethod(method, handlerType);
-
-        if (requestMappingInfo != null) {
-            AdminFrameworkController adminFrameworkControllerAnnotation = handlerType.getAnnotation(AdminFrameworkController.class);
-            if (adminFrameworkControllerAnnotation != null && adminFrameworkControllerAnnotation.requestMapping().length > 0) {
-                RequestMapping requestMappingAnnotation = adminFrameworkControllerAnnotation.requestMapping()[0];
-                requestMappingAnnotation = AnnotationUtils.synthesizeAnnotation(requestMappingAnnotation, null);
-                RequestMappingInfo parentRequestMappingInfo = createRequestMappingInfo(requestMappingAnnotation, null);
-                requestMappingInfo = parentRequestMappingInfo.combine(requestMappingInfo);
-                return requestMappingInfo;
-            }
-        }
-
-        return requestMappingInfo;
+        return (AnnotatedElementUtils.hasAnnotation(beanType, Controller.class) ||
+                AnnotatedElementUtils.hasAnnotation(beanType, RequestMapping.class))
+                && AdminBasicEntityController.class.isAssignableFrom(beanType);
     }
 }

@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.web.controller.annotation;
 
-import org.broadleafcommerce.common.web.controller.AdminFrameworkControllerHandlerMapping;
 import org.broadleafcommerce.common.web.controller.FrameworkControllerHandlerMapping;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -43,7 +42,7 @@ import java.lang.annotation.Target;
  * <ol>
  * <li>{@link RequestMappingHandlerMapping}</li>
  * <li>{@link FrameworkControllerHandlerMapping}</li>
- * <li>{@link AdminFrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminControllerHandlerMapping}</li>
  * </ol>
  * <p>
  * This concept was adapted from {@code @FrameworkEndpoint} from Spring Security OAuth 2.

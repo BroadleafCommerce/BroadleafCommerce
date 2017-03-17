@@ -36,7 +36,6 @@ package org.broadleafcommerce.common.web.controller;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.web.controller.annotation.AdminFrameworkController;
 import org.broadleafcommerce.common.web.controller.annotation.FrameworkMapping;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.target.EmptyTargetSource;
@@ -447,16 +446,12 @@ public class FrameworkMvcUriComponentsBuilder {
 
         FrameworkMapping frameworkMapping = controllerType.getAnnotation(FrameworkMapping.class);
         RequestMapping requestMapping = controllerType.getAnnotation(RequestMapping.class);
-        AdminFrameworkController adminFrameworkController = controllerType.getAnnotation(AdminFrameworkController.class);
 
         if (frameworkMapping != null) {
             paths = frameworkMapping.path();
 
         } else if (requestMapping != null) {
             paths = requestMapping.path();
-
-        } else if (adminFrameworkController != null && adminFrameworkController.requestMapping().length > 0) {
-            paths = adminFrameworkController.requestMapping()[0].path();
 
         } else {
             return "/";

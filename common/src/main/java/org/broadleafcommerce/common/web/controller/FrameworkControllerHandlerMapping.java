@@ -52,7 +52,7 @@ import java.lang.reflect.Method;
  * <ol>
  * <li>{@link RequestMappingHandlerMapping}</li>
  * <li>{@link FrameworkControllerHandlerMapping}</li>
- * <li>{@link AdminFrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminControllerHandlerMapping}</li>
  * </ol>
  *
  * @author Philip Baggett (pbaggett)

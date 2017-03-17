@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.web.controller.annotation;
 
-import org.broadleafcommerce.common.web.controller.AdminFrameworkControllerHandlerMapping;
 import org.broadleafcommerce.common.web.controller.FrameworkControllerHandlerMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import java.lang.annotation.Documented;
@@ -44,7 +43,7 @@ import java.lang.annotation.Target;
  * <ol>
  * <li>{@link RequestMappingHandlerMapping}</li>
  * <li>{@link FrameworkControllerHandlerMapping}</li>
- * <li>{@link AdminFrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminControllerHandlerMapping}</li>
  * </ol>
  *
  * @author Philip Baggett (pbaggett)

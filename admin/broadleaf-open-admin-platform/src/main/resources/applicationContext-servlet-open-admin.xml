@@ -35,14 +35,7 @@
     <bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
         <property name="order" value="1"/>
     </bean>
-    
-    <mvc:annotation-driven>
-        <!-- This changes the ordering of the message converters such that JSON appears prior to any XML converters -->
-        <mvc:message-converters>
-            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
-        </mvc:message-converters>
-    </mvc:annotation-driven>
-    
+
     <bean id="blAdminExceptionResolver" class="org.broadleafcommerce.openadmin.web.handler.AdminMappingExceptionResolver">
         <property name="showDebugMessage" value="${exception.showDebugMessage}" />
     </bean>
