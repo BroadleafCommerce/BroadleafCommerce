@@ -22,7 +22,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -33,9 +32,6 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.web.JsonResponse;
-import org.broadleafcommerce.common.web.controller.AdminFrameworkControllerHandlerMapping;
-import org.broadleafcommerce.common.web.controller.FrameworkControllerHandlerMapping;
-import org.broadleafcommerce.common.web.controller.annotation.AdminFrameworkController;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -74,7 +70,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
@@ -90,9 +86,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UrlPathHelper;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,7 +94,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -109,25 +102,12 @@ import javax.servlet.http.HttpServletResponse;
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to super
  * and does not provide any custom-tailored functionality. It is responsible for rendering the admin for every entity
  * that is not explicitly customized by its own controller.
- * <p>
- * Due to the "catch all" nature of the parent {@link RequestMapping} on this class, <b>any</b> override of this bean id
- * <b>must</b> also use {@link AdminFrameworkController} as show below. The reason this must be done is that Broadleaf
- * has annotations that cause {@link RequestMapping} methods to be in different tiers of {@link
- * org.springframework.web.servlet.HandlerMapping} to provide client applications a simple way to override mappings
- * without causing an ambiguous mapping exception. If this controller is registered in the default {@link
- * org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping} then it will match any otherwise
- * unmatched request and the mappings registered in {@link FrameworkControllerHandlerMapping}
- * and {@link AdminFrameworkControllerHandlerMapping} will never get a chance to
- * check for matches as they have a lower precedence.
  *
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
- * @author Philip Baggett (pbaggett)
- * @see AdminFrameworkController
  */
-@Component("blAdminBasicEntityController")
-@AdminFrameworkController(
-        requestMapping = @RequestMapping("/{sectionKey:.+}"))
+@Controller("blAdminBasicEntityController")
+@RequestMapping("/{sectionKey:.+}")
 public class AdminBasicEntityController extends AdminAbstractController {
 
     protected static final Log LOG = LogFactory.getLog(AdminBasicEntityController.class);

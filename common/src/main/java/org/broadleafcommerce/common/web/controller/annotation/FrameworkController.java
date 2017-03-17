@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.common.web.controller.annotation;
 
-import org.broadleafcommerce.common.web.controller.AdminFrameworkControllerHandlerMapping;
 import org.broadleafcommerce.common.web.controller.FrameworkControllerHandlerMapping;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -33,17 +33,23 @@ import java.lang.annotation.Target;
  * included in the application context and that {@link FrameworkMapping}s will be added to handler mappings with a lower
  * priority than {@link org.springframework.web.bind.annotation.RequestMapping}s found within a class annotated with
  * {@link org.springframework.stereotype.Controller}. This priority is achieved through {@link
- * FrameworkControllerHandlerMapping} having a higher order value than {@link org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping}.
+ * FrameworkControllerHandlerMapping} having a higher order value than {@link RequestMappingHandlerMapping}.
  * <p>
  * The intention is that you are able to specify MVC controllers and mappings within a framework module as the default
  * MVC mappings and a client application can essentially override those mappings without causing an ambiguous mapping
  * exception.
  * <p>
- * The handler mappings in play in order of precedence from highest to lowest are:
+ * The site handler mappings in play in order of precedence from highest to lowest are:
  * <ol>
  * <li>{@link RequestMappingHandlerMapping}</li>
  * <li>{@link FrameworkControllerHandlerMapping}</li>
- * <li>{@link AdminFrameworkControllerHandlerMapping}</li>
+ * </ol>
+ * <p>
+ * The admin handler mappings in play in order of precedence from highest to lowest are:
+ * <ol>
+ * <li>{@link AdminRequestMappingHandlerMapping}</li>
+ * <li>{@link FrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminControllerHandlerMapping}</li>
  * </ol>
  * <p>
  * This concept was adapted from {@code @FrameworkEndpoint} from Spring Security OAuth 2.
