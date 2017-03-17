@@ -26,17 +26,27 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
+ * Configure WebMvc for the admin application.
+ *
  * @author Philip Baggett (pbaggett)
  */
 @Configuration("blAdminWebMvcConfiguration")
 @ConditionalOnAdmin
 public class AdminWebMvcConfiguration extends WebMvcConfigurationSupport {
 
+    /**
+     * Modify the default handler mapping.
+     *
+     * @see AdminRequestMappingHandlerMapping
+     */
     @Override
     protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
         return new AdminRequestMappingHandlerMapping();
     }
 
+    /**
+     * Set the default media type to JSON because AJAX calls from the admin UI are expecting JSON.
+     */
     @Override
     protected void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         configurer.defaultContentType(MediaType.APPLICATION_JSON);

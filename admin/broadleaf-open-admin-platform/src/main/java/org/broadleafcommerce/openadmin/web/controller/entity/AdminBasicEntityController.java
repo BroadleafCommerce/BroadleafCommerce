@@ -32,8 +32,6 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.web.JsonResponse;
-import org.broadleafcommerce.openadmin.web.controller.AdminControllerHandlerMapping;
-import org.broadleafcommerce.common.web.controller.FrameworkControllerHandlerMapping;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -104,16 +102,6 @@ import javax.servlet.http.HttpServletResponse;
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to super
  * and does not provide any custom-tailored functionality. It is responsible for rendering the admin for every entity
  * that is not explicitly customized by its own controller.
- * <p>
- * Due to the "catch all" nature of the parent {@link RequestMapping} on this class, <b>any</b> override of this bean id
- * <b>must</b> also use {@link AdminFrameworkController} as show below. The reason this must be done is that Broadleaf
- * has annotations that cause {@link RequestMapping} methods to be in different tiers of {@link
- * org.springframework.web.servlet.HandlerMapping} to provide client applications a simple way to override mappings
- * without causing an ambiguous mapping exception. If this controller is registered in the default {@link
- * org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping} then it will match any otherwise
- * unmatched request and the mappings registered in {@link FrameworkControllerHandlerMapping}
- * and {@link AdminControllerHandlerMapping} will never get a chance to
- * check for matches as they have a lower precedence.
  *
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer

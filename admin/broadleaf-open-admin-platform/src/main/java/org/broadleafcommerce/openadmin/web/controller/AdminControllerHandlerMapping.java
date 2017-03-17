@@ -28,19 +28,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
- * This class registers controllers annotated with {@link AdminFrameworkController} so they will be registered in a
- * separate {@link org.springframework.web.servlet.HandlerMapping} therefore lowering the precedence and allowing client
- * applications to create identical override mappings without causing an ambiguous mapping exception.
+ * This class is designed to be the default handler mapping for {@link Controller}/{@link RequestMapping} annotations in
+ * the admin for classes that have {@link AdminBasicEntityController} as an ancestor.
  * <p>
- * The handler mappings in play in order of precedence from highest to lowest are:
+ * The reason these mappings are separated out is that admin pipeline controllers (ones that extend from {@link
+ * AdminBasicEntityController}) have some catch all mappings that will not allow mappings located in {@link
+ * FrameworkControllerHandlerMapping} to be found if the admin pipeline controller is located in the default handler
+ * mapping.
+ * <p>
+ * The admin handler mappings in play in order of precedence from highest to lowest are:
  * <ol>
- * <li>{@link RequestMappingHandlerMapping}</li>
+ * <li>{@link AdminRequestMappingHandlerMapping}</li>
  * <li>{@link FrameworkControllerHandlerMapping}</li>
  * <li>{@link AdminControllerHandlerMapping}</li>
  * </ol>
  *
  * @author Philip Baggett (pbaggett)
- * @see AdminFrameworkController
+ * @see AdminRequestMappingHandlerMapping
  */
 @Component
 @ConditionalOnAdmin

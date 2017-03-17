@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.openadmin.web.controller;
 
+import org.broadleafcommerce.common.web.controller.FrameworkControllerHandlerMapping;
+import org.broadleafcommerce.openadmin.web.controller.config.AdminWebMvcConfiguration;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Controller;
@@ -24,7 +26,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
+ * This class is designed to be the default handler mapping for {@link Controller}/{@link RequestMapping} annotations in
+ * the admin so long as the class doesn't have {@link AdminBasicEntityController} as an ancestor.
+ * <p>
+ * This class is set as the default handler mapping in {@link AdminWebMvcConfiguration}.
+ * <p>
+ * The reason these mappings are separated out is that admin pipeline controllers (ones that extend from {@link
+ * AdminBasicEntityController}) have some catch all mappings that will not allow mappings located in {@link
+ * FrameworkControllerHandlerMapping} to be found if the admin pipeline controller is located in the default handler
+ * mapping.
+ * <p>
+ * The admin handler mappings in play in order of precedence from highest to lowest are:
+ * <ol>
+ * <li>{@link AdminRequestMappingHandlerMapping}</li>
+ * <li>{@link FrameworkControllerHandlerMapping}</li>
+ * <li>{@link AdminControllerHandlerMapping}</li>
+ * </ol>
+ *
  * @author Philip Baggett (pbaggett)
+ * @see AdminWebMvcConfiguration
+ * @see AdminControllerHandlerMapping
  */
 public class AdminRequestMappingHandlerMapping extends RequestMappingHandlerMapping {
 
