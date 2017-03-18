@@ -18,6 +18,9 @@
 
 package org.broadleafcommerce.common.web.filter;
 
+import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -31,7 +34,9 @@ import javax.servlet.http.HttpServletRequest;
 
 
 @Component("blEstablishSessionFilter")
-public class EstablishSessionFilter extends GenericFilterBean {
+@ConditionalOnNotAdmin
+@ConditionalOnProperty(value = "use.stateless.request", matchIfMissing = true, havingValue = "false")
+public class EstablishSessionFilter extends GenericFilterBean implements Ordered {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
@@ -39,5 +44,10 @@ public class EstablishSessionFilter extends GenericFilterBean {
             ((HttpServletRequest) request).getSession();
         }
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.PRE_SECURITY_LOW;
     }
 }

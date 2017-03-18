@@ -23,9 +23,12 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.cms.url.service.URLHandlerService;
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -49,7 +52,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author bpolster
  */
 @Component("blURLHandlerFilter")
-public class URLHandlerFilter extends OncePerRequestFilter {
+@ConditionalOnNotAdmin
+public class URLHandlerFilter extends OncePerRequestFilter implements Ordered {
 
     private static final Log LOG = LogFactory.getLog(URLHandlerFilter.class);
 
@@ -159,5 +163,10 @@ public class URLHandlerFilter extends OncePerRequestFilter {
 
     protected boolean getPreserveQueryStringOnRedirect() {
         return BLCSystemProperty.resolveBooleanSystemProperty("preserveQueryStringOnRedirect");
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.POST_SECURITY_LOW;
     }
 }
