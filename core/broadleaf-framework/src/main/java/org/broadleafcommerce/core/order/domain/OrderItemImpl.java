@@ -658,11 +658,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 totalAdjustmentValue = totalAdjustmentValue.add(priceDetail.getTotalAdjustmentValue());
             }
         }
-
-        for (OrderItem child : childOrderItems) {
-            totalAdjustmentValue = totalAdjustmentValue.add(child.getTotalAdjustmentValue()).multiply(quantity);
-        }
-
         return totalAdjustmentValue;
     }
 
@@ -674,19 +669,10 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 returnValue = returnValue.add(oipd.getTotalAdjustedPrice());
             }
         } else {
-            if (shouldSumChildren()) {
-                returnValue = getSalePrice().multiply(quantity);
-
-                for (OrderItem child : getChildOrderItems()) {
-                    Money childPrice = child.getTotalPrice().multiply(quantity);
-                    returnValue = returnValue.add(childPrice);
-                }
+            if (price != null) {
+                returnValue = convertToMoney(price).multiply(quantity);
             } else {
-                if (price != null) {
-                    returnValue = convertToMoney(price).multiply(quantity);
-                } else {
-                    returnValue = getSalePrice().multiply(quantity);
-                }
+                returnValue = getSalePrice().multiply(quantity);
             }
         }
 
@@ -811,13 +797,14 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     protected boolean shouldSumChildren() {
-        for (OrderItem child : childOrderItems) {
-            if (child.getTotalPrice().greaterThan(BigDecimal.ZERO)) {
-                return true;
-            }
-        }
-
         return false;
+//        for (OrderItem child : childOrderItems) {
+//            if (child.getTotalPrice().greaterThan(BigDecimal.ZERO)) {
+//                return true;
+//            }
+//        }
+//
+//        return false;
     }
 
     public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
