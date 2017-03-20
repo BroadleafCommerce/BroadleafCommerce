@@ -65,6 +65,10 @@ public interface OfferCode extends Status, Serializable, MultiTenantCloneable<Of
      */
     public void setMaxUses(int maxUses);
 
+    public String getEmailAddress();
+
+    public void setEmailAddress(String emailAddress);
+
     /**
      * Indicates that this is an unlimited-use code. By default this is true if {@link #getMaxUses()} == 0
      */

@@ -130,7 +130,12 @@ public class OfferCodeImpl implements OfferCode {
     @Column(name = "USES")
     @Deprecated
     protected int uses;
-    
+
+    @Column(name = "EMAIL_ADDRESS")
+    @Index(name = "OFFER_EMAIL_INDEX", columnNames = { "EMAIL_ADDRESS" })
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Email_Address")
+    protected String emailAddress;
+
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
     
@@ -221,6 +226,16 @@ public class OfferCodeImpl implements OfferCode {
     }
 
     @Override
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    @Override
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    @Override
     public Date getStartDate() {
         return offerCodeStartDate;
     }
@@ -287,6 +302,7 @@ public class OfferCodeImpl implements OfferCode {
         return new HashCodeBuilder()
             .append(offer)
             .append(offerCode)
+            .append(emailAddress)
             .build();
     }
     
@@ -298,6 +314,7 @@ public class OfferCodeImpl implements OfferCode {
                 .append(this.id, that.id)
                 .append(this.offer, that.offer)
                 .append(this.offerCode, that.offerCode)
+                .append(this.emailAddress, that.emailAddress)
                 .build();
         }
         
@@ -321,6 +338,7 @@ public class OfferCodeImpl implements OfferCode {
         cloned.setArchived(getArchived());
         cloned.setOfferCode(offerCode);
         cloned.setUses(uses);
+        cloned.setEmailAddress(emailAddress);
         return  createResponse;
     }
 }
