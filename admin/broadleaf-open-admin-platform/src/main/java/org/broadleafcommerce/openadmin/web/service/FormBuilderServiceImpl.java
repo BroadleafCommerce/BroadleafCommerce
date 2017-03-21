@@ -769,7 +769,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
      * @param sortPropery
      * @return
      */
-    protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, DynamicResultSet drs, String sectionKey, Integer order, String idProperty, List<SectionCrumb> sectionCrumbs, String sortPropery) {
+    protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, DynamicResultSet drs,
+            String sectionKey, Integer order, String idProperty, List<SectionCrumb> sectionCrumbs, String sortPropery) {
         // Create the list grid and set some basic attributes
         ListGrid listGrid = new ListGrid();
         listGrid.setClassName(className);
