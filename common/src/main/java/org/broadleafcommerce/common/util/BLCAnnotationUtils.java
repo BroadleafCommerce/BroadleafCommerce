@@ -30,21 +30,21 @@ public class BLCAnnotationUtils {
      * Given an array and a typed predicate, determines if the array has an object that matches the condition of the
      * predicate. The predicate should evaluate to true when a match occurs.
      * 
-     * @param annotationType
-     * @param entity
-     * @return the annotation of annotationType if it can be found
+     * @param annotationClass
+     * @param clazz
+     * @return the annotation of annotationClass if it can be found
      */
-    public static Annotation getAnnotationFromEntityOrInterface(Class annotationType, Class entity) {
-        Annotation result = entity.getAnnotation(annotationType);
+    public static <A extends Annotation> A getAnnotationFromClassOrInterface(Class<A> annotationClass, Class clazz) {
+        Annotation result = clazz.getAnnotation(annotationClass);
         if (result == null) {
-            for (Class inter : entity.getInterfaces()) {
-                result = inter.getAnnotation(annotationType);
+            for (Class inter : clazz.getInterfaces()) {
+                result = inter.getAnnotation(annotationClass);
                 if (result != null) {
                     break;
                 }
             }
         }
-        return result;
+        return (A) result;
     }
 
 }
