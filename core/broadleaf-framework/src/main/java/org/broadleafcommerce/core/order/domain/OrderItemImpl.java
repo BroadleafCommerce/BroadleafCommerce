@@ -544,7 +544,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         if (includeChildren) {
             for (OrderItem child : getChildOrderItems()) {
                 Money childPrice = child.getPriceBeforeAdjustments(allowSalesPrice, true);
-                returnPrice = returnPrice.add(childPrice.multiply(child.getQuantity()));
+                returnPrice = returnPrice.add(childPrice.multiply(child.getQuantity()).divide(quantity));
             }
         }
 
@@ -651,6 +651,11 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Money getTotalAdjustmentValue() {
+        return getTotalAdjustmentValue(false);
+    }
+
+    @Override
+    public Money getTotalAdjustmentValue(boolean includeChildren) {
         Money totalAdjustmentValue = BroadleafCurrencyUtils.getMoney(getOrder().getCurrency());
         List<OrderItemPriceDetail> priceDetails = getOrderItemPriceDetails();
         if (priceDetails != null) {
@@ -658,11 +663,23 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 totalAdjustmentValue = totalAdjustmentValue.add(priceDetail.getTotalAdjustmentValue());
             }
         }
+
+        if (includeChildren) {
+            for (OrderItem child : getChildOrderItems()) {
+                Money childPrice = child.getTotalAdjustmentValue().divide(quantity);
+                totalAdjustmentValue = totalAdjustmentValue.add(childPrice);
+            }
+        }
         return totalAdjustmentValue;
     }
 
     @Override
     public Money getTotalPrice() {
+        return getTotalPrice(false);
+    }
+
+    @Override
+    public Money getTotalPrice(boolean includeChildren) {
         Money returnValue = convertToMoney(BigDecimal.ZERO);
         if (orderItemPriceDetails != null && orderItemPriceDetails.size() > 0) {
             for (OrderItemPriceDetail oipd : orderItemPriceDetails) {
@@ -673,6 +690,13 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 returnValue = convertToMoney(price).multiply(quantity);
             } else {
                 returnValue = getSalePrice().multiply(quantity);
+            }
+        }
+
+        if (includeChildren) {
+            for (OrderItem child : getChildOrderItems()) {
+                Money childPrice = child.getTotalPrice();//.multiply(quantity);
+                returnValue = returnValue.add(childPrice);
             }
         }
 
