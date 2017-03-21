@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededExc
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.AddToCartItem;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
@@ -125,7 +126,10 @@ public class BroadleafCartController extends AbstractCartController {
 
             String originalOrderItem = request.getParameter("originalOrderItem");
             if (StringUtils.isNotEmpty(originalOrderItem)) {
-                cart = orderService.removeItem(cart.getId(), Long.parseLong(originalOrderItem), false);
+                Long originalOrderItemId = Long.parseLong(originalOrderItem);
+                updateAddRequestQuantities(itemRequest, originalOrderItemId);
+
+                cart = orderService.removeItem(cart.getId(), originalOrderItemId, false);
                 cart = orderService.save(cart, true);
             }
         }
@@ -134,6 +138,15 @@ public class BroadleafCartController extends AbstractCartController {
         cart = orderService.save(cart, true);
 
         return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
+    }
+
+    protected void updateAddRequestQuantities(OrderItemRequestDTO itemRequest, Long originalOrderItemId) {
+        // Update the request to match the quantity of the order item it's replacing
+        OrderItem orderItem = orderItemService.readOrderItemById(originalOrderItemId);
+        itemRequest.setQuantity(orderItem.getQuantity());
+        for (OrderItemRequestDTO childDTO : itemRequest.getChildOrderItems()) {
+            childDTO.setQuantity(childDTO.getQuantity() * orderItem.getQuantity());
+        }
     }
 
     protected boolean isUpdateRequest(HttpServletRequest request) {
