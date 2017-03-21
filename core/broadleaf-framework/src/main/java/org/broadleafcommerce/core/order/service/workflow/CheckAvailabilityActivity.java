@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.inventory.service.InventoryUnavailableExceptio
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
@@ -63,10 +64,11 @@ public class CheckAvailabilityActivity extends BaseActivity<ProcessContext<CartO
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         Sku sku;
+        OrderItem orderItem = null;
         Long orderItemId = request.getItemRequest().getOrderItemId();
         if (orderItemId != null) {
             // this must be an update request as there is an order item ID available
-            OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
+            orderItem = orderItemService.readOrderItemById(orderItemId);
             if (orderItem instanceof DiscreteOrderItem) {
                 sku = ((DiscreteOrderItem) orderItem).getSku();
             } else if (orderItem instanceof BundleOrderItem) {
@@ -82,29 +84,42 @@ public class CheckAvailabilityActivity extends BaseActivity<ProcessContext<CartO
             Long skuId = request.getItemRequest().getSkuId();
             sku = catalogService.findSkuById(skuId);
         }
-        
-        
+
+        Order order = context.getSeedData().getOrder();
+        Integer requestedQuantity = request.getItemRequest().getQuantity();
+        checkSkuAvailability(order, sku, requestedQuantity);
+
+        // If we have an order item, check the new quantities for its child items
+        if (orderItem != null) {
+            Integer previousQty = orderItem.getQuantity();
+            for (OrderItem child : orderItem.getChildOrderItems()) {
+                Sku childSku = ((DiscreteOrderItem) child).getSku();
+                Integer childQuantity = child.getQuantity();
+                childQuantity = childQuantity / previousQty;
+                checkSkuAvailability(order, childSku, childQuantity * requestedQuantity);
+            }
+        }
+
+        return context;
+    }
+
+    protected void checkSkuAvailability(Order order, Sku sku, Integer requestedQuantity) throws InventoryUnavailableException {
         // First check if this Sku is available
         if (!sku.isAvailable()) {
-            throw new InventoryUnavailableException("The referenced Sku " + sku.getId() + " is marked as unavailable",
-                    sku.getId(), request.getItemRequest().getQuantity(), 0);
+            throw new InventoryUnavailableException("The referenced Sku " + sku.getId() + " is marked as unavailable", sku.getId(), requestedQuantity, 0);
         }
-        
+
         if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-            Integer requestedQuantity = request.getItemRequest().getQuantity();
-            
             Map<String, Object> inventoryContext = new HashMap<String, Object>();
-            inventoryContext.put(ContextualInventoryService.ORDER_KEY, context.getSeedData().getOrder());
+            inventoryContext.put(ContextualInventoryService.ORDER_KEY, order);
             boolean available = inventoryService.isAvailable(sku, requestedQuantity, inventoryContext);
             if (!available) {
                 throw new InventoryUnavailableException(sku.getId(),
                         requestedQuantity, inventoryService.retrieveQuantityAvailable(sku, inventoryContext));
             }
         }
-        
+
         // the other case here is ALWAYS_AVAILABLE and null, which we are treating as being available
-        
-        return context;
     }
-    
+
 }
