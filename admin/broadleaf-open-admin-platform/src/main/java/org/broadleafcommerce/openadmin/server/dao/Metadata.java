@@ -120,7 +120,7 @@ public class Metadata {
         Boolean classAnnotatedPopulateManyToOneFields = null;
         //go in reverse order since I want the lowest subclass override to come last to guarantee that it takes effect
         for (int i = entities.length-1;i >= 0; i--) {
-            AdminPresentationClass adminPresentationClass = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, entities[i]);
+            AdminPresentationClass adminPresentationClass = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, entities[i]);
             if (adminPresentationClass != null && adminPresentationClass.populateToOneFields() != PopulateToOneFieldsEnum.NOT_SPECIFIED) {
                 classAnnotatedPopulateManyToOneFields = adminPresentationClass.populateToOneFields()==PopulateToOneFieldsEnum.TRUE;
                 break;

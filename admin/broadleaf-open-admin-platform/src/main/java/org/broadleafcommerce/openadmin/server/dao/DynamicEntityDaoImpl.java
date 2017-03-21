@@ -355,7 +355,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     protected void createClassTreeFromAnnotation(Class<?> clazz, ClassTree myTree) {
-        AdminPresentationClass classPresentation = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, clazz);
+        AdminPresentationClass classPresentation = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, clazz);
         if (classPresentation != null) {
             String friendlyName = classPresentation.friendlyName();
             if (!StringUtils.isEmpty(friendlyName)) {
@@ -368,7 +368,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     public ClassTree getClassTree(Class<?>[] polymorphicClasses) {
         String ceilingClass = null;
         for (Class<?> clazz : polymorphicClasses) {
-            AdminPresentationClass classPresentation = clazz.getAnnotation(AdminPresentationClass.class);
+            AdminPresentationClass classPresentation = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, clazz);
             if (classPresentation != null) {
                String ceilingEntity = classPresentation.ceilingDisplayEntity();
                 if (!StringUtils.isEmpty(ceilingEntity)) {

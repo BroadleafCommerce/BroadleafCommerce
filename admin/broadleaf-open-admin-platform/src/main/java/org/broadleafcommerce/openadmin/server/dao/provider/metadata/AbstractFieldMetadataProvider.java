@@ -75,9 +75,9 @@ public abstract class AbstractFieldMetadataProvider implements FieldMetadataProv
             AdminPresentationClass adminPresentationClass;
             if (parentClass != null) {
                 metadata.setOwningClass(parentClass.getName());
-                adminPresentationClass = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, parentClass);
+                adminPresentationClass = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, parentClass);
             } else {
-                adminPresentationClass = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, targetClass);
+                adminPresentationClass = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, targetClass);
             }
             if (adminPresentationClass != null) {
                 String friendlyName = adminPresentationClass.friendlyName();

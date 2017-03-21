@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ProxyDetectionException;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.util.BLCAnnotationUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
@@ -233,7 +234,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         }
 
         //We filter out classes that are marked to exclude from polymorphism
-        AdminPresentationClass adminPresentationClass = clazz.getAnnotation(AdminPresentationClass.class);
+        AdminPresentationClass adminPresentationClass = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, clazz);
         if (adminPresentationClass == null) {
             return false;
         } else if (adminPresentationClass.excludeFromPolymorphism()) {

@@ -57,7 +57,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
 
     @Override
     public MetadataProviderResponse addTabAndGroupMetadata(AddMetadataRequest addMetadataRequest, Map<String, TabMetadata> metadata) {
-        AdminPresentationClass annot = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, addMetadataRequest.getTargetClass());
+        AdminPresentationClass annot = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, addMetadataRequest.getTargetClass());
 
         if (annot == null) {
             return MetadataProviderResponse.NOT_HANDLED;
@@ -72,7 +72,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
 
     @Override
     public MetadataProviderResponse overrideMetadataViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, TabMetadata> metadata) {
-        AdminPresentationClass annot = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, overrideViaAnnotationRequest.getRequestedEntity());
+        AdminPresentationClass annot = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, overrideViaAnnotationRequest.getRequestedEntity());
 
         if (annot == null) {
             return MetadataProviderResponse.NOT_HANDLED;
