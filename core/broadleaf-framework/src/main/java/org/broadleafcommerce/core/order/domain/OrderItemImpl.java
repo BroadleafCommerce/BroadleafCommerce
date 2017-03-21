@@ -666,7 +666,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
         if (includeChildren) {
             for (OrderItem child : getChildOrderItems()) {
-                Money childPrice = child.getTotalAdjustmentValue().divide(quantity);
+                Money childPrice = child.getTotalAdjustmentValue();
                 totalAdjustmentValue = totalAdjustmentValue.add(childPrice);
             }
         }
