@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.core.web.geolocation;
 
+import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -30,7 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component("blGeolocationFilter")
-public class GeolocationFilter extends OncePerRequestFilter {
+@ConditionalOnNotAdmin
+public class GeolocationFilter extends OncePerRequestFilter implements Ordered {
 
     @Resource(name="blGeolocationRequestProcessor")
     protected GeolocationRequestProcessor geolocationRequestProcessor;
@@ -44,6 +48,11 @@ public class GeolocationFilter extends OncePerRequestFilter {
         } finally {
             geolocationRequestProcessor.postProcess(request);
         }
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.POST_SECURITY_LOW;
     }
 }
 

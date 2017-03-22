@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.admin.domain.TypedEntity;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
@@ -34,6 +35,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -55,7 +57,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jon Fleschler (jfleschler)
  */
 @Component("blAdminTypedEntityRequestFilter")
-public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdminRequestFilter {
+public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdminRequestFilter implements Ordered {
 
     private final Log LOG = LogFactory.getLog(BroadleafAdminTypedEntityRequestFilter.class);
 
@@ -255,5 +257,10 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
     protected DynamicEntityDao getDynamicEntityDao(String className) {
         return PersistenceManagerFactory.getPersistenceManager(className).getDynamicEntityDao();
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.POST_SECURITY_LOW;
     }
 }

@@ -17,7 +17,9 @@
  */
 package org.broadleafcommerce.common.web.filter;
 
+import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.GenericFilterBean;
@@ -37,7 +39,8 @@ import java.io.IOException;
  * @author Andre Azzolini (apazzolini), bpolster
  */
 @Component("blTranslationFilter")
-public class TranslationFilter extends GenericFilterBean {
+@ConditionalOnNotAdmin
+public class TranslationFilter extends GenericFilterBean implements Ordered {
     
     @Resource(name = "blTranslationRequestProcessor")
     protected TranslationRequestProcessor translationRequestProcessor;
@@ -50,5 +53,10 @@ public class TranslationFilter extends GenericFilterBean {
         } finally {
             translationRequestProcessor.postProcess(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
         }
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.POST_SECURITY_LOW;
     }
 }

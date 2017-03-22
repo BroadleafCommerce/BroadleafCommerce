@@ -194,7 +194,6 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
     
     @Override
-    @Transactional
     public void refresh(Serializable entity) {
         standardEntityManager.refresh(entity);
     }

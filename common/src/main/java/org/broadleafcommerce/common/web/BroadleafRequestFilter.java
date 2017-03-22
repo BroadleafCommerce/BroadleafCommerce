@@ -22,6 +22,9 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -43,7 +46,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author bpolster
  */
 @Component("blRequestFilter")
-public class BroadleafRequestFilter extends OncePerRequestFilter {
+@ConditionalOnProperty(value = "use.basic.request", matchIfMissing = true)
+public class BroadleafRequestFilter extends OncePerRequestFilter implements Ordered {
 
     private final Log LOG = LogFactory.getLog(getClass());
 
@@ -161,5 +165,10 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilterErrorDispatch() {
         return false;
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.PRE_SECURITY_LOW;
     }
 }

@@ -18,6 +18,8 @@
 package org.broadleafcommerce.common.web.filter;
 
 import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.GenericFilterBean;
@@ -39,12 +41,18 @@ import javax.servlet.http.HttpServletResponse;
  * @author bpolster
  */
 @Component("blStatelessSessionFilter")
-public class StatelessSessionFilter extends GenericFilterBean {
+@ConditionalOnProperty(value = "use.stateless.request", matchIfMissing = true)
+public class StatelessSessionFilter extends GenericFilterBean implements Ordered {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         BLCRequestUtils.setOKtoUseSession(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response), Boolean.FALSE);
         SessionlessHttpServletRequestWrapper wrapper = new SessionlessHttpServletRequestWrapper((HttpServletRequest) request);
         filterChain.doFilter(wrapper, response);
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.PRE_SECURITY_HIGH;
     }
 }

@@ -17,6 +17,10 @@
  */
 package org.broadleafcommerce.profile.web.core.security;
 
+import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -30,7 +34,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Component("blCustomerStateFilter")
 /**
  * <p>
  * This filter should be configured after the RememberMe listener from Spring Security.
@@ -42,6 +45,9 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author bpolster
  */
+@Component("blCustomerStateFilter")
+@ConditionalOnNotAdmin
+@ConditionalOnProperty(value = "use.customer.state.filter", matchIfMissing = true)
 public class CustomerStateFilter extends OncePerRequestFilter implements Ordered {
     
     @Resource(name="blCustomerStateRequestProcessor")
@@ -60,9 +66,7 @@ public class CustomerStateFilter extends OncePerRequestFilter implements Ordered
 
     @Override
     public int getOrder() {
-        //FilterChainOrder has been dropped from Spring Security 3
-        //return FilterChainOrder.REMEMBER_ME_FILTER+1;
-        return 1501;
+        return FilterOrdered.POST_SECURITY_HIGH + 50;
     }
 
     @Override

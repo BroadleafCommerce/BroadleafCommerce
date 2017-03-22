@@ -19,7 +19,9 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderLockManager;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -59,6 +61,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blCartStateFilter")
+@ConditionalOnNotAdmin
 public class CartStateFilter extends OncePerRequestFilter implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(CartStateFilter.class);
@@ -164,9 +167,7 @@ public class CartStateFilter extends OncePerRequestFilter implements Ordered {
 
     @Override
     public int getOrder() {
-        //FilterChainOrder has been dropped from Spring Security 3
-        //return FilterChainOrder.REMEMBER_ME_FILTER+1;
-        return 1502;
+        return FilterOrdered.POST_SECURITY_LOW;
     }
 
     public List<String> getExcludedOrderLockRequestPatterns() {

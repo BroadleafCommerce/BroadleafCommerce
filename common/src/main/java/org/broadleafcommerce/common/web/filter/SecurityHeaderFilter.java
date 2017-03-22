@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.web.filter;
 
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -33,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Chad Harchar (charchar)
  */
 @Component("blSecurityHeaderFilter")
-public class SecurityHeaderFilter extends OncePerRequestFilter {
+public class SecurityHeaderFilter extends OncePerRequestFilter implements Ordered {
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
@@ -43,5 +44,10 @@ public class SecurityHeaderFilter extends OncePerRequestFilter {
         
         filterChain.doFilter(request, response);
         return;
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.PRE_SECURITY_HIGH;
     }
 }

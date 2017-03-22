@@ -27,10 +27,12 @@ import org.broadleafcommerce.common.security.service.StaleStateProtectionService
 import org.broadleafcommerce.common.security.service.StaleStateServiceException;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.broadleafcommerce.openadmin.security.ClassNameRequestParamValidationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.Persistable;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
 import org.broadleafcommerce.common.persistence.TargetModeType;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -53,7 +55,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blAdminRequestFilter")
-public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFilter {
+public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFilter implements Ordered {
 
     private final Log LOG = LogFactory.getLog(BroadleafAdminRequestFilter.class);
 
@@ -169,5 +171,10 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
         };
         requestProcessor.process(new ServletWebRequest(wrapper, response));
         wrapper.getRequestDispatcher("/sc_conflict").forward(wrapper, response);
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.POST_SECURITY_HIGH;
     }
 }

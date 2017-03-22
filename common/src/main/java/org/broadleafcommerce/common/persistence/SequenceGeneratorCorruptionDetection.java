@@ -174,7 +174,9 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                     sequenceEntryExists = true;
                 }
 
-                LOG.info("Detecting id sequence state between " + mappedClass.getName() + " and " + segmentValue + " in " + tableName);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Detecting id sequence state between " + mappedClass.getName() + " and " + segmentValue + " in " + tableName);
+                }
 
                 StringBuilder sb = new StringBuilder();
                 sb.append("select max(");

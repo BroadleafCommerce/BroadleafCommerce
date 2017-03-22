@@ -31,8 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-
 import net.sf.ehcache.CacheManager;
 
 public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean implements ApplicationContextAware {
@@ -71,8 +69,8 @@ public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean im
         }
     }
 
-    @PostConstruct
-    public void configureMergedItems() {
+    @Override
+    public void afterPropertiesSet() {
         List<Resource> temp = new ArrayList<>();
         if (mergedCacheConfigLocations != null && !mergedCacheConfigLocations.isEmpty()) {
             for (String location : mergedCacheConfigLocations) {
@@ -96,6 +94,7 @@ public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean im
         } catch (Exception e) {
             throw new FatalBeanException("Unable to merge cache locations", e);
         }
+        super.afterPropertiesSet();
     }
 
     public void setConfigLocations(List<Resource> configLocations) throws BeansException {
