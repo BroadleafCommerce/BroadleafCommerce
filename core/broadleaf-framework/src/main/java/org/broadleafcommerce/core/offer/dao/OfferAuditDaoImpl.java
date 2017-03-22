@@ -20,16 +20,22 @@ package org.broadleafcommerce.core.offer.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.util.dao.TQRestriction;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferAuditImpl;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 @Repository("blOfferAuditDao")
 public class OfferAuditDaoImpl implements OfferAuditDao {
@@ -70,18 +76,31 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
     @Override
     public Long countUsesByCustomer(Long orderId, Long customerId, Long offerId) {
-        TQRestriction isNotAlreadyAppliedToOrder = new TQRestriction("offerAudit.orderId", "<>", orderId);
-        TQRestriction orderIdIsNull = new TQRestriction("offerAudit.orderId", "is", null);
-        TQRestriction isNotAlreadyAppliedToOrderOrOrderIdIsNull = new TQRestriction(TQRestriction.Mode.OR)
-                .addChildRestriction(isNotAlreadyAppliedToOrder)
-                .addChildRestriction(orderIdIsNull);
-        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
-                .addRestriction("offerAudit.customerId", "=", customerId)
-                .addRestriction("offerAudit.offerId", "=", offerId)
-                .addRestriction(isNotAlreadyAppliedToOrderOrOrderIdIsNull)
-                .toCountQuery(em);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
+        criteria.select(builder.count(root));
 
-        return query.getSingleResult();
+        List<Predicate> restrictions = new ArrayList<>();
+        restrictions.add(
+            builder.and(
+                builder.or(
+                    builder.notEqual(root.get("orderId"),  orderId),
+                    builder.isNull(root.get("orderId"))
+                ),
+                builder.equal(root.get("customerId"), customerId),
+                builder.equal(root.get("offerId"), offerId)
+            )
+        );
+
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        try {
+            return em.createQuery(criteria).getSingleResult();
+        } catch (Exception e) {
+            LOG.error("Error counting offer uses by customer.", e);
+            return null;
+        }
     }
     
     @Deprecated
@@ -97,17 +116,30 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
     @Override
     public Long countOfferCodeUses(Long orderId, Long offerCodeId) {
-        TQRestriction isNotAlreadyAppliedToOrder = new TQRestriction("offerAudit.orderId", "<>", orderId);
-        TQRestriction orderIdIsNull = new TQRestriction("offerAudit.orderId", "is", null);
-        TQRestriction isNotAlreadyAppliedToOrderOrOrderIdIsNull = new TQRestriction(TQRestriction.Mode.OR)
-                .addChildRestriction(isNotAlreadyAppliedToOrder)
-                .addChildRestriction(orderIdIsNull);
-        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
-                .addRestriction("offerAudit.offerCodeId", "=", offerCodeId)
-                .addRestriction(isNotAlreadyAppliedToOrderOrOrderIdIsNull)
-                .toCountQuery(em);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
+        criteria.select(builder.count(root));
 
-        return query.getSingleResult();
+        List<Predicate> restrictions = new ArrayList<>();
+        restrictions.add(
+            builder.and(
+                builder.or(
+                    builder.notEqual(root.get("orderId"),  orderId),
+                    builder.isNull(root.get("orderId"))
+                ),
+                builder.equal(root.get("offerCodeId"), offerCodeId)
+            )
+        );
+
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        
+        try {
+            return em.createQuery(criteria).getSingleResult();
+        } catch (Exception e) {
+            LOG.error("Error counting offer code uses.", e);
+            return null;
+        }
     }
     
     @Deprecated
