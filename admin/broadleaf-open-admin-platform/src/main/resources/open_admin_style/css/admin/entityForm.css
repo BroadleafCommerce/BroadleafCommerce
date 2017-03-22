@@ -580,6 +580,13 @@ input.color-picker-value {
     font-size: 12px;
     color: #8EAA2B !important;
 }
+.content-area-title-bar .alert-box.alert {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #DE3A2E !important;
+}
 .fieldset-card .titlebar-title i.help-tip {
     margin-left: 5px;
 }

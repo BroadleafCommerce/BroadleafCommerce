@@ -18,6 +18,7 @@
 (function ($, BLCAdmin) {
 
     var initializationHandlers = [];
+    var postRowSelectionHandlers = [];
 
     // Add utility functions for list grids to the BLCAdmin object
     BLCAdmin.listGrid = {
@@ -365,6 +366,10 @@
             initializationHandlers.push(fn);
         },
 
+        addPostRowSelectionHandler: function (fn) {
+            postRowSelectionHandlers.push(fn);
+        },
+
         /**
          * The rowSelected handler for the inline list grid ...
          */
@@ -392,6 +397,10 @@
 
             BLCAdmin.listGrid.updateActionButtons($listGridContainer);
             BLCAdmin.adornedEntityForm.updateActionButtons($listGridContainer);
+
+            for (var i = 0; i < postRowSelectionHandlers.length; i++) {
+                postRowSelectionHandlers[i]($tr);
+            }
         }
     };
 

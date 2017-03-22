@@ -566,6 +566,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
+            ppr.setCeilingEntityClassname(fmd.getCollectionCeilingEntity());
             ppr.getEntity().setType(new String[] { fmd.getCollectionCeilingEntity() });
 
             Property fp = new Property();
@@ -575,7 +576,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 properties.add(fp);
             }
         } else if (md instanceof AdornedTargetCollectionMetadata) {
-            ppr.getEntity().setType(new String[] { ppr.getAdornedList().getAdornedTargetEntityClassname() });
+            String adornedTargetEntityClassname = ppr.getAdornedList().getAdornedTargetEntityClassname();
+            ppr.setCeilingEntityClassname(adornedTargetEntityClassname);
+            ppr.getEntity().setType(new String[] {adornedTargetEntityClassname});
+
             for (Property property : properties) {
                 if (property.getName().equals(ppr.getAdornedList().getLinkedObjectPath() +
                                     "." + ppr.getAdornedList().getLinkedIdProperty())) {
@@ -603,7 +607,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     " not a collection field.", field.getName(), mainMetadata.getCeilingType()));
         }
 
-        ppr.setCeilingEntityClassname(ppr.getEntity().getType()[0]);
         String sectionField = field.getName();
         if (sectionField.contains(".")) {
             sectionField = sectionField.substring(0, sectionField.lastIndexOf("."));

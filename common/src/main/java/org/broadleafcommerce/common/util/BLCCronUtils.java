@@ -52,4 +52,14 @@ public class BLCCronUtils {
 
         return nextValidTime;
     }
+
+    /**
+     * Determines whether or not the cron expression is valid
+     *
+     * @param cron
+     * @return whether or not the cron is valid
+     */
+    public static boolean isValidExpression(String cron) {
+        return StringUtils.isNotBlank(cron) && CronExpression.isValidExpression(cron);
+    }
 }
