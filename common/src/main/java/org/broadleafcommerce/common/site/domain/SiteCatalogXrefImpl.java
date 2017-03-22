@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -39,7 +40,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "SiteCatalogXrefImpl")
-public class SiteCatalogXrefImpl implements SiteCatalogXref {
+public class SiteCatalogXrefImpl implements SiteCatalogXref, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -98,4 +99,8 @@ public class SiteCatalogXrefImpl implements SiteCatalogXref {
         this.catalog = catalog;
     }
 
+    @Override
+    public String getMainEntityName() {
+        return getCatalog().getName();
+    }
 }
