@@ -45,11 +45,7 @@ public class CronExpressionValidator extends ValidationConfigurationBasedPropert
             String propertyName,
             String value) {
 
-        if (BLCCronUtils.isValidExpression(value)) {
-            return new PropertyValidationResult(true);
-        }
-
-        return new PropertyValidationResult(false, INVALID_EXPRESSION);
+        return new PropertyValidationResult(BLCCronUtils.isValidExpression(value), INVALID_EXPRESSION);
     }
 
 
