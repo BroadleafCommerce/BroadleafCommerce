@@ -38,6 +38,10 @@
     white-space: nowrap;
     vertical-align: top;
 }
+.entityCatalogName {
+    font-size: 12px;
+    font-weight: 100;
+}
 .sticky-fixed {
     position: fixed;
     top: 80px;

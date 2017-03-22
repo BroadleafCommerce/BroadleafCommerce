@@ -382,6 +382,10 @@ circle {
     /*vertical-align: middle;*/
     color: #B3B3B3;
 }
+.back-button i {
+    top: 1px;
+    position: relative;
+}
 .back-button:hover {
     color: #F2B95A;
 }
