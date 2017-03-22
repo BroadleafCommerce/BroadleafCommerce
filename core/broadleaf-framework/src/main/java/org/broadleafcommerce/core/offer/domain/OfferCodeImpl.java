@@ -21,8 +21,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
-import org.broadleafcommerce.common.dao.GenericEntityDaoImpl;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -132,7 +130,7 @@ public class OfferCodeImpl implements OfferCode {
     protected int uses;
 
     @Column(name = "EMAIL_ADDRESS")
-    @Index(name = "OFFER_EMAIL_INDEX", columnNames = { "EMAIL_ADDRESS" })
+    @Index(name = "OFFER_CODE_EMAIL_INDEX", columnNames = { "EMAIL_ADDRESS" })
     @AdminPresentation(friendlyName = "OfferCodeImpl_Email_Address")
     protected String emailAddress;
 
@@ -141,7 +139,7 @@ public class OfferCodeImpl implements OfferCode {
     
     @ManyToMany(fetch = FetchType.LAZY, mappedBy="addedOfferCodes", targetEntity = OrderImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    protected List<Order> orders = new ArrayList<Order>();
+    protected List<Order> orders = new ArrayList<>();
 
     @Transient
     protected Offer sbClonedOffer;
