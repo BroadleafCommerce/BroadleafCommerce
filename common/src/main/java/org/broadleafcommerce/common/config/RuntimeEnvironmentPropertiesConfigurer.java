@@ -80,7 +80,7 @@ import javax.annotation.PostConstruct;
  * property 'runtime.environment')
  * @author <a href="mailto:chris.lee.9@gmail.com">Chris Lee</a>
  * @deprecated Instead of using anything around the -Druntime-environment values, you should be using Spring profiles
- * and properties activated with that via {@link ProfileAwarePropertiesBeanFactoryPostProcessor}.
+ * and properties activated with that via {@link BroadleafEnvironmentConfiguringApplicationListener}.
  */
 @Deprecated
 public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderConfigurer implements InitializingBean {

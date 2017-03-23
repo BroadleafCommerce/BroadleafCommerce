@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.test;
 
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
 import org.broadleafcommerce.common.config.EnableBroadleafAdminRootAutoConfiguration;
-import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.annotation.Rollback;
@@ -39,7 +39,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  *
  */
 @Rollback
-@ContextConfiguration(name = "adminRoot")
+@ContextConfiguration(name = "adminRoot", initializers = BroadleafEnvironmentConfiguringApplicationListener.class)
 @WebAppConfiguration
 @ActiveProfiles("mbeansdisabled")
 public class TestNGAdminIntegrationSetup extends AbstractTransactionalTestNGSpringContextTests {

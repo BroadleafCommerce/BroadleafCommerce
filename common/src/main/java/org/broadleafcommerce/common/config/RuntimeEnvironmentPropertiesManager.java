@@ -26,7 +26,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
 /**
  * @deprecated Instead of using anything around the -Druntime-environment values, you should be using Spring profiles
- * and properties activated with that via {@link ProfileAwarePropertiesBeanFactoryPostProcessor}.
+ * and properties activated with that via {@link BroadleafEnvironmentConfiguringApplicationListener}.
  */
 @Deprecated
 public class RuntimeEnvironmentPropertiesManager implements BeanFactoryAware {

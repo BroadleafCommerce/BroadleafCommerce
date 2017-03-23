@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,14 +15,25 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.web.config;
+/**
+ * 
+ */
+package org.broadleafcommerce.openadmin.config.properties;
 
-import org.springframework.context.annotation.Configuration;
+import org.broadleafcommerce.common.config.FrameworkCommonClasspathPropertySource;
+import org.springframework.core.annotation.Order;
 
 /**
- * @author Jeff Fischer
+ * 
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
  */
-@Configuration
-public class FrameworkWebConfig {
+@Order(FrameworkCommonClasspathPropertySource.OPEN_ADMIN_ORDER)
+public class OpenAdminProperties implements FrameworkCommonClasspathPropertySource {
+
+    @Override
+    public String getClasspathFolder() {
+        return "config/bc/admin/";
+    }
 
 }

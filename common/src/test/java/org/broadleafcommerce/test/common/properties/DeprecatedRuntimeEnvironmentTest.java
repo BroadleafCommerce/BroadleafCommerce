@@ -20,8 +20,7 @@
  */
 package org.broadleafcommerce.test.common.properties;
 
-import org.broadleafcommerce.common.config.ProfileAwarePropertiesBeanFactoryPostProcessor;
-import org.broadleafcommerce.test.common.properties.DefaultDevelopmentOverridePropertiesTest.PropertyTestConfig;
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -39,18 +38,18 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = PropertyTestConfig.class)
+@ContextConfiguration(initializers = BroadleafEnvironmentConfiguringApplicationListener.class)
 @DirtiesContext
 public class DeprecatedRuntimeEnvironmentTest {
 
     @BeforeClass
     public static void setRuntimeEnvironment() {
-        System.setProperty(ProfileAwarePropertiesBeanFactoryPostProcessor.DEPRECATED_RUNTIME_ENVIRONMENT_KEY, "production");
+        System.setProperty(BroadleafEnvironmentConfiguringApplicationListener.DEPRECATED_RUNTIME_ENVIRONMENT_KEY, "production");
     }
     
     @AfterClass
     public static void clearRuntimeEnvironment() {
-        System.clearProperty(ProfileAwarePropertiesBeanFactoryPostProcessor.DEPRECATED_RUNTIME_ENVIRONMENT_KEY);
+        System.clearProperty(BroadleafEnvironmentConfiguringApplicationListener.DEPRECATED_RUNTIME_ENVIRONMENT_KEY);
     }
     
     @Autowired
@@ -58,6 +57,6 @@ public class DeprecatedRuntimeEnvironmentTest {
     
     @Test
     public void testDeprecatedRuntimeEnvironmentKey() {
-        Assert.assertEquals("productionvalue", env.getProperty(PropertyTestConfig.TEST_PROPERTY));
+        Assert.assertEquals("productionvalue", env.getProperty(DefaultDevelopmentOverridePropertiesTest.TEST_PROPERTY));
     }
 }

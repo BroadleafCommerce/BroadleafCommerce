@@ -15,38 +15,49 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+/**
+ * 
+ */
 package org.broadleafcommerce.test.common.properties;
+
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Validates that profile-specific properties override framework values with the default of 'development'
+ * Tests to ensure that @TestPropertySource actually overrides anything from the default Broadleaf properties with a negative test
+ * to ensure that the {@link @PropertySource} does <i>not</i> override any of the Broadleaf property sources.
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(initializers = BroadleafEnvironmentConfiguringApplicationListener.class)
-@DirtiesContext
-public class DefaultDevelopmentOverridePropertiesTest {
-    
-    public static final String TEST_PROPERTY = "test.property.source";
+@TestPropertySource(properties = "dev.only.property=overridevalue")
+public class PropertySourceOverrideDefaultTest {
+
+    @PropertySource("classpath:overridestest.properties")
+    @Configuration
+    public static class Config { }
     
     @Autowired
-    protected Environment env;
+    Environment env;
     
     @Test
-    public void testProfileOverridesCommon() {
-        Assert.assertEquals("developmentvalue", env.getProperty(TEST_PROPERTY));
-        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.FRAMEWORK_SOURCES_NAME));
-        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.PROFILE_AWARE_SOURCES_NAME));
+    public void propertySourceAnnotationDoNotOverrideBroadleafDefaults() {
+        Assert.assertNotEquals("overridevalue", env.getProperty("test.property.source"));
     }
     
+    @Test
+    public void testPropertySourceAnnotationOverridesBroadleafDeafults() {
+        // This is something only set in development.properties (the highest profile-specific) but @TestPropertySource should override it
+        Assert.assertEquals("overridevalue", env.getProperty("dev.only.property"));
+    }
 }

@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.test;
 
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
 import org.broadleafcommerce.common.config.EnableBroadleafSiteRootAutoConfiguration;
-import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -38,7 +38,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  *
  */
 @Rollback
-@ContextConfiguration(name="siteRoot")
+@ContextConfiguration(name="siteRoot", initializers = BroadleafEnvironmentConfiguringApplicationListener.class)
 @WebAppConfiguration
 @ActiveProfiles("mbeansdisabled")
 public class JUnitSiteIntegrationSetup extends AbstractTransactionalJUnit4SpringContextTests {

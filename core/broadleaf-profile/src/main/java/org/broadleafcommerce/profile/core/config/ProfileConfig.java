@@ -25,6 +25,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ProfileConfig {
 
-    // If you add any FrameworkCommonProeprtySource, make sure that it has
-    // the order FrameworkCommonPropertySource.PROFILE_ORDER
+    // If you add any FrameworkCommonClasspathPropertySource, make sure that it has
+    // the order FrameworkCommonClasspathPropertySource.PROFILE_ORDER
 }

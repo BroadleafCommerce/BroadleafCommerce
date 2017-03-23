@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.test
 
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener
 import org.broadleafcommerce.common.config.EnableBroadleafSiteRootAutoConfiguration
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader
 import org.springframework.context.annotation.ComponentScan
@@ -42,7 +43,7 @@ import spock.lang.Specification
  *
  */
 @Rollback
-@ContextConfiguration(name="siteRoot")
+@ContextConfiguration(name="siteRoot", initializers = BroadleafEnvironmentConfiguringApplicationListener)
 @WebAppConfiguration
 @ActiveProfiles("mbeansdisabled")
 class SiteIntegrationSetup extends Specification {

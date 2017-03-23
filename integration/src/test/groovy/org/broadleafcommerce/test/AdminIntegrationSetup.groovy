@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.test
 
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener
 import org.broadleafcommerce.common.config.EnableBroadleafAdminRootAutoConfiguration
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader
 import org.springframework.context.annotation.Configuration
@@ -40,7 +41,7 @@ import spock.lang.Specification
  *
  */
 @Rollback
-@ContextConfiguration(name = "adminRoot")
+@ContextConfiguration(name = "adminRoot", initializers = BroadleafEnvironmentConfiguringApplicationListener)
 @WebAppConfiguration
 @ActiveProfiles("mbeansdisabled")
 class AdminIntegrationSetup extends Specification {

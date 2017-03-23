@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.cms.config;
 
-import org.broadleafcommerce.common.config.FrameworkCommonPropertySource;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -29,9 +27,4 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CmsConfig {
 
-    @Bean
-    public static FrameworkCommonPropertySource blCmsProperties() {
-        return new FrameworkCommonPropertySource("config/bc/cms/", FrameworkCommonPropertySource.CMS_ORDER);
-    }
-    
 }
