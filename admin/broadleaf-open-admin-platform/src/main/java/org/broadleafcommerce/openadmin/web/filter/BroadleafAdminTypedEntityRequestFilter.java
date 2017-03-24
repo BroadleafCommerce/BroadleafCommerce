@@ -132,15 +132,11 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
         final HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper(request) {
             @Override
             public String getParameter(String name) {
-                Object temp = parameters.get(name);
-                Object[] response = new Object[0];
-                if (temp != null) {
-                    ArrayUtils.addAll(response, temp);
-                }
+                String[] response = (String[]) parameters.get(name);
                 if (ArrayUtils.isEmpty(response)) {
                     return null;
                 } else {
-                    return (String) response[0];
+                    return response[0];
                 }
             }
 
@@ -261,6 +257,6 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
     @Override
     public int getOrder() {
-        return FilterOrdered.POST_SECURITY_LOW;
+        return FilterOrdered.POST_SECURITY_LOW + 1000;
     }
 }

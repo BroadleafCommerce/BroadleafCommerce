@@ -238,8 +238,8 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
     }
 
     @Override
-    public Class<?> getCeilingImplClassFromEntityManagers(String beanId) {
-        Class<?> beanIdClass = getClassForName(beanId);
+    public Class<?> getCeilingImplClassFromEntityManagers(String className) {
+        Class<?> beanIdClass = getClassForName(className);
 
         for (EntityManager em : entityManagers) {
             Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(beanIdClass, em.unwrap(Session.class).getSessionFactory(), true, true);
@@ -249,7 +249,7 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
             }
         }
 
-        throw new RuntimeException("Unable to retrieve the entity class for the given bean id: " + beanId);
+        throw new RuntimeException("Unable to retrieve the entity class for the given bean id: " + className);
     }
 
     protected String buildManagerCacheKey(String targetMode, Class<?> clazz) {
@@ -274,9 +274,9 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
         }
     }
 
-    protected Class<?> getClassForName(String beanId) {
+    protected Class<?> getClassForName(String className) {
         try {
-            return Class.forName(beanId);
+            return Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
