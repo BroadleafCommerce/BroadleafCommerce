@@ -20,7 +20,7 @@
  */
 package org.broadleafcommerce.test.common.properties;
 
-import org.broadleafcommerce.test.common.properties.DefaultDevelopmentOverridePropertiesTest.PropertyTestConfig;
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +37,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = PropertyTestConfig.class)
+@ContextConfiguration(initializers = BroadleafEnvironmentConfiguringApplicationListener.class)
 @ActiveProfiles("otherenvironment")
 @DirtiesContext
 public class OtherEnvironmentOverridePropertiesTest {
@@ -47,6 +47,6 @@ public class OtherEnvironmentOverridePropertiesTest {
     
     @Test
     public void testOtherEnvironmentOverride() {
-        Assert.assertEquals("otherenvironmentvalue", env.getProperty(PropertyTestConfig.TEST_PROPERTY));
+        Assert.assertEquals("otherenvironmentvalue", env.getProperty(DefaultDevelopmentOverridePropertiesTest.TEST_PROPERTY));
     }
 }

@@ -28,8 +28,6 @@ import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.config.service.SystemPropertiesServiceImpl;
 import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
@@ -50,14 +48,14 @@ import net.sf.ehcache.Cache;
 @ContextHierarchy(@ContextConfiguration(name="siteRoot"))
 public class SystemPropertiesTest extends TestNGSiteIntegrationSetup {
     
-    @Configuration
-    public static class SystemPropertiesTestConfig {
-        @Bean
-        public FrameworkCommonPropertySource blTestOverridePropertySource() {
-            return new FrameworkCommonPropertySource("config/bc/overrideprops");
+    public static class SystemPropertiesTestConfig implements FrameworkCommonClasspathPropertySource {
+
+        @Override
+        public String getClasspathFolder() {
+            return "config/bc/overrideprops";
         }
     }
-
+    
     @Autowired
     protected Environment env;
     

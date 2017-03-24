@@ -20,11 +20,12 @@
  */
 package org.broadleafcommerce.test.common.properties;
 
-import org.broadleafcommerce.test.common.properties.DefaultDevelopmentOverridePropertiesTest.PropertyTestConfig;
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -39,7 +40,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = PropertyTestConfig.class)
+@ContextConfiguration(initializers = BroadleafEnvironmentConfiguringApplicationListener.class)
 @ActiveProfiles("production")
 @DirtiesContext
 public class ProductionOverridePropertiesTest {
@@ -49,11 +50,12 @@ public class ProductionOverridePropertiesTest {
     
     @Test
     public void testOverriddenProductionProperty() {
-        Assert.assertEquals("productionvalue", env.getProperty(PropertyTestConfig.TEST_PROPERTY));
+        Assert.assertEquals("productionvalue", env.getProperty(DefaultDevelopmentOverridePropertiesTest.TEST_PROPERTY));
     }
     
     @Test
     public void testOverriddenProductionSharedProperty() {
         Assert.assertEquals("productionsharedvalue", env.getProperty("shared.override.test"));
+        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.PROFILE_AWARE_SOURCES_NAME));
     }
 }

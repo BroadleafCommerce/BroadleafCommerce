@@ -45,21 +45,6 @@ public class BroadleafCommonConfig {
         return pppc;
     }
     
-    @Bean
-    public static ProfileAwarePropertiesBeanFactoryPostProcessor blPropertiesPostProcessor() {
-        return new ProfileAwarePropertiesBeanFactoryPostProcessor();
-    }
-    
-    @Bean
-    public static FrameworkCommonPropertySource blCommonProperties() {
-        return new FrameworkCommonPropertySource("config/bc/", FrameworkCommonPropertySource.BROADLEAF_COMMON_ORDER);
-    }
-    
-    @Bean
-    public static ProfileAwarePropertySource blDefaultRuntimeProperties() {
-        return new ProfileAwarePropertySource("runtime-properties");
-    }
-    
     /**
      * Other enterprise/mulititenant modules override this adapter to provide one that supports dynamic filtration
      */

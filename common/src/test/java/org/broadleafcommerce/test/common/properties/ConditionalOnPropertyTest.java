@@ -15,38 +15,59 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+/**
+ * 
+ */
 package org.broadleafcommerce.test.common.properties;
+
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+
 /**
- * Validates that profile-specific properties override framework values with the default of 'development'
+ * Test to verify that properties are added to the environment early enough via the ApplicationListener so that @ConditionalOnProperty works
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(initializers = BroadleafEnvironmentConfiguringApplicationListener.class)
-@DirtiesContext
-public class DefaultDevelopmentOverridePropertiesTest {
-    
-    public static final String TEST_PROPERTY = "test.property.source";
-    
-    @Autowired
-    protected Environment env;
-    
-    @Test
-    public void testProfileOverridesCommon() {
-        Assert.assertEquals("developmentvalue", env.getProperty(TEST_PROPERTY));
-        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.FRAMEWORK_SOURCES_NAME));
-        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.PROFILE_AWARE_SOURCES_NAME));
+public class ConditionalOnPropertyTest {
+
+    @Configuration
+    public static class ConditionalOnPropertyConfig {
+        
+        @Bean
+        @ConditionalOnProperty("test.property.source")
+        public String shouldFind() {
+            return "shouldFind";
+        }
+        
+        @Bean
+        @ConditionalOnProperty("property.that.does.not.exist")
+        public String shouldNotFind() {
+            return "shouldNotFind";
+        }
     }
     
+    @Autowired
+    ApplicationContext ctx;
+    
+    @Test
+    public void foundPropertyInstantiatesBean() {
+        Assert.assertTrue(ctx.containsBean("shouldFind"));
+    }
+    
+    @Test
+    public void missingPropertyPreventsBean() {
+        Assert.assertFalse(ctx.containsBean("shouldNotFind"));
+    }
 }

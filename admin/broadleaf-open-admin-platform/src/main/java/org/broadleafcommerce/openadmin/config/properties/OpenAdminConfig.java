@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.openadmin.config.properties;
 
-import org.broadleafcommerce.common.config.FrameworkCommonPropertySource;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -27,10 +25,5 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class OpenAdminConfig {
-    
-    @Bean
-    public static FrameworkCommonPropertySource blOpenAdminProperties() {
-        return new FrameworkCommonPropertySource("config/bc/admin/", FrameworkCommonPropertySource.OPEN_ADMIN_ORDER);
-    }
     
 }

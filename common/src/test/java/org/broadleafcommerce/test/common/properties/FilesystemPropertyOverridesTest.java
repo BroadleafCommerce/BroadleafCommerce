@@ -20,14 +20,14 @@
  */
 package org.broadleafcommerce.test.common.properties;
 
-import org.broadleafcommerce.common.config.ProfileAwarePropertiesBeanFactoryPostProcessor;
-import org.broadleafcommerce.test.common.properties.DefaultDevelopmentOverridePropertiesTest.PropertyTestConfig;
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -41,7 +41,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = PropertyTestConfig.class)
+@ContextConfiguration(initializers = BroadleafEnvironmentConfiguringApplicationListener.class)
 @ActiveProfiles("production")
 @DirtiesContext
 public class FilesystemPropertyOverridesTest {
@@ -54,13 +54,13 @@ public class FilesystemPropertyOverridesTest {
     public static void setOverrideProperty() {
         String overridePropertiesPath = FilesystemPropertyOverridesTest.class.getClassLoader().getResource("overridestest.properties").getFile();
         overridePropertiesPath = overridePropertiesPath.replace("%20", " ");
-        System.setProperty(ProfileAwarePropertiesBeanFactoryPostProcessor.PROPERTY_OVERRIDES_PROPERTY, overridePropertiesPath);
+        System.setProperty(BroadleafEnvironmentConfiguringApplicationListener.PROPERTY_OVERRIDES_PROPERTY, overridePropertiesPath);
     }
     
     // don't impact other tests with my property override
     @AfterClass
     public static void clearOverrideProperty() {
-        System.clearProperty(ProfileAwarePropertiesBeanFactoryPostProcessor.PROPERTY_OVERRIDES_PROPERTY);
+        System.clearProperty(BroadleafEnvironmentConfiguringApplicationListener.PROPERTY_OVERRIDES_PROPERTY);
     }
     
     @Test
@@ -68,6 +68,7 @@ public class FilesystemPropertyOverridesTest {
     // by dirtying the context
     @DirtiesContext
     public void testProperitesWereOverridden() {
-        Assert.assertEquals("overridevalue", env.getProperty(PropertyTestConfig.TEST_PROPERTY));
+        Assert.assertEquals("overridevalue", env.getProperty(DefaultDevelopmentOverridePropertiesTest.TEST_PROPERTY));
+        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.OVERRIDE_SOURCES_NAME));
     }
 }

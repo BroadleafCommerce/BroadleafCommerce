@@ -1,0 +1,6 @@
+# Register the default property sources that we need from Common
+org.broadleafcommerce.common.config.BroadleafSharedOverrideProfileAwarePropertySource=org.broadleafcommerce.common.config.DefaultRuntimeEnvironmentProfileAwarePropertySource
+org.broadleafcommerce.common.config.FrameworkCommonClasspathPropertySource=org.broadleafcommerce.common.config.BroadleafCommonPropertySource
+
+# Ensure that our ApplicationContextInitializer gets invoked automatically with Spring Boot
+org.springframework.context.ApplicationContextInitializer=org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener

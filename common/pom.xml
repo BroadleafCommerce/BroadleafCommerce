@@ -392,6 +392,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <version>${spring.boot.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-common-presentation</artifactId>
             <version>${broadleaf-presentation.version}</version>

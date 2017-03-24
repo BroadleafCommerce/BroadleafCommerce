@@ -22,15 +22,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.Ordered;
-import org.springframework.core.PriorityOrdered;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
@@ -39,62 +34,95 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePropertySource;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * <p>
- * Adds beans of type {@link FrameworkCommonPropertySource} and {@link ProfileAwarePropertySource} to the current environment.
- * If no Spring profile is active, this will default to {@code "development"} and add that profile to {@link ConfigurableEnvironment#getActiveProfiles()}
+ * Adds {@code META-INF/spring.factories} entries of type {@link FrameworkCommonClasspathPropertySource} and {@link BroadleafSharedOverrideProfileAwarePropertySource}
+ * to the current {@link Environment}. All property sources that this initializer adds are added as composite sources to the {@link Environment} with
+ * different priorities, and are added relative to each other via the {@link AnnotationAwareOrderComparator}. The {@link PropertySource}s are in the {@link Environment}
+ * in the following order, all as {@link CompositePropertySource}s:
+ * 
+ * <ol>
+ *  <li>{@link #OVERRIDE_SOURCES_NAME} - An external property file given with {@code -Dproperty-override}</li>
+ *  <li>{@link #PROFILE_AWARE_SOURCES_NAME} - All {@link BroadleafSharedOverrideProfileAwarePropertySource} entries from {@code META-INF/spring.factories}</li>
+ *  <li>{@link #FRAMEWORK_SOURCES_NAME} - All {@link FrameworkCommonClasspathPropertySource} entries from {@code META-IF/spring.factories}</li>
+ * </ol>
  * 
  * <p>
- * This is specifically designed to execute <i>prior</i> to the {@link PropertySourcesPlaceholderConfigurer} because all property sources must be
- * added to the environment prior to executing that post-processor in order for all {@literal @}Value placeholders to be resolved correctly.
+ * If no Spring profile is active, this will default to {@code "development"} and add that profile to {@link ConfigurableEnvironment#getActiveProfiles()} in order
+ * to maintain backwards compatibility with Broadleaf versions prior to 5.2.
+ * 
+ * <p>
+ * This is by default added into {@code META-INF/spring.factories} with the {@code org.springframework.context.ApplicationContextInitializer} key. In non-boot
+ * applications this must be added manually like in a {@code web.xml} with:
+ * 
+ * <pre>
+ * {@literal
+ * <context-param>
+ *   <param-name>contextInitializerClasses</param-name>
+ *   <param-value>org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener</param-value>
+ * </context-param>
+ * }
+ * </pre>
  * 
  * @author Jeff Fischer
  * @author Phillip Verheyden (phillipuniverse)
- * @see {@link ProfileAwarePropertySource}
- * @see {@link FrameworkCommonPropertySource}
+ * @since 5.2
+ * @see BroadleafSharedOverrideProfileAwarePropertySource
+ * @see FrameworkCommonClasspathPropertySource
  */
-public class ProfileAwarePropertiesBeanFactoryPostProcessor implements BeanFactoryPostProcessor, EnvironmentAware, PriorityOrdered {
+public class BroadleafEnvironmentConfiguringApplicationListener implements ApplicationContextInitializer<ConfigurableApplicationContext> {
     
     /**
      * A -D argument representing a path to a file that overrides all of the other properties resolved from internal property files
      */
     public static final String PROPERTY_OVERRIDES_PROPERTY = "property-override";
     public static final String DEPRECATED_RUNTIME_ENVIRONMENT_KEY = "runtime.environment";
-
-    private static final Log LOG = LogFactory.getLog(ProfileAwarePropertiesBeanFactoryPostProcessor.class);
     
-    protected Environment environment;
+    /**
+     * The name of the Broadleaf framework composite properties within the Environment, useful for ordering before and after
+     */
+    public static final String FRAMEWORK_SOURCES_NAME = "broadleafFrameworkSources";
     
-    protected BeanFactory beanFactory;
+    /**
+     * The name of the profile-aware property sources
+     */
+    public static final String PROFILE_AWARE_SOURCES_NAME = "broadleafProfileAwareSources";
     
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
+    /**
+     * The name of the the property source from the command line -Dproperty-override
+     */
+    public static final String OVERRIDE_SOURCES_NAME = "broadleafCommandlineArgumentOverridesSource";
+    
+    
+    private static final Log LOG = LogFactory.getLog(BroadleafEnvironmentConfiguringApplicationListener.class);
+    
+    protected List<FrameworkCommonClasspathPropertySource> getFrameworkSources() {
+        return SpringFactoriesLoader.loadFactories(FrameworkCommonClasspathPropertySource.class, null);
+    }
+    
+    protected List<BroadleafSharedOverrideProfileAwarePropertySource> getProfileAwareSources() {
+        return SpringFactoriesLoader.loadFactories(BroadleafSharedOverrideProfileAwarePropertySource.class, null);
     }
     
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        ConfigurableEnvironment env = (ConfigurableEnvironment) environment;
+    public void initialize(ConfigurableApplicationContext applicationContext) {
+        ConfigurableEnvironment env = applicationContext.getEnvironment();
 
-        // Manually looking up these beans because you can't @Autowire inside of BeanFactoryPostProcessor
-        List<FrameworkCommonPropertySource> frameworkSources = new ArrayList<>(beanFactory.getBeansOfType(FrameworkCommonPropertySource.class).values());
-        Collections.sort(frameworkSources, AnnotationAwareOrderComparator.INSTANCE);
-        
-        String lastAddedResourceName = null;
         // first add all of the framework property sources which should be 'common.properties'
-        for (FrameworkCommonPropertySource source : frameworkSources) {
+        List<FrameworkCommonClasspathPropertySource> frameworkSources = getFrameworkSources();
+        for (FrameworkCommonClasspathPropertySource source : frameworkSources) {
             String configLocation = source.getClasspathFolder();
             
             Resource commonProp = createClasspathResource(configLocation, "common", null);
             if (commonProp.exists()) {
-                lastAddedResourceName = addToEnvironment(env, Arrays.asList(commonProp), lastAddedResourceName);
+                addToEnvironment(env, Arrays.asList(commonProp), FRAMEWORK_SOURCES_NAME, null);
             }
         }
         
@@ -105,15 +133,12 @@ public class ProfileAwarePropertiesBeanFactoryPostProcessor implements BeanFacto
             env.addActiveProfile(deprecatedRuntimeEnvironment);
         }
         
-        // Manually looking up these beans because you can't @Autowire inside of BeanFactoryPostProcessor
-        List<ProfileAwarePropertySource> profileAwareSources = new ArrayList<>(beanFactory.getBeansOfType(ProfileAwarePropertySource.class).values());
-        Collections.sort(profileAwareSources, AnnotationAwareOrderComparator.INSTANCE);
-        
         List<Resource> commonSharedResources = new ArrayList<>();
         List<Resource> commonResources = new ArrayList<>();
         List<Resource> profileSpecificSharedResources = new ArrayList<>();
         List<Resource> profileSpecificResources = new ArrayList<>();
-        for (ProfileAwarePropertySource source : profileAwareSources) {
+        List<BroadleafSharedOverrideProfileAwarePropertySource> profileAwareSources = getProfileAwareSources();
+        for (BroadleafSharedOverrideProfileAwarePropertySource source : profileAwareSources) {
             // then add all of the user property sources
             String configLocation = source.getClasspathFolder();
             
@@ -162,21 +187,21 @@ public class ProfileAwarePropertiesBeanFactoryPostProcessor implements BeanFacto
             }
         }
         
-        lastAddedResourceName = addToEnvironment(env, commonSharedResources, lastAddedResourceName);
-        lastAddedResourceName = addToEnvironment(env, commonResources, lastAddedResourceName);
-        lastAddedResourceName = addToEnvironment(env, profileSpecificSharedResources, lastAddedResourceName);
-        lastAddedResourceName = addToEnvironment(env, profileSpecificResources, lastAddedResourceName);
+        addToEnvironment(env, commonSharedResources, PROFILE_AWARE_SOURCES_NAME, FRAMEWORK_SOURCES_NAME);
+        addToEnvironment(env, commonResources, PROFILE_AWARE_SOURCES_NAME, FRAMEWORK_SOURCES_NAME);
+        addToEnvironment(env, profileSpecificSharedResources, PROFILE_AWARE_SOURCES_NAME, FRAMEWORK_SOURCES_NAME);
+        addToEnvironment(env, profileSpecificResources, PROFILE_AWARE_SOURCES_NAME, FRAMEWORK_SOURCES_NAME);
         
-        // At the very end of all of it, look at the property-override location
+        // At the very end of all of it, look at the property-override location and add that higher than the profile aware ones
         String overrideFileLocation = env.getProperty(PROPERTY_OVERRIDES_PROPERTY);
         if (StringUtils.isNotBlank(overrideFileLocation)) {
             Resource overrideFileResource = new FileSystemResource(overrideFileLocation);
-            addToEnvironment(env, Arrays.asList(overrideFileResource), lastAddedResourceName);
+            addToEnvironment(env, Arrays.asList(overrideFileResource), OVERRIDE_SOURCES_NAME, PROFILE_AWARE_SOURCES_NAME);
         }
     }
     
     protected Resource createClasspathResource(String rootLocation, String propertyName, String suffix) {
-        suffix = (suffix == null) ? "" : "-" + suffix;
+        suffix = (StringUtils.isEmpty(suffix)) ? "" : "-" + suffix;
         String fileName = propertyName + suffix + ".properties";
         return new ClassPathResource(FilenameUtils.concat(rootLocation, fileName));
     }
@@ -189,7 +214,7 @@ public class ProfileAwarePropertiesBeanFactoryPostProcessor implements BeanFacto
      * <p>
      * If <b>addBeforeResourceName</b> is null, the given <b>resource</b> will be added last via {@link MutablePropertySources#addLast(PropertySource)}.
      */
-    protected String addToEnvironment(ConfigurableEnvironment environment, List<Resource> resources, String addBeforeResourceName) {
+    protected void addToEnvironment(ConfigurableEnvironment environment, List<Resource> resources, String compositeSourceName, String addBeforeSourceName) {
         try {
             for (Resource resource : resources) {
                 if (!resource.exists()) {
@@ -197,18 +222,21 @@ public class ProfileAwarePropertiesBeanFactoryPostProcessor implements BeanFacto
                     continue;
                 }
                 PropertySource<?> props = new ResourcePropertySource(resource);
-    
-                if (addBeforeResourceName == null) {
-                    environment.getPropertySources().addLast(props);
-                    LOG.debug("Added property source " + props.getName() + " to the environment");
-                } else {
-                    environment.getPropertySources().addBefore(addBeforeResourceName, props);
-                    LOG.debug("Added property source " + props.getName() + " to the environment with a higher priority than " + addBeforeResourceName);
+                
+                CompositePropertySource compositeSource = (CompositePropertySource) environment.getPropertySources().get(compositeSourceName);
+                if (compositeSource == null) {
+                    compositeSource = new CompositePropertySource(compositeSourceName);
+                    if (addBeforeSourceName == null) {
+                        environment.getPropertySources().addLast(compositeSource);
+                    } else {
+                        environment.getPropertySources().addBefore(addBeforeSourceName, compositeSource);
+                    }
+                    LOG.debug("Added new composite property source source " + compositeSource.getName() + " to the environment");
                 }
                 
-                addBeforeResourceName = props.getName();
+                compositeSource.addFirstPropertySource(props);
+                LOG.debug(String.format("Added property source %s at the beginning of the composite source ", props.getName(), compositeSource.getName()));
             }
-            return addBeforeResourceName;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -216,11 +244,6 @@ public class ProfileAwarePropertiesBeanFactoryPostProcessor implements BeanFacto
 
     protected String getDeprecatedDefaultProfileKey() {
         return "development";
-    }
-
-    @Override
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
     }
 
 }

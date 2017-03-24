@@ -17,9 +17,9 @@
  */
 package org.broadleafcommerce.core.config;
 
-import org.broadleafcommerce.common.config.FrameworkCommonPropertySource;
-import org.springframework.context.annotation.Bean;
+import org.broadleafcommerce.common.config.FrameworkCommonClasspathPropertySource;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 /**
  * @author Jeff Fischer
@@ -27,9 +27,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FrameworkConfig {
 
-    @Bean
-    public static FrameworkCommonPropertySource blFrameworkProperties() {
-        return new FrameworkCommonPropertySource("config/bc/fw/", FrameworkCommonPropertySource.FRAMEWORK_ORDER);
+    @Order(FrameworkCommonClasspathPropertySource.FRAMEWORK_ORDER)
+    public static class FrameworkPropertySource implements FrameworkCommonClasspathPropertySource {
+
+        @Override
+        public String getClasspathFolder() {
+            return "config/bc/fw/";
+        }
+        
     }
     
 }
