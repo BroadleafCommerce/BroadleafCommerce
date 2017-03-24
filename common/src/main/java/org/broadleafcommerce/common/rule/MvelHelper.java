@@ -63,8 +63,12 @@ public class MvelHelper {
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
     // The following attribute is set in BroadleafProcessURLFilter
-    public static final String REQUEST_DTO = "blRequestDTO";    
-    
+    public static final String REQUEST_DTO = "blRequestDTO";
+
+    static {
+        System.setProperty("mvel2.disable.jit", "true");
+    }
+
     /**
      * Converts a field to the specified type.    Useful when 
      * @param type
