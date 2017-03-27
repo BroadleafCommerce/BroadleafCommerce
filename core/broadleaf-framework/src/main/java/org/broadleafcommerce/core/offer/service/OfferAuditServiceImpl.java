@@ -58,12 +58,25 @@ public class OfferAuditServiceImpl implements OfferAuditService {
     public OfferAudit create() {
         return offerAuditDao.create();
     }
+
+    @Override
+    public Long countUsesByCustomer(Long orderId, Long customerId, Long offerId) {
+        return offerAuditDao.countUsesByCustomer(orderId, customerId, offerId);
+    }
     
+    
+    @Deprecated
     @Override
     public Long countUsesByCustomer(Long customerId, Long offerId) {
         return offerAuditDao.countUsesByCustomer(customerId, offerId);
     }
 
+    @Override
+    public Long countOfferCodeUses(Long orderId, Long offerCodeId) {
+        return offerAuditDao.countOfferCodeUses(orderId, offerCodeId);
+    }
+    
+    @Deprecated
     @Override
     public Long countOfferCodeUses(Long offerCodeId) {
         return offerAuditDao.countOfferCodeUses(offerCodeId);
