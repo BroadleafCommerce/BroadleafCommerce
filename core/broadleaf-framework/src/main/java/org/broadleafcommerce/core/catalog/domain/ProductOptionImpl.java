@@ -92,8 +92,8 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     protected Boolean required;
 
     @Column(name = "USE_IN_SKU_GENERATION")
-    @AdminPresentation(friendlyName = "productOption_UseInSKUGeneration", defaultValue = "true")
-    private Boolean useInSkuGeneration = Boolean.TRUE;
+    @AdminPresentation(friendlyName = "productOption_UseInSKUGeneration", defaultValue = "false")
+    private Boolean useInSkuGeneration = Boolean.FALSE;
 
     @Column(name = "DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "productOption_displayOrder")
