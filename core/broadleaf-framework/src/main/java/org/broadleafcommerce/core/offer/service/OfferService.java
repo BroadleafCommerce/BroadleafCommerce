@@ -47,41 +47,41 @@ public interface OfferService {
      * Returns all offers
      * @return all offers
      */
-    public List<Offer> findAllOffers();
+    List<Offer> findAllOffers();
 
     /**
      * Save a new offer or updates an existing offer
      * @param offer
      * @return the offer
      */
-    public Offer save(Offer offer);
+    Offer save(Offer offer);
 
     /**
      * Saves a new Offer or updates an existing Offer that belongs to an OfferCode, then saves or updates the OfferCode
      * @param offerCode
      * @return the offerCode
      */
-    public OfferCode saveOfferCode(OfferCode offerCode);
+    OfferCode saveOfferCode(OfferCode offerCode);
     /**
      * Lookup offer by code.
      * @param code the code
      * @return the offer
      */
-    public Offer lookupOfferByCode(String code);
+    Offer lookupOfferByCode(String code);
     
     /**
      * Lookup an OfferCode by its id
      * @param id the offer id
      * @return the offer
      */
-    public OfferCode findOfferCodeById(Long id);
+    OfferCode findOfferCodeById(Long id);
 
     /**
      * Lookup OfferCode by code.
      * @param code the code
      * @return the offer
      */
-    public OfferCode lookupOfferCodeByCode(String code);
+    OfferCode lookupOfferCodeByCode(String code);
 
     /**
      * Apply offers to order. By default this does not re-price the order.
@@ -89,7 +89,7 @@ public interface OfferService {
      * @param order the order
      * @return
      */
-    public Order applyAndSaveOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+    Order applyAndSaveOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
     /**
      * Apply offers to order. By default this does not re-price the order. This method is deprecated and 
@@ -102,14 +102,14 @@ public interface OfferService {
      * @{@link Deprecated} see applyAndSaveOffersToOrder
      */
     @Deprecated
-    public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+    void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
     /**
      * Create a list of offers that applies to this order
      * @param order
      * @return
      */
-    public List<Offer> buildOfferListForOrder(Order order);
+    List<Offer> buildOfferListForOrder(Order order);
 
     /**
      * Attempts to resolve a list of offer codes associated explicitly with the customer. 
@@ -117,44 +117,80 @@ public interface OfferService {
      * in a custom table or in customer attributes.  This allows you to associate one or more offer codes 
      * with a customer without necessarily having them type it in (e.g. on a URL), or by allowing them to 
      * type it in, but before it has been actually applied to an order.
-     * 
-     * @param customer
-     * @return
+     *
+     * @param order
+     * @return a list of offer codes associated explicitly with the customer
      */
-    public List<OfferCode> buildOfferCodeListForCustomer(Customer customer);
+    List<OfferCode> buildOfferCodeListForCustomer(Order order);
 
-    public CustomerOfferDao getCustomerOfferDao();
+    /**
+     * Attempts to resolve a list of offer codes associated explicitly with the customer. 
+     * For example, an implementation may choose to associate a specific offer code with a customer 
+     * in a custom table or in customer attributes.  This allows you to associate one or more offer codes 
+     * with a customer without necessarily having them type it in (e.g. on a URL), or by allowing them to 
+     * type it in, but before it has been actually applied to an order.
+     *
+     * @param customer
+     * @return a list of offer codes associated explicitly with the customer
+     * @deprecated use {@link #buildOfferCodeListForCustomer(Order)}
+     */
+    @Deprecated
+    List<OfferCode> buildOfferCodeListForCustomer(Customer customer);
 
-    public void setCustomerOfferDao(CustomerOfferDao customerOfferDao);
+    CustomerOfferDao getCustomerOfferDao();
 
-    public OfferCodeDao getOfferCodeDao();
+    void setCustomerOfferDao(CustomerOfferDao customerOfferDao);
 
-    public void setOfferCodeDao(OfferCodeDao offerCodeDao);
+    OfferCodeDao getOfferCodeDao();
 
-    public OfferDao getOfferDao();
+    void setOfferCodeDao(OfferCodeDao offerCodeDao);
 
-    public void setOfferDao(OfferDao offerDao);
+    OfferDao getOfferDao();
 
-    public OrderOfferProcessor getOrderOfferProcessor();
+    void setOfferDao(OfferDao offerDao);
 
-    public void setOrderOfferProcessor(OrderOfferProcessor orderOfferProcessor);
+    OrderOfferProcessor getOrderOfferProcessor();
 
-    public ItemOfferProcessor getItemOfferProcessor();
+    void setOrderOfferProcessor(OrderOfferProcessor orderOfferProcessor);
 
-    public void setItemOfferProcessor(ItemOfferProcessor itemOfferProcessor);
+    ItemOfferProcessor getItemOfferProcessor();
 
-    public FulfillmentGroupOfferProcessor getFulfillmentGroupOfferProcessor();
+    void setItemOfferProcessor(ItemOfferProcessor itemOfferProcessor);
 
-    public void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor);
+    FulfillmentGroupOfferProcessor getFulfillmentGroupOfferProcessor();
+
+    void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor);
     
-    public Order applyAndSaveFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+    Order applyAndSaveFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
     @Deprecated
-    public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+    void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
-    public PromotableItemFactory getPromotableItemFactory();
+    PromotableItemFactory getPromotableItemFactory();
 
-    public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
+    void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
+
+    /**
+     * <p>Validates that the Customer to whom an Order belongs has not exceeded the max uses for the
+     * passed in offer. This method will take into account if the Offer has already been applied to 
+     * the Order so as not to prevent the Offer from applying to new items added to the Order by a 
+     * CRS.</p>
+     *
+     * <p>This condition could pass if the system allows two concurrent carts for the same customer.
+     * The condition will fail at order submission time when the {@link VerifyCustomerMaxOfferUsesActivity}
+     * runs (if that activity is configured as part of the checkout workflow.)</p>
+     *
+     * <p>This method only checks offers who have a max_customer_uses value that is greater than zero.
+     * By default offers can be used as many times as the customer's order qualifies.</p>
+     *
+     * <p>This method offers no protection against systems that allow customers to create
+     * multiple ids in the system.</p>
+     *
+     * @param order the order the offer is to be applied to
+     * @param offer the offer to check
+     * @return <b>true</b> if it is ok for the customer to use this offer with their current order, <b>false</b> if not.
+     */
+    boolean verifyMaxCustomerUsageThreshold(@Nonnull Order order, @Nonnull Offer offer);
 
     /**
      * <p>Validates that the passed in customer has not exceeded the max uses for the
@@ -173,18 +209,33 @@ public interface OfferService {
      * @param customer the customer attempting to use the offer
      * @param offer the offer to check
      * @return <b>true</b> if it is ok for the customer to use this offer with their current order, <b>false</b> if not.
+     * @deprecated use {@link #verifyMaxCustomerUsageThreshold(Order, Offer)}
      */
-    public boolean verifyMaxCustomerUsageThreshold(@Nonnull Customer customer, @Nonnull Offer offer);
+    @Deprecated
+    boolean verifyMaxCustomerUsageThreshold(@Nonnull Customer customer, @Nonnull Offer offer);
     
     /**
-     * <p>Validates that the given code is underneath the max uses for that code. This method will also delegate to
-     * {@link #verifyMaxCustomerUsageThreshold(Customer, Offer)} for the code's offer and the passed in customer</p>
+     * <p>Validates that the given OfferCode has not reached its maximum number of usages. 
+     * This method will also delegate to {@link #verifyMaxCustomerUsageThreshold(Order, Offer)} 
+     * for the code's Offer and the passed in Order's Customer.</p>
      * 
-     * @param customer the customer attempting to use the code
+     * @param order the order the offer is to be applied to
      * @param code the code to check
      * @return <b>true</b> if it is ok for the customer to use this offer with their current order, <b>false</b> if not.
      */
-    public boolean verifyMaxCustomerUsageThreshold(@Nonnull Customer customer, @Nonnull OfferCode code);
+     boolean verifyMaxCustomerUsageThreshold(@Nonnull Order order, @Nonnull OfferCode code);
+
+    /**
+     * <p>Validates that the given OfferCode has not reached its maximum number of usages. This method will also delegate to
+     * {@link #verifyMaxCustomerUsageThreshold(Order, Offer)} for the code's Offer and the passed in Customer.</p>
+     *
+     * @param customer the customer attempting to use the code
+     * @param code the code to check
+     * @return <b>true</b> if it is ok for the customer to use this offer with their current order, <b>false</b> if not.
+     * @deprecated use {@link #verifyMaxCustomerUsageThreshold(Order, OfferCode)}
+     */
+    @Deprecated
+    boolean verifyMaxCustomerUsageThreshold(@Nonnull Customer customer, @Nonnull OfferCode code);
     
     /**
      * Returns a set of offers that have been used for this order by checking adjustments on the different levels like
@@ -194,7 +245,7 @@ public interface OfferService {
      * @param order
      * @return
      */
-    public Set<Offer> getUniqueOffersFromOrder(Order order);
+    Set<Offer> getUniqueOffersFromOrder(Order order);
     
     /**
      * Given a list of offer codes and a set of offers, return a map of of offer codes that are keyed by the offer that was
@@ -204,7 +255,7 @@ public interface OfferService {
      * @param appliedOffers
      * @return
      */
-    public Map<Offer, OfferCode> getOffersRetrievedFromCodes(List<OfferCode> codes, Set<Offer> appliedOffers);
+    Map<Offer, OfferCode> getOffersRetrievedFromCodes(List<OfferCode> codes, Set<Offer> appliedOffers);
 
     /**
      * For a given order, give back a map of all {@link Offer}s that were retrieved from {@link OfferCode}s. More explicitly,
@@ -214,11 +265,11 @@ public interface OfferService {
      * @param order
      * @return a map from {@link Offer} to the {@link OfferCode} that was used to obtain it
      */
-    public Map<Offer, OfferCode> getOffersRetrievedFromCodes(Order order);
+    Map<Offer, OfferCode> getOffersRetrievedFromCodes(Order order);
 
-    public OrderService getOrderService();
+    OrderService getOrderService();
 
-    public void setOrderService(OrderService orderService);
+    void setOrderService(OrderService orderService);
 
-    public Boolean deleteOfferCode(OfferCode code);
+    Boolean deleteOfferCode(OfferCode code);
 }
