@@ -896,7 +896,7 @@
                 }
                 filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
             } else {
-                if ($(filterButton).text() != 'Filter') {debugger;
+                if ($(filterButton).text() != 'Filter') {
                     // change "edit filter" button back to "filter"
                     filterButton.text("Filter");
                     filterButton.insertBefore(filterButton.parent());
