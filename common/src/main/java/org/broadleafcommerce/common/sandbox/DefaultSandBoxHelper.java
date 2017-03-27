@@ -88,6 +88,11 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     }
 
     @Override
+    public boolean isReplayOperation() {
+        return false;
+    }
+
+    @Override
     public void optionallyIncludeDeletedItemsInQueriesAndCollections(Runnable runnable, boolean includeDeleted) {
         runnable.run();
     }

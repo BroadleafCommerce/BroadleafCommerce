@@ -250,16 +250,16 @@ public class TranslationServiceImpl implements TranslationService {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
         }
 
+        boolean specificTranslationDeleted = false;
+        boolean generalTranslationDeleted = false;
+
         if (result != null) {
             Map<String, Map<String, StandardCacheItem>> propertyTranslationMap =
                     (Map<String, Map<String, StandardCacheItem>>) result.getObjectValue();
 
-            boolean specificTranslationDeleted = false;
-            boolean generalTranslationDeleted = false;
-
             // Check For a Specific Standard Site Match (language and country)
-            StandardCacheItem specificTranslation = lookupTranslationFromMap(specificPropertyKey, propertyTranslationMap,
-                    entityId);            
+            StandardCacheItem specificTranslation =
+                    lookupTranslationFromMap(specificPropertyKey, propertyTranslationMap, entityId);
             if (specificTranslation != null) {
                 if (ItemStatus.DELETED.equals(specificTranslation.getItemStatus())) {
                     specificTranslationDeleted = true;
@@ -270,8 +270,8 @@ public class TranslationServiceImpl implements TranslationService {
             }
                 
             // Check For a General Match (language and country)
-            StandardCacheItem generalTranslation = lookupTranslationFromMap(generalPropertyKey, propertyTranslationMap,
-                    entityId);
+            StandardCacheItem generalTranslation =
+                    lookupTranslationFromMap(generalPropertyKey, propertyTranslationMap, entityId);
             if (generalTranslation != null) {
                 if (ItemStatus.DELETED.equals(generalTranslation.getItemStatus())) {
                     generalTranslationDeleted = true;
@@ -285,19 +285,19 @@ public class TranslationServiceImpl implements TranslationService {
                     return replaceEmptyWithNullResponse(response);
                 }
             }
-            
-            // Check for a Template Match
-            if (specificTranslationDeleted) {
-                // only check general properties since we explicitly deleted specific properties at standard (site) level            
-                specificPropertyKey = generalPropertyKey;
-            } else if (generalTranslationDeleted) {
-                // only check specific properties since we explicitly deleted general properties at standard (site) level            
-                generalPropertyKey = specificPropertyKey;                
-            }
-            
-            response = getTemplateTranslatedValue(cacheKey, property, entityType, entityId, localeCode,
-                        localeCountryCode, specificPropertyKey, generalPropertyKey);            
         }
+
+        // Check for a Template Match
+        if (specificTranslationDeleted) {
+            // only check general properties since we explicitly deleted specific properties at standard (site) level
+            specificPropertyKey = generalPropertyKey;
+        } else if (generalTranslationDeleted) {
+            // only check specific properties since we explicitly deleted general properties at standard (site) level
+            generalPropertyKey = specificPropertyKey;
+        }
+
+        response = getTemplateTranslatedValue(cacheKey, property, entityType, entityId, localeCode,
+                    localeCountryCode, specificPropertyKey, generalPropertyKey);
 
         return replaceEmptyWithNullResponse(response);
     }
