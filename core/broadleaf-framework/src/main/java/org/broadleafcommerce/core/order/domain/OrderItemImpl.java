@@ -820,15 +820,9 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         return null;
     }
 
+    @Deprecated
     protected boolean shouldSumChildren() {
         return false;
-//        for (OrderItem child : childOrderItems) {
-//            if (child.getTotalPrice().greaterThan(BigDecimal.ZERO)) {
-//                return true;
-//            }
-//        }
-//
-//        return false;
     }
 
     public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
