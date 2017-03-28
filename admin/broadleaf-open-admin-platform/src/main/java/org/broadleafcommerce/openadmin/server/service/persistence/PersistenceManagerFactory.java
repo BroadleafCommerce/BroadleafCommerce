@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.service.PersistenceService;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -98,7 +99,7 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
      *  using the passed in {@link TargetModeType}
      */
     public static PersistenceManager getDefaultPersistenceManager(TargetModeType targetModeType) {
-        synchronized (persistenceManagers) {
+        synchronized (DynamicDaoHelperImpl.LOCK_OBJECT) {
             Integer cacheKey = persistenceService.identifyDefaultEntityManager(targetModeType).hashCode();
             if (!persistenceManagers.containsKey(cacheKey)) {
                 PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
@@ -112,7 +113,7 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
     }
 
     public static PersistenceManager getPersistenceManager(Class entityClass, TargetModeType targetModeType) {
-        synchronized (persistenceManagers) {
+        synchronized (DynamicDaoHelperImpl.LOCK_OBJECT) {
             Integer cacheKey = persistenceService.identifyEntityManager(entityClass, targetModeType).hashCode();
             if (!persistenceManagers.containsKey(cacheKey)) {
                 PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
