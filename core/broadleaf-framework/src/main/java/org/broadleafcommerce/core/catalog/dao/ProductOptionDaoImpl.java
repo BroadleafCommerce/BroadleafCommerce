@@ -146,6 +146,10 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         List<Predicate> predicates = new ArrayList<>();
 
         // restrict archived values
+        predicates.add(cb.or(
+                cb.isNull(root.get("archiveStatus").get("archived")),
+                cb.equal(root.get("archiveStatus").get("archived"), 'N')));
+
         predicates.add(cb.or(cb.notEqual(root.get("sku").get("archiveStatus").get("archived"), 'Y'), 
                              cb.isNull(root.get("sku").get("archiveStatus").get("archived"))));
 
