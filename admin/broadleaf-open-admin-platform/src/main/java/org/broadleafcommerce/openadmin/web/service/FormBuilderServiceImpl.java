@@ -638,7 +638,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         if (isMedia) {
             listGrid.setListGridType(ListGrid.Type.ASSET_GRID);
-            listGrid.setSelectType(ListGrid.SelectType.NONE);
         }
 
         extensionManager.getProxy().modifyListGrid(listGrid.getClassName(), listGrid);

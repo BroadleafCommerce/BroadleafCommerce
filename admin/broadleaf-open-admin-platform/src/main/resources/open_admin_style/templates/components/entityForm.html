@@ -92,7 +92,7 @@
                                     </th:block>
 
                                     <th:block th:each="listGrid : ${tab.listGrids}"
-                                              th:if="${listGrid.selectType} != 'selectize' and ${listGrid.listGridType} != 'asset_grid'">
+                                              th:if="${listGrid.selectType} != 'selectize'">
                                         <div class="fieldset-card field-group listgrid-container entityform-listgrid"
                                              th:id="${listGrid.subCollectionFieldName}">
                                             <div class="fieldgroup-listgrid-wrapper-header titlebar" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden-body'">
@@ -109,17 +109,11 @@
                                                 <th:block th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"></th:block>
                                             </div>
                                             <div class="fieldgroup-listgrid-wrapper fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
-                                                <th:block th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
+                                                <th:block th:unless="${listGrid.listGridType} == 'asset_grid'" th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
+                                                <th:block th:if="${listGrid.listGridType} == 'asset_grid'" th:include="components/mediaListGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
                                             </div>
                                         </div>
                                     </th:block>
-
-                                    <div th:each="listGrid : ${tab.listGrids}"
-                                              th:id="${listGrid.subCollectionFieldName}"
-                                              class="media-container entityform-listgrid"
-                                              th:if="${listGrid.selectType} != 'selectize' and ${listGrid.listGridType} == 'asset_grid'">
-                                        <div th:include="components/mediaGrid" th:with="listGrid=${listGrid}"></div>
-                                    </div>
 
                                     <th:block th:each="listGrid : ${tab.listGrids}"
                                          th:if="${listGrid.selectType} == 'selectize'">
