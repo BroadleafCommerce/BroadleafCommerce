@@ -133,7 +133,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (deproxiedSku == null) {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
 
-            if (postLoaderDao != null) {
+            if (postLoaderDao != null && sku.getId() != null) {
                 Long id = sku.getId();
                 deproxiedSku = postLoaderDao.find(SkuImpl.class, id);
             } else if (sku instanceof HibernateProxy) {
@@ -169,7 +169,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (deproxiedProduct == null) {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
 
-            if (product != null && postLoaderDao != null) {
+            if (product != null && postLoaderDao != null && product.getId() != null) {
                 Long id = product.getId();
                 deproxiedProduct = postLoaderDao.find(ProductImpl.class, id);
             } else if (product instanceof HibernateProxy) {

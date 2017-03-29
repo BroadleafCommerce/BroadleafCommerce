@@ -21,8 +21,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
-import org.broadleafcommerce.common.dao.GenericEntityDaoImpl;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -159,7 +157,7 @@ public class OfferCodeImpl implements OfferCode {
         if (deproxiedOffer == null) {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
 
-            if (postLoaderDao != null) {
+            if (postLoaderDao != null && offer.getId() != null) {
                 Long id = offer.getId();
                 deproxiedOffer = postLoaderDao.find(OfferImpl.class, id);
             } else if (offer instanceof HibernateProxy) {
