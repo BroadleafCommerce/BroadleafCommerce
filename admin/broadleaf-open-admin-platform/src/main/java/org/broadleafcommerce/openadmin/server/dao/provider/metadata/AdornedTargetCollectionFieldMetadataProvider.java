@@ -253,6 +253,8 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
                         Boolean.parseBoolean(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentationAdornedTargetCollection.ADORNEDTARGETADDTYPE)) {
                 fieldMetadataOverride.setAdornedTargetAddMethodType(AdornedTargetAddMethodType.valueOf(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationAdornedTargetCollection.GROUP)) {
+                fieldMetadataOverride.setGroup(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationAdornedTargetCollection.JOINENTITYCLASS)) {
                 fieldMetadataOverride.setJoinEntityClass(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationAdornedTargetCollection.MAINTAINEDADORNEDTARGETFIELDS)) {

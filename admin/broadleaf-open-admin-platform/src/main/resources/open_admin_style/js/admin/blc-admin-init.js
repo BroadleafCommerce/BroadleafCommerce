@@ -106,7 +106,7 @@
                 // Nothing to do here.
             });
 
-            return true;
+            return false;
         };
 
         // Synchronize URL hash to tabs

@@ -65,6 +65,8 @@ public class PropertyType {
         public static final String DEFAULTVALUE = "defaultValue";
         public static final String GROUP = "group";
         public static final String TAB = "tab";
+        public static final String CANLINKTOEXTERNALENTITY = "canLinkToExternalEntity";
+        public static final String ASSOCIATEDFIELDNAME = "associatedFieldName";
 
         @Deprecated
         public static final String GROUPORDER = "groupOrder";

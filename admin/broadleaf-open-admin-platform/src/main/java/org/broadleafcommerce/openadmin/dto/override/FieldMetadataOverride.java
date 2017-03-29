@@ -130,6 +130,8 @@ public class FieldMetadataOverride extends MetadataOverride {
     private Boolean translatable;
     private LookupType lookupType;
     private String defaultValue;
+    private Boolean canLinkToExternalEntity;
+    private String associatedFieldName;
 
     //@AdminPresentationMapField derived fields
     private Boolean searchable;
@@ -367,6 +369,14 @@ public class FieldMetadataOverride extends MetadataOverride {
         this.defaultValue = defaultValue;
     }
 
+    public String getAssociatedFieldName() {
+        return associatedFieldName;
+    }
+
+    public void setAssociatedFieldName(String associatedFieldName) {
+        this.associatedFieldName = associatedFieldName;
+    }
+
     public String getTab() {
         return tab;
     }
@@ -551,6 +561,14 @@ public class FieldMetadataOverride extends MetadataOverride {
 
     public void setMapFieldValueClass(String mapFieldValueClass) {
         this.mapFieldValueClass = mapFieldValueClass;
+    }
+
+    public Boolean getCanLinkToExternalEntity() {
+        return canLinkToExternalEntity;
+    }
+
+    public void setCanLinkToExternalEntity(Boolean canLinkToExternalEntity) {
+        this.canLinkToExternalEntity = canLinkToExternalEntity;
     }
 
     //collection fields

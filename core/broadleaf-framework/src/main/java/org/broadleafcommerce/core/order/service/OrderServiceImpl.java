@@ -21,7 +21,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.payment.PaymentType;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -153,8 +155,7 @@ public class OrderServiceImpl implements OrderService {
     protected boolean moveNamedOrderItems = true;
     protected boolean deleteEmptyNamedOrders = true;
 
-    @Value("${automatically.merge.like.items}")
-    protected boolean automaticallyMergeLikeItems;
+    protected Boolean automaticallyMergeLikeItems;
 
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
@@ -382,7 +383,7 @@ public class OrderServiceImpl implements OrderService {
                 
                 if (order.getAddedOfferCodes().contains(offerCode) || addedOffers.contains(offerCode.getOffer())) {
                     throw new OfferAlreadyAddedException("The offer has already been added.");
-                } else if (!offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode)) {
+                } else if (!offerService.verifyMaxCustomerUsageThreshold(order, offerCode)) {
                     throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
                 } else if (!offerCode.isActive() || !offerCode.getOffer().isActive()) {
                     throw new OfferExpiredException("The offer has expired.");
@@ -558,7 +559,7 @@ public class OrderServiceImpl implements OrderService {
     public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
         Order order = findOrderById(orderId);
         preValidateCartOperation(order);
-        if (automaticallyMergeLikeItems) {
+        if (getAutomaticallyMergeLikeItems()) {
             OrderItem item = findMatchingItem(order, orderItemRequestDTO);
             if (item != null) {
                 orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
@@ -605,7 +606,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
     public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
-        preValidateCartOperation(findOrderById(orderId));
+        Order order = findOrderById(orderId);
+        preValidateCartOperation(order);
         preValidateUpdateQuantityOperation(findOrderById(orderId), orderItemRequestDTO);
         if (orderItemRequestDTO.getQuantity() == 0) {
             return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
@@ -687,7 +689,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean getAutomaticallyMergeLikeItems() {
-        return automaticallyMergeLikeItems;
+        
+        if (automaticallyMergeLikeItems != null) {
+            return automaticallyMergeLikeItems;
+        }
+
+        return BLCSystemProperty.resolveBooleanSystemProperty("automatically.merge.like.items", true);
     }
 
     @Override
@@ -790,7 +797,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * Returns true if the two items attributes exactly match.
-     * @param item1
+     * @param item1Attributes
      * @param item2
      * @return
      */
@@ -941,5 +948,30 @@ public class OrderServiceImpl implements OrderService {
         } else if (erh.getThrowable() != null) {
             throw new RuntimeException(erh.getThrowable());
         }
+    }
+
+    @Override
+    public void refresh(Order order) {
+        orderDao.refresh(order);
+    }
+
+    @Override
+    public Order findCartForCustomerWithEnhancements(Customer customer) {
+        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
+        ExtensionResultStatusType resultStatusType = extensionManager.findCartForCustomerWithEnhancements(customer, erh);
+        if (ExtensionResultStatusType.NOT_HANDLED != resultStatusType) {
+            return erh.getResult();
+        }
+        return findCartForCustomer(customer);
+    }
+
+    @Override
+    public Order findCartForCustomerWithEnhancements(Customer customer, Order candidateOrder) {
+        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
+        ExtensionResultStatusType resultStatusType = extensionManager.findCartForCustomerWithEnhancements(customer, candidateOrder, erh);
+        if (ExtensionResultStatusType.NOT_HANDLED != resultStatusType) {
+            return erh.getResult();
+        }
+        return candidateOrder;
     }
 }

@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.web.rulebuilder.service;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -30,10 +31,11 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -49,12 +51,11 @@ import javax.annotation.Resource;
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFieldService, ApplicationContextAware, InitializingBean {
+public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFieldService, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
 
     protected DynamicEntityDao dynamicEntityDao;
     protected ApplicationContext applicationContext;
     protected List<FieldData> fields = new ArrayList<FieldData>();
-    protected static Boolean handlersInitialized = false;
 
     @Resource(name = "blRuleBuilderFieldServiceExtensionManager")
     protected RuleBuilderFieldServiceExtensionManager extensionManager;
@@ -143,18 +144,6 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
 
     @Override
     public List<FieldData> getFields() {
-        // Initialize additional static fields method for the component.  
-        if (!handlersInitialized) {
-            synchronized (handlersInitialized) {
-                if (!handlersInitialized) {
-                    if (extensionManager != null) {
-                        extensionManager.getProxy().addFields(fields, getName());
-                    }
-                }
-            }
-            handlersInitialized = true;
-        }
-
         return fields;
     }
 
@@ -183,9 +172,13 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
             private void testFieldName(FieldData fieldData) throws ClassNotFoundException {
                 if (!fieldData.getSkipValidation()) {
                     if (!StringUtils.isEmpty(fieldData.getFieldName()) && dynamicEntityDao != null) {
-                        Class<?>[] dtos = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName(getDtoClassName()));
+                        String dtoClassName = getDtoClassName();
+                        if (fieldData.getOverrideDtoClassName() != null) {
+                            dtoClassName = fieldData.getOverrideDtoClassName();
+                        }
+                        Class<?>[] dtos = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName(dtoClassName));
                         if (ArrayUtils.isEmpty(dtos)) {
-                            dtos = new Class<?>[] { Class.forName(getDtoClassName()) };
+                            dtos = new Class<?>[] { Class.forName(dtoClassName) };
                         }
                         Field field = null;
                         for (Class<?> dto : dtos) {
@@ -195,13 +188,23 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
                             }
                         }
                         if (field == null) {
-                            throw new IllegalArgumentException("Unable to find the field declared in FieldData (" + fieldData.getFieldName() + ") on the target class (" + getDtoClassName() + "), or any registered entity class that derives from it.");
+                            throw new IllegalArgumentException("Unable to find the field declared in FieldData (" + fieldData.getFieldName() + ") on the target class (" + dtoClassName + "), or any registered entity class that derives from it.");
                         }
                     }
                 }
             }
         });
         this.fields = proxyFields;
+    }
+
+    @Override
+    public String getOverrideFieldEntityKey(String fieldName) {
+        for (FieldData fieldData : fields) {
+            if (StringUtils.equals(fieldData.getFieldName(), fieldName)) {
+                return fieldData.getOverrideEntityKey();
+            }
+        }
+        return null;
     }
 
     @Override
@@ -221,7 +224,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     public abstract void init();
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void onApplicationEvent(ContextRefreshedEvent event) {
         // This bean only is valid when the following bean is active. (admin)
         if (applicationContext.containsBean(PersistenceManagerFactory.getPersistenceManagerRef()) && applicationContext.containsBean("blPersistenceManagerFactory")) {
             //initialize the factory bean
@@ -242,6 +245,10 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
 
             try {
                 init();
+                // Initialize additional static fields method for the component.
+                if (extensionManager != null) {
+                    extensionManager.getProxy().addFields(fields, getName());
+                }
                 validateRuleBuilderState(this);
             } finally {
                 if (contextWasNull) {

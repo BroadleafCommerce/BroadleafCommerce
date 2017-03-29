@@ -43,6 +43,8 @@ public interface RuleBuilderFieldService extends Cloneable {
 
     public void setFields(List<FieldData> fields);
 
+    public String getOverrideFieldEntityKey(String fieldName);
+
     public RuleBuilderFieldService clone() throws CloneNotSupportedException;
 
     public void setRuleBuilderFieldServiceExtensionManager(RuleBuilderFieldServiceExtensionManager extensionManager);

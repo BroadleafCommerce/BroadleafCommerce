@@ -18,6 +18,8 @@
 package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
+import org.broadleafcommerce.common.presentation.RuleOperatorType;
+import org.broadleafcommerce.common.presentation.RuleOptionType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.AbstractRuleBuilderFieldService;
@@ -38,22 +40,22 @@ public class OrderFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_orderCurrencyCode")
                 .name("currency.currencyCode")
-                .operators("blcOperators_Text")
-                .options("[]")
+                .operators(RuleOperatorType.TEXT)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_orderSubtotal")
                 .name("subTotal")
-                .operators("blcOperators_Numeric")
-                .options("[]")
+                .operators(RuleOperatorType.NUMERIC)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.MONEY)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_localeCode")
                 .name("locale")
-                .operators("blcOperators_Text")
-                .options("[]")
+                .operators(RuleOperatorType.TEXT)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
                 .build());
     }

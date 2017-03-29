@@ -1260,7 +1260,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         // Set the parent id on the entity form
-        entityForm.setParentId(id);
+        if (entityForm != null) {
+            entityForm.setParentId(id);
+        }
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", ModalHeaderType.ADD_COLLECTION_ITEM.getType());

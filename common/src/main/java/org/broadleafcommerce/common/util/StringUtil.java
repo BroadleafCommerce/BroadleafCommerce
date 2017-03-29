@@ -26,7 +26,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.Adler32;
@@ -69,12 +68,16 @@ public class StringUtil {
         if (StringUtils.isEmpty(bigger) || StringUtils.isEmpty(included)) {
             return false;
         }
-        String[] biggerSegments = bigger.split("\\.");
-        String[] includedSetments = included.split("\\.");
+        return (bigger.equals(included)) || validateStartsWith(bigger, included);
+    }
 
-        String[] biggerSubset = Arrays.copyOfRange(biggerSegments, 0, includedSetments.length);
-
-        return Arrays.equals(biggerSubset, includedSetments);
+    private static boolean validateStartsWith(String value, String prefix) {
+        boolean isIncluded = value.startsWith(prefix);
+        // We check against a false positive where it mismatches sku.date into sku.dateExtra
+        if (isIncluded && !prefix.endsWith(".")) {
+            isIncluded = value.startsWith(prefix + ".");
+        }
+        return isIncluded;
     }
 
     public static double determineSimilarity(String test1, String test2) {

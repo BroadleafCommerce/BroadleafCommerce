@@ -535,6 +535,7 @@ var BLCAdmin = (function($) {
 
                 // create the datetimepicker with the desired display format
                 $self.datetimepicker({
+                    formatTime: "g:ia",
                     format: "l, F d, Y \@ g:ia",
                     onClose: function(current_time, $input) {
                         if (current_time) {
@@ -898,7 +899,9 @@ var BLCAdmin = (function($) {
             if (value == null) {
                 $field.find('input[type="radio"]:checked').removeAttr('checked')
             } else {
-                $field.find('input[type="radio"][value="' + value + '"]').attr('checked', 'checked');
+                var $radio = $field.find('input[type="radio"][value="' + value + '"]');
+                $radio.attr('checked', 'checked');
+                $radio.next('label').click();
             }
 
             $field.find('select').val(value);
@@ -1370,6 +1373,12 @@ var getCurrentHashVal = function() {
 };
 
 $(document).ready(function() {
+
+    // primary entity buttons should be disabled until page is loaded
+    $(window).load(function () {
+        $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');
+    });
+
     $(window).resize(function() {
         $.doTimeout('resize', 150, function() {
             if (BLCAdmin.currentModal() != null) {

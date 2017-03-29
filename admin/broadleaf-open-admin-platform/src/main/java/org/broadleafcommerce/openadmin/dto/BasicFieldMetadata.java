@@ -91,6 +91,8 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected Boolean translatable;
     protected String defaultValue;
     protected Boolean isFilter;
+    protected Boolean canLinkToExternalEntity;
+    protected String associatedFieldName;
 
     //for MapFields
     protected String mapFieldValueClass;
@@ -557,6 +559,14 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.defaultValue = defaultValue;
     }
 
+    public String getAssociatedFieldName() {
+        return associatedFieldName;
+    }
+
+    public void setAssociatedFieldName(String associatedFieldName) {
+        this.associatedFieldName = associatedFieldName;
+    }
+
     public Boolean getIsFilter() {
         return isFilter;
     }
@@ -568,6 +578,14 @@ public class BasicFieldMetadata extends FieldMetadata {
     public Boolean getAllowNoValueEnumOption() {
         return StringUtils.isEmpty(getDefaultValue())
             || (!getRequired() && !(getRequiredOverride() != null && getRequiredOverride()));
+    }
+
+    public void setCanLinkToExternalEntity(Boolean canLinkToExternalEntity) {
+        this.canLinkToExternalEntity = canLinkToExternalEntity;
+    }
+
+    public Boolean getCanLinkToExternalEntity() {
+        return canLinkToExternalEntity;
     }
 
     @Override
@@ -653,6 +671,8 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.translatable = translatable;
         metadata.isDerived = isDerived;
         metadata.defaultValue = defaultValue;
+        metadata.associatedFieldName = associatedFieldName;
+        metadata.canLinkToExternalEntity = canLinkToExternalEntity;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 
@@ -828,6 +848,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (isDerived != null ? !isDerived.equals(metadata.isDerived) : metadata.isDerived != null) {
             return false;
         }
+        if (canLinkToExternalEntity != null ? !canLinkToExternalEntity.equals(metadata.canLinkToExternalEntity) : metadata.canLinkToExternalEntity != null) {
+            return false;
+        }
 
         return true;
     }
@@ -884,6 +907,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (mapKeyValueProperty != null ? mapKeyValueProperty.hashCode() : 0);
         result = 31 * result + (lookupType != null ? lookupType.hashCode() : 0);
         result = 31 * result + (isDerived != null ? isDerived.hashCode() : 0);
+        result = 31 * result + (canLinkToExternalEntity != null ? canLinkToExternalEntity.hashCode() : 0);
         return result;
     }
 
