@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.order.strategy;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -35,7 +34,6 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -233,6 +231,12 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                 }
             } else {
                 fgisToDelete.addAll(updateItemQuantity(order, orderItem, orderItemQuantityDelta));
+
+                List<OrderItem> itemsToUpdate = new ArrayList<>(orderItem.getChildOrderItems());
+                for (OrderItem oi : itemsToUpdate) {
+                    int quantityPer = oi.getQuantity() / orderItem.getQuantity();
+                    fgisToDelete.addAll(updateItemQuantity(order, oi, (quantityPer * orderItemQuantityDelta)));
+                }
             }
             request.setFgisToDelete(fgisToDelete);
         }

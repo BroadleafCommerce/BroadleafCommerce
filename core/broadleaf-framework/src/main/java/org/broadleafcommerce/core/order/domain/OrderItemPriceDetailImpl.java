@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -42,10 +41,21 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 
 @Entity
@@ -159,30 +169,8 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
 
     @Override
     public Money getTotalAdjustedPrice() {
-        Money basePrice = orderItem.getPriceBeforeAdjustments(getUseSalePrice(), false);
-        basePrice = basePrice.add(getChildOrderItemsTotalAdjustedPrice());
+        Money basePrice = orderItem.getPriceBeforeAdjustments(getUseSalePrice());
         return basePrice.multiply(quantity).subtract(getTotalAdjustmentValue());
-    }
-
-    protected Money getChildOrderItemsTotalAdjustedPrice() {
-        Money returnPrice = Money.ZERO;
-        for (OrderItem child : orderItem.getChildOrderItems()) {
-            if (CollectionUtils.isNotEmpty(child.getOrderItemPriceDetails())) {
-                for (OrderItemPriceDetail oipd : child.getOrderItemPriceDetails()) {
-                    Money childBase = child.getPriceBeforeAdjustments(oipd.getUseSalePrice(), true);
-                    childBase = childBase
-                            .multiply(oipd.getQuantity())
-                            .subtract(oipd.getTotalAdjustmentValue());
-
-                    returnPrice = returnPrice.add(childBase);
-                }
-            } else {
-                Money childBase = child.getPriceBeforeAdjustments(true, true);
-                childBase = childBase.multiply(child.getQuantity());
-                returnPrice = returnPrice.add(childBase);
-            }
-        }
-        return returnPrice;
     }
 
     @Override
