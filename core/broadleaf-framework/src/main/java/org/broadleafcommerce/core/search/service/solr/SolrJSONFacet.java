@@ -85,13 +85,13 @@ public class SolrJSONFacet {
         if (List.class.isAssignableFrom(object.getClass())) {
             sb.append(StringUtils.repeat(" ", tabs * 2)).append(key).append(" : ").append("[\n");
             for (SolrJSONFacet subFacet : (List<SolrJSONFacet>) object) {
-                sb.append(StringUtils.repeat(" ", (tabs+1) * 2)).append(subFacet.toString(tabs + 2)).append(",\n");;
+                sb.append(StringUtils.repeat(" ", (tabs+1) * 2)).append(subFacet.toString(tabs + 2)).append(",\n");
             }
-            sb.append(StringUtils.repeat(" ", tabs * 2)).append("]").append(",\n");;
+            sb.append(StringUtils.repeat(" ", tabs * 2)).append("]").append(",\n");
         } else if (SolrJSONFacet.class.isAssignableFrom(object.getClass())) {
-            sb.append(StringUtils.repeat(" ", tabs * 2)).append(key).append(" : ").append(((SolrJSONFacet) object).toString(tabs + 1)).append(",\n");;
+            sb.append(StringUtils.repeat(" ", tabs * 2)).append(key).append(" : ").append(((SolrJSONFacet) object).toString(tabs + 1)).append(",\n");
         } else {
-            sb.append(StringUtils.repeat(" ", tabs * 2)).append(key).append(" : ").append(object.toString()).append(",\n");;
+            sb.append(StringUtils.repeat(" ", tabs * 2)).append(key).append(" : ").append(object.toString()).append(",\n");
         }
 
         return sb.toString();
