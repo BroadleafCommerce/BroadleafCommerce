@@ -626,14 +626,15 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
             if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
                 // Clone the list - we don't want to remove these facets from the DB
-                List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
+                List<SearchFacetRange> facetRanges = searchFacetDao.readSearchFacetRangesForSearchFacet(dto.getFacet());
+                List<SearchFacetRange> cloneFacetRanges = new ArrayList<>(facetRanges);
 
                 if (searchExtensionManager != null) {
-                    searchExtensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
+                    searchExtensionManager.getProxy().filterSearchFacetRanges(dto, cloneFacetRanges);
                 }
 
-                if (CollectionUtils.isNotEmpty(facetRanges)) {
-                    for (SearchFacetRange range : facetRanges) {
+                if (CollectionUtils.isNotEmpty(cloneFacetRanges)) {
+                    for (SearchFacetRange range : cloneFacetRanges) {
                         query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
                     }
                 } else {
