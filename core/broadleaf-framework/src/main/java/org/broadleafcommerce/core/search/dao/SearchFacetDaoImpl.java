@@ -144,7 +144,11 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         Root<SearchFacetRangeImpl> ranges = criteria.from(SearchFacetRangeImpl.class);
         criteria.select(ranges);
         criteria.where(
-                builder.equal(ranges.get("searchFacet"), searchFacet)
+                builder.and(
+                    builder.equal(ranges.get("searchFacet"), searchFacet),
+                    builder.or(builder.isNull(ranges.get("archiveStatus").get("archived").as(String.class)),
+                            builder.notEqual(ranges.get("archiveStatus").get("archived").as(Character.class), 'Y'))
+                )
         );
 
         TypedQuery<SearchFacetRange> query = em.createQuery(criteria);
