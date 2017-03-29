@@ -71,20 +71,6 @@
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
             </plugin>
-            <!-- Include Spock specifications, exclude the browser tests 
-                by default -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/*Spec*</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/browsertest/**</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
         </plugins>
         <resources>
             <resource>

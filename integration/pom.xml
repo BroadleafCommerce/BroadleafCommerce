@@ -86,10 +86,6 @@
                 </configuration>
                 <version>2.4.1</version>
             </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -196,8 +192,18 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <type>jar</type>
+            <!-- ABANDON ALL HOPE, YE WHO ENTER HERE -->
+            <!-- DO NOT COPY THIS DEPENDENCY SOMEWHERE ELSE -->
+            
+            <!-- A large amount of test failures occur within the integration project
+                 if you change the version to anything but exactly this. Proceed with 
+                 caution as tests will likely fail with deadlocks, etc -->
+            <!-- If you want to use TestNG elsewhere, you should be using the latest version
+                and not use this version -->
+            <version>5.9</version>
             <classifier>jdk15</classifier>
+            <type>jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
