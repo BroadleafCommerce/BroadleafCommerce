@@ -53,8 +53,15 @@ public class UpdateOrderItemActivity extends BaseActivity<ProcessContext<CartOpe
         
         OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(orderItem));
         if (orderItemRequestDTO.getQuantity() >= 0) {
+            int previousQty = itemFromOrder.getQuantity();
             request.setOrderItemQuantityDelta(orderItemRequestDTO.getQuantity() - itemFromOrder.getQuantity());
             itemFromOrder.setQuantity(orderItemRequestDTO.getQuantity());
+
+            for (OrderItem child : itemFromOrder.getChildOrderItems()) {
+                int childQuantity = child.getQuantity();
+                childQuantity = childQuantity / previousQty;
+                child.setQuantity(childQuantity * orderItemRequestDTO.getQuantity());
+            }
 
             // Update any additional attributes of the passed in request
             if (itemFromOrder instanceof DiscreteOrderItem) {

@@ -316,9 +316,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public Money calculateSubTotal() {
         Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(getCurrency());
         for (OrderItem orderItem : orderItems) {
-            if (orderItem.getParentOrderItem() == null) {
-                calculatedSubTotal = calculatedSubTotal.add(orderItem.getTotalPrice());
-            }
+            calculatedSubTotal = calculatedSubTotal.add(orderItem.getTotalPrice());
         }
         return calculatedSubTotal;
     }

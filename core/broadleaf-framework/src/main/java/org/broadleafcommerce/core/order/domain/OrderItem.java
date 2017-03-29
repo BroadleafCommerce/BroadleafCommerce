@@ -445,6 +445,13 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
     Money getTotalAdjustmentValue();
 
     /**
+     * Returns the total for all item level adjustments.
+     * @param includeChildren
+     * @return
+     */
+    Money getTotalAdjustmentValue(boolean includeChildren);
+
+    /**
      * Returns the total price to be paid for this order item including item-level adjustments.
      * 
      * It does not include the effect of order level adjustments.   Calculated by looping through
@@ -453,7 +460,14 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      * @return
      */
     Money getTotalPrice();
-    
+
+    /**
+     * Returns the total price to be paid for this order item including item-level adjustments.
+     * @param includeChildren
+     * @return
+     */
+    Money getTotalPrice(boolean includeChildren);
+
     /**
      * Returns whether or not this item is taxable. If this flag is not set, it returns true by default
      * 
