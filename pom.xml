@@ -54,7 +54,7 @@
         <spock.core.version>1.1-groovy-2.4-rc-3</spock.core.version>
         <spock.spring.version>1.1-groovy-2.4-rc-3</spock.spring.version>
         <selenium.version>2.43.1</selenium.version>
-        <groovy.version>2.4.8</groovy.version>
+        <groovy.version>2.4.10</groovy.version>
         <project.uri>${project.baseUri}</project.uri>
         <broadleaf-presentation.version>1.0.2-GA</broadleaf-presentation.version>
     </properties>
