@@ -31,7 +31,7 @@ public class AbstractRuleBuilderFieldServiceExtensionHandler extends AbstractExt
         implements RuleBuilderFieldServiceExtensionHandler {
 
     @Override
-    public ExtensionResultStatusType addFields(List<FieldData> fields, String name) {
+    public ExtensionResultStatusType addFields(List<FieldData> fields, String name, String dtoClassName) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 }

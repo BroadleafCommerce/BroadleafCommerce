@@ -245,7 +245,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
                 init();
                 // Initialize additional static fields method for the component.
                 if (extensionManager != null) {
-                    extensionManager.getProxy().addFields(fields, getName());
+                    extensionManager.getProxy().addFields(fields, getName(), getDtoClassName());
                 }
                 validateRuleBuilderState(this);
             } finally {
