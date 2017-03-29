@@ -344,7 +344,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         if (deproxiedCategory == null) {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
 
-            if (category != null && postLoaderDao != null) {
+            if (category != null && postLoaderDao != null && category.getId() != null) {
                 Long id = category.getId();
                 deproxiedCategory = postLoaderDao.find(CategoryImpl.class, id);
             } else if (category != null && category instanceof HibernateProxy) {

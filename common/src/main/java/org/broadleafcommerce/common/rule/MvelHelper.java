@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.rule;
 
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -31,14 +30,12 @@ import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -56,7 +53,6 @@ import javax.servlet.http.HttpServletRequest;
 public class MvelHelper {
 
     private static final Map<String, Serializable> DEFAULT_EXPRESSION_CACHE = new EfficientLRUMap<String, Serializable>(5000);
-
     private static final Log LOG = LogFactory.getLog(MvelHelper.class);
 
     private static boolean TEST_MODE = false;
@@ -64,8 +60,12 @@ public class MvelHelper {
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
     // The following attribute is set in BroadleafProcessURLFilter
-    public static final String REQUEST_DTO = "blRequestDTO";    
-    
+    public static final String REQUEST_DTO = "blRequestDTO";
+
+    static {
+        System.setProperty("mvel2.disable.jit", "true");
+    }
+
     /**
      * Converts a field to the specified type.    Useful when 
      * @param type
@@ -118,7 +118,7 @@ public class MvelHelper {
 
     /**
      * Evaluates the passed in rule given the passed in parameters.   
-     *
+     * 
      * @param rule
      * @param ruleParameters
      * @return
@@ -127,7 +127,7 @@ public class MvelHelper {
             Map<String, Serializable> expressionCache) {
         return evaluateRule(rule, ruleParameters, expressionCache, null);
     }
-
+    
     /**
      * @param rule
      * @param ruleParameters
@@ -144,7 +144,10 @@ public class MvelHelper {
             return true;
         } else {
             // MVEL expression compiling can be expensive so let's cache the expression
-            Serializable exp = expressionCache.get(rule);
+            Serializable exp = null;
+            if (expressionCache != null) {
+                exp = expressionCache.get(rule);
+            }
             if (exp == null) {
                 ParserContext context = new ParserContext();
                 context.addImport("MVEL", MVEL.class);
@@ -156,14 +159,12 @@ public class MvelHelper {
                     }
                 }
                 
-                rule = modifyExpression(rule, ruleParameters, context);
+                String modifiedRule = modifyExpression(rule, ruleParameters, context);
 
                 synchronized (expressionCache) {
-                    exp = MVEL.compileExpression(rule, context);
+                    exp = MVEL.compileExpression(modifiedRule, context);
                     expressionCache.put(rule, exp);
                 }
-
-
             }
 
             Map<String, Object> mvelParameters = new HashMap<String, Object>();
@@ -184,8 +185,8 @@ public class MvelHelper {
             } catch (Exception e) {
                 //Unable to execute the MVEL expression for some reason
                 //Return false, but notify about the bad expression through logs
-                if (!TEST_MODE) {
-                    LOG.info("Unable to parse and/or execute the mvel expression (" + StringUtil.sanitize(rule) 
+                if (!TEST_MODE && LOG.isInfoEnabled()) {
+                    LOG.info("Unable to parse and/or execute the mvel expression (" + StringUtil.sanitize(rule)
                             + "). Reporting to the logs and returning false for the match expression", e);
                 }
                 return false;

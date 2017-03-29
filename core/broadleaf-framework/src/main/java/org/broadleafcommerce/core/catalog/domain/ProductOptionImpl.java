@@ -88,7 +88,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
         group = GroupName.General, order = FieldOrder.name,
         prominent = true, gridOrder = 1000)
     protected String name;
-    
+
     @Column(name = "OPTION_TYPE")
     @AdminPresentation(friendlyName = "productOption_Type",
         group = GroupName.General, order = FieldOrder.type,
@@ -121,9 +121,9 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     @AdminPresentation(friendlyName = "productOption_UseInSKUGeneration",
         group = GroupName.Details, order = FieldOrder.useInSkuGeneration,
         tooltip = "productOption_useInSkuGenerationTip",
-        defaultValue = "true",
+        defaultValue = "false",
         validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUseInSkuGenerationValidator") })
-    private Boolean useInSkuGeneration = Boolean.TRUE;
+    private Boolean useInSkuGeneration = Boolean.FALSE;
 
     @Column(name = "DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "productOption_displayOrder",
