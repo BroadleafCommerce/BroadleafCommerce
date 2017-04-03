@@ -36,10 +36,10 @@ import javax.servlet.http.HttpServletRequest;
 @Component("blEstablishSessionFilter")
 @ConditionalOnNotAdmin
 @ConditionalOnProperty(value = "use.stateless.request", matchIfMissing = true, havingValue = "false")
-public class EstablishSessionFilter extends GenericFilterBean implements Ordered {
+public class EstablishSessionFilter extends AbstractIgnorableFilter {
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterUnlessIgnored(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         if (HttpServletRequest.class.isAssignableFrom(request.getClass())) {
             ((HttpServletRequest) request).getSession();
         }

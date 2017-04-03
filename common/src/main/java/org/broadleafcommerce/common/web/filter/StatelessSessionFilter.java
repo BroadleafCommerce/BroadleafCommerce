@@ -42,10 +42,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component("blStatelessSessionFilter")
 @ConditionalOnProperty(value = "use.stateless.request", matchIfMissing = true)
-public class StatelessSessionFilter extends GenericFilterBean implements Ordered {
+public class StatelessSessionFilter extends AbstractIgnorableFilter {
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterUnlessIgnored(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         BLCRequestUtils.setOKtoUseSession(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response), Boolean.FALSE);
         SessionlessHttpServletRequestWrapper wrapper = new SessionlessHttpServletRequestWrapper((HttpServletRequest) request);
         filterChain.doFilter(wrapper, response);

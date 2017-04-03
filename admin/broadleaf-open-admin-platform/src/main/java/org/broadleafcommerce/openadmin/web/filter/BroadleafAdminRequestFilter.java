@@ -55,7 +55,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blAdminRequestFilter")
-public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFilter implements Ordered {
+public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFilter {
 
     private final Log LOG = LogFactory.getLog(BroadleafAdminRequestFilter.class);
 
@@ -69,7 +69,7 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
     protected ClassNameRequestParamValidationService validationService;
 
     @Override
-    public void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterInternalUnlessIgnored(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
 
         if (!validateClassNameParams(request)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

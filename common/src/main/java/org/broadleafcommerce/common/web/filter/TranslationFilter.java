@@ -40,13 +40,13 @@ import java.io.IOException;
  */
 @Component("blTranslationFilter")
 @ConditionalOnNotAdmin
-public class TranslationFilter extends GenericFilterBean implements Ordered {
+public class TranslationFilter extends AbstractIgnorableFilter {
     
     @Resource(name = "blTranslationRequestProcessor")
     protected TranslationRequestProcessor translationRequestProcessor;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterUnlessIgnored(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
             translationRequestProcessor.process(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
             filterChain.doFilter(request, response);

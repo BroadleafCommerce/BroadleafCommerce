@@ -26,6 +26,7 @@ import org.broadleafcommerce.cms.url.type.URLRedirectType;
 import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
@@ -53,7 +54,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component("blURLHandlerFilter")
 @ConditionalOnNotAdmin
-public class URLHandlerFilter extends OncePerRequestFilter implements Ordered {
+public class URLHandlerFilter extends AbstractIgnorableOncePerRequestFilter {
 
     private static final Log LOG = LogFactory.getLog(URLHandlerFilter.class);
 
@@ -67,7 +68,7 @@ public class URLHandlerFilter extends OncePerRequestFilter implements Ordered {
     public String charEncoding;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
+    protected void doFilterInternalUnlessIgnored(HttpServletRequest request,
             HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         

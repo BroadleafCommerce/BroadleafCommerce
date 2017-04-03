@@ -57,7 +57,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jon Fleschler (jfleschler)
  */
 @Component("blAdminTypedEntityRequestFilter")
-public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdminRequestFilter implements Ordered {
+public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdminRequestFilter {
 
     private final Log LOG = LogFactory.getLog(BroadleafAdminTypedEntityRequestFilter.class);
 
@@ -74,7 +74,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
     GenericEntityService genericEntityService;
 
     @Override
-    public void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterInternalUnlessIgnored(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
         if (isRequestForTypedEntity(request, response)) {
             return;
         }

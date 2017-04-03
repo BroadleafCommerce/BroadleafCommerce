@@ -19,6 +19,7 @@ package org.broadleafcommerce.profile.web.core.security;
 
 import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
+import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.Ordered;
@@ -48,13 +49,13 @@ import javax.servlet.http.HttpServletResponse;
 @Component("blCustomerStateFilter")
 @ConditionalOnNotAdmin
 @ConditionalOnProperty(value = "use.customer.state.filter", matchIfMissing = true)
-public class CustomerStateFilter extends OncePerRequestFilter implements Ordered {
+public class CustomerStateFilter extends AbstractIgnorableOncePerRequestFilter {
     
     @Resource(name="blCustomerStateRequestProcessor")
     protected CustomerStateRequestProcessor customerStateProcessor;
 
     @Override
-    public void doFilterInternal(HttpServletRequest baseRequest, HttpServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
+    public void doFilterInternalUnlessIgnored(HttpServletRequest baseRequest, HttpServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
         ServletWebRequest request = new ServletWebRequest(baseRequest, baseResponse);
         try {
             customerStateProcessor.process(request);

@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
+import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.Ordered;
@@ -47,7 +48,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component("blRequestFilter")
 @ConditionalOnProperty(value = "use.basic.request", matchIfMissing = true)
-public class BroadleafRequestFilter extends OncePerRequestFilter implements Ordered {
+public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilter {
 
     private final Log LOG = LogFactory.getLog(getClass());
 
@@ -69,7 +70,7 @@ public class BroadleafRequestFilter extends OncePerRequestFilter implements Orde
     protected BroadleafRequestProcessor requestProcessor;
 
     @Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternalUnlessIgnored(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         if (!shouldProcessURL(request, request.getRequestURI())) {
             if (LOG.isTraceEnabled()) {

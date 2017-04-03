@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 public class BLCRequestUtils {
     
     private static String OK_TO_USE_SESSION = "blOkToUseSession";
+    private static String URI_IS_FILTER_IGNORED = "blUriIsFilterIgnored";
     
     /**
      * Broadleaf "Resolver" and "Filter" classes may need to know if they are allowed to utilize the session.
@@ -46,6 +47,16 @@ public class BLCRequestUtils {
             return true;
         } else {
             return useSessionForRequestProcessing.booleanValue();
+        }
+    }
+
+    public static boolean isFilteringIgnoredForUri(WebRequest request) {
+        Boolean ignoreUri = (Boolean) request.getAttribute(URI_IS_FILTER_IGNORED, WebRequest.SCOPE_REQUEST);
+        if (ignoreUri == null) {
+            // by default we will use the session
+            return false;
+        } else {
+            return ignoreUri.booleanValue();
         }
     }
     
@@ -80,6 +91,10 @@ public class BLCRequestUtils {
      */
     public static void setOKtoUseSession(WebRequest request, Boolean value) {
         request.setAttribute(OK_TO_USE_SESSION, value, WebRequest.SCOPE_REQUEST);
+    }
+
+    public static void setIsFilteringIgnoredForUri(WebRequest request, Boolean value) {
+        request.setAttribute(URI_IS_FILTER_IGNORED, value, WebRequest.SCOPE_REQUEST);
     }
 
     /**

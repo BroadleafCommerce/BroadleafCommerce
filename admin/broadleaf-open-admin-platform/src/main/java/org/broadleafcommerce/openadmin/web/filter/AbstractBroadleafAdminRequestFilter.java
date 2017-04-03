@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.web.filter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,7 +31,7 @@ import java.util.Set;
 /**
  * @author Jeff Fischer
  */
-public abstract class AbstractBroadleafAdminRequestFilter extends OncePerRequestFilter {
+public abstract class AbstractBroadleafAdminRequestFilter extends AbstractIgnorableOncePerRequestFilter {
 
     private final Log LOG = LogFactory.getLog(AbstractBroadleafAdminRequestFilter.class);
 

@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderLockManager;
@@ -62,7 +63,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component("blCartStateFilter")
 @ConditionalOnNotAdmin
-public class CartStateFilter extends OncePerRequestFilter implements Ordered {
+public class CartStateFilter extends AbstractIgnorableOncePerRequestFilter {
 
     protected static final Log LOG = LogFactory.getLog(CartStateFilter.class);
 
@@ -78,7 +79,7 @@ public class CartStateFilter extends OncePerRequestFilter implements Ordered {
     protected List<String> excludedOrderLockRequestPatterns;
 
     @Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    public void doFilterInternalUnlessIgnored(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {        
         cartStateProcessor.process(new ServletWebRequest(request, response));
         
