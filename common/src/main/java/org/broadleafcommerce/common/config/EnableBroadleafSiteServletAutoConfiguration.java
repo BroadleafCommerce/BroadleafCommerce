@@ -42,7 +42,27 @@ import javax.servlet.ServletContainerInitializer;
  * is sufficient.If you have a customized {@link ServletContainerInitializer}
  * with a servlet-specific {@link ApplicationContext}, this annotation should only be placed on an {@literal @}Configuration class within
  * <b>that</b> servlet-specific {@lnk ApplicationContext}. If this is not the case and no servlet-specific {@link ApplicationContext} exists in your
- * project and you are using Spring Boot, this can be placed on the {@literal @}SpringBootApplication class.
+ * project and you are using Spring Boot, this <b>must</b> be placed on an <b>inner static class</b> within the {@literal @}SpringBootApplication class. Example:
+ * 
+ * <pre>
+ * {@literal @}SpringBootApplication
+ * public class MyApplication extends SpringBootServletInitializer {
+ * 
+ *     {@literal @}Configuration
+ *     {@literal @}EnableBroadleafSiteServletAutoConfiguration
+ *     public static class BroadleafConfiguration { }
+ *     
+ *     public static void main(String[] args) {
+ *         SpringApplication.run(ApiApplication.class, args);
+ *     }
+ *  
+ *     {@literal @}Override
+ *     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+ *         return application.sources(ApiApplication.class);
+ *     }
+ * }
+ *
+ * </pre>
  * 
  * <p>
  * Since this annotation is a meta-annotation for {@literal @}Import, this <b>can</b> be placed on a {@literal @}Configuration class

@@ -20,7 +20,6 @@ package org.broadleafcommerce.common.config;
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -34,8 +33,28 @@ import javax.servlet.ServletContainerInitializer;
  * <p>
  * Bootstraps Broadleaf admin configuration XML for both servlet and non-servlet. As a result, this annotation should only be placed
  * on an {@literal @}Configuration class within a servlet. If there are no custom {@link ServletContainerInitializer}s with
- * a servlet-specific {@link ApplicationContext} (like in a non-servlet spring boot application) then this can be placed on the main
- * {@literal @}SpringBootApplication class
+ * a servlet-specific {@link ApplicationContext} (like in a non-servlet spring boot application) then this <b>must</b>
+ * be placed on an <b>inner static class</b> within the {@literal @}SpringBootApplication class. Example:
+ * 
+ * <pre>
+ * {@literal @}SpringBootApplication
+ * public class MyApplication extends SpringBootServletInitializer {
+ * 
+ *     {@literal @}Configuration
+ *     {@literal @}EnableBroadleafAdminAutoConfiguration
+ *     public static class BroadleafConfiguration { }
+ *     
+ *     public static void main(String[] args) {
+ *         SpringApplication.run(ApiApplication.class, args);
+ *     }
+ *  
+ *     {@literal @}Override
+ *     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+ *         return application.sources(ApiApplication.class);
+ *     }
+ * }
+ *
+ * </pre>
  * 
  * <p>
  * Since this annotation is a meta-annotation for {@literal @}Import, this <b>can</b> be placed on a {@literal @}Configuration class

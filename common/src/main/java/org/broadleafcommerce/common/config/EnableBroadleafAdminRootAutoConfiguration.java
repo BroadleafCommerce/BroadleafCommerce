@@ -31,7 +31,28 @@ import java.lang.annotation.Target;
 /**
  * <p>
  * Bootstraps the Broadleaf <b>root</b> admin configuration XML for only non-servlet beans. This can be placed on any {@literal @}Configuration
- * class (except ones with additional {@literal @}ImportResource) to make the root Broadleaf beans apart of the {@link ApplicationContext}
+ * class (except ones with additional {@literal @}ImportResource) to make the root Broadleaf beans apart of the {@link ApplicationContext}.
+ * If you are using Spring boot, this <b>must</b> be placed on an <b>inner static class</b> within the {@literal @}SpringBootApplication class. Example:
+ * 
+ * <pre>
+ * {@literal @}SpringBootApplication
+ * public class MyApplication extends SpringBootServletInitializer {
+ * 
+ *     {@literal @}Configuration
+ *     {@literal @}EnableBroadleafAdminRootAutoConfiguration
+ *     public static class BroadleafConfiguration { }
+ *     
+ *     public static void main(String[] args) {
+ *         SpringApplication.run(ApiApplication.class, args);
+ *     }
+ *  
+ *     {@literal @}Override
+ *     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+ *         return application.sources(ApiApplication.class);
+ *     }
+ * }
+ *
+ * </pre>
  * 
  * <p>
  * Since this annotation is a meta-annotation for {@literal @}Import, this <b>can</b> be placed on a {@literal @}Configuration class
