@@ -28,6 +28,7 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <import resource="bl-common-applicationContext-persistence.xml"/>
+    <import resource="bl-common-applicationContext-wrapper.xml"/>
     <context:component-scan base-package="org.broadleafcommerce.common">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.common.web.controller.*"/>
     </context:component-scan>

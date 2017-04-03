@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.profile.core.domain.AdditionalFields;
+import org.broadleafcommerce.common.domain.AdditionalFields;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 /**

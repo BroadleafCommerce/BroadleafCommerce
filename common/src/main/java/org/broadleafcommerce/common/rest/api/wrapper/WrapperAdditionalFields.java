@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Profile
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -16,20 +16,20 @@
  * #L%
  */
 
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.common.rest.api.wrapper;
 
-import java.util.Map;
+import java.util.List;
 
 /**
- * this interface indicates if the domain objects use additional fields
- * It is not mandatory,  but it is useful in order to process those fields in a generic way when generating JAXB Wrappers
+ * Wrapper classes implementing this interface expose their additionalFields, and they can
+ * make use of the utility methods in BaseWrapper to transfer said fields between the wrapper and 
+ * the corresponding domain object
  * @author gdiaz
  *
  */
-public interface AdditionalFields {
+public interface WrapperAdditionalFields {
 
-    public Map<String, String> getAdditionalFields();
+    List<MapElementWrapper> getAdditionalFields();
 
-    public void setAdditionalFields(Map<String, String> additionalFields);
-
+    void setAdditionalFields(List<MapElementWrapper> afs);
 }
