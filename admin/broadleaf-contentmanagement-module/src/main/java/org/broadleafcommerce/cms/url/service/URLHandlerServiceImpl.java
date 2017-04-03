@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.cms.url.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.url.dao.URLHandlerDao;
@@ -24,7 +25,6 @@ import org.broadleafcommerce.cms.url.domain.NullURLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandlerDTO;
 import org.broadleafcommerce.common.cache.StatisticsService;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -80,17 +80,17 @@ public class URLHandlerServiceImpl implements URLHandlerService {
 
         URLHandler handler = null;
 
-        SandBox sandbox = null;
         Site site = null;
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
-            sandbox = BroadleafRequestContext.getBroadleafRequestContext().getSandBox();
             site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
         }
 
-        String key = buildKey(site, sandbox, uri);
+        String key = buildURLHandlerCacheKey(site, uri);
 
-        //See if this is in cache first...
-        handler = getUrlHandlerFromCache(key);
+        //See if this is in cache first, but only if we are in production
+        if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
+            handler = getUrlHandlerFromCache(key);
+        }
 
         if (handler == null) {
             //Check for an exact match in the DB...
@@ -110,7 +110,9 @@ public class URLHandlerServiceImpl implements URLHandlerService {
                 handler = new URLHandlerDTO(handler.getNewURL(), handler.getUrlRedirectType());
             }
 
-            getUrlHandlerCache().put(new Element(key, handler));
+            if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
+                getUrlHandlerCache().put(new Element(key, handler));
+            }
         }
 
         if (handler instanceof NullURLHandler) {
@@ -178,6 +180,20 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         return null;
     }
 
+    @Override
+    public Boolean removeURLHandlerFromCache(String mapKey) {
+        Boolean success = Boolean.FALSE;
+        if (mapKey != null) {
+            Element e = getUrlHandlerCache().get(mapKey);
+
+            if (e != null && e.getObjectValue() != null) {
+                success = Boolean.valueOf(getUrlHandlerCache().remove(mapKey));
+            }
+        }
+
+        return success;
+    }
+
     /*
      * Some clients may wish, for example, to convert the URI into all lower case, or to manipulate it in some way.  This 
      * is just a convenience method to allow the manipulation of the URI coming in that we are trying to 
@@ -203,17 +219,15 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         return urlHandlerCache;
     }
 
-    protected String buildKey(Site site, SandBox sandBox, String requestUri) {
+    @Override
+    public String buildURLHandlerCacheKey(Site site, String requestUri) {
         StringBuilder key = new StringBuilder();
         if (site != null) {
             key.append("site:").append(site.getId()).append('_');
         }
 
-        if (sandBox != null) {
-            key.append("sbx:").append(sandBox.getId()).append('_');
-        }
-
-        key.append(requestUri);
+        //make sure the uri part of the key is always lower case for consistency when dealing with the cache
+        key.append(StringUtils.lowerCase(requestUri));
 
         return key.toString();
     }

@@ -18,6 +18,7 @@
 package org.broadleafcommerce.cms.url.service;
 
 import org.broadleafcommerce.cms.url.domain.URLHandler;
+import org.broadleafcommerce.common.site.domain.Site;
 
 import java.util.List;
 
@@ -67,5 +68,9 @@ public interface URLHandlerService {
      * @return
      */
     public List<URLHandler> findAllRegexURLHandlers();
+
+    public String buildURLHandlerCacheKey(Site site, String requestUri);
+
+    public Boolean removeURLHandlerFromCache(String mapKey);
 
 }
