@@ -17,16 +17,16 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
-import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
 import org.hibernate.Criteria;
@@ -37,11 +37,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.ejb.QueryHints;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -145,14 +142,6 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // restrict archived values
-        predicates.add(cb.or(
-                cb.isNull(root.get("archiveStatus").get("archived")),
-                cb.equal(root.get("archiveStatus").get("archived"), 'N')));
-
-        predicates.add(cb.or(cb.notEqual(root.get("sku").get("archiveStatus").get("archived"), 'Y'), 
-                             cb.isNull(root.get("sku").get("archiveStatus").get("archived"))));
-
         // restrict to skus that match the product
         predicates.add(root.get("sku").get("product").get("id").in(sandBoxHelper.mergeCloneIds(ProductImpl.class, productId)));
 
@@ -168,12 +157,27 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
             predicates.add(skuDomainPredicate);
         }
 
+        // restrict archived values
+        attachArchivalConditionIfPossible(SkuProductOptionValueXrefImpl.class, root, cb, predicates);
+        attachArchivalConditionIfPossible(SkuImpl.class, root.get("sku"), cb, predicates);
+
         criteria.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 
         TypedQuery<Long> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         return query.getResultList();
+    }
+
+    protected void attachArchivalConditionIfPossible(Class<?> clazz, Path<?> path, CriteriaBuilder cb, List<Predicate> predicates) {
+        if (Status.class.isAssignableFrom(clazz)) {
+            predicates.add(
+                cb.or(
+                    cb.isNull(path.get("archiveStatus").get("archived")),
+                    cb.equal(path.get("archiveStatus").get("archived"), 'N')
+                )
+            );
+        }
     }
 
     @SuppressWarnings("unchecked")
