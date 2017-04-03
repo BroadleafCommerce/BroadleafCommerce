@@ -236,9 +236,8 @@ public class PageServiceImpl implements PageService {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         Site site = context.getNonPersistentSite();
         Long siteId = (site != null) ? site.getId() : null;
-        Long sandBoxId = context.getSandBoxId();
 
-        String mapKey = getPageMapCacheKey(identifier, sandBoxId, siteId);
+        String mapKey = getPageMapCacheKey(identifier, siteId);
 
         if (mapKey != null) {
             Element e = getPageMapCache().get(mapKey);
@@ -254,14 +253,13 @@ public class PageServiceImpl implements PageService {
     }
 
     @Override
-    public String getPageMapCacheKey(String uri, Long sandBoxId, Long site) {
+    public String getPageMapCacheKey(String uri, Long site) {
         String siteString = (site == null) ? "ALL" : String.valueOf(site);
-        return uri + "-" + sandBoxId + "-" + siteString;
+        return uri + "-" + siteString;
     }
 
     protected String buildKey(String identifier, Locale locale, Boolean secure) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        Long sandBoxId = context.getSandBoxId();
         Site site = context.getNonPersistentSite();
         Long siteId = (site != null) ? site.getId() : null;
         locale = findLanguageOnlyLocale(locale);
@@ -272,9 +270,6 @@ public class PageServiceImpl implements PageService {
         }
         if (secure != null) {
             key.append("-").append(secure);
-        }
-        if (sandBoxId != null) {
-            key.append("-").append(sandBoxId);
         }
         if (siteId != null) {
             key.append("-").append(siteId);
@@ -376,22 +371,24 @@ public class PageServiceImpl implements PageService {
     @Override
     @SuppressWarnings("unchecked")
     public Boolean removePageFromCache(String mapKey) {
-        Boolean success = Boolean.FALSE;
+        Boolean success = null;
         if (mapKey != null) {
             Element e = getPageMapCache().get(mapKey);
 
             if (e != null && e.getObjectValue() != null) {
                 List<String> keys = (List<String>) e.getObjectValue();
+
                 for (String k : keys) {
-                    success = Boolean.valueOf(getPageCache().remove(k));
-                    if (success) {
-                        break;
+                    if (success == null) {
+                        success = Boolean.valueOf(getPageCache().remove(k));
+                    } else {
+                        success = success && Boolean.valueOf(getPageCache().remove(k));
                     }
                 }
             }
         }
 
-        return success;
+        return success == null ? Boolean.FALSE : success;
     }
 
 }
