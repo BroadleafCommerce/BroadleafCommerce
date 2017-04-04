@@ -185,8 +185,8 @@ $(document).ready(function() {
         var $this = $(this);
         var val = $this.val();
         
-        $clearFilterButton = $this.closest('.filter-fields').find('button.listgrid-clear-filter');
-        $filterButton = $this.closest('.filter-fields').find('button.listgrid-filter');
+        var $clearFilterButton = $this.closest('.filter-fields').find('button.listgrid-clear-filter');
+        var $filterButton = $this.closest('.filter-fields').find('button.listgrid-filter');
         if (val) {
             $filterButton.click();
             $clearFilterButton.removeAttr('disabled');
