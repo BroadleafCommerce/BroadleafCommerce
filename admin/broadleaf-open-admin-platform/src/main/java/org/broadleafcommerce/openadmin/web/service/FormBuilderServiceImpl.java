@@ -274,7 +274,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             AdminSection section = adminNavigationService.findAdminSectionByClassAndSectionId(fmd.getForeignKeyClass(), null);
             if (section != null) {
-                fieldDTO.setSelectizeSectionKey(section.getSectionKey());
+                String sectionKey = section.getUrl().substring(1);
+                fieldDTO.setSelectizeSectionKey(sectionKey);
             } else {
                 fieldDTO.setSelectizeSectionKey(fmd.getForeignKeyClass());
             }
