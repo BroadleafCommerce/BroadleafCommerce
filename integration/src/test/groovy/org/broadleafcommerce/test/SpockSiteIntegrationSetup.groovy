@@ -18,8 +18,9 @@
 package org.broadleafcommerce.test
 
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener
-import org.broadleafcommerce.common.config.EnableBroadleafAdminRootAutoConfiguration
+import org.broadleafcommerce.common.config.EnableBroadleafSiteRootAutoConfiguration
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportResource
 import org.springframework.test.annotation.Rollback
@@ -29,31 +30,35 @@ import org.springframework.test.context.web.WebAppConfiguration
 
 import spock.lang.Specification
 
+
 /**
- * Base Integration Test Setup groovy file for Admin based integration tests. This base class has all the
- * applicationContext's shared by Integration tests for Admin based testing. Extend from this class on a
+ * Base Integration Test Setup groovy file for Site based integration tests. This base class has all the
+ * applicationContext's shared by Integration tests for Site based testing. Extend from this class on a
  * per project basis with another setup file that contains only an @ContextHeirarchy(@ContextConfiguration)
- * that references this "adminContexts" ContextConfiguration and add only the contexts, in the locations
+ * that references this "siteContexts" ContextConfiguration and add only the contexts, in the locations
  * parameter, that you need to run your tests at that level. Then extend off of that setup file with your
  * actual integration tests. IntegrationSetup files should not have any code in their body's.
- *
+ * 
  * @author austinrooke
  *
  */
 @Rollback
-@ContextConfiguration(name = "adminRoot", initializers = BroadleafEnvironmentConfiguringApplicationListener)
+@ContextConfiguration(name="siteRoot", initializers = BroadleafEnvironmentConfiguringApplicationListener)
 @WebAppConfiguration
 @ActiveProfiles("mbeansdisabled")
-class AdminIntegrationSetup extends Specification {
-
+class SpockSiteIntegrationSetup extends Specification {
+    
     /**
      * This is a nested configuration class so that you can do a mix of both {@link @}Configuration classes
      * as well as XML configuration files at the same level of the 'siteRoot' {@link @}ContextConfiguration
      */
     @Configuration
-    @EnableBroadleafAdminRootAutoConfiguration
+    @EnableBroadleafSiteRootAutoConfiguration
     @ImportResource(value = [
+            "classpath:bl-applicationContext-test-security.xml",
             "classpath:bl-applicationContext-test.xml"
     ])
-    public static class ContextConfig {}
+    @ComponentScan(["org.broadleafcommerce.profile.web.controller", "org.broadleafcommerce.profile.web.core.service.login"])
+    static class ContextConfig {}
+    
 }
