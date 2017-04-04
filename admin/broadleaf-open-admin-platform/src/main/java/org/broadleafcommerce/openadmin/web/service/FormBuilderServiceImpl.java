@@ -1683,7 +1683,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             // We want our entity form to only render the maintained adorned target fields
             for (String targetFieldName : adornedMd.getMaintainedAdornedTargetFields()) {
                 Property p = collectionMetadata.getPMap().get(targetFieldName);
-                if (p.getMetadata() instanceof BasicFieldMetadata && BooleanUtils.isFalse(p.getMetadata().getExcluded())) {
+                if (p.getMetadata() instanceof BasicFieldMetadata && BooleanUtils.isNotTrue( p.getMetadata().getExcluded())) {
                     ((BasicFieldMetadata) p.getMetadata()).setVisibility(VisibilityEnum.VISIBLE_ALL);
                     entityFormProperties.add(p);
                 }
