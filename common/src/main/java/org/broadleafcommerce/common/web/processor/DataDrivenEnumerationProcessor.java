@@ -17,18 +17,19 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
-import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
 import org.broadleafcommerce.common.enumeration.service.DataDrivenEnumerationService;
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+import org.broadleafcommerce.common.web.expression.DataDrivenEnumVariableExpression;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import com.google.common.collect.ImmutableMap;
+
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -44,53 +45,33 @@ import javax.annotation.Resource;
  *          {@link DataDrivenEnumerationValue#getDisplay()}
  *
  * @author Phillip Verheyden (phillipuniverse)
+ * @deprecated use {@link DataDrivenEnumVariableExpression} instead
  */
-public class DataDrivenEnumerationProcessor extends AbstractModelVariableModifierProcessor {
+@Deprecated
+@Component("blDataDrivenEnumerationProcessor")
+@ConditionalOnTemplating
+public class DataDrivenEnumerationProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Resource(name = "blDataDrivenEnumerationService")
     protected DataDrivenEnumerationService enumService;
     
-    /**
-     * @param elementName
-     */
-    public DataDrivenEnumerationProcessor() {
-        super("enumeration");
-    }
-
+    @Resource
+    protected DataDrivenEnumVariableExpression ddeVariableExpression;
+    
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        String key = element.getAttributeValue("key");
-        if (StringUtils.isEmpty(key)) {
-            throw new IllegalArgumentException("No 'key' parameter was passed to find enumeration values");
-        }
-        
-        DataDrivenEnumeration ddEnum = enumService.findEnumByKey(key);
-        if (ddEnum == null) {
-            throw new IllegalArgumentException("Could not find a data driven enumeration keyed by " + key);
-        }
-        List<DataDrivenEnumerationValue> enumValues = new ArrayList<DataDrivenEnumerationValue>(ddEnum.getEnumValues());
-        
-        final String sort = element.getAttributeValue("sort");
-        if (StringUtils.isNotEmpty(sort)) {
-            Collections.sort(enumValues, new Comparator<DataDrivenEnumerationValue>() {
-
-                @Override
-                public int compare(DataDrivenEnumerationValue arg0, DataDrivenEnumerationValue arg1) {
-                    if (sort.equals("ASCENDING")) {
-                        return arg0.getDisplay().compareTo(arg1.getDisplay());
-                    } else {
-                        return arg1.getDisplay().compareTo(arg0.getDisplay());
-                    }
-                }
-            });
-        }
-        
-        addToModel(arguments, "enumValues", enumValues);
+    public String getName() {
+        return "enumeration";
     }
-
+    
     @Override
     public int getPrecedence() {
-        return 1;
+        return 10000;
+    }
+
+    @Override
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+        List<DataDrivenEnumerationValue> enumValues = ddeVariableExpression.getEnumValues(tagAttributes.get("key"), tagAttributes.get("sort"));
+        return ImmutableMap.of("enumValues", (Object) enumValues);
     }
 
 }

@@ -136,7 +136,7 @@ $(document).ready(function() {
             $this.find('img.thumbnail').data("fullurl", fields['adminDisplayAssetUrl']);
             $this.find('img.thumbnail').parent().attr("href", fields['adminDisplayAssetUrl']);
             $this.find('img.thumbnail').removeClass('placeholder-image');
-            
+
             var mediaItem = $this.find('input.mediaItem');
             if (mediaItem.length > 0) {
                 var mediaUrl = $this.find('input.mediaUrl');

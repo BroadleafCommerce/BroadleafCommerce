@@ -24,7 +24,10 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 
 import java.util.List;
 
-
+/**
+ * @deprecated instead, see the ProductType Module's Product Add-On's usage of {@link DiscreteOrderItem}s
+ */
+@Deprecated
 public interface BundleOrderItem extends OrderItem, OrderItemContainer, SkuAccessor {
 
     List<DiscreteOrderItem> getDiscreteOrderItems();

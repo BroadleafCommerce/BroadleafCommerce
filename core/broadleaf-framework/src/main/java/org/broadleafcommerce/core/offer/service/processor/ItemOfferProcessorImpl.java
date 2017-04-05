@@ -158,7 +158,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         // The same offer may be applied to different Order Items
         
         for (PromotableCandidateItemOffer itemOffer : itemOffers) {
-            if (orderMeetsQualifyingSubtotalRequirements(order, itemOffer) && orderMeetsSubtotalRequirements(order, itemOffer)) {
+            if (orderMeetsQualifyingSubtotalRequirements(order, itemOffer)
+                    && orderMeetsTargetSubtotalRequirements(order, itemOffer)
+                    && orderMeetsSubtotalRequirements(order, itemOffer)) {
                 applyItemOffer(order, itemOffer);
             }
         }
@@ -166,6 +168,10 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
     protected boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
         return offerServiceUtilities.orderMeetsQualifyingSubtotalRequirements(order, itemOffer.getOffer(), itemOffer.getCandidateQualifiersMap());
+    }
+
+    protected boolean orderMeetsTargetSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
+        return offerServiceUtilities.orderMeetsTargetSubtotalRequirements(order, itemOffer.getOffer(), itemOffer.getCandidateTargetsMap());
     }
 
     protected boolean orderMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
@@ -407,8 +413,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 quantity = ((Integer) o).intValue();
             }
         }
-
-        return itemOffer.calculateSavingsForOrderItem(item, quantity);
+        boolean isAddOnOrderItem = offerServiceUtilities.isAddOnOrderItem(item.getOrderItem());
+        Boolean offerCanApplyToChildOrderItems = itemOffer.getOffer().getApplyToChildItems();
+        if (isAddOnOrderItem && !offerCanApplyToChildOrderItems) {
+            return Money.ZERO;
+        } else {
+            return itemOffer.calculateSavingsForOrderItem(item, quantity);
+        }
     }
 
     /**
@@ -456,6 +467,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     }
 
     protected BigDecimal calculatePercent(Money itemSubTotal, Money itemSavings) {
+        if (Money.ZERO.equals(itemSubTotal)) {
+            return BigDecimal.ZERO;
+        }
         return itemSavings.getAmount().divide(itemSubTotal.getAmount(), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
     }
 
@@ -584,7 +598,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
     }
 
-    protected void determineBestPermutation(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order) {
+    protected List<PromotableCandidateItemOffer> determineBestPermutation(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order) {
         List<List<PromotableCandidateItemOffer>> permutations = buildItemOfferPermutations(itemOffers);
         removeDuplicatePermutations(permutations);
         List<PromotableCandidateItemOffer> bestOfferList = null;
@@ -617,7 +631,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             offer.resetUses();
         }
 
-        applyAllItemOffers(bestOfferList, order);
+        return bestOfferList;
     }
 
     protected void removeDuplicatePermutations(List<List<PromotableCandidateItemOffer>> permutations) {
@@ -662,11 +676,10 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             Collections.sort(qualifiedItemOffers, ItemOfferComparator.INSTANCE);
             
             if (qualifiedItemOffers.size() > 1) {
-                determineBestPermutation(qualifiedItemOffers, order);
-            } else {
-                applyAllItemOffers(qualifiedItemOffers, order);
-
+                qualifiedItemOffers = determineBestPermutation(qualifiedItemOffers, order);
             }
+
+            applyAllItemOffers(qualifiedItemOffers, order);
         }
         chooseSaleOrRetailAdjustments(order);
         if (extensionManager != null) {

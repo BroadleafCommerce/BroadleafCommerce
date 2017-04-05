@@ -15,6 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -22,11 +23,11 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafAttributeModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafAttributeModifier;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,16 +42,16 @@ import javax.servlet.http.HttpServletRequest;
  * 
  * @author apazzolini
  */
-public class RemoveFacetValuesLinkProcessor extends AbstractAttributeModifierAttrProcessor {
-    
+@Component("blRemoveFacetValuesLinkProcessor")
+@ConditionalOnTemplating
+public class RemoveFacetValuesLinkProcessor extends AbstractBroadleafAttributeModifierProcessor {
+
     @Resource(name = "blSearchFacetDTOService")
     protected SearchFacetDTOService searchFacetDTOService;
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public RemoveFacetValuesLinkProcessor() {
-        super("removefacetvalueslink");
+    @Override
+    public String getName() {
+        return "removefacetvalueslink";
     }
     
     @Override
@@ -59,42 +60,22 @@ public class RemoveFacetValuesLinkProcessor extends AbstractAttributeModifierAtt
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
-        Map<String, String> attrs = new HashMap<String, String>();
-        
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
         BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
         HttpServletRequest request = blcContext.getRequest();
-        
+
         String baseUrl = request.getRequestURL().toString();
-        Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
-        
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
-        SearchFacetDTO facet = (SearchFacetDTO) expression.execute(arguments.getConfiguration(), arguments);
-        
+        Map<String, String[]> params = new HashMap<>(request.getParameterMap());
+
+        SearchFacetDTO facet = (SearchFacetDTO) context.parseExpression(attributeValue);
+
         String key = searchFacetDTOService.getUrlKey(facet);
         params.remove(key);
         params.remove(SearchCriteria.PAGE_NUMBER);
-        
+
         String url = ProcessorUtils.getUrl(baseUrl, params);
-        
-        attrs.put("href", url);
-        return attrs;
-    }
-
-    @Override
-    protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return ModificationType.SUBSTITUTION;
-    }
-
-    @Override
-    protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return true;
-    }
-
-    @Override
-    protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
-        return false;
+        Map<String, String> newAttributes = new HashMap<>();
+        newAttributes.put("href", url);
+        return new BroadleafAttributeModifier(newAttributes);
     }
 }

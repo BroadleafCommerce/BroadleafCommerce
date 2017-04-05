@@ -18,11 +18,15 @@
 package org.broadleafcommerce.common.web.processor;
 
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.common.web.expression.PropertiesVariableExpression;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.springframework.stereotype.Component;
 
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -37,11 +41,16 @@ import org.thymeleaf.dom.Element;
  * 
  * @author bpolster
  * @see {@link PropertiesVariableExpression}
+ * @deprecated use {@link PropertiesVariableExpression} instead
  */
-public class ConfigVariableProcessor extends AbstractModelVariableModifierProcessor {
+@Deprecated
+@Component("blConfigVariableProcessor")
+@ConditionalOnTemplating
+public class ConfigVariableProcessor extends AbstractBroadleafVariableModifierProcessor {
 
-    public ConfigVariableProcessor() {
-        super("config");
+    @Override
+    public String getName() {
+        return "config";
     }
     
     @Override
@@ -49,16 +58,20 @@ public class ConfigVariableProcessor extends AbstractModelVariableModifierProces
         return 10000;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.presentation.dialect.AbstractModelVariableModifierProcessor#populateModelVariables(java.lang.String, java.util.Map, java.util.Map)
+     */
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        String resultVar = element.getAttributeValue("resultVar");
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+        String resultVar = tagAttributes.get("resultVar");
         if (resultVar == null) {
             resultVar = "value";
         }
-        
-        String attributeName = element.getAttributeValue("name");
+
+        String attributeName = tagAttributes.get("name");
         String attributeValue = BLCSystemProperty.resolveSystemProperty(attributeName);
         
-        addToModel(arguments, resultVar, attributeValue);
+        return ImmutableMap.of(resultVar, (Object) attributeValue);
     }
+
 }

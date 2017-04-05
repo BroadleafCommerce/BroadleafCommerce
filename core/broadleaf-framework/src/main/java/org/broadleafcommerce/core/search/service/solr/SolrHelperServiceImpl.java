@@ -210,9 +210,14 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getPropertyNameForIndexField(IndexField field, FieldType fieldType, String prefix) {
+        String fieldName = field.getField().getAbbreviation();
+        if (StringUtils.isEmpty(fieldName)) {
+            fieldName = field.getField().getPropertyName();
+        }
+
         return new StringBuilder()
                 .append(prefix)
-                .append(field.getField().getAbbreviation()).append("_").append(fieldType.getType())
+                .append(fieldName).append("_").append(fieldType.getType())
                 .toString();
     }
 

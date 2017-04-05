@@ -31,7 +31,6 @@ import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -73,6 +72,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -256,6 +256,10 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             fieldType = SupportedFieldType.HTML_BASIC,
             translatable = true)
     protected String longDescription;
+
+    @Column(name = "ROOT_DISPLAY_ORDER", precision = 10, scale = 6)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    protected BigDecimal rootDisplayOrder;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
@@ -627,27 +631,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public Category getParentCategory() {
-        Category response = null;
-        List<CategoryXref> xrefs = getAllParentCategoryXrefs();
-        if (!CollectionUtils.isEmpty(xrefs)) {
-            for (CategoryXref xref : xrefs) {
-                if (xref.getCategory().isActive() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
-                    response = xref.getCategory();
-                    break;
-                }
-            }
-        }
-        if (response == null) {
-            if (!CollectionUtils.isEmpty(xrefs)) {
-                for (CategoryXref xref : xrefs) {
-                   if (xref.getCategory().isActive()) {
-                        response = xref.getCategory();
-                        break;
-                    }
-                }
-            }
-        }
-        return response;
+        CategoryXref parentCategoryXref = getParentCategoryXref();
+        return parentCategoryXref == null ? null : parentCategoryXref.getCategory();
     }
 
     @Override
@@ -824,12 +809,12 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
-    public List<Category> buildParentCategoryPath(List<Category> currentPath) {
-        return buildParentCategoryPath(currentPath, false);
+    public List<Category> getParentCategoryHierarchy(List<Category> currentPath) {
+        return getParentCategoryHierarchy(currentPath, false);
     }
 
     @Override
-    public List<Category> buildParentCategoryPath(List<Category> currentPath, Boolean firstParent) {
+    public List<Category> getParentCategoryHierarchy(List<Category> currentPath, Boolean firstParent) {
         // If firstParent is null, default it to false
         if (firstParent == null) {
             firstParent = false;
@@ -863,7 +848,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         for (Category category : myParentCategories) {
             if (!currentPath.contains(category)) {
                 currentPath.add(0, category);
-                category.buildParentCategoryPath(currentPath, firstParent);
+                category.getParentCategoryHierarchy(currentPath, firstParent);
             }
         }
 
@@ -908,6 +893,16 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Deprecated
     public void setAllParentCategories(List<Category> allParentCategories) {
         throw new UnsupportedOperationException("Not Supported - Use setAllParentCategoryXrefs()");
+    }
+
+    @Override
+    public BigDecimal getRootDisplayOrder() {
+        return rootDisplayOrder;
+    }
+
+    @Override
+    public void setRootDisplayOrder(BigDecimal rootDisplayOrder) {
+        this.rootDisplayOrder = rootDisplayOrder;
     }
 
     @Override

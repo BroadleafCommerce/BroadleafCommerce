@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 
 
 /**
@@ -36,7 +37,14 @@ public abstract class AbstractUpdateCartServiceExtensionHandler extends Abstract
      * @param resultHolder
      * @return
      */
+    @Override
     public ExtensionResultStatusType updateAndValidateCart(Order cart, ExtensionResultHolder resultHolder) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+    
+    @Override
+    public ExtensionResultStatusType validateAddToCartItem(OrderItemRequestDTO itemRequest, Order cart) throws IllegalArgumentException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
 }

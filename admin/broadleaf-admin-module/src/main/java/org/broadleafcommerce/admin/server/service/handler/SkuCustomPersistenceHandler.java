@@ -30,11 +30,9 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.TypedTransformer;
-import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
@@ -69,7 +67,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
-import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -101,6 +98,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     private static final Log LOG = LogFactory.getLog(SkuCustomPersistenceHandler.class);
 
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
+    public static String INVENTORY_ONLY_CRITERIA = "onlyInventoryProperties";
+
 
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
@@ -446,34 +445,45 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             int totalRecords = helper.getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
             
             //Now fill out the relevant properties for the product options for the Skus that were returned
-            for (int i = 0; i < records.size(); i++) {
-                Sku sku = (Sku) records.get(i);
-                Entity entity = payload[i];
-
-                List<ProductOptionValue> optionValues = BLCCollectionUtils.collectList(sku.getProductOptionValueXrefs(), new TypedTransformer<ProductOptionValue>() {
-                    @Override
-                    public ProductOptionValue transform(Object input) {
-                        return ((SkuProductOptionValueXref) input).getProductOptionValue();
-                    }
-                });
-
-                for (ProductOptionValue value : optionValues) {
-                    Property optionProperty = new Property();
-                    optionProperty.setName(PRODUCT_OPTION_FIELD_PREFIX + value.getProductOption().getId());
-                    optionProperty.setValue(value.getId().toString());
-                    entity.addProperty(optionProperty);
-                }
-
-                if (CollectionUtils.isNotEmpty(optionValues)) {
-                    entity.addProperty(getConsolidatedOptionProperty(optionValues));
-                } else {
-                    entity.addProperty(getBlankConsolidatedOptionProperty());
-                }
-            }
+            updateProductOptionFieldsForFetch(records, payload);
 
             return new DynamicResultSet(payload, totalRecords);
         } catch (Exception e) {
             throw new ServiceException("Unable to perform fetch for entity: " + ceilingEntityFullyQualifiedClassname, e);
+        }
+    }
+
+    /**
+     * Sets the {@link ProductOptionValue}s of the given {@link Sku}s in a list format for display in a ListGrid context.
+     *
+     * @param records
+     * @param payload
+     * @return
+     */
+    public void updateProductOptionFieldsForFetch(List<Serializable> records, Entity[] payload) {
+        for (int i = 0; i < records.size(); i++) {
+            Sku sku = (Sku) records.get(i);
+            Entity entity = payload[i];
+
+            List<ProductOptionValue> optionValues = BLCCollectionUtils.collectList(sku.getProductOptionValueXrefs(), new TypedTransformer<ProductOptionValue>() {
+                @Override
+                public ProductOptionValue transform(Object input) {
+                    return ((SkuProductOptionValueXref) input).getProductOptionValue();
+                }
+            });
+
+            for (ProductOptionValue value : optionValues) {
+                Property optionProperty = new Property();
+                optionProperty.setName(PRODUCT_OPTION_FIELD_PREFIX + value.getProductOption().getId());
+                optionProperty.setValue(value.getId().toString());
+                entity.addProperty(optionProperty);
+            }
+
+            if (CollectionUtils.isNotEmpty(optionValues)) {
+                entity.addProperty(getConsolidatedOptionProperty(optionValues));
+            } else {
+                entity.addProperty(getBlankConsolidatedOptionProperty());
+            }
         }
     }
 
@@ -658,7 +668,10 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 return entity;
             }
 
-            associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
+            // Only modify product options if this isn't an update for inventory properties
+            if (persistencePackage.containsCriteria(INVENTORY_ONLY_CRITERIA) < 0) {
+                associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
+            }
 
             adminInstance = dynamicEntityDao.merge(adminInstance);
 

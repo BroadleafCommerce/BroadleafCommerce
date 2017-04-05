@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import java.io.Serializable;
 import java.util.List;
@@ -133,6 +134,18 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      * @return
      */
     boolean isSalePriceOverride();
+
+    /**
+     * Returns a list of all prorated adjustments for this order item.
+     * @return
+     */
+    List<ProratedOrderItemAdjustment> getProratedOrderItemAdjustments();
+
+    /**
+     * Sets the list of prorated order item adjustments for this order item.
+     * @param proratedOrderItemAdjustments
+     */
+    void setProratedOrderItemAdjustments(List<ProratedOrderItemAdjustment> proratedOrderItemAdjustments);
 
     /**
      * @deprecated 
@@ -326,7 +339,7 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
     void finalizePrice();
 
     /**
-     * Sets the name of this order item. 
+     * Sets the name of this order item.
      * @param name
      */
     void setName(String name);
@@ -351,7 +364,9 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      * @return
      */
     Money getPriceBeforeAdjustments(boolean allowSalesPrice);
-    
+
+    Money getPriceBeforeAdjustments(boolean allowSalesPrice, boolean includeChildren);
+
     /**
      * Used by the promotion engine to add offers that might apply to this orderItem.
      * @param candidateItemOffer
@@ -430,6 +445,13 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
     Money getTotalAdjustmentValue();
 
     /**
+     * Returns the total for all item level adjustments.
+     * @param includeChildren
+     * @return
+     */
+    Money getTotalAdjustmentValue(boolean includeChildren);
+
+    /**
      * Returns the total price to be paid for this order item including item-level adjustments.
      * 
      * It does not include the effect of order level adjustments.   Calculated by looping through
@@ -438,7 +460,14 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      * @return
      */
     Money getTotalPrice();
-    
+
+    /**
+     * Returns the total price to be paid for this order item including item-level adjustments.
+     * @param includeChildren
+     * @return
+     */
+    Money getTotalPrice(boolean includeChildren);
+
     /**
      * Returns whether or not this item is taxable. If this flag is not set, it returns true by default
      * 
@@ -492,9 +521,38 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
     public void setParentOrderItem(OrderItem parentOrderItem);
 
     /**
+     * @return whether or not this order item has an error
+     */
+    Boolean getHasValidationError();
+
+    /**
+     * Sets whether or not this order item has an error associated with it
+     *
+     * @param hasValidationError
+     */
+    void setHasValidationError(Boolean hasValidationError);
+
+    /**
      * @param candidateChild
      * @return true if the candidateChild is a child of the hierarchy starting from this OrderItem
      */
     public boolean isAParentOf(OrderItem candidateChild);
+
+    /**
+     * @return true if the OrderItem has a parent
+     */
+    public boolean isChildOrderItem();
+
+    /**
+     * @return the list of messages that should be displayed in the cart
+     */
+    List<String> getCartMessages();
+
+    /**
+     * Sets the list of messages that should be displayed in the cart
+     *
+     * @param cartMessage
+     */
+    void setCartMessages(List<String> cartMessages);
 
 }

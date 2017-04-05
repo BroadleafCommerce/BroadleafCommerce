@@ -19,6 +19,8 @@ package org.broadleafcommerce.common.web.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -52,6 +54,10 @@ public class BroadleafControllerUtility {
      * @return - whether or not it was an AJAX request
      */
     public static boolean isAjaxRequest(HttpServletRequest request) {
+        return isAjaxRequest(new ServletWebRequest(request));
+    }
+    
+    public static boolean isAjaxRequest(WebRequest request) {
         String ajaxParameter = request.getParameter(BLC_AJAX_PARAMETER);
         String requestedWithHeader = request.getHeader("X-Requested-With");
         boolean result = (ajaxParameter != null && "true".equals(ajaxParameter))
@@ -59,7 +65,7 @@ public class BroadleafControllerUtility {
         
         if (LOG.isTraceEnabled()) {
             StringBuilder sb = new StringBuilder()
-                .append("Request URL: [").append(request.getServletPath()).append("]")
+                .append("Request URL: [").append(request.getContextPath()).append("]")
                 .append(" - ")
                 .append("ajaxParam: [").append(String.valueOf(ajaxParameter)).append("]")
                 .append(" - ")

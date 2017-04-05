@@ -50,89 +50,12 @@
         <property name="useSuffixPatternMatch" value="false" />
     </bean>
 
-    <context:component-scan base-package="org.broadleafcommerce.openadmin.web.controller" />
-    
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
-    
-    <bean id="blAdminDialectProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
-        <property name="sourceSet">
-            <set>
-                <ref bean="blAdminUserProcessor"/>
-                <ref bean="blAdminComponentIdProcessor"/>
-                <ref bean="blAdminModuleProcessor"/>
-                <ref bean="blAdminSectionHrefProcessor"/>
-                <ref bean="blAdminFieldBuilderProcessor"/>
-                <ref bean="blErrorsProcessor"/>
-                
-            </set>
-        </property>
-    </bean>
-    <bean id="blAdminDialect" class="org.broadleafcommerce.common.web.dialect.BLCAdminDialect">
-        <property name="processors" ref="blAdminDialectProcessors" />
-    </bean>
-    
-    <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
-    <bean id="blAdminWebCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
     
     <bean id="blAdminExceptionResolver" class="org.broadleafcommerce.openadmin.web.handler.AdminMappingExceptionResolver">
         <property name="showDebugMessage" value="${exception.showDebugMessage}" />
     </bean>
-
-    <bean id="blAdminWebTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
-        <property name="prefix" value="/WEB-INF/templates/admin/" />
-        <property name="suffix" value=".html" />
-        <property name="templateMode" value="HTML5" />
-        <property name="cacheable" value="${cache.page.templates}"/>
-        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
-        <property name="characterEncoding" value="UTF-8" />
-        <property name="order" value="200"/>         
-    </bean>
     
-    <bean id="blAdminWebClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
-        <property name="prefix" value="open_admin_style/templates/" />
-        <property name="suffix" value=".html" />
-        <property name="templateMode" value="HTML5" />        
-        <property name="characterEncoding" value="UTF-8" />
-        <property name="cacheable" value="${cache.page.templates}"/>
-        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
-        <property name="order" value="300"/> 
-    </bean>  
-
-    <bean id="blAdminMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver">
-        <property name="order" value="100" />
-    </bean>
-    
-    <bean id="blAdminWebTemplateResolvers" class="org.springframework.beans.factory.config.SetFactoryBean">
-        <property name="sourceSet">
-            <set>
-                <ref bean="blAdminWebCustomTemplateResolver" />
-                <ref bean="blAdminWebTemplateResolver" />
-                <ref bean="blAdminWebClasspathTemplateResolver" />
-                <ref bean="blWebCommonClasspathTemplateResolver" />
-            </set>
-        </property>
-    </bean>
-                
-    <bean id="blAdminWebTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
-        <property name="messageResolvers">
-            <set>
-                <ref bean="blAdminMessageResolver" />
-                <bean class="org.thymeleaf.spring4.messageresolver.SpringMessageResolver">
-                    <property name="order" value="200" />
-                </bean>
-            </set>
-        </property>
-        <property name="templateResolvers" ref="blAdminWebTemplateResolvers" />
-        <property name="dialects">
-            <set>
-                <ref bean="thymeleafSpringStandardDialect" />
-                <ref bean="blAdminDialect" />
-                <ref bean="blDialect" />
-            </set>
-        </property>
-        <!--<property name="cacheManager"><null/></property>-->
-    </bean>
-
     <bean id="blAdminTranslationControllerExtensionListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>

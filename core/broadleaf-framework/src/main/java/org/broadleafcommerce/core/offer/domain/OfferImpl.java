@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -45,6 +46,8 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
+import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -194,7 +197,14 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             group = GroupName.Advanced,
             defaultValue = "true")
     protected Boolean applyToSalePrice = true;
-    
+
+    @Column(name = "APPLY_TO_CHILD_ITEMS")
+    @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Child_Items",
+            tooltip = "OfferImpl_Apply_To_Child_Items_tooltip",
+            group = GroupName.Advanced,
+            defaultValue = "false")
+    protected Boolean applyToChildItems = false;
+
     /**
      * Determines if other offers of the same type can be combined with this offer. 
      */
@@ -247,6 +257,13 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         group = GroupName.Restrictions, order = FieldOrder.OrderMinSubTotal,
         defaultValue = "0.00000")
     protected BigDecimal orderMinSubTotal;
+
+    @Column(name = "TARGET_MIN_TOTAL", precision=19, scale=5)
+    @AdminPresentation(friendlyName="OfferImpl_Target_Subtotal",
+            tooltip = "OfferImplMinTargetSubtotal_tooltip",
+            group = GroupName.Restrictions, order = FieldOrder.TargetMinSubTotal,
+            defaultValue = "0.00000")
+    protected BigDecimal targetMinSubTotal;
 
     @Column(name = "OFFER_ITEM_TARGET_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Target_Rule",
@@ -474,7 +491,17 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public void setApplyDiscountToSalePrice(boolean applyToSalePrice) {
-        this.applyToSalePrice=applyToSalePrice;
+        this.applyToSalePrice = applyToSalePrice;
+    }
+
+    @Override
+    public Boolean getApplyToChildItems() {
+        return applyToChildItems == null ? false : applyToChildItems;
+    }
+
+    @Override
+    public void setApplyToChildItems(boolean applyToChildItems) {
+        this.applyToChildItems = applyToChildItems;
     }
 
     /**
@@ -683,6 +710,16 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setOrderMinSubTotal(Money orderMinSubTotal) {
         this.orderMinSubTotal = Money.toAmount(orderMinSubTotal);
+    }
+
+    @Override
+    public Money getTargetMinSubTotal() {
+        return targetMinSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(targetMinSubTotal, null);
+    }
+
+    @Override
+    public void setTargetMinSubTotal(Money targetMinSubTotal) {
+        this.targetMinSubTotal = Money.toAmount(targetMinSubTotal);
     }
 
     @Override

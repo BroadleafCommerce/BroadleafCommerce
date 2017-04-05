@@ -41,6 +41,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
@@ -51,6 +52,9 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.common.web.Locatable;
+import org.broadleafcommerce.core.offer.domain.OfferAdminPresentation;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
+import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -322,6 +326,9 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Transient
     protected Map<String, Set<String>> productOptionMap;
 
+    @Transient
+    protected List<String> allParentCategoryIds;
+
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
@@ -437,6 +444,15 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Override
     public Money getRetailPrice() {
+        return getRetailPriceInternal();
+    }
+
+    @Override
+    public Money getSalePrice() {
+        return getSalePriceInternal();
+    }
+
+    protected Money getRetailPriceInternal() {
         if (defaultSku == null) {
             return null;
         } else {
@@ -444,9 +460,17 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         }
     }
 
+    protected Money getSalePriceInternal() {
+        if (defaultSku == null) {
+            return null;
+        } else {
+            return defaultSku.getSalePrice();
+        }
+    }
+
     @Override
-    public Money getSalePrice() {
-        return getRetailPrice();
+    public boolean isOnSale() {
+        return defaultSku.isOnSale();
     }
 
     @Override
@@ -490,8 +514,20 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Override
     public List<Sku> getAllSkus() {
+        return getAllSkus(true);
+    }
+
+    @Override
+    public List<Sku> getAllSellableSkus() {
+        boolean includeDefaultSku = getCanSellWithoutOptions() || getAdditionalSkus().isEmpty();
+        return getAllSkus(includeDefaultSku);
+    }
+
+    protected List<Sku> getAllSkus(boolean includeDefaultSku) {
         List<Sku> allSkus = new ArrayList<Sku>();
-        allSkus.add(getDefaultSku());
+        if (includeDefaultSku) {
+            allSkus.add(getDefaultSku());
+        }
         for (Sku additionalSku : additionalSkus) {
             if (!additionalSku.getId().equals(getDefaultSku().getId())) {
                 allSkus.add(additionalSku);
@@ -623,6 +659,35 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     public void setAllParentCategoryXrefs(List<CategoryProductXref> allParentCategories) {
         this.allParentCategoryXrefs.clear();
         allParentCategoryXrefs.addAll(allParentCategories);
+    }
+
+    @Override
+    public List<Long> getParentCategoryHierarchyIds() {
+        List<Long> parentCategoryHierarchyIds = new ArrayList<>();
+
+        List<CategoryProductXref> parentCategoryXrefs = getAllParentCategoryXrefs();
+        for (CategoryProductXref xref : parentCategoryXrefs) {
+            Category xrefCategory = xref.getCategory();
+            List<Category> parentCategoryHierarchy = xrefCategory.getParentCategoryHierarchy(null);
+            for (Category hierarchyCategory : parentCategoryHierarchy) {
+                parentCategoryHierarchyIds.add(hierarchyCategory.getId());
+            }
+        }
+
+        return parentCategoryHierarchyIds;
+    }
+
+    @Override
+    public List<String> getAllParentCategoryIds() {
+        List<String> parentIds = new ArrayList<>();
+
+        for (CategoryProductXref xref : allParentCategoryXrefs) {
+            String parentId = String.valueOf(xref.getCategory().getId());
+            parentIds.add(parentId);
+        }
+
+        allParentCategoryIds = parentIds;
+        return parentIds;
     }
 
     @Override

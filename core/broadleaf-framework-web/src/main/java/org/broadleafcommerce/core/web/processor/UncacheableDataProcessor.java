@@ -19,9 +19,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.cms.web.PageHandlerMapping;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -33,15 +31,15 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.SkuAccessor;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.processor.extension.UncacheableDataProcessorExtensionManager;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Macro;
-import org.thymeleaf.dom.Node;
-import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.element.AbstractElementProcessor;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,7 +69,9 @@ import javax.annotation.Resource;
  * </pre>
  * @author bpolster
  */
-public class UncacheableDataProcessor extends AbstractElementProcessor {
+@Component("blUncacheableDataProcessor")
+@ConditionalOnTemplating
+public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementProcessor {
     
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
@@ -87,44 +87,37 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
 
     private String defaultCallbackFunction = "updateUncacheableData(params)";
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public UncacheableDataProcessor() {
-        super("uncacheabledata");
+    @Override
+    public String getName() {
+        return "uncacheabledata"; 
     }
 
     @Override
     public int getPrecedence() {
         return 100;
     }
-
-
+    
     @Override
-    protected ProcessorResult processElement(Arguments arguments, Element element) {
+    public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         StringBuffer sb = new StringBuffer();
         sb.append("<SCRIPT>\n");
         sb.append("  var params = \n  ");
-        sb.append(buildContentMap(arguments)).append(";\n  ");
-        sb.append(getUncacheableDataFunction(arguments, element)).append(";\n");
+        sb.append(buildContentMap(context)).append(";\n  ");
+        sb.append(getUncacheableDataFunction(context, tagAttributes)).append(";\n");
         sb.append("</SCRIPT>");
                 
         // Add contentNode to the document
-        Node contentNode = new Macro(sb.toString());
-        element.clearChildren();
-        element.getParent().insertAfter(element, contentNode);
-        element.getParent().removeChild(element);
-
-        // Return OK
-        return ProcessorResult.OK;
-
+        BroadleafTemplateModel model = context.createModel();
+        BroadleafTemplateElement script = context.createTextElement(sb.toString());
+        model.addElement(script);
+        return model;
     }
-
-    protected String buildContentMap(Arguments arguments) {
-        Map<String, Object> attrMap = new HashMap<String, Object>();
+    
+    protected String buildContentMap(BroadleafTemplateContext context) {
+        Map<String, Object> attrMap = new HashMap<>();
         addCartData(attrMap);
         addCustomerData(attrMap);
-        addProductInventoryData(attrMap, arguments);
+        addProductInventoryData(attrMap, context);
 
         try {
             attrMap.put("csrfToken", eps.getCSRFToken());
@@ -135,14 +128,14 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
         return StringUtil.getMapAsJson(attrMap);
     }
 
-    protected void addProductInventoryData(Map<String, Object> attrMap, Arguments arguments) {
-        List<Long> outOfStockProducts = new ArrayList<Long>();
-        List<Long> outOfStockSkus = new ArrayList<Long>();
+    protected void addProductInventoryData(Map<String, Object> attrMap, BroadleafTemplateContext context) {
+        List<Long> outOfStockProducts = new ArrayList<>();
+        List<Long> outOfStockSkus = new ArrayList<>();
 
-        Set<Product> allProducts = new HashSet<Product>();
-        Set<Sku> allSkus = new HashSet<Sku>();
-        Set<Product> products = (Set<Product>) ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).get("blcAllDisplayedProducts");
-        Set<Sku> skus = (Set<Sku>) ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).get("blcAllDisplayedSkus");
+        Set<Product> allProducts = new HashSet<>();
+        Set<Sku> allSkus = new HashSet<>();
+        Set<Product> products = (Set<Product>) context.getVariable("blcAllDisplayedProducts");
+        Set<Sku> skus = (Set<Sku>) context.getVariable("blcAllDisplayedSkus");
         if (!CollectionUtils.isEmpty(products)) {
             allProducts.addAll(products);
         }
@@ -150,7 +143,7 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
             allSkus.addAll(skus);
         }
 
-        extensionManager.getProxy().modifyProductListForInventoryCheck(arguments, allProducts, allSkus);
+        extensionManager.getProxy().modifyProductListForInventoryCheck(context, allProducts, allSkus);
 
         if (!allProducts.isEmpty()) {
             for (Product product : allProducts) {
@@ -179,8 +172,8 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
     protected void addCartData(Map<String, Object> attrMap) {
         Order cart = CartState.getCart();
         int cartQty = 0;
-        List<Long> cartItemIdsWithOptions = new ArrayList<Long>();
-        List<Long> cartItemIdsWithoutOptions = new ArrayList<Long>();
+        List<Long> cartItemIdsWithOptions = new ArrayList<>();
+        List<Long> cartItemIdsWithoutOptions = new ArrayList<>();
 
         if (cart != null && cart.getOrderItems() != null) {
             cartQty = cart.getItemCount();
@@ -188,7 +181,7 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
             for (OrderItem item : cart.getOrderItems()) {
                 if (item instanceof SkuAccessor) {
                     Sku sku = ((SkuAccessor) item).getSku();
-                    if (sku != null && sku.getProduct() != null) {
+                    if (sku != null && sku.getProduct() != null && item.getParentOrderItem() == null) {
                         if (useSku) {
                             cartItemIdsWithoutOptions.add(sku.getId());
                         } else {
@@ -236,9 +229,9 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
         attrMap.put("anonymous", anonymous);
     }
     
-    public String getUncacheableDataFunction(Arguments arguments, Element element) {
-        if (element.hasAttribute("callback")) {
-            return element.getAttributeValue("callback");
+    public String getUncacheableDataFunction(BroadleafTemplateContext context, Map<String, String> tagAttributes) {
+        if (tagAttributes.containsKey("callback")) {
+            return tagAttributes.get("callback");
         } else {
             return getDefaultCallbackFunction();
         }
@@ -251,4 +244,5 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
     public void setDefaultCallbackFunction(String defaultCallbackFunction) {
         this.defaultCallbackFunction = defaultCallbackFunction;
     }
+
 }

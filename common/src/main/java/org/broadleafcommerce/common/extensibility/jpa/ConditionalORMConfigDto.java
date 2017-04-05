@@ -17,20 +17,10 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa;
 
-import java.io.Serializable;
+public class ConditionalORMConfigDto extends ORMConfigDto {
 
-public class ConditionalORMConfigDto implements Serializable {
-
-    protected String puName;
     protected String conditionalProperty;
-
-    public String getPuName() {
-        return puName;
-    }
-
-    public void setPuName(String puName) {
-        this.puName = puName;
-    }
+    protected String conditionalClassName;
 
     public String getConditionalProperty() {
         return conditionalProperty;
@@ -38,5 +28,13 @@ public class ConditionalORMConfigDto implements Serializable {
 
     public void setConditionalProperty(String conditionalProperty) {
         this.conditionalProperty = conditionalProperty;
+    }
+
+    public String getConditionalClassName() {
+        return conditionalClassName;
+    }
+
+    public void setConditionalClassName(String conditionalClassName) {
+        this.conditionalClassName = conditionalClassName;
     }
 }

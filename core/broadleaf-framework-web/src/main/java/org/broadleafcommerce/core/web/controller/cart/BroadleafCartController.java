@@ -17,15 +17,20 @@
  */
 package org.broadleafcommerce.core.web.controller.cart;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.AddToCartItem;
+import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
@@ -42,6 +47,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,13 +59,19 @@ import javax.servlet.http.HttpServletResponse;
  * @author Andre Azzolini (apazzolini)
  */
 public class BroadleafCartController extends AbstractCartController {
-    
+
     protected static String cartView = "cart/cart";
     protected static String cartPageRedirect = "redirect:/cart";
-    
+    protected static String configureView = "configure/partials/configure";
+    protected static String configurePageRedirect = "redirect:/cart/configure";
+
+    protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
+
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
-    
+
+    @Value("${automatically.add.complete.items}")
+    protected boolean automaticallyAddCompleteItems;
 
     /**
      * Renders the cart page.
@@ -95,9 +107,11 @@ public class BroadleafCartController extends AbstractCartController {
      * @throws IOException
      * @throws AddToCartException 
      * @throws PricingException
+     * @throws RemoveFromCartException 
+     * @throws NumberFormatException 
      */
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
-            OrderItemRequestDTO itemRequest) throws IOException, AddToCartException, PricingException  {
+            OrderItemRequestDTO itemRequest) throws IOException, AddToCartException, PricingException, NumberFormatException, RemoveFromCartException, IllegalArgumentException  {
         Order cart = CartState.getCart();
         
         // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
@@ -106,18 +120,37 @@ public class BroadleafCartController extends AbstractCartController {
             cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
         }
 
-        updateCartService.validateCart(cart);
+        // if this is an update to an existing order item, remove the old before proceeding
+        if (isUpdateRequest(request)) {
+            updateCartService.validateAddToCartRequest(itemRequest, cart);
+
+            String originalOrderItem = request.getParameter("originalOrderItem");
+            if (StringUtils.isNotEmpty(originalOrderItem)) {
+                Long originalOrderItemId = Long.parseLong(originalOrderItem);
+                updateAddRequestQuantities(itemRequest, originalOrderItemId);
+
+                cart = orderService.removeItem(cart.getId(), originalOrderItemId, false);
+                cart = orderService.save(cart, true);
+            }
+        }
 
         cart = orderService.addItem(cart.getId(), itemRequest, false);
-        cart = orderService.save(cart,  true);
-        
+        cart = orderService.save(cart, true);
+
         return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
     }
 
-    @Deprecated
-    public String add(HttpServletRequest request, HttpServletResponse response, Model model,
-                      AddToCartItem itemRequest) throws IOException, AddToCartException, PricingException  {
-        return add(request, response, model, (OrderItemRequestDTO) itemRequest);
+    protected void updateAddRequestQuantities(OrderItemRequestDTO itemRequest, Long originalOrderItemId) {
+        // Update the request to match the quantity of the order item it's replacing
+        OrderItem orderItem = orderItemService.readOrderItemById(originalOrderItemId);
+        itemRequest.setQuantity(orderItem.getQuantity());
+        for (OrderItemRequestDTO childDTO : itemRequest.getChildOrderItems()) {
+            childDTO.setQuantity(childDTO.getQuantity() * orderItem.getQuantity());
+        }
+    }
+
+    protected boolean isUpdateRequest(HttpServletRequest request) {
+        return request.getParameter("isUpdateRequest") != null && Boolean.parseBoolean(request.getParameter("isUpdateRequest"));
     }
 
     /**
@@ -147,7 +180,7 @@ public class BroadleafCartController extends AbstractCartController {
             cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
         }
 
-        updateCartService.validateCart(cart);
+        updateCartService.validateAddToCartRequest(itemRequest, cart);
 
         cart = orderService.addItemWithPriceOverrides(cart.getId(), itemRequest, false);
         cart = orderService.save(cart, true);
@@ -159,6 +192,81 @@ public class BroadleafCartController extends AbstractCartController {
     public String addWithPriceOverride(HttpServletRequest request, HttpServletResponse response, Model model,
                                        AddToCartItem itemRequest) throws IOException, AddToCartException, PricingException {
         return addWithPriceOverride(request, response, model, (OrderItemRequestDTO) itemRequest);
+    }
+
+    /**
+     * Takes a product id and builds out a dependant order item tree.  If it determines the order
+     * item is safe to add, it will proceed to calling the "add" method.
+     *
+     * If the method was invoked via an AJAX call, it will render the "ajax/configure" template.
+     * Otherwise, it will perform a 302 redirect to "/cart/configure"
+     *
+     * In the case that an "add" happened it will render either the "ajax/cart" or perform a 302
+     * redirect to "/cart"
+     *
+     * @param request
+     * @param response
+     * @param model
+     * @param productId
+     * @throws IOException
+     * @throws AddToCartException
+     * @throws PricingException
+     */
+    public String configure(HttpServletRequest request, HttpServletResponse response, Model model,
+                            Long productId) throws IOException, AddToCartException, PricingException, Exception {
+
+        Product product = catalogService.findProductById(productId);
+        ConfigurableOrderItemRequest itemRequest = orderItemService.createConfigurableOrderItemRequestFromProduct(product);
+
+        orderItemService.modifyOrderItemRequest(itemRequest);
+
+        // If this item request is safe to add, go ahead and add it.
+        if (isSafeToAdd(itemRequest)) {
+            return add(request, response, model, itemRequest);
+        }
+
+        model.addAttribute("baseItem", itemRequest);
+        model.addAttribute("isUpdateRequest", Boolean.TRUE);
+        model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, orderItemService.findAllProductsInRequest(itemRequest));
+
+        return isAjaxRequest(request) ? getConfigureView() : getConfigurePageRedirect();
+    }
+
+    /**
+     * Takes an order item id and rebuilds the dependant order item tree with the current quantities and options set.
+     *
+     * If the method was invoked via an AJAX call, it will render the "ajax/configure" template.
+     * Otherwise, it will perform a 302 redirect to "/cart/configure"
+     *
+     * @param request
+     * @param response
+     * @param model
+     * @param orderItemId
+     * @throws IOException
+     * @throws AddToCartException
+     * @throws PricingException
+     */
+    public String reconfigure(HttpServletRequest request, HttpServletResponse response, Model model,
+                            Long orderItemId) throws IOException, AddToCartException, PricingException, Exception {
+
+        DiscreteOrderItem orderItem = (DiscreteOrderItem) orderItemService.readOrderItemById(orderItemId);
+
+        Long productId = orderItem.getProduct().getId();
+        Product product = catalogService.findProductById(productId);
+        ConfigurableOrderItemRequest itemRequest = orderItemService.createConfigurableOrderItemRequestFromProduct(product);
+
+        orderItemService.modifyOrderItemRequest(itemRequest);
+        orderItemService.mergeOrderItemRequest(itemRequest, orderItem);
+
+        // update quantities and product options
+        itemRequest.setQuantity(orderItem.getQuantity());
+
+        model.addAttribute("baseItem", itemRequest);
+        model.addAttribute("isUpdateRequest", Boolean.TRUE);
+        model.addAttribute("originalOrderItem", orderItemId);
+        model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, orderItemService.findAllProductsInRequest(itemRequest));
+
+        return isAjaxRequest(request) ? getConfigureView() : getConfigurePageRedirect();
     }
 
     /**
@@ -185,7 +293,7 @@ public class BroadleafCartController extends AbstractCartController {
         cart = orderService.save(cart, false);
         
         if (isAjaxRequest(request)) {
-            Map<String, Object> extraData = new HashMap<String, Object>();
+            Map<String, Object> extraData = new HashMap<>();
             if(useSku) {
                 extraData.put("skuId", itemRequest.getSkuId());
             } else {
@@ -227,7 +335,7 @@ public class BroadleafCartController extends AbstractCartController {
         cart = orderService.save(cart, true);
         
         if (isAjaxRequest(request)) {
-            Map<String, Object> extraData = new HashMap<String, Object>();
+            Map<String, Object> extraData = new HashMap<>();
             extraData.put("cartItemCount", cart.getItemCount());
             if(useSku) {
                 extraData.put("skuId", itemRequest.getSkuId());
@@ -282,32 +390,34 @@ public class BroadleafCartController extends AbstractCartController {
         String exception = "";
         
         if (cart != null && !(cart instanceof NullOrderImpl)) {
-            OfferCode offerCode = offerService.lookupOfferCodeByCode(customerOffer);
-            if (offerCode != null) {
-                try {
-                    orderService.addOfferCode(cart, offerCode, false);
-                    promoAdded = true;
-                    cart = orderService.save(cart, true);
-                } catch (OfferException e) {
-                    if (e instanceof OfferMaxUseExceededException) {
-                        exception = "Use Limit Exceeded";
-                    } else if (e instanceof OfferExpiredException) {
-                        exception = "Offer Has Expired";
-                    } else if (e instanceof OfferAlreadyAddedException) {
-                        exception = "Offer Has Already Been Added";
-                    } else {
-                        exception = "An Unknown Offer Error Has Occured";
+            List<OfferCode> offerCodes = offerService.lookupAllOfferCodesByCode(customerOffer);
+            for (OfferCode offerCode : offerCodes) {
+                if (offerCode != null) {
+                    try {
+                        orderService.addOfferCode(cart, offerCode, false);
+                        promoAdded = true;
+                    } catch (OfferException e) {
+                        if (e instanceof OfferMaxUseExceededException) {
+                            exception = "Use Limit Exceeded";
+                        } else if (e instanceof OfferExpiredException) {
+                            exception = "Offer Has Expired";
+                        } else if (e instanceof OfferAlreadyAddedException) {
+                            exception = "Offer Has Already Been Added";
+                        } else {
+                            exception = "An Unknown Offer Error Has Occured";
+                        }
                     }
+                } else {
+                    exception = "Invalid Code";
                 }
-            } else {
-                exception = "Invalid Code";
             }
+            cart = orderService.save(cart, true);
         } else {
             exception = "Invalid Cart";
         }
 
         if (isAjaxRequest(request)) {
-            Map<String, Object> extraData = new HashMap<String, Object>();
+            Map<String, Object> extraData = new HashMap<>();
             extraData.put("promoAdded", promoAdded);
             extraData.put("exception" , exception);
             model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
@@ -349,13 +459,43 @@ public class BroadleafCartController extends AbstractCartController {
     public String getCartPageRedirect() {
         return cartPageRedirect;
     }
-    
+
+    public String getConfigureView() {
+        return configureView;
+    }
+
+    public String getConfigurePageRedirect() {
+        return configurePageRedirect;
+    }
+
     public Map<String, String> handleIllegalCartOpException(IllegalCartOperationException ex) {
-        Map<String, String> returnMap = new HashMap<String, String>();
+        Map<String, String> returnMap = new HashMap<>();
         returnMap.put("error", "illegalCartOperation");
         returnMap.put("exception", BLCMessageUtils.getMessage(ex.getType()));
         return returnMap;
     }
-    
 
+    protected boolean isSafeToAdd(ConfigurableOrderItemRequest itemRequest) {
+        if (!automaticallyAddCompleteItems) {
+            return false;
+        }
+
+        boolean canSafelyAdd = true;
+        for (OrderItemRequestDTO child : itemRequest.getChildOrderItems()) {
+            ConfigurableOrderItemRequest configurableRequest = (ConfigurableOrderItemRequest) child;
+            Product childProduct = configurableRequest.getProduct();
+
+            if (childProduct == null) {
+                return false;
+            }
+
+            int minQty = configurableRequest.getMinQuantity();
+            if (minQty == 0 || childProduct.getProductOptionXrefs().size() > 0) {
+                return false;
+            }
+
+            canSafelyAdd = isSafeToAdd(configurableRequest);
+        }
+        return canSafelyAdd;
+    }
 }

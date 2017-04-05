@@ -20,7 +20,7 @@ var blcOperators = [
     {type: "IS_NULL", nb_inputs: 0, multiple: false, apply_to: ['string']},
     {type: "EQUALS", nb_inputs: 1, multiple: false, apply_to: ['boolean', 'string', 'number', 'datetime']},
     {type: "IEQUALS", nb_inputs: 1, multiple: false, apply_to: ['string']},
-    {type: "NOT_EQUAL", nb_inputs: 1, multiple: false, apply_to: ['string', 'number', 'datetime']},
+    {type: "NOT_EQUAL", nb_inputs: 1, multiple: false, apply_to: ['boolean', 'string', 'number', 'datetime']},
     {type: "INOT_EQUAL", nb_inputs: 1, multiple: false, apply_to: ['string']},
     {type: "CONTAINS", nb_inputs: 1, multiple: false, apply_to: ['string']},
     {type: "ICONTAINS", nb_inputs: 1, multiple: false, apply_to: ['string']},
@@ -46,7 +46,8 @@ var blcOperators = [
 ];
 
 var blcOperators_Boolean = [
-    "EQUALS"
+    "EQUALS",
+    "NOT_EQUAL"
 ];
 
 var blcOperators_Selectize = [

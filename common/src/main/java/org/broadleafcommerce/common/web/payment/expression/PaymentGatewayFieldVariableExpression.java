@@ -19,10 +19,13 @@
 package org.broadleafcommerce.common.web.payment.expression;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * <p>A Thymeleaf Variable Expression implementation for Payment Gateway Specific fields.
@@ -48,6 +51,8 @@ import java.util.Map;
  *
  * @author Elbert Bautista (elbertbautista)
  */
+@Component("blpaymentGatewayFieldVariableExpression")
+@ConditionalOnTemplating
 public class PaymentGatewayFieldVariableExpression implements BroadleafVariableExpression {
 
     @Resource(name = "blPaymentGatewayFieldExtensionManager")
@@ -59,7 +64,7 @@ public class PaymentGatewayFieldVariableExpression implements BroadleafVariableE
     }
 
     public String mapName(String fieldName) {
-        Map<String, String> fieldNameMap = new HashMap<String, String>();
+        Map<String, String> fieldNameMap = new HashMap<>();
         fieldNameMap.put(fieldName, fieldName);
         extensionManager.getProxy().mapFieldName(fieldName, fieldNameMap);
         return fieldNameMap.get(fieldName);

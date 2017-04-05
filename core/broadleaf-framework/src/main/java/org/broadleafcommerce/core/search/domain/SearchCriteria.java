@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.search.domain;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -39,7 +40,7 @@ public class SearchCriteria {
     protected Integer pageSize;
     protected Integer startIndex;
     protected String sortQuery;
-    protected Map<String, String[]> filterCriteria;
+    protected Map<String, String[]> filterCriteria = new HashMap<>();
     /**
      * The category that the user searched on
      */

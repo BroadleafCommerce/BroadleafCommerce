@@ -231,6 +231,7 @@
                 <ref bean="blForeignSkuFieldPersistenceProvider"/>
                 <ref bean="blProductParentCategoryFieldPersistenceProvider"/>
                 <ref bean="blCategoryParentCategoryFieldPersistenceProvider"/>
+                <ref bean="blTypedEntityFieldPersistenceProvider"/>
             </list>
         </property>
     </bean>

@@ -31,16 +31,14 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.SkuAccessor;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateNonVoidElement;
 import org.springframework.beans.factory.annotation.Value;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Macro;
-import org.thymeleaf.dom.Node;
-import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.element.AbstractElementProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.IStandardExpressionParser;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,7 +73,9 @@ import javax.servlet.http.HttpServletRequest;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor {
+@Component("blGoogleUniversalAnalyticsProcessor")
+@ConditionalOnTemplating
+public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagReplacementProcessor {
 
     private static final Log LOG = LogFactory.getLog(GoogleUniversalAnalyticsProcessor.class);
 
@@ -95,36 +95,30 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
     @Value("${googleAnalytics.testLocal}")
     protected boolean testLocal = false;
     
-    public GoogleUniversalAnalyticsProcessor() {
-        super("google_universal_analytics");
-    }
-    
-    public GoogleUniversalAnalyticsProcessor(String elementName) {
-        super(elementName);
+    @Override
+    public String getName() {
+        return "google_universal_analytics";
     }
     
     @Override
     public int getPrecedence() {
         return 0;
     }
-
+    
     @Override
-    protected ProcessorResult processElement(Arguments arguments, Element element) {
+    public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         StringBuffer sb = new StringBuffer();
         Map<String, String> trackers = getTrackers();
         if (MapUtils.isNotEmpty(trackers)) {
-            sb.append("<script>\n");
             sb.append("(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){");
             sb.append("(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),");
             sb.append("m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)");
             sb.append("})(window,document,'script','//www.google-analytics.com/analytics.js','ga');");
             
-            String orderNumberExpression = element.getAttributeValue("ordernumber");
+            String orderNumberExpression = tagAttributes.get("ordernumber");
             String orderNumber = null;
             if (orderNumberExpression != null) {
-                final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
-                Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, orderNumberExpression);
-                orderNumber = (String) expression.execute(arguments.getConfiguration(), arguments);
+                orderNumber = (String) context.parseExpression(orderNumberExpression);
             }
             
             Order order = null;
@@ -177,27 +171,25 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
                 }
             }
             
-            sb.append("</script>");
-            
             // Add contentNode to the document
-            Node contentNode = new Macro(sb.toString());
-            element.clearChildren();
-            element.getParent().insertAfter(element, contentNode);
-            element.getParent().removeChild(element);
+            BroadleafTemplateModel model = context.createModel();
+            BroadleafTemplateNonVoidElement scriptTag = context.createNonVoidElement("script");
+            BroadleafTemplateElement script = context.createTextElement(sb.toString());
+            scriptTag.addChild(script);
+            model.addElement(scriptTag);
+            return model;
         } else {
             LOG.warn("No trackers were found, not outputting Google Analytics script. Set the googleAnalytics.webPropertyId"
                     + " and/or the googleAnalytics.masterWebPropertyId system properties to output Google Analytics");
         }
-
-        // Return OK
-        return ProcessorResult.OK;
+        return null;
     }
-    
+
     /**
      * Grabs a map of trackers keyed by the tracker name with the analytics ID as the value
      */
     protected Map<String, String> getTrackers() {
-        Map<String, String> trackers = new HashMap<String, String>();
+        Map<String, String> trackers = new HashMap<>();
         if (shouldShowMasterTracker()) {
             trackers.put("master", getMasterWebPropertyId());
         }

@@ -435,7 +435,11 @@
                     var $newTbody;
                     if ($tbody.closest('.tree-column-wrapper').length) {
                         var treeColumnParentId = $tbody.closest('.select-column').data('parentid');
-                        $newTbody = $(data).find(".select-column[data-parentid='" + treeColumnParentId + "']").find('tbody');
+                        if (treeColumnParentId === undefined) {
+                            $newTbody = $(data).find(".tree-column-wrapper .select-column").find('tbody');
+                        } else {
+                            $newTbody = $(data).find(".tree-column-wrapper .select-column[data-parentid='" + treeColumnParentId + "']").find('tbody');
+                        }
                     } else {
                         var listGridId = $tbody.closest('table').attr('id');
                         $newTbody = $(data).find('table#' + listGridId).find('tbody');
@@ -637,8 +641,8 @@
             var listGridsCount = BLCAdmin.listGrid.getListGridCount($);
             if (listGridsCount == 1 && $wrapper.parents('.entity-form').length == 0 &&
                 $table.data('listgridtype') !== 'tree' &&
-                $table.data('listgridtype') !== 'asset_grid' &&
-                $table.data('listgridtype') !== 'asset_grid_folder') {
+                ($table.data('listgridtype') !== 'asset_grid' && $table.data('listgridtype') !== 'asset_grid_folder') ||
+                (BLCAdmin.assetGrid == undefined && ($table.data('listgridtype') === 'asset_grid' || $table.data('listgridtype') === 'asset_grid_folder'))) {
 
                 var $window = $(window);
                 
@@ -659,9 +663,10 @@
                 if ($wrapper.find('.mCS_no_scrollbar').length > 0 && $modalBody.length === 0) {
                     BLCAdmin.listGrid.paginate.updateUrlFromScroll($wrapper.find('tbody'));
                 }
-            } else if ($table.data('listgridtype') === 'asset_grid'
+            } else if (BLCAdmin.assetGrid != undefined
+                && ($table.data('listgridtype') === 'asset_grid'
                 || $table.data('listgridtype') === 'asset_grid_folder'
-                || $table.data('listgridtype') === 'tree') {
+                || $table.data('listgridtype') === 'tree')) {
                 var $window = $(window);
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
 
@@ -729,6 +734,7 @@
 
             // after all the heights have been calculated, update the table footer with the correct record shown count
             BLCAdmin.listGrid.paginate.updateTableFooter($wrapper.find('tbody'));
+            BLCAdmin.listGrid.updateGridTitleBarSize($table.closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
         },
         
         computeActualMaxHeight : function($tbody, desiredMaxHeight) {

@@ -495,7 +495,7 @@ var BLCAdmin = (function($) {
                 var tabId = '#' + $container.attr("class").substring(0, 4);
 
                 var $tabWithError = $('a[href=' + tabId + ']');
-                if (BLCAdmin.currentModal().length) {
+                if (BLCAdmin.currentModal() !== undefined) {
                     $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
                 }
 
@@ -905,11 +905,11 @@ var BLCAdmin = (function($) {
             }
 
             $field.find('select').val(value);
-            if (!$field.find('.additional-foreign-key-container')) {
+            if (!$field.find('.additional-foreign-key-container').length) {
                 $field.find('input[type="text"]').val(value);
             }
             
-            if (value == null && $field.find('button.clear-foreign-key')) {
+            if (value == null && $field.find('button.clear-foreign-key').length) {
                 $field.find('button.clear-foreign-key').click();
             }
             $field.trigger('change');
@@ -1011,7 +1011,7 @@ var BLCAdmin = (function($) {
                 BLCAdmin.addDependentFieldHandler(className, parentFieldSelector, '#' + childFieldName, function(val) {
                     return val != null && val != "";
                 }, { 
-                    'clearChildData' : true
+                    clearChildData : true
                 });
             }
         },
@@ -1373,7 +1373,6 @@ var getCurrentHashVal = function() {
 };
 
 $(document).ready(function() {
-
     // primary entity buttons should be disabled until page is loaded
     $(window).load(function () {
         $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');

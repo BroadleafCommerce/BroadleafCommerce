@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
@@ -66,6 +67,11 @@ public class FieldPersistenceProviderAdapter extends AbstractFieldPersistencePro
     }
 
     protected boolean checkDirtyState(PopulateValueRequest request, Object instance, Object checkValue) throws Exception {
+        boolean dirty = isFieldDirty(request, instance, checkValue);
+        return !request.getPreAdd() && dirty;
+    }
+
+    protected boolean isFieldDirty(PopulateValueRequest request, Object instance, Object checkValue) throws IllegalAccessException, FieldNotAvailableException {
         boolean dirty = !(instance == null && checkValue == null) && (instance == null || checkValue == null);
         if (!dirty) {
             Object value = request.getFieldManager().getFieldValue(instance, request.getProperty().getName());
@@ -87,7 +93,7 @@ public class FieldPersistenceProviderAdapter extends AbstractFieldPersistencePro
             }
             dirty = value == null || !value.equals(checkValue);
         }
-        return !request.getPreAdd() && dirty;
+        return dirty;
     }
 
     protected void setNonDisplayableValues(PopulateValueRequest request) {

@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.admin.web.rulebuilder.service;
 
+import org.broadleafcommerce.admin.web.controller.entity.AdminCategoryController;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.RuleOperatorType;
 import org.broadleafcommerce.common.presentation.RuleOptionType;
@@ -64,6 +65,14 @@ public class ProductFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .operators(RuleOperatorType.TEXT)
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("rule_productCategory")
+                .name("allParentCategoryIds")
+                .operators("blcOperators_Selectize")
+                .selectizeSectionKey(AdminCategoryController.SECTION_KEY)
+                .options("[]")
+                .type(SupportedFieldType.COLLECTION)
                 .build());
     }
 

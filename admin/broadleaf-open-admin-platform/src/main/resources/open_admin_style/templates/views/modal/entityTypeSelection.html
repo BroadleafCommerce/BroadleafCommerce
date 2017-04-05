@@ -2,6 +2,6 @@
     <li th:each="type : ${entityTypes}" th:object="${type}">
         <a th:href="@{/__${currentUri}__(entityType=*{fullyQualifiedClassname})}"
             class="add-main-entity-select-type"
-            th:text="#{*{friendlyName}}" />
+            th:text="#{*{friendlyName}}" ></a>
     </li>
 </ul>

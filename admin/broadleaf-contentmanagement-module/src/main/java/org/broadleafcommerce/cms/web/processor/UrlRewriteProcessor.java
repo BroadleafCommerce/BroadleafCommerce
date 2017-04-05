@@ -15,16 +15,17 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.cms.web.processor;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafAttributeModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafAttributeModifier;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,22 +40,18 @@ import javax.servlet.http.HttpServletRequest;
  * 
  * @author apazzolini
  */
-public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor {
-    
+@Component("blUrlRewriteProcessor")
+@ConditionalOnTemplating
+public class UrlRewriteProcessor extends AbstractBroadleafAttributeModifierProcessor {
+
     @Resource(name = "blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public UrlRewriteProcessor() {
-        this("src");
+    @Override
+    public String getName() {
+        return "src";
     }
     
-    protected UrlRewriteProcessor(final String attributeName) {
-        super(attributeName);
-    }
-
     @Override
     public int getPrecedence() {
         return 1000;
@@ -65,49 +62,35 @@ public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor 
      */
     protected boolean isRequestSecure(HttpServletRequest request) {
         return ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
-    } 
+    }
 
-    
-    @Override
-    protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
-        Map<String, String> attrs = new HashMap<String, String>();
+    protected String getFullAssetPath(String attributeValue, BroadleafTemplateContext context) {
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-        
         boolean secureRequest = true;
         if (request != null) {
             secureRequest = isRequestSecure(request);
         }
-        
-        String elementValue = element.getAttributeValue(attributeName);
 
-        if (elementValue.startsWith("/")) {
-            elementValue = "@{ " + elementValue + " }";
-        }
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, elementValue);
-        String assetPath = (String) expression.execute(arguments.getConfiguration(), arguments);
-        
+        String assetPath = parsePath(attributeValue, context);
+
         // We are forcing an evaluation of @{} from Thymeleaf above which will automatically add a contextPath, no need to
         // add it twice
-        assetPath = staticAssetPathService.convertAssetPath(assetPath, null, secureRequest);
-        
-        attrs.put("src", assetPath);
-        
-        return attrs;
+        return staticAssetPathService.convertAssetPath(assetPath, null, secureRequest);
+    }
+
+    protected String parsePath(String attributeValue, BroadleafTemplateContext context) {
+        String newAttributeValue = attributeValue;
+        if (newAttributeValue.startsWith("/")) {
+            newAttributeValue = "@{ " + newAttributeValue + " }";
+        }
+        return (String) context.parseExpression(newAttributeValue);
     }
 
     @Override
-    protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return ModificationType.SUBSTITUTION;
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+        Map<String, String> newAttributes = new HashMap<>();
+        newAttributes.put("src", getFullAssetPath(attributeValue, context));
+        return new BroadleafAttributeModifier(newAttributes);
     }
 
-    @Override
-    protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return true;
-    }
-
-    @Override
-    protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
-        return false;
-    }
 }

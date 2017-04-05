@@ -367,6 +367,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             }
             override.setCurrencyCodeField(annotColl.currencyCodeField());
             override.setLazyFetch(annotColl.lazyFetch());
+            override.setManualFetch(annotColl.manualFetch());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationCollection annotation not found on Field");
@@ -524,6 +525,9 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
 
         if (collectionMetadata.getLazyFetch() != null) {
             metadata.setLazyFetch(collectionMetadata.getLazyFetch());
+        }
+        if (collectionMetadata.getManualFetch() != null) {
+            metadata.setManualFetch(collectionMetadata.getManualFetch());
         }
 
         if (collectionMetadata.getFriendlyName() != null) {

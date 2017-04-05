@@ -15,28 +15,28 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.beans.factory.annotation.Value;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
-
 
 /**
  * A Thymeleaf processor that will find related products and skus.    A product or category id must be specified.    If both are specified, only the productId will be used.  
@@ -59,44 +59,51 @@ import javax.annotation.Resource;
  *      
  * @author bpolster
  */
-public class RelatedProductProcessor extends AbstractModelVariableModifierProcessor {
-    
+@Component("blRelatedProductProcessor")
+@ConditionalOnTemplating
+public class RelatedProductProcessor extends AbstractBroadleafVariableModifierProcessor {
+
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
-    
+
     @Resource(name = "blRelatedProductsService")
     protected RelatedProductsService relatedProductsService;
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public RelatedProductProcessor() {
-        super("related_products");
+    @Override
+    public String getName() {
+        return "related_products";
     }
     
     @Override
     public int getPrecedence() {
         return 10000;
     }
-
+    
     @Override
+    public List<String> getCollectionModelVariableNamesToAddTo() {
+        List<String> names = new ArrayList<>();
+        names.add("blcAllProducts");
+        return names;
+    }
+
     /**
      * Controller method for the processor that readies the service call and adds the results to the model.
      */
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        RelatedProductDTO relatedProductDTO = buildDTO(arguments, element);
+    @Override
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+        RelatedProductDTO relatedProductDTO = buildDTO(tagAttributes, tagName, context);
         List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(relatedProductDTO);
-        if (useSku) {
-            addToModel(arguments, getRelatedSkusResultVar(element), getRelatedSkus(relatedProducts, relatedProductDTO.getQuantity()));
-        } else {
-            addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
-            addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
-            addCollectionToExistingSet(arguments, "blcAllProducts", buildProductList(relatedProducts));
-        }
+        
+        Map<String, Object> newModelVars = new HashMap<>();
+        newModelVars.put(getRelatedProductsResultVar(tagAttributes), relatedProducts);
+        newModelVars.put(getProductsResultVar(tagAttributes), convertRelatedProductsToProducts(relatedProducts));
+        newModelVars.put("blcAllProducts", buildProductList(relatedProducts));
+        
+        return newModelVars;
     }
 
     protected List<Product> buildProductList(List<? extends PromotableProduct> relatedProducts) {
-        List<Product> productList = new ArrayList<Product>();
+        List<Product> productList = new ArrayList<>();
         if (relatedProducts != null) {
             for (PromotableProduct promProduct : relatedProducts) {
                 productList.add(promProduct.getRelatedProduct());
@@ -104,25 +111,25 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         }
         return productList;
     }
-    
+
     protected List<Sku> getRelatedSkus(List<? extends PromotableProduct> relatedProducts, Integer maxQuantity) {
-        List<Sku> relatedSkus = new ArrayList<Sku>();
+        List<Sku> relatedSkus = new ArrayList<>();
         if (relatedProducts != null) {
             Integer numSkus = 0;
             for (PromotableProduct promProduct : relatedProducts) {
                 Product relatedProduct = promProduct.getRelatedProduct();
                 List<Sku> additionalSkus = relatedProduct.getAdditionalSkus();
-                if(CollectionUtils.isNotEmpty(additionalSkus)) {
-                    for(Sku additionalSku : additionalSkus) {
-                        if(numSkus == maxQuantity) {
+                if (CollectionUtils.isNotEmpty(additionalSkus)) {
+                    for (Sku additionalSku : additionalSkus) {
+                        if (numSkus == maxQuantity) {
                             break;
                         }
                         relatedSkus.add(additionalSku);
                         numSkus++;
-                        
+
                     }
                 } else {
-                    if(numSkus.equals(maxQuantity)) {
+                    if (numSkus.equals(maxQuantity)) {
                         break;
                     }
                     relatedSkus.add(relatedProduct.getDefaultSku());
@@ -132,95 +139,73 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         }
         return relatedSkus;
     }
-    
+
     protected List<Product> convertRelatedProductsToProducts(List<? extends PromotableProduct> relatedProducts) {
-        List<Product> products = new ArrayList<Product>();
+        List<Product> products = new ArrayList<>();
         if (relatedProducts != null) {
             for (PromotableProduct product : relatedProducts) {
                 products.add(product.getRelatedProduct());
             }
         }
-        return products;        
+        return products;
     }
-    
-    private String getRelatedProductsResultVar(Element element) {
-        String resultVar = element.getAttributeValue("relatedProductsResultVar");       
+
+    private String getRelatedProductsResultVar(Map<String, String> tagAttributes) {
+        String resultVar = tagAttributes.get("relatedProductsResultVar");
         if (resultVar == null) {
             resultVar = "relatedProducts";
         }
         return resultVar;
     }
-    
-    private String getRelatedSkusResultVar(Element element) {
-        String resultVar = element.getAttributeValue("relatedSkusResultVar");       
-        if (resultVar == null) {
-            resultVar = "relatedSkus";
-        }
-        return resultVar;
-    }
-    
-    private String getProductsResultVar(Element element) {
-        String resultVar = element.getAttributeValue("productsResultVar");      
+
+    private String getProductsResultVar(Map<String, String> tagAttributes) {
+        String resultVar = tagAttributes.get("productsResultVar");
         if (resultVar == null) {
             resultVar = "products";
         }
         return resultVar;
     }
 
-    private RelatedProductDTO buildDTO(Arguments args, Element element) {
+    private RelatedProductDTO buildDTO(Map<String, String> tagAttributes, String tagName, BroadleafTemplateContext context) {
         RelatedProductDTO relatedProductDTO = new RelatedProductDTO();
-        String productIdStr = element.getAttributeValue("productId"); 
-        String categoryIdStr = element.getAttributeValue("categoryId"); 
-        String quantityStr = element.getAttributeValue("quantity"); 
-        String typeStr = element.getAttributeValue("type"); 
-        
-        if (productIdStr != null) {
-            Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
-                    .parseExpression(args.getConfiguration(), args, productIdStr);
-            Object productId = expression.execute(args.getConfiguration(), args);
-            if (productId instanceof BigDecimal) {
-                productId = new Long(((BigDecimal) productId).toPlainString());
-            }
-            relatedProductDTO.setProductId((Long) productId);
-        }
-        
-        if (categoryIdStr != null) {
-            Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
-                    .parseExpression(args.getConfiguration(), args, categoryIdStr);
-            Object categoryId = expression.execute(args.getConfiguration(), args);
-            if (categoryId instanceof BigDecimal) {
-                categoryId = new Long(((BigDecimal) categoryId).toPlainString());
-            }
-            relatedProductDTO.setCategoryId((Long) categoryId);         
-        }
-        
-        if (quantityStr != null) {
-            Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
-                    .parseExpression(args.getConfiguration(), args, quantityStr);
-            Object quantityExp = expression.execute(args.getConfiguration(), args);
-            int quantity = 0;
-            if (quantityExp instanceof String) {
-                quantity = Integer.parseInt((String)quantityExp);
-            } else {
-                quantity = ((BigDecimal)expression.execute(args.getConfiguration(), args)).intValue();
-            }
-            relatedProductDTO.setQuantity(quantity);          
-        }       
-                
-        if (typeStr != null ) {
-            Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
-                    .parseExpression(args.getConfiguration(), args, typeStr);
-            Object typeExp = expression.execute(args.getConfiguration(), args);
-            if (typeExp instanceof String && RelatedProductTypeEnum.getInstance((String)typeExp) != null) {
-                relatedProductDTO.setType(RelatedProductTypeEnum.getInstance((String)typeExp));
-            }
+        String productIdStr = tagAttributes.get("productId");
+        String categoryIdStr = tagAttributes.get("categoryId");
+        String quantityStr = tagAttributes.get("quantity");
+        String typeStr = tagAttributes.get("type");
 
+        if (productIdStr != null) {
+            Number productId = context.parseExpression(productIdStr);
+            relatedProductDTO.setProductId(productId.longValue());
         }
-        
-        if ("false".equalsIgnoreCase(element.getAttributeValue("cumulativeResults"))) {
-            relatedProductDTO.setCumulativeResults(false);          
+
+        if (categoryIdStr != null) {
+            Number categoryId = context.parseExpression(categoryIdStr);
+            relatedProductDTO.setCategoryId(categoryId.longValue());
         }
-                    
+
+        if (quantityStr != null) {
+            Object quantityObj = context.parseExpression(quantityStr);
+            Number quantity = 0;
+            if (quantityObj instanceof Number) {
+                quantity = (Number) quantityObj;
+            } else if (quantityObj instanceof String) {
+                quantity = new Integer((String) quantityObj);
+            }
+            relatedProductDTO.setQuantity(quantity.intValue());
+        }
+
+        if (typeStr != null) {
+            Object typeExp = context.parseExpression(typeStr);
+            if (typeExp instanceof String && RelatedProductTypeEnum.getInstance((String) typeExp) != null) {
+                relatedProductDTO.setType(RelatedProductTypeEnum.getInstance((String) typeExp));
+            }
+        }
+
+        if ("false".equalsIgnoreCase(tagAttributes.get("cumulativeResults"))) {
+            relatedProductDTO.setCumulativeResults(false);
+        }
+
         return relatedProductDTO;
     }
+
 }

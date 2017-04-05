@@ -71,11 +71,6 @@ public interface CategoryDao {
     @Nonnull
     @Deprecated
     public Category readCategoryByName(@Nonnull String categoryName);
-    
-    /**
-     * @return a list of all categories that do not have a defaultParentCategory set
-     */
-    public Category readRootCategory();
 
     /**
      * Retrieve a list of {@code Category} instances by name.

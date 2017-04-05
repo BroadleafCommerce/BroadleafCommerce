@@ -520,6 +520,7 @@
                     loadThrottle: 100,
                     preload: true,
                     hideSelected: true,
+                    dropdownParent: 'body',
                     closeAfterSelect: !allowAdd,
                     placeholder: field.label + " +",
                     create: allowAdd,

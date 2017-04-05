@@ -20,6 +20,8 @@ package org.broadleafcommerce.common.web.expression;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.processor.ConfigVariableProcessor;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -36,6 +38,8 @@ import javax.servlet.http.HttpServletRequest;
  * @author Andre Azzolini (apazzolini)
  * @see {@link ConfigVariableProcessor}
  */
+@Component("blPropertiesVariableExpression")
+@ConditionalOnTemplating
 public class PropertiesVariableExpression implements BroadleafVariableExpression {
     
     @Override

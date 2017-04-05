@@ -32,4 +32,9 @@ public interface CatalogServiceExtensionHandler extends ExtensionHandler {
 
     public ExtensionResultStatusType findSkuByURI(String uri, ExtensionResultHolder resultHolder);
 
+    public ExtensionResultStatusType findProductByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
+
+    public ExtensionResultStatusType findCategoryByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
+
+    public ExtensionResultStatusType findSkuByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
 }

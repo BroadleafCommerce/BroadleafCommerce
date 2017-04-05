@@ -27,9 +27,16 @@ public class RequiredAttributeNotProvidedException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
+    protected String productId;
     public static final String ERROR_CODE = "REQUIRED_ATTRIBUTE";
 
     protected String attributeName;
+
+    public RequiredAttributeNotProvidedException(String message, String attributeName, String productId) {
+        super(message);
+        setAttributeName(attributeName);
+        setProductId(productId);
+    }
 
     public RequiredAttributeNotProvidedException(String message, String attributeName) {
         super(message);
@@ -52,5 +59,13 @@ public class RequiredAttributeNotProvidedException extends RuntimeException {
 
     public void setAttributeName(String attributeName) {
         this.attributeName = attributeName;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 }

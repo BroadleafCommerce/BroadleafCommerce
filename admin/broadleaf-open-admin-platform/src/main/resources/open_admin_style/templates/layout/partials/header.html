@@ -1,6 +1,6 @@
 <header class="site-bar">
 
-    <li th:substituteby="layout/partials/additionalHeaderMenu" />
+    <li th:replace="layout/partials/additionalHeaderMenu" ></li>
 
     <!--<div class="alert-box">-->
         <!--<div class="dropdown">-->
@@ -19,7 +19,7 @@
     <!--</div>-->
 
     <div class="account-info dropdown">
-        <blc_admin:admin_user resultVar="adminUser" />
+        <blc_admin:admin_user resultVar="adminUser" ></blc_admin:admin_user>
         <div class="dropdown-toggle" id="accountdrop" data-toggle="dropdown" aria-expanded="true">
             <span th:text="'Welcome ' + ${adminUser.name} + '!'"></span>
             <span class="caret"></span>
@@ -31,12 +31,12 @@
     </div>
 
 
-    <div th:if="${customRibbon == null or #strings.equals(customRibbon, '')}" th:remove="tag">
-        <div th:substituteBy="layout/partials/sandboxRibbon"></div>
-    </div>
-    <div th:unless="${customRibbon == null or #strings.equals(customRibbon, '')}" th:remove="tag">
-        <div th:substituteBy="${customRibbon}"></div>
-    </div>
+    <th:block th:if="${customRibbon == null or #strings.equals(customRibbon, '')}">
+        <div th:replace="layout/partials/sandboxRibbon"></div>
+    </th:block>
+    <th:block th:unless="${customRibbon == null or #strings.equals(customRibbon, '')}">
+        <div th:replace="${customRibbon}"></div>
+    </th:block>
 </header>
 <div id="lightbox" style="display: none;">
 

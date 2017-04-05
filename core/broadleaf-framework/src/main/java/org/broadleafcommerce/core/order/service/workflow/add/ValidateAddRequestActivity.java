@@ -22,6 +22,8 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
@@ -34,10 +36,14 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
+
+import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
+
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
+import org.broadleafcommerce.core.order.service.workflow.add.extension.ValidateAddRequestActivityExtensionManager;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
@@ -68,8 +74,27 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
 
+    @Resource(name = "blValidateAddRequestActivityExtensionManager")
+    protected ValidateAddRequestActivityExtensionManager extensionManager;
+
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
+        ExtensionResultHolder<Exception> resultHolder = new ExtensionResultHolder<>();
+        resultHolder.setResult(null);
+        if (extensionManager != null && extensionManager.getProxy() != null) {
+            ExtensionResultStatusType result = extensionManager.getProxy().validate(context.getSeedData(), resultHolder);
+
+            if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+                if (resultHolder.getResult() != null) {
+                    throw resultHolder.getResult();
+                }
+            }
+        }
+
+        return validate(context);
+    }
+
+    protected ProcessContext<CartOperationRequest> validate(ProcessContext<CartOperationRequest> context) {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         Integer orderItemQuantity = orderItemRequestDTO.getQuantity();
@@ -82,8 +107,18 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             throw new IllegalArgumentException("Order is required when adding item to order");
         } else {
             Product product = determineProduct(orderItemRequestDTO);
-            Sku sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(),
-                                   (ActivityMessages) context);
+            Sku sku;
+            try {
+                sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(),
+                    (ActivityMessages) context);
+            } catch (RequiredAttributeNotProvidedException e) {
+                if (orderItemRequestDTO instanceof ConfigurableOrderItemRequest) {
+                    // Mark the request as a configuration error and proceed with the add.
+                    orderItemRequestDTO.setHasConfigurationError(Boolean.TRUE);
+                    return context;
+                }
+                throw e;
+            }
 
             addSkuToCart(sku, orderItemRequestDTO, product, request);
 
@@ -116,7 +151,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         return product;
     }
     
-    protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) {
+    protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
         Sku sku = null;
         
         //If sku browsing is enabled, product option data will not be available.
@@ -145,7 +180,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         return CollectionUtils.isNotEmpty(product.getAdditionalSkus()) && !product.getCanSellWithoutOptions();
     }
     
-    protected Sku findMatchingSku(Product product, Map<String, String> attributeValues, ActivityMessages messages) {
+    protected Sku findMatchingSku(Product product, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
         Map<String, String> attributesRelevantToFindMatchingSku = new HashMap<>();
 
         // Verify that required product-option values were set.

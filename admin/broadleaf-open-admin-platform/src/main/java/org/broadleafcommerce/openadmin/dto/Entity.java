@@ -17,12 +17,14 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -162,7 +164,7 @@ public class Entity implements Serializable {
                 } else if (o2 == null) {
                     return -1;
                 }
-                return o1.getName().compareTo(o2.getName());
+                return ObjectUtils.compare(o1.getName(), o2.getName());
             }
         });
         Property searchProperty = new Property();
@@ -177,7 +179,7 @@ public class Entity implements Serializable {
                 } else if (o2 == null) {
                     return -1;
                 }
-                return o1.getName().compareTo(o2.getName());
+                return ObjectUtils.compare(o1.getName(), o2.getName());
             }
         });
         if (index >= 0) {

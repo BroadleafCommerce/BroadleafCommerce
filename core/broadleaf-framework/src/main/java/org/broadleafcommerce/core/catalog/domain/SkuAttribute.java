@@ -18,8 +18,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.common.value.Searchable;
-
+import org.broadleafcommerce.common.value.ValueAssignable;
 
 /**
  * Implementations of this interface are used to hold data about a SKU's Attributes.
@@ -35,7 +34,7 @@ import org.broadleafcommerce.common.value.Searchable;
  * @author btaylor
  *
  */
-public interface SkuAttribute extends Searchable<String>, MultiTenantCloneable<SkuAttribute> {
+public interface SkuAttribute extends ValueAssignable<String>, MultiTenantCloneable<SkuAttribute> {
 
     /**
      * Gets the id.

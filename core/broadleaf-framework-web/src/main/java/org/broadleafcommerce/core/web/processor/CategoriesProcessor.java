@@ -15,21 +15,25 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -44,19 +48,19 @@ import javax.annotation.Resource;
  * 
  * @author apazzolini
  */
-public class CategoriesProcessor extends AbstractModelVariableModifierProcessor {
-    
+@Component("blCategoriesProcessor")
+@ConditionalOnTemplating
+public class CategoriesProcessor extends AbstractBroadleafVariableModifierProcessor {
+
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
     @Resource(name = "blCategoriesProcessorExtensionManager")
     protected CategoriesProcessorExtensionManager extensionManager;
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public CategoriesProcessor() {
-        super("categories");
+    @Override
+    public String getName() {
+        return "categories";
     }
     
     @Override
@@ -65,17 +69,18 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
     }
 
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        String resultVar = element.getAttributeValue("resultVar");
-        String parentCategory = element.getAttributeValue("parentCategory");
-        String unparsedMaxResults = element.getAttributeValue("maxResults");
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+        String resultVar = tagAttributes.get("resultVar");
+        String parentCategory = tagAttributes.get("parentCategory");
+        String unparsedMaxResults = tagAttributes.get("maxResults");
 
+        Map<String, Object> newModelVars = new HashMap<>();
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
             ExtensionResultStatusType result = extensionManager.getProxy().findAllPossibleChildCategories(parentCategory, unparsedMaxResults, holder);
             if (ExtensionResultStatusType.HANDLED.equals(result)) {
-                addToModel(arguments, resultVar, holder.getResult());
-                return;
+                newModelVars.put(resultVar, holder.getResult());
+                return newModelVars;
             }
         }
 
@@ -87,20 +92,21 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
             List<CategoryXref> subcategories = categories.get(0).getChildCategoryXrefs();
             List<Category> results = Collections.emptyList();
             if (subcategories != null && !subcategories.isEmpty()) {
-                results = new ArrayList<Category>(subcategories.size());
+                results = new ArrayList<>(subcategories.size());
                 if (StringUtils.isNotEmpty(unparsedMaxResults)) {
                     int maxResults = Integer.parseInt(unparsedMaxResults);
                     if (subcategories.size() > maxResults) {
                         subcategories = subcategories.subList(0, maxResults);
                     }
                 }
-                
+
                 for (CategoryXref xref : subcategories) {
                     results.add(xref.getSubCategory());
                 }
             }
-            
-            addToModel(arguments, resultVar, results);
+            newModelVars.put(resultVar, results);
         }
+        return newModelVars;
     }
+
 }

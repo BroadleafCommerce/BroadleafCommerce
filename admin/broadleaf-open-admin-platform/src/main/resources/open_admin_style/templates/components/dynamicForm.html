@@ -7,7 +7,7 @@
 
     <img th:src="@{/img/admin/ajax-loader.gif}" class="ajax-loader" />
     
-    <div th:unless="${#sets.isEmpty(df.tabs)}" th:remove="tag">
+    <th:block th:unless="${#sets.isEmpty(df.tabs)}">
         <div th:each="group : ${df.tabs[0].fieldGroups}"
             th:classappend="${!group.isVisible}? 'hidden'" class="fieldset-card field-group dynamic-form">
             <a class="titlebar" href="#">
@@ -33,27 +33,27 @@
                              <div th:if="${renderOriginalValue}"
                                   class="original-value"
                                   th:attr="data-original-value=${field.attributes['originalValue']},
-                                           data-original-overriden-value=${field.attributes['originalOverridenValue']}" />
+                                           data-original-overriden-value=${field.attributes['originalOverridenValue']}" ></div>
 
-                            <div th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
-                                <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldType)}"/>
-                            </div>
-                            <div th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}" th:remove="tag">
-                                <div th:substituteBy="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"/>
-                            </div>
+                            <th:block th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}">
+                                <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldType)}"></div>
+                            </th:block>
+                            <th:block th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}">
+                                <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"></div>
+                            </th:block>
 
-                            <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
+                            <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" ></span>
                         </div>
                     </th:block>
                 </th:block>
 
-                <div th:unless="${#strings.containsIgnoreCase(group.title, 'master')}" th:remove="tag">
-                    <div th:if="${dynamicFormActionsTemplate}" th:remove="tag">
-                        <div th:substituteby="${dynamicFormActionsTemplate}" />
-                    </div>
-                </div>
+                <th:block th:unless="${#strings.containsIgnoreCase(group.title, 'master')}">
+                    <th:block th:if="${dynamicFormActionsTemplate}">
+                        <div th:replace="${dynamicFormActionsTemplate}" ></div>
+                    </th:block>
+                </th:block>
             </div>
         </div>
-    </div>
+    </th:block>
     
 </div>

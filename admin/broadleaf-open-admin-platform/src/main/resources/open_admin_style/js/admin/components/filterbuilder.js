@@ -632,7 +632,7 @@
             }
             var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
 
-            var $filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
+            var $filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']')[0];
             var $tbody = $('.list-grid-table[data-hiddenid=' + hiddenId + ']:not([id$=-header])');
             var $filterFields = $tbody.closest('.listgrid-body-wrapper').prev().find('.filter-fields');
 
@@ -653,7 +653,10 @@
             var inputs = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
 
             if (filters.data.length <= 0) {
-                $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
+                var mainContent = $filterButton.closest('.main-content');
+                if (mainContent.length) {
+                    $(mainContent).find('.sticky-container .filter-text').hide();
+                }
             }
 
             BLC.ajax({
@@ -716,7 +719,6 @@
         },
 
         clearFilters : function(hiddenId) {
-            var $filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
             // clear the filters from the filterbuilder
             var jsonVal = JSON.stringify({ 'data' : [] });
             $('#' + hiddenId).val(jsonVal);
@@ -871,11 +873,12 @@
             $('#' + hiddenId).val(jsonVal);
 
             // if there are active filters, change the filter button to "Edit"
-            var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
+            var $filterButton = $($('.filter-button[data-hiddenid=' + hiddenId + ']')[0]);
             if (filterData.rules.length > 0) {
-                if (!filterButton.closest('.button-group').length) {
+                if (!$filterButton.closest('.button-group').length) {
 
-                    filterButton.text("Edit Filter");
+                    $filterButton.text("Edit Filter");
+                    $filterButton.removeClass('disabled').removeAttr('disabled');
 
                     var clearButton = $('<button>', {
                         'html': '<i class="fa fa-times" />',
@@ -886,20 +889,20 @@
                         'class': 'button-group'
                     });
 
-                    buttonGroup.append(filterButton.clone());
+                    buttonGroup.append($filterButton.clone());
                     buttonGroup.append(clearButton);
-                    $(buttonGroup).insertBefore(filterButton.closest('.filter-info:visible').find('.filter-builder-data'));
+                    $(buttonGroup).insertBefore($filterButton.closest('.filter-info:visible').find('.filter-builder-data'));
 
-                    filterButton.remove();
+                    $filterButton.remove();
                 }
-                filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
+                $filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
             } else {
-                if ($(filterButton).text() != 'Filter') {
+                if ($filterButton.text() !== 'Filter') {
                     // change "edit filter" button back to "filter"
-                    filterButton.text("Filter");
-                    filterButton.insertBefore(filterButton.parent());
-                    filterButton.siblings('.button-group:visible').remove();
-                    filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
+                    $filterButton.text("Filter");
+                    $filterButton.insertBefore($filterButton.parent());
+                    $filterButton.siblings('.button-group:visible').remove();
+                    $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
                 }
             }
         },
@@ -1232,13 +1235,14 @@ $(document).ready(function() {
             var filterData = $.parseJSON($('#' + hiddenId).val());
 
             // if there are active filters, change the filter button to "Edit"
-            var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
+            var $filterButton = $($('.filter-button[data-hiddenid=' + hiddenId + ']')[0]);
             if (filterData.data.length == 1) {
                 if (filterData.data[0].rules.length > 0) {
 
-                    if (!filterButton.closest('.button-group').length) {
+                    if (!$filterButton.closest('.button-group').length) {
 
-                        filterButton.text("Edit Filter");
+                        $filterButton.text("Edit Filter");
+                        $filterButton.removeClass('disabled').removeAttr('disabled');
 
                         var clearButton = $('<button>', {
                             'html': '<i class="fa fa-times" />',
@@ -1249,21 +1253,21 @@ $(document).ready(function() {
                             'class': 'button-group'
                         });
 
-                        buttonGroup.append(filterButton.clone());
+                        buttonGroup.append($filterButton.clone());
                         buttonGroup.append(clearButton);
-                        $(buttonGroup).insertBefore(filterButton.closest('.filter-info:visible').find('.filter-builder-data'));
+                        $(buttonGroup).insertBefore($filterButton.closest('.filter-info:visible').find('.filter-builder-data'));
 
-                        filterButton.remove();
-                        filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
+                        $filterButton.remove();
+                        $filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
                     }
                 }
             } else {
-                if ($(filterButton).text() != 'Filter') {
+                if ($filterButton.text() !== 'Filter') {
                     // change "edit filter" button back to "filter"
-                    filterButton.text("Filter");
-                    filterButton.insertBefore(filterButton.parent());
-                    filterButton.siblings('.button-group:visible').remove();
-                    filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
+                    $filterButton.text("Filter");
+                    $filterButton.insertBefore($filterButton.parent());
+                    $filterButton.siblings('.button-group:visible').remove();
+                    $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
                 }
             }
         });

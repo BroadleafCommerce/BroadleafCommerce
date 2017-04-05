@@ -15,19 +15,23 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafAttributeModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafAttributeModifier;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Thymeleaf Processor that replaces the "href" attribute on an <a/> element, maintaining the current search criteria
@@ -35,32 +39,32 @@ import java.util.Map;
  *
  * @author Joseph Fridye (jfridye)
  */
-public class PaginationSortLinkProcessor extends AbstractAttributeModifierAttrProcessor {
+@Component("blPaginationSortLinkProcessor")
+@ConditionalOnTemplating
+public class PaginationSortLinkProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
-    public PaginationSortLinkProcessor() {
-        super("pagination-sort-link");
+    @Override
+    public String getName() {
+        return "pagination-sort-link";
     }
-
+    
     @Override
     public int getPrecedence() {
         return 10000;
     }
 
     @Override
-    protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
-
-        Map<String, String> attributes = new HashMap<String, String>();
-
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 
         String baseUrl = request.getRequestURL().toString();
 
-        Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
+        Map<String, String[]> params = new HashMap<>(request.getParameterMap());
 
-        String sort = element.getAttributeValue(attributeName);
+        String sort = attributeValue;
 
         if (StringUtils.isNotBlank(sort)) {
-            params.put(SearchCriteria.SORT_STRING, new String[]{sort});
+            params.put(SearchCriteria.SORT_STRING, new String[] { sort });
         } else {
             params.remove(SearchCriteria.SORT_STRING);
         }
@@ -70,26 +74,9 @@ public class PaginationSortLinkProcessor extends AbstractAttributeModifierAttrPr
         params.remove(SearchCriteria.PAGE_NUMBER);
 
         String url = ProcessorUtils.getUrl(baseUrl, params);
-
-        attributes.put("href", url);
-
-        return attributes;
+        Map<String, String> newAttributes = new HashMap<>();
+        newAttributes.put("href", url);
+        return new BroadleafAttributeModifier(newAttributes);
 
     }
-
-    @Override
-    protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return ModificationType.SUBSTITUTION;
-    }
-
-    @Override
-    protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-        return true;
-    }
-
-    @Override
-    protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
-        return false;
-    }
-
 }

@@ -1,4 +1,4 @@
-<blc_admin:admin_field_builder fieldBuilder="${field.fieldBuilder}">
+<blc_admin:admin_field_builder fieldBuilder="${field.fieldBuilder}" ceilingEntity="${currentAdminSection.ceilingEntity}">
 
     <!--/*
     The BLC Rule Builder has several different UI states in which it can be rendered:
@@ -40,9 +40,6 @@
             <span style="margin-right: 10px;" th:text="#{No}"></span>
         </label>
     </div>
-
-
-    <div th:substituteby="components/fieldTooltip"></div>
  
     <div class="rule-builder-container"
          th:classappend="${field.ruleType}"
@@ -88,9 +85,12 @@
 
         
         <!--/* For: All display types */-->
-        <h4 th:id="${field.name + '-header'}" class="field-label" th:text="#{${field.friendlyName}}"
+        <h4 th:id="${field.name + '-header'}" class="field-label"
             th:classappend="${!field.required ? 'query-builder-rules-header' : 'query-builder-rules-header required'}"
-            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.displayType == 'MODAL') ? 'display: none;' : ''}"></h4>
+            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.displayType == 'MODAL') ? 'display: none;' : ''}">
+            <span th:text="#{${field.friendlyName}}"></span>
+            <span th:replace="components/fieldTooltip"></span>
+        </h4>
 
         <div class="query-builder-rules-container"
             th:classappend="${(field.required ? 'required-query-builder' : '')

@@ -411,6 +411,7 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
             override.setForceFreeFormKeys(map.forceFreeFormKeys());
             override.setManyToField(map.manyToField());
             override.setLazyFetch(map.lazyFetch());
+            override.setManualFetch(map.manualFetch());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationMap annotation not found on field");
@@ -687,6 +688,9 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
 
         if (map.getLazyFetch() != null) {
             metadata.setLazyFetch(map.getLazyFetch());
+        }
+        if (map.getManualFetch() != null) {
+            metadata.setManualFetch(map.getManualFetch());
         }
         if (map.getFriendlyName() != null) {
             metadata.setFriendlyName(map.getFriendlyName());

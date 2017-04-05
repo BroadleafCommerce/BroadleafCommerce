@@ -41,4 +41,19 @@ public abstract class AbstractCatalogServiceExtensionHandler extends AbstractExt
     public ExtensionResultStatusType findSkuByURI(String uri, ExtensionResultHolder resultHolder) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
+    @Override
+    public ExtensionResultStatusType findProductByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder) {
+        return findProductByURI(uri, resultHolder);
+    }
+
+    @Override
+    public ExtensionResultStatusType findCategoryByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder) {
+        return findCategoryByURI(uri, resultHolder);
+    }
+
+    @Override
+    public ExtensionResultStatusType findSkuByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder) {
+        return findSkuByURI(uri, resultHolder);
+    }
 }

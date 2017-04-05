@@ -265,6 +265,9 @@ circle {
 .app-content .side-nav ul li a.fa-usd:before {
     left: 17px;
 }
+.app-content .side-nav ul li a.fa-clock-o:before {
+    left: 14px;
+}
 .app-content .side-nav ul li .blc-icon-blc-leaf {
     float: left;
     position: relative;

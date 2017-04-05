@@ -157,4 +157,29 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
             return null;
         }
     }
+
+    protected boolean isAssignableFrom(String ceilingEntityFullyQualifiedClassname, Class targetClass) {
+        try {
+            Class<?> clazz = Class.forName(ceilingEntityFullyQualifiedClassname);
+            return targetClass.isAssignableFrom(clazz);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    protected boolean meetsCustomCriteria(PersistencePackage pkg, String[] customCriteria) {
+        if (pkg.getCustomCriteria() == null) {
+            return false;
+        }
+        for (String criteria : pkg.getCustomCriteria()) {
+            if (criteria != null) {
+                for (String search : customCriteria) {
+                    if (criteria.equals(search)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }

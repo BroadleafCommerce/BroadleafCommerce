@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -95,6 +96,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -164,9 +167,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey, crumbs);
         listGrid.setSelectType(ListGrid.SelectType.NONE);
 
-        Field firstField = listGrid.getHeaderFields().iterator().next();
-        if (requestParams.containsKey(firstField.getName())) {
-            model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
+        Set<Field> headerFields = listGrid.getHeaderFields();
+        if (CollectionUtils.isNotEmpty(headerFields)) {
+            Field firstField = headerFields.iterator().next();
+            if (requestParams.containsKey(firstField.getName())) {
+                model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
+            }
         }
 
         model.addAttribute("viewType", "entityList");
@@ -383,6 +389,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("viewType", "modal/entityAdd");
             model.addAttribute("currentUrl", request.getRequestURL().toString());
             model.addAttribute("modalHeaderType", ModalHeaderType.ADD_ENTITY.getType());
+            model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
             setModelAttributes(model, sectionKey);
             return "modules/modalContainer";
         }

@@ -15,16 +15,22 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.web.expression.OrderVariableExpression;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -45,40 +51,40 @@ import javax.annotation.Resource;
  * 
  * @see {@link Order#getName()}
  * @author elbertbautista
+ * @deprecated use {@link OrderVariableExpression#getNamedOrderForCurrentCustomer(String)} instead
  */
-public class NamedOrderProcessor extends AbstractModelVariableModifierProcessor {
-    
+@Deprecated
+@Component("blNamedOrderProcessor")
+@ConditionalOnTemplating
+public class NamedOrderProcessor extends AbstractBroadleafVariableModifierProcessor {
+
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     *
-     * NOTE: thymeleaf normalizes the attribute names by converting all to lower-case
-     * we will use the underscore instead of camel case to avoid confusion
-     *
-     */
-    public NamedOrderProcessor() {
-        super("named_order");
+    
+    @Override
+    public String getName() {
+        return "named_order";
     }
-
+    
     @Override
     public int getPrecedence() {
         return 10000;
     }
-
+    
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         Customer customer = CustomerState.getCustomer();
 
-        String orderVar = element.getAttributeValue("orderVar");
-        String orderName = element.getAttributeValue("orderName");
+        String orderVar = tagAttributes.get("orderVar");
+        String orderName = tagAttributes.get("orderName");
 
         Order order = orderService.findNamedOrderForCustomer(orderName, customer);
+        Map<String, Object> newModelVars = new HashMap<>();
         if (order != null) {
-            addToModel(arguments, orderVar, order);
+            newModelVars.put(orderVar, order);
         } else {
-            addToModel(arguments, orderVar, new NullOrderImpl());
+            newModelVars.put(orderVar, new NullOrderImpl());
         }
+        return newModelVars;
     }
 }

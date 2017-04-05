@@ -104,7 +104,7 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
 
     @Override
     public <T> T getTopMostOriginalRecord(T record) {
-        return null;
+        return record;
     }
 
     @Override

@@ -26,11 +26,11 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * The controller responsible for wishlist management activities, including
@@ -53,8 +53,9 @@ public class BroadleafManageWishlistController extends AbstractAccountController
             wishlist = orderService.createNamedOrderForCustomer(wishlistName, CustomerState.getCustomer(request));
         }
         
-        wishlist = orderService.addItem(wishlist.getId(), itemRequest, true);
-        
+        wishlist = orderService.addItem(wishlist.getId(), itemRequest, false);
+        wishlist = orderService.save(wishlist, true);
+
         return getAccountWishlistRedirect();
     }
     
@@ -76,7 +77,7 @@ public class BroadleafManageWishlistController extends AbstractAccountController
     }
 
     public String moveItemToCart(HttpServletRequest request, HttpServletResponse response, Model model, 
-            String wishlistName, Long orderItemId) throws RemoveFromCartException, AddToCartException {
+            String wishlistName, Long orderItemId) throws RemoveFromCartException, AddToCartException, PricingException {
         Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
         List<OrderItem> orderItems = wishlist.getOrderItems();
 
@@ -89,7 +90,8 @@ public class BroadleafManageWishlistController extends AbstractAccountController
         }
 
         if (orderItem != null) {
-            orderService.addItemFromNamedOrder(wishlist, orderItem, true);
+            Order cartOrder = orderService.addItemFromNamedOrder(wishlist, orderItem, false);
+            cartOrder = orderService.save(cartOrder, true);
         } else {
             throw new IllegalArgumentException("The item id provided was not found in the wishlist");
         }
@@ -100,11 +102,11 @@ public class BroadleafManageWishlistController extends AbstractAccountController
     }
     
     public String moveListToCart(HttpServletRequest request, HttpServletResponse response, Model model, 
-            String wishlistName) throws RemoveFromCartException, AddToCartException {
+            String wishlistName) throws RemoveFromCartException, AddToCartException, PricingException {
         Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
         
-        orderService.addAllItemsFromNamedOrder(wishlist, true);
-        
+        Order cartOrder = orderService.addAllItemsFromNamedOrder(wishlist, false);
+        cartOrder = orderService.save(cartOrder, true);
         model.addAttribute("wishlist", wishlist);
         return getAccountWishlistRedirect();
     }

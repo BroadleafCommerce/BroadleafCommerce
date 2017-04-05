@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -26,6 +27,7 @@ import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
@@ -55,6 +57,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.context.request.WebRequest;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -67,6 +70,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * An implementation of SearchService that uses Solr.
@@ -365,9 +369,28 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     protected void modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
             List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
 
-        extensionManager.getProxy().modifySolrQuery(query, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
+        extensionManager.getProxy().modifySolrQuery(createSearchContextDTO(), query, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
     }
-    
+
+    protected SearchContextDTO createSearchContextDTO() {
+        SearchContextDTO searchContextDTO = new SearchContextDTO();
+
+        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+
+        if (ctx != null) {
+            HttpServletRequest request = ctx.getRequest();
+            if (request != null && request.getAttribute("blRuleMap") != null) {
+                Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap");
+
+                if (MapUtils.isNotEmpty(ruleMap)) {
+                    searchContextDTO.setAttributes(ruleMap);
+                }
+            }
+        }
+
+        return searchContextDTO;
+    }
+
     protected List<SolrDocument> getResponseDocuments(QueryResponse response) {
         return shs.getResponseDocuments(response);
     }
@@ -648,5 +671,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Override
     public void destroy() throws Exception {
         solrConfiguration.destroy();
+    }
+
+    @Override
+    public boolean isActive() {
+        return solrConfiguration != null;
     }
 }

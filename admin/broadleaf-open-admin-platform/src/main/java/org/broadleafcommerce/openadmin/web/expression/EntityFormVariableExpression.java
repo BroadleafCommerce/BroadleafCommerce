@@ -20,12 +20,16 @@ package org.broadleafcommerce.openadmin.web.expression;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.springframework.stereotype.Component;
 
 /**
  * A {@link BroadleafVariableExpression} that assists with operations for Thymeleaf-layer operations on entity forms.
  * 
  * @author Andre Azzolini (apazzolini)
  */
+@Component("blEntityFormVariableExpression")
+@ConditionalOnTemplating
 public class EntityFormVariableExpression implements BroadleafVariableExpression {
     
     @Override

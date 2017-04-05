@@ -37,14 +37,6 @@
     <context:component-scan base-package="org.broadleafcommerce.profile.web.controller" />
     <context:component-scan base-package="org.broadleafcommerce.profile.web.core.service.login" />
     
-    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
-            </list>
-        </property>
-    </bean>
-
     <bean id="blDefaultErrorHandler" class="org.broadleafcommerce.core.workflow.SilentErrorHandler"/>
 
     <bean id="blTestRollbackHandler" class="org.broadleafcommerce.core.workflow.state.test.TestRollbackHandler"/>
@@ -91,13 +83,18 @@
                      by bean definitions in bl-applicationContext-test-module.xml -->
                 <!-- 
                     The final configuration of this workflow should be:
-                    0 100 - PassThroughActivity
-                    1 1000 - framework activity
-                    2 2000 - framework activity
-                    3 3000 - framework activity
-                    4 3000 - PassThroughActivity
-                    5 4000 - framework activity
-                    6 5000 - TestRollbackActivity
+                    0  100 - PassThroughActivity
+                    1  500 - framework activity
+                    2  1000 - framework activity
+                    3  2000 - framework activity
+                    4  3000 - framework activity
+                    5  3500 - PassThroughActivity
+                    6  4000 - framework activity
+                    7  5000 - framework activity
+                    8  5000 - TestRollbackActivity
+                    9  6000 - framework activity
+                    10 7000 - framework activity
+                    11 8000 - TestExampleModuleActivity
                 -->
                 <bean p:order="100" class="org.broadleafcommerce.core.workflow.PassThroughActivity"/>
                 <bean p:order="5000" class="org.broadleafcommerce.core.workflow.state.test.TestRollbackActivity">

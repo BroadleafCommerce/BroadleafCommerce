@@ -19,7 +19,6 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
-import org.broadleafcommerce.common.value.Searchable;
 import org.broadleafcommerce.common.value.ValueAssignable;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
@@ -33,11 +32,9 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
-
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
@@ -201,9 +198,6 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                 //transient object exception on the manyToField object (which itself has not been saved yet)
                 persistValue = false;
             }
-        }
-        if (Searchable.class.isAssignableFrom(valueType)) {
-            ((Searchable) assignableValue).setSearchable(populateValueRequest.getMetadata().getSearchable());
         }
         if (persistValue) {
             populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(assignableValue);

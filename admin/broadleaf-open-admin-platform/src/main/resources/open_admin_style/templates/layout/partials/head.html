@@ -1,13 +1,13 @@
 <head>
     
-    <div th:substituteby="layout/partials/preHeadContent" />
+    <div th:replace="layout/partials/preHeadContent" ></div>
 
     <meta charset="utf-8" />
     <meta http-equiv="Content-Language" content="en-us" />
     <meta http-equiv="Content-Author" content="Broadleaf Commerce" />
     <meta name="viewport" content="width=device-width" />
 
-    <title th:text="#{Admin_Title}" />
+    <title th:text="#{Admin_Title}" ></title>
     
     <!--[if IE 7]>
     <link rel="stylesheet" th:href="@{/css/font-awesome-ie7.min.css}" />
@@ -30,12 +30,12 @@
                        admin/tooltips.css,
                        admin/session-expiration.css,
                        admin/jquery-confirm.min.css,
-                       admin/selectize.css" />
+                       admin/selectize.css" ></blc:bundle>
 
     <script type="text/javascript" th:src="@{/js/admin/lib/modernizr.foundation.js}"></script>
     
     <!--[if IE]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     
-    <div th:substituteby="layout/partials/postHeadContent" />
+    <div th:replace="layout/partials/postHeadContent" ></div>
     
 </head>

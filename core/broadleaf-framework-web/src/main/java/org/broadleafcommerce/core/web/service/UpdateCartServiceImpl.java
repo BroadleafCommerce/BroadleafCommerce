@@ -78,9 +78,9 @@ public class UpdateCartServiceImpl implements UpdateCartService {
         }
 
         //Reprice order logic
-        List<OrderItemRequestDTO> itemsToReprice = new ArrayList<OrderItemRequestDTO>();
-        List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
-        List<OrderItem> itemsToReset = new ArrayList<OrderItem>();
+        List<OrderItemRequestDTO> itemsToReprice = new ArrayList<>();
+        List<OrderItem> itemsToRemove = new ArrayList<>();
+        List<OrderItem> itemsToReset = new ArrayList<>();
         boolean repriceOrder = true;
 
         for(OrderItem orderItem: currentCart.getOrderItems()){
@@ -144,8 +144,10 @@ public class UpdateCartServiceImpl implements UpdateCartService {
     }
 
     @Override
-    public void validateCart(Order cart) {
-        // hook to allow override
+    public void validateAddToCartRequest(OrderItemRequestDTO itemRequest, Order cart) {
+        if (extensionManager != null) {
+            extensionManager.getProxy().validateAddToCartItem(itemRequest, cart);
+        }
     }
 
     @Override

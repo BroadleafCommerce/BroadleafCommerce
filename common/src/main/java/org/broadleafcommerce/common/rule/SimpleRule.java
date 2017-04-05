@@ -32,7 +32,6 @@ public interface SimpleRule extends Serializable {
      *
      * @return the rule as an MVEL string
      */
-    @Nonnull
     public String getMatchRule();
 
     /**

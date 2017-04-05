@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
+import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -36,8 +37,17 @@ import java.util.HashMap;
 public class DefaultDynamicSkuPricingServiceImpl implements DynamicSkuPricingService {
 
     @Override
-    @SuppressWarnings("rawtypes")
+    @Deprecated
     public DynamicSkuPrices getSkuPrices(Sku sku, HashMap skuPricingConsiderations) {
+        SkuPriceWrapper wrapper = new SkuPriceWrapper(sku);
+        return getSkuPrices(wrapper, skuPricingConsiderations);
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public DynamicSkuPrices getSkuPrices(SkuPriceWrapper skuWrapper, HashMap skuPricingConsiderations) {
+        Sku sku = skuWrapper.getTargetSku();
+        
         DynamicSkuPrices prices = new DynamicSkuPrices();
         prices.setRetailPrice(sku.getRetailPrice());
         prices.setSalePrice(sku.getSalePrice());

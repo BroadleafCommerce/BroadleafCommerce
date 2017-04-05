@@ -15,13 +15,18 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.cms.web.processor;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
+@Component("blContentProcessorExtensionManager")
+@ConditionalOnTemplating
 public class ContentProcessorExtensionManager extends ExtensionManager<ContentProcessorExtensionHandler> {
 
     public ContentProcessorExtensionManager() {

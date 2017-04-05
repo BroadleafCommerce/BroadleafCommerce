@@ -4,7 +4,7 @@
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 
-<head th:include="layout/partials/head" />
+<head th:include="layout/partials/head" ></head>
 
 <body class="login">
 
@@ -15,12 +15,12 @@
 
         <div class="clear"></div>
 
-        <div id="messages" th:include="${templateName}::messages" />
+        <div id="messages" th:include="${templateName}::messages" ></div>
 
-        <div id="js-warning" th:text="#{admin.login.requiresJs}" onload="" />
+        <div id="js-warning" th:text="#{admin.login.requiresJs}" onload="" ></div>
 
         <div id="js-visible" style="display: none;">
-            <div th:substituteby="${templateName}::form" />
+            <div th:replace="${templateName}::form" ></div>
         </div>
 
         <script type="text/javascript">

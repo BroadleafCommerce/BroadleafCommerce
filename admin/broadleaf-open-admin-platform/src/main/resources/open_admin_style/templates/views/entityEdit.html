@@ -1,29 +1,29 @@
-<div th:remove="tag">
-    <div th:remove="tag" th:if="${entityFormTemplatePath == null and useAjaxUpdate == true}">
-        <blc:form th:include="components/entityForm"
-            th:remove="tag"
-            th:with="additionalClasses='blc-admin-ajax-update',
-                     additionalTabClasses='entity-form',
-                     showSingleTab='false',
-                     hideActions='true',
-                     inModal=${inModal != null and inModal}" />
-    </div>
-
-    <div th:remove="tag" th:if="${entityFormTemplatePath == null and useAjaxUpdate != true}">
-        <blc:form th:include="components/entityForm"
-            th:remove="tag"
-            th:with="additionalTabClasses='entity-form',
-                     showSingleTab='false',
-                     hideActions='true',
-                     inModal=${inModal != null and inModal}" />
-    </div>
-
-    <div th:remove="tag" th:unless="${entityFormTemplatePath == null}">
-        <blc:form th:include="${entityFormTemplatePath}"
-            th:remove="tag"
-            th:with="additionalTabClasses='entity-form',
-                     showSingleTab='false',
-                     hideActions='true',
-                     inModal=${inModal != null and inModal}" />
-    </div>
-</div>
+<th:block>
+    <th:block th:if="${entityFormTemplatePath == null and useAjaxUpdate == true}" >
+        <th:block th:include="components/entityForm"
+        th:with="additionalClasses='blc-admin-ajax-update',
+                 additionalTabClasses='entity-form',
+                 showSingleTab='false',
+                 hideActions='true',
+                 inModal=${inModal != null and inModal}" ></th:block>
+    </th:block>
+    
+    <th:block th:if="${entityFormTemplatePath == null and useAjaxUpdate != true}" >
+        <th:block th:include="components/entityForm"
+        th:with="additionalTabClasses='entity-form',
+                 showSingleTab='false',
+                 hideActions='true',
+                 inModal=${inModal != null and inModal}" ></th:block>
+    
+    </th:block>
+    
+    <th:block th:unless="${entityFormTemplatePath == null}" >
+        <th:block th:include="${entityFormTemplatePath}"
+              th:with="additionalTabClasses='entity-form',
+                       showSingleTab='false',
+                       hideActions='true',
+                       inModal=${inModal != null and inModal}"></th:block>
+    </th:block>
+    <input type="hidden" th:name="${@blExploitProtectionService.getCsrfTokenParameter()}" th:value="${@blExploitProtectionService.getCSRFToken()}" />
+    <input type="hidden" th:name="${@blStaleStateProtectionService.stateVersionTokenParameter}" th:value="${@blStaleStateProtectionService.stateVersionToken}" />
+</th:block>

@@ -15,6 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.cms.web.processor;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -34,16 +35,11 @@ import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.deeplink.DeepLink;
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.context.IWebContext;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.standard.expression.Assignation;
-import org.thymeleaf.standard.expression.AssignationSequence;
-import org.thymeleaf.standard.expression.AssignationUtils;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.IStandardExpressionParser;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
+import org.broadleafcommerce.presentation.model.BroadleafAssignation;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.springframework.stereotype.Component;
 
 import com.google.common.primitives.Ints;
 
@@ -96,60 +92,55 @@ import javax.servlet.http.HttpServletRequest;
  *                          The list will be sorted first by dynamicFieldA descending and then dynamicFieldB ascending
  * </ul>
  */
-public class ContentProcessor extends AbstractModelVariableModifierProcessor {
+@Component("blContentProcessor")
+@ConditionalOnTemplating
+public class ContentProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     protected final Log LOG = LogFactory.getLog(getClass());
     public static final String REQUEST_DTO = "blRequestDTO";
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
-    
+
     @Resource(name = "blStructuredContentService")
     protected StructuredContentService structuredContentService;
-    
+
     @Resource(name = "blStaticAssetService")
     protected StaticAssetService staticAssetService;
 
     @Resource(name = "blContentProcessorExtensionManager")
     protected ContentProcessorExtensionManager extensionManager;
-    
+
     @Resource(name = "blContentDeepLinkService")
     protected ContentDeepLinkServiceImpl contentDeepLinkService;
-    
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public ContentProcessor() {
-        super("content");
-    }
-    
-    public ContentProcessor(String elementName) {
-        super(elementName);
+
+    @Override
+    public String getName() {
+        return "content";
     }
     
     @Override
     public int getPrecedence() {
         return 10000;
     }
-    
     /**
      * Returns a default name
      * @param element
      * @param valueName
      * @return
      */
-    protected String getAttributeValue(Element element, String valueName, String defaultValue) {
-        String returnValue = element.getAttributeValue(valueName);
+    protected String getAttributeValue(Map<String, String> tagAttributes, String valueName, String defaultValue) {
+        String returnValue = tagAttributes.get(valueName);
         if (returnValue == null) {
             return defaultValue;
         } else {
             return returnValue;
         }
-    }   
+    }
 
     @Override
-    protected void modifyModelAttributes(final Arguments arguments, Element element) {        
-        String contentType = element.getAttributeValue("contentType");
-        String contentName = element.getAttributeValue("contentName");
-        String maxResultsStr = element.getAttributeValue("maxResults");
+    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+        String contentType = tagAttributes.get("contentType");
+        String contentName = tagAttributes.get("contentName");
+        String maxResultsStr = tagAttributes.get("maxResults");
 
         if (StringUtils.isEmpty(contentType) && StringUtils.isEmpty(contentName)) {
             throw new IllegalArgumentException("The content processor must have a non-empty attribute value for 'contentType' or 'contentName'");
@@ -162,47 +153,49 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         if (maxResults == null) {
             maxResults = Integer.MAX_VALUE;
         }
-        
-        String contentListVar = getAttributeValue(element, "contentListVar", "contentList");
-        String contentItemVar = getAttributeValue(element, "contentItemVar", "contentItem");
-        String numResultsVar = getAttributeValue(element, "numResultsVar", "numResults");
-        
-        String fieldFilters = element.getAttributeValue("fieldFilters");
-        final String sorts = element.getAttributeValue("sorts");
 
-        IWebContext context = (IWebContext) arguments.getContext();     
-        HttpServletRequest request = context.getHttpServletRequest();   
+        String contentListVar = getAttributeValue(tagAttributes, "contentListVar", "contentList");
+        String contentItemVar = getAttributeValue(tagAttributes, "contentItemVar", "contentItem");
+        String numResultsVar = getAttributeValue(tagAttributes, "numResultsVar", "numResults");
+
+        String fieldFilters = tagAttributes.get("fieldFilters");
+        final String sorts = tagAttributes.get("sorts");
+
         BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
-        
-        Map<String, Object> mvelParameters = buildMvelParameters(request, arguments, element);
+        HttpServletRequest request = blcContext.getRequest();
+        Map<String, Object> mvelParameters = buildMvelParameters(blcContext.getRequest(), tagAttributes, context);
         SandBox currentSandbox = blcContext.getSandBox();
 
         List<StructuredContentDTO> contentItems;
         StructuredContentType structuredContentType = null;
-        if (contentType != null ) {
+        if (contentType != null) {
             structuredContentType = structuredContentService.findStructuredContentTypeByName(contentType);
         }
 
         Locale locale = blcContext.getLocale();
-            
-        contentItems = getContentItems(contentName, maxResults, request, mvelParameters, currentSandbox, structuredContentType, locale, arguments, element);
+
+        Map<String, Object> newModelVars = new HashMap<>();
+        contentItems = getContentItems(contentName, maxResults, request, mvelParameters, currentSandbox, structuredContentType, locale, tagName, tagAttributes, newModelVars, context);
         
         if (contentItems.size() > 0) {
-            
+
             // sort the resulting list by the configured property sorts on the tag
             if (StringUtils.isNotEmpty(sorts)) {
+                final BroadleafTemplateContext finalContext = context;
+                // In order to use the context in a comparator it needs to be final
                 Collections.sort(contentItems, new Comparator<StructuredContentDTO>() {
+
                     @Override
                     public int compare(StructuredContentDTO o1, StructuredContentDTO o2) {
-                        AssignationSequence sortAssignments = AssignationUtils.parseAssignationSequence(arguments.getConfiguration(), arguments, sorts, false);
+                        List<BroadleafAssignation> sortAssignments = finalContext.getAssignationSequence(sorts, false);
                         CompareToBuilder compareBuilder = new CompareToBuilder();
-                        for (Assignation sortAssignment : sortAssignments) {
-                            String property = sortAssignment.getLeft().getStringRepresentation();
-                            
+                        for (BroadleafAssignation sortAssignment : sortAssignments) {
+                            String property = sortAssignment.getLeftStringRepresentation(finalContext);
+
                             Object val1 = o1.getPropertyValue(property);
                             Object val2 = o2.getPropertyValue(property);
-                            
-                            if (sortAssignment.getRight().execute(arguments.getConfiguration(), arguments).equals("ASCENDING")) {
+
+                            if (sortAssignment.parseRight(finalContext).equals("ASCENDING")) {
                                 compareBuilder.append(val1, val2);
                             } else {
                                 compareBuilder.append(val2, val1);
@@ -212,18 +205,18 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
                     }
                 });
             }
-            
-            List<Map<String, Object>> contentItemFields = new ArrayList<Map<String, Object>>();          
-            
+
+            List<Map<String, Object>> contentItemFields = new ArrayList<>();
+
             for (StructuredContentDTO item : contentItems) {
                 if (StringUtils.isNotEmpty(fieldFilters)) {
-                    AssignationSequence assignments = AssignationUtils.parseAssignationSequence(arguments.getConfiguration(), arguments, fieldFilters, false);
+                    List<BroadleafAssignation> assignments = context.getAssignationSequence(fieldFilters, false);
                     boolean valid = true;
-                    for (Assignation assignment : assignments) {
-                        
-                        if (ObjectUtils.notEqual(assignment.getRight().execute(arguments.getConfiguration(), arguments),
-                                                item.getValues().get(assignment.getLeft().getStringRepresentation()))) {
-                            LOG.info("Excluding content " + item.getId()  + " based on the property value of " + assignment.getLeft().getStringRepresentation());
+                    for (BroadleafAssignation assignment : assignments) {
+
+                        if (ObjectUtils.notEqual(assignment.parseRight(context),
+                            item.getValues().get(assignment.getLeftStringRepresentation(context)))) {
+                            LOG.info("Excluding content " + item.getId() + " based on the property value of " + assignment.getLeftStringRepresentation(context));
                             valid = false;
                             break;
                         }
@@ -241,25 +234,27 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
                 contentItem = contentItemFields.get(0);
             }
 
-            addToModel(arguments, contentItemVar, contentItem);
-            addToModel(arguments, contentListVar, contentItemFields);
-            addToModel(arguments, numResultsVar, contentItems.size());
+            newModelVars.put(contentItemVar, contentItem);
+            newModelVars.put(contentListVar, contentItemFields);
+            newModelVars.put(numResultsVar, contentItems.size());
         } else {
             if (LOG.isInfoEnabled()) {
                 LOG.info("**************************The contentItems is null*************************");
             }
-            addToModel(arguments, contentItemVar, null);
-            addToModel(arguments, contentListVar, null);
-            addToModel(arguments, numResultsVar, 0);
-        }       
-        
-        String deepLinksVar = element.getAttributeValue("deepLinks");
-        if (StringUtils.isNotBlank(deepLinksVar) && contentItems.size() > 0 ) {
-            List<DeepLink> links = contentDeepLinkService.getLinks(contentItems.get(0));
-            extensionManager.getProxy().addExtensionFieldDeepLink(links, arguments, element);
-            extensionManager.getProxy().postProcessDeepLinks(links);
-            addToModel(arguments, deepLinksVar, links);
+            newModelVars.put(contentItemVar, null);
+            newModelVars.put(contentListVar, null);
+            newModelVars.put(numResultsVar, 0);
         }
+
+        String deepLinksVar = tagAttributes.get("deepLinks");
+        if (StringUtils.isNotBlank(deepLinksVar) && contentItems.size() > 0) {
+            List<DeepLink> links = contentDeepLinkService.getLinks(contentItems.get(0));
+            extensionManager.getProxy().addExtensionFieldDeepLink(links, tagName, tagAttributes, context);
+            extensionManager.getProxy().postProcessDeepLinks(links);
+            newModelVars.put(deepLinksVar, links);
+        }
+        
+        return newModelVars;
     }
 
     /**
@@ -274,10 +269,11 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
      * @return
      */
     protected List<StructuredContentDTO> getContentItems(String contentName, Integer maxResults, HttpServletRequest request,
-            Map<String, Object> mvelParameters,
-            SandBox currentSandbox,
-            StructuredContentType structuredContentType,
-            Locale locale, Arguments arguments, Element element) {
+                                                         Map<String, Object> mvelParameters,
+                                                         SandBox currentSandbox,
+                                                         StructuredContentType structuredContentType,
+                                                         Locale locale, String tagName, Map<String, String> tagAttributes,
+                                                         Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         List<StructuredContentDTO> contentItems;
         if (structuredContentType == null) {
             contentItems = structuredContentService.lookupStructuredContentItemsByName(contentName, locale, maxResults, mvelParameters, isSecure(request));
@@ -290,18 +286,18 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         }
 
         //add additional fields to the model
-        extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
+        extensionManager.getProxy().addAdditionalFieldsToModel(tagName, tagAttributes, newModelVars, context);
 
         return contentItems;
     }
-    
+
     /**
      * MVEL is used to process the content targeting rules.
      *
      * @param request
      * @return
      */
-    protected Map<String, Object> buildMvelParameters(HttpServletRequest request, Arguments arguments, Element element) {
+    protected Map<String, Object> buildMvelParameters(HttpServletRequest request, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         TimeZone timeZone = BroadleafRequestContext.getBroadleafRequestContext().getTimeZone();
 
         final TimeDTO timeDto;
@@ -313,35 +309,30 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 
         RequestDTO requestDto = (RequestDTO) request.getAttribute(REQUEST_DTO);
 
-        Map<String, Object> mvelParameters = new HashMap<String, Object>();
+        Map<String, Object> mvelParameters = new HashMap<>();
         mvelParameters.put("time", timeDto);
         mvelParameters.put("request", requestDto);
 
-        String productString = element.getAttributeValue("product");
+        String productString = tagAttributes.get("product");
 
         if (productString != null) {
-            final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
-            Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, productString);
-            Object product = expression.execute(arguments.getConfiguration(), arguments);
-
+            Object product = context.parseExpression(productString);
             if (product != null) {
                 mvelParameters.put("product", product);
             }
         }
 
-        String categoryString = element.getAttributeValue("category");
+        String categoryString = tagAttributes.get("category");
 
         if (categoryString != null) {
-            final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
-            Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, productString);
-            Object category = expression.execute(arguments.getConfiguration(), arguments);
+            Object category = context.parseExpression(categoryString);
             if (category != null) {
                 mvelParameters.put("category", category);
             }
         }
 
         @SuppressWarnings("unchecked")
-        Map<String,Object> blcRuleMap = (Map<String,Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
+        Map<String, Object> blcRuleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
         if (blcRuleMap != null) {
             for (String mapKey : blcRuleMap.keySet()) {
                 mvelParameters.put(mapKey, blcRuleMap.get(mapKey));
@@ -349,14 +340,14 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         }
 
         return mvelParameters;
-    }   
-    
+    }
+
     public boolean isSecure(HttpServletRequest request) {
         boolean secure = false;
         if (request != null) {
-             secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
+            secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
         }
         return secure;
     }
-    
+
 }

@@ -15,34 +15,34 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.cms.web.processor;
 
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.web.deeplink.DeepLink;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract implementation of {@link ContentProcessorExtensionHandler}
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public abstract class AbstractContentProcessorExtensionHandler extends AbstractExtensionHandler 
-        implements ContentProcessorExtensionHandler {
+public abstract class AbstractContentProcessorExtensionHandler extends AbstractExtensionHandler implements ContentProcessorExtensionHandler {
 
     @Override
-    public ExtensionResultStatusType addAdditionalFieldsToModel(Arguments arguments, Element element) {
+    public ExtensionResultStatusType addAdditionalFieldsToModel(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType addExtensionFieldDeepLink(List<DeepLink> links, Arguments arguments, Element element) {
+    public ExtensionResultStatusType addExtensionFieldDeepLink(List<DeepLink> links, String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-    
+
     @Override
     public ExtensionResultStatusType postProcessDeepLinks(List<DeepLink> links) {
         return ExtensionResultStatusType.NOT_HANDLED;

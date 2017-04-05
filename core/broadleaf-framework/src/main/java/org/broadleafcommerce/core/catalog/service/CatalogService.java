@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.catalog.service;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
@@ -218,8 +217,6 @@ public interface CatalogService {
     public Sku createSku();
     
     public Product createProduct(ProductType productType);
-
-    public Category findRootCategory();
     
     public List<Category> findAllSubCategories(Category category);
 
@@ -245,7 +242,9 @@ public interface CatalogService {
      * @return
      */
     public Category findCategoryByURI(String uri);
-    
+
+    Category findOriginalCategoryByURI(String uri);
+
     /**
      * Returns a product associated with the passed in URI or null if no Product is
      * mapped to this URI.
@@ -254,7 +253,9 @@ public interface CatalogService {
      * @return
      */    
     public Product findProductByURI(String uri);
-    
+
+    Product findOriginalProductByURI(String uri);
+
     /**
      * Returns a sku associated with the passed in URI or null if no sku is
      * mapped to this URI.

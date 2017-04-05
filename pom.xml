@@ -5,7 +5,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>5.0.9-SNAPSHOT</version>
+    <version>5.1.2-SNAPSHOT</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -31,18 +31,30 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
+    <repositories>
+        <repository>
+            <id>releases</id>
+            <name>public releases</name>
+            <url>http://nexus.broadleafcommerce.org/nexus/content/groups/community-releases/</url>
+        </repository>
+        <repository>
+            <id>snapshots</id>
+            <name>public snapshots</name>
+            <url>http://nexus.broadleafcommerce.org/nexus/content/groups/community-snapshots/</url>
+        </repository>
+    </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.1.9.RELEASE</spring.version>
         <spring.security.version>3.2.9.RELEASE</spring.security.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
-        <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
         <geb.version>0.10.0</geb.version>
         <spock.core.version>1.0-groovy-2.3</spock.core.version>
         <spock.spring.version>1.0-groovy-2.3</spock.spring.version>
         <selenium.version>2.43.1</selenium.version>
         <groovy.version>2.3.11</groovy.version>
         <project.uri>${project.baseUri}</project.uri>
+        <broadleaf-presentation.version>1.0.2-GA</broadleaf-presentation.version>
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</connection>
@@ -821,40 +833,12 @@
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>2.1</version>
-                <type>jar</type>
-                <scope>provided</scope>
-            </dependency>
 
             <!--Presentation Layer Related Libraries -->
             <dependency>
                 <groupId>jstl</groupId>
                 <artifactId>jstl</artifactId>
                 <version>1.1.2</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.thymeleaf</groupId>
-                <artifactId>thymeleaf</artifactId>
-                <version>${thymeleaf.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.thymeleaf</groupId>
-                <artifactId>thymeleaf-spring4</artifactId>
-                <version>${thymeleaf.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>nz.net.ultraq.thymeleaf</groupId>
-                <artifactId>thymeleaf-layout-dialect</artifactId>
-                <version>1.2.5</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>

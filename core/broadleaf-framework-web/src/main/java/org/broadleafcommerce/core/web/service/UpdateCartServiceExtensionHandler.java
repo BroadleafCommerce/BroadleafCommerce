@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 
 
 /**
@@ -38,4 +39,12 @@ public interface UpdateCartServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType updateAndValidateCart(Order cart, ExtensionResultHolder resultHolder);
 
+    /**
+     * Validates the item request just before it actually goes through the add or update workflow to get it into the cart
+     * @param addToCartItem
+     * @return
+     * @throws Exception
+     */
+    public ExtensionResultStatusType validateAddToCartItem(OrderItemRequestDTO itemRequest, Order cart) throws IllegalArgumentException;
+    
 }

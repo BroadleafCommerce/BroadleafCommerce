@@ -28,7 +28,7 @@ import java.util.List;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public interface SearchFacet extends Serializable, MultiTenantCloneable<SearchFacet> {
+public interface SearchFacet extends Serializable {
 
     /**
      * Returns the internal id

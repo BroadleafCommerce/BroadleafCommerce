@@ -105,6 +105,20 @@ public interface OfferService {
     void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
     /**
+     * Lookup all offers by code.
+     * @param code the code
+     * @return the list of offers
+     */
+    List<Offer> lookupAllOffersByCode(String code);
+
+    /**
+     * Lookup all OfferCodes by code.
+     * @param code the code
+     * @return the list of offer codes
+     */
+    List<OfferCode> lookupAllOfferCodesByCode(String code);
+
+    /**
      * Create a list of offers that applies to this order
      * @param order
      * @return
@@ -124,10 +138,10 @@ public interface OfferService {
     List<OfferCode> buildOfferCodeListForCustomer(Order order);
 
     /**
-     * Attempts to resolve a list of offer codes associated explicitly with the customer. 
-     * For example, an implementation may choose to associate a specific offer code with a customer 
-     * in a custom table or in customer attributes.  This allows you to associate one or more offer codes 
-     * with a customer without necessarily having them type it in (e.g. on a URL), or by allowing them to 
+     * Attempts to resolve a list of offer codes associated explicitly with the customer.
+     * For example, an implementation may choose to associate a specific offer code with a customer
+     * in a custom table or in customer attributes.  This allows you to associate one or more offer codes
+     * with a customer without necessarily having them type it in (e.g. on a URL), or by allowing them to
      * type it in, but before it has been actually applied to an order.
      *
      * @param customer
@@ -160,7 +174,7 @@ public interface OfferService {
     FulfillmentGroupOfferProcessor getFulfillmentGroupOfferProcessor();
 
     void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor);
-    
+
     Order applyAndSaveFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
     @Deprecated
@@ -172,8 +186,8 @@ public interface OfferService {
 
     /**
      * <p>Validates that the Customer to whom an Order belongs has not exceeded the max uses for the
-     * passed in offer. This method will take into account if the Offer has already been applied to 
-     * the Order so as not to prevent the Offer from applying to new items added to the Order by a 
+     * passed in offer. This method will take into account if the Offer has already been applied to
+     * the Order so as not to prevent the Offer from applying to new items added to the Order by a
      * CRS.</p>
      *
      * <p>This condition could pass if the system allows two concurrent carts for the same customer.
@@ -215,10 +229,10 @@ public interface OfferService {
     boolean verifyMaxCustomerUsageThreshold(@Nonnull Customer customer, @Nonnull Offer offer);
     
     /**
-     * <p>Validates that the given OfferCode has not reached its maximum number of usages. 
-     * This method will also delegate to {@link #verifyMaxCustomerUsageThreshold(Order, Offer)} 
+     * <p>Validates that the given OfferCode has not reached its maximum number of usages.
+     * This method will also delegate to {@link #verifyMaxCustomerUsageThreshold(Order, Offer)}
      * for the code's Offer and the passed in Order's Customer.</p>
-     * 
+     *
      * @param order the order the offer is to be applied to
      * @param code the code to check
      * @return <b>true</b> if it is ok for the customer to use this offer with their current order, <b>false</b> if not.
@@ -271,5 +285,7 @@ public interface OfferService {
 
     void setOrderService(OrderService orderService);
 
-    Boolean deleteOfferCode(OfferCode code);
+    public Boolean deleteOfferCode(OfferCode code);
+
+    public Offer findOfferById(Long offerId);
 }

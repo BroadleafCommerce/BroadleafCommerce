@@ -96,7 +96,26 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
     @SuppressWarnings("unchecked")
     public OfferCode readOfferCodeByCode(String code) {
         OfferCode offerCode = null;
-        Query query = null;
+
+        Query query = readOfferCodesQuery(code);
+        List<OfferCode> result = query.getResultList();
+        if (result.size() > 0) {
+            offerCode = result.get(0);
+        }
+
+        return offerCode;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<OfferCode> readAllOfferCodesByCode(String code) {
+        Query query = readOfferCodesQuery(code);
+
+        return query.getResultList();
+    }
+
+    protected Query readOfferCodesQuery(String code) {
+        Query query;
 
         ExtensionResultHolder<Query> resultHolder = new ExtensionResultHolder<Query>();
         ExtensionResultStatusType extensionResult =
@@ -110,13 +129,7 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
             query.setHint(QueryHints.HINT_CACHEABLE, true);
             query.setHint(QueryHints.HINT_CACHE_REGION, "query.Offer");
         }
-
-        List<OfferCode> result = query.getResultList();
-        if (result.size() > 0) {
-            offerCode = result.get(0);
-        }
-
-        return offerCode;
+        return query;
     }
 
 }
