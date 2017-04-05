@@ -58,6 +58,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityListeners;
+import javax.persistence.Table;
 
 /**
  * This class transformer will copy fields, methods, and interface definitions from a source class to a target class,
@@ -488,10 +489,18 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
         return addedTemplates;
     }
 
+    /**
+     * Build class-level annotations from a template class
+     * 
+     * @param classFile
+     * @param templateClassFile
+     * @param constantPool
+     * @throws NotFoundException
+     */
     protected void buildClassLevelAnnotations(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
         List<?> templateAttributes = templateClassFile.getAttributes();
         Iterator<?> templateItr = templateAttributes.iterator();
-        Annotation templateEntityListeners = null;
+        Map<String, Annotation> classTemplateAnnotations = new HashMap<>();
         while(templateItr.hasNext()) {
             Object object = templateItr.next();
             if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
@@ -499,64 +508,88 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 Annotation[] items = attr.getAnnotations();
                 for (Annotation annotation : items) {
                     String typeName = annotation.getTypeName();
-                    if (typeName.equals(EntityListeners.class.getName())) {
-                        templateEntityListeners = annotation;
+                    if (typeName.equals(EntityListeners.class.getName()) || typeName.equals(Table.class.getName())) {
+                        classTemplateAnnotations.put(typeName, annotation);
                     }
                 }
             }
         }
+        if (classTemplateAnnotations.size() > 0) {
+            copyClassLevelAnnotations(classFile, constantPool, classTemplateAnnotations);            
+        }
+    }
 
-        if (templateEntityListeners != null) {
-            AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
-            List<?> attributes = classFile.getAttributes();
-            Iterator<?> itr = attributes.iterator();
-            Annotation existingEntityListeners = null;
-            while(itr.hasNext()) {
-                Object object = itr.next();
-                if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
-                    AnnotationsAttribute attr = (AnnotationsAttribute) object;
-                    Annotation[] items = attr.getAnnotations();
-                    for (Annotation annotation : items) {
-                        String typeName = annotation.getTypeName();
-                        if (typeName.equals(EntityListeners.class.getName())) {
-                            logger.debug("Stripping out previous EntityListeners annotation at the class level - will merge into new EntityListeners");
-                            existingEntityListeners = annotation;
-                            continue;
+    /**
+     * Copies class-level annotations from a template class to the destination class.  Handles both MemberValues and
+     * ArrayMemberValues.
+     * 
+     * @param classFile
+     * @param constantPool
+     * @param templateAnnotationMap
+     */
+    protected void copyClassLevelAnnotations(ClassFile classFile, ConstPool constantPool, Map<String, Annotation> templateAnnotationMap) {
+        AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
+        List<?> attributes = classFile.getAttributes();
+        Iterator<?> itr = attributes.iterator();
+        while(itr.hasNext()) {
+            Object object = itr.next();
+            if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                AnnotationsAttribute attr = (AnnotationsAttribute) object;
+                Annotation[] items = attr.getAnnotations();
+                for (Annotation annotation : items) {
+                    String typeName = annotation.getTypeName();
+                    Annotation templateAnnotation = templateAnnotationMap.get(typeName);
+                    if (templateAnnotation != null) {
+                        Annotation newAnnotation = new Annotation(templateAnnotation.getTypeName(), constantPool);
+                        for(Object memberName : templateAnnotation.getMemberNames()) {
+                            String name = (String) memberName;
+                            MemberValue memberValue = templateAnnotation.getMemberValue(name);
+                            if (memberValue instanceof ArrayMemberValue) {
+                                newAnnotation.addMemberValue(name, mergeClassAnnotationArray(constantPool, annotation, templateAnnotation, name));
+                            } else {
+                                if (templateAnnotation.getMemberValue(name) != null) {
+                                    newAnnotation.addMemberValue(name, templateAnnotation.getMemberValue(name));
+                                }
+                            }
                         }
-                        annotationsAttribute.addAnnotation(annotation);
+                        annotationsAttribute.addAnnotation(newAnnotation);
+                        continue;
                     }
-                    itr.remove();
+                    annotationsAttribute.addAnnotation(annotation);
                 }
+                itr.remove();
             }
-
-            Annotation entityListeners = getEntityListeners(constantPool, existingEntityListeners, templateEntityListeners);
-            annotationsAttribute.addAnnotation(entityListeners);
-
-            classFile.addAttribute(annotationsAttribute);
         }
+
+        classFile.addAttribute(annotationsAttribute);
     }
 
-    protected Annotation getEntityListeners(ConstPool constantPool, Annotation existingEntityListeners, Annotation templateEntityListeners) {
-        Annotation listeners = new Annotation(EntityListeners.class.getName(), constantPool);
-        ArrayMemberValue listenerArray = new ArrayMemberValue(constantPool);
-        Set<MemberValue> listenerMemberValues = new HashSet<MemberValue>();
+    /**
+     * Merges ArrayMemeberValues from both the template class and the destinate class
+     * 
+     * @param constantPool
+     * @param existingAnnotation
+     * @param templateAnnotation
+     * @param memberName
+     * @return
+     */
+    protected ArrayMemberValue mergeClassAnnotationArray(ConstPool constantPool, Annotation existingAnnotation, Annotation templateAnnotation, String memberName) {
+        ArrayMemberValue annotationArray = new ArrayMemberValue(constantPool);
+        Set<MemberValue> annotationMemberValues = new HashSet<MemberValue>();
         {
-            ArrayMemberValue templateListenerValues = (ArrayMemberValue) templateEntityListeners.getMemberValue("value");
-            listenerMemberValues.addAll(Arrays.asList(templateListenerValues.getValue()));
-            logger.debug("Adding template values to new EntityListeners");
+            ArrayMemberValue templateAnnotationValues = (ArrayMemberValue) templateAnnotation.getMemberValue(memberName);
+            annotationMemberValues.addAll(Arrays.asList(templateAnnotationValues.getValue()));
+            logger.debug("Adding template values to new Annotation");
         }
-        if (existingEntityListeners != null) {
-            ArrayMemberValue oldListenerValues = (ArrayMemberValue) existingEntityListeners.getMemberValue("value");
-            listenerMemberValues.addAll(Arrays.asList(oldListenerValues.getValue()));
-            logger.debug("Adding previous values to new EntityListeners");
+        if (existingAnnotation != null) {
+            ArrayMemberValue oldAnnotationValues = (ArrayMemberValue) existingAnnotation.getMemberValue(memberName);
+            annotationMemberValues.addAll(Arrays.asList(oldAnnotationValues.getValue()));
+            logger.debug("Adding previous values to new Annotations");
         }
-        listenerArray.setValue(listenerMemberValues.toArray(new MemberValue[listenerMemberValues.size()]));
-        listeners.addMemberValue("value", listenerArray);
-
-        return listeners;
-
+        annotationArray.setValue(annotationMemberValues.toArray(new MemberValue[annotationMemberValues.size()]));
+        return annotationArray;
     }
-
+    
     /**
      * This method will do its best to return an implementation type for a given classname. This will allow weaving
      * template classes to have initialized values.
