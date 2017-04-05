@@ -229,6 +229,11 @@ public interface SolrHelperService {
     public Long getIndexableId(Indexable indexable);
 
     /**
+     * @return the type of the primary indexable document
+     */
+    public String getPrimaryDocumentType();
+
+    /**
      * See getPropertyValue(Object, String)
      * @param object
      * @param field

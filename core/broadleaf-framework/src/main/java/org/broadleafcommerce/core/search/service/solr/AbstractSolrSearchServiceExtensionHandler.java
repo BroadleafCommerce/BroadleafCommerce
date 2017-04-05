@@ -105,8 +105,14 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
     }
 
     @Override
+    @Deprecated
     public ExtensionResultStatusType buildActiveFacetFilter(FieldEntity entityType, String solrKey, String[] selectedValues, List<String> valueStrings) {
         return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType buildActiveFacetFilter(SearchFacet facet, String[] selectedValues, List<String> valueStrings) {
+        return buildActiveFacetFilter(facet.getField().getEntityType(), facet.getField().getAbbreviation(), selectedValues, valueStrings);
     }
 
     @Override
@@ -131,6 +137,11 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
 
     @Override
     public ExtensionResultStatusType batchFetchCatalogData(List<Product> products) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType attachSortField(SolrQuery solrQuery, String requestedSortFieldName, SolrQuery.ORDER order) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 }
