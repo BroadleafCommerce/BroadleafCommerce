@@ -31,6 +31,6 @@ import java.util.List;
  */
 public interface RuleBuilderFieldServiceExtensionHandler extends ExtensionHandler {
     
-    public ExtensionResultStatusType addFields(List<FieldData> fields, String name);
+    public ExtensionResultStatusType addFields(List<FieldData> fields, String name, String dtoClassName);
 
 }

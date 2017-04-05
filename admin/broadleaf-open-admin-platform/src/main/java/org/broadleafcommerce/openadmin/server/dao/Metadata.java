@@ -22,7 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.util.BLCAnnotationUtils;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
@@ -39,6 +38,7 @@ import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderRespo
 import org.hibernate.mapping.Property;
 import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -59,7 +59,7 @@ public class Metadata {
     private static final Log LOG = LogFactory.getLog(Metadata.class);
 
     @Resource(name="blFieldMetadataProviders")
-    protected List<FieldMetadataProvider> fieldMetadataProviders = new ArrayList<FieldMetadataProvider>();
+    protected List<FieldMetadataProvider> fieldMetadataProviders = new ArrayList<>();
 
     @Resource(name= "blDefaultFieldMetadataProvider")
     protected FieldMetadataProvider defaultFieldMetadataProvider;
@@ -68,7 +68,7 @@ public class Metadata {
     protected BasicEntityMetadataProvider basicEntityMetadataProvider;
 
     public Map<String, FieldMetadata> getFieldMetadataForTargetClass(Class<?> parentClass, Class<?> targetClass, DynamicEntityDao dynamicEntityDao, String prefix) {
-        Map<String, FieldMetadata> metadata = new HashMap<String, FieldMetadata>();
+        Map<String, FieldMetadata> metadata = new HashMap<>();
         Field[] fields = dynamicEntityDao.getAllFields(targetClass);
         for (Field field : fields) {
             boolean foundOneOrMoreHandlers = false;
@@ -120,7 +120,7 @@ public class Metadata {
         Boolean classAnnotatedPopulateManyToOneFields = null;
         //go in reverse order since I want the lowest subclass override to come last to guarantee that it takes effect
         for (int i = entities.length-1;i >= 0; i--) {
-            AdminPresentationClass adminPresentationClass = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, entities[i]);
+            AdminPresentationClass adminPresentationClass = AnnotationUtils.findAnnotation(entities[i], AdminPresentationClass.class);
             if (adminPresentationClass != null && adminPresentationClass.populateToOneFields() != PopulateToOneFieldsEnum.NOT_SPECIFIED) {
                 classAnnotatedPopulateManyToOneFields = adminPresentationClass.populateToOneFields()==PopulateToOneFieldsEnum.TRUE;
                 break;

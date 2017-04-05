@@ -52,7 +52,7 @@ public class GeolocationFieldServiceExtensionHandler extends AbstractRuleBuilder
     }
 
     @Override
-    public ExtensionResultStatusType addFields(List<FieldData> fields, String ruleFieldName) {
+    public ExtensionResultStatusType addFields(List<FieldData> fields, String ruleFieldName, String dtoClassName) {
 
         if (isGeolocationEnabled() && RuleIdentifier.REQUEST.equals(ruleFieldName)) {
             fields.add(new FieldData.Builder()

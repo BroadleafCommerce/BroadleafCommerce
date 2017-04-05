@@ -69,7 +69,7 @@ public class ProductFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_productCategory")
                 .name("allParentCategoryIds")
-                .operators("blcOperators_Selectize")
+                .operators(RuleOperatorType.SELECTIZE)
                 .selectizeSectionKey(AdminCategoryController.SECTION_KEY)
                 .options("[]")
                 .type(SupportedFieldType.COLLECTION)
