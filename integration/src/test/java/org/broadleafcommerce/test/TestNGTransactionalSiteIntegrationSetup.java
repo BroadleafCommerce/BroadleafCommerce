@@ -17,23 +17,27 @@
  */
 package org.broadleafcommerce.test;
 
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
 /**
- * Base TestNG support class used for Broadleaf Site tests. This is slightly different than the normal {@link AbstractTestNGSpringContextTests}
- * in that this also includes the other default {@link TestExecutionListeners} in order to use {@literal @}Transactional in test methods,
- * while not marking the entire test as {@literal @}Transactional (like in {@link TestNGTransactionalSiteIntegrationSetup}.
+ * <p>
+ * The {@literal @}Transactional version of the {@link TestNGSiteIntegrationSetup}. All {@literal @}Test methods contained
+ * within any subclasses of this are run within the {@link TransactionUtils#DEFAULT_TRANSACTION_MANAGER} transaction manager.
+ * However, all test-level transactions default to {@code @Rollback(true)}.
  * 
+ * <p>
+ * You can get finer-grained control over which classes are {@code @Transactional} and which ones aren't by instead subclassing
+ * {@link TestNGSiteIntegrationSetup} instead and annotating individual {@code @Test} methods.
+ * 
+ * @see AbstractTransactionalTestNGSpringContextTests
+ * @see TransactionalTestExecutionListener
  * @see BroadleafSiteIntegrationTest
- * @see TestNGTransactionalSiteIntegrationSetup
  * @author Phillip Verheyden (phillipuniverse)
  */
 @BroadleafSiteIntegrationTest
-@TestExecutionListeners({TransactionalTestExecutionListener.class, SqlScriptsTestExecutionListener.class})
-public abstract class TestNGSiteIntegrationSetup extends AbstractTestNGSpringContextTests {
+public abstract class TestNGTransactionalSiteIntegrationSetup extends AbstractTransactionalTestNGSpringContextTests {
     
 }

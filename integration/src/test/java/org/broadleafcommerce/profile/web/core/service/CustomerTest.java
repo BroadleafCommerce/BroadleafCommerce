@@ -17,12 +17,13 @@
  */
 package org.broadleafcommerce.profile.web.core.service;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.common.id.domain.IdGeneration;
 import org.broadleafcommerce.common.id.domain.IdGenerationImpl;
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.dataprovider.CustomerDataProvider;
 import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
@@ -47,7 +48,7 @@ public class CustomerTest extends TestNGSiteIntegrationSetup {
     List<String> userNames = new ArrayList<>();
 
     @Test(groups = { "createCustomerIdGeneration" })
-    @Rollback(false)
+    @Commit
     @Transactional
     public void createCustomerIdGeneration() {
         IdGenerationImpl gen = em.find(IdGenerationImpl.class, "org.broadleafcommerce.profile.core.domain.Customer");
@@ -74,7 +75,7 @@ public class CustomerTest extends TestNGSiteIntegrationSetup {
         userNames.add(customer.getUsername());
     }
 
-    @Test(groups = { "readCustomer" }, dependsOnGroups = { "createCustomers" })
+    @Test(groups = { "readCustomer" }, dependsOnGroups = { "createCustomers", "createCustomerIdGeneration" })
     public void readCustomersById() {
         for (Long userId : userIds) {
             Customer customer = customerService.readCustomerById(userId);
@@ -92,7 +93,7 @@ public class CustomerTest extends TestNGSiteIntegrationSetup {
 
     @Test(groups = { "changeCustomerPassword" }, dependsOnGroups = { "readCustomer" })
     @Transactional
-    @Rollback(false)
+    @Commit
     public void changeCustomerPasswords() {
         for (String userName : userNames) {
             Customer customer = customerService.readCustomerByUsername(userName);

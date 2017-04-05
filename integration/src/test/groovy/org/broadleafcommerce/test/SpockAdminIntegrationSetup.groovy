@@ -17,15 +17,7 @@
  */
 package org.broadleafcommerce.test
 
-import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener
-import org.broadleafcommerce.common.config.EnableBroadleafAdminRootAutoConfiguration
-import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.ImportResource
-import org.springframework.test.annotation.Rollback
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.web.WebAppConfiguration
+import org.broadleafcommerce.test.config.BroadleafAdminIntegrationTest
 
 import spock.lang.Specification
 
@@ -33,27 +25,13 @@ import spock.lang.Specification
  * Base Integration Test Setup groovy file for Admin based integration tests. This base class has all the
  * applicationContext's shared by Integration tests for Admin based testing. Extend from this class on a
  * per project basis with another setup file that contains only an @ContextHeirarchy(@ContextConfiguration)
- * that references this "adminContexts" ContextConfiguration and add only the contexts, in the locations
+ * that references this "adminRoot" ContextConfiguration and add only the contexts, in the locations
  * parameter, that you need to run your tests at that level. Then extend off of that setup file with your
  * actual integration tests. IntegrationSetup files should not have any code in their body's.
  *
- * @author austinrooke
- *
+ * @author Phillip Verheyden (phillipuniverse)
  */
-@Rollback
-@ContextConfiguration(name = "adminRoot", initializers = BroadleafEnvironmentConfiguringApplicationListener)
-@WebAppConfiguration
-@ActiveProfiles("mbeansdisabled")
+@BroadleafAdminIntegrationTest
 class SpockAdminIntegrationSetup extends Specification {
 
-    /**
-     * This is a nested configuration class so that you can do a mix of both {@link @}Configuration classes
-     * as well as XML configuration files at the same level of the 'siteRoot' {@link @}ContextConfiguration
-     */
-    @Configuration
-    @EnableBroadleafAdminRootAutoConfiguration
-    @ImportResource(value = [
-            "classpath:bl-applicationContext-test.xml"
-    ])
-    public static class ContextConfig {}
 }
