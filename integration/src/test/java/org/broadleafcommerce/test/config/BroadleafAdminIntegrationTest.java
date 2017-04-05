@@ -21,9 +21,10 @@
 package org.broadleafcommerce.test.config;
 
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
+import org.broadleafcommerce.test.TestNGAdminIntegrationSetup;
+import org.broadleafcommerce.test.junit.JUnitAdminIntegrationSetup;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.lang.annotation.Documented;
@@ -38,8 +39,9 @@ import java.lang.annotation.Target;
  * any type of test that uses spring-test (e.g. TestNG, Spock, JUnit).
  * 
  * <p>
- * Customization of the Spring ApplicationContext that this creates follows the same rules laid out in {@link ContextConfiguration}. Subclasses
- * should target the {@code "adminRoot"} context name in their {@link ContextHierarchy}.
+ * If you need to customize the application context to add your own configuration (and not only use the Broadleaf out of the box beans) you
+ * will need to use one of the superclasses, {@link JUnitAdminIntegrationSetup} or {@link TestNGAdminIntegrationSetup}. Otherwise you will
+ * not get the inheriting strategy with all of the Broadleaf beans plus your custom ones.
  * 
  * <p>
  * Example usage:
@@ -92,6 +94,79 @@ import java.lang.annotation.Target;
  * </pre>
  * 
  * <p>
+ * Example usage with a customized ApplicationContext (additional beans, overrides, etc):
+ * <h2>JUnit</h2>
+ * 
+ * <pre>
+ * {@literal @}ContextHierarchy({@literal @}ContextConfiguration(name = BroadleafSiteIntegrationTest.CONTEXT_NAME))
+ * public class ExampleBroadleafJUnitTest extends JUnitSiteIntegrationSetup {
+ *     
+ *     {@literal @}Configuration
+ *     public static class CustomConfiguration {
+ *         {@literal @}Bean
+ *         public CatalogService blCatalogService() {
+ *             return MyCatalogService();
+ *         }
+ *     }
+ *     
+ *     {@literal @}Autowired
+ *     private CatalogService catalogService;
+ *     
+ *     {@literal @}Test
+ *     public void catalogServiceInjected() {
+ *         Assert.assertTrue(MyCatalogService.class.isAssignableFrom(catalogService.getClass()));
+ *     }
+ * }
+ * </pre>
+ * 
+ * <h2>TestNG</h2>
+ * <pre>
+ * {@literal @}ContextHierarchy({@literal @}ContextConfiguration(name = BroadleafSiteIntegrationTest.CONTEXT_NAME))
+ * public class ExampleBroadleafTestNGTest extends AbstractTestNGSpringContextTests {
+ *     
+ *     {@literal @}Configuration
+ *     public static class CustomConfiguration {
+ *         {@literal @}Bean
+ *         public CatalogService blCatalogService() {
+ *             return MyCatalogService();
+ *         }
+ *     }
+ *     
+ *     {@literal @}Autowired
+ *     private CatalogService catalogService;
+ *     
+ *     {@literal @}Test
+ *     public void catalogServiceInjected() {
+ *         Assert.assertTrue(MyCatalogService.class.isAssignableFrom(catalogService.getClass()));
+ *     }
+ * }
+ * </pre>
+ * 
+ * <h2>Spock</h2>
+ * <pre>
+ * {@literal @}ContextHierarchy({@literal @}ContextConfiguration(name = BroadleafSiteIntegrationTest.CONTEXT_NAME))
+ * class SpockExampleTest extends SpockSiteIntegrationSetup {
+ * 
+ *     {@literal @}Configuration
+ *     public static class CustomConfiguration {
+ *         {@literal @}Bean
+ *         public CatalogService blCatalogService() {
+ *             return MyCatalogService();
+ *         }
+ *     }
+ *     
+ *     {@literal @}Resource
+ *     private CatalogService catalogService
+ *
+ *     def "Test injection works"() {
+ *         when: "The test is run"
+ *         then: "The catalogService is an instance of my override"
+ *         MyCatalogService.class.isAssignableFrom(catalogService.getClass())
+ *     }
+ * }
+ * </pre>
+ *  
+ * <p>
  * When used within the Enterprise module, you cannot use both this annotation along with {@link BroadleafSiteIntegrationTest}. This is because
  * class transformation can be different depending on the context. For this reason, you usually need to split out your "site" and "admin"
  * tests into different JVM runs. This can be done with the following surefire configuration in Maven that brings everything contained
@@ -142,11 +217,12 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@ContextConfiguration(name = "adminRoot",
+@ContextConfiguration(name = BroadleafAdminIntegrationTest.CONTEXT_NAME,
     initializers = BroadleafEnvironmentConfiguringApplicationListener.class,
     classes = AdminTestContextConfiguration.class)
 @WebAppConfiguration
 @ActiveProfiles("mbeansdisabled")
 public @interface BroadleafAdminIntegrationTest {
 
+    public static final String CONTEXT_NAME = "adminRoot";
 }
