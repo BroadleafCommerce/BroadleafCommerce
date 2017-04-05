@@ -24,13 +24,13 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ProxyDetectionException;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.util.BLCAnnotationUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.Type;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
@@ -95,7 +95,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
                 }
             }
             if (cache == null) {
-                List<Class<?>> entities = new ArrayList<Class<?>>();
+                List<Class<?>> entities = new ArrayList<>();
                 for (Object item : sessionFactory.getAllClassMetadata().values()) {
                     ClassMetadata metadata = (ClassMetadata) item;
                     Class<?> mappedClass = metadata.getMappedClass();
@@ -105,7 +105,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
                 }
                 Class<?>[] sortedEntities = sortEntities(ceilingClass, entities);
 
-                List<Class<?>> filteredSortedEntities = new ArrayList<Class<?>>();
+                List<Class<?>> filteredSortedEntities = new ArrayList<>();
 
                 for (int i = 0; i < sortedEntities.length; i++) {
                     Class<?> item = sortedEntities[i];
@@ -161,7 +161,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
             return pEntities;
         }
         Class<?> topConcreteClass = pEntities[pEntities.length - 1];
-        List<Class<?>> temp = new ArrayList<Class<?>>(pEntities.length);
+        List<Class<?>> temp = new ArrayList<>(pEntities.length);
         temp.addAll(Arrays.asList(pEntities));
         Collections.reverse(temp);
         boolean eof = false;
@@ -185,11 +185,11 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
          * Sort entities with the most derived appearing first
          */
         Class<?>[] sortedEntities = new Class<?>[entities.size()];
-        List<Class<?>> stageItems = new ArrayList<Class<?>>();
+        List<Class<?>> stageItems = new ArrayList<>();
         stageItems.add(ceilingClass);
         int j = 0;
         while (j < sortedEntities.length) {
-            List<Class<?>> newStageItems = new ArrayList<Class<?>>();
+            List<Class<?>> newStageItems = new ArrayList<>();
             boolean topLevelClassFound = false;
             for (Class<?> stageItem : stageItems) {
                 Iterator<Class<?>> itr = entities.iterator();
@@ -234,7 +234,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         }
 
         //We filter out classes that are marked to exclude from polymorphism
-        AdminPresentationClass adminPresentationClass = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, clazz);
+        AdminPresentationClass adminPresentationClass = AnnotationUtils.findAnnotation(clazz, AdminPresentationClass.class);
         if (adminPresentationClass == null) {
             return false;
         } else if (adminPresentationClass.excludeFromPolymorphism()) {
@@ -246,7 +246,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     @Override
     public Map<String, Object> getIdMetadata(Class<?> entityClass, HibernateEntityManager entityManager) {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
-        Map<String, Object> response = new HashMap<String, Object>();
+        Map<String, Object> response = new HashMap<>();
         SessionFactory sessionFactory = entityManager.getSession().getSessionFactory();
         
         ClassMetadata metadata = sessionFactory.getClassMetadata(entityClass);
@@ -266,7 +266,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     public List<String> getPropertyNames(Class<?> entityClass, HibernateEntityManager entityManager) {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
         ClassMetadata metadata = getSessionFactory(entityManager).getClassMetadata(entityClass);
-        List<String> propertyNames = new ArrayList<String>();
+        List<String> propertyNames = new ArrayList<>();
         Collections.addAll(propertyNames, metadata.getPropertyNames());
         return propertyNames;
     }
@@ -275,7 +275,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     public List<Type> getPropertyTypes(Class<?> entityClass, HibernateEntityManager entityManager) {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
         ClassMetadata metadata = getSessionFactory(entityManager).getClassMetadata(entityClass);
-        List<Type> propertyTypes = new ArrayList<Type>();
+        List<Type> propertyTypes = new ArrayList<>();
         Collections.addAll(propertyTypes, metadata.getPropertyTypes());
         return propertyTypes;
     }

@@ -23,13 +23,13 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.common.util.BLCAnnotationUtils;
 import org.broadleafcommerce.common.util.Tuple;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.override.MetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -60,9 +60,9 @@ public abstract class AbstractFieldMetadataProvider extends AbstractMetadataProv
             AdminPresentationClass adminPresentationClass;
             if (parentClass != null) {
                 metadata.setOwningClass(parentClass.getName());
-                adminPresentationClass = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, parentClass);
+                adminPresentationClass = AnnotationUtils.findAnnotation(parentClass, AdminPresentationClass.class);
             } else {
-                adminPresentationClass = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, targetClass);
+                adminPresentationClass = AnnotationUtils.findAnnotation(targetClass, AdminPresentationClass.class);
             }
             if (adminPresentationClass != null) {
                 String friendlyName = adminPresentationClass.friendlyName();
@@ -186,7 +186,7 @@ public abstract class AbstractFieldMetadataProvider extends AbstractMetadataProv
     }
 
     protected Map<String, AdminPresentationMergeEntry> getAdminPresentationEntries(AdminPresentationMergeEntry[] entries) {
-        Map<String, AdminPresentationMergeEntry> response = new HashMap<String, AdminPresentationMergeEntry>();
+        Map<String, AdminPresentationMergeEntry> response = new HashMap<>();
         for (AdminPresentationMergeEntry entry : entries) {
             response.put(entry.propertyType(), entry);
         }

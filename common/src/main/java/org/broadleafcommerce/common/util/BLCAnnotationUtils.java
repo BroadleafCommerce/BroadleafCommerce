@@ -17,23 +17,40 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.springframework.core.annotation.AliasFor;
+import org.springframework.core.annotation.AnnotationUtils;
+
 import java.lang.annotation.Annotation;
 
 /**
- * Convenience methods for interacting with annotations
+ * <p>
+ * Spring has a much more elaborate and full-featured version of this within its {@link AnnotationUtils}. Consider
+ * using that instead of relying on this class.
+ * 
+ * <p>
+ * Convenience methods for interacting with annotations.
  * 
  * @author Chris Kittrell
+ * @deprecated use Spring's {@link AnnotationUtils} instead.
  */
+@Deprecated
 public class BLCAnnotationUtils {
     
     /**
+     * <p>
+     * Rather than using this method, consider using Spring's {@link AnnotationUtils} which also includes support for
+     * composed, meta-annotations and synthesizing annotations with {@link AliasFor}.
+     * 
+     * <p>
      * Given an array and a typed predicate, determines if the array has an object that matches the condition of the
      * predicate. The predicate should evaluate to true when a match occurs.
      * 
      * @param annotationClass
      * @param clazz
      * @return the annotation of annotationClass if it can be found
+     * @deprecated use SPring's {@link AnnotationUtils} instead
      */
+    @Deprecated
     public static <A extends Annotation> A getAnnotationFromClassOrInterface(Class<A> annotationClass, Class clazz) {
         Annotation result = clazz.getAnnotation(annotationClass);
         if (result == null) {

@@ -30,7 +30,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.BLCAnnotationUtils;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
@@ -63,8 +62,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -305,7 +304,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         Path idField = root.get(getIdField(clazz).getName());
         criteria.select(idField.as(Long.class));
 
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(builder.equal(root.get(propertyName), value));
         restrictions.add(builder.notEqual(idField, getIdentifier(instance)));
 
@@ -355,7 +354,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     protected void createClassTreeFromAnnotation(Class<?> clazz, ClassTree myTree) {
-        AdminPresentationClass classPresentation = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, clazz);
+        AdminPresentationClass classPresentation = AnnotationUtils.findAnnotation(clazz, AdminPresentationClass.class);
         if (classPresentation != null) {
             String friendlyName = classPresentation.friendlyName();
             if (!StringUtils.isEmpty(friendlyName)) {
@@ -368,7 +367,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     public ClassTree getClassTree(Class<?>[] polymorphicClasses) {
         String ceilingClass = null;
         for (Class<?> clazz : polymorphicClasses) {
-            AdminPresentationClass classPresentation = BLCAnnotationUtils.getAnnotationFromClassOrInterface(AdminPresentationClass.class, clazz);
+            AdminPresentationClass classPresentation = AnnotationUtils.findAnnotation(clazz, AdminPresentationClass.class);
             if (classPresentation != null) {
                String ceilingEntity = classPresentation.ceilingDisplayEntity();
                 if (!StringUtils.isEmpty(ceilingEntity)) {
