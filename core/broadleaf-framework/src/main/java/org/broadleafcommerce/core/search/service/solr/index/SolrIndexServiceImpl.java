@@ -802,8 +802,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public void deleteByQuery(String deleteQuery) throws SolrServerException, IOException {
-        String docType = (useSku) ? FieldEntity.SKU.getType() : FieldEntity.PRODUCT.getType();
-        String childDeleteQuery = "{!child of=" + shs.getTypeFieldName() + ":" + docType + "} " + deleteQuery;
+        String childDeleteQuery = "{!child of=" + shs.getTypeFieldName() + ":" + shs.getPrimaryDocumentType() + "} " + deleteQuery;
         solrConfiguration.getServer().deleteByQuery(childDeleteQuery);
         solrConfiguration.getServer().deleteByQuery(deleteQuery);
 
