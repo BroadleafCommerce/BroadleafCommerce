@@ -15,17 +15,14 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.web.core.security;
+package org.broadleafcommerce.profile.web.site.security;
 
-import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
-import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.Ordered;
+import org.broadleafcommerce.profile.web.core.security.CustomerStateRequestProcessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
@@ -47,8 +44,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author bpolster
  */
 @Component("blCustomerStateFilter")
-@ConditionalOnNotAdmin
-@ConditionalOnProperty(value = "use.customer.state.filter", matchIfMissing = true)
 public class CustomerStateFilter extends AbstractIgnorableOncePerRequestFilter {
     
     @Resource(name="blCustomerStateRequestProcessor")
@@ -63,6 +58,16 @@ public class CustomerStateFilter extends AbstractIgnorableOncePerRequestFilter {
         } finally {
             customerStateProcessor.postProcess(request);
         }
+    }
+
+    @Override
+    protected boolean isIgnored(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        boolean response = super.isIgnored(httpServletRequest, httpServletResponse);
+        if (!response) {
+            //ignore for stateless requests (i.e. rest api)
+            response = !BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(httpServletRequest));
+        }
+        return response;
     }
 
     @Override

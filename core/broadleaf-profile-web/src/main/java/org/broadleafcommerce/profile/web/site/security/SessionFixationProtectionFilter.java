@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.web.core.security;
+package org.broadleafcommerce.profile.web.site.security;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -24,7 +24,6 @@ import org.broadleafcommerce.common.encryption.EncryptionModule;
 import org.broadleafcommerce.common.security.RandomGenerator;
 import org.broadleafcommerce.common.security.util.CookieUtils;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -51,7 +50,6 @@ import javax.servlet.http.HttpSession;
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blSessionFixationProtectionFilter")
-@ConditionalOnProperty(value = "use.session.fixation.protection", matchIfMissing = true)
 public class SessionFixationProtectionFilter extends GenericFilterBean {
 
     private static final Log LOG = LogFactory.getLog(SessionFixationProtectionFilter.class);

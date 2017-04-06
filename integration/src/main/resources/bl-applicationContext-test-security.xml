@@ -48,6 +48,6 @@
         </sec:authentication-provider>
     </sec:authentication-manager>
 
-    <bean id="blCustomerStateFilter" class="org.broadleafcommerce.profile.web.core.security.CustomerStateFilter"/>
+    <bean id="blCustomerStateFilter" class="org.broadleafcommerce.profile.web.site.security.CustomerStateFilter"/>
                                                                           
 </beans>

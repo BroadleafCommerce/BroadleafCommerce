@@ -15,8 +15,9 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.web.core.security;
+package org.broadleafcommerce.profile.web.site.security;
 
+import org.broadleafcommerce.profile.web.core.security.CustomerStateRequestProcessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.ui.ModelMap;

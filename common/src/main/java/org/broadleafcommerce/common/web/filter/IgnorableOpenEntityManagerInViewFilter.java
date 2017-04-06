@@ -41,8 +41,7 @@ public class IgnorableOpenEntityManagerInViewFilter extends OpenEntityManagerInV
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        boolean isUriSecurityIgnored = BLCRequestUtils.isFilteringIgnoredForUri(new ServletWebRequest(request, response));
-        if (isUriSecurityIgnored) {
+        if (isIgnored(request, response)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace(String.format("%s filtering is disabled for %s", this.getClass().getName(), request.getRequestURI()));
             }
@@ -53,5 +52,10 @@ public class IgnorableOpenEntityManagerInViewFilter extends OpenEntityManagerInV
             }
             super.doFilterInternal(request, response, filterChain);
         }
+    }
+
+    protected boolean isIgnored(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        boolean isUriSecurityIgnored = BLCRequestUtils.isFilteringIgnoredForUri(new ServletWebRequest(httpServletRequest, httpServletResponse));
+        return isUriSecurityIgnored;
     }
 }

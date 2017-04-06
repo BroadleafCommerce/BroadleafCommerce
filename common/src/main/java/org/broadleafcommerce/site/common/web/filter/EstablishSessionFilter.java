@@ -15,14 +15,14 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.web.filter;
+
+package org.broadleafcommerce.site.common.web.filter;
 
 import org.broadleafcommerce.common.util.BLCRequestUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.Ordered;
+import org.broadleafcommerce.common.web.filter.AbstractIgnorableFilter;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 
@@ -33,26 +33,30 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Sets a request attribute that informs all Broadleaf Filters that follow NOT to use the HTTP Session.
- * 
- * Intended for use by REST api requests.
- * 
- * @author bpolster
- */
-@Component("blStatelessSessionFilter")
-@ConditionalOnProperty(value = "use.stateless.request", matchIfMissing = true)
-public class StatelessSessionFilter extends AbstractIgnorableFilter {
+
+@Component("blEstablishSessionFilter")
+public class EstablishSessionFilter extends AbstractIgnorableFilter {
 
     @Override
     public void doFilterUnlessIgnored(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        BLCRequestUtils.setOKtoUseSession(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response), Boolean.FALSE);
-        SessionlessHttpServletRequestWrapper wrapper = new SessionlessHttpServletRequestWrapper((HttpServletRequest) request);
-        filterChain.doFilter(wrapper, response);
+        if (HttpServletRequest.class.isAssignableFrom(request.getClass())) {
+            ((HttpServletRequest) request).getSession();
+        }
+        filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean isIgnored(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        boolean response = super.isIgnored(httpServletRequest, httpServletResponse);
+        if (!response) {
+            //ignore for stateless requests (i.e. rest api)
+            response = !BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(httpServletRequest));
+        }
+        return response;
     }
 
     @Override
     public int getOrder() {
-        return FilterOrdered.PRE_SECURITY_HIGH;
+        return FilterOrdered.PRE_SECURITY_LOW;
     }
 }

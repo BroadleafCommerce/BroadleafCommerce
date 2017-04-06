@@ -46,8 +46,7 @@ public abstract class AbstractIgnorableOncePerRequestFilter extends OncePerReque
 
     @Override
     public void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        boolean isUriSecurityIgnored = BLCRequestUtils.isFilteringIgnoredForUri(new ServletWebRequest(httpServletRequest, httpServletResponse));
-        if (isUriSecurityIgnored) {
+        if (isIgnored(httpServletRequest, httpServletResponse)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace(String.format("%s filtering is disabled for %s", this.getClass().getName(), httpServletRequest.getRequestURI()));
             }
@@ -58,6 +57,11 @@ public abstract class AbstractIgnorableOncePerRequestFilter extends OncePerReque
             }
             doFilterInternalUnlessIgnored(httpServletRequest, httpServletResponse, filterChain);
         }
+    }
+
+    protected boolean isIgnored(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        boolean isUriSecurityIgnored = BLCRequestUtils.isFilteringIgnoredForUri(new ServletWebRequest(httpServletRequest, httpServletResponse));
+        return isUriSecurityIgnored;
     }
 
     protected abstract void doFilterInternalUnlessIgnored(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException;

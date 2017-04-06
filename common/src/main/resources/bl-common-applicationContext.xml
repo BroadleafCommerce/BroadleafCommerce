@@ -31,6 +31,8 @@
     <import resource="bl-common-applicationContext-wrapper.xml"/>
     <context:component-scan base-package="org.broadleafcommerce.common">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.common.web.controller.*"/>
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.common.web.site.*"/>
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.common.web.api.*"/>
     </context:component-scan>
     
     <!-- Override Spring's default ApplicationEventMultiCaster with one that is a little smarter about asynchronous -->

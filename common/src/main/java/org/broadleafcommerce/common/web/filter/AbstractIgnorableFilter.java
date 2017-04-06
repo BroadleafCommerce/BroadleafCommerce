@@ -48,8 +48,7 @@ public abstract class AbstractIgnorableFilter extends GenericFilterBean implemen
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        boolean isUriSecurityIgnored = BLCRequestUtils.isFilteringIgnoredForUri(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
-        if (isUriSecurityIgnored) {
+        if (isIgnored((HttpServletRequest) request, (HttpServletResponse) response)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace(String.format("%s filtering is disabled for %s", this.getClass().getName(), ((HttpServletRequest) request).getRequestURI()));
             }
@@ -60,6 +59,11 @@ public abstract class AbstractIgnorableFilter extends GenericFilterBean implemen
             }
             doFilterUnlessIgnored(request, response, chain);
         }
+    }
+
+    protected boolean isIgnored(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        boolean isUriSecurityIgnored = BLCRequestUtils.isFilteringIgnoredForUri(new ServletWebRequest(httpServletRequest, httpServletResponse));
+        return isUriSecurityIgnored;
     }
 
     public abstract void doFilterUnlessIgnored(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException;

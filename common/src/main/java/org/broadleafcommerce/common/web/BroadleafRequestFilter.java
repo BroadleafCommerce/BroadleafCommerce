@@ -20,15 +20,16 @@ package org.broadleafcommerce.common.web;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTOImpl;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
+import org.broadleafcommerce.common.module.BroadleafModuleRegistration.BroadleafModuleEnum;
+import org.broadleafcommerce.common.module.ModulePresentUtil;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
 import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -47,7 +48,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author bpolster
  */
 @Component("blRequestFilter")
-@ConditionalOnProperty(value = "use.basic.request", matchIfMissing = true)
+@ConditionalOnNotAdmin
 public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilter {
 
     private final Log LOG = LogFactory.getLog(getClass());
@@ -74,7 +75,7 @@ public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilte
 
         if (!shouldProcessURL(request, request.getRequestURI())) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Process URL not processing URL " + request.getRequestURI());
+                LOG.trace(String.format("%s not processing URL %s", getClass().getName(), request.getRequestURI()));
             }
             filterChain.doFilter(request, response);
             return;
@@ -126,22 +127,17 @@ public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilte
      * @return true if the {@code HttpServletRequest} should be processed
      */
     protected boolean shouldProcessURL(HttpServletRequest request, String requestURI) {
+        return shouldProcessURL(request, requestURI, false);
+    }
+
+    protected boolean shouldProcessURL(HttpServletRequest request, String requestURI, boolean ignoreSessionCheck) {
         if (requestURI.contains(BLC_ADMIN_GWT) || requestURI.endsWith(BLC_ADMIN_SERVICE) || requestURI.contains(BLC_ADMIN_PREFIX)) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("BroadleafProcessURLFilter ignoring admin request URI " + requestURI);
-            }
             return false;
-        } else {
-            int pos = requestURI.lastIndexOf(".");
-            if (pos > 0) {
-//                String suffix = requestURI.substring(pos);
-//                if (getIgnoreSuffixes().contains(suffix.toLowerCase())) {
-//                    if (LOG.isTraceEnabled()) {
-//                        LOG.trace("BroadleafProcessURLFilter ignoring request due to suffix " + requestURI);
-//                    }
-//                    return false;
-//                }
-            }
+        } else if (!ignoreSessionCheck && BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))
+            && ModulePresentUtil.isPresent(BroadleafModuleEnum.ENTERPRISE)) {
+            //if session usage is enabled and enterprise is in play - disable to allow the enterprise request filters
+            //if session usage is disallowed - allow this filter regardless of enterprise (i.e. rest api)
+            return false;
         }
         return true;
     }
@@ -158,7 +154,7 @@ public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilte
     protected Set getIgnoreSuffixes() {
         if (ignoreSuffixes == null || ignoreSuffixes.isEmpty()) {
             String[] ignoreSuffixList = { ".aif", ".aiff", ".asf", ".avi", ".bin", ".bmp", ".css", ".doc", ".eps", ".gif", ".hqx", ".js", ".jpg", ".jpeg", ".mid", ".midi", ".mov", ".mp3", ".mpg", ".mpeg", ".p65", ".pdf", ".pic", ".pict", ".png", ".ppt", ".psd", ".qxd", ".ram", ".ra", ".rm", ".sea", ".sit", ".stk", ".swf", ".tif", ".tiff", ".txt", ".rtf", ".vob", ".wav", ".wmf", ".xls", ".zip" };
-            ignoreSuffixes = new HashSet<String>(Arrays.asList(ignoreSuffixList));
+            ignoreSuffixes = new HashSet<>(Arrays.asList(ignoreSuffixList));
         }
         return ignoreSuffixes;
     }
