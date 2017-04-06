@@ -76,6 +76,16 @@ public interface SandBoxHelper {
      */
     Long getSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent);
 
+    /**
+     * Find the production sandbox clone, if any, in the current site for the supplied type and primary key value. The
+     * assumption is that the primary key value supplied is from a parent catalog or profile. Since these are multitenant
+     * concepts, the response from this method should only be non-null when the multitenant module is loaded and active.
+     * When multitenant is used, changes can "cascade" through catalogs or profiles, finally ending at a standard site level.
+     *
+     * @param linkedObjectType
+     * @param requestedParent
+     * @return
+     */
     Long getCascadedProductionStateId(Class<?> linkedObjectType, Long requestedParent);
 
     /**
