@@ -273,12 +273,12 @@
         <property name="resourceResolvers" ref="blAdminResourceResolvers" />
     </bean>
     
-    <bean id="adminJsResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
+    <bean id="blJsResources" parent="adminResourceHttpRequestHandlerBase">
         <property name="locations" ref="blJsLocations"/>
         <property name="resourceTransformers" ref="blJsResourceTransformers" />     
     </bean>
     
-    <bean id="adminCssResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
+    <bean id="blCssResources" parent="adminResourceHttpRequestHandlerBase">
         <property name="locations" ref="blCssLocations"/>
         <property name="resourceTransformers" ref="blCssResourceTransformers" />             
     </bean>
