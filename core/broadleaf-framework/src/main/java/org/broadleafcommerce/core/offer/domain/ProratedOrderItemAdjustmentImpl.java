@@ -52,7 +52,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRORATED_ORDER_ITEM_ADJ")
+@Table(name = "BLC_PRORATED_ORDER_ITEM_ADJUSTMENT")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationMergeOverrides(
     {

@@ -21,8 +21,13 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.cache.spi.UpdateTimestampsCache;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.type.Type;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -130,6 +135,26 @@ public class UpdateExecutor {
             response += query.executeUpdate();
         }
         return response;
+    }
+
+    /**
+     *
+     * @param em
+     * @param entityType
+     * @param ids
+     */
+    public static void executeTargetedCacheInvalidation(EntityManager em, Class<?> entityType, List<Long> ids) {
+        Session session = em.unwrap(Session.class);
+        for (Long id : ids) {
+            session.getSessionFactory().getCache().evictEntity(entityType, id);
+        }
+        //update the timestamp cache for the table so that queries will be refreshed
+        ClassMetadata metadata = session.getSessionFactory().getClassMetadata(entityType);
+        String tableName = ((AbstractEntityPersister) metadata).getTableName();
+        UpdateTimestampsCache timestampsCache = em.unwrap(SessionImplementor.class).getFactory().getUpdateTimestampsCache();
+        if (timestampsCache != null) {
+            timestampsCache.invalidate(new Serializable[]{tableName});
+        }
     }
 
     /**

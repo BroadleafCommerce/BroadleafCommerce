@@ -180,4 +180,27 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
         return query.getResultList();
     }
 
+    @Override
+    public IndexField readIndexFieldByAbbreviation(String abbreviation) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<IndexField> criteria = builder.createQuery(IndexField.class);
+
+        Root<IndexFieldImpl> root = criteria.from(IndexFieldImpl.class);
+
+        criteria.select(root);
+        criteria.where(
+                builder.equal(root.get("field").get("abbreviation").as(String.class), abbreviation)
+        );
+
+        TypedQuery<IndexField> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
 }

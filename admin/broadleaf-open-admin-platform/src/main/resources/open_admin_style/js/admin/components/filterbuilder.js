@@ -873,11 +873,12 @@
             $('#' + hiddenId).val(jsonVal);
 
             // if there are active filters, change the filter button to "Edit"
-            var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']')[0];
+            var $filterButton = $($('.filter-button[data-hiddenid=' + hiddenId + ']')[0]);
             if (filterData.rules.length > 0) {
-                if (!filterButton.closest('.button-group').length) {
+                if (!$filterButton.closest('.button-group').length) {
 
-                    filterButton.text("Edit Filter");
+                    $filterButton.text("Edit Filter");
+                    $filterButton.removeClass('disabled').removeAttr('disabled');
 
                     var clearButton = $('<button>', {
                         'html': '<i class="fa fa-times" />',
@@ -888,20 +889,20 @@
                         'class': 'button-group'
                     });
 
-                    buttonGroup.append(filterButton.clone());
+                    buttonGroup.append($filterButton.clone());
                     buttonGroup.append(clearButton);
-                    $(buttonGroup).insertBefore(filterButton.closest('.filter-info:visible').find('.filter-builder-data'));
+                    $(buttonGroup).insertBefore($filterButton.closest('.filter-info:visible').find('.filter-builder-data'));
 
-                    filterButton.remove();
+                    $filterButton.remove();
                 }
-                filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
+                $filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
             } else {
-                if ($(filterButton).text() != 'Filter') {
+                if ($filterButton.text() !== 'Filter') {
                     // change "edit filter" button back to "filter"
-                    filterButton.text("Filter");
-                    filterButton.insertBefore(filterButton.parent());
-                    filterButton.siblings('.button-group:visible').remove();
-                    filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
+                    $filterButton.text("Filter");
+                    $filterButton.insertBefore($filterButton.parent());
+                    $filterButton.siblings('.button-group:visible').remove();
+                    $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
                 }
             }
         },
@@ -1240,13 +1241,14 @@ $(document).ready(function() {
             var filterData = $.parseJSON($('#' + hiddenId).val());
 
             // if there are active filters, change the filter button to "Edit"
-            var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']')[0];
+            var $filterButton = $($('.filter-button[data-hiddenid=' + hiddenId + ']')[0]);
             if (filterData.data.length == 1) {
                 if (filterData.data[0].rules.length > 0) {
 
-                    if (!filterButton.closest('.button-group').length) {
+                    if (!$filterButton.closest('.button-group').length) {
 
-                        filterButton.text("Edit Filter");
+                        $filterButton.text("Edit Filter");
+                        $filterButton.removeClass('disabled').removeAttr('disabled');
 
                         var clearButton = $('<button>', {
                             'html': '<i class="fa fa-times" />',
@@ -1257,21 +1259,21 @@ $(document).ready(function() {
                             'class': 'button-group'
                         });
 
-                        buttonGroup.append(filterButton.clone());
+                        buttonGroup.append($filterButton.clone());
                         buttonGroup.append(clearButton);
-                        $(buttonGroup).insertBefore(filterButton.closest('.filter-info:visible').find('.filter-builder-data'));
+                        $(buttonGroup).insertBefore($filterButton.closest('.filter-info:visible').find('.filter-builder-data'));
 
-                        filterButton.remove();
-                        filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
+                        $filterButton.remove();
+                        $filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
                     }
                 }
             } else {
-                if ($(filterButton).text() != 'Filter') {
+                if ($filterButton.text() !== 'Filter') {
                     // change "edit filter" button back to "filter"
-                    filterButton.text("Filter");
-                    filterButton.insertBefore(filterButton.parent());
-                    filterButton.siblings('.button-group:visible').remove();
-                    filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
+                    $filterButton.text("Filter");
+                    $filterButton.insertBefore($filterButton.parent());
+                    $filterButton.siblings('.button-group:visible').remove();
+                    $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
                 }
             }
         });

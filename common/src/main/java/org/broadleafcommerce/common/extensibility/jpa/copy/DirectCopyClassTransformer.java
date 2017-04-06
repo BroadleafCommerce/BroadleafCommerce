@@ -97,7 +97,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
 
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
@@ -303,7 +303,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     annotationTransformedClasses.add(convertedClassName);
                 }
                 logger.debug(String.format("[%s] - Transform - Copying into [%s] from [%s]", LifeCycleEvent.END, xformKey,
-                                    StringUtils.join(xformVals, ",")));
+                        StringUtils.join(xformVals, ",")));
                 return clazz.toBytecode();
             }
         } catch (ClassCircularityError error) {

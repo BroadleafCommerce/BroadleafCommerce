@@ -209,11 +209,21 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         solrQuery.set("qf", buildQueryFieldsString(solrQuery, searchCriteria));
 
         // Attach additional restrictions
-        attachSortClause(solrQuery, searchCriteria, defaultSort);
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
         attachFacets(solrQuery, namedFacetMap, searchCriteria);
         
         modifySolrQuery(solrQuery, searchCriteria.getQuery(), facets, searchCriteria, defaultSort);
+
+        // If there is a sort, remove all boosting that has been applied before we apply the sort clause.
+        // We do this in order to support cases where we use boosting for enforcing a sort, specifically when sorting
+        // on child documents.
+        if (StringUtils.isNotBlank(defaultSort) || StringUtils.isNotBlank(searchCriteria.getSortQuery())) {
+            solrQuery.remove("bq");
+            solrQuery.remove("bf");
+            solrQuery.remove("boost");
+        }
+
+        attachSortClause(solrQuery, searchCriteria, defaultSort);
 
         solrQuery.setShowDebugInfo(true);
 
