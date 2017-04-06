@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.service;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.CeilingEntityNotManagedException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
@@ -32,8 +33,6 @@ import org.hibernate.metadata.ClassMetadata;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.SmartLifecycle;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -238,7 +237,7 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
     }
 
     @Override
-    public Class<?> getCeilingImplClassFromEntityManagers(String className) {
+    public Class<?> getCeilingImplClassFromEntityManagers(String className) throws CeilingEntityNotManagedException {
         Class<?> beanIdClass = getClassForName(className);
 
         for (EntityManager em : entityManagers) {
@@ -249,7 +248,7 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
             }
         }
 
-        throw new RuntimeException("Unable to retrieve the entity class for the given bean id: " + className);
+        throw new CeilingEntityNotManagedException("Unable to retrieve the entity class for the given class name: " + className);
     }
 
     protected String buildManagerCacheKey(String targetMode, Class<?> clazz) {
