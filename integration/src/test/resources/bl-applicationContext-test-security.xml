@@ -25,7 +25,7 @@
                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 
-    <sec:http auto-config="true" >
+    <sec:http authentication-manager-ref="blAuthenticationManager" >
         <sec:intercept-url pattern="/account/**" access="ROLE_USER" />      
         <sec:form-login login-page='/registerCustomer/registerCustomer.htm' 
                         default-target-url='/welcome.htm'
@@ -33,7 +33,7 @@
                         login-processing-url="/login_post.htm"
                          />
         <sec:logout logout-url="/logout.htm"/>
-        <sec:remember-me />
+        <sec:remember-me user-service-ref="blUserDetailsService" />
         <sec:custom-filter after="REMEMBER_ME_FILTER" ref="blCustomerStateFilter"/>
     </sec:http>
     
