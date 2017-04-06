@@ -30,6 +30,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -450,6 +451,20 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * @return the current active search facets for this category and all parent categories
      */
     public List<CategorySearchFacet> getCumulativeSearchFacets();
+
+    /**
+     * Returns a list of CategorySearchFacets that takes into consideration the search facets for this Category,
+     * the search facets for all parent categories, and the search facets that should be excluded from this
+     * Category. This method will order the resulting list based on the {@link CategorySearchFacet#getPosition()}
+     * method for each category level. That is, the facets on this Category will be ordered by their position
+     * relative to each other with the ordered parent facets after that, etc.
+     *
+     * Takes a Set of the categories that have been traversed in order to protect from circular dependencies.
+     *
+     * @param categoryHierarchy
+     * @return the current active search facets for this category and all parent categories     *
+     */
+    public List<CategorySearchFacet> getCumulativeSearchFacets(Set<Category> categoryHierarchy);
     
     /**
      * Build category hierarchy by walking the default category tree up to the root category.
