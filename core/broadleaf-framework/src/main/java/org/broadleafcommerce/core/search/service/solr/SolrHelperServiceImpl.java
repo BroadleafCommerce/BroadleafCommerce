@@ -625,8 +625,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             ExtensionResultStatusType status = searchExtensionManager.getProxy().attachFacet(query, entry.getKey(), dto, searchCriteria);
 
             if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
-                // Clone the list - we don't want to remove these facets from the DB
-                List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
+                List<SearchFacetRange> facetRanges = searchFacetDao.readSearchFacetRangesForSearchFacet(dto.getFacet());
 
                 if (searchExtensionManager != null) {
                     searchExtensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
