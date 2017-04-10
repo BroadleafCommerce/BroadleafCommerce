@@ -24,11 +24,12 @@ import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetImpl;
-import org.broadleafcommerce.core.search.domain.IndexField;
-import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
+import org.broadleafcommerce.core.search.domain.SearchFacetRange;
+import org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -132,6 +133,32 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
             return query.getSingleResult();
         } catch (NoResultException e) {
             return null;
+        }
+    }
+
+    @Override
+    public List<SearchFacetRange> readSearchFacetRangesForSearchFacet(SearchFacet searchFacet) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<SearchFacetRange> criteria = builder.createQuery(SearchFacetRange.class);
+
+        Root<SearchFacetRangeImpl> ranges = criteria.from(SearchFacetRangeImpl.class);
+        criteria.select(ranges);
+        criteria.where(
+                builder.and(
+                    builder.equal(ranges.get("searchFacet"), searchFacet),
+                    builder.or(builder.isNull(ranges.get("archiveStatus").get("archived").as(String.class)),
+                            builder.notEqual(ranges.get("archiveStatus").get("archived").as(Character.class), 'Y'))
+                )
+        );
+
+        TypedQuery<SearchFacetRange> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
+
+        try {
+            return query.getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<>();
         }
     }
 }
