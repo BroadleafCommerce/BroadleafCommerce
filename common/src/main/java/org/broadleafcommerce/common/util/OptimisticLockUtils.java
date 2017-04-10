@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.broadleafcommerce.common.exception.OptimisticLockInvalidStateException;
 import org.broadleafcommerce.common.exception.OptimisticLockMaxRetryException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -36,8 +37,36 @@ import lombok.extern.apachecommons.CommonsLog;
 @CommonsLog
 public class OptimisticLockUtils {
 
+    /**
+     * Performs an update operation on an entity within an optimistic lock aware transaction.
+     *
+     * @param <T> The type of entity you wish to update.
+     */
     public interface UpdateOperation<T> {
+        /**
+         * Perform the update operations on the entity.
+         *
+         * @param t The entity as represented in the database during the current transaction.
+         */
         void update(T t);
+    }
+
+    /**
+     * Checks if the state of the entity is valid then performs an update operation on an entity within an optimistic
+     * lock aware transaction.
+     *
+     * @param <T> The type of entity you wish to validate and update.
+     */
+    public interface ValidatedUpdateOperation<T> extends UpdateOperation<T> {
+        /**
+         * Check whether or not the {@link #update(Object)} operation is still valid given the current state of the
+         * entity.
+         *
+         * @param t The entity as represented in the database during the current transaction.
+         * @return true if the entity is in a valid state to perform the {@link #update(Object)} operation, false
+         * otherwise.
+         */
+        boolean isValid(T t);
     }
 
     /**
@@ -47,39 +76,53 @@ public class OptimisticLockUtils {
      * the transaction. If the transaction cannot be committed due to an {@link OptimisticLockException} then the
      * operation will be retried until {@code maxRetryCount} is reached.
      * <p>
+     * If a {@link ValidatedUpdateOperation} is passed as the {@code operation} parameter, then the {@link
+     * ValidatedUpdateOperation#isValid(Object)} method will be called after the read but before the update. If this
+     * call returns false, then the update will abort with a {@link OptimisticLockInvalidStateException}.
+     * <p>
      * Optimistic locking can be enabled on an entity by adding a variable with the {@link Version} annotation.
      *
-     * @throws OptimisticLockMaxRetryException if an {@link OptimisticLockException} occurs {@code maxRetryCount} times.
+     * @throws OptimisticLockMaxRetryException     if an {@link OptimisticLockException} occurs {@code maxRetryCount}
+     *                                             times.
+     * @throws OptimisticLockInvalidStateException if the entity state is found to be invalid due to {@link
+     *                                             ValidatedUpdateOperation#isValid(Object)} returning false.
      */
-    public static <T> T performOptimisticLockUpdate(String name, UpdateOperation operation, T t, Object identifier, int maxRetryCount, PlatformTransactionManager transactionManager, EntityManager entityManager) throws OptimisticLockMaxRetryException {
+    public static <T> T performOptimisticLockUpdate(String name, UpdateOperation<T> operation, Class<? extends T> entityClass, Object identifier, int maxRetryCount, PlatformTransactionManager transactionManager, EntityManager entityManager) throws OptimisticLockMaxRetryException, OptimisticLockInvalidStateException {
         int retryCount = 0;
         boolean saveSuccessful = false;
+        T entity = null;
         while (!saveSuccessful) {
             if (retryCount >= maxRetryCount) {
-                throw new OptimisticLockMaxRetryException("Unable to perform " + name + " on " + t.getClass().getSimpleName() + " with id: " + identifier + ". " +
+                log.debug("Max retry count was reached while trying to perform " + name + " on " + entityClass.getSimpleName()+ " with id: " + identifier);
+                throw new OptimisticLockMaxRetryException("Unable to perform " + name + " on " + entityClass.getSimpleName() + " with id: " + identifier + ". " +
                         "Tried " + retryCount + " times, but the version for this entity continues to be concurrently modified.");
             }
             try {
-                t = doTransactionalOptimisticUpdate(name, operation, t, identifier, transactionManager, entityManager);
+                entity = doTransactionalOptimisticUpdate(name, operation, entityClass, identifier, transactionManager, entityManager);
                 saveSuccessful = true;
-                log.debug(name + " for " + t.getClass().getSimpleName() + " with ID: " + identifier + " performed " + retryCount + " retries.");
+                log.debug(name + " for " + entityClass.getSimpleName() + " with ID: " + identifier + " performed " + retryCount + " retries.");
 
             } catch (OptimisticLockException e) {
-                log.debug("Optimistic locking failure. Concurrent modification detected when attempting to modify " + t.getClass().getSimpleName() + " with id: " + identifier);
+                log.debug("Optimistic locking failure. Concurrent modification detected when attempting to modify " + entityClass.getSimpleName() + " with id: " + identifier);
             }
             retryCount++;
         }
-        return t;
+        return entity;
     }
 
-    protected static <T> T doTransactionalOptimisticUpdate(String name, UpdateOperation operation, T t, Object identifier, PlatformTransactionManager transactionManager, EntityManager entityManager) {
+    protected static <T> T doTransactionalOptimisticUpdate(String name, UpdateOperation<T> operation, Class<? extends T> entityClass, Object identifier, PlatformTransactionManager transactionManager, EntityManager entityManager) {
         TransactionStatus transactionStatus = TransactionUtils.createTransaction(
                 name,
                 TransactionDefinition.PROPAGATION_REQUIRES_NEW,
                 transactionManager);
+        T entity;
         try {
-            t = (T) entityManager.find(t.getClass(), identifier);
-            operation.update(t);
+            entity = entityManager.find(entityClass, identifier);
+            if (operation instanceof ValidatedUpdateOperation && !((ValidatedUpdateOperation<T>) operation).isValid(entity)) {
+                log.debug("Entity state was found to be invalid while trying to perform " + name + " on " + entityClass.getSimpleName() + " with id: " + identifier);
+                throw new OptimisticLockInvalidStateException("Unable to perform " + name + " on " + entityClass.getSimpleName() + " with id: " + identifier + ". Aborting update due to invalid state.");
+            }
+            operation.update(entity);
             entityManager.flush();
 
             TransactionUtils.finalizeTransaction(transactionStatus, transactionManager, false);
@@ -88,6 +131,6 @@ public class OptimisticLockUtils {
             TransactionUtils.finalizeTransaction(transactionStatus, transactionManager, true);
             throw e;
         }
-        return t;
+        return entity;
     }
 }
