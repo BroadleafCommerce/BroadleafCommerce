@@ -109,13 +109,12 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     private static final String SOLR_SORTABLE_FIELD_TYPES = "solr.sortable.field.types";
     private static final String DEFAULT_SORTABLE_FIELD_TYPES = "sort,s,p,i,l";
 
-
-    @Resource
-    protected SystemPropertiesService systemPropertiesService;
-
     protected static final String PREFIX_SEPARATOR = "_";
 
     protected static Locale defaultLocale;
+
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
 
     @Resource(name = "blLocaleService")
     protected LocaleService localeService;
@@ -699,6 +698,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
         if (StringUtils.isNotBlank(sortQuery)) {
             String[] sortFields = sortQuery.split(",");
+            List<String> sortableFieldTypes = getSortableFieldTypes();
 
             for (String sortField : sortFields) {
                 String[] sortFieldsSegments = sortField.split(" ");
@@ -715,7 +715,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 // In case you have tokenized only just add them all
                 List<SortClause> sortClauses = new ArrayList<>();
                 boolean foundNotTokenizedField = false;
-                List<String> sortableFieldTypes = getSortableFieldTypes();
+
                 // Loop through all of the field types for the given sort field and add each generated field name
                 // as a sort. Generated field names are comprised of both the field abbreviation and their type, and each
                 // field could have indexed multiple field types. Rather than try to guess which field type to sort by
