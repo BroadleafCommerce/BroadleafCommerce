@@ -77,6 +77,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -103,6 +104,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     // The value of these two fields has no special significance, but they must be non-blank
     protected static final String GLOBAL_FACET_TAG_FIELD = "a";
     protected static final String[] specialCharacters = new String[] { "\\\\", "\\+", "-", "&&", "\\|\\|", "\\!", "\\(", "\\)", "\\{", "\\}", "\\[", "\\]", "\\^", "\"", "~", "\\*", "\\?", ":" };
+
+    private static final List<FieldType> TOKENIZED_FIELD_TYPES = Arrays.asList(FieldType.TEXT, FieldType.TEXTS);
 
     protected static final String PREFIX_SEPARATOR = "_";
 
@@ -688,7 +691,12 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 // attach the sort field that is being requested. If we do, then we shouldn't manually add the requested
                 // sort field ourselves but if not, we should
                 boolean requestedSortFieldAdded = false;
-                
+
+                // and some not  give a preference to NOT tokenized fields, and remove tokenized.
+                // In case you have tokenized only just add them all
+                List<SortClause> sortClauses = new ArrayList<>();
+                boolean foundNotTokenizedField = false;
+
                 // Loop through all of the field types for the given sort field and add each generated field name
                 // as a sort. Generated field names are comprised of both the field abbreviation and their type, and each
                 // field could have indexed multiple field types. Rather than try to guess which field type to sort by
@@ -704,7 +712,20 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     }
                     
                     ORDER order = getSortOrder(sortFieldsSegments, sortQuery);
-                    query.addSort(new SortClause(field, order));
+                    SortClause sortClause = new SortClause(field, order);
+                    if (!TOKENIZED_FIELD_TYPES.contains(fieldType.getFieldType())) {
+                        if (!sortClauses.isEmpty() && !foundNotTokenizedField) {
+                            sortClauses.clear();
+                        }
+                        sortClauses.add(sortClause);
+                        foundNotTokenizedField = true;
+                    } else if (!foundNotTokenizedField) {
+                        sortClauses.add(sortClause);
+                    }
+
+                }
+                if (!sortClauses.isEmpty()) {
+                    sortClauses.forEach(t -> query.addSort(t));
                 }
                 
                 // At the end here, it's possible that the field that was passed in to sort by was not managed in the
