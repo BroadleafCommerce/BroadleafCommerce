@@ -42,6 +42,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
@@ -70,6 +71,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -104,8 +106,12 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     // The value of these two fields has no special significance, but they must be non-blank
     protected static final String GLOBAL_FACET_TAG_FIELD = "a";
     protected static final String[] specialCharacters = new String[] { "\\\\", "\\+", "-", "&&", "\\|\\|", "\\!", "\\(", "\\)", "\\{", "\\}", "\\[", "\\]", "\\^", "\"", "~", "\\*", "\\?", ":" };
+    private static final String SOLR_SORTABLE_FIELD_TYPES = "solr.sortable.field.types";
+    private static final String DEFAULT_SORTABLE_FIELD_TYPES = "sort,s,p,i,l";
 
-    private static final List<FieldType> TOKENIZED_FIELD_TYPES = Arrays.asList(FieldType.TEXT, FieldType.TEXTS);
+
+    @Resource
+    protected SystemPropertiesService systemPropertiesService;
 
     protected static final String PREFIX_SEPARATOR = "_";
 
@@ -671,6 +677,19 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         return docs;
     }
 
+    protected List<String> getSortableFieldTypes() {
+        List<String> strings;
+        try {
+            strings = Arrays.asList(systemPropertiesService.resolveSystemProperty(SOLR_SORTABLE_FIELD_TYPES).
+                    split(","));
+        } catch (Exception ex) {
+            LOG.error(String.format("Error reading property %s. Using default values: %s",
+                    SOLR_SORTABLE_FIELD_TYPES, DEFAULT_SORTABLE_FIELD_TYPES), ex);
+            strings = Arrays.asList(DEFAULT_SORTABLE_FIELD_TYPES.split(","));
+        }
+        return strings;
+    }
+
     @Override
     public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
         String sortQuery = searchCriteria.getSortQuery();
@@ -696,7 +715,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 // In case you have tokenized only just add them all
                 List<SortClause> sortClauses = new ArrayList<>();
                 boolean foundNotTokenizedField = false;
-
+                List<String> sortableFieldTypes = getSortableFieldTypes();
                 // Loop through all of the field types for the given sort field and add each generated field name
                 // as a sort. Generated field names are comprised of both the field abbreviation and their type, and each
                 // field could have indexed multiple field types. Rather than try to guess which field type to sort by
@@ -713,7 +732,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     
                     ORDER order = getSortOrder(sortFieldsSegments, sortQuery);
                     SortClause sortClause = new SortClause(field, order);
-                    if (!TOKENIZED_FIELD_TYPES.contains(fieldType.getFieldType())) {
+
+                    if (sortableFieldTypes.contains(fieldType.getFieldType().getType())) {
                         if (!sortClauses.isEmpty() && !foundNotTokenizedField) {
                             sortClauses.clear();
                         }
@@ -724,8 +744,15 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     }
 
                 }
+                if (!foundNotTokenizedField) {
+                    LOG.warn(String.format("Sorting on a tokenized field, this could have adverse effects on the ordering of results. " +
+                                    "Add a field type for this field from the following list to ensure proper result ordering: [%s]",
+                            StringUtils.join(sortableFieldTypes, ", ")));
+                }
                 if (!sortClauses.isEmpty()) {
-                    sortClauses.forEach(t -> query.addSort(t));
+                    for (SortClause sortClause : sortClauses) {
+                        query.addSort(sortClause);
+                    }
                 }
                 
                 // At the end here, it's possible that the field that was passed in to sort by was not managed in the
