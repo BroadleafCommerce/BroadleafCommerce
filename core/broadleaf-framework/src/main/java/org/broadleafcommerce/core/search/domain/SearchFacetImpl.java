@@ -30,6 +30,10 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
@@ -53,6 +57,23 @@ import java.util.List;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
 })
+@AdminPresentationMergeOverrides({
+        @AdminPresentationMergeOverride(name = "fieldType.indexField.field.friendlyName", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3000),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "IndexFieldTypeImpl_indexField"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "NOT_REQUIRED" )
+        }),
+        @AdminPresentationMergeOverride(name = "fieldType.indexField.searchable", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 4000),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "IndexFieldTypeImpl_searchable")
+        })
+})
 public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEntity, SearchFacetAdminPresentation {
 
     private static final long serialVersionUID = 1L;
@@ -73,18 +94,18 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
 
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "SearchFacetImpl_name", group = GroupName.General,
-            groupOrder = 2, order = 2, prominent = true, translatable = true, gridOrder = 500, requiredOverride = RequiredOverride.REQUIRED)
+            groupOrder = 2, order = 2, prominent = true, translatable = true, gridOrder = 1000, requiredOverride = RequiredOverride.REQUIRED)
     protected String name;
     
     @Column(name = "LABEL")
     @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = GroupName.General,
-            prominent = true, translatable = true, gridOrder = 1000)
+            prominent = true, translatable = true, gridOrder = 2000)
     protected String label;
 
     @ManyToOne(targetEntity = IndexFieldTypeImpl.class)
     @JoinColumn(name = "INDEX_FIELD_TYPE_ID")
     @AdminPresentation(friendlyName = "SearchFacetImpl_field", order = 2000, group = GroupName.General,
-            prominent = true, gridOrder = 2000, requiredOverride = RequiredOverride.REQUIRED)
+            requiredOverride = RequiredOverride.REQUIRED)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "indexField.field.friendlyName")
     protected IndexFieldType fieldType;
 
