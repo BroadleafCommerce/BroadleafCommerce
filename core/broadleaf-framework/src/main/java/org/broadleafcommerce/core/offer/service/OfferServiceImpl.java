@@ -21,8 +21,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
+import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
+import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -60,8 +61,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * The Class OfferServiceImpl.
@@ -105,8 +107,11 @@ public class OfferServiceImpl implements OfferService {
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
-    @Resource(name = "blGenericEntityDao")
-    protected GenericEntityDao genericEntityDao;
+    @PersistenceContext(unitName="blPU")
+    protected EntityManager em;
+
+    @Resource(name="blStreamingTransactionCapableUtil")
+    protected StreamingTransactionCapableUtil transUtil;
 
     @Override
     public List<Offer> findAllOffers() {
@@ -298,16 +303,28 @@ public class OfferServiceImpl implements OfferService {
      * @param order the order to check
      * @return the refreshed list of OfferCodes
      */
-    protected List<OfferCode> refreshOfferCodesIfApplicable(Order order) {
-        List<OfferCode> orderOfferCodes = order.getAddedOfferCodes();
-        for (OfferCode offerCode : orderOfferCodes) {
-            if (offerCode.getOffer() != null) {
-                Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(OfferImpl.class, offerCode.getOffer().getId());
-                if (sandBoxVersionId != null && !Objects.equals(sandBoxVersionId, offerCode.getOffer().getId())) {
-                    genericEntityDao.getEntityManager().refresh(offerCode);
+    protected List<OfferCode> refreshOfferCodesIfApplicable(final Order order) {
+        final List<OfferCode> orderOfferCodes = order.getAddedOfferCodes();
+
+        transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+            @Override
+            public void execute() {
+                for (OfferCode offerCode : orderOfferCodes) {
+                    if (offerCode.getOffer() != null) {
+                        Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(OfferImpl.class, offerCode.getOffer().getId());
+                        if (sandBoxVersionId != null && !Objects.equals(sandBoxVersionId, offerCode.getOffer().getId())) {
+                            em.refresh(offerCode);
+                        }
+                    }
                 }
             }
-        }
+
+            @Override
+            public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
+                return true;
+            }
+        }, RuntimeException.class);
+
         return orderOfferCodes;
     }
 

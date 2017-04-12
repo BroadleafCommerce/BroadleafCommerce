@@ -40,8 +40,8 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
-        List<OfferCode> offerCodes = offerService.buildOfferCodeListForCustomer(order);
-        
+        List<OfferCode> offerCodes = getNewOfferCodesFromCustomer(order);
+
         if (offerCodes != null && !offerCodes.isEmpty()) {
             order = orderService.addOfferCodes(order, offerCodes, false);
         }
@@ -51,6 +51,15 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
         context.setSeedData(order);
 
         return context;
+    }
+
+    protected List<OfferCode> getNewOfferCodesFromCustomer(Order order) {
+        List<OfferCode> offerCodesFromCustomer = offerService.buildOfferCodeListForCustomer(order);
+        List<OfferCode> offerCodesFromOrder = order.getAddedOfferCodes();
+
+        offerCodesFromCustomer.removeAll(offerCodesFromOrder);
+
+        return offerCodesFromCustomer;
     }
 
 }
