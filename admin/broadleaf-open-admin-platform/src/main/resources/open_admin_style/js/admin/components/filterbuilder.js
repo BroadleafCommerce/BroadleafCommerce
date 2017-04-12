@@ -484,7 +484,9 @@
                                     $selectize.addItem(Number(dataHydrate[k]), false);
                                     var name = $selectize.getItem(Number(dataHydrate[k])).text();
                                     var $readonly = this.$input.parent().parent().find('.read-only');
-                                    $readonly.html($readonly.html().replace(Number(dataHydrate[k]), name));
+                                    if ($readonly.html() !== undefined) {
+                                        $readonly.html($readonly.html().replace(Number(dataHydrate[k]), name));
+                                    }
                                 }
                             }
                         },
