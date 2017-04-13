@@ -391,5 +391,9 @@
             <artifactId>broadleaf-common-presentation</artifactId>
             <version>${broadleaf-presentation.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+        </dependency>
     </dependencies>
 </project>
