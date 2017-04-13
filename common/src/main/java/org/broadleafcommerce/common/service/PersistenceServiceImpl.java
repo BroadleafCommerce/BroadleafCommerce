@@ -20,7 +20,6 @@ package org.broadleafcommerce.common.service;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.exception.CeilingEntityNotManagedException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
@@ -237,7 +236,7 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
     }
 
     @Override
-    public Class<?> getCeilingImplClassFromEntityManagers(String className) throws CeilingEntityNotManagedException {
+    public Class<?> getCeilingImplClassFromEntityManagers(String className) {
         Class<?> beanIdClass = getClassForName(className);
 
         for (EntityManager em : entityManagers) {
@@ -247,8 +246,7 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
                 return entitiesFromCeiling[entitiesFromCeiling.length - 1];
             }
         }
-
-        throw new CeilingEntityNotManagedException("Unable to retrieve the entity class for the given class name: " + className);
+        return null;
     }
 
     protected String buildManagerCacheKey(String targetMode, Class<?> clazz) {

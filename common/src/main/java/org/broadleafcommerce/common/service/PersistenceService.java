@@ -23,6 +23,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 
 /**
@@ -127,10 +128,11 @@ public interface PersistenceService {
     EJB3ConfigurationDao getEJB3ConfigurationDao(Map<String, Object> managerMap);
 
     /**
-     * Retrieves the ceiling implementation for the given className by checking each registered {@link EntityManager}
+     * Retrieves the topmost implementation for the given className by checking each registered {@link EntityManager}. If
+     * this is not found in the entity managers, this returns null
      *
      * @param className
-     * @return the cache key
      */
+    @Nullable
     Class<?> getCeilingImplClassFromEntityManagers(String className);
 }
