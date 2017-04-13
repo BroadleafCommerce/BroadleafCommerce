@@ -20,8 +20,6 @@ package org.broadleafcommerce.core.search.domain;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -34,9 +32,11 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -98,7 +98,7 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "IndexFieldImpl_fieldTypes", order = 1000)
-    protected List<IndexFieldType> fieldTypes = new ArrayList<IndexFieldType>();
+    protected List<IndexFieldType> fieldTypes = new ArrayList<>();
 
     @Override
     public Long getId() {
@@ -158,22 +158,6 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
                 .append(id)
                 .append(field)
                 .toHashCode();
-    }
-
-    @Override
-    public <G extends IndexField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        IndexField cloned = createResponse.getClone();
-        cloned.setSearchable(searchable);
-        cloned.setField(field);
-        for(IndexFieldType entry : fieldTypes){
-            cloned.getFieldTypes().add(entry.createOrRetrieveCopyInstance(context).getClone());
-        }
-
-        return createResponse;
     }
 
     @Override
