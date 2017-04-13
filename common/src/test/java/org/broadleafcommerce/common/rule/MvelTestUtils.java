@@ -108,11 +108,17 @@ public class MvelTestUtils {
             ((URLClassLoader) (Thread.currentThread()
                 .getContextClassLoader())).getURLs()) {
           buffer.append(new File(url.getPath()));
+          String path = url.getPath().replaceAll("%20", " ");
+
+          buffer.append(new File(path));
           buffer.append(System.getProperty("path.separator"));
         }
         String classpath = buffer.toString();
         int toIndex = classpath.lastIndexOf(System.getProperty("path.separator"));
         classpath = classpath.substring(0, toIndex);
+        if (classpath.contains(" ")) {
+            classpath = "\"" + classpath + "\"";
+        }
         return classpath;
     }
 }

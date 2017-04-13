@@ -21,6 +21,8 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -28,10 +30,7 @@ import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +38,7 @@ import junit.framework.TestCase;
 
 public class MvelHelperTest extends TestCase {
 
+    private static final Log LOG = LogFactory.getLog(MvelHelperTest.class);
 
     /**
      * Test that a blank rule is true.
@@ -133,7 +133,7 @@ public class MvelHelperTest extends TestCase {
      * calling the method identified during compilation. This causes the expression to permanently be in an incorrect
      * state from which it will never recover.
      */
-    public void testMvelMethodOverloadFailureCase() {
+    public void testMvelMethodOverloadFailureCase() throws IOException {
         String classpath = MvelTestUtils.getClassPath();
 
         boolean result = false;
@@ -151,7 +151,7 @@ public class MvelHelperTest extends TestCase {
             try {
                 executor.execute(cmdLine);
             } catch (IOException e) {
-                //do nothing
+                throw new IOException(new String(baos.toByteArray()));
             }
             String run = new String(baos.toByteArray());
             result = Boolean.valueOf(run.trim());
@@ -168,7 +168,7 @@ public class MvelHelperTest extends TestCase {
      * </p>
      * See {@link #testMvelMethodOverloadFailureCase()} for a more complete description of the problem case.
      */
-    public void testMvelMethodOverloadWorkaroundCase() {
+    public void testMvelMethodOverloadWorkaroundCase() throws IOException {
         String classpath = MvelTestUtils.getClassPath();
 
         boolean result = false;
@@ -185,7 +185,7 @@ public class MvelHelperTest extends TestCase {
             try {
                 executor.execute(cmdLine);
             } catch (IOException e) {
-                //do nothing
+                throw new IOException(new String(baos.toByteArray()));
             }
             String run = new String(baos.toByteArray());
             result = Boolean.valueOf(run.trim());
