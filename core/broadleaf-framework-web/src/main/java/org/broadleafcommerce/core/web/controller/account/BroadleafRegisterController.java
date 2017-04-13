@@ -22,7 +22,6 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.MergeCartService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.order.CartState;
@@ -76,9 +75,13 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
     public String register(RegisterCustomerForm registerCustomerForm, HttpServletRequest request, 
             HttpServletResponse response, Model model) {
         String redirectUrl = request.getParameter("successUrl");
+        
         if (StringUtils.isNotBlank(redirectUrl)) {
             registerCustomerForm.setRedirectUrl(redirectUrl);
+        } else {
+            registerCustomerForm.setRedirectUrl(request.getContextPath());
         }
+        
         return getRegisterView();
     }
     
