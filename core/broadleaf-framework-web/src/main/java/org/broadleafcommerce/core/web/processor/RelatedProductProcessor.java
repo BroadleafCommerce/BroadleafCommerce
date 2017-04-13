@@ -30,12 +30,10 @@ import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModif
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 
 /**
@@ -58,9 +56,11 @@ import javax.annotation.Resource;
  *      relatedProduct.promotionMessage.
  *      
  * @author bpolster
+ * @deprecated in favor of {@link org.broadleafcommerce.core.web.expression.RelatedProductsVariableExpression}
  */
 @Component("blRelatedProductProcessor")
 @ConditionalOnTemplating
+@Deprecated
 public class RelatedProductProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     @Value("${solr.index.use.sku}")
