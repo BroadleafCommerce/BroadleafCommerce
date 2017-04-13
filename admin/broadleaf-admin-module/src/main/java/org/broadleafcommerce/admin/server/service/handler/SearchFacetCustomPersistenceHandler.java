@@ -21,19 +21,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
+import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
-
-
-import javax.annotation.Resource;
+import java.util.Map;
 
 
 /**
@@ -45,9 +44,6 @@ import javax.annotation.Resource;
 public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(SearchFacetCustomPersistenceHandler.class);
-
-    @Resource(name = "blSearchFacetDao")
-    protected SearchFacetDao searchFacetDao;
 
     @Override
     public Boolean canHandleRemove(PersistencePackage persistencePackage) {
@@ -61,23 +57,24 @@ public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandle
         Entity entity = persistencePackage.getEntity();
 
         try {
-            Object adminInstance = Class.forName(entity.getType()[0]).newInstance();
-            Property idProperty = entity.findProperty("id");
-            if (idProperty != null ) {
-                Long instanceId = Long.parseLong(idProperty.getValue());
-                if (instanceId != null) {
-                    adminInstance = dynamicEntityDao.find(adminInstance.getClass(),instanceId);
-                }
-            }
+            SearchFacet adminInstance = getAdminInstance(persistencePackage, dynamicEntityDao, helper, entity);
             if (Status.class.isAssignableFrom(adminInstance.getClass())) {
                 ((Status) adminInstance).setArchived('Y');
-                searchFacetDao.save((SearchFacet)adminInstance);
-                return;
+                dynamicEntityDao.merge(adminInstance);
             }
-
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
         }
+    }
+
+    protected SearchFacet getAdminInstance(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper,
+                                                Entity entity) throws ClassNotFoundException {
+        PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+        Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(SearchFacetRange.class.getName(), persistencePerspective);
+        Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+        String type = entity.getType()[0];
+        SearchFacet adminInstance = (SearchFacet) dynamicEntityDao.retrieve(Class.forName(type), primaryKey);
+
+        return adminInstance;
     }
 }
