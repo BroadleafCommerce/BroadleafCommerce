@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXrefImpl;
@@ -93,7 +94,12 @@ public class OfferServiceTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        offerService = new OfferServiceImpl();
+        offerService = new OfferServiceImpl() { 
+            @Override
+            protected List<OfferCode> refreshOfferCodesIfApplicable(Order order) {
+                return order.getAddedOfferCodes();
+            }
+        };
         customerOfferDaoMock = EasyMock.createMock(CustomerOfferDao.class);
         orderServiceMock = EasyMock.createMock(OrderService.class);
         offerCodeDaoMock = EasyMock.createMock(OfferCodeDao.class);
@@ -164,7 +170,7 @@ public class OfferServiceTest extends TestCase {
     }
 
     public void testApplyOffersToOrder_Order() throws Exception {
-        final ThreadLocal<Order> myOrder = new ThreadLocal<Order>();
+        final ThreadLocal<Order> myOrder = new ThreadLocal<>();
         EasyMock.expect(offerDaoMock.createOrderItemPriceDetailAdjustment()).andAnswer(OfferDataItemProvider.getCreateOrderItemPriceDetailAdjustmentAnswer()).anyTimes();
 
         CandidateOrderOfferAnswer candidateOrderOfferAnswer = new CandidateOrderOfferAnswer();
@@ -197,7 +203,7 @@ public class OfferServiceTest extends TestCase {
         EasyMock.expect(multishipOptionServiceMock.findOrderMultishipOptions(EasyMock.isA(Long.class))).andAnswer(new IAnswer<List<OrderMultishipOption>>() {
             @Override
             public List<OrderMultishipOption> answer() throws Throwable {
-                return new ArrayList<OrderMultishipOption>();
+                return new ArrayList<>();
             }
         }).anyTimes();
 
@@ -359,7 +365,7 @@ public class OfferServiceTest extends TestCase {
     }
 
     public void testApplyOffersToOrder_Items() throws Exception {
-        final ThreadLocal<Order> myOrder = new ThreadLocal<Order>();
+        final ThreadLocal<Order> myOrder = new ThreadLocal<>();
         EasyMock.expect(offerDaoMock.createOrderItemPriceDetailAdjustment()).andAnswer(OfferDataItemProvider.getCreateOrderItemPriceDetailAdjustmentAnswer()).anyTimes();
 
         CandidateItemOfferAnswer answer = new CandidateItemOfferAnswer();
@@ -382,7 +388,7 @@ public class OfferServiceTest extends TestCase {
         EasyMock.expect(multishipOptionServiceMock.findOrderMultishipOptions(EasyMock.isA(Long.class))).andAnswer(new IAnswer<List<OrderMultishipOption>>() {
             @Override
             public List<OrderMultishipOption> answer() throws Throwable {
-                return new ArrayList<OrderMultishipOption>();
+                return new ArrayList<>();
             }
         }).anyTimes();
 
