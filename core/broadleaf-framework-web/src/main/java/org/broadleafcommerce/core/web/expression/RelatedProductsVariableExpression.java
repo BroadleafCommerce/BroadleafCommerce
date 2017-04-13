@@ -23,7 +23,9 @@ import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class RelatedProductsVariableExpression implements BroadleafVariableExpre
 
     private final RelatedProductsService relatedProductsService;
 
+    @Autowired
     public RelatedProductsVariableExpression(RelatedProductsService relatedProductsService) {
         this.relatedProductsService = relatedProductsService;
     }
