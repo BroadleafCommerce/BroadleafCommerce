@@ -20,10 +20,34 @@
 
     var excludedEFSectionTabSelectors = [];
 
-    var originalStickyBarOffset = $('.sticky-container').offset().top;
-    var originalStickyBarHeight = $('.sticky-container').height();
+    var originalStickyBarOffset;
+    var originalStickyBarHeight;
     
     BLCAdmin.entityForm = {
+
+        initializeStickyHeader : function () {
+            originalStickyBarOffset = $('.sticky-container').offset().top;
+            originalStickyBarHeight = $('.sticky-container').height();
+
+            if ($('form.entity-form').length && !$('.oms').length) {
+                var $sc = $('.sticky-container');
+                var $scp = $('.sticky-container-padding');
+                var height = BLCAdmin.entityForm.getOriginalStickyBarHeight();
+
+                $scp.show();
+                $sc.addClass('sticky-fixed').css('top', BLCAdmin.entityForm.getOriginalStickyBarOffset());
+                $sc.outerWidth($('.main-content').outerWidth());
+                $scp.outerHeight(height);
+
+                $sc.find('.content-area-title-bar').css('height', height);
+                $sc.find('.content-area-title-bar').css('line-height', height + 'px');
+                $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', height + 'px');
+                $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-22px');
+            }
+
+            $('.main-content').css('overflow', 'auto');
+        },
+
         showActionSpinner : function ($actions) {
             $("#headerFlashAlertBoxContainer").addClass("hidden");
             $actions.find('button').prop("disabled",true);
@@ -240,6 +264,8 @@
 
 $(document).ready(function() {
 
+    BLCAdmin.entityForm.initializeStickyHeader();
+
     /**
      * Make the sticky bar (breadcrumb) lock at the top of the window when it's scrolled off the page
      */
@@ -272,25 +298,6 @@ $(document).ready(function() {
             $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-7px');
         }
     });
-
-    /**
-     * Initialize the sticky bar
-     */
-    if ($('form.entity-form').length && !$('.oms').length) {
-        var $sc = $('.sticky-container');
-        var $scp = $('.sticky-container-padding');
-        var height = BLCAdmin.entityForm.getOriginalStickyBarHeight();
-
-        $scp.show();
-        $sc.addClass('sticky-fixed').css('top', BLCAdmin.entityForm.getOriginalStickyBarOffset());
-        $sc.outerWidth($('.main-content').outerWidth());
-        $scp.outerHeight(height);
-
-        $sc.find('.content-area-title-bar').css('height', height);
-        $sc.find('.content-area-title-bar').css('line-height', height + 'px');
-        $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', height + 'px');
-        $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-22px');
-    }
     
     var tabs_action=null;
     $('body div.section-tabs li').find('a:not(".workflow-tab, .system-property-tab' +
