@@ -21,12 +21,15 @@ import org.apache.commons.collections.map.MultiValueMap;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
-import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 /**
  * Introduce some common testing util methods here.
@@ -102,23 +105,45 @@ public class MvelTestUtils {
         Level2 getLevel2();
     }
 
-    public static String getClassPath() {
+    public static String getClassPath() throws IOException {
+        ClassLoader cl = MvelTestUtils.class.getClassLoader();
+        String classpath = null;
         StringBuilder buffer = new StringBuilder();
-        for (URL url :
-            ((URLClassLoader) (Thread.currentThread()
-                .getContextClassLoader())).getURLs()) {
-          buffer.append(new File(url.getPath()));
-          String path = url.getPath().replaceAll("%20", " ");
-
-          buffer.append(new File(path));
-          buffer.append(System.getProperty("path.separator"));
+        Enumeration<URL> resources = cl.getResources("META-INF/MANIFEST.MF");
+        while (resources.hasMoreElements()) {
+            Manifest manifest = new Manifest(resources.nextElement().openStream());
+            Attributes main = manifest.getMainAttributes();
+            String mainClass = main.getValue("Main-Class");
+            if ("org.apache.maven.surefire.booter.ForkedBooter".equals(mainClass)) {
+                String[] urls = main.getValue("Class-Path").split(" ");
+                for (String url : urls) {
+                    assembleClassPathElement(buffer, new URL(url));
+                }
+                classpath = cleanUpClassPathString(buffer);
+                break;
+            }
         }
-        String classpath = buffer.toString();
-        int toIndex = classpath.lastIndexOf(System.getProperty("path.separator"));
-        classpath = classpath.substring(0, toIndex);
-        if (classpath.contains(" ")) {
-            classpath = "\"" + classpath + "\"";
+        if (buffer.length() == 0) {
+            for (URL url : ((URLClassLoader) cl).getURLs()) {
+                assembleClassPathElement(buffer, url);
+            }
+            classpath = cleanUpClassPathString(buffer);
         }
         return classpath;
+    }
+
+    private static String cleanUpClassPathString(StringBuilder buffer) {
+        String classpath;
+        classpath = buffer.toString();
+        int toIndex = classpath.lastIndexOf(System.getProperty("path.separator"));
+        classpath = classpath.substring(0, toIndex);
+        return classpath;
+    }
+
+    private static void assembleClassPathElement(StringBuilder buffer, URL val) {
+        String path = val.getPath();
+        path = path.replace("%20", " ");
+        buffer.append(path);
+        buffer.append(System.getProperty("path.separator"));
     }
 }
