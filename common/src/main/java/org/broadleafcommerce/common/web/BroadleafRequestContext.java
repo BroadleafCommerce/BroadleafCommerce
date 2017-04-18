@@ -41,15 +41,19 @@ import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * Convenient holder class for various objects to be automatically available on thread local without invoking the various
@@ -116,6 +120,7 @@ public class BroadleafRequestContext {
     protected java.util.Locale javaLocale;
     protected Currency javaCurrency;
     protected Catalog currentCatalog;
+    protected List<Long> explicitCatalogs = new ArrayList<>();
     protected Site currentProfile;
     protected Boolean ignoreSite = false;
     protected Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -387,6 +392,14 @@ public class BroadleafRequestContext {
 
     public void setCurrentCatalog(Catalog currentCatalog) {
         this.currentCatalog = currentCatalog;
+    }
+
+    public List<Long> getExplicitCatalogs() {
+        return explicitCatalogs != null ? explicitCatalogs : new ArrayList<Long>();
+    }
+
+    public void setExplicitCatalogs(List<Long> explicitCatalogs) {
+        this.explicitCatalogs = explicitCatalogs;
     }
 
     public Site getCurrentProfile() {
