@@ -36,9 +36,6 @@ var BLCAdmin = (function($) {
         top: 20
     };
 
-    var originalStickyBarOffset;
-    var originalStickyBarHeight;
-
     var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container, .redactor_box, ' +
                          '.asset-selector-container img, >div>select, div.custom-checkbox, div.small-enum-container, .ace-editor, ' +
                          'textarea:not(.redactor-box textarea), div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
@@ -246,14 +243,6 @@ var BLCAdmin = (function($) {
             for (var i = 0; i < selectizeUpdateHandlers.length; i++) {
                 selectizeUpdateHandlers[i]($container);
             }
-        },
-
-        getOriginalStickyBarOffset : function() {
-            return originalStickyBarOffset;
-        },
-
-        getOriginalStickyBarHeight : function() {
-            return originalStickyBarHeight;
         },
 
         setModalMaxHeight : function($modal) {
@@ -471,29 +460,6 @@ var BLCAdmin = (function($) {
                     return $body.find('.entityFormTab.active');
                 }
             }
-        },
-
-        initializeStickyHeader : function () {
-            originalStickyBarOffset = $('.sticky-container').offset().top;
-            originalStickyBarHeight = $('.sticky-container').height();
-
-            if (!$('.oms').length) {
-                var $sc = $('.sticky-container');
-                var $scp = $('.sticky-container-padding');
-                var height = BLCAdmin.getOriginalStickyBarHeight();
-
-                $scp.show();
-                $sc.addClass('sticky-fixed').css('top', BLCAdmin.getOriginalStickyBarOffset());
-                $sc.outerWidth($('.main-content').outerWidth());
-                $scp.outerHeight(height);
-
-                $sc.find('.content-area-title-bar').css('height', height);
-                $sc.find('.content-area-title-bar').css('line-height', height + 'px');
-                $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', height + 'px');
-                $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-22px');
-            }
-
-            $('.main-content').css('overflow', 'auto');
         },
 
         initializeFields : function($container) {
@@ -1585,39 +1551,6 @@ $('body').on('click', '.add-main-entity', function (e) {
         var action = $(this).data('url');
 
         BLCAdmin.showLinkAsModal(action);
-    }
-});
-
-/**
- * Make the sticky bar (breadcrumb & actions) lock at the top of the window when it's scrolled off the page
- */
-$('.main-content').on('scroll', function() {
-    if ($('.oms').length)  {
-        return;
-    }
-    var $sc = $('.sticky-container');
-    var $scp = $('.sticky-container-padding');
-    var height = BLCAdmin.getOriginalStickyBarHeight();
-    var minHeight = height - 30;
-
-    $scp.show();
-    $sc.addClass('sticky-fixed').css('top', BLCAdmin.getOriginalStickyBarOffset());
-    $sc.outerWidth($('.main-content').outerWidth());
-    $('.sticky-container-padding').outerHeight(height);
-
-    if ($('.main-content').scrollTop() <= 30) {
-        var scroll = $('.main-content').scrollTop();
-        $sc.find('.content-area-title-bar').css('height', height - scroll);
-        $sc.find('.content-area-title-bar').css('line-height', height - scroll + 'px');
-        $sc.find('.content-area-title-bar .ajax-loader').css('margin-top', 30 - scroll / 2 + 'px');
-        $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', height - scroll + 'px');
-        $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', (-22 + scroll / 2) + 'px');
-    } else {
-        $sc.find('.content-area-title-bar').css('height', minHeight + 'px');
-        $sc.find('.content-area-title-bar').css('line-height', minHeight + 'px');
-        $sc.find('.content-area-title-bar .ajax-loader').css('margin-top', '17px');
-        $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', minHeight + 'px');
-        $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-7px');
     }
 });
 
