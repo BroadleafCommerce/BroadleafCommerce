@@ -19,11 +19,9 @@
 (function($, BLCAdmin) {
 
     var excludedEFSectionTabSelectors = [];
-
-    var originalStickyBarOffset = $('.sticky-container').offset().top;
-    var originalStickyBarHeight = $('.sticky-container').height();
     
     BLCAdmin.entityForm = {
+
         showActionSpinner : function ($actions) {
             $("#headerFlashAlertBoxContainer").addClass("hidden");
             $actions.find('button').prop("disabled",true);
@@ -202,14 +200,6 @@
             $ruleBuilders.find('.toggle-container label').addClass('disabled');
         },
 
-        getOriginalStickyBarOffset : function() {
-            return originalStickyBarOffset;
-        },
-
-        getOriginalStickyBarHeight : function() {
-            return originalStickyBarHeight;
-        },
-
         toggleFieldVisibility : function($field, shouldShow) {
             var hideGroupIfFieldsAreHidden = function ($field) {
                 var $groupContent = $field.closest('.fieldset-card-content');
@@ -239,58 +229,6 @@
 })(jQuery, BLCAdmin);
 
 $(document).ready(function() {
-
-    /**
-     * Make the sticky bar (breadcrumb) lock at the top of the window when it's scrolled off the page
-     */
-    $('.main-content').on('scroll', function() {
-        if (!$('form.entity-form').length || $('.oms').length)  {
-            return;
-        }
-        var $sc = $('.sticky-container');
-        var $scp = $('.sticky-container-padding');
-        var height = BLCAdmin.entityForm.getOriginalStickyBarHeight();
-        var minHeight = height - 30;
-
-        $scp.show();
-        $sc.addClass('sticky-fixed').css('top', BLCAdmin.entityForm.getOriginalStickyBarOffset());
-        $sc.outerWidth($('.main-content').outerWidth());
-        $('.sticky-container-padding').outerHeight(height);
-
-        if ($('.main-content').scrollTop() <= 30) {
-            var scroll = $('.main-content').scrollTop();
-            $sc.find('.content-area-title-bar').css('height', height - scroll);
-            $sc.find('.content-area-title-bar').css('line-height', height - scroll + 'px');
-            $sc.find('.content-area-title-bar .ajax-loader').css('margin-top', 30 - scroll / 2 + 'px');
-            $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', height - scroll + 'px');
-            $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', (-22 + scroll / 2) + 'px');
-        } else {
-            $sc.find('.content-area-title-bar').css('height', minHeight + 'px');
-            $sc.find('.content-area-title-bar').css('line-height', minHeight + 'px');
-            $sc.find('.content-area-title-bar .ajax-loader').css('margin-top', '17px');
-            $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', minHeight + 'px');
-            $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-7px');
-        }
-    });
-
-    /**
-     * Initialize the sticky bar
-     */
-    if ($('form.entity-form').length && !$('.oms').length) {
-        var $sc = $('.sticky-container');
-        var $scp = $('.sticky-container-padding');
-        var height = BLCAdmin.entityForm.getOriginalStickyBarHeight();
-
-        $scp.show();
-        $sc.addClass('sticky-fixed').css('top', BLCAdmin.entityForm.getOriginalStickyBarOffset());
-        $sc.outerWidth($('.main-content').outerWidth());
-        $scp.outerHeight(height);
-
-        $sc.find('.content-area-title-bar').css('height', height);
-        $sc.find('.content-area-title-bar').css('line-height', height + 'px');
-        $sc.find('.content-area-title-bar h3:not(.line-height-fixed)').css('line-height', height + 'px');
-        $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-22px');
-    }
     
     var tabs_action=null;
     $('body div.section-tabs li').find('a:not(".workflow-tab, .system-property-tab' +

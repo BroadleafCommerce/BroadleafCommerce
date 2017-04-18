@@ -187,6 +187,11 @@ circle {
 .mCSB_draggerContainer {
     background-color: #F9F7F3;
 }
+
+/* temporarily disable EntityForm scrolling */
+.app-content .content .section-content .main-content {
+    overflow: hidden;
+}
 /****************************************
  ADMIN DROPDOWN RELATED STYLES
 ****************************************/
