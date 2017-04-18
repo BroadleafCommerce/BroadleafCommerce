@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
+import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionServiceImpl;
 import org.broadleafcommerce.common.security.service.StaleStateServiceException;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
@@ -68,6 +69,9 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
     @Resource(name="blClassNameRequestParamValidationService")
     protected ClassNameRequestParamValidationService validationService;
 
+    @Resource(name="blStaleStateProtectionService")
+    protected StaleStateProtectionService staleStateProtectionService;
+
     @Override
     public void doFilterInternalUnlessIgnored(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
 
@@ -90,7 +94,14 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
                 public Void execute() {
                     try {
                         requestProcessor.process(new ServletWebRequest(request, response));
-                        filterChain.doFilter(request, response);
+                        if (!staleStateProtectionService.sendRedirectOnStateChange(
+                                response,
+                                BroadleafAdminRequestProcessor.SANDBOX_REQ_PARAM,
+                                BroadleafAdminRequestProcessor.CATALOG_REQ_PARAM,
+                                BroadleafAdminRequestProcessor.PROFILE_REQ_PARAM
+                        )) {
+                            filterChain.doFilter(request, response);
+                        }
                         return null;
                     } catch (Exception e) {
                         throw ExceptionHelper.refineException(e);

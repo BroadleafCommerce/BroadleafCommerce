@@ -191,7 +191,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 }
                 String token = request.getParameter(staleStateProtectionService.getStateVersionTokenParameter());
                 staleStateProtectionService.compareToken(token);
-                staleStateProtectionService.invalidateState();
+                staleStateProtectionService.invalidateState(true);
             }
 
             if (profile == null) {
@@ -248,7 +248,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 }
                 String token = request.getParameter(staleStateProtectionService.getStateVersionTokenParameter());
                 staleStateProtectionService.compareToken(token);
-                staleStateProtectionService.invalidateState();
+                staleStateProtectionService.invalidateState(true);
             }
 
             if (catalog == null) {
@@ -329,7 +329,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 if (BLCRequestUtils.isOKtoUseSession(request)) {
                     String token = request.getParameter(staleStateProtectionService.getStateVersionTokenParameter());
                     staleStateProtectionService.compareToken(token);
-                    staleStateProtectionService.invalidateState();
+                    staleStateProtectionService.invalidateState(true);
                 }
             }
 
