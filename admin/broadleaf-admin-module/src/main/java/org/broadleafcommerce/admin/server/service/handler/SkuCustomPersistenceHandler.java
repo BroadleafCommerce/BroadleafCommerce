@@ -110,7 +110,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     protected long lastCacheFlushTime = System.currentTimeMillis();
 
     protected static final Map<String, Map<String, FieldMetadata>> METADATA_CACHE =
-            new EfficientLRUMap<String, Map<String, FieldMetadata>>(1000);
+            new EfficientLRUMap<>(1000);
 
     @Resource(name="blAdornedTargetListPersistenceModule")
     protected PersistenceModule adornedPersistenceModule;
@@ -202,7 +202,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+            Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<>();
 
             Map<String, FieldMetadata> properties = null;
             boolean isCache = useCache();
@@ -279,7 +279,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     protected void filterOutProductMetadata(Map<String, FieldMetadata> map) {
         //TODO we shouldn't have to filter out these keys here -- we should be able to exclude using @AdminPresentation,
         //but there's a bug preventing this behavior from completely working correctly
-        List<String> removeKeys = new ArrayList<String>();
+        List<String> removeKeys = new ArrayList<>();
         for (Map.Entry<String, FieldMetadata> entry : map.entrySet()) {
             if (entry.getKey().contains("defaultProduct.") || entry.getKey().contains("product.")) {
                 removeKeys.add(entry.getKey());
@@ -349,7 +349,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         //            }
         //        });
 
-        ArrayList<String> stringValues = new ArrayList<String>();
+        ArrayList<String> stringValues = new ArrayList<>();
         CollectionUtils.collect(values, new Transformer() {
 
             @Override
@@ -545,7 +545,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     public void applyProductOptionValueCriteria(List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage, String skuPropertyPrefix) {
 
         //if the front
-        final List<Long> productOptionValueFilterIDs = new ArrayList<Long>();
+        final List<Long> productOptionValueFilterIDs = new ArrayList<>();
         for (String filterProperty : cto.getCriteriaMap().keySet()) {
             if (filterProperty.startsWith(PRODUCT_OPTION_FIELD_PREFIX)) {
                 FilterAndSortCriteria criteria = cto.get(filterProperty);
@@ -554,7 +554,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
 
         //also determine if there is a consolidated POV query
-        final List<String> productOptionValueFilterValues = new ArrayList<String>();
+        final List<String> productOptionValueFilterValues = new ArrayList<>();
         FilterAndSortCriteria consolidatedCriteria = cto.get(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME);
         if (!consolidatedCriteria.getFilterValues().isEmpty()) {
             //the criteria in this case would be a semi-colon delimeter value list
@@ -669,7 +669,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             }
 
             // Only modify product options if this isn't an update for inventory properties
-            if (persistencePackage.containsCriteria(INVENTORY_ONLY_CRITERIA) < 0) {
+            if (persistencePackage.containsCriteria(INVENTORY_ONLY_CRITERIA)) {
                 associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
             }
 
@@ -696,7 +696,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      */
     protected void associateProductOptionValuesToSku(Entity entity, Sku adminInstance, DynamicEntityDao dynamicEntityDao) {
         //Get the list of product option value ids that were selected from the form
-        List<Long> productOptionValueIds = new ArrayList<Long>();
+        List<Long> productOptionValueIds = new ArrayList<>();
         for (Property property : getProductOptionProperties(entity)) {
             Long propId = Long.parseLong(property.getValue());
             productOptionValueIds.add(propId);
@@ -723,7 +723,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     }
 
     protected List<Property> getProductOptionProperties(Entity entity) {
-        List<Property> productOptionProperties = new ArrayList<Property>();
+        List<Property> productOptionProperties = new ArrayList<>();
         for (Property property : entity.getProperties()) {
             if (property.getName().startsWith(PRODUCT_OPTION_FIELD_PREFIX)) {
                 productOptionProperties.add(property);
@@ -751,7 +751,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
         //do not attempt POV validation if no PO properties were passed in
         if (CollectionUtils.isNotEmpty(productOptionProperties)) {
-            List<Long> productOptionValueIds = new ArrayList<Long>();
+            List<Long> productOptionValueIds = new ArrayList<>();
             for (Property property : productOptionProperties) {
                 productOptionValueIds.add(Long.parseLong(property.getValue()));
             }
@@ -759,7 +759,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             boolean validated = true;
             for (Sku sku : product.getAdditionalSkus()) {
                 if (currentSku == null || !sku.getId().equals(currentSku.getId())) {
-                    List<Long> testList = new ArrayList<Long>();
+                    List<Long> testList = new ArrayList<>();
                     for (ProductOptionValue optionValue : sku.getProductOptionValues()) {
                         testList.add(optionValue.getId());
                     }
