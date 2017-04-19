@@ -563,7 +563,7 @@
             }
 
             // If this is a Selectize Adder input, we don't want to track as changes are auto-saved
-            if (el !== undefined && $(el).closest('.selectize-adder').length) {
+            if (el !== undefined && ($(el).closest('.selectize-adder').length || $(el).closest('.selectize-collection').length)) {
                 return false;
             }
             return true;

@@ -43,8 +43,10 @@
         /**
          * Should happen after the AJAX request completes
          */
-        hideActionSpinner : function () {
-            var $actions = $('.entity-form-actions');
+        hideActionSpinner : function ($actions) {
+            if (!$actions.length) {
+                $actions = $('.entity-form-actions');
+            }
             $actions.find('button').prop("disabled",false);
             $actions.find('img.ajax-loader').hide();
         },
