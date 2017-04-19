@@ -195,6 +195,16 @@ public class EntityForm {
                 return fieldGroup;
             }
         }
+
+        String translatedGroup = BLCMessageUtils.getMessage(groupName);
+
+        for (Tab tab : tabs) {
+            FieldGroup fieldGroup = tab.findGroupByTitle(translatedGroup);
+            if (fieldGroup != null) {
+                return fieldGroup;
+            }
+        }
+        
         return null;
     }
 
@@ -204,6 +214,15 @@ public class EntityForm {
                 return tab;
             }
         }
+
+        String translatedTab = BLCMessageUtils.getMessage(tabTitle);
+
+        for (Tab tab : tabs) {
+            if (tab.getKey() != null && tab.getKey().equals(translatedTab)) {
+                return tab;
+            }
+        }
+        
         return null;
     }
 
