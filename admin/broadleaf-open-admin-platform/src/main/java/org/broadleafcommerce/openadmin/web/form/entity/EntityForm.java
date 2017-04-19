@@ -212,7 +212,7 @@ public class EntityForm {
 
     public Tab findTab(String tabTitle) {
         for (Tab tab : tabs) {
-            if (tab.getKey() != null && tab.getKey().equals(tabTitle)) {
+            if (StringUtils.equals(tab.getKey(), tabTitle)) {
                 return tab;
             }
         }
@@ -221,7 +221,7 @@ public class EntityForm {
             String translatedTab = BLCMessageUtils.getMessage(tabTitle);
 
             for (Tab tab : tabs) {
-                if (tab.getKey() != null && tab.getKey().equals(translatedTab)) {
+                if (StringUtils.equals(tab.getKey(), translatedTab)) {
                     return tab;
                 }
             }
