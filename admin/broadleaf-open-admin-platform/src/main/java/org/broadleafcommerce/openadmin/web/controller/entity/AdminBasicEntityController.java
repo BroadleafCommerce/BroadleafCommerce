@@ -1041,6 +1041,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        ppr.addCustomCriteria("ignoreAdditionStatusFilter");
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
         // First, we must save the collection entity
@@ -1092,6 +1093,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        ppr.addCustomCriteria("ignoreAdditionStatusFilter");
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
         
         // First, we must save the collection entity
@@ -1804,6 +1806,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String priorKey = request.getParameter("key");
         
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        ppr.addCustomCriteria("ignoreAdditionStatusFilter");
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
         // First, we must remove the collection entity
