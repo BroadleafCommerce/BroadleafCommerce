@@ -511,6 +511,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         attachAdditionalDocumentFields(indexable, document);
 
+        extensionManager.getProxy().attachChildDocuments(indexable, document, fields, locales);
+
         return document;
     }
 

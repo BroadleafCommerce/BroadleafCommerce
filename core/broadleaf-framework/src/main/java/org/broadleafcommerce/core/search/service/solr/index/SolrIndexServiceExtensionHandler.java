@@ -121,4 +121,15 @@ public interface SolrIndexServiceExtensionHandler extends ExtensionHandler {
     public ExtensionResultStatusType populateDocumentForIndexField(SolrInputDocument document, IndexField field, FieldType fieldType, Map<String, Object> propertyValues);
 
     public ExtensionResultStatusType attachAdditionalDocumentFields(Indexable indexable, SolrInputDocument document);
+
+    /**
+     * This extension point allows other modules to contribute child documents to this document.
+     *
+     * @param indexable
+     * @param document
+     * @param fields
+     * @param locales
+     * @return either {@link ExtensionResultStatusType#NOT_HANDLED} or {@link ExtensionResultStatusType#HANDLED_CONTINUE}.
+     */
+    public ExtensionResultStatusType attachChildDocuments(Indexable indexable, SolrInputDocument document, List<IndexField> fields, List<Locale> locales);
 }
