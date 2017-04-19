@@ -128,26 +128,18 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     }
 
     public void removeCustomCriteria(String criteria) {
-        int pos = containsCriteria(criteria);
+        int pos = getCriteriaIndex(criteria);
         if (pos >= 0) {
             customCriteria = ArrayUtils.remove(customCriteria, pos);
         }
     }
 
-    public int containsCriteria(String criteria) {
-        if (ArrayUtils.isEmpty(customCriteria)) {
-            return -1;
-        }
-        
-        for (int i = 0; i < customCriteria.length; i++) {
-            if (customCriteria[i] != null && customCriteria[i].equals(criteria)) {
-                return i;
-            } else if (customCriteria[i] == null && criteria == null) {
-                return i;
-            }
-        }
+    public int getCriteriaIndex(String criteria) {
+        return ArrayUtils.indexOf(customCriteria, criteria);
+    }
 
-        return -1;
+    public boolean containsCriteria(String criteria) {
+        return ArrayUtils.contains(customCriteria, criteria);
     }
     
     public Entity getEntity() {
