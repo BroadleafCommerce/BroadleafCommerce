@@ -196,12 +196,14 @@ public class EntityForm {
             }
         }
 
-        String translatedGroup = BLCMessageUtils.getMessage(groupName);
+        if (groupName != null) {
+            String translatedGroup = BLCMessageUtils.getMessage(groupName);
 
-        for (Tab tab : tabs) {
-            FieldGroup fieldGroup = tab.findGroupByTitle(translatedGroup);
-            if (fieldGroup != null) {
-                return fieldGroup;
+            for (Tab tab : tabs) {
+                FieldGroup fieldGroup = tab.findGroupByTitle(translatedGroup);
+                if (fieldGroup != null) {
+                    return fieldGroup;
+                }
             }
         }
         
@@ -210,16 +212,18 @@ public class EntityForm {
 
     public Tab findTab(String tabTitle) {
         for (Tab tab : tabs) {
-            if (tab.getKey() != null && tab.getKey().equals(tabTitle)) {
+            if (StringUtils.equals(tab.getKey(), tabTitle)) {
                 return tab;
             }
         }
 
-        String translatedTab = BLCMessageUtils.getMessage(tabTitle);
+        if (tabTitle != null) {
+            String translatedTab = BLCMessageUtils.getMessage(tabTitle);
 
-        for (Tab tab : tabs) {
-            if (tab.getKey() != null && tab.getKey().equals(translatedTab)) {
-                return tab;
+            for (Tab tab : tabs) {
+                if (StringUtils.equals(tab.getKey(), translatedTab)) {
+                    return tab;
+                }
             }
         }
         
