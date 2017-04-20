@@ -63,6 +63,7 @@ public interface BroadleafModuleRegistration {
      */
     public enum BroadleafModuleEnum {
         ACCOUNT ("Account"),
+        ADMIN ("Admin"),
         ADVANCED_CMS ("Advanced CMS"),
         ADVANCED_INVENTORY ("Advanced Inventory"),
         ADVANCED_OFFER ("Advanced Offer"),
