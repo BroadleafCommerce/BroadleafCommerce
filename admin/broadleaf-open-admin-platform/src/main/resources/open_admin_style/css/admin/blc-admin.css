@@ -125,6 +125,10 @@ legend {
 a:active,a:focus {
     outline: none;
 }
+a.disabled {
+    pointer-events: none;
+    cursor: default;
+}
 blockquote{
     display: block;
     padding: 15px 20px 15px 50px;
