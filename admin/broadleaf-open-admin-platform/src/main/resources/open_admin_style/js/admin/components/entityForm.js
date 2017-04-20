@@ -70,7 +70,7 @@
          * Should happen after the AJAX request completes
          */
         hideActionSpinner : function ($actions) {
-            if (!$actions.length) {
+            if (!$actions || !$actions.length) {
                 $actions = $('.entity-form-actions');
             }
             $actions.find('button').prop("disabled",false);
