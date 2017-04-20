@@ -562,10 +562,16 @@
                 return false;
             }
 
-            // If this is a Selectize Adder input, we don't want to track as changes are auto-saved
-            if (el !== undefined && $(el).closest('.selectize-adder').length) {
+            // If this is a Selectize Adder or Collection input, we don't want to track as changes are auto-saved
+            if (el !== undefined && ($(el).closest('.selectize-adder').length || $(el).closest('.selectize-collection').length)) {
                 return false;
             }
+
+            // If this is a boolean-link, it is purely frontend related and not actually changing any values of import
+            if (el !== undefined && $(el).closest('.field-group').find('.boolean-link').length) {
+                return false;
+            }
+
             return true;
         }
     };

@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
@@ -1033,6 +1034,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        declareShouldIgnoreAdditionStatusFilter();
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
         // First, we must save the collection entity
@@ -1049,6 +1051,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
             returnVal.put("alternateId", savedEntity.findProperty(ALTERNATE_ID_PROPERTY).getValue());
         }
         return returnVal;
+    }
+
+    protected void declareShouldIgnoreAdditionStatusFilter() {
+        Map<String, Object> additionalProperties = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties();
+        additionalProperties.put("shouldIgnoreAdditionStatusFilter", true);
     }
 
     /**
@@ -1084,6 +1091,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        declareShouldIgnoreAdditionStatusFilter();
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
         // First, we must save the collection entity
@@ -1797,6 +1805,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String priorKey = request.getParameter("key");
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        declareShouldIgnoreAdditionStatusFilter();
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
         // First, we must remove the collection entity
