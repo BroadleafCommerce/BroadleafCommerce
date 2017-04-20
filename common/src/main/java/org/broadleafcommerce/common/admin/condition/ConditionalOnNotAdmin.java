@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.common.admin.condition;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.broadleafcommerce.common.condition.ConditionalOnMissingBroadleafModule;
+import org.broadleafcommerce.common.module.BroadleafModuleRegistration.BroadleafModuleEnum;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -36,6 +36,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@ConditionalOnMissingBean(name = "blBasicPersistenceModule")
+@ConditionalOnMissingBroadleafModule(BroadleafModuleEnum.ADMIN)
 public @interface ConditionalOnNotAdmin {
 }
