@@ -87,8 +87,6 @@ import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
-import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
-import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
@@ -1072,25 +1070,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             Set<String> tabMetadataKeySet = tabMetadataMap.keySet();
             for (String tabKey : tabMetadataKeySet) {
                 TabMetadata tabMetadata = tabMetadataMap.get(tabKey);
-
-                String unprocessedTabName = tabMetadata.getTabName();
-                Tab currentTab = ef.findTab(unprocessedTabName);
-
-                if (currentTab != null) {
-                    unprocessedTabName = currentTab.getTitle();
-                } else {
-                    unprocessedTabName = ef.addTabFromTabMetadata(tabMetadata);
-                    currentTab = ef.findTab(unprocessedTabName);
-                }
-
+                String unprocessedTabName = ef.addTabFromTabMetadata(tabMetadata);
                 Set<String> groupMetadataKeySet = tabMetadata.getGroupMetadata().keySet();
                 for (String groupKey : groupMetadataKeySet) {
-                    String translatedGroupName = BLCMessageUtils.getMessage(groupKey);
-                    FieldGroup fieldGroup = currentTab.findGroupByTitle(translatedGroupName);
-
-                    if (fieldGroup == null) {
-                        ef.addGroupFromGroupMetadata(tabMetadata.getGroupMetadata().get(groupKey), unprocessedTabName);
-                    }
+                    ef.addGroupFromGroupMetadata(tabMetadata.getGroupMetadata().get(groupKey), unprocessedTabName);
                 }
             }
         }
