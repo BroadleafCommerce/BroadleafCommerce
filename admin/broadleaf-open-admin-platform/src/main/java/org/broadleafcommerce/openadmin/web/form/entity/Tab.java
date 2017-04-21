@@ -125,7 +125,7 @@ public class Tab {
 
     public FieldGroup findGroupByKey(String key) {
         for (FieldGroup fg : fieldGroups) {
-            if (fg.getKey() != null && fg.getKey().equalsIgnoreCase(key)) {
+            if (fg.getKey() != null && fg.getKey().equals(key)) {
                 return fg;
             }
         }
@@ -134,7 +134,7 @@ public class Tab {
 
     public FieldGroup findGroupByTitle(String title) {
         for (FieldGroup fg : fieldGroups) {
-            if (fg.getTitle() != null && fg.getTitle().equalsIgnoreCase(title)) {
+            if (fg.getTitle() != null && fg.getTitle().equals(title)) {
                 return fg;
             }
         }
