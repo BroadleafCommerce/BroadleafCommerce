@@ -458,6 +458,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     protected PersistenceResponse executePostAddHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
+        dynamicEntityDao.flush();
         setMainEntityName(persistencePackage, persistenceResponse.getEntity());
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
             PersistenceManagerEventHandlerResponse response = handler.postAdd(this, persistenceResponse.getEntity(), persistencePackage);
@@ -600,6 +601,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     protected PersistenceResponse executePostUpdateHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
+        dynamicEntityDao.flush();
         setMainEntityName(persistencePackage, persistenceResponse.getEntity());
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
             PersistenceManagerEventHandlerResponse response = handler.postUpdate(this, persistenceResponse.getEntity(), persistencePackage);
@@ -665,6 +667,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     protected PersistenceResponse executePostRemoveHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
+        dynamicEntityDao.flush();
         setMainEntityName(persistencePackage, persistenceResponse.getEntity());
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
             PersistenceManagerEventHandlerResponse response = handler.postRemove(this, persistencePackage);
