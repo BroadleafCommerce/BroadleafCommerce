@@ -37,10 +37,6 @@ import java.util.List;
  */
 public class DataDTOToMVELTranslator {
 
-    private static String CONTAINS_OPERATOR = "org.apache.commons.lang3.StringUtils.contains";
-    private static String STARTS_WITH_OPERATOR = "org.apache.commons.lang3.StringUtils.startsWith";
-    private static String ENDS_WITH_OPERATOR = "org.apache.commons.lang3.StringUtils.endsWith";
-
     public String createMVEL(String entityKey, DataDTO dataDTO, RuleBuilderFieldService fieldService)
             throws MVELTranslationException {
         StringBuffer sb = new StringBuffer();
@@ -112,22 +108,22 @@ public class DataDTOToMVELTranslator {
 
         switch(operator) {
             case CONTAINS: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, CONTAINS_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains",
                         true, false, false, false, false);
                 break;
             }
             case CONTAINS_FIELD: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, CONTAINS_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains",
                         true, true, false, false, false);
                 break;
             }
             case ENDS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ENDS_WITH_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith",
                         true, false, false, false, false);
                 break;
             }
             case ENDS_WITH_FIELD: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ENDS_WITH_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith",
                         true, true, false, false, false);
                 break;
             }
@@ -156,12 +152,12 @@ public class DataDTOToMVELTranslator {
                 break;
             }
             case ICONTAINS: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, CONTAINS_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains",
                         true, false, true, false, false);
                 break;
             }
             case IENDS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ENDS_WITH_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith",
                         true, false, true, false, false);
                 break;
             }
@@ -170,12 +166,12 @@ public class DataDTOToMVELTranslator {
                 break;
             }
             case INOT_CONTAINS: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, CONTAINS_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains",
                         true, false, true, true, false);
                 break;
             }
             case INOT_ENDS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ENDS_WITH_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith",
                         true, false, true, true, false);
                 break;
             }
@@ -184,7 +180,7 @@ public class DataDTOToMVELTranslator {
                 break;
             }
             case INOT_STARTS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, STARTS_WITH_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith",
                         true, false, true, true, false);
                 break;
             }
@@ -194,7 +190,7 @@ public class DataDTOToMVELTranslator {
                 break;
             }
             case ISTARTS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, STARTS_WITH_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith",
                         true, false, true, false, false);
                 break;
             }
@@ -216,12 +212,12 @@ public class DataDTOToMVELTranslator {
                 break;
             }
             case NOT_CONTAINS: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, CONTAINS_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains",
                         true, false, false, true, false);
                 break;
             }
             case NOT_ENDS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ENDS_WITH_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith",
                         true, false, false, true, false);
                 break;
             }
@@ -240,17 +236,17 @@ public class DataDTOToMVELTranslator {
                 break;
             }
             case NOT_STARTS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, STARTS_WITH_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith",
                         true, false, false, true, false);
                 break;
             }
             case STARTS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, STARTS_WITH_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith",
                         true, false, false, false, false);
                 break;
             }
             case STARTS_WITH_FIELD: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, STARTS_WITH_OPERATOR,
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith",
                         true, true, false, false, false);
                 break;
             }
@@ -381,14 +377,6 @@ public class DataDTOToMVELTranslator {
                     secondaryType.equals(SupportedFieldType.INTEGER)) || type.equals(SupportedFieldType.INTEGER)) {
                 sb.append(".intValue()");
             }
-            sb.append(")");
-        } else if (operator.equals(CONTAINS_OPERATOR) || operator.equals(STARTS_WITH_OPERATOR) || operator.equals(ENDS_WITH_OPERATOR)) {
-            sb.append(operator);
-            sb.append("(");
-            sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
-            sb.append(",");
-            sb.append(formatValue(field, entityKey, type, secondaryType, value,
-                    isFieldComparison, ignoreCase, ignoreQuotes));
             sb.append(")");
         } else {
             sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
