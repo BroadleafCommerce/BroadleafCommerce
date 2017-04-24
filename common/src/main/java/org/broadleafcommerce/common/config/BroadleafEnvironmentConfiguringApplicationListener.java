@@ -83,6 +83,7 @@ public class BroadleafEnvironmentConfiguringApplicationListener implements Appli
      * A -D argument representing a path to a file that overrides all of the other properties resolved from internal property files
      */
     public static final String PROPERTY_OVERRIDES_PROPERTY = "property-override";
+    public static final String PROPERTY_SHARED_OVERRIDES_PROPERTY = "property-shared-override";
     public static final String DEPRECATED_RUNTIME_ENVIRONMENT_KEY = "runtime.environment";
     
     /**
@@ -94,6 +95,11 @@ public class BroadleafEnvironmentConfiguringApplicationListener implements Appli
      * The name of the profile-aware property sources
      */
     public static final String PROFILE_AWARE_SOURCES_NAME = "broadleafProfileAwareSources";
+    
+    /**
+     * The name of the the property source from the command line -Dproperty-shared-override
+     */
+    public static final String SHARED_OVERRIDE_SOURCES_NAME = "broadleafCommandlineArgumentSharedOverridesSource";
     
     /**
      * The name of the the property source from the command line -Dproperty-override
@@ -192,11 +198,19 @@ public class BroadleafEnvironmentConfiguringApplicationListener implements Appli
         addToEnvironment(env, profileSpecificSharedResources, PROFILE_AWARE_SOURCES_NAME, FRAMEWORK_SOURCES_NAME);
         addToEnvironment(env, profileSpecificResources, PROFILE_AWARE_SOURCES_NAME, FRAMEWORK_SOURCES_NAME);
         
-        // At the very end of all of it, look at the property-override location and add that higher than the profile aware ones
+        // At the very end of all of it, look at the property-override and property-shared-overrides locations and add that higher than the profile aware ones
+        String sharedOverrideFileLocation = env.getProperty(PROPERTY_SHARED_OVERRIDES_PROPERTY);
+        String currentHighestPrecedenceProperties = PROFILE_AWARE_SOURCES_NAME;
+        if (StringUtils.isNotBlank(sharedOverrideFileLocation)) {
+            Resource sharedOverrideFileResource = new FileSystemResource(sharedOverrideFileLocation);
+            addToEnvironment(env, Arrays.asList(sharedOverrideFileResource), SHARED_OVERRIDE_SOURCES_NAME, PROFILE_AWARE_SOURCES_NAME);
+            currentHighestPrecedenceProperties = SHARED_OVERRIDE_SOURCES_NAME;
+        }
+        
         String overrideFileLocation = env.getProperty(PROPERTY_OVERRIDES_PROPERTY);
         if (StringUtils.isNotBlank(overrideFileLocation)) {
             Resource overrideFileResource = new FileSystemResource(overrideFileLocation);
-            addToEnvironment(env, Arrays.asList(overrideFileResource), OVERRIDE_SOURCES_NAME, PROFILE_AWARE_SOURCES_NAME);
+            addToEnvironment(env, Arrays.asList(overrideFileResource), OVERRIDE_SOURCES_NAME, currentHighestPrecedenceProperties);
         }
     }
     

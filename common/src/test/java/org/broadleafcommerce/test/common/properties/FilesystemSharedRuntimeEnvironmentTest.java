@@ -35,8 +35,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Validates that I can pass in a system argument pointing to a file on the filesystem to override any properties in the application
- * even when a profile is specified
+ * 
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
@@ -44,23 +43,23 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ContextConfiguration(initializers = BroadleafEnvironmentConfiguringApplicationListener.class)
 @ActiveProfiles("production")
 @DirtiesContext
-public class FilesystemPropertyOverridesTest {
-    
+public class FilesystemSharedRuntimeEnvironmentTest {
+
     @Autowired
     protected Environment env;
     
     // Inside of a static @BeforeClass to ensure this code executes before Spring starts the appctx
     @BeforeClass
     public static void setOverrideProperty() {
-        String overridePropertiesPath = FilesystemPropertyOverridesTest.class.getClassLoader().getResource("overridestest.properties").getFile();
-        overridePropertiesPath = overridePropertiesPath.replace("%20", " ");
-        System.setProperty(BroadleafEnvironmentConfiguringApplicationListener.PROPERTY_OVERRIDES_PROPERTY, overridePropertiesPath);
+        String sharedOverridePropertiesPath = FilesystemSharedRuntimeEnvironmentTest.class.getClassLoader().getResource("sharedoverridestest.properties").getFile();
+        sharedOverridePropertiesPath = sharedOverridePropertiesPath.replace("%20", " ");
+        System.setProperty(BroadleafEnvironmentConfiguringApplicationListener.PROPERTY_SHARED_OVERRIDES_PROPERTY, sharedOverridePropertiesPath);
     }
     
     // don't impact other tests with my property override
     @AfterClass
     public static void clearOverrideProperty() {
-        System.clearProperty(BroadleafEnvironmentConfiguringApplicationListener.PROPERTY_OVERRIDES_PROPERTY);
+        System.clearProperty(BroadleafEnvironmentConfiguringApplicationListener.PROPERTY_SHARED_OVERRIDES_PROPERTY);
     }
     
     @Test
@@ -68,7 +67,7 @@ public class FilesystemPropertyOverridesTest {
     // by dirtying the context
     @DirtiesContext
     public void testPropertiesWereOverridden() {
-        Assert.assertEquals("overridevalue", env.getProperty(DefaultDevelopmentOverridePropertiesTest.TEST_PROPERTY));
-        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.OVERRIDE_SOURCES_NAME));
+        Assert.assertEquals("sharedoverridevalue", env.getProperty(DefaultDevelopmentOverridePropertiesTest.TEST_PROPERTY));
+        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.SHARED_OVERRIDE_SOURCES_NAME));
     }
 }
