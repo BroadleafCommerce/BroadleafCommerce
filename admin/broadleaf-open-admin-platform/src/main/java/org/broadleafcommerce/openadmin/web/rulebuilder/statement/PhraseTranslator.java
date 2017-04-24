@@ -33,9 +33,9 @@ public class PhraseTranslator {
     private static final String COLLECTIONCASE = "CollectionUtils.intersection";
 
     private static final String[] SPECIALCASES = {
-            "org.apache.commons.lang3.StringUtils.startsWith",
-            "org.apache.commons.lang3.StringUtils.endsWith",
-            "org.apache.commons.lang3.StringUtils.contains"
+            ".startsWith",
+            ".endsWith",
+            ".contains"
     };
 
     private static final String[] STANDARDOPERATORS = {
@@ -294,9 +294,10 @@ public class PhraseTranslator {
 
     protected String[] extractSpecialComponents(String[] components, String key) {
         String[] temp = new String[3];
-        temp[0] = components[0].substring(key.length() + 1, components[0].indexOf(","));
-        temp[1] = key.substring(37, key.length());
-        temp[2] = components[0].substring(components[0].indexOf(",") + 1, components[0].lastIndexOf(")"));
+        int startsWithIndex = components[0].indexOf(key);
+        temp[0] = components[0].substring(0, startsWithIndex);
+        temp[1] = key.substring(1, key.length());
+        temp[2] = components[0].substring(startsWithIndex + key.length() + 1, components[0].lastIndexOf(")"));
         return temp;
     }
 
