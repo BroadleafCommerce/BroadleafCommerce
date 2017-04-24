@@ -115,7 +115,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Column(name="VALUE")
     @CollectionTable(name="BLC_ORDER_ITEM_ADD_ATTR", joinColumns=@JoinColumn(name="ORDER_ITEM_ID"))
     @BatchSize(size = 50)
-    @Deprecated
     protected Map<String, String> additionalAttributes = new HashMap<String, String>();
     
     @OneToMany(mappedBy = "discreteOrderItem", targetEntity = DiscreteOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
