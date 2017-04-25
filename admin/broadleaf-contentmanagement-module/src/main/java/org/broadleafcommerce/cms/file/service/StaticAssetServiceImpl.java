@@ -327,6 +327,18 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     }
 
     @Override
+    public String getPrefixedStaticAssetUrl(String assetUrl) {
+        String staticAssetUrlPrefix = getStaticAssetUrlPrefix();
+        if (staticAssetUrlPrefix != null && !staticAssetUrlPrefix.startsWith("/")) {
+            staticAssetUrlPrefix = "/" + staticAssetUrlPrefix;
+        }
+        if (staticAssetUrlPrefix != null) {
+            return staticAssetUrlPrefix + assetUrl;
+        }
+        return assetUrl;
+    }
+
+    @Override
     public String getStaticAssetEnvironmentUrlPrefix() {
         return staticAssetPathService.getStaticAssetEnvironmentUrlPrefix();
     }
