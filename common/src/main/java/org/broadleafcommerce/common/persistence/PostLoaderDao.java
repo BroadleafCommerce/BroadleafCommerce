@@ -39,4 +39,15 @@ public interface PostLoaderDao {
      * @return deproxied entity or null if not found
      */
     <T> T find(Class<T> clazz, Object id);
+
+    /**
+     * Find the entity by primary key and class using the configured Entity Manager.
+     *
+     * @param clazz
+     * @param id
+     * @param <T>
+     * @return
+     */
+    <T> T findUsingEntityManager(Class<T> clazz, Object id);
+
 }
