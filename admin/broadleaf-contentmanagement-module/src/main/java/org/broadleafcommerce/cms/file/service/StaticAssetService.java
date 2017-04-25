@@ -95,7 +95,7 @@ public interface StaticAssetService {
      * @param assetUrl
      * @return
      */
-    String getPrefixedStaticAssetUrl(String assetUrl);
+    public String getPrefixedStaticAssetUrl(String assetUrl);
 
     /**
      * @see StaticAssetPathService#getStaticAssetEnvironmentUrlPrefix()
