@@ -89,7 +89,7 @@ public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor 
         String assetPath = (String) expression.execute(arguments.getConfiguration(), arguments);
 
         // If this is an image tag, we want to fallback to default images for non-image files
-        if ("img".equals(element.getOriginalName())) {
+        if ("img".equals(element.getOriginalName()) && BroadleafRequestContext.getBroadleafRequestContext().getAdmin()) {
             assetPath = getAssetImagePath(assetPath, arguments);
         }
 
