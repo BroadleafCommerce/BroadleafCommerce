@@ -143,7 +143,7 @@
 
                             <span th:if="${field.fieldType == 'IMAGE'}">
                                 <img class="thumbnail" th:style="${'width: 100%;'}"
-                                    th:src="@{${field.value + record.getField('thumbnailKey').value}}"
+                                    blc:src="@{${field.value + record.getField('thumbnailKey').value}}"
                                     th:attr="data-fullurl=@{${field.value}}" />
                             </span>
 
@@ -168,7 +168,7 @@
 
                             <span th:if="${field.fieldType == 'IMAGE'}">
                                 <img class="thumbnail" th:style="${'width: 100%;'}"
-                                     th:src="@{${field.value + '?largeAdminThumbnail'}}"
+                                     blc:src="@{${field.value + '?largeAdminThumbnail'}}"
                                      th:attr="data-fullurl=@{${field.value}}" />
                             </span>
 
@@ -202,7 +202,7 @@
 
                                 <span th:if="${field.fieldType == 'IMAGE'}">
                                     <img class="thumbnail" th:style="${'width: 100%;'}"
-                                        th:src="@{${field.value + record.getField('thumbnailKey').value}}"
+                                        blc:src="@{${field.value + record.getField('thumbnailKey').value}}"
                                         th:attr="data-fullurl=@{${field.value}}" />
                                 </span>
 
