@@ -41,13 +41,15 @@ public interface PostLoaderDao {
     <T> T find(Class<T> clazz, Object id);
 
     /**
-     * Find the entity by primary key and class using the configured Entity Manager.
+     * If within the context of a sandbox, return the sandbox entity by primary key and class.
+     *
+     * This purposefully uses the Entity Manager in order to trigger the hibernate filters.
      *
      * @param clazz
      * @param id
      * @param <T>
      * @return
      */
-    <T> T findUsingEntityManager(Class<T> clazz, Object id);
+    <T> T findSandboxEntity(Class<T> clazz, Object id);
 
 }
