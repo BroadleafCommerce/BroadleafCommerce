@@ -67,13 +67,13 @@ public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustm
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OrderItemAdjustmentId")
+    @GeneratedValue(generator = "ProratedOrderItemAdjustmentId")
     @GenericGenerator(
             name = "OrderItemAdjustmentId",
             strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
-                    @Parameter(name = "segment_value", value = "OrderItemAdjustmentImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl")
+                    @Parameter(name = "segment_value", value = "ProratedOrderItemAdjustmentImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustmentImpl")
             }
     )
     @Column(name = "PRORATED_ORDER_ITEM_ADJUSTMENT_ID")
