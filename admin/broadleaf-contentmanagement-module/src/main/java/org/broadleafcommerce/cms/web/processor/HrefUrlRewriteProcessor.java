@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
@@ -53,11 +52,12 @@ public class HrefUrlRewriteProcessor extends UrlRewriteProcessor {
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName,
+            String attributeValue, BroadleafTemplateContext context) {
         String useCDN = tagAttributes.get("useCDN");
         String hrefValue = attributeValue;
         if (LINK.equals(tagName) || StringUtils.equals("true", useCDN)) {
-            hrefValue = super.getFullAssetPath(attributeValue, context);
+            hrefValue = super.getFullAssetPath(tagName, attributeValue, context);
         } else {
             hrefValue = super.parsePath(attributeValue, context);
         }
