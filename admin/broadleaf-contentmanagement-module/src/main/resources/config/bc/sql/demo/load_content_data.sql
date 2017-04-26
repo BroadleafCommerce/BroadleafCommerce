@@ -18,12 +18,6 @@ INSERT INTO BLC_STATIC_ASSET (STATIC_ASSET_ID, MIME_TYPE, STORAGE_TYPE, FULL_URL
 INSERT INTO BLC_STATIC_ASSET (STATIC_ASSET_ID, MIME_TYPE, STORAGE_TYPE, FULL_URL, NAME) VALUES (-2004,'image/jpg','FILESYSTEM','/img/banners/shirt-special.jpg','Shirt Special');
 INSERT INTO BLC_STATIC_ASSET (STATIC_ASSET_ID, MIME_TYPE, STORAGE_TYPE, FULL_URL, NAME) VALUES (-2005,'image/jpg','FILESYSTEM','/img/banners/shirts-speciale.jpg','Shirts Speciale');
 
-INSERT INTO BLC_STATIC_ASSET (STATIC_ASSET_ID, MIME_TYPE, STORAGE_TYPE, FULL_URL, NAME) VALUES (-16000,'image/jpg','FILESYSTEM','/img/content-targeting.png','Content Targeting');
-INSERT INTO BLC_STATIC_ASSET (STATIC_ASSET_ID, MIME_TYPE, STORAGE_TYPE, FULL_URL, NAME) VALUES (-16001,'image/jpg','FILESYSTEM','/img/offers-and-promotions.png','Offers And Promotions');
-INSERT INTO BLC_STATIC_ASSET (STATIC_ASSET_ID, MIME_TYPE, STORAGE_TYPE, FULL_URL, NAME) VALUES (-16002,'image/jpg','FILESYSTEM','/img/pricing.png','Pricing');
-INSERT INTO BLC_STATIC_ASSET (STATIC_ASSET_ID, MIME_TYPE, STORAGE_TYPE, FULL_URL, NAME) VALUES (-16003,'image/jpg','FILESYSTEM','/img/workflow.png','Workflow');
-
-
 -----------------------------------------------------------------------------------------------------------------------------------
 -- SAMPLE PAGE DATA - would typically be entered via the admin
 -----------------------------------------------------------------------------------------------------------------------------------
