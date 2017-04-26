@@ -1376,6 +1376,7 @@ $(document).ready(function() {
     // primary entity buttons should be disabled until page is loaded
     $(window).load(function () {
         $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');
+        $('a.show-translations').removeClass('disabled');
     });
 
     $(window).resize(function() {

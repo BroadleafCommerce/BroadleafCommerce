@@ -1,6 +1,6 @@
 <th:block th:if="${field.translatable and hideTranslations != 'true'}">
     <th:block th:if="${df}">
-        <a class="show-translations"
+        <a class="show-translations disabled"
            th:classappend="${df.translationId == null} ? 'disabled'"
            th:href="@{/translation(ceilingEntity=${df.translationCeilingEntity},
                                    entityId=${df.translationId},
@@ -10,7 +10,7 @@
         </a>
     </th:block>
     <th:block th:unless="${df}">
-        <a class="show-translations"
+        <a class="show-translations disabled"
            th:classappend="${entityForm.translationId == null} ? 'disabled'"
            th:href="@{/translation(ceilingEntity=${entityForm.translationCeilingEntity},
                                    entityId=${entityForm.translationId},
