@@ -199,7 +199,7 @@ public class SkuBundleItemImpl implements SkuBundleItem {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
             Long id = sku.getId();
             if (postLoaderDao != null && id != null) {
-                deproxiedSku = postLoaderDao.findUsingEntityManager(SkuImpl.class, id);
+                deproxiedSku = postLoaderDao.findSandboxEntity(SkuImpl.class, id);
             } else if (sku instanceof HibernateProxy) {
                 deproxiedSku = HibernateUtils.deproxy(sku);
             } else {
