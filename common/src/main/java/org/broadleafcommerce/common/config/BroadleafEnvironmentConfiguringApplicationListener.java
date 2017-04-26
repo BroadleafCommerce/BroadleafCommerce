@@ -203,14 +203,22 @@ public class BroadleafEnvironmentConfiguringApplicationListener implements Appli
         String currentHighestPrecedenceProperties = PROFILE_AWARE_SOURCES_NAME;
         if (StringUtils.isNotBlank(sharedOverrideFileLocation)) {
             Resource sharedOverrideFileResource = new FileSystemResource(sharedOverrideFileLocation);
-            addToEnvironment(env, Arrays.asList(sharedOverrideFileResource), SHARED_OVERRIDE_SOURCES_NAME, PROFILE_AWARE_SOURCES_NAME);
-            currentHighestPrecedenceProperties = SHARED_OVERRIDE_SOURCES_NAME;
+            if (sharedOverrideFileResource.exists()) {
+                addToEnvironment(env, Arrays.asList(sharedOverrideFileResource), SHARED_OVERRIDE_SOURCES_NAME, PROFILE_AWARE_SOURCES_NAME);
+                currentHighestPrecedenceProperties = SHARED_OVERRIDE_SOURCES_NAME;
+            } else {
+                LOG.warn(String.format("An environment property of %s was specified but the file path %s does not exist, not overriding properties", PROPERTY_SHARED_OVERRIDES_PROPERTY, sharedOverrideFileLocation));
+            }
         }
         
         String overrideFileLocation = env.getProperty(PROPERTY_OVERRIDES_PROPERTY);
         if (StringUtils.isNotBlank(overrideFileLocation)) {
             Resource overrideFileResource = new FileSystemResource(overrideFileLocation);
-            addToEnvironment(env, Arrays.asList(overrideFileResource), OVERRIDE_SOURCES_NAME, currentHighestPrecedenceProperties);
+            if (overrideFileResource.exists()) {
+                addToEnvironment(env, Arrays.asList(overrideFileResource), OVERRIDE_SOURCES_NAME, currentHighestPrecedenceProperties);
+            } else {
+                LOG.warn(String.format("An environment property of %s was specified but the file path %s does not exist, not overriding properties", PROPERTY_OVERRIDES_PROPERTY, overrideFileLocation));
+            }
         }
     }
     
