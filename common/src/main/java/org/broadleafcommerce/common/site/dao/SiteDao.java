@@ -82,6 +82,8 @@ public interface SiteDao {
      * @return the catalog
      */
     public Catalog retrieveCatalog(Long id);
+    
+    Catalog retrieveCatalogByName(String name);
 
     /**
      * Creates a catalog using {@link org.broadleafcommerce.common.persistence.EntityConfiguration}.

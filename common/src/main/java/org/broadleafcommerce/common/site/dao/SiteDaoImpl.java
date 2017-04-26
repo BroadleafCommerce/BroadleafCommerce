@@ -62,6 +62,20 @@ public class SiteDaoImpl implements SiteDao {
     public Catalog retrieveCatalog(Long id) {
         return em.find(CatalogImpl.class, id);
     }
+    
+    @Override
+    public Catalog retrieveCatalogByName(String name) {
+        TypedQuery<Catalog> catalogByName = new TypedQueryBuilder<>(Catalog.class, "c")
+            .addRestriction("c.name", "=", name)
+            .toQuery(em);
+        
+        List<Catalog> catalogs = catalogByName.getResultList();
+        if (CollectionUtils.isNotEmpty(catalogs)) {
+            return catalogs.get(0);
+        } else {
+            return null;
+        }
+    }
 
     @Override
     public Catalog createCatalog() {

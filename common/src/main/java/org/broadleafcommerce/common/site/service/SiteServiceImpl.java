@@ -88,10 +88,12 @@ public class SiteServiceImpl implements SiteService {
         return response[0];
     }
     
+    @Override
     public Site retrieveNonPersistentSiteByIdentifer(String identifier) {
         return retrieveSiteByIdentifier(identifier, false);
     }
     
+    @Override
     public Site retrievePersistentSiteByIdentifier(String identifier) {
         return retrieveSiteByIdentifier(identifier, true);
     }
@@ -209,6 +211,11 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public Catalog findCatalogById(Long id) {
         return siteDao.retrieveCatalog(id);
+    }
+    
+    @Override
+    public Catalog findCatalogByName(String name) {
+        return siteDao.retrieveCatalogByName(name);
     }
 
     @Override

@@ -170,6 +170,8 @@ public interface SiteService {
      * @return the catalog
      */
     public Catalog findCatalogById(Long id);
+    
+    Catalog findCatalogByName(String name);
 
     /**
      * Creates an instance of {@code Catalog}.   Default implementation delegates to {@link SiteDao#createCatalog()}.
