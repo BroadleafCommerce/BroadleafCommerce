@@ -17,15 +17,20 @@
  */
 package org.broadleafcommerce.core.geolocation;
 
-import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 @Service("blGeolocationService")
 public class GeolocationServiceImpl implements GeolocationService {
+
+    @Resource
+    protected Environment env;
 
     @Autowired(required = false)
     protected Map<String, GeolocationAPI> geolocationMap = new HashMap<>();
@@ -41,7 +46,7 @@ public class GeolocationServiceImpl implements GeolocationService {
     }
 
     protected GeolocationAPI getGeolocationAPI() {
-        String selectedAPI = BLCSystemProperty.resolveSystemProperty("geolocation.api");
+        String selectedAPI = env.getProperty("geolocation.api");
         return geolocationMap.get(selectedAPI);
     }
 }
