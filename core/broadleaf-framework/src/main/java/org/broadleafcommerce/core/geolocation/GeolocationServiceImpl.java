@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.geolocation;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,8 @@ import javax.annotation.Resource;
 
 @Service("blGeolocationService")
 public class GeolocationServiceImpl implements GeolocationService {
+
+    private static final Log LOG = LogFactory.getLog(GeolocationServiceImpl.class);
 
     @Resource
     protected Environment env;
@@ -47,6 +51,13 @@ public class GeolocationServiceImpl implements GeolocationService {
 
     protected GeolocationAPI getGeolocationAPI() {
         String selectedAPI = env.getProperty("geolocation.api");
-        return geolocationMap.get(selectedAPI);
+        GeolocationAPI api = geolocationMap.get(selectedAPI);
+
+        if (api == null) {
+            LOG.warn("A Geolocation API implementation could not be found for the provided resource name: '" + selectedAPI + "'. " +
+                    "Please configure the 'geolocation.api' property to be the name of a registered GeolocationAPI implementation.");
+        }
+
+        return api;
     }
 }
