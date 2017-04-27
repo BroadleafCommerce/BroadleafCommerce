@@ -19,11 +19,11 @@ package org.broadleafcommerce.core.web.geolocation;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.geolocation.GeolocationDTO;
 import org.broadleafcommerce.core.geolocation.GeolocationService;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -42,6 +42,9 @@ public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProc
 
     @Resource(name="blGeolocationService")
     protected GeolocationService geolocationService;
+
+    @Resource
+    protected Environment env;
 
     @Override
     public void process(WebRequest request) {
@@ -64,7 +67,7 @@ public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProc
     }
 
     protected boolean isGeolocationEnabled() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("geolocation.api.enabled", false);
+        return env.getProperty("geolocation.api.enabled", Boolean.class, false);
     }
 
     protected String getIPAddress(ServletWebRequest request) {
