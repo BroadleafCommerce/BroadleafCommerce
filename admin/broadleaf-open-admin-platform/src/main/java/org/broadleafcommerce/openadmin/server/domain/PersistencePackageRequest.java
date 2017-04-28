@@ -36,6 +36,7 @@ import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
+import org.broadleafcommerce.openadmin.server.service.type.FetchType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,6 +67,7 @@ public class PersistencePackageRequest {
     protected Integer upperCount;
     protected Integer lowerCount;
     protected Integer pageSize;
+    protected Boolean presentationFetch;
     protected SectionCrumb[] sectionCrumbs;
     protected String sectionEntityField;
     protected String requestingEntityName;
@@ -274,6 +276,11 @@ public class PersistencePackageRequest {
 
     public PersistencePackageRequest withPageSize(Integer pageSize) {
         setPageSize(pageSize);
+        return this;
+    }
+
+    public PersistencePackageRequest withPresentationFetch(Boolean presentationFetch) {
+        setPresentationFetch(presentationFetch);
         return this;
     }
 
@@ -554,6 +561,12 @@ public class PersistencePackageRequest {
         this.isUpdateLookupType = isUpdateLookupType;
     }
 
+    /**
+     * Intended for usage with other than {@link FetchType#DEFAULT}. Denotes the last primary key value of the previous
+     * page of records.
+     *
+     * @return
+     */
     public Long getLastId() {
         return lastId;
     }
@@ -562,6 +575,10 @@ public class PersistencePackageRequest {
         this.lastId = lastId;
     }
 
+    /**
+     * Intended for usage with other than {@link FetchType#DEFAULT}. Denotes the first primary key value of the previous
+     * page or records.
+     */
     public Long getFirstId() {
         return firstId;
     }
@@ -570,6 +587,13 @@ public class PersistencePackageRequest {
         this.firstId = firstId;
     }
 
+    /**
+     * Intended for usage with other than {@link FetchType#DEFAULT}. Denotes the cumulative total count of the previous page
+     * of records. For example, if this was the second page of records and each page contained 5 records, the upperCount
+     * would be 10.
+     *
+     * @return
+     */
     public Integer getUpperCount() {
         return upperCount;
     }
@@ -578,6 +602,11 @@ public class PersistencePackageRequest {
         this.upperCount = upperCount;
     }
 
+    /**
+     * Intended for usage with other than {@link FetchType#DEFAULT}. Denotes the cumulative starting count of the previous
+     * page of records. For example, if this was the second page of records and each page contained 5 records, the lowerCount
+     * would be 5.
+     */
     public Integer getLowerCount() {
         return lowerCount;
     }
@@ -586,11 +615,29 @@ public class PersistencePackageRequest {
         this.lowerCount = lowerCount;
     }
 
+    /**
+     * The number of records to retrieve in a single page. If null, defaults to the "admin.default.max.results" property value.
+     *
+     * @return
+     */
     public Integer getPageSize() {
         return pageSize;
     }
 
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
+    }
+
+    /**
+     * Whether or not this represents a fetch request from the presentation layer.
+     *
+     * @return
+     */
+    public Boolean getPresentationFetch() {
+        return presentationFetch;
+    }
+
+    public void setPresentationFetch(Boolean presentationFetch) {
+        this.presentationFetch = presentationFetch;
     }
 }

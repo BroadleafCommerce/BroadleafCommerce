@@ -342,6 +342,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 lowerCount = cto.getUpperCount() + 1;
             }
             upperCount = lowerCount + persistenceResponse.getDynamicResultSet().getTotalRecords() - 1;
+            if (lowerCount == 1 && persistenceResponse.getDynamicResultSet().getTotalRecords() == 0) {
+                lowerCount = 0;
+            }
+        }
+        if (cto.getFirstId() == null && cto.getLastId() == null) {
+            persistenceResponse.getDynamicResultSet().setTotalCountLessThanPageSize(persistenceResponse.getDynamicResultSet().getTotalRecords() < cto.getMaxResults());
         }
         persistenceResponse.getDynamicResultSet().setUpperCount(upperCount);
         persistenceResponse.getDynamicResultSet().setLowerCount(lowerCount);
@@ -349,7 +355,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         if (!ArrayUtils.isEmpty(payload)) {
             Entity first = payload[0];
             Entity last = payload[payload.length-1];
-            String idProperty = getIdPropertyName(persistencePackage.getFetchTypeFullyQualifiedClassname());
+            String idProperty = getIdPropertyName(persistencePackage.getCeilingEntityFullyQualifiedClassname());
             if (!StringUtils.isEmpty(idProperty)) {
                 {
                     Property property = first.findProperty(idProperty);

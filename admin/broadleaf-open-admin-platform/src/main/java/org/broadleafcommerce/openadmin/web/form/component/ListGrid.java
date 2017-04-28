@@ -69,6 +69,7 @@ public class ListGrid {
     protected long lastId;
     protected int upperCount;
     protected int lowerCount;
+    protected boolean totalCountLessThanPageSize;
     
     protected AddMethodType addMethodType;
     protected String listGridType;
@@ -467,5 +468,13 @@ public class ListGrid {
 
     public void setLowerCount(int lowerCount) {
         this.lowerCount = lowerCount;
+    }
+
+    public boolean isTotalCountLessThanPageSize() {
+        return totalCountLessThanPageSize;
+    }
+
+    public void setTotalCountLessThanPageSize(boolean totalCountLessThanPageSize) {
+        this.totalCountLessThanPageSize = totalCountLessThanPageSize;
     }
 }

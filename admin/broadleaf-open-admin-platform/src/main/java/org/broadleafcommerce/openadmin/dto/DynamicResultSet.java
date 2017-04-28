@@ -43,6 +43,7 @@ public class DynamicResultSet implements Serializable {
     private Integer upperCount;
     private Integer lowerCount;
     private FetchType fetchType;
+    private Boolean totalCountLessThanPageSize;
 
     public DynamicResultSet() {
         //do nothing
@@ -149,5 +150,13 @@ public class DynamicResultSet implements Serializable {
 
     public void setFetchType(FetchType fetchType) {
         this.fetchType = fetchType;
+    }
+
+    public Boolean getTotalCountLessThanPageSize() {
+        return totalCountLessThanPageSize;
+    }
+
+    public void setTotalCountLessThanPageSize(Boolean totalCountLessThanPageSize) {
+        this.totalCountLessThanPageSize = totalCountLessThanPageSize;
     }
 }

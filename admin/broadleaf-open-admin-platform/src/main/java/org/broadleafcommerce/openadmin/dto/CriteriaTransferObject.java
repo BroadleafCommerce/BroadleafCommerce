@@ -42,6 +42,7 @@ public class CriteriaTransferObject {
     private Long firstId;
     private Integer upperCount;
     private Integer lowerCount;
+    private Boolean presentationFetch;
 
     private Map<String, FilterAndSortCriteria> criteriaMap = new HashMap<String, FilterAndSortCriteria>();
 
@@ -114,6 +115,14 @@ public class CriteriaTransferObject {
 
     public void setLowerCount(Integer lowerCount) {
         this.lowerCount = lowerCount;
+    }
+
+    public Boolean getPresentationFetch() {
+        return presentationFetch;
+    }
+
+    public void setPresentationFetch(Boolean presentationFetch) {
+        this.presentationFetch = presentationFetch;
     }
 
     /**
