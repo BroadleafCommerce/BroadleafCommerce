@@ -99,12 +99,20 @@ public interface RecordHelper extends DataFormatProvider {
             Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws ValidationException;
     
     public Object getPrimaryKey(Entity entity, Map<String, FieldMetadata> mergedProperties);
-    
-    public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective);
-    
-    public FieldManager getFieldManager();
 
-    public PersistenceModule getCompatibleModule(OperationType operationType);
+    /**
+     * For the fully qualified entity class name, find the primary key property name.
+     *
+     * @param entityClass
+     * @return
+     */
+    String getIdPropertyName(String entityClass);
+    
+    Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective);
+    
+    FieldManager getFieldManager();
+
+    PersistenceModule getCompatibleModule(OperationType operationType);
 
     /**
      * Validates the {@link Entity} based on the validators associated with each property
@@ -117,24 +125,60 @@ public interface RecordHelper extends DataFormatProvider {
      * @return whether or not the entity passed validation. This yields the same result as calling !{@link Entity#isValidationFailure()}
      * after invoking this method
      */
-    public boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties, boolean validateUnsubmittedProperties);
+    boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties, boolean validateUnsubmittedProperties);
 
     /**
      * Delegates to the overloaded method with validateUnsubmittedProperties set to true.
      * 
      * @see #validate(Entity, Serializable, Map, boolean)
      */
-    public boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties);
+    boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties);
 
-    public Integer getTotalRecords(String ceilingEntity, List<FilterMapping> filterMappings);
+    /**
+     * Retrieve a total count of persistent entities given some basic metadata and restrictions
+     *
+     * @deprecated use {@link #getTotalRecords(FetchRequest)} instead
+     * @param ceilingEntity
+     * @param filterMappings
+     * @return
+     */
+    @Deprecated
+    Integer getTotalRecords(String ceilingEntity, List<FilterMapping> filterMappings);
 
-    public Serializable getMaxValue(String ceilingEntity, List<FilterMapping> filterMappings, String maxField);
+    /**
+     * Retrieve a total count of persistent entities given some basic metadata and restrictions
+     *
+     * @param fetchRequest
+     * @return
+     */
+    Integer getTotalRecords(FetchRequest fetchRequest);
 
-    public List<Serializable> getPersistentRecords(String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults);
+    Serializable getMaxValue(String ceilingEntity, List<FilterMapping> filterMappings, String maxField);
 
-    public EntityResult update(PersistencePackage persistencePackage, boolean includeRealEntityObject) throws ServiceException;
+    /**
+     * Retrieve a paged list of persistent entity instances given some basic metadata and restrictions.
+     *
+     * @deprecated use {@link #getPersistentRecords(FetchRequest)} instead
+     * @param ceilingEntity
+     * @param filterMappings
+     * @param firstResult
+     * @param maxResults
+     * @return
+     */
+    @Deprecated
+    List<Serializable> getPersistentRecords(String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults);
 
-    public EntityResult add(PersistencePackage persistencePackage, boolean includeRealEntityObject) throws ServiceException;
+    /**
+     * Retrieve a paged list of persistent entity instances given some basic metadata and restrictions.
+     *
+     * @param fetchRequest
+     * @return
+     */
+    List<Serializable> getPersistentRecords(FetchRequest fetchRequest);
+
+    EntityResult update(PersistencePackage persistencePackage, boolean includeRealEntityObject) throws ServiceException;
+
+    EntityResult add(PersistencePackage persistencePackage, boolean includeRealEntityObject) throws ServiceException;
 
     /**
      * Returns a string representation of the field on the given instance specified by the property name. The propertyName
@@ -144,7 +188,7 @@ public interface RecordHelper extends DataFormatProvider {
      * @param propertyName
      * @return
      */
-    public String getStringValueFromGetter(Serializable instance, String propertyName)
+    String getStringValueFromGetter(Serializable instance, String propertyName)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
 
 }

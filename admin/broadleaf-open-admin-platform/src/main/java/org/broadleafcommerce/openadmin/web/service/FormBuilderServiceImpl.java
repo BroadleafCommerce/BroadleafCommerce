@@ -174,6 +174,21 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
 
         ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, drs, sectionKey, 0, idProperty, sectionCrumbs);
+        if (drs.getFirstId() != null) {
+            listGrid.setFirstId(drs.getFirstId());
+        }
+        if (drs.getLastId() != null) {
+            listGrid.setLastId(drs.getLastId());
+        }
+        if (drs.getUpperCount() != null) {
+            listGrid.setUpperCount(drs.getUpperCount());
+        }
+        if (drs.getLowerCount() != null) {
+            listGrid.setLowerCount(drs.getLowerCount());
+        }
+        if (drs.getFetchType() != null) {
+            listGrid.setFetchType(drs.getFetchType().toString());
+        }
         
         if (CollectionUtils.isNotEmpty(listGrid.getHeaderFields())) {
             // Set the first column to be able to link to the main entity

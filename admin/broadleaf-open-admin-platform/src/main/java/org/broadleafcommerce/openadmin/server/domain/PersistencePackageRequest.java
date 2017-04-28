@@ -61,6 +61,11 @@ public class PersistencePackageRequest {
     protected ForeignKey foreignKey;
     protected Integer startIndex;
     protected Integer maxIndex;
+    protected Long lastId;
+    protected Long firstId;
+    protected Integer upperCount;
+    protected Integer lowerCount;
+    protected Integer pageSize;
     protected SectionCrumb[] sectionCrumbs;
     protected String sectionEntityField;
     protected String requestingEntityName;
@@ -244,6 +249,31 @@ public class PersistencePackageRequest {
     
     public PersistencePackageRequest withMaxIndex(Integer maxIndex) {
         setMaxIndex(maxIndex);
+        return this;
+    }
+
+    public PersistencePackageRequest withLastId(Long lastId) {
+        setLastId(lastId);
+        return this;
+    }
+
+    public PersistencePackageRequest withFirstId(Long firstId) {
+        setFirstId(firstId);
+        return this;
+    }
+
+    public PersistencePackageRequest withUpperCount(Integer upperCount) {
+        setUpperCount(upperCount);
+        return this;
+    }
+
+    public PersistencePackageRequest withLowerCount(Integer lowerCount) {
+        setLowerCount(lowerCount);
+        return this;
+    }
+
+    public PersistencePackageRequest withPageSize(Integer pageSize) {
+        setPageSize(pageSize);
         return this;
     }
 
@@ -523,5 +553,44 @@ public class PersistencePackageRequest {
     public void setUpdateLookupType(boolean isUpdateLookupType) {
         this.isUpdateLookupType = isUpdateLookupType;
     }
-    
+
+    public Long getLastId() {
+        return lastId;
+    }
+
+    public void setLastId(Long lastId) {
+        this.lastId = lastId;
+    }
+
+    public Long getFirstId() {
+        return firstId;
+    }
+
+    public void setFirstId(Long firstId) {
+        this.firstId = firstId;
+    }
+
+    public Integer getUpperCount() {
+        return upperCount;
+    }
+
+    public void setUpperCount(Integer upperCount) {
+        this.upperCount = upperCount;
+    }
+
+    public Integer getLowerCount() {
+        return lowerCount;
+    }
+
+    public void setLowerCount(Integer lowerCount) {
+        this.lowerCount = lowerCount;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
 }

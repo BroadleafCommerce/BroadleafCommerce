@@ -26,6 +26,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.server.service.type.FetchType;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 
 import java.util.ArrayList;
@@ -63,6 +64,11 @@ public class ListGrid {
     protected Boolean canFilterAndSort;
     protected Boolean isReadOnly;
     protected Boolean hideIdColumn;
+    protected String fetchType = FetchType.DEFAULT.toString();
+    protected long firstId;
+    protected long lastId;
+    protected int upperCount;
+    protected int lowerCount;
     
     protected AddMethodType addMethodType;
     protected String listGridType;
@@ -421,5 +427,45 @@ public class ListGrid {
             return;
         }
         this.sectionCrumbs = sectionCrumbs;
+    }
+
+    public String getFetchType() {
+        return fetchType;
+    }
+
+    public void setFetchType(String fetchType) {
+        this.fetchType = fetchType;
+    }
+
+    public long getFirstId() {
+        return firstId;
+    }
+
+    public void setFirstId(long firstId) {
+        this.firstId = firstId;
+    }
+
+    public long getLastId() {
+        return lastId;
+    }
+
+    public void setLastId(long lastId) {
+        this.lastId = lastId;
+    }
+
+    public int getUpperCount() {
+        return upperCount;
+    }
+
+    public void setUpperCount(int upperCount) {
+        this.upperCount = upperCount;
+    }
+
+    public int getLowerCount() {
+        return lowerCount;
+    }
+
+    public void setLowerCount(int lowerCount) {
+        this.lowerCount = lowerCount;
     }
 }

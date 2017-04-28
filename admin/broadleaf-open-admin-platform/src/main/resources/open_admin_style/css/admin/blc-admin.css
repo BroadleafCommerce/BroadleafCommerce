@@ -1826,3 +1826,28 @@ div.action-popup.change-password {
 	right: 0;
 	width: 330px;
 }
+
+a.previous-page {
+    cursor: pointer;
+    padding-right: 50px;
+    visibility: hidden;
+}
+
+a.next-page {
+    cursor: pointer;
+    padding-left: 50px;
+    visibility: hidden;
+}
+
+div.result-page-size {
+    padding-left: 50px;
+    display: inline;
+    float: right;
+}
+
+input.result-page-size-input {
+    height: 18px;
+    width: 50px;
+    float: right;
+    padding-left: 10px
+}

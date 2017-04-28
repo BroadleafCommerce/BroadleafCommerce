@@ -824,6 +824,14 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 cto.setMaxResults(requestedMaxResults);
             }
         }
+
+        cto.setLastId(request.getLastId());
+        cto.setFirstId(request.getFirstId());
+        cto.setUpperCount(request.getUpperCount());
+        cto.setLowerCount(request.getLowerCount());
+        if (request.getPageSize() != null) {
+            cto.setMaxResults(request.getPageSize());
+        }
         
         return service.fetch(pkg, cto);
     }

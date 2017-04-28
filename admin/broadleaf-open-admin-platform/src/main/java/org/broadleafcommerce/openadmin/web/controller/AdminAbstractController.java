@@ -674,6 +674,51 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         List<String> maxIndex = requestParams.get(FilterAndSortCriteria.MAX_INDEX_PARAMETER);
         return CollectionUtils.isEmpty(maxIndex) ? null : Integer.parseInt(maxIndex.get(0));
     }
+
+    protected Long getLastId(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> lastId = requestParams.get(FilterAndSortCriteria.LAST_ID_PARAMETER);
+        return CollectionUtils.isEmpty(lastId) ? null : Long.parseLong(lastId.get(0));
+    }
+
+    protected Long getFirstId(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> firstId = requestParams.get(FilterAndSortCriteria.FIRST_ID_PARAMETER);
+        return CollectionUtils.isEmpty(firstId) ? null : Long.parseLong(firstId.get(0));
+    }
+
+    protected Integer getUpperCount(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> upperCount = requestParams.get(FilterAndSortCriteria.UPPER_COUNT_PARAMETER);
+        return CollectionUtils.isEmpty(upperCount) ? null : Integer.parseInt(upperCount.get(0));
+    }
+
+    protected Integer getLowerCount(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> lowerCount = requestParams.get(FilterAndSortCriteria.LOWER_COUNT_PARAMETER);
+        return CollectionUtils.isEmpty(lowerCount) ? null : Integer.parseInt(lowerCount.get(0));
+    }
+
+    protected Integer getPageSize(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> pageSize = requestParams.get(FilterAndSortCriteria.PAGE_SIZE_PARAMETER);
+        return CollectionUtils.isEmpty(pageSize) ? null : Integer.parseInt(pageSize.get(0));
+    }
     
     // ************************
     // GENERIC HELPER METHODS *
@@ -753,7 +798,12 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                 .withFilterAndSortCriteria(fascs)
                 .withStartIndex(getStartIndex(requestParams))
                 .withMaxIndex(getMaxIndex(requestParams))
-                .withSectionCrumbs(sectionCrumbs);
+                .withSectionCrumbs(sectionCrumbs)
+                .withLastId(getLastId(requestParams))
+                .withFirstId(getFirstId(requestParams))
+                .withUpperCount(getUpperCount(requestParams))
+                .withLowerCount(getLowerCount(requestParams))
+                .withPageSize(getPageSize(requestParams));
 
         attachSectionSpecificInfo(ppr, pathVars);
 

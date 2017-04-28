@@ -37,6 +37,11 @@ public class FilterAndSortCriteria {
     public static final String SORT_DIRECTION_PARAMETER = "sortDirection";
     public static final String START_INDEX_PARAMETER = "startIndex";
     public static final String MAX_INDEX_PARAMETER = "maxIndex";
+    public static final String LAST_ID_PARAMETER = "lastId";
+    public static final String FIRST_ID_PARAMETER = "firstId";
+    public static final String UPPER_COUNT_PARAMETER = "upperCount";
+    public static final String LOWER_COUNT_PARAMETER = "lowerCount";
+    public static final String PAGE_SIZE_PARAMETER = "pageSize";
 
     public static final String IS_NULL_FILTER_VALUE = new String("BLC_SPECIAL_FILTER_VALUE:NULL").intern();
     public static final String IS_NOT_NULL_FILTER_VALUE = new String("BLC_SPECIAL_FILTER_VALUE:NOT_NULL").intern();

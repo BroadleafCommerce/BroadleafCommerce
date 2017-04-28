@@ -157,6 +157,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     @Resource(name = "blBasicPersistenceModuleExtensionManager")
     protected BasicPersistenceModuleExtensionManager extensionManager;
 
+    @Resource(name = "blFetchWrapper")
+    protected FetchWrapper fetchWrapper;
+
     @PostConstruct
     public void init() {
         Collections.sort(fieldPersistenceProviders, new Comparator<FieldPersistenceProvider>() {
@@ -761,6 +764,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
     }
 
+    @Override
+    public String getIdPropertyName(String entityClass) {
+        return persistenceManager.getIdPropertyName(entityClass);
+    }
+
     public String getIdPropertyName(Map<String, FieldMetadata> mergedUnfilteredProperties) {
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
         for (String property : mergedProperties.keySet()) {
@@ -1133,13 +1141,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 standardFilterMappings.addAll(cto.getNonCountAdditionalFilterMappings());
             }
 
-            List<Serializable> records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), standardFilterMappings, cto.getFirstResult(), cto.getMaxResults());
+            FetchRequest fetchRequest = new FetchRequest(persistencePackage, cto,
+                    persistencePackage.getFetchTypeFullyQualifiedClassname(), standardFilterMappings);
+            List<Serializable> records = getPersistentRecords(fetchRequest);
 
             List<FilterMapping> countFilterMappings = new ArrayList<FilterMapping>(filterMappings);
             if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
                 countFilterMappings.addAll(cto.getAdditionalFilterMappings());
             }
-            totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), countFilterMappings);
+            FetchRequest countFetchRequest = new FetchRequest(persistencePackage, cto,
+                    persistencePackage.getFetchTypeFullyQualifiedClassname(), countFilterMappings);
+            totalRecords = getTotalRecords(countFetchRequest);
 
             payload = getRecords(mergedProperties, records, null, null);
         } catch (Exception e) {
@@ -1147,6 +1159,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
 
         return new DynamicResultSet(null, payload, totalRecords);
+    }
+
+    @Override
+    public Integer getTotalRecords(FetchRequest fetchRequest) {
+        return fetchWrapper.getTotalRecords(fetchRequest);
     }
 
     @Override
@@ -1164,6 +1181,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     public Serializable getMaxValue(String ceilingEntity, List<FilterMapping> filterMappings, String maxField) {
         return criteriaTranslator.translateMaxQuery(persistenceManager.getDynamicEntityDao(),
                 ceilingEntity, filterMappings, maxField).getSingleResult();
+    }
+
+    @Override
+    public List<Serializable> getPersistentRecords(FetchRequest fetchRequest) {
+        return fetchWrapper.getPersistentRecords(fetchRequest);
     }
 
     @Override
