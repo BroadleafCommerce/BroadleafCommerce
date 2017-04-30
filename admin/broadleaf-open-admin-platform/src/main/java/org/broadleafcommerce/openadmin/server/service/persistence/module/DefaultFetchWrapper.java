@@ -20,9 +20,9 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -51,5 +51,12 @@ public class DefaultFetchWrapper implements FetchWrapper {
         PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
         BasicPersistenceModule basicPersistenceModule = (BasicPersistenceModule) ((InspectHelper) persistenceManager).getCompatibleModule(OperationType.BASIC);
         return basicPersistenceModule;
+    }
+
+    @Override
+    public Entity[] getRecords(FetchExtractionRequest fetchExtractionRequest) {
+        return getBasicPersistenceModule().getRecords(fetchExtractionRequest.getPrimaryUnfilteredMergedProperties(),
+                fetchExtractionRequest.getRecords(), fetchExtractionRequest.getAlternateUnfilteredMergedProperties(),
+                fetchExtractionRequest.getPathToTargetObject());
     }
 }

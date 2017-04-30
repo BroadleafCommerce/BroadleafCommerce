@@ -260,8 +260,13 @@ public class SiteServiceImpl implements SiteService {
         if (persistentSite == null) {
             return null;
         }
-        Site clone = persistentSite.clone();
-        extensionManager.getProxy().contributeNonPersitentSiteProperties(persistentSite, clone);
+        NonPersistentSiteTheadLocalCache cache = NonPersistentSiteTheadLocalCache.getSitesCache();
+        Site clone = cache.getSites().get(persistentSite.getId());
+        if (clone == null) {
+            clone = persistentSite.clone();
+            extensionManager.getProxy().contributeNonPersitentSiteProperties(persistentSite, clone);
+            cache.getSites().put(persistentSite.getId(), clone);
+        }
         return clone;
     }
     

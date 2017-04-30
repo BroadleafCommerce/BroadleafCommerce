@@ -48,30 +48,54 @@ import java.util.Map;
  */
 public interface RecordHelper extends DataFormatProvider {
 
-    public List<FilterMapping> getFilterMappings(PersistencePerspective persistencePerspective, CriteriaTransferObject cto,
+    List<FilterMapping> getFilterMappings(PersistencePerspective persistencePerspective, CriteriaTransferObject cto,
                                                  String ceilingEntityFullyQualifiedClassname,
                                                  Map<String, FieldMetadata> mergedProperties);
 
-    public List<FilterMapping> getFilterMappings(PersistencePerspective persistencePerspective, CriteriaTransferObject cto,
+    List<FilterMapping> getFilterMappings(PersistencePerspective persistencePerspective, CriteriaTransferObject cto,
                                                      String ceilingEntityFullyQualifiedClassname,
                                                      Map<String, FieldMetadata> mergedUnfilteredProperties,
                                                      RestrictionFactory customRestrictionFactory);
 
-    public Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject);
+    /**
+     * Based on retrieved persistent entities and entity metadata, construct data transfer object instances to represent these records
+     * to the caller.
+     *
+     * @param fetchExtractionRequest
+     * @return
+     */
+    Entity[] getRecords(FetchExtractionRequest fetchExtractionRequest);
 
-    public Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records);
+    /**
+     * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead
+     * @param primaryMergedProperties
+     * @param records
+     * @param alternateMergedProperties
+     * @param pathToTargetObject
+     * @return
+     */
+    Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject);
+
+    /**
+     * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead.
+     * @param primaryMergedProperties
+     * @param records
+     * @return
+     */
+    @Deprecated
+    Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records);
     
-    public Entity[] getRecords(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, List<? extends Serializable> records);
+    Entity[] getRecords(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, List<? extends Serializable> records);
     
-    public Entity getRecord(Map<String, FieldMetadata> primaryMergedProperties, Serializable record, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject);
+    Entity getRecord(Map<String, FieldMetadata> primaryMergedProperties, Serializable record, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject);
     
-    public Entity getRecord(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, Serializable record);
+    Entity getRecord(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, Serializable record);
 
     /**
      * <p>Populates a Hibernate entity <b>instance</b> based on the values from <b>entity</b> (the DTO representation of
      * <b>instance</b>) and the metadata from <b>mergedProperties</b>.</p>
      * <p>While populating <b>instance</b>, validation is also performed using the {@link EntityValidatorService}. If this
-     * validation fails, then the instance is left unchanged and a {@link ValidationExcpetion} is thrown. In the common
+     * validation fails, then the instance is left unchanged and a {@link ValidationException} is thrown. In the common
      * case, this exception bubbles up to the {@link DynamicRemoteService} which catches the exception and communicates
      * appropriately to the invoker</p>
      * 
@@ -87,7 +111,7 @@ public interface RecordHelper extends DataFormatProvider {
      * in <b>mergedProperties</b>
      * @see {@link EntityValidatorService}
      */
-    public Serializable createPopulatedInstance(Serializable instance, Entity entity, 
+    Serializable createPopulatedInstance(Serializable instance, Entity entity,
             Map<String, FieldMetadata> mergedProperties, Boolean setId, Boolean validateUnsubmittedProperties) throws ValidationException;
 
     /**
@@ -95,10 +119,10 @@ public interface RecordHelper extends DataFormatProvider {
      * 
      * @see #createPopulatedInstance(Serializable, Entity, Map, Boolean, Boolean)
      */
-    public Serializable createPopulatedInstance(Serializable instance, Entity entity, 
+    Serializable createPopulatedInstance(Serializable instance, Entity entity,
             Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws ValidationException;
     
-    public Object getPrimaryKey(Entity entity, Map<String, FieldMetadata> mergedProperties);
+    Object getPrimaryKey(Entity entity, Map<String, FieldMetadata> mergedProperties);
 
     /**
      * For the fully qualified entity class name, find the primary key property name.

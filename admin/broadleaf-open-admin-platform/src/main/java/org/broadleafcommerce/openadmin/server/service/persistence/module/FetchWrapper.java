@@ -19,15 +19,16 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * Wrap calls to {@link BasicPersistenceModule#getPersistentRecords(String, List, Integer, Integer)} and
- * {@link BasicPersistenceModule#getTotalRecords(String, List)}, presumably to provide additional configuration or
- * state modification before calling those methods on BasicPersistenceModule.
+ * Wrap calls to {@link BasicPersistenceModule#getPersistentRecords(String, List, Integer, Integer)},
+ * {@link BasicPersistenceModule#getTotalRecords(String, List)}, and {@link BasicPersistenceModule#getRecords(FetchExtractionRequest)},
+ * presumably to provide additional configuration or state modification before calling those methods on BasicPersistenceModule.
  *
  * @author Jeff Fischer
  */
@@ -50,5 +51,13 @@ public interface FetchWrapper {
      * @return
      */
     Integer getTotalRecords(FetchRequest fetchRequest);
+
+    /**
+     * Retrieve the dto representation of persistent records based on the record contents and entity metadata.
+     *
+     * @param fetchExtractionRequest
+     * @return
+     */
+    Entity[] getRecords(FetchExtractionRequest fetchExtractionRequest);
 
 }

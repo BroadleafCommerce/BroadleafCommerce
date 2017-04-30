@@ -529,6 +529,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return entities;
     }
 
+    @Override
+    public Entity[] getRecords(FetchExtractionRequest fetchExtractionRequest) {
+        return fetchWrapper.getRecords(fetchExtractionRequest);
+    }
+
     protected void extractPropertiesFromPersistentEntity(Map<String, FieldMetadata> mergedProperties, Serializable entity, List<Property> props) {
         FieldManager fieldManager = getFieldManager();
         try {
@@ -1153,7 +1158,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     persistencePackage.getFetchTypeFullyQualifiedClassname(), countFilterMappings);
             totalRecords = getTotalRecords(countFetchRequest);
 
-            payload = getRecords(mergedProperties, records, null, null);
+            FetchExtractionRequest fetchExtractionRequest = new FetchExtractionRequest(persistencePackage, cto,
+                    persistencePackage.getFetchTypeFullyQualifiedClassname(), mergedProperties, records);
+            payload = getRecords(fetchExtractionRequest);
         } catch (Exception e) {
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
         }
