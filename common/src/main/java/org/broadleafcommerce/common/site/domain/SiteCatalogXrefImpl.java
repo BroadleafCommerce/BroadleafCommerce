@@ -41,7 +41,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "BLC_SITE_CATALOG")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSiteElements")
 public class SiteCatalogXrefImpl implements SiteCatalogXref {
 
     private static final long serialVersionUID = 1L;
