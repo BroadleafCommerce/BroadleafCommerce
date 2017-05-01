@@ -40,7 +40,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_ADMIN_USER_ADDTL_FIELDS")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurityVolatile")
 public class AdminUserAttributeImpl implements AdminUserAttribute {
 
     private static final long serialVersionUID = 1L;
