@@ -32,5 +32,12 @@ $(document).ready(function() {
         $('button.show-category-list-view').removeClass('active');
         $('button.show-category-tree-view').addClass('active');
     });
+
+    $('body').on('click', 'button.show-category-tree-view-modal', function() {
+        var currentUrl = window.location.href;
+        currentUrl = BLCAdmin.history.getUrlWithParameter('tree', true, null, currentUrl);
+        BLCAdmin.showLinkAsModal(currentUrl);
+        return false;
+    });
     
 });
