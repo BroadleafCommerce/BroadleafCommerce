@@ -82,6 +82,7 @@
                 </entry>
             </map>
         </property>
+        <property name="registrationPolicy" value="IGNORE_EXISTING" />
     </bean>
 
 </beans>
