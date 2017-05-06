@@ -51,4 +51,6 @@ public interface Catalog extends Status, Serializable, Comparable<Catalog> {
     @Override
     public int compareTo(Catalog other);
 
+    Catalog clone();
+
 }
