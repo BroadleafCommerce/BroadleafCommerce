@@ -20,9 +20,11 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
 
 /**
  * Performs the actual initialization work for the rootId application context.
@@ -58,7 +60,7 @@ import javax.servlet.ServletContext;
  *
  * @author Jeff Fischer
  */
-public class MergeContextLoader extends ContextLoader {
+public class MergeContextLoader extends ContextLoaderListener {
 
     /**
      * Name of servlet context parameter (i.e., "<code>patchConfigLocation</code>")
@@ -92,6 +94,7 @@ public class MergeContextLoader extends ContextLoader {
      * @throws BeansException if the context couldn't be initialized
      * @see ConfigurableWebApplicationContext
      */
+    @Override
     @Deprecated
     protected WebApplicationContext createWebApplicationContext(ServletContext servletContext, ApplicationContext parent) throws BeansException {
         MergeXmlWebApplicationContext wac = new MergeXmlWebApplicationContext();
@@ -133,5 +136,10 @@ public class MergeContextLoader extends ContextLoader {
         //wac.refresh();
 
         return wac;
+    }
+
+    @Override
+    public void contextInitialized(ServletContextEvent event) {
+        super.contextInitialized(event);
     }
 }
