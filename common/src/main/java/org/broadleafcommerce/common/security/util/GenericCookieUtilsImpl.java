@@ -18,6 +18,9 @@
 package org.broadleafcommerce.common.security.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.owasp.esapi.ESAPI;
 import org.springframework.stereotype.Component;
 
@@ -27,12 +30,16 @@ import javax.servlet.http.HttpServletResponse;
 
 @Component("blCookieUtils")
 public class GenericCookieUtilsImpl implements CookieUtils {
-
+    private static final Log LOG = LogFactory.getLog(GenericCookieUtilsImpl.class);
+    
     protected final String COOKIE_INVALIDATION_PLACEHOLDER_VALUE = "CookieInvalidationPlaceholderValue";
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.profile.web.CookieUtils#getCookieValue(javax.servlet.http.HttpServletRequest, java.lang.String)
-     */
+    @Override
+    public Boolean shouldUseSecureCookieIfApplicable() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("cookies.use.secure", false);
+    }
+    
+    @Override
     public String getCookieValue(HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
 
@@ -46,14 +53,8 @@ public class GenericCookieUtilsImpl implements CookieUtils {
 
         return null;
     }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.profile.web.CookieUtils#setCookieValue(javax.servlet.http.HttpServletResponse, java.lang.String, java.lang.String, java.lang.String, java.lang.Integer)
-     *   Note, this method uses a cookieValue of "CookieInvalidationPlaceholderValue" simply because the later call to
-     *  `ESAPI.httpUtilities().addHeader()` fails if the value is null or an empty String. If an empty cookieValue is passed, this is considered
-     *  a request to remove the cookie and the maxAge is set to 0 to force the removal.  In addition, calls to `ESAPI.httpUtilities().killCookie()` have shown
-     *  to be ineffective and this approach for removing cookies works.
-     */
+    
+    @Override
     public void setCookieValue(HttpServletResponse response, String cookieName, String cookieValue, String path, Integer maxAge, Boolean isSecure) {
         if (StringUtils.isBlank(cookieValue)) {
             cookieValue = COOKIE_INVALIDATION_PLACEHOLDER_VALUE;
@@ -65,7 +66,13 @@ public class GenericCookieUtilsImpl implements CookieUtils {
         if (maxAge != null) {
             cookie.setMaxAge(maxAge);
         }
-        cookie.setSecure(isSecure);
+        
+        if (shouldUseSecureCookieIfApplicable()) {
+            cookie.setSecure(isSecure);
+        } else {
+            cookie.setSecure(false);
+            LOG.info("HTTP cookie set regardless of the value of isSecure.");
+        }
 
         final StringBuffer sb = new StringBuffer();
         ServerCookie.appendCookieValue
@@ -78,17 +85,13 @@ public class GenericCookieUtilsImpl implements CookieUtils {
         // asks for 2109.
         ESAPI.httpUtilities().addHeader(response, "Set-Cookie", sb.toString());
     }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.profile.web.CookieUtils#setCookieValue(javax.servlet.http.HttpServletResponse, java.lang.String, java.lang.String)
-     */
+    
+    @Override
     public void setCookieValue(HttpServletResponse response, String cookieName, String cookieValue) {
         setCookieValue(response, cookieName, cookieValue, "/", null, false);
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.profile.web.CookieUtils#invalidateCookie(javax.servlet.http.HttpServletResponse, java.lang.String)
-     */
+    @Override
     public void invalidateCookie(HttpServletResponse response, String cookieName) {
         setCookieValue(response, cookieName, "", "/", 0, false);
     }
