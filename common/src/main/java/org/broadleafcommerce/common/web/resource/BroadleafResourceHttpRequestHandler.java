@@ -24,6 +24,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
      * If neither of those cases match, delegates to the normal ResourceHttpRequestHandler
      */
     @Override
-	protected Resource getResource(HttpServletRequest request) {
+	protected Resource getResource(HttpServletRequest request) throws IOException {
 		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         if (bundlingService.hasBundle(path)) {
             return bundlingService.getBundle(path);
