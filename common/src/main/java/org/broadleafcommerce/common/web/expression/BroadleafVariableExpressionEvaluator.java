@@ -18,7 +18,7 @@ package org.broadleafcommerce.common.web.expression;
 
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.IProcessingContext;
-import org.thymeleaf.spring3.expression.SpelVariableExpressionEvaluator;
+import org.thymeleaf.spring4.expression.SpelVariableExpressionEvaluator;
 
 import java.util.ArrayList;
 import java.util.HashMap;

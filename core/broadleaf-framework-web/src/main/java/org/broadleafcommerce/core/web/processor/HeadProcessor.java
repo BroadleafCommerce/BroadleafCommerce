@@ -20,15 +20,18 @@ import org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtension
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.dom.Node;
 import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.fragment.FragmentAndTarget;
-import org.thymeleaf.fragment.WholeFragmentSpec;
 import org.thymeleaf.processor.element.AbstractFragmentHandlingElementProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
-import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will include the standard head element. It will also set the
@@ -66,22 +69,24 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
     }
 
     @Override
-    protected boolean getSubstituteInclusionNode(Arguments arguments, Element element) {
+    protected boolean getRemoveHostNode(Arguments arguments, Element element) {
         return true;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected FragmentAndTarget getFragmentAndTarget(Arguments arguments, Element element, boolean substituteInclusionNode) {
+    protected List<Node> computeFragment(final Arguments arguments, final Element element) {
         // The pageTitle attribute could be an expression that needs to be evaluated. Try to evaluate, but fall back
         // to its text value if the expression wasn't able to be processed. This will allow things like
         // pageTitle="Hello this is a string"
         // as well as expressions like
         // pageTitle="${'Hello this is a ' + product.name}"
-        
+
         String pageTitle = element.getAttributeValue("pageTitle");
         try {
-            pageTitle = (String) StandardExpressionProcessor.processExpression(arguments, pageTitle);
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                    .parseExpression(arguments.getConfiguration(), arguments, pageTitle);
+            pageTitle = (String) expression.execute(arguments.getConfiguration(), arguments);
         } catch (TemplateProcessingException e) {
             // Do nothing.
         }
@@ -90,7 +95,12 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
 
         extensionManager.processAttributeValues(arguments, element);
 
-        return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
+        //the commit at https://github.com/thymeleaf/thymeleaf/commit/b214d9b5660369c41538e023d4b8d7223ebcbc22 along with
+        //the referenced issue at https://github.com/thymeleaf/thymeleaf/issues/205
+
+
+//        return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
+        return new ArrayList<Node>();
     }
 
 }
