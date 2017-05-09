@@ -24,9 +24,10 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 public class IdGenerationTest extends BaseTest {
 
@@ -39,6 +40,7 @@ public class IdGenerationTest extends BaseTest {
 
     @Test(groups = "createId")
     @Rollback(false)
+    @Transactional
     public void createId() {
         IdGeneration idGeneration = new IdGenerationImpl();
         idGeneration.setType("IdGenerationTest");

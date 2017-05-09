@@ -60,11 +60,12 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 @SuppressWarnings("deprecation")
 public class LegacyPricingTest extends BaseTest {
@@ -298,13 +299,17 @@ public class LegacyPricingTest extends BaseTest {
     }
     
     @Test(groups = { "createCustomerIdGenerationLegacy" })
+    @Transactional
     @Rollback(false)
     public void createCustomerIdGeneration() {
-        IdGeneration idGeneration = new IdGenerationImpl();
-        idGeneration.setType("org.broadleafcommerce.profile.core.domain.Customer");
-        idGeneration.setBatchStart(1L);
-        idGeneration.setBatchSize(10L);
-        em.persist(idGeneration);
+        IdGenerationImpl gen = em.find(IdGenerationImpl.class, "org.broadleafcommerce.profile.core.domain.Customer");
+        if (gen == null) {
+            IdGeneration idGeneration = new IdGenerationImpl();
+            idGeneration.setType("org.broadleafcommerce.profile.core.domain.Customer");
+            idGeneration.setBatchStart(1L);
+            idGeneration.setBatchSize(10L);
+            em.persist(idGeneration);
+        }
     }
 
     public Customer createCustomer() {
