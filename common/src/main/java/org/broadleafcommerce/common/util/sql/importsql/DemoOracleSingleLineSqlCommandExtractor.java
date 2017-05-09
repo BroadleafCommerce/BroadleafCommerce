@@ -99,7 +99,14 @@ public class DemoOracleSingleLineSqlCommandExtractor extends SingleLineSqlComman
             
             // Any MySQL-specific newlines replace with newline character concatenation
             statement = statement.replaceAll(DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX, "' || CHR(13) || CHR(10) || '");
-            
+            // Any MySQL CHAR functions with CHR
+            Pattern charPattern = Pattern.compile("CHAR\\((\\d+)\\)");
+            Matcher charMatcher = charPattern.matcher(statement);
+            if (charMatcher.find()) {
+                String charCode = charMatcher.group(1);
+                statement = charMatcher.replaceAll("CHR(" + charCode + ")");
+            }
+
             statements[x] = statement;
         }
 
