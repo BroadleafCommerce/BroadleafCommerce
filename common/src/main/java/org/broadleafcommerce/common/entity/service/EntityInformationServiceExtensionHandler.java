@@ -23,8 +23,8 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
-
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -61,6 +61,15 @@ public interface EntityInformationServiceExtensionHandler extends ExtensionHandl
      * @param erh {@link ExtensionResultHolder} a container for the result     
      */
     ExtensionResultStatusType getBaseProfileIdForSite(Site site, ExtensionResultHolder<Long> erh);
+
+    /**
+     * Handler implementations will populate the {@link ExtensionResultHolder} with a valid
+     * child site ids whose base profile is the given profile
+     *
+     * @param profile {@link Site} the profile to check for the child sites
+     * @param erh a container for the result
+     */
+    ExtensionResultStatusType getChildSiteIdsForProfile(Site profile, ExtensionResultHolder<Set<Long>> erh);
 
     /**
      * Handler implementations will popoulate the {@link ExtensionResultHolder} with a valid
