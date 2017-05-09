@@ -675,7 +675,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
             purchaseCost = lookupDefaultSku().getCost();
         }
 
-        if (price != null && price.getAmount().equals(BigDecimal.ZERO)) {
+        if (price != null && !price.getAmount().equals(BigDecimal.ZERO)) {
             if (purchaseCost != null) {
                 margin = price.subtract(purchaseCost).divide(price.getAmount());
             }
