@@ -198,9 +198,9 @@ public class EntityForm {
         return null;
     }
 
-    public Tab findTab(String tabTitle) {
+    public Tab findTab(String tabKey) {
         for (Tab tab : tabs) {
-            if (tab.getKey() != null && tab.getKey().equals(tabTitle)) {
+            if (tab.getKey() != null && tab.getKey().equals(tabKey)) {
                 return tab;
             }
         }
