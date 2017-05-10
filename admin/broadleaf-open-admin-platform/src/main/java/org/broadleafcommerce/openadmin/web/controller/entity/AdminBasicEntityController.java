@@ -91,6 +91,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UrlPathHelper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,6 +120,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
     public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
     public static final String CUSTOM_CRITERIA = "criteria";
+    public static final String IS_SELECTIZE_REQUEST = "isSelectizeRequest";
 
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
@@ -222,6 +224,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         List<SectionCrumb> crumbs = getSectionCrumbs(request, null, null);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams, crumbs, pathVars)
                 .withCustomCriteria(getCustomCriteria(requestParams));
+
+        ppr.addCustomCriteria(buildSelectizeCustomCriteria());
 
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
@@ -995,7 +999,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withFilterAndSortCriteria(getCriteria(requestParams))
                 .withStartIndex(getStartIndex(requestParams))
-                .withMaxIndex(getMaxIndex(requestParams));
+                .withMaxIndex(getMaxIndex(requestParams))
+                .withCustomCriteria(buildSelectizeCustomCriteria());
 
         if (md instanceof AdornedTargetCollectionMetadata) {
             ppr.setOperationTypesOverride(null);
@@ -1006,6 +1011,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
         DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
 
         return formService.buildSelectizeCollectionInfo(id, drs, collectionProperty, sectionKey, sectionCrumbs);
+    }
+
+    protected String[] buildSelectizeCustomCriteria() {
+        return new String[]{ IS_SELECTIZE_REQUEST };
     }
 
     /**
@@ -1042,6 +1051,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        ppr.addCustomCriteria(buildSelectizeCustomCriteria());
         declareShouldIgnoreAdditionStatusFilter();
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
