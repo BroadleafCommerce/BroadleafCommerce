@@ -60,7 +60,7 @@ public class OracleRequiredFieldManagerModifier implements FieldManagerModifier 
 
         Column column = field.getAnnotation(Column.class);
         AdminPresentation adminPresentation = field.getAnnotation(AdminPresentation.class);
-        return adminPresentation != null && isRequiredField(adminPresentation, column) && isStringFieldType(value, adminPresentation);
+        return adminPresentation != null && isRequiredField(adminPresentation, column) && isStringFieldType(field, adminPresentation);
     }
 
     protected boolean isRequiredField(AdminPresentation adminPresentation, Column column) {
@@ -69,10 +69,10 @@ public class OracleRequiredFieldManagerModifier implements FieldManagerModifier 
         return ((column != null && !column.nullable()) || (requiredOverride.equals(RequiredOverride.REQUIRED))) && StringUtils.isEmpty(defaultValue);
     }
 
-    protected boolean isStringFieldType(Object value, AdminPresentation adminPresentation) {
+    protected boolean isStringFieldType(Field field, AdminPresentation adminPresentation) {
         SupportedFieldType fieldType = adminPresentation.fieldType();
         return TYPES_THAT_SUPPORT_SINGLE_SPACE_AS_DEFAULT.contains(fieldType.toString())
-            || (SupportedFieldType.UNKNOWN.toString().equals(fieldType.toString()) && value instanceof String);
+            || (SupportedFieldType.UNKNOWN.toString().equals(fieldType.toString()) && String.class.isAssignableFrom(field.getType()));
     }
 
     @Override

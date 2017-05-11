@@ -136,8 +136,8 @@ public class EntityForm {
         for (Entry<String, EntityForm> entry : dynamicForms.entrySet()) {
             Map<String, Field> dynamicFormFields = entry.getValue().getFields();
             for (Entry<String, Field> dynamicField : dynamicFormFields.entrySet()) {
-                if (fields.containsKey(dynamicField.getKey())) {
-                    LOG.info("Excluding dynamic field " + StringUtil.sanitize(dynamicField.getKey()) + 
+                if (fields.containsKey(dynamicField.getKey()) && LOG.isDebugEnabled()) {
+                    LOG.debug("Excluding dynamic field " + StringUtil.sanitize(dynamicField.getKey()) +
                             " as there is already an occurrence in this entityForm");
                 } else {
                     fields.put(dynamicField.getKey(), dynamicField.getValue());
@@ -198,9 +198,9 @@ public class EntityForm {
         return null;
     }
 
-    public Tab findTab(String tabTitle) {
+    public Tab findTab(String tabKey) {
         for (Tab tab : tabs) {
-            if (tab.getKey() != null && tab.getKey().equals(tabTitle)) {
+            if (tab.getKey() != null && tab.getKey().equals(tabKey)) {
                 return tab;
             }
         }
