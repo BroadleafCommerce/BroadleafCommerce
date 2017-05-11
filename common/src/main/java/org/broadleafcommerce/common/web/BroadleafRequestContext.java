@@ -18,9 +18,6 @@
 package org.broadleafcommerce.common.web;
 
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -41,9 +38,11 @@ import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Currency;
@@ -51,6 +50,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -123,7 +126,7 @@ public class BroadleafRequestContext {
     protected List<Long> explicitCatalogs = new ArrayList<>();
     protected Site currentProfile;
     protected Boolean ignoreSite = false;
-    protected Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    protected Map<String, Object> additionalProperties = new HashMap<>();
     protected MessageSource messageSource;
     protected RequestDTO requestDTO;
     protected Boolean isAdmin = false;
@@ -479,21 +482,25 @@ public class BroadleafRequestContext {
     }
 
     /**
-     * Intended for internal use only
+     * Used to ignore all of the underlying automatic Hibernate filters applied by Broadleaf (e.g. for sandboxing, multi-tenant and archiving filters).
      */
     public void setInternalIgnoreFilters(Boolean internalIgnoreFilters) {
         this.internalIgnoreFilters = internalIgnoreFilters;
     }
 
     /**
-     * Intended for internal use only
+     * @see #setInternalValidateFind(Boolean)}
      */
     public Boolean getInternalValidateFind() {
         return internalValidateFind;
     }
 
     /**
-     * Intended for internal use only
+     * Only relevant in multi-tenant scenarios with site-level overrides in a catalog or profile, and only when querying by primary key
+     * (e.g. using em.find()). Normally querying directly by ID does not engage the clone cache or any filter restrictions across sibling
+     * sites. This is done for performance reasons. Activating this behavior ensures that em.find() _does_ engage the clone cache and
+     * validation across sibling sites. Generally this is only used within API use cases where you often query for objects on their ID. In all
+     * other types of queries (e.g. using query.getResultList()) the automatic filtration and overriding is already applied.
      */
     public void setInternalValidateFind(Boolean internalValidateFind) {
         this.internalValidateFind = internalValidateFind;

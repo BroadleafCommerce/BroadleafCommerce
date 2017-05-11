@@ -94,6 +94,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.Version;
@@ -1060,18 +1061,85 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return null;
     }
 
+    /**
+     * NOTE: This method will attempt to merge tabs if the unprocessed {@link TabMetadata#getTabName()} is equal to
+     *  the processed value of another tab.
+     *
+     * For example, if {@link TabMetadata#getTabName()} is "Example", there is a another tab where
+     *  {@link TabMetadata#getTabName()} is "Example_Tab", and a message property where 'Example_Tab=Example',
+     *  then the tabs should be merged together, so that we do not end up rendering multiple "Example" tabs.
+     */
     protected void setEntityFormTabsAndGroups(EntityForm ef, Map<String, TabMetadata> tabMetadataMap) {
         if (tabMetadataMap != null) {
             Set<String> tabMetadataKeySet = tabMetadataMap.keySet();
             for (String tabKey : tabMetadataKeySet) {
                 TabMetadata tabMetadata = tabMetadataMap.get(tabKey);
-                String unprocessedTabName = ef.addTabFromTabMetadata(tabMetadata);
+                String unprocessedTabName = getUnprocessedNameOfMatchingTab(tabMetadata, tabMetadataKeySet);
+
+                if (foundMatchingTab(unprocessedTabName)) {
+                    if (!tabExists(ef, unprocessedTabName)) {
+                        TabMetadata originalTabMetadata = tabMetadataMap.get(unprocessedTabName);
+                        unprocessedTabName = ef.addTabFromTabMetadata(originalTabMetadata);
+                    }
+                } else {
+                    if (tabExists(ef, tabKey)) {
+                        unprocessedTabName = tabKey;
+                    } else {
+                        unprocessedTabName = ef.addTabFromTabMetadata(tabMetadata);
+                    }
+                }
+
                 Set<String> groupMetadataKeySet = tabMetadata.getGroupMetadata().keySet();
                 for (String groupKey : groupMetadataKeySet) {
                     ef.addGroupFromGroupMetadata(tabMetadata.getGroupMetadata().get(groupKey), unprocessedTabName);
                 }
             }
         }
+    }
+
+    /**
+     * Search for any other tab on the target entity that has the same display value
+     *  as the value provided tab name.
+     *
+     * This assumes that the {@link TabMetadata#getTabName()} is in the form of a processed message property.
+     *  For example, if {@link TabMetadata#getTabName()} is "Example", there is a tabKey from the tabMetadataKeySet
+     *  that is "Example_Tab", and a message property where 'Example_Tab=Example', then this method should return
+     *  "Example_Tab" which will end up causing the tabs to merge together.
+     *
+     * If a tab with the same display value cannot be found, then we should return null to indicate that there
+     *  is no matching tab with the same processed tabName value.
+     */
+    protected String getUnprocessedNameOfMatchingTab(TabMetadata tabMetadata, Set<String> tabMetadataKeySet) {
+        for (String tabKey : tabMetadataKeySet) {
+            String tabName = tabMetadata.getTabName();
+
+            if (processedTabKeyMatchesTabName(tabName, tabKey)) {
+                return tabKey;
+            }
+        }
+
+        return null;
+    }
+
+    protected boolean processedTabKeyMatchesTabName(String tabName, String candidateTabKey) {
+        try {
+            String processedCandidateTabKey = BLCMessageUtils.getMessage(candidateTabKey);
+            boolean candidateTabKeyWasProcessed = !StringUtils.equals(candidateTabKey, processedCandidateTabKey);
+
+            return candidateTabKeyWasProcessed && StringUtils.equalsIgnoreCase(tabName, processedCandidateTabKey);
+        } catch (NoSuchMessageException e) {
+            LOG.debug("No such message exists for " + candidateTabKey, e);
+
+            return false;
+        }
+    }
+
+    protected boolean foundMatchingTab(String unprocessedTabName) {
+        return (unprocessedTabName != null);
+    }
+
+    protected boolean tabExists(EntityForm ef, String tabKey) {
+        return (ef.findTab(tabKey) != null);
     }
 
     @Override

@@ -20,8 +20,8 @@ package org.broadleafcommerce.common.entity.service;
 import org.broadleafcommerce.common.entity.dto.EntityInformationDto;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
-
 import java.util.List;
+import java.util.Set;
 
 /**
  * Class that provides guidance to modules that need to react when running in a multi-tenant mode.   Especially, 
@@ -51,6 +51,8 @@ public interface EntityInformationService {
      * @return
      */
     Long getBaseProfileIdForSite(Site site);
+
+    Set<Long> getChildSiteIdsForProfile(Site profile);
 
     /**
      * Given a profile {@link Site} object, returns the parent site, if one exists. This method provides a hook
