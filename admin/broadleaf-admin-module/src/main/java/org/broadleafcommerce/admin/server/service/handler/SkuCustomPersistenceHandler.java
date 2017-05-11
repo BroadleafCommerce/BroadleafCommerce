@@ -668,8 +668,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 return entity;
             }
 
-            // Only modify product options if this isn't an update for inventory properties
-            if (persistencePackage.containsCriteria(INVENTORY_ONLY_CRITERIA)) {
+            // Only modify product options if this ISN'T an update for inventory properties
+            if (!persistencePackage.containsCriteria(INVENTORY_ONLY_CRITERIA)) {
                 associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
             }
 
