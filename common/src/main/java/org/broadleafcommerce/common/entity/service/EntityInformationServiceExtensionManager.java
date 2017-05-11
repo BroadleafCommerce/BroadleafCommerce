@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Extension manager that holds the list of {@link EntityInformationServiceExtensionHandler}.
@@ -77,6 +78,13 @@ public class EntityInformationServiceExtensionManager extends ExtensionManager<E
             return ((EntityInformationServiceExtensionHandler) handler).findAllCatalogs((ExtensionResultHolder<List<Catalog>>) params[0]);
         }
     };
+    
+    public static final ExtensionManagerOperation getChildSiteIdsForProfile = new ExtensionManagerOperation() {
+        @Override
+        public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
+            return ((EntityInformationServiceExtensionHandler) handler).getChildSiteIdsForProfile((Site) params[0], (ExtensionResultHolder<Set<Long>>) params[1]);
+        }
+    };
 
     public EntityInformationServiceExtensionManager() {
         super(EntityInformationServiceExtensionHandler.class);
@@ -116,5 +124,10 @@ public class EntityInformationServiceExtensionManager extends ExtensionManager<E
     @Override
     public ExtensionResultStatusType getDefaultCatalogIdForSite(Site site, ExtensionResultHolder<Long> erh) {
         return execute(getDefaultCatalogIdForSite, site, erh);
+    }
+
+    @Override
+    public ExtensionResultStatusType getChildSiteIdsForProfile(Site profile, ExtensionResultHolder<Set<Long>> erh) {
+        return execute(getChildSiteIdsForProfile, profile, erh);
     }
 }
