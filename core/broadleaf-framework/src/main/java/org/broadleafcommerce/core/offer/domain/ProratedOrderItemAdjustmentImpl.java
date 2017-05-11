@@ -48,7 +48,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -69,7 +68,7 @@ public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustm
     @Id
     @GeneratedValue(generator = "ProratedOrderItemAdjustmentId")
     @GenericGenerator(
-            name = "OrderItemAdjustmentId",
+            name = "ProratedOrderItemAdjustmentId",
             strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "ProratedOrderItemAdjustmentImpl"),
