@@ -63,10 +63,13 @@ public interface IndexFieldDao {
     public List<IndexField> readSearchableFieldsByEntityType(FieldEntity entityType);
 
     List<IndexFieldType> getIndexFieldTypesByAbbreviation(String abbreviation);
+    List<IndexFieldType> getIndexFieldTypesByAbbreviationAndEntityType(String abbreviation, FieldEntity entityType);
 
     List<IndexFieldType> getIndexFieldTypesByAbbreviationOrPropertyName(String name);
 
     List<IndexFieldType> getIndexFieldTypes(FieldType facetFieldType);
 
     IndexField readIndexFieldByAbbreviation(String abbreviation);
+    IndexField readIndexFieldByAbbreviationAndEntityType(String abbreviation, FieldEntity entityType);
+
 }

@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.search.dao;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
@@ -120,15 +121,29 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
 
     @Override
     public List<IndexFieldType> getIndexFieldTypesByAbbreviation(String abbreviation) {
+        return getIndexFieldTypesByAbbreviationAndEntityType(abbreviation, null);
+    }
+    
+    @Override
+    public List<IndexFieldType> getIndexFieldTypesByAbbreviationAndEntityType(String abbreviation, FieldEntity entityType) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<IndexFieldType> criteria = builder.createQuery(IndexFieldType.class);
 
         Root<IndexFieldTypeImpl> root = criteria.from(IndexFieldTypeImpl.class);
 
         criteria.select(root);
-        criteria.where(
+        if (entityType == null) {
+            criteria.where(
                 builder.equal(root.get("indexField").get("field").get("abbreviation").as(String.class), abbreviation)
-        );
+            );
+        } else {
+            criteria.where(
+                    builder.and(
+                        builder.equal(root.get("indexField").get("field").get("abbreviation").as(String.class), abbreviation),
+                        builder.equal(root.get("indexField").get("field").get("entityType").as(String.class), entityType.getType())
+                    )
+            );
+        }
 
         TypedQuery<IndexFieldType> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -136,6 +151,7 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
 
         return query.getResultList();
     }
+
 
     @Override
     public List<IndexFieldType> getIndexFieldTypesByAbbreviationOrPropertyName(String name) {
@@ -182,25 +198,36 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
 
     @Override
     public IndexField readIndexFieldByAbbreviation(String abbreviation) {
+        return readIndexFieldByAbbreviationAndEntityType(abbreviation, null);
+    }
+    
+    @Override
+    public IndexField readIndexFieldByAbbreviationAndEntityType(String abbreviation, FieldEntity entityType) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<IndexField> criteria = builder.createQuery(IndexField.class);
 
         Root<IndexFieldImpl> root = criteria.from(IndexFieldImpl.class);
 
         criteria.select(root);
-        criteria.where(
+        if (entityType == null) {
+            criteria.where(
                 builder.equal(root.get("field").get("abbreviation").as(String.class), abbreviation)
-        );
+            );
+        } else {
+            criteria.where(
+                    builder.and(
+                        builder.equal(root.get("field").get("abbreviation").as(String.class), abbreviation),
+                        builder.equal(root.get("field").get("entityType").as(String.class), entityType.getType())
+                    )
+            );
+        }
 
         TypedQuery<IndexField> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
 
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException ex) {
-            return null;
-        }
+        List<IndexField> resultList = query.getResultList();
+        return CollectionUtils.isNotEmpty(resultList) ? resultList.get(0) : null;
     }
 
 }
