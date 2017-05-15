@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferAuditImpl;
+import org.broadleafcommerce.core.order.domain.Order;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     }
 
     @Override
-    public Long countUsesByCustomer(Long orderId, Long customerId, Long offerId) {
+    public Long countUsesByCustomer(Order order, Long customerId, Long offerId) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
@@ -85,7 +86,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         restrictions.add(
             builder.and(
                 builder.or(
-                    builder.notEqual(root.get("orderId"),  orderId),
+                    builder.notEqual(root.get("orderId"),  getOrderId(order)),
                     builder.isNull(root.get("orderId"))
                 ),
                 builder.equal(root.get("customerId"), customerId),
@@ -103,6 +104,10 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         }
     }
     
+    protected Long getOrderId(Order order) {
+        return order.getId();
+    }
+    
     @Deprecated
     @Override
     public Long countUsesByCustomer(Long customerId, Long offerId) {
@@ -115,7 +120,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     }
 
     @Override
-    public Long countOfferCodeUses(Long orderId, Long offerCodeId) {
+    public Long countOfferCodeUses(Order order, Long offerCodeId) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
@@ -125,7 +130,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         restrictions.add(
             builder.and(
                 builder.or(
-                    builder.notEqual(root.get("orderId"),  orderId),
+                    builder.notEqual(root.get("orderId"),  getOrderId(order)),
                     builder.isNull(root.get("orderId"))
                 ),
                 builder.equal(root.get("offerCodeId"), offerCodeId)
