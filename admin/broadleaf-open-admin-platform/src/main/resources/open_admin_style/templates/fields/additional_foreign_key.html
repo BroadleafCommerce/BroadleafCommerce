@@ -40,6 +40,7 @@
                 <input class="display-value read-only form-control" type="text" th:value="*{fields['__${field.name}__'].displayValue}" readonly="readonly"/>
                 <span class="input-group-btn">
                     <button class="clear-foreign-key secondary button"
+                            th:classappend="${field.readOnly}? 'read-only'"
                             th:disabled="${field.readOnly}"
                             type="button" th:inline="text"
                             th:unless="${field.required}"
@@ -48,6 +49,7 @@
                     </button>
 
                     <button class="to-one-lookup secondary button"
+                            th:classappend="${field.readOnly}? 'read-only'"
                             th:disabled="${field.readOnly}"
                             type="button" th:inline="text"
                             th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})},
