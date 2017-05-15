@@ -466,7 +466,7 @@ public class OfferServiceImpl implements OfferService {
         Customer customer = order.getCustomer();
         
         if (offer.isLimitedUsePerCustomer()) {
-            Long currentUses = offerAuditService.countUsesByCustomer(order.getId(), customer.getId(), offer.getId());
+            Long currentUses = offerAuditService.countUsesByCustomer(order, customer.getId(), offer.getId());
             
             if (currentUses >= offer.getMaxUsesPerCustomer()) {
                 return false;
@@ -495,7 +495,7 @@ public class OfferServiceImpl implements OfferService {
         boolean underCodeMaxUses = true;
         
         if (code.isLimitedUse()) {
-            Long currentCodeUses = offerAuditService.countOfferCodeUses(order.getId(), code.getId());
+            Long currentCodeUses = offerAuditService.countOfferCodeUses(order, code.getId());
             underCodeMaxUses = currentCodeUses < code.getMaxUses();
         }
         
