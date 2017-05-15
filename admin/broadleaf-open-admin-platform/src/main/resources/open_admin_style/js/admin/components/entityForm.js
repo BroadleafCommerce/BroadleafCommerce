@@ -457,7 +457,7 @@ $(document).ready(function() {
     }
 
     function hideTabSpinner($tab, $tabBody) {
-        $tabBody.find('button:not(.row-action)').prop("disabled", false);
+        $tabBody.find('button:not(.read-only, .row-action)').prop("disabled", false);
         $tab.find('i.fa-spinner').hide();
     }
 
