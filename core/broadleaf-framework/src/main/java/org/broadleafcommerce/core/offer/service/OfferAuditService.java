@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.offer.service;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import java.util.List;
 
@@ -52,12 +53,12 @@ public interface OfferAuditService {
      * applied to the Order so as not to prevent the Offer from applying 
      * to new items added to the Order by a CRS.
      *
-     * @param orderId
+     * @param order
      * @param customerId
      * @param offerId
      * @return number of times and offer has been used by a customer
      */
-    Long countUsesByCustomer(Long orderId, Long customerId, Long offerId);
+    Long countUsesByCustomer(Order order, Long customerId, Long offerId);
 
     /**
      * Counts how many times the an offer has been used by a customer
@@ -65,7 +66,7 @@ public interface OfferAuditService {
      * @param customerId
      * @param offerId
      * @return number of times and offer has been used by a customer
-     * @deprecated use {@link #countUsesByCustomer(Long, Long, Long)}
+     * @deprecated use {@link #countUsesByCustomer(Order, Long, Long)}
      */
     Long countUsesByCustomer(Long customerId, Long offerId);
 
@@ -75,18 +76,18 @@ public interface OfferAuditService {
      * applied to the Order so as not to prevent the OfferCODE from applying 
      * to new items added to the Order by a CRS.
      *
-     * @param orderId
+     * @param order
      * @param offerCodeId
      * @return number of times the offer code has been used
      */
-    Long countOfferCodeUses(Long orderId, Long offerCodeId);
+    Long countOfferCodeUses(Order order, Long offerCodeId);
 
     /**
      * Counts how many times the given offer code has been used in the system
      *
      * @param offerCodeId
      * @return number of times the offer code has been used
-     * @deprecated use {@link #countOfferCodeUses(Long, Long)}
+     * @deprecated use {@link #countOfferCodeUses(Order, Long)}
      */
     @Deprecated
     Long countOfferCodeUses(Long offerCodeId);
