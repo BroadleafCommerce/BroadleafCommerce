@@ -79,6 +79,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -1081,40 +1082,47 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     public void setFulfillmentType(FulfillmentType fulfillmentType) {
         this.fulfillmentType = fulfillmentType == null ? null : fulfillmentType.getType();
     }
-    
+
     protected List<CategorySearchFacet> getParentFacets(final Collection<SearchFacet> facets) {
         List<CategorySearchFacet> parentFacets = null;
-        
+
         if (getParentCategory() != null) {
             parentFacets = getParentCategory().getCumulativeSearchFacets();
             CollectionUtils.filter(parentFacets, new Predicate() {
                 @Override
                 public boolean evaluate(Object arg) {
                     CategorySearchFacet csf = (CategorySearchFacet) arg;
-                    
+
                     return !isExcludedSearchFacet(csf) && !facets.contains(csf.getSearchFacet());
                 }
-                
+
                 protected boolean isExcludedSearchFacet(CategorySearchFacet csf) {
                     boolean isExcludedSearchFacet = false;
-                    
+
                     for (CategoryExcludedSearchFacet excludedSearchFacet : getExcludedSearchFacets()) {
                         if (excludedSearchFacet.getSearchFacet().equals(csf.getSearchFacet())) {
                             isExcludedSearchFacet = true;
                             break;
                         }
                     }
-                    
+
                     return isExcludedSearchFacet;
                 }
             });
         }
-        
+
         return parentFacets;
     }
 
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets() {
+        Set<Category> categoryHierarchy = new HashSet<>();
+        return getCumulativeSearchFacets(categoryHierarchy);
+    }
+
+    @Override
+    public List<CategorySearchFacet> getCumulativeSearchFacets(Set<Category> categoryHierarchy) {
+        categoryHierarchy.add(this);
         List<CategorySearchFacet> returnCategoryFacets = new ArrayList<CategorySearchFacet>();
         returnCategoryFacets.addAll(getSearchFacets());
         Collections.sort(returnCategoryFacets, facetPositionComparator);
@@ -1127,8 +1135,19 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             });
 
         // Add in parent facets unless they are excluded
-        List<CategorySearchFacet> parentFacets = getParentFacets(facets);
-        
+        Category parentCategory = getDefaultParentCategory();
+        List<CategorySearchFacet> parentFacets = null;
+        if (parentCategory != null && !categoryHierarchy.contains(parentCategory)) {
+            parentFacets = parentCategory.getCumulativeSearchFacets(categoryHierarchy);
+            CollectionUtils.filter(parentFacets, new Predicate() {
+                @Override
+                public boolean evaluate(Object arg) {
+                    CategorySearchFacet csf = (CategorySearchFacet) arg;
+                    return !getExcludedSearchFacets().contains(csf.getSearchFacet())
+                            && !facets.contains(csf.getSearchFacet());
+                }
+            });
+        }
         if (parentFacets != null) {
             returnCategoryFacets.addAll(parentFacets);
         }
@@ -1201,6 +1220,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Override
     public void setCategoryAttributes(List<CategoryAttribute> categoryAttributes) {
         this.categoryAttributes = categoryAttributes;
+
     }
 
     @Override
@@ -1346,9 +1366,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             CategoryXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getAllChildCategoryXrefs().add(clonedEntry);
         }
-        for(CategoryAttribute entry : categoryAttributes){
-            CategoryAttribute clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            cloned.getCategoryAttributes().add(clonedEntry);
+        for(Map.Entry<String,CategoryAttribute> entry : getCategoryAttributesMap().entrySet()){
+            CategoryAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
+            cloned.getCategoryAttributesMap().put(entry.getKey(),clonedEntry);
         }
         for(CategorySearchFacet entry : searchFacets){
             CategorySearchFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
