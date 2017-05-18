@@ -330,6 +330,11 @@ public class CustomerServiceImpl implements CustomerService {
         return customerDao.readCustomerById(id);
     }
 
+    @Override
+    public Customer readCustomerByExternalId(String userExternalId) {
+        return customerDao.readCustomerByExternalId(userExternalId);
+    }
+
     public void setCustomerDao(CustomerDao customerDao) {
         this.customerDao = customerDao;
     }

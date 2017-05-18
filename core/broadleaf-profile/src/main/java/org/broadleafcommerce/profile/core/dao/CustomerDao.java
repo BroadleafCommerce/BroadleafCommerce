@@ -25,6 +25,8 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 public interface CustomerDao {
 
     public Customer readCustomerById(Long id);
+
+    public Customer readCustomerByExternalId(String id);
     
     public List<Customer> readCustomersByIds(List<Long> ids);
     
