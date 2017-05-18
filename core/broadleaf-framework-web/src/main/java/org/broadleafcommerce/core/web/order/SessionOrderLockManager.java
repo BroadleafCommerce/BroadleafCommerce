@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.web.order;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderLockManager;
@@ -29,9 +30,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 
-import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
-
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,12 +45,10 @@ public class SessionOrderLockManager implements OrderLockManager, ApplicationLis
 
     private static final Log LOG = LogFactory.getLog(SessionOrderLockManager.class);
     private static final Object LOCK = new Object();
-    private static final ConcurrentMap<String, ReentrantLock> SESSION_LOCKS;
+    private static final EfficientLRUMap<String, ReentrantLock> SESSION_LOCKS;
     
     static {
-        SESSION_LOCKS = new ConcurrentLinkedHashMap.Builder<String, ReentrantLock>()
-            .maximumWeightedCapacity(10000)
-            .build();
+        SESSION_LOCKS = new EfficientLRUMap<>(10000);
     }
 
     /**
