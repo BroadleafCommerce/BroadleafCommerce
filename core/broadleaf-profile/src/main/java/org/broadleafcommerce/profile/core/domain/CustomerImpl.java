@@ -222,6 +222,12 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
             visibility = VisibilityEnum.GRID_HIDDEN)
     protected String taxExemptionCode;
 
+    @Column(name = "EXTERNAL_ID", nullable = true)
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_ExternalId",
+            group = GroupName.Pricing, order = FieldOrder.TAX_EXEMPTION_CODE,
+            visibility = VisibilityEnum.GRID_HIDDEN)
+    private String externalId;
+
     @Transient
     protected String unencodedPassword;
 
@@ -248,6 +254,16 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String getExternalId() {
+        return externalId;
+    }
+
+    @Override
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     @Override

@@ -46,6 +46,8 @@ public interface CustomerService {
 
     public Customer readCustomerById(Long userId);
 
+    public Customer readCustomerByExternalId(String userExternalId);
+
     public Customer createCustomer();
 
     /**

@@ -51,7 +51,16 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer readCustomerById(Long id) {
         return em.find(CustomerImpl.class, id);
     }
-    
+
+    @Override
+    public Customer readCustomerByExternalId(String id) {
+        TypedQuery<Customer> query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EXTERNAL_ID", Customer.class);
+        query.setParameter("externalId", id);
+        query.setHint(QueryHints.HINT_CACHEABLE, false);
+        List<Customer> resultList = query.getResultList();
+        return CollectionUtils.isEmpty(resultList) ? null : resultList.get(0);
+    }
+
     @Override
     public List<Customer> readCustomersByIds(List<Long> ids){
         if (ids == null || ids.size() == 0) {
