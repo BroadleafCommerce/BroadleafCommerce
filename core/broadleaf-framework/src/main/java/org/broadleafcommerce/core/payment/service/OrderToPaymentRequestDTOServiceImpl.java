@@ -18,11 +18,15 @@
 
 package org.broadleafcommerce.core.payment.service;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
+import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -33,9 +37,13 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * Service that translates various pieces of information such as:
@@ -55,18 +63,24 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fgService;
+    
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
 
     @Override
     public PaymentRequestDTO translateOrder(Order order) {
         if (order != null) {
+            final Long id = order.getId();
+            final BroadleafCurrency currency = order.getCurrency();
+            PaymentRequestDTO requestDTO = new PaymentRequestDTO().orderId(id.toString());
+            
             if (LOG.isTraceEnabled()) {
-                LOG.trace(String.format("Translating Order (ID:%s) into a PaymentRequestDTO for the configured " +
-                        "gateway.", order.getId()));
+                LOG.trace(String.format("Translating Order (ID:%s) into a PaymentRequestDTO for the configured " + 
+                                        "gateway.", id));
             }
-            PaymentRequestDTO requestDTO = new PaymentRequestDTO()
-                    .orderId(order.getId().toString());
-            if (order.getCurrency() != null) {
-                requestDTO.orderCurrencyCode(order.getCurrency().getCurrencyCode());
+            
+            if (currency != null) {
+                requestDTO.orderCurrencyCode(currency.getCurrencyCode());
             }
 
             populateCustomerInfo(order, requestDTO);
@@ -87,11 +101,13 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     }
 
     @Override
-    public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction, boolean autoCalculateFinalPaymentTotals) {
-
+    public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction, 
+                                                         boolean autoCalculateFinalPaymentTotals) {
+        paymentTransaction = refreshTransaction(paymentTransaction);
+        
         if (LOG.isTraceEnabled()) {
-            LOG.trace(String.format("Translating Payment Transaction (ID:%s) into a PaymentRequestDTO for the configured " +
-                    "gateway.", paymentTransaction.getId()));
+            LOG.trace(String.format("Translating Payment Transaction (ID:%s) into a PaymentRequestDTO for the configured " + 
+                                    "gateway.", paymentTransaction.getId()));
         }
 
         //Will set the full amount to be charged on the transaction total/subtotal and not worry about shipping/tax breakdown
@@ -123,6 +139,23 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
         return requestDTO;
     }
+    
+    /*
+     * This avoids LazyInitializationExceptions in case of a rollback during checkout
+     */
+    protected PaymentTransaction refreshTransaction(PaymentTransaction paymentTransaction) {
+        final Class<? extends PaymentTransaction> clazz = paymentTransaction.getClass();
+        final PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+        final Long id = paymentTransaction.getId();
+
+        if (postLoaderDao != null) {
+            paymentTransaction = postLoaderDao.find(clazz, id);
+        } else {
+            paymentTransaction = em.find(clazz, id);
+        }
+        
+        return paymentTransaction;
+    }
 
     @Override
     public void populateTotals(Order order, PaymentRequestDTO requestDTO) {
@@ -152,11 +185,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     public void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO) {
         Customer customer = order.getCustomer();
         String phoneNumber = null;
-        if (customer.getCustomerPhones() != null && !customer.getCustomerPhones().isEmpty()) {
-            for (CustomerPhone phone : customer.getCustomerPhones()) {
-                if (phone.getPhone().isDefault()) {
-                    phoneNumber =  phone.getPhone().getPhoneNumber();
-                }
+        
+        for (CustomerPhone phone : ListUtils.emptyIfNull(customer.getCustomerPhones())) {
+            if (phone.getPhone().isDefault()) {
+                phoneNumber =  phone.getPhone().getPhoneNumber();
             }
         }
 
@@ -168,7 +200,6 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                 .lastName(customer.getLastName())
                 .email(orderEmail)
                 .phone(phoneNumber);
-
     }
 
     /**
