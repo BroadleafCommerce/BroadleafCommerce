@@ -23,13 +23,15 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
@@ -37,6 +39,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Proxy;
@@ -118,6 +121,9 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
 
+    @Transient
+    protected Sku deproxiedSku = null;
+
     @Override
     public Long getId() {
         return id;
@@ -147,9 +153,7 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
             } else {
                 DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(sku, salePrice);
                 Sku proxy = (Sku) Proxy.newProxyInstance(sku.getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(sku.getClass()), handler);
-
-                SkuPriceWrapper wrapper = new SkuPriceWrapper(proxy);
-                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(wrapper, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
                 returnPrice = dynamicPrices.getSalePrice();
             }
         } else {
@@ -173,15 +177,15 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     @Override
     public Money getSalePrice() {
         if (itemSalePrice == null) {
-            return sku.getSalePrice();
+            return getSku().getSalePrice();
         } else {
-            return getDynamicSalePrice(sku, itemSalePrice);
+            return getDynamicSalePrice(getSku(), itemSalePrice);
         }
     }
 
     @Override
     public Money getRetailPrice() {
-         return sku.getRetailPrice();
+         return getSku().getRetailPrice();
      }
 
     @Override
@@ -196,7 +200,20 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
 
     @Override
     public Sku getSku() {
-        return sku;
+        // We deproxy the sku to allow logic introduced by filters to still take place (this can be an issue since
+        // the sku is lazy loaded).
+        if (deproxiedSku == null) {
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+            Long id = sku.getId();
+            if (postLoaderDao != null && id != null) {
+                deproxiedSku = postLoaderDao.findSandboxEntity(SkuImpl.class, id);
+            } else if (sku instanceof HibernateProxy) {
+                deproxiedSku = HibernateUtils.deproxy(sku);
+            } else {
+                deproxiedSku = sku;
+            }
+        }
+        return deproxiedSku;
     }
 
     @Override
@@ -217,7 +234,7 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     @Override
     public void clearDynamicPrices() {
         dynamicPrices = null;
-        sku.clearDynamicPrices();
+        getSku().clearDynamicPrices();
     }
 
     @Override
