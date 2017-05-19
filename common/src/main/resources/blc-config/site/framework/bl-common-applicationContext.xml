@@ -27,4 +27,34 @@
 
     <context:component-scan base-package="org.broadleafcommerce.site.common.web"/>
 
+    <!--  Spring 4.1 Site Resource Handling Base Classes -->
+    <bean id="siteResourceHttpRequestHandlerBase" abstract="true" 
+            class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">
+        <property name="cacheSeconds" value="${staticResourceBrowserCacheSeconds}" />    
+        <property name="resourceResolvers" ref="blSiteResourceResolvers" />
+    </bean>
+    
+    <bean id="siteJsResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blJsLocations" />
+        <property name="resourceTransformers" ref="blJsResourceTransformers" />    
+    </bean>
+    <bean id="blJsResources" parent="siteJsResourceRequestHandlerBase" />
+    
+    <bean id="siteCssResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blCssLocations" />
+        <property name="resourceTransformers" ref="blCssResourceTransformers" />
+    </bean>
+    <bean id="blCssResources" parent="siteCssResourceRequestHandlerBase" />
+
+    <bean id="siteImageResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blImageLocations" />
+    </bean>
+    <bean id="blImageResources" parent="siteImageResourceRequestHandlerBase" />
+    
+    <bean id="siteFontResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blFontLocations"/>            
+    </bean>
+    <bean id="blFontResources" parent="siteFontResourceRequestHandlerBase" />
+   
+
 </beans>
