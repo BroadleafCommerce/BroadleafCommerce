@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
@@ -36,6 +37,7 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -64,8 +66,8 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fgService;
     
-    @PersistenceContext(unitName = "blPU")
-    protected EntityManager em;
+    @Resource(name = "blPostLoaderDao")
+    protected PostLoaderDao postLoaderDao;
 
     @Override
     public PaymentRequestDTO translateOrder(Order order) {
@@ -145,16 +147,9 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
      */
     protected PaymentTransaction refreshTransaction(PaymentTransaction paymentTransaction) {
         final Class<? extends PaymentTransaction> clazz = paymentTransaction.getClass();
-        final PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
         final Long id = paymentTransaction.getId();
 
-        if (postLoaderDao != null) {
-            paymentTransaction = postLoaderDao.find(clazz, id);
-        } else {
-            paymentTransaction = em.find(clazz, id);
-        }
-        
-        return paymentTransaction;
+        return postLoaderDao.find(clazz, id);
     }
 
     @Override
