@@ -124,6 +124,9 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     @Transient
     protected Sku deproxiedSku = null;
 
+    @Transient
+    protected ProductBundle deproxiedBundle = null;
+
     @Override
     public Long getId() {
         return id;
@@ -190,7 +193,23 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
 
     @Override
     public ProductBundle getBundle() {
-        return bundle;
+        // We deproxy the bundle to allow logic introduced by filters to still take place (this can be an issue since
+        // the bundle is lazy loaded).
+        if(deproxiedBundle == null) {
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+            Long id = bundle.getId();
+            if (postLoaderDao != null && id != null) {
+                deproxiedBundle = postLoaderDao.findSandboxEntity(ProductBundleImpl.class, id);
+            } else if (bundle instanceof HibernateProxy) {
+                deproxiedBundle = HibernateUtils.deproxy(bundle);
+            } else {
+                deproxiedBundle = bundle;
+            }
+        }
+        if (deproxiedBundle instanceof HibernateProxy) {
+            deproxiedBundle = HibernateUtils.deproxy(bundle);
+        }
+        return deproxiedBundle;
     }
 
     @Override
@@ -212,6 +231,9 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
             } else {
                 deproxiedSku = sku;
             }
+        }
+        if (deproxiedSku instanceof HibernateProxy) {
+            deproxiedSku = HibernateUtils.deproxy(sku);
         }
         return deproxiedSku;
     }
