@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.search.dao;
 
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -40,6 +41,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 @Repository("blSearchFacetDao")
@@ -143,13 +145,20 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
 
         Root<SearchFacetRangeImpl> ranges = criteria.from(SearchFacetRangeImpl.class);
         criteria.select(ranges);
-        criteria.where(
-                builder.and(
-                    builder.equal(ranges.get("searchFacet"), searchFacet),
-                    builder.or(builder.isNull(ranges.get("archiveStatus").get("archived").as(String.class)),
-                            builder.notEqual(ranges.get("archiveStatus").get("archived").as(Character.class), 'Y'))
-                )
-        );
+        Predicate facetRestriction = builder.equal(ranges.get("searchFacet"), searchFacet);
+        // ArchiveStatus could have been dynamically weaved onto SearchFacet, this query will fail
+        // if it hadn't
+        if (ArchiveStatus.class.isAssignableFrom(SearchFacetRangeImpl.class)) {
+            criteria.where(
+                    builder.and(
+                        facetRestriction,
+                        builder.or(builder.isNull(ranges.get("archiveStatus").get("archived").as(String.class)),
+                                builder.notEqual(ranges.get("archiveStatus").get("archived").as(Character.class), 'Y'))
+                    )
+            );
+        } else {
+            criteria.where(facetRestriction);
+        }
 
         TypedQuery<SearchFacetRange> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);

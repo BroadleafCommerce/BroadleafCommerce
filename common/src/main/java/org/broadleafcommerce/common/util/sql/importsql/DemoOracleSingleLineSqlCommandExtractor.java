@@ -93,7 +93,7 @@ public class DemoOracleSingleLineSqlCommandExtractor extends SingleLineSqlComman
             Matcher matcher = pattern.matcher(statement);
             while (matcher.find()) {
                 String date = matcher.group(1);
-                statement = statement.substring(0, statements[x].indexOf(date)) + "{ts " + date + "}" +
+                statement = statement.substring(0, statement.indexOf(date)) + "{ts " + date + "}" +
                     statement.substring(statement.indexOf(date) + date.length(), statement.length());
             }
             
@@ -106,6 +106,9 @@ public class DemoOracleSingleLineSqlCommandExtractor extends SingleLineSqlComman
                 String charCode = charMatcher.group(1);
                 statement = charMatcher.replaceAll("CHR(" + charCode + ")");
             }
+
+            // replace double backslashes with single, since all strings in oracle are literal
+            statement = statement.replace("\\\\", "\\");
 
             statements[x] = statement;
         }
