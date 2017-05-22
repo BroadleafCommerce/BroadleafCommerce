@@ -74,13 +74,13 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
         return (em == null) ? null : em.find(clazz, id);
     }
 
-    protected EntityManager getEntityManager(Class clazz) {
-        return persistenceService.identifyEntityManager(clazz);
-    }
-
     @Override
     public <T> T findSandboxEntity(Class<T> clazz, Object id) {
-        return em.find(clazz, id);
+        return find(clazz, id);
+    }
+
+    protected EntityManager getEntityManager(Class clazz) {
+        return persistenceService.identifyEntityManager(clazz);
     }
 
 }
