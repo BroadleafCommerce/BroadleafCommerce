@@ -84,4 +84,14 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     public CustomerAddress create() {
         return customerAddressDao.create();
     }
+
+    @Override
+    public List<CustomerAddress> readBatchAddresses(int start, int pageSize) {
+        return customerAddressDao.readBatchCustomerAddresses(start, pageSize);
+    }
+
+    @Override
+    public Long readNumberOfAddresses() {
+        return customerAddressDao.readNumberOfAddresses();
+    }
 }

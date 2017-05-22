@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -40,7 +41,7 @@ import org.springframework.stereotype.Repository;
 public class CustomerDaoImpl implements CustomerDao {
 
     private static final Log LOG = LogFactory.getLog(CustomerDaoImpl.class);
-    
+
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
@@ -116,14 +117,14 @@ public class CustomerDaoImpl implements CustomerDao {
         List<Customer> customers = readCustomersByEmail(emailAddress);
         return CollectionUtils.isEmpty(customers) ? null : customers.get(0);
     }
-    
+
     @Override
     public List<Customer> readCustomersByEmail(String emailAddress) {
         TypedQuery<Customer> query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EMAIL", Customer.class);
         query.setParameter("email", emailAddress);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
-        return query.getResultList();        
+        return query.getResultList();
     }
 
     @Override
@@ -159,5 +160,11 @@ public class CustomerDaoImpl implements CustomerDao {
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Customer");
 
         return query.getResultList();
+    }
+
+    @Override
+    public Long readNumberOfCustomers() {
+        Query query = em.createQuery("SELECT COUNT(xref) FROM org.broadleafcommerce.profile.core.domain.Customer xref");
+        return (Long) query.getSingleResult();
     }
 }
