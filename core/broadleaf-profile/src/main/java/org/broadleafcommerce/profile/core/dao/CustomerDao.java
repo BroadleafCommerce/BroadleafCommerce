@@ -27,9 +27,9 @@ public interface CustomerDao {
     public Customer readCustomerById(Long id);
 
     public Customer readCustomerByExternalId(String id);
-    
+
     public List<Customer> readCustomersByIds(List<Long> ids);
-    
+
     /**
      * Reads a batch list of customers from the DB.
      * @param start
@@ -40,7 +40,7 @@ public interface CustomerDao {
 
     /**
      * Returns the first customer that match the passed in username, with caching defaulted.
-     * 
+     *
      * @param username
      * @return
      */
@@ -49,7 +49,7 @@ public interface CustomerDao {
     /**
      * Returns the first customer that match the passed in username, and caches according to
      * cacheable.
-     * 
+     *
      * @param username
      * @param cacheable
      * @return
@@ -58,7 +58,7 @@ public interface CustomerDao {
 
     /**
      * Returns all customers that match the passed in username, with caching defaulted.
-     * 
+     *
      * @param username
      * @return
      */
@@ -67,7 +67,7 @@ public interface CustomerDao {
     /**
      * Returns all customers that match the passed in username, and caches according to
      * cacheable.
-     * 
+     *
      * @param username
      * @param cacheable
      * @return
@@ -78,15 +78,15 @@ public interface CustomerDao {
 
     /**
      * Returns the first customer that matches the passed in email.
-     * 
+     *
      * @param emailAddress
      * @return
      */
     public Customer readCustomerByEmail(String emailAddress);
-    
+
     /**
      * Returns all customers that matches the passed in email.
-     * 
+     *
      * @param emailAddress
      * @return
      */
@@ -100,4 +100,6 @@ public interface CustomerDao {
      * @param customer the customer entity to remove
      */
     void delete(Customer customer);
+
+    Long readNumberOfCustomers();
 }

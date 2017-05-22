@@ -68,13 +68,13 @@ import javax.annotation.Resource;
 public class CustomerServiceImpl implements CustomerService {
     private static final Log LOG = LogFactory.getLog(CustomerServiceImpl.class);
     private static final int PASSWORD_LENGTH = 16;
-    
+
     @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
 
     @Resource(name="blIdGenerationService")
     protected IdGenerationService idGenerationService;
-    
+
     @Resource(name="blCustomerForgotPasswordSecurityTokenDao")
     protected CustomerForgotPasswordSecurityTokenDao customerForgotPasswordSecurityTokenDao;
 
@@ -97,7 +97,7 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Resource(name="blPasswordEncoder")
     protected Object passwordEncoderBean;
-    
+
     /**
      * Optional password salt to be used with the passwordEncoder
      *
@@ -106,7 +106,7 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Deprecated
     protected String salt;
-    
+
     /**
      * Use a Salt Source ONLY if there's one configured
      *
@@ -116,28 +116,28 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired(required=false)
     @Qualifier("blSaltSource")
     protected SaltSource saltSource;
-    
+
     @Resource(name="blRoleDao")
     protected RoleDao roleDao;
-    
+
     @Resource(name="blEmailService")
     protected EmailService emailService;
-    
+
     @Resource(name="blForgotPasswordEmailInfo")
     protected EmailInfo forgotPasswordEmailInfo;
 
     @Resource(name="blForgotUsernameEmailInfo")
-    protected EmailInfo forgotUsernameEmailInfo;    
-    
+    protected EmailInfo forgotUsernameEmailInfo;
+
     @Resource(name="blRegistrationEmailInfo")
-    protected EmailInfo registrationEmailInfo;    
-    
+    protected EmailInfo registrationEmailInfo;
+
     @Resource(name="blChangePasswordEmailInfo")
-    protected EmailInfo changePasswordEmailInfo;       
-    
+    protected EmailInfo changePasswordEmailInfo;
+
     protected int tokenExpiredMinutes = 30;
-    protected int passwordTokenLength = 20;   
-             
+    protected int passwordTokenLength = 20;
+
     protected final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
     protected List<PasswordUpdatedHandler> passwordResetHandlers = new ArrayList<PasswordUpdatedHandler>();
     protected List<PasswordUpdatedHandler> passwordChangedHandlers = new ArrayList<PasswordUpdatedHandler>();
@@ -177,7 +177,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (register && !customer.isRegistered()) {
             customer.setRegistered(true);
         }
-        
+
         if (customer.getUnencodedPassword() != null) {
             customer.setPassword(encodePassword(customer.getUnencodedPassword(), customer));
         }
@@ -207,10 +207,10 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setUnencodedPassword(password);
         Customer retCustomer = saveCustomer(customer);
         createRegisteredCustomerRoles(retCustomer);
-        
+
         HashMap<String, Object> vars = new HashMap<String, Object>();
         vars.put("customer", retCustomer);
-        
+
         sendEmail(customer.getEmailAddress(), getRegistrationEmailInfo(), vars);
         notifyPostRegisterListeners(retCustomer);
         return retCustomer;
@@ -237,14 +237,14 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setUnencodedPassword(passwordChange.getNewPassword());
         customer.setPasswordChangeRequired(passwordChange.getPasswordChangeRequired());
         customer = saveCustomer(customer);
-        
+
         for (PasswordUpdatedHandler handler : passwordChangedHandlers) {
             handler.passwordChanged(passwordChange, customer, passwordChange.getNewPassword());
         }
-        
+
         return customer;
     }
-    
+
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Customer resetPassword(PasswordReset passwordReset) {
@@ -253,11 +253,11 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setUnencodedPassword(newPassword);
         customer.setPasswordChangeRequired(passwordReset.getPasswordChangeRequired());
         customer = saveCustomer(customer);
-        
+
         for (PasswordUpdatedHandler handler : passwordResetHandlers) {
             handler.passwordChanged(passwordReset, customer, newPassword);
         }
-        
+
         return customer;
     }
 
@@ -351,13 +351,13 @@ public class CustomerServiceImpl implements CustomerService {
         this.passwordEncoderBean = passwordEncoder;
         setupPasswordEncoder();
     }
-    
+
     @Deprecated
     @Override
     public Object getSalt(Customer customer) {
         return getSalt(customer, "");
     }
-    
+
     @Deprecated
     @Override
     public Object getSalt(Customer customer, String unencodedPassword) {
@@ -445,7 +445,7 @@ public class CustomerServiceImpl implements CustomerService {
     public String getSalt() {
         return salt;
     }
-    
+
     @Override
     @Deprecated
     public void setSalt(String salt) {
@@ -483,7 +483,7 @@ public class CustomerServiceImpl implements CustomerService {
     public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers) {
         this.passwordChangedHandlers = passwordChangedHandlers;
     }
-    
+
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public GenericResponse sendForgotUsernameNotification(String emailAddress) {
@@ -527,7 +527,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         checkCustomer(customer, response);
 
-        if (! response.getHasErrors()) {        
+        if (! response.getHasErrors()) {
             String token = PasswordUtils.generateSecurePassword(getPasswordTokenLength());
             token = token.toLowerCase();
 
@@ -557,7 +557,7 @@ public class CustomerServiceImpl implements CustomerService {
                     resetPasswordUrl=resetPasswordUrl+"?token="+token;
                 }
             }
-            vars.put("resetPasswordUrl", resetPasswordUrl); 
+            vars.put("resetPasswordUrl", resetPasswordUrl);
             sendEmail(customer.getEmailAddress(), getForgotPasswordEmailInfo(), vars);
         }
         return response;
@@ -625,7 +625,7 @@ public class CustomerServiceImpl implements CustomerService {
             } else if (isTokenExpired(fpst)) {
                 response.addErrorCode("tokenExpired");
             }
-        }       
+        }
         return fpst;
     }
 
@@ -748,5 +748,15 @@ public class CustomerServiceImpl implements CustomerService {
     @Deprecated
     protected boolean usingDeprecatedPasswordEncoder() {
         return passwordEncoder != null;
+    }
+
+    @Override
+    public List<Customer> readBatchCustomers(int start, int pageSize){
+        return customerDao.readBatchCustomers(start, pageSize);
+    }
+
+    @Override
+    public Long readNumberOfCustomers() {
+        return customerDao.readNumberOfCustomers();
     }
 }
