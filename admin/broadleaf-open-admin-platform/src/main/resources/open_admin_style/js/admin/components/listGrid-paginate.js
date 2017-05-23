@@ -287,7 +287,19 @@
                     $(document).enableSelection();
                 }
             });
-            
+
+            // Initialize the headers for the initial load
+            var $columnHeaders = $headerTable.find('thead tr th');
+            $columnHeaders.each(function(index, header) {
+                var currentHeader = $($columnHeaders[index])[0];
+                var $currentHeaderText = $(currentHeader).find('.listgrid-title span');
+
+                var nextHeader = $($columnHeaders[index+1])[0];
+                var $nextHeaderText = $(nextHeader).find('.listgrid-title span');
+
+                $currentHeaderText.outerWidth($(currentHeader).outerWidth() - CONTROL_WIDTH);
+                $nextHeaderText.outerWidth($(nextHeader).outerWidth() - CONTROL_WIDTH);
+            });
         },
         
         // ********************** *
