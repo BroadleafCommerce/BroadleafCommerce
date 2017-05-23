@@ -818,6 +818,15 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 }
             }
 
+            if (e.findProperty("progressStatus") != null) {
+                ExtensionResultStatusType messageResultStatus = listGridErrorExtensionManager
+                        .getProxy().determineStatusMessageForEntity(e, record);
+                if (ExtensionResultStatusType.NOT_HANDLED.equals(messageResultStatus)) {
+                    record.setStatus(e.findProperty("progressStatus").getValue());
+                    record.setStatusCssClass("listgrid.record.status");
+                }
+            }
+
             if (e.findProperty(idProperty) != null) {
                 record.setId(e.findProperty(idProperty).getValue());
             }
