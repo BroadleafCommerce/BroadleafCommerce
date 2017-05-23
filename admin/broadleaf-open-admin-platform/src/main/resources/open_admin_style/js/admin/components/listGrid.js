@@ -335,7 +335,8 @@
 
             // update duration fields
             $($.find("[data-fieldname='durationLabel']")).each(function () {
-                var day = moment.duration(parseInt($(this).html())).format('h[h] m[m] s[s]');
+                var parsed = parseInt($(this).data("fieldvalue"));
+                var day = moment.duration(parsed).format('h[h] m[m] s[s]');
                 $(this).html(day);
             });
 
