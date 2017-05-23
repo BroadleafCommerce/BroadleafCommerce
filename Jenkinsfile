@@ -8,5 +8,4 @@ properties(commonModuleJobProps(
         description: 'Identifier validation is intentionally disabled, do not re-enable it or the build will fail'
     ))
 )
-properties(commonModuleJobProps())
 buildBroadleafModule(params)
