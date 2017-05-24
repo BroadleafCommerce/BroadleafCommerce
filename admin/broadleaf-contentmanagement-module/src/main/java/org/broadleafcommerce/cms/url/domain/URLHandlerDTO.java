@@ -71,7 +71,7 @@ public class URLHandlerDTO implements URLHandler {
     }
 
     @Override
-    public void setRegexHandler(boolean regexHandler) {
+    public void setRegexHandler(Boolean regexHandler) {
         this.isRegex = regexHandler;
     }
 

@@ -153,8 +153,8 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     }
 
     @Override
-    public void setRegexHandler(boolean regexHandler) {
-        this.isRegex = regexHandler;
+    public void setRegexHandler(Boolean regexHandler) {
+        this.isRegex = regexHandler != null ? regexHandler : false;
     }
 
     @Override
