@@ -70,6 +70,12 @@ public class URLHandlerDTO implements URLHandler {
         return isRegex;
     }
 
+    @Deprecated
+    @Override
+    public void setRegexHandler(boolean regexHandler) {
+        this.isRegex = regexHandler;
+    }
+
     @Override
     public void setRegexHandler(Boolean regexHandler) {
         this.isRegex = regexHandler != null ? regexHandler : false;
