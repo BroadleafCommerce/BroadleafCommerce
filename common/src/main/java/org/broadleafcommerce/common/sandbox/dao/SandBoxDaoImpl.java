@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.sandbox.dao;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxManagement;
