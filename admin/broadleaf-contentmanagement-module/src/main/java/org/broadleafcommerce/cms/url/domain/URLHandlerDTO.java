@@ -70,6 +70,9 @@ public class URLHandlerDTO implements URLHandler {
         return isRegex;
     }
 
+    /**
+     * @Deprecated use {@link #setRegexHandler(Boolean regexHandler)}
+     */
     @Deprecated
     @Override
     public void setRegexHandler(boolean regexHandler) {
@@ -101,7 +104,7 @@ public class URLHandlerDTO implements URLHandler {
         cloned.setIncomingURL(incomingURL);
         cloned.setNewURL(newURL);
         cloned.setUrlRedirectType(URLRedirectType.getInstance(urlRedirectType));
-        cloned.setRegexHandler(isRegex);
+        cloned.setRegexHandler(new Boolean(isRegex));
         return createResponse;
     }
 }
