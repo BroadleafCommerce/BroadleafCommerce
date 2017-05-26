@@ -70,8 +70,11 @@ public class SandBoxDaoImpl implements SandBoxDao {
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
         criteria.select(sandbox.get("sandBox").as(SandBox.class));
         criteria.where(
-                builder.and(builder.notEqual(sandbox.get("sandBox").get("name").as(String.class), ""),
-                builder.or(builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
+                builder.and(builder.or(
+                        builder.isNotNull(sandbox.get("sandBox").get("name")),
+                        builder.notEqual(sandbox.get("sandBox").get("name").as(String.class), "")),
+                builder.or(
+                        builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
                         builder.notEqual(sandbox.get("sandBox").get("archiveStatus").get("archived").as(Character.class), 'Y')))
         );
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
@@ -88,8 +91,11 @@ public class SandBoxDaoImpl implements SandBoxDao {
         criteria.select(sandbox.get("sandBox").as(SandBox.class));
         criteria.where(
                 builder.and(builder.equal(sandbox.get("sandBox").get("sandboxType"), sandboxType.getType()),
-                        builder.notEqual(sandbox.get("sandBox").get("name").as(String.class), ""),
-                        builder.or(builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
+                        builder.or(
+                                builder.isNotNull(sandbox.get("sandBox").get("name")),
+                                builder.notEqual(sandbox.get("sandBox").get("name").as(String.class), "")),
+                        builder.or(
+                                builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
                                 builder.notEqual(sandbox.get("sandBox").get("archiveStatus").get("archived").as(Character.class), 'Y')))
         );
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
@@ -128,7 +134,8 @@ public class SandBoxDaoImpl implements SandBoxDao {
         criteria.select(sandbox.get("sandBox").as(SandBox.class));
         criteria.where(
                 builder.and(sandbox.get("sandBox").get("parentSandBox").in(parentSandBoxId),
-                        builder.notEqual(sandbox.get("sandBox").get("name").as(String.class), ""),
+                        builder.or(builder.isNotNull(sandbox.get("sandBox").get("name")),
+                                builder.notEqual(sandbox.get("sandBox").get("name").as(String.class), "")),
                         builder.or(builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
                                 builder.notEqual(sandbox.get("sandBox").get("archiveStatus").get("archived").as(Character.class), 'Y')))
         );
@@ -150,7 +157,11 @@ public class SandBoxDaoImpl implements SandBoxDao {
         restrictions.add(builder.equal(sandbox.get("sandBox").get("sandboxType"), SandBoxType.USER.getType()));
         restrictions.add(builder.equal(sandbox.get("sandBox").get("author"), authorId));
         restrictions.add(builder.equal(sandbox.get("sandBox").get("parentSandBox").get("id"), parentSandBoxId));
-        restrictions.add(builder.notEqual(sandbox.get("sandBox").get("name").as(String.class), ""));
+        restrictions.add(
+                builder.or(
+                        builder.isNotNull(sandbox.get("sandBox").get("name")),
+                        builder.notEqual(sandbox.get("sandBox").get("name").as(String.class), ""))
+        );
         restrictions.add(
                 builder.or(
                         builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
@@ -287,7 +298,11 @@ public class SandBoxDaoImpl implements SandBoxDao {
         criteria.select(sandbox.get("sandBox").as(SandBox.class));
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(builder.equal(sandbox.get("sandBox").get("author"), authorId));
-        restrictions.add(builder.notEqual(sandbox.get("sandBox").get("name").as(String.class), ""));
+        restrictions.add(
+                builder.or(
+                        builder.isNotNull(sandbox.get("sandBox").get("name")),
+                        builder.notEqual(sandbox.get("sandBox").get("name").as(String.class), ""))
+        );
         if (sandBoxType != null) {
             restrictions.add(builder.equal(sandbox.get("sandBox").get("sandboxType"), sandBoxType.getType()));
         }
