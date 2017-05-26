@@ -54,5 +54,11 @@ public interface URLHandler extends Serializable, MultiTenantCloneable<URLHandle
      *
      * @param regexHandler
      */
+    public abstract void setRegexHandler(Boolean regexHandler);
+
+    /**
+     * @Deprecated use {@link #setRegexHandler(Boolean regexHandler)} 
+     */
+    @Deprecated
     public abstract void setRegexHandler(boolean regexHandler);
 }
