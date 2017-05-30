@@ -20,14 +20,13 @@ package org.broadleafcommerce.core.web.geolocation;
 import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
-import org.springframework.core.Ordered;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +36,8 @@ import javax.servlet.http.HttpServletResponse;
 @ConditionalOnNotAdmin
 public class GeolocationFilter extends AbstractIgnorableOncePerRequestFilter {
 
-    @Resource(name="blGeolocationRequestProcessor")
+    @Autowired
+    @Qualifier("blGeolocationRequestProcessor")
     protected GeolocationRequestProcessor geolocationRequestProcessor;
 
     @Override

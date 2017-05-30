@@ -28,6 +28,8 @@ import org.broadleafcommerce.core.order.service.OrderLockManager;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.order.security.exception.OrderLockAcquisitionFailureException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -38,7 +40,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -67,13 +68,16 @@ public class CartStateFilter extends AbstractIgnorableOncePerRequestFilter {
 
     protected static final Log LOG = LogFactory.getLog(CartStateFilter.class);
 
-    @Resource(name = "blCartStateRequestProcessor")
+    @Autowired
+    @Qualifier("blCartStateRequestProcessor")
     protected CartStateRequestProcessor cartStateProcessor;
 
-    @Resource(name = "blOrderLockManager")
+    @Autowired
+    @Qualifier("blOrderLockManager")
     protected OrderLockManager orderLockManager;
     
-    @Resource(name = "blOrderService")
+    @Autowired
+    @Qualifier("blOrderService")
     protected OrderService orderService;
 
     protected List<String> excludedOrderLockRequestPatterns;

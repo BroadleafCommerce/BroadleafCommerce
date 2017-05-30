@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionServiceImpl;
 import org.broadleafcommerce.common.security.service.StaleStateServiceException;
@@ -32,18 +33,17 @@ import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.broadleafcommerce.openadmin.security.ClassNameRequestParamValidationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.Persistable;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
-import org.broadleafcommerce.common.persistence.TargetModeType;
-import org.springframework.core.Ordered;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.LinkedHashMap;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -60,16 +60,20 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
 
     private final Log LOG = LogFactory.getLog(BroadleafAdminRequestFilter.class);
 
-    @Resource(name = "blAdminRequestProcessor")
+    @Autowired
+    @Qualifier("blAdminRequestProcessor")
     protected BroadleafWebRequestProcessor requestProcessor;
 
-    @Resource(name="blPersistenceThreadManager")
+    @Autowired
+    @Qualifier("blPersistenceThreadManager")
     protected PersistenceThreadManager persistenceThreadManager;
 
-    @Resource(name="blClassNameRequestParamValidationService")
+    @Autowired
+    @Qualifier("blClassNameRequestParamValidationService")
     protected ClassNameRequestParamValidationService validationService;
 
-    @Resource(name="blStaleStateProtectionService")
+    @Autowired
+    @Qualifier("blStaleStateProtectionService")
     protected StaleStateProtectionService staleStateProtectionService;
 
     @Override

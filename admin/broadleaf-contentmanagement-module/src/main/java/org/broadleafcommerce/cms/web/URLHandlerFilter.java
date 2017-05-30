@@ -28,10 +28,10 @@ import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -41,7 +41,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -58,10 +57,12 @@ public class URLHandlerFilter extends AbstractIgnorableOncePerRequestFilter {
 
     private static final Log LOG = LogFactory.getLog(URLHandlerFilter.class);
 
-    @Resource(name = "blURLHandlerService")
+    @Autowired
+    @Qualifier("blURLHandlerService")
     private URLHandlerService urlHandlerService;
 
-    @Resource(name = "blURLHandlerFilterExtensionManager")
+    @Autowired
+    @Qualifier("blURLHandlerFilterExtensionManager")
     private URLHandlerFilterExtensionManager extensionManager;
 
     @Value("${request.uri.encoding}")

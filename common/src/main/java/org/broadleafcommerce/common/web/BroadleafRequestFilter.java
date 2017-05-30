@@ -28,6 +28,8 @@ import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
 import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -36,7 +38,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +68,8 @@ public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilte
 
     private Set<String> ignoreSuffixes;
 
-    @Resource(name = "blRequestProcessor")
+    @Autowired
+    @Qualifier("blRequestProcessor")
     protected BroadleafRequestProcessor requestProcessor;
 
     @Override

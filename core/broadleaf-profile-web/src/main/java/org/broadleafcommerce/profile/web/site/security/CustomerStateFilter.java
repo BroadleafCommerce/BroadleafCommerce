@@ -21,6 +21,8 @@ import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.broadleafcommerce.profile.web.core.security.CustomerStateRequestProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -46,7 +48,8 @@ import javax.servlet.http.HttpServletResponse;
 @Component("blCustomerStateFilter")
 public class CustomerStateFilter extends AbstractIgnorableOncePerRequestFilter {
     
-    @Resource(name="blCustomerStateRequestProcessor")
+    @Autowired
+    @Qualifier("blCustomerStateRequestProcessor")
     protected CustomerStateRequestProcessor customerStateProcessor;
 
     @Override

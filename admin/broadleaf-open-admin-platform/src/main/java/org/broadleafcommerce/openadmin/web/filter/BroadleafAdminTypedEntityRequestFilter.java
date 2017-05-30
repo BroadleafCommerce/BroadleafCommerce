@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.TypedEntity;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
@@ -35,7 +34,8 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
-import org.springframework.core.Ordered;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -44,7 +44,6 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -61,16 +60,20 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
     private final Log LOG = LogFactory.getLog(BroadleafAdminTypedEntityRequestFilter.class);
 
-    @Resource(name = "blAdminRequestProcessor")
+    @Autowired
+    @Qualifier("blAdminRequestProcessor")
     protected BroadleafWebRequestProcessor requestProcessor;
 
-    @Resource(name="blAdminNavigationService")
+    @Autowired
+    @Qualifier("blAdminNavigationService")
     protected AdminNavigationService adminNavigationService;
 
-    @Resource(name = "blAdminSecurityRemoteService")
+    @Autowired
+    @Qualifier("blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
 
-    @Resource(name = "blGenericEntityService")
+    @Autowired
+    @Qualifier("blGenericEntityService")
     GenericEntityService genericEntityService;
 
     @Override
