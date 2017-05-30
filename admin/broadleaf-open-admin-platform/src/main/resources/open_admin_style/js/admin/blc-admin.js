@@ -311,6 +311,10 @@ var BLCAdmin = (function($) {
         },
 
         showMessageAsModal : function(header, message) {
+            this.showMessageAsModalWithCallback(header, message);
+        },
+
+        showMessageAsModalWithCallback : function(header, message, onModalHide, onModalHideArgs) {
             if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
                 BLCAdmin.hideCurrentModal();
             }
@@ -321,7 +325,7 @@ var BLCAdmin = (function($) {
             $modal.find('.modal-body').append(message);
             $modal.find('.modal-body').css('padding-bottom', '20px');
 
-            this.showElementAsModal($modal);
+            this.showElementAsModal($modal, onModalHide, onModalHideArgs);
         },
 
         showElementAsModal : function($element, onModalHide, onModalHideArgs) {
