@@ -844,7 +844,7 @@ $(document).ready(function () {
                 },
                 update : function(event, ui) {
                     var url = ui.item.data('link') + '/sequence';
-                    
+
                     if (BLCAdmin.treeListGrid !== undefined) {
                         url = BLCAdmin.treeListGrid.updateSequenceUrl(ui, url);
                     }
