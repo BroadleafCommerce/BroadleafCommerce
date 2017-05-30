@@ -23,7 +23,6 @@ package org.broadleafcommerce.common.config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
@@ -35,16 +34,6 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 @Configuration
 public class BroadleafCommonConfig {
 
-    /**
-     * Used in order to hydrate beans that have {@literal @}Value annotations on their properties.
-     */
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer blPropertyPlaceholderConfigurer() {
-        PropertySourcesPlaceholderConfigurer pppc = new PropertySourcesPlaceholderConfigurer();
-        pppc.setIgnoreUnresolvablePlaceholders(true);
-        return pppc;
-    }
-    
     /**
      * Other enterprise/mulititenant modules override this adapter to provide one that supports dynamic filtration
      */

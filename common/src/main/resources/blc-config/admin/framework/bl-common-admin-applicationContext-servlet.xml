@@ -26,7 +26,7 @@
     <!-- Bean Post-processors that need to activated in the servlet context  -->
     
     <!-- Ensures the @Value annotations are resolved -->
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+    <bean id="blPropertyPlaceholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
         <property name="ignoreUnresolvablePlaceholders" value="true" />
     </bean>
     
