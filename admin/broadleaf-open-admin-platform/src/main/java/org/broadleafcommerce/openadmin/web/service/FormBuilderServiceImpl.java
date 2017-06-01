@@ -520,6 +520,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (drs.getTotalCountLessThanPageSize() != null) {
             listGrid.setTotalCountLessThanPageSize(drs.getTotalCountLessThanPageSize());
         }
+        if (drs.getPromptSearch() != null) {
+            listGrid.setPromptSearch(drs.getPromptSearch());
+        }
 
         return listGrid;
     }

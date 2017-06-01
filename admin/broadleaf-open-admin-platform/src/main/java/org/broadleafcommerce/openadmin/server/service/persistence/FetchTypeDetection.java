@@ -25,11 +25,17 @@ import org.broadleafcommerce.openadmin.server.service.type.FetchType;
 
 /**
  * Detect the type of fetch and paging being used for a particular admin pipeline fetch request
+ * </p>
+ * Also, {@link #shouldPromptForSearch(PersistencePackage, CriteriaTransferObject)} designates whether this fetch
+ * request should be considered empty and instead prompt the user to enter a search term in the listgrid before
+ * retrieving records. This save a wasted default retrieval delay, which could be impactful.
  *
  * @author Jeff Fischer
  */
 public interface FetchTypeDetection {
 
     FetchType getFetchType(PersistencePackage persistencePackage, CriteriaTransferObject cto);
+
+    boolean shouldPromptForSearch(PersistencePackage persistencePackage, CriteriaTransferObject cto);
 
 }

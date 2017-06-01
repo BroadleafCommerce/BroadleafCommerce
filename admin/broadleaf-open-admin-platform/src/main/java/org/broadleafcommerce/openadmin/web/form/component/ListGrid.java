@@ -70,6 +70,7 @@ public class ListGrid {
     protected int upperCount;
     protected int lowerCount;
     protected boolean totalCountLessThanPageSize;
+    protected boolean promptSearch;
     
     protected AddMethodType addMethodType;
     protected String listGridType;
@@ -476,5 +477,13 @@ public class ListGrid {
 
     public void setTotalCountLessThanPageSize(boolean totalCountLessThanPageSize) {
         this.totalCountLessThanPageSize = totalCountLessThanPageSize;
+    }
+
+    public boolean isPromptSearch() {
+        return promptSearch;
+    }
+
+    public void setPromptSearch(boolean promptSearch) {
+        this.promptSearch = promptSearch;
     }
 }

@@ -44,6 +44,7 @@ public class DynamicResultSet implements Serializable {
     private Integer lowerCount;
     private FetchType fetchType;
     private Boolean totalCountLessThanPageSize;
+    private Boolean promptSearch;
 
     public DynamicResultSet() {
         //do nothing
@@ -158,5 +159,13 @@ public class DynamicResultSet implements Serializable {
 
     public void setTotalCountLessThanPageSize(Boolean totalCountLessThanPageSize) {
         this.totalCountLessThanPageSize = totalCountLessThanPageSize;
+    }
+
+    public Boolean getPromptSearch() {
+        return promptSearch;
+    }
+
+    public void setPromptSearch(Boolean promptSearch) {
+        this.promptSearch = promptSearch;
     }
 }

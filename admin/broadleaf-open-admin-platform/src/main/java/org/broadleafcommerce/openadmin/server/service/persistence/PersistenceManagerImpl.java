@@ -381,6 +381,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
         if (fetchDetection != null) {
             persistenceResponse.getDynamicResultSet().setFetchType(fetchDetection.getFetchType(persistencePackage, cto));
+            persistenceResponse.getDynamicResultSet().setPromptSearch(fetchDetection.shouldPromptForSearch(persistencePackage, cto));
         }
 
         return persistenceResponse;
