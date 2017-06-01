@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
@@ -37,8 +38,11 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.ejb.QueryHints;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -136,9 +140,9 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
     @Override
     public List<Long> readSkuIdsForProductOptionValues(Long productId, String attributeName, String attributeValue, List<Long> possibleSkuIds) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> criteria = cb.createQuery(Long.class);
+        CriteriaQuery<Sku> criteria = cb.createQuery(Sku.class);
         Root<SkuProductOptionValueXrefImpl> root = criteria.from(SkuProductOptionValueXrefImpl.class);
-        criteria.select(root.get("sku").get("id").as(Long.class));
+        criteria.select(root.get("sku").as(Sku.class));
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -163,10 +167,24 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
         criteria.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 
-        TypedQuery<Long> query = em.createQuery(criteria);
+        TypedQuery<Sku> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-        return query.getResultList();
+        List<Sku> candidateSkus = query.getResultList();
+        
+        return filterCandidateSkusForArchivedStatus(candidateSkus);
+    }
+    
+    protected List<Long> filterCandidateSkusForArchivedStatus(final List<Sku> candidateSkus) {
+        final List<Long> validCandidateSkuIds = new ArrayList<>();
+        
+        for (final Sku sku : candidateSkus) {
+            if (sku instanceof Status && !Objects.equals(((Status) sku).getArchived(), 'Y')) {
+                validCandidateSkuIds.add(sku.getId());
+            }
+        }
+        
+        return validCandidateSkuIds;
     }
 
     protected void attachArchivalConditionIfPossible(Class<?> clazz, Path<?> path, CriteriaBuilder cb, List<Predicate> predicates) {
