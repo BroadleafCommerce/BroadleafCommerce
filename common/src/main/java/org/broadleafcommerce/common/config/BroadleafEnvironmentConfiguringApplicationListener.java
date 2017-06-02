@@ -133,7 +133,7 @@ public class BroadleafEnvironmentConfiguringApplicationListener implements Appli
         }
         
         String deprecatedRuntimeEnvironment = env.getProperty(DEPRECATED_RUNTIME_ENVIRONMENT_KEY);
-        if (ArrayUtils.isEmpty(env.getActiveProfiles()) && StringUtils.isNotBlank(deprecatedRuntimeEnvironment)) {
+        if (StringUtils.isNotBlank(deprecatedRuntimeEnvironment)) {
             LOG.warn("The use of -Druntime.environment is deprecated in favor of Spring Profiles and will be removed in a future release. To specify a profile as a -D argument use -Dspring.profiles.active as a drop-in replacement"
                 + " for -Druntime.environment. Adding " + deprecatedRuntimeEnvironment + " to the list of active Spring profiles.");
             env.addActiveProfile(deprecatedRuntimeEnvironment);
