@@ -34,8 +34,28 @@ import org.broadleafcommerce.openadmin.server.service.type.FetchType;
  */
 public interface FetchTypeDetection {
 
+    /**
+     * Detect whether or not this list grid will fetch records using infinite scroll and traditional paging
+     * ({@link FetchType#DEFAULT}), or next and previous page links with scrolling only for the current page of records
+     * ({@link FetchType#LARGERESULTSET}).
+     *
+     * @param persistencePackage
+     * @param cto
+     * @return
+     */
     FetchType getFetchType(PersistencePackage persistencePackage, CriteriaTransferObject cto);
 
+    /**
+     * Designates whether this fetch request should be considered empty and instead prompt the user to enter a search term
+     * in the listgrid before retrieving records. This save a wasted default retrieval delay, which could be impactful.
+     * </p>
+     * This should not include filtered list grids, as a filtered list grid indicates a search has been
+     * performed, in which case, you always want to return the records found.
+     *
+     * @param persistencePackage
+     * @param cto
+     * @return
+     */
     boolean shouldPromptForSearch(PersistencePackage persistencePackage, CriteriaTransferObject cto);
 
 }
