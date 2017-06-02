@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.module;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.condition.ConditionalOnBroadleafModule;
 import org.broadleafcommerce.common.condition.OnBroadleafModuleCondition;
 import org.broadleafcommerce.common.logging.ModuleLifecycleLoggingBean;
@@ -35,6 +36,7 @@ import javax.annotation.Nonnull;
  * @see {@link OnBroadleafModuleCondition}
  * @author Nathan Moore (nathanmoore).
  * @author Phillip Verheyden (phillipuniverse)
+ * @author Philip Baggett (pbaggett)
  */
 public class ModulePresentUtil {
 
@@ -49,6 +51,22 @@ public class ModulePresentUtil {
      */
     public static boolean isPresent(@Nonnull final BroadleafModuleEnum moduleInQuestion) {
         return isPresent(moduleInQuestion.getName());
+    }
+
+    /**
+     * Checks that every module in the list is registered.
+     *
+     * @param modulesInQuestion list of modules that should be checked
+     * @return true if all modules in the list are present, false otherwise
+     * @see #isPresent(String)
+     */
+    public static boolean allPresent(@Nonnull final List<String> modulesInQuestion) {
+        for (String module : modulesInQuestion) {
+            if (StringUtils.isEmpty(module) || !isPresent(module)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

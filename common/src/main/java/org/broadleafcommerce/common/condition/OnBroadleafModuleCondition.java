@@ -20,20 +20,21 @@
  */
 package org.broadleafcommerce.common.condition;
 
-import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.module.BroadleafModuleRegistration;
 import org.broadleafcommerce.common.module.BroadleafModuleRegistration.BroadleafModuleEnum;
 import org.broadleafcommerce.common.module.ModulePresentUtil;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.util.MultiValueMap;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Detects whether or not a Broadleaf module has been registered via am {@link spring.factories} entry for {@link BroadleafModuleRegistration}
  * 
  * @author Phillip Verheyden (phillipuniverse)
+ * @author Philip Baggett (pbaggett)
  * @see {@link ConditionalOnBroadleafModule}
  * @since 5.2
  */
@@ -41,11 +42,15 @@ public class OnBroadleafModuleCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        Map<String, Object> attributes = metadata.getAnnotationAttributes(ConditionalOnBroadleafModule.class.getName());
-        BroadleafModuleEnum module = (BroadleafModuleEnum) attributes.get("value");
-        String moduleName = (BroadleafModuleEnum.IGNORED != module) ? module.getName() : (String) attributes.get("moduleName");
-        
-        return StringUtils.isNotEmpty(moduleName) && ModulePresentUtil.isPresent(moduleName);
+        MultiValueMap<String, Object> attributes = metadata.getAllAnnotationAttributes(ConditionalOnBroadleafModule.class.getName());
+        List<Object> modules = attributes.get("value");
+        List<Object> moduleNames = attributes.get("moduleName");
+        List<String> moduleNameStrings = new ArrayList<>();
+        for (int i = 0; i < modules.size(); ++i) {
+            BroadleafModuleEnum module = (BroadleafModuleEnum) modules.get(i);
+            String moduleName = (BroadleafModuleEnum.IGNORED != module) ? module.getName() : (String) moduleNames.get(i);
+            moduleNameStrings.add(moduleName);
+        }
+        return ModulePresentUtil.allPresent(moduleNameStrings);
     }
-    
 }
