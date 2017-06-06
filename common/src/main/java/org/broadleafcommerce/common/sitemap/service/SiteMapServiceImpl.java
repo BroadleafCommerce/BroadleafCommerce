@@ -244,7 +244,7 @@ public class SiteMapServiceImpl implements SiteMapService {
 
 
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.error("Error writing zip file.", e);
             }
         }
     }

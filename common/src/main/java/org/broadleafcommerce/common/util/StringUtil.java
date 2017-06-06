@@ -19,6 +19,8 @@
 package org.broadleafcommerce.common.util;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jettison.json.JSONObject;
 import org.owasp.esapi.ESAPI;
 
@@ -35,6 +37,8 @@ import java.util.zip.CheckedInputStream;
  * Convenience methods for interacting with Java String types
  */
 public class StringUtil {
+
+    private static final Log LOG = LogFactory.getLog(StringUtil.class);
 
     public static long getChecksum(String test) {
         try {
@@ -106,7 +110,7 @@ public class StringUtil {
             return encodedUrl == null ? null : URLDecoder.decode(encodedUrl, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // this should not happen
-            e.printStackTrace();
+            LOG.warn("Could not decode URL.", e);
             return encodedUrl;
         }
     }
