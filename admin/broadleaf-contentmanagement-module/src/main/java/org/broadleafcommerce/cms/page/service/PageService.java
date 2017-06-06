@@ -40,14 +40,14 @@ public interface PageService {
      * @param pageId - The id of the page.
      * @return The associated page.
      */
-    public Page findPageById(Long pageId);
+    Page findPageById(Long pageId);
 
     /**
      * Returns the page-fields associated with a page.
      * @param pageId
      * @return
      */
-    public Map<String, PageField> findPageFieldMapByPageId(Long pageId);
+    Map<String, PageField> findPageFieldMapByPageId(Long pageId);
 
     /**
      * Returns the page template with the passed in id.
@@ -55,7 +55,7 @@ public interface PageService {
      * @param id - the id of the page template
      * @return The associated page template.
      */
-    public PageTemplate findPageTemplateById(Long id);
+    PageTemplate findPageTemplateById(Long id);
     
     /**
      * Saves the given {@link PageTemplate}
@@ -63,7 +63,7 @@ public interface PageService {
      * @param template the {@link PageTemplate} to save
      * @return the database-saved {@link PageTemplate}
      */
-    public PageTemplate savePageTemplate(PageTemplate template);
+    PageTemplate savePageTemplate(PageTemplate template);
 
     /**
      * Looks up the page from the backend datastore.   Processes the page's fields to
@@ -76,19 +76,19 @@ public interface PageService {
      * @param secure - set to true if current request is over HTTPS
      * @return
      */
-    public PageDTO findPageByURI(Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure);
+    PageDTO findPageByURI(Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure);
     
     /**
      * Returns all pages, regardless of any sandbox they are apart of
      * @return all {@link Page}s configured in the system
      */
-    public List<Page> readAllPages();
+    List<Page> readAllPages();
     
     /**
      * Returns all page templates, regardless of any sandbox they are apart of
      * @return all {@link PageTemplate}s configured in the system
      */
-    public List<PageTemplate> readAllPageTemplates();
+    List<PageTemplate> readAllPageTemplates();
 
     /**
      * Call to evict all known PageDTOs that are associated with the given page from cache
@@ -96,11 +96,13 @@ public interface PageService {
      * @param key
      * @return whether successful
      */
-    public Boolean removePageFromCache(String key);
+    Boolean removePageFromCache(String key);
 
     Cache getPageCache();
 
     Cache getPageMapCache();
+    
+    Cache getUriCachedDateCache();
 
     /**
      * Builds a list of {@link PageDTO} objects from the given list of {@link Page} objects and caches the list
@@ -111,7 +113,7 @@ public interface PageService {
      * @param locale
      * @return copy of DTOList
      */
-    public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure, String identifier, Locale locale);
+    List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure, String identifier, Locale locale);
 
     String getPageMapCacheKey(String uri, Long site);
 }
