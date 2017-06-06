@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.cms.page.dao;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
@@ -35,6 +37,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -127,32 +130,90 @@ public class PageDaoImpl implements PageDao {
         CriteriaQuery<Page> criteriaQuery = builder.createQuery(Page.class);
         Root pageRoot = criteriaQuery.from(PageImpl.class);
         criteriaQuery.select(pageRoot);
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        
+        List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(builder.equal(pageRoot.get("fullUrl"), uri));
 
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
 
-        // Add the active start/end date restrictions
+        addActiveDateRestrictions(builder, pageRoot, restrictions, currentDate, currentDate);
+        addOfflineRestriction(builder, pageRoot, restrictions);
+
+        criteriaQuery.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        
+        return getResultForQueryAndCache(criteriaQuery);
+    }
+    
+    protected void addActiveDateRestrictions(final CriteriaBuilder builder, final Root pageRoot, final List<Predicate> restrictions, Date afterStartDate, Date beforeEndDate) {
         restrictions.add(builder.or(
                 builder.isNull(pageRoot.get("activeStartDate")),
-                builder.lessThanOrEqualTo(pageRoot.get("activeStartDate").as(Date.class), currentDate)));
+                builder.lessThanOrEqualTo(pageRoot.get("activeStartDate").as(Date.class), afterStartDate)));
         restrictions.add(builder.or(
                 builder.isNull(pageRoot.get("activeEndDate")),
-                builder.greaterThanOrEqualTo(pageRoot.get("activeEndDate").as(Date.class), currentDate)));
-        // Ensure the page is currently active
+                builder.greaterThanOrEqualTo(pageRoot.get("activeEndDate").as(Date.class), beforeEndDate)));
+    }
+
+    protected void addOfflineRestriction(final CriteriaBuilder builder, final Root pageRoot, final List<Predicate> restrictions) {
         restrictions.add(builder.or(
                 builder.isNull(pageRoot.get("offlineFlag")),
                 builder.isFalse(pageRoot.get("offlineFlag"))));
-
-        // Add the restrictions to the criteria query
-        criteriaQuery.where(restrictions.toArray(new Predicate[restrictions.size()]));
-
+    }
+    
+    protected List<Page> getResultForQueryAndCache(final CriteriaQuery<Page> criteriaQuery) {
         TypedQuery<Page> q = em.createQuery(criteriaQuery);
         q.setHint(QueryHints.HINT_CACHEABLE, true);
         q.setHint(QueryHints.HINT_CACHE_REGION, "query.Cms");
 
-        List<Page> pages = q.getResultList();
+        return q.getResultList();
+    }
+    
+    @Override
+    public List<Page> findPageByURIAndActiveDate(final String uri, final Date activeDate) {
+        final CriteriaBuilder builder = em.getCriteriaBuilder();
+        final CriteriaQuery<Page> criteriaQuery = builder.createQuery(Page.class);
+        final Root pageRoot = criteriaQuery.from(PageImpl.class);
+        criteriaQuery.select(pageRoot);
+
+        final List<Predicate> restrictions = new ArrayList<>();
+        restrictions.add(builder.equal(pageRoot.get("fullUrl"), uri));
+
+        final Date nextDay = DateUtils.addDays(activeDate, 1);
+
+        addOfflineRestriction(builder, pageRoot, restrictions);
+        addActiveDateRestrictions(builder, pageRoot, restrictions, nextDay, activeDate);
+        
+        criteriaQuery.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        List<Page> pages = getResultForQueryAndCache(criteriaQuery);
+        
+        if (CollectionUtils.isEmpty(pages)) {
+            return null;
+        } else {
+            return filterInactive(pages);
+        }
+    }
+    
+    protected List<Page> filterInactive(final List<Page> pages) {
+        final ListIterator<Page> pagesIterator = pages.listIterator();
+        
+        while (pagesIterator.hasNext()) {
+            final Page page = pagesIterator.next();
+            
+            if (!isActiveNow(page)) {
+                pagesIterator.remove();
+            }
+        }
+
         return pages;
+    }
+    
+    protected boolean isActiveNow(final Page page) {
+        final Date now = new Date();
+        final Date activeStartDate = page.getActiveStartDate();
+        final Date activeEndDate = page.getActiveEndDate();
+
+        return !((activeStartDate != null && now.before(activeStartDate))
+                 || (activeEndDate != null && now.after(activeEndDate)));
     }
 
     @Override
