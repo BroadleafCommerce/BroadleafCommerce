@@ -111,6 +111,7 @@ public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilte
         } catch (HaltFilterChainException e) {
             return;
         } catch (SiteNotFoundException e) {
+            LOG.warn("Could not resolve a site for the given request, returning not found");
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } finally {
             requestProcessor.postProcess(new ServletWebRequest(request, response));

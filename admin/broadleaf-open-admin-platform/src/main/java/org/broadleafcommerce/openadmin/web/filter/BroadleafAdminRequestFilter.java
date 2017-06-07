@@ -113,6 +113,7 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
                 }
             });
         } catch (SiteNotFoundException e) {
+            LOG.warn("Could not resolve a site for the given request, returning not found");
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (StaleStateServiceException e) {
             //catch state change attempts from a stale page
@@ -128,7 +129,7 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
         String ceilingEntityFullyQualifiedClassname = request.getParameter("fields['ceilingEntityFullyQualifiedClassname'].value");
         String originalType = request.getParameter("fields['__originalType'].value");
         String entityType = request.getParameter("entityType");
-        Map<String, String> params = new HashMap<String, String>(2);
+        Map<String, String> params = new HashMap<>(2);
         params.put("ceilingEntityClassname", ceilingEntityClassname);
         params.put("entityType", entityType);
         params.put("ceilingEntity", ceilingEntity);
