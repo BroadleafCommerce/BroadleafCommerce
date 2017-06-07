@@ -37,9 +37,9 @@ import javax.persistence.EntityManager;
  * </p>
  * Currently, the monitor attempts to recognize the following fault states:
  * <ul>
- *     <li>TRANSACTIONMONITOR(1) - Leaked Resource: The transaction thread is not considered stuck, but no queries have been issued againsted the
- *     tracked EntityManager in {@link #loggingReportingLagThreshold} and the transaction info has been alive for {@link #loggingThreshold}.
- *     This could indicate the thread has moved on and the transaction was not correctly finalized.</li>
+ *     <li>TRANSACTIONMONITOR(1) - Leaked Resource: The transaction thread is not considered stuck, but no queries have been issued against the
+ *     tracked EntityManager in {@link #loggingReportingLagThreshold}. This could indicate the thread has moved on and the transaction was
+ *     not correctly finalized.</li>
  *
  *     <li>TRANSACTIONMONITOR(2) - Long Running Transaction: The transaction thread is not considered stuck, but the transaction info has been alive
  *     for {@link #loggingThreshold}. This is not necessarily a fault, but may warrant review. Long running or stuck
