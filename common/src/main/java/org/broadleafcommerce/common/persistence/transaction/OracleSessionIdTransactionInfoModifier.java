@@ -15,7 +15,7 @@ public class OracleSessionIdTransactionInfoModifier implements TransactionInfoCu
         EntityManager em = info.getEntityManager();
         if (em != null) {
             Session session = em.unwrap(Session.class);
-            SQLQuery query = session.createSQLQuery("SELECT sys_context('userenv') FROM dual;");
+            SQLQuery query = session.createSQLQuery("select sys_context('userenv','sid') from dual;");
             String sessionId = String.valueOf(query.uniqueResult());
             info.getAdditionalParams().put("sessionid", sessionId);
         }
