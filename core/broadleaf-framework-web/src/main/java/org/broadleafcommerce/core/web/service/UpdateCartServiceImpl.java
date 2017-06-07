@@ -116,7 +116,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
             try {
                 currentCart = orderService.removeItem(currentCart.getId(), orderItem.getId(), false);
             } catch (RemoveFromCartException e) {
-                e.printStackTrace();
+                LOG.error("Could not remove from cart.", e);
             }
         }
 
@@ -124,7 +124,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
             try {
                 currentCart = orderService.addItem(currentCart.getId(), itemRequest, false);
             } catch (AddToCartException e) {
-                e.printStackTrace();
+                LOG.error("Could not add to cart.", e);
             }
         }
 
@@ -132,7 +132,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
         try {
          currentCart = orderService.save(currentCart, repriceOrder);
         } catch (PricingException e) {
-         e.printStackTrace();
+            LOG.error("Could not save cart.", e);
         }
         setSavedCurrency(currency);
 

@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.openadmin.audit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.audit.AbstractAuditableListener;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
@@ -26,6 +28,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 public class AdminAuditableListener extends AbstractAuditableListener {
+
+    private static final Log LOG = LogFactory.getLog(AdminAuditableListener.class);
 
     @PrePersist
     @Override
@@ -51,7 +55,7 @@ public class AdminAuditableListener extends AbstractAuditableListener {
         } catch (IllegalStateException e) {
             //do nothing
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Error setting admin audit field.", e);
         }
     }
 

@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.audit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
@@ -27,6 +29,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 public class AuditableListener extends AbstractAuditableListener {
+
+    private static final Log LOG = LogFactory.getLog(AuditableListener.class);
 
     @PrePersist
     @Override
@@ -69,7 +73,7 @@ public class AuditableListener extends AbstractAuditableListener {
                 field.set(entity, customerId);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Error setting audit field.", e);
         }
     }
 
