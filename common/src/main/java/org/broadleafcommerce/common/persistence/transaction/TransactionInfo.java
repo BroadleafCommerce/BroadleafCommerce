@@ -3,6 +3,7 @@ package org.broadleafcommerce.common.persistence.transaction;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.springframework.transaction.TransactionDefinition;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.ref.WeakReference;
@@ -26,26 +27,29 @@ public class TransactionInfo {
         initialize();
     }
 
-    public TransactionInfo(EntityManager em, TransactionDefinition definition) {
+    public TransactionInfo(EntityManager em, TransactionDefinition definition, boolean isCompressed) {
         this.entityManager = new WeakReference<EntityManager>(em);
         this.definition = new WeakReference<TransactionDefinition>(definition);
+        this.isCompressed = isCompressed;
         initialize();
     }
 
     protected WeakReference<EntityManager> entityManager;
     protected WeakReference<TransactionDefinition> definition;
     protected String beginStack;
+    protected CompressedItem compressedBeginStack;
     protected WeakReference<Thread> thread;
     protected String threadName;
     protected String threadId;
     protected Long startTime;
-    protected Long expiryStartTime;
     protected List<String> queries = new ArrayList<String>();
+    protected List<CompressedItem> compressedQueries = new ArrayList<CompressedItem>();
     protected Map<String, String> additionalParams = new HashMap<String, String>();
     protected String currentStackElement;
     protected Long lastLogTime;
     protected Long stuckThreadStartTime;
     protected Boolean faultStateDetected = false;
+    protected Boolean isCompressed = true;
 
     public EntityManager getEntityManager() {
         return entityManager.get();
@@ -69,6 +73,14 @@ public class TransactionInfo {
 
     public void setBeginStack(String beginStack) {
         this.beginStack = beginStack;
+    }
+
+    public CompressedItem getCompressedBeginStack() {
+        return compressedBeginStack;
+    }
+
+    public void setCompressedBeginStack(CompressedItem compressedBeginStack) {
+        this.compressedBeginStack = compressedBeginStack;
     }
 
     public Thread getThread() {
@@ -127,14 +139,6 @@ public class TransactionInfo {
         this.startTime = startTime;
     }
 
-    public Long getExpiryStartTime() {
-        return expiryStartTime;
-    }
-
-    public void setExpiryStartTime(Long expiryStartTime) {
-        this.expiryStartTime = expiryStartTime;
-    }
-
     public Map<String, String> getAdditionalParams() {
         return additionalParams;
     }
@@ -149,6 +153,14 @@ public class TransactionInfo {
 
     public void setQueries(List<String> queries) {
         this.queries = queries;
+    }
+
+    public List<CompressedItem> getCompressedQueries() {
+        return compressedQueries;
+    }
+
+    public void setCompressedQueries(List<CompressedItem> compressedQueries) {
+        this.compressedQueries = compressedQueries;
     }
 
     public Boolean getFaultStateDetected() {
@@ -166,10 +178,25 @@ public class TransactionInfo {
     }
 
     public void logStatement(String statement) {
-        if (getQueries().isEmpty()) {
-            getQueries().add("\n" + statement + "\n");
-        } else {
-            getQueries().add(statement + "\n");
+        boolean isLogged = false;
+        if (isCompressed) {
+            try {
+                if (getCompressedQueries().isEmpty()) {
+                    getCompressedQueries().add(new CompressedItem("\n" + statement + "\n"));
+                } else {
+                    getCompressedQueries().add(new CompressedItem(statement + "\n"));
+                }
+                isLogged = true;
+            } catch (IOException e) {
+                //do nothing
+            }
+        }
+        if (!isLogged) {
+            if (getQueries().isEmpty()) {
+                getQueries().add("\n" + statement + "\n");
+            } else {
+                getQueries().add(statement + "\n");
+            }
         }
         lastLogTime = System.currentTimeMillis();
     }
@@ -178,12 +205,23 @@ public class TransactionInfo {
         RuntimeException e = new RuntimeException();
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
-        beginStack = sw.toString();
+        boolean isLogged = false;
+        if (isCompressed) {
+            try {
+                compressedBeginStack = new CompressedItem(sw.toString());
+                isLogged = true;
+            } catch (IOException e1) {
+                //do nothing
+            }
+        }
+        if (!isLogged) {
+            beginStack = sw.toString();
+        }
         thread = new WeakReference<Thread>(Thread.currentThread());
         threadName = thread.get().getName();
         threadId = String.valueOf(thread.get().getId());
         startTime = System.currentTimeMillis();
-        expiryStartTime = startTime;
+        lastLogTime = startTime;
     }
 
     @Override
@@ -191,7 +229,11 @@ public class TransactionInfo {
         final StringBuilder sb = new StringBuilder("TransactionInfo{");
         sb.append("threadName='").append(threadName).append('\'').append("\n");
         sb.append(", threadId=").append(threadId).append("\n");
-        sb.append(", queries=").append(queries);
+        if (isCompressed) {
+            sb.append(", queries=").append(compressedQueries);
+        } else {
+            sb.append(", queries=").append(queries);
+        }
         sb.append(", additionalParams=").append(additionalParams).append("\n");
         if (startTime != null) {
             Date start = new Date(getStartTime());
@@ -210,7 +252,11 @@ public class TransactionInfo {
             );
             sb.append(", duration=").append(durationString).append("\n");
         }
-        sb.append(", beginStack='").append(beginStack).append('\'');
+        if (isCompressed) {
+            sb.append(", beginStack='").append(compressedBeginStack).append('\'');
+        } else {
+            sb.append(", beginStack='").append(beginStack).append('\'');
+        }
         sb.append('}');
         return sb.toString();
     }

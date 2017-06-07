@@ -43,7 +43,8 @@ import javax.persistence.EntityManager;
  *
  *     <li>TRANSACTIONMONITOR(2) - Long Running Transaction: The transaction thread is not considered stuck, but the transaction info has been alive
  *     for {@link #loggingThreshold}. This is not necessarily a fault, but may warrant review. Long running or stuck
- *     transactions can account for long resource lock times.</li>
+ *     transactions can account for long resource lock times. Note, this case can later become a stuck thread if the {@link #stuckThreshold}
+ *     has not elapsed.</li>
  *
  *     <li>TRANSACTIONMONITOR(3) - Exception During Finalization: The transaction is attempting to finalize normally, but has
  *     experienced an exception during that finalization attempt. This could indicate a problem communicating with the backing
@@ -72,7 +73,20 @@ import javax.persistence.EntityManager;
  * The default value is 30000.
  * </p>
  * The {@link #loggingReportingLagThreshold} variable can be controlled via the 'log.transaction.lifecycle.reporting.lag.threshold.millis' property.
- * The default value is 120000.
+ * The default value is 300000.
+ * </p>
+ * The {@link #countMax} variable can be controlled via the 'log.transaction.lifecycle.info.count.max' property. The default value is 5000.
+ * </p>
+ * The {@link #useCompression} variable can be controlled via the 'log.transaction.lifecycle.use.compression' property. The default value is true.
+ * </p>
+ * This monitor is intended for temporary usage as part of transaction related debugging efforts. From both a heap utilization
+ * and performance standpoint, this monitor is suitable for production with default settings. Performance impacts should be minor and will generally
+ * be related to creation of the intial call stack, compression of that call stack and subsequent compression of sql statements.
+ * Compression can be turned off via the 'log.transaction.lifecycle.use.compression' for a minor performance benefit at the cost
+ * of additional heap usage. Heap usage can be capped via the 'log.transaction.lifecycle.info.count.max' property, but if the max
+ * happens to be reached, new transactions will not be monitored. This is more a safety net feature than anything and it's not
+ * anticipated that the default max count will be reached during normal usage. Set 'log.transaction.lifecycle.info.count.max' to
+ * -1 to uncap growth.
  *
  * @author Jeff Fischer
  */
@@ -104,9 +118,15 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
     @Value("${log.transaction.lifecycle.logging.polling.resolution.millis:30000}")
     protected long loggingPollingResolution = 30000L;
 
-    //2 minutes
-    @Value("${log.transaction.lifecycle.reporting.lag.threshold.millis:120000}")
-    protected long loggingReportingLagThreshold = 120000L;
+    //5 minutes
+    @Value("${log.transaction.lifecycle.reporting.lag.threshold.millis:300000}")
+    protected long loggingReportingLagThreshold = 300000L;
+
+    @Value("${log.transaction.lifecycle.info.count.max:5000}")
+    protected int countMax = 5000;
+
+    @Value("${log.transaction.lifecycle.use.compression:true}")
+    protected boolean useCompression = true;
 
     protected Map<Integer, TransactionInfo> infos = new ConcurrentHashMap<Integer, TransactionInfo>();
     protected boolean isStarted = false;
@@ -162,8 +182,8 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                 Long currentTime = System.currentTimeMillis();
                 for (Map.Entry<Integer, TransactionInfo> entry : infos.entrySet()) {
                     TransactionInfo info = entry.getValue();
-                    logger.support(String.format("TRANSACTIONMONITOR(5) - This transaction was detected as in-progress at the time" +
-                        "of shutdown. The TransactionInfo has been alive for %s milliseconds. Logging TransactionInfo: %s",
+                    logger.support(String.format("TRANSACTIONMONITOR(5) - This transaction was detected as in-progress at the time " +
+                        "of shutdown. The TransactionInfo has been alive for %s milliseconds. Logging TransactionInfo: \n%s",
                         currentTime - info.getStartTime(), info.toString()));
                 }
             }
@@ -192,13 +212,17 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                 case BEGIN: {
                     EntityManager em = getEntityManagerFromTransactionObject(event.getParams()[0]);
                     if (em != null) {
-                        TransactionInfo info = new TransactionInfo(em, (TransactionDefinition) event.getParams()[1]);
-                        if (modifiers != null) {
-                            for (TransactionInfoCustomModifier modifier : modifiers) {
-                                modifier.modify(info);
+                        if (countMax == -1 || infos.size() <= countMax) {
+                            TransactionInfo info = new TransactionInfo(em, (TransactionDefinition) event.getParams()[1], useCompression);
+                            if (modifiers != null) {
+                                for (TransactionInfoCustomModifier modifier : modifiers) {
+                                    modifier.modify(info);
+                                }
                             }
+                            infos.put(em.hashCode(), info);
+                        } else {
+                            logger.debug(String.format("Not monitoring new transaction. Current monitored transaction count exceeds maximum: %s", countMax));
                         }
-                        infos.put(em.hashCode(), info);
                     }
                     break;
                 }
@@ -238,76 +262,94 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                 long currentTime = System.currentTimeMillis();
                 TransactionInfo info = entry.getValue();
                 Thread thread = info.getThread();
-                StackTraceElement[] elements = null;
-                if (thread != null && thread.isAlive()) {
-                    elements = thread.getStackTrace();
-                    if (!ArrayUtils.isEmpty(elements)) {
-                        StackTraceElement top = elements[0];
-                        String currentStackElement = top.toString();
-                        if (info.getCurrentStackElement() != null && info.getCurrentStackElement().equals(currentStackElement)) {
-                            if (info.getStuckThreadStartTime() == null) {
-                                info.setStuckThreadStartTime(currentTime);
-                            }
-                        } else {
-                            if (info.getStuckThreadStartTime() != null) {
-                                //We've presumably become unstuck - reset the clock on expiration
-                                info.setExpiryStartTime(currentTime);
-                                info.setStuckThreadStartTime(null);
-                            }
-                            info.setCurrentStackElement(currentStackElement);
-                        }
-                    }
-                }
-                boolean isExpired = currentTime - info.getExpiryStartTime() >= loggingThreshold;
-                if (isExpired) {
-                    if (info.getStuckThreadStartTime() != null) {
-                        boolean isStuck = currentTime - info.getStuckThreadStartTime() >= stuckThreshold;
-                        if (isStuck) {
-                            try {
-                                String currentStack = "UNKNOWN";
-                                if (!ArrayUtils.isEmpty(elements)) {
-                                    StringBuilder sb = new StringBuilder();
-                                    for (StackTraceElement element : elements) {
-                                        sb.append(element.toString());
-                                    }
-                                    currentStack = sb.toString();
-                                }
-                                logger.support(String.format("TRANSACTIONMONITOR(4) - The thread associated with the tested TransactionInfo may be " +
-                                    "stuck. The TransactionInfo has been alive for %s milliseconds and the associated thread stack " +
-                                    "has not changed in %s milliseconds. Logging TransactionInfo and current stack: %s currentStack=\'%s\'",
-                                    currentTime - info.getStartTime(), currentTime - info.getStuckThreadStartTime(), info.toString(), currentStack));
-                            } finally {
-                                infosToRemove.add(entry.getKey());
-                            }
-                        }
-                    } else {
-                        boolean isPossiblyLeaked = currentTime - info.getLastLogTime() >= loggingReportingLagThreshold;
-                        if (isPossiblyLeaked) {
-                            try {
-                                logger.support(String.format("TRANSACTIONMONITOR(1) - The thread associated with the tested TransactionInfo is not " +
-                                    "considered stuck, but the TransactionInfo has been alive for %s milliseconds and a SQL " +
-                                    "statement has not been reported against the tracked TransactionInfo in %s milliseconds. " +
-                                    "This could indicate the thread has moved on and the transaction was not properly finalized. " +
-                                    "Logging TransactionInfo: %s",
-                                    currentTime - info.getStartTime(), currentTime - info.getLastLogTime(), info.toString()));
-                            } finally {
-                                infosToRemove.add(entry.getKey());
-                            }
-                        } else if (!info.getFaultStateDetected()){
-                            logger.support(String.format("TRANSACTIONMONITOR(2) - The thread associated with the tested TransactionInfo is not " +
-                                "considered stuck, but the TransactionInfo has been alive for %s milliseconds. " +
-                                "This could indicate a overly long transaction time. Logging TransactionInfo: %s",
-                                    currentTime - info.getStartTime(), info.toString()));
-                        }
-                    }
-                    info.setFaultStateDetected(true);
-                }
+                StackTraceElement[] elements = compileThreadInformation(currentTime, info, thread);
+                detectExpiry(infosToRemove, entry.getKey(), currentTime, info, elements);
+                detectLeakage(infosToRemove, entry.getKey(), currentTime, info);
             }
         } finally {
             for (Integer key : infosToRemove) {
                 infos.remove(key);
             }
         }
+    }
+
+    protected void detectLeakage(List<Integer> infosToRemove, Integer key, long currentTime, TransactionInfo info) {
+        boolean isPossiblyLeaked = currentTime - info.getLastLogTime() >= loggingReportingLagThreshold;
+        if (isPossiblyLeaked) {
+            try {
+                info.setFaultStateDetected(true);
+                logger.support(String.format("TRANSACTIONMONITOR(1) - The thread associated with the tested TransactionInfo is not " +
+                    "considered stuck, but the TransactionInfo has been alive for %s milliseconds and a SQL " +
+                    "statement has not been reported against the tracked EntityManager in %s milliseconds. " +
+                    "This could indicate the thread has moved on and the transaction was not properly finalized. " +
+                    "Logging TransactionInfo: \n%s",
+                    currentTime - info.getStartTime(), currentTime - info.getLastLogTime(), info.toString()));
+            } finally {
+                infosToRemove.add(key);
+            }
+        }
+    }
+
+    protected void detectExpiry(List<Integer> infosToRemove, Integer key, long currentTime, TransactionInfo info, StackTraceElement[] elements) {
+        boolean isExpired = currentTime - info.getStartTime() >= loggingThreshold;
+        if (isExpired) {
+            if (info.getStuckThreadStartTime() != null) {
+                boolean isStuck = currentTime - info.getStuckThreadStartTime() >= stuckThreshold;
+                if (isStuck) {
+                    try {
+                        String currentStack = "UNKNOWN";
+                        if (!ArrayUtils.isEmpty(elements)) {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("Stack\n");
+                            for (StackTraceElement element : elements) {
+                                sb.append("\tat ");
+                                sb.append(element);
+                                sb.append("\n");
+                            }
+                            currentStack = sb.toString();
+                        }
+                        logger.support(String.format("TRANSACTIONMONITOR(4) - The thread associated with the tested TransactionInfo may be " +
+                            "stuck. The TransactionInfo has been alive for %s milliseconds and the associated thread stack " +
+                            "has not changed in %s milliseconds. Logging TransactionInfo and current stack: \n%s currentStack=\'%s\'",
+                            currentTime - info.getStartTime(), currentTime - info.getStuckThreadStartTime(), info.toString(), currentStack));
+                    } finally {
+                        infosToRemove.add(key);
+                    }
+                }
+            } else {
+                if (!info.getFaultStateDetected()){
+                    logger.support(String.format("TRANSACTIONMONITOR(2) - The thread associated with the tested TransactionInfo is not " +
+                        "considered stuck yet, but the TransactionInfo has been alive for %s milliseconds. " +
+                        "This could indicate a overly long transaction time. Logging TransactionInfo: \n%s",
+                            currentTime - info.getStartTime(), info.toString()));
+                }
+            }
+            info.setFaultStateDetected(true);
+        }
+    }
+
+    protected StackTraceElement[] compileThreadInformation(long currentTime, TransactionInfo info, Thread thread) {
+        StackTraceElement[] elements = null;
+        if (thread != null && thread.isAlive()) {
+            elements = thread.getStackTrace();
+            if (!ArrayUtils.isEmpty(elements)) {
+                StackTraceElement top = elements[0];
+                String currentStackElement = top.toString();
+                //don't detect a waiting thread as stuck - could be a parked thread in a container thread pool, for example
+                boolean isWaiting = thread.getState() == Thread.State.WAITING || thread.getState() == Thread.State.TIMED_WAITING;
+                if (info.getCurrentStackElement() != null && info.getCurrentStackElement().equals(currentStackElement) && !isWaiting) {
+                    if (info.getStuckThreadStartTime() == null) {
+                        info.setStuckThreadStartTime(currentTime);
+                    }
+                } else {
+                    if (info.getStuckThreadStartTime() != null) {
+                        info.setStuckThreadStartTime(null);
+                    }
+                    info.setCurrentStackElement(currentStackElement);
+                }
+            }
+        }
+        return elements;
     }
 
     protected void finalizeTransaction(TransactionLifecycleEvent event) {
@@ -326,7 +368,7 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                         StringWriter sw = new StringWriter();
                         finalizationException.printStackTrace(new PrintWriter(sw));
                         logger.support(String.format("TRANSACTIONMONITOR(3) - Exception during "+finalizationType+" finalization. Logging " +
-                            "TransactionInfo and finalization exception: %s finalizationStack=\'%s\'", info.toString(), sw.toString()));
+                            "TransactionInfo and finalization exception: \n%s finalizationStack=\'%s\'", info.toString(), sw.toString()));
                     }
                 } finally {
                     infos.remove(hashcode);
