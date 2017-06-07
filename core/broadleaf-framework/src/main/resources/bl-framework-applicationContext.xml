@@ -36,7 +36,7 @@
     <bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.PassthroughEncryptionModule"/>
     
     <bean id="blAccountNumberMask" class="org.broadleafcommerce.common.payment.AccountNumberMask">
-        <constructor-arg>
+        <constructor-arg index="0">
             <list>
                 <bean class="org.broadleafcommerce.common.payment.UnmaskRange">
                     <constructor-arg value="0"/>
@@ -48,7 +48,7 @@
                 </bean>
             </list>
         </constructor-arg>
-        <constructor-arg value="X"/>
+        <constructor-arg index="1" value="X"/>
     </bean>
 
     <bean id="blContentCartRuleProcessor" class="org.broadleafcommerce.core.order.service.StructuredContentCartRuleProcessor">

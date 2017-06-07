@@ -18,14 +18,10 @@
 
 package org.broadleafcommerce.common.extensibility;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 
@@ -46,7 +42,7 @@ import java.util.Objects;
  * @author Jeff Fischer
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class FrameworkXmlBeanDefinitionReader extends XmlBeanDefinitionReader {
+public class FrameworkXmlBeanDefinitionReader extends MergeXmlBeanDefinitionReader {
 
     public FrameworkXmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
         super(registry);
@@ -89,12 +85,6 @@ public class FrameworkXmlBeanDefinitionReader extends XmlBeanDefinitionReader {
         return processedCount;
     }
 
-    protected boolean isXMLBean(BeanDefinition beanDefinition) {
-        return beanDefinition instanceof GenericBeanDefinition
-                && ((GenericBeanDefinition) beanDefinition).getResource() != null
-                && ((GenericBeanDefinition) beanDefinition).getResource().getFilename().endsWith(".xml");
-    }
-    
     protected boolean isConfigurationClassBean(BeanDefinition definition) {
         // there is a somewhat loose assumption here that anything that is not a GenericBeanDefinition
         // is actually a ConfigurationClassBeanDefinition. I can't use ConfigurationClassBeanDefinition here
