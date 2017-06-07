@@ -26,8 +26,6 @@
     <import resource="bl-profile-applicationContext-persistence.xml"/>
     <context:component-scan base-package="org.broadleafcommerce.profile.core" />
 
-    <bean id="blEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo" />
-    <bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />
     <bean id="blRegistrationEmailInfo" parent="blNullEmailInfo" />
     <bean id="blForgotPasswordEmailInfo" parent="blNullEmailInfo" />
     <bean id="blForgotUsernameEmailInfo" parent="blNullEmailInfo" />
@@ -43,7 +41,5 @@
         </property>
     </bean>
 
-    <bean id="blPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
-        <constructor-arg value="${password.site.encoder}"/>
-    </bean>
+    <bean id="blPasswordEncoder" class="${password.site.encoder}" />
 </beans>

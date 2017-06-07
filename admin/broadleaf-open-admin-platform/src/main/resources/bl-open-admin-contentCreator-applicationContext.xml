@@ -354,8 +354,6 @@
         </property>
     </bean>
 
-    <bean id="blAdminPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
-        <constructor-arg value="${password.admin.encoder}"/>
-    </bean>
+    <bean id="blAdminPasswordEncoder" class="${password.admin.encoder}" />
 
 </beans>

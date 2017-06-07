@@ -32,10 +32,6 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.*"/> 
     </context:component-scan>
 
-    <bean id="blPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
-        <constructor-arg value="${password.site.encoder}"/>
-    </bean>
-    
     <!-- Bean for encrypting PCI data -->
     <bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.PassthroughEncryptionModule"/>
     
