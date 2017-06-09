@@ -1,3 +1,22 @@
+/*
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 package org.broadleafcommerce.common.persistence.transaction;
 
 import org.broadleafcommerce.common.event.BroadleafApplicationListener;
@@ -238,7 +257,7 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                     //do nothing
                     break;
                 default:
-                    throw new UnsupportedOperationException(event.getLifecycle().toString() + "not supported");
+                    throw new UnsupportedOperationException(event.getLifecycle().toString() + " not supported");
             }
         }
     }
@@ -253,6 +272,54 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
         }
     }
 
+    public long getLoggingThreshold() {
+        return loggingThreshold;
+    }
+
+    public void setLoggingThreshold(long loggingThreshold) {
+        this.loggingThreshold = loggingThreshold;
+    }
+
+    public long getStuckThreshold() {
+        return stuckThreshold;
+    }
+
+    public void setStuckThreshold(long stuckThreshold) {
+        this.stuckThreshold = stuckThreshold;
+    }
+
+    public long getLoggingPollingResolution() {
+        return loggingPollingResolution;
+    }
+
+    public void setLoggingPollingResolution(long loggingPollingResolution) {
+        this.loggingPollingResolution = loggingPollingResolution;
+    }
+
+    public long getLoggingReportingLagThreshold() {
+        return loggingReportingLagThreshold;
+    }
+
+    public void setLoggingReportingLagThreshold(long loggingReportingLagThreshold) {
+        this.loggingReportingLagThreshold = loggingReportingLagThreshold;
+    }
+
+    public int getCountMax() {
+        return countMax;
+    }
+
+    public void setCountMax(int countMax) {
+        this.countMax = countMax;
+    }
+
+    public boolean isUseCompression() {
+        return useCompression;
+    }
+
+    public void setUseCompression(boolean useCompression) {
+        this.useCompression = useCompression;
+    }
+
     protected void groomInProgressTransactionInfos() {
         List<Integer> infosToRemove = new ArrayList<Integer>();
         try {
@@ -263,8 +330,9 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                 TransactionInfo info = entry.getValue();
                 Thread thread = info.getThread();
                 StackTraceElement[] elements = compileThreadInformation(currentTime, info, thread);
-                detectExpiry(infosToRemove, entry.getKey(), currentTime, info, elements);
-                detectLeakage(infosToRemove, entry.getKey(), currentTime, info);
+                if (!detectExpiry(infosToRemove, entry.getKey(), currentTime, info, elements)) {
+                    detectLeakage(infosToRemove, entry.getKey(), currentTime, info);
+                }
             }
         } finally {
             for (Integer key : infosToRemove) {
@@ -273,7 +341,8 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
         }
     }
 
-    protected void detectLeakage(List<Integer> infosToRemove, Integer key, long currentTime, TransactionInfo info) {
+    protected boolean detectLeakage(List<Integer> infosToRemove, Integer key, long currentTime, TransactionInfo info) {
+        boolean removed = false;
         boolean isPossiblyLeaked = currentTime - info.getLastLogTime() >= loggingReportingLagThreshold;
         if (isPossiblyLeaked) {
             try {
@@ -286,11 +355,14 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                     currentTime - info.getStartTime(), currentTime - info.getLastLogTime(), info.toString()));
             } finally {
                 infosToRemove.add(key);
+                removed = true;
             }
         }
+        return removed;
     }
 
-    protected void detectExpiry(List<Integer> infosToRemove, Integer key, long currentTime, TransactionInfo info, StackTraceElement[] elements) {
+    protected boolean detectExpiry(List<Integer> infosToRemove, Integer key, long currentTime, TransactionInfo info, StackTraceElement[] elements) {
+        boolean removed = false;
         boolean isExpired = currentTime - info.getStartTime() >= loggingThreshold;
         if (isExpired) {
             if (info.getStuckThreadStartTime() != null) {
@@ -314,6 +386,7 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                             currentTime - info.getStartTime(), currentTime - info.getStuckThreadStartTime(), info.toString(), currentStack));
                     } finally {
                         infosToRemove.add(key);
+                        removed = true;
                     }
                 }
             } else {
@@ -326,6 +399,7 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
             }
             info.setFaultStateDetected(true);
         }
+        return removed;
     }
 
     protected StackTraceElement[] compileThreadInformation(long currentTime, TransactionInfo info, Thread thread) {
