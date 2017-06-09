@@ -18,11 +18,13 @@
 package org.broadleafcommerce.openadmin.server.security.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -82,6 +84,16 @@ public class AdminUserDaoImpl implements AdminUserDao {
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setParameter("userName", userName);
         List<AdminUser> users = query.getResultList();
+        //TODO rewrite on streams when upgraded to java 8
+        Iterator<AdminUser> iterator = users.iterator();
+        while (iterator.hasNext()){
+            AdminUser user = iterator.next();
+            if(Status.class.isAssignableFrom(user.getClass())) {
+                if('Y' == ((Status)user).getArchived()) {
+                    iterator.remove();
+                }
+            }
+        }
         if (users != null && !users.isEmpty()) {
             return users.get(0);
         }
