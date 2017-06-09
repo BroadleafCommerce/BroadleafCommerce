@@ -38,7 +38,7 @@ import java.util.Properties;
  * Add this class transformer to any implementation by adding it to the blMergedClassTransformers list in app context:
  * <pre>
  * {@code
- * <bean id="myMaterializedClobTypeClassTransfomer" class="org.broadleafcommerce.common.extensibility.jpa.convert.OracleMaterializedClobTypeClassTransformer"/>
+ * <bean id="myMaterializedClobTypeClassTransfomer" class="org.broadleafcommerce.common.extensibility.jpa.convert.MaterializedClobTypeClassTransformer"/>
  * <bean id="myClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">
  *     <property name="sourceList">
  *         <list>
@@ -55,7 +55,7 @@ import java.util.Properties;
  *
  * @author Jeff Fischer
  */
-public class OracleMaterializedClobTypeClassTransformer implements BroadleafClassTransformer {
+public class MaterializedClobTypeClassTransformer implements BroadleafClassTransformer {
 
     @Resource(name = "blDirectCopyIgnorePatterns")
     protected List<DirectCopyIgnorePattern> ignorePatterns = new ArrayList<DirectCopyIgnorePattern>();
