@@ -477,7 +477,10 @@ var BLCAdmin = (function($) {
             var continueInitialization = BLCAdmin.runFieldInitializationHandlers($container);
 
             // If we've already initialized this container, we'll skip it.
-            if ($container.data('initialized') == 'true' || !continueInitialization) {
+            if ($container.data('initialized') === 'true' || !continueInitialization) {
+                if ($container.closest('.oms-tab').length) {
+                    return;
+                }
                 // Update all listgrids sizing on the current tab just in case.
                 $container.find('.listgrid-container tbody').each(function (index, element) {
                     BLCAdmin.listGrid.updateGridTitleBarSize($(element).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));

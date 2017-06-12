@@ -35,6 +35,8 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.BroadleafFileService;
 import org.broadleafcommerce.common.file.service.GloballySharedInputStream;
+import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
+import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
 import org.springframework.beans.factory.annotation.Value;
@@ -93,6 +95,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
     @Resource(name = "blStaticAssetServiceExtensionManager")
     protected StaticAssetServiceExtensionManager extensionManager;
+
+    @Resource(name="blStreamingTransactionCapableUtil")
+    protected StreamingTransactionCapableUtil transUtil;
 
     protected StaticAsset findStaticAsset(String fullUrl) {
         StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl);
@@ -199,7 +204,6 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         }
     }    
 
-    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public Map<String, String> getCacheFileModel(String fullUrl, Map<String, String> parameterMap) throws Exception {
         StaticAsset staticAsset = findStaticAsset(fullUrl);
@@ -258,40 +262,87 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         return model;
     }
 
-    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
-    public StaticAssetStorage findStaticAssetStorageById(Long id) {
-        return staticAssetStorageDao.readStaticAssetStorageById(id);
+    public StaticAssetStorage findStaticAssetStorageById(final Long id) {
+        final StaticAssetStorage[] storage = new StaticAssetStorage[1];
+        transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+            @Override
+            public void execute() {
+                storage[0] = staticAssetStorageDao.readStaticAssetStorageById(id);
+            }
+        }, RuntimeException.class);
+        return storage[0];
     }
 
-    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public StaticAssetStorage create() {
         return staticAssetStorageDao.create();
     }
 
-    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
-    public StaticAssetStorage readStaticAssetStorageByStaticAssetId(Long id) {
-        return staticAssetStorageDao.readStaticAssetStorageByStaticAssetId(id);
+    public StaticAssetStorage readStaticAssetStorageByStaticAssetId(final Long id) {
+        final StaticAssetStorage[] storage = new StaticAssetStorage[1];
+        transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+            @Override
+            public void execute() {
+                storage[0] = staticAssetStorageDao.readStaticAssetStorageByStaticAssetId(id);
+            }
+        }, RuntimeException.class);
+        return storage[0];
     }
 
-    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
-    public StaticAssetStorage save(StaticAssetStorage assetStorage) {
-        return staticAssetStorageDao.save(assetStorage);
+    public StaticAssetStorage save(final StaticAssetStorage assetStorage) {
+        final StaticAssetStorage[] storage = new StaticAssetStorage[1];
+        transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+            @Override
+            public void execute() {
+                storage[0] = staticAssetStorageDao.save(assetStorage);
+            }
+        }, RuntimeException.class);
+        return storage[0];
     }
 
-    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
-    public void delete(StaticAssetStorage assetStorage) {
-        staticAssetStorageDao.delete(assetStorage);
+    public void delete(final StaticAssetStorage assetStorage) {
+        transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+            @Override
+            public void execute() {
+                staticAssetStorageDao.delete(assetStorage);
+            }
+        }, RuntimeException.class);
     }
 
-    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
-    public Blob createBlob(MultipartFile uploadedFile) throws IOException {
-        return staticAssetStorageDao.createBlob(uploadedFile);
+    public Blob createBlob(final MultipartFile uploadedFile) throws IOException {
+        final Blob[] blob = new Blob[1];
+        transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+            @Override
+            public void execute() {
+                try {
+                    blob[0] = staticAssetStorageDao.createBlob(uploadedFile);
+                } catch (IOException e) {
+                    LOG.error("Unable to create blob from MultipartFile.", e);
+                }
+            }
+        }, RuntimeException.class);
+        return blob[0];
+    }
+
+    @Override
+    public Blob createBlob(final InputStream uploadedFileInputStream, final long fileSize) throws IOException {
+        final Blob[] blob = new Blob[1];
+        transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+            @Override
+            public void execute() {
+                try {
+                    blob[0] = staticAssetStorageDao.createBlob(uploadedFileInputStream, fileSize);
+                } catch (IOException e) {
+                    LOG.error("Unable to create blob from InputStream.", e);
+                }
+            }
+        }, RuntimeException.class);
+        return blob[0];
     }
 
     /**
@@ -359,11 +410,11 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     @Override
     public void createStaticAssetStorage(InputStream fileInputStream, StaticAsset staticAsset) throws IOException {
         if (StorageType.DATABASE.equals(staticAsset.getStorageType())) {
-            StaticAssetStorage storage = staticAssetStorageDao.create();
+            StaticAssetStorage storage = create();
             storage.setStaticAssetId(staticAsset.getId());
-            Blob uploadBlob = staticAssetStorageDao.createBlob(fileInputStream, staticAsset.getFileSize());
+            Blob uploadBlob = createBlob(fileInputStream, staticAsset.getFileSize());
             storage.setFileData(uploadBlob);
-            staticAssetStorageDao.save(storage);
+            save(storage);
         } else if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType())) {
             FileWorkArea tempWorkArea = broadleafFileService.initializeWorkArea();
             // Convert the given URL from the asset to a system-specific suitable file path
