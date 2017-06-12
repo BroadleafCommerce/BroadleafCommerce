@@ -22,6 +22,7 @@ import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.locale.domain.Locale;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -31,11 +32,11 @@ import javax.annotation.Nonnull;
  */
 public interface PageDao {
 
-    public Page readPageById(Long id);
+    Page readPageById(Long id);
     
-    public List<PageField> readPageFieldsByPageId(Long pageId);
+    List<PageField> readPageFieldsByPageId(Long pageId);
 
-    public PageTemplate readPageTemplateById(Long id);
+    PageTemplate readPageTemplateById(Long id);
     
     /**
      * Saves the given {@link PageTemplate}
@@ -43,19 +44,19 @@ public interface PageDao {
      * @param template the {@link PageTemplate} to save
      * @return the database-saved {@link PageTemplate}
      */
-    public PageTemplate savePageTemplate(PageTemplate template);
+    PageTemplate savePageTemplate(PageTemplate template);
 
-    public Page updatePage(Page page);
+    Page updatePage(Page page);
 
-    public void delete(Page page);
+    void delete(Page page);
 
-    public Page addPage(Page clonedPage);
+    Page addPage(Page clonedPage);
 
     /**
      * Returns all pages, regardless of any sandbox they are apart of
      * @return all Pages configured in the system
      */
-    public List<Page> readAllPages();
+    List<Page> readAllPages();
     
     /**
      * Retrieve a subset of all online and site map included Pages
@@ -66,23 +67,33 @@ public interface PageDao {
      * @return
      */
     @Nonnull
-    public List<Page> readOnlineAndIncludedPages(@Nonnull int limit, @Nonnull int offset, @Nonnull String sortBy);
+    List<Page> readOnlineAndIncludedPages(@Nonnull int limit, @Nonnull int offset, @Nonnull String sortBy);
 
     /**
      * Returns all page templates, regardless of any sandbox they are apart of
      * @return all {@link PageTemplate}s configured in the system
      */
-    public List<PageTemplate> readAllPageTemplates();
+    List<PageTemplate> readAllPageTemplates();
 
-    public List<Page> findPageByURI(String uri);
+    List<Page> findPageByURI(String uri);
     
-    public List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri);
+    List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri);
 
-    public List<Page> findPageByURI(Locale locale, String uri);
+    List<Page> findPageByURI(Locale locale, String uri);
 
-    public void detachPage(Page page);
+    /**
+     * Returns pages that match the given URI and are within 1 day of the active date (potentially cached).
+     * This will only cache for 1 day.
+     * 
+     * @param uri
+     * @param activeDate
+     * @return
+     */
+    List<Page> findPageByURIAndActiveDate(String uri, Date activeDate);
 
-    public Long getCurrentDateResolution();
+    void detachPage(Page page);
 
-    public void setCurrentDateResolution(Long currentDateResolution);
+    Long getCurrentDateResolution();
+
+    void setCurrentDateResolution(Long currentDateResolution);
 }

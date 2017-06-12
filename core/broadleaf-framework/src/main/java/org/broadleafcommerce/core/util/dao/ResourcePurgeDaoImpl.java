@@ -155,7 +155,7 @@ public class ResourcePurgeDaoImpl implements ResourcePurgeDao {
         for (List<Long> idSetToExclude : listsOfExcludeIds) {
             inRestrictions.add(builder.not(root.get("id").in(idSetToExclude)));
         }
-        restrictions.add(builder.or(inRestrictions.toArray(new Predicate[inRestrictions.size()])));
+        restrictions.add(builder.and(inRestrictions.toArray(new Predicate[inRestrictions.size()])));
     }
     
     protected <T> TypedQuery<T> buildCartQuery(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview, Class<T> returnType,

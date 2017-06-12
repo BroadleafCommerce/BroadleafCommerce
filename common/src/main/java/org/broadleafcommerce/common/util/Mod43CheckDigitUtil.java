@@ -17,7 +17,12 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class Mod43CheckDigitUtil {
+
+    private static final Log LOG = LogFactory.getLog(Mod43CheckDigitUtil.class);
 
     private final static String CHARSET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%";
 
@@ -31,7 +36,7 @@ public class Mod43CheckDigitUtil {
                     valid = true;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("Error generating check digit.", e);
             }
         }
         return valid;

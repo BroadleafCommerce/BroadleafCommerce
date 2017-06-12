@@ -46,6 +46,15 @@
         eternal="false"
         overflowToDisk="true"
         timeToLiveSeconds="3600"/>
+    
+    <!-- Caches Page URIs by date added to Cache to reduce 
+         number of queries to find Pages by URI.
+         Cache for a day -->
+    <cache name="uriCachedDateCache"
+           maxElementsInMemory="1000"
+           eternal="false"
+           overflowToDisk="true"
+           timeToLiveSeconds="86400"/>
 
     <!-- Structured Content Cache - 1 hour cache -->
     <cache name="cmsStructuredContentCache"
