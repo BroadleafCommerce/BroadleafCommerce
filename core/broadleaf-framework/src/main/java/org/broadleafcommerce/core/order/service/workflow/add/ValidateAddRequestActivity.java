@@ -24,21 +24,16 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
-
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
-
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
@@ -48,6 +43,7 @@ import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,8 +53,11 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
+@Component("blValidateAddRequestActivity")
 public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
 
+    public static final int ORDER = 1000;
+    
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
     
@@ -77,6 +76,10 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     @Resource(name = "blValidateAddRequestActivityExtensionManager")
     protected ValidateAddRequestActivityExtensionManager extensionManager;
 
+    public ValidateAddRequestActivity() {
+        setOrder(ORDER);
+    }
+    
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         ExtensionResultHolder<Exception> resultHolder = new ExtensionResultHolder<>();

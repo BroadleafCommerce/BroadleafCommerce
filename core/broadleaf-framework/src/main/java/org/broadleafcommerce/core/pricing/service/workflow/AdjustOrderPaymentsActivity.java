@@ -18,15 +18,11 @@
 package org.broadleafcommerce.core.pricing.service.workflow;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.payment.PaymentTransactionType;
-import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-
-import java.math.BigDecimal;
+import org.springframework.stereotype.Component;
 
 /**
  * The AdjustOrderPaymentsActivity is responsible for adjusting any of the order payments
@@ -69,7 +65,14 @@ import java.math.BigDecimal;
  *
  * @author Elbert Bautista (elbertbautista)
  */
+@Component("blAdjustOrderPaymentsActivity")
 public class AdjustOrderPaymentsActivity extends BaseActivity<ProcessContext<Order>> {
+    
+    public static final int ORDER = 9000;
+    
+    public AdjustOrderPaymentsActivity() {
+        setOrder(ORDER);
+    }
 
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {

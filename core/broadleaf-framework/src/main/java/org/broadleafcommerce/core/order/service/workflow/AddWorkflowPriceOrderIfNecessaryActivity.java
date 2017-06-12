@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,7 +51,10 @@ import javax.annotation.Resource;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
+@Component("blAddWorkflowPriceOrderIfNecessaryActivity")
+public class AddWorkflowPriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
+    
+    public static final int ORDER = 5000;
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -63,6 +67,10 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
 
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
+    
+    public AddWorkflowPriceOrderIfNecessaryActivity() {
+        setOrder(ORDER);
+    }
     
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
@@ -111,13 +119,13 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
         
         // We need to build up a map of OrderItem to which FulfillmentGroupItems reference that particular OrderItem.
         // We'll also save the order item and build up a map of the unsaved items to their saved counterparts.
-        Map<OrderItem, List<FulfillmentGroupItem>> oiFgiMap = new HashMap<OrderItem, List<FulfillmentGroupItem>>();
-        Map<OrderItem, OrderItem> savedOrderItems = new HashMap<OrderItem, OrderItem>();
+        Map<OrderItem, List<FulfillmentGroupItem>> oiFgiMap = new HashMap<>();
+        Map<OrderItem, OrderItem> savedOrderItems = new HashMap<>();
         for (OrderItem oi : order.getOrderItems()) {
             if (oi instanceof BundleOrderItem) {
                 // We first need to save the discrete order items that are part of this bundle. Once they're saved, we'll
                 // mark them and remove them from this bundle.
-                List<DiscreteOrderItem> doisToAdd = new ArrayList<DiscreteOrderItem>();
+                List<DiscreteOrderItem> doisToAdd = new ArrayList<>();
                 ListIterator<DiscreteOrderItem> li = ((BundleOrderItem) oi ).getDiscreteOrderItems().listIterator();
                 while (li.hasNext()) {
                     DiscreteOrderItem doi = li.next();
@@ -147,7 +155,7 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
         
         // Now, we'll update the orderitems in the order to their saved counterparts
         ListIterator<OrderItem> li = order.getOrderItems().listIterator();
-        List<OrderItem> oisToAdd = new ArrayList<OrderItem>();
+        List<OrderItem> oisToAdd = new ArrayList<>();
         while (li.hasNext()) {
             OrderItem oi = li.next();
             OrderItem savedOi = savedOrderItems.get(oi);
@@ -233,7 +241,7 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
     }
     
     protected void getOiFgiMap(Order order, Map<OrderItem, List<FulfillmentGroupItem>> oiFgiMap, OrderItem oi) {
-        List<FulfillmentGroupItem> fgis = new ArrayList<FulfillmentGroupItem>();
+        List<FulfillmentGroupItem> fgis = new ArrayList<>();
 
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {

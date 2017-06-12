@@ -22,23 +22,13 @@ import org.broadleafcommerce.core.catalog.service.CatalogService
 import org.broadleafcommerce.core.inventory.service.ContextualInventoryService
 import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException
 import org.broadleafcommerce.core.inventory.service.type.InventoryType
-import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl
-import org.broadleafcommerce.core.order.domain.OrderItemImpl
 import org.broadleafcommerce.core.order.service.OrderItemService
-import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity
+import org.broadleafcommerce.core.order.service.workflow.CheckAddAvailabilityActivity
 
 
 
 /*
- * 1a) orderItemId != null
- *      a) orderItem instanceOf DiscreteOrderItem
- *          * sku is set using DiscreteOrderItem.getSku() CONTINUE
- *      b) orderItem instanceOf BundleOrderItem 
- *          * sku is set using BundleOrderItem.getSku() CONTINUE
- *      c) LOG.warn() issued and return context EXIT
- * 1b) orderItemId == null
- *      a) sku set using catalogService.findSkuById(_) CONTINUE
+ * 1a) sku set using catalogService.findSkuById(_) CONTINUE
  * 
  * 2) !sku.isAvailable()
  *      * throw InventoryUnavailableException EXIT
@@ -52,7 +42,7 @@ import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivi
  *              
  * 4) return context
  */
-class CheckAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
+class CheckAddAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
 
     CatalogService mockCatalogService = Mock()
     OrderItemService mockOrderItemService = Mock()
@@ -64,7 +54,7 @@ class CheckAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
      * 2) setup activity
      */
     def setup(){
-        activity = Spy(CheckAvailabilityActivity).with {
+        activity = Spy(CheckAddAvailabilityActivity).with {
             catalogService = mockCatalogService
             orderItemService = mockOrderItemService
             inventoryService = mockInventoryService
@@ -72,62 +62,6 @@ class CheckAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         }
         
         
-    }
-    
-    def "If the order item id is non-null, and there is a DiscreteOrderItem, then a sku from that DiscreteOrderItem will be tested for availability"(){
-        
-        setup: "setup a discrete order item and non-null orderitemId"
-        DiscreteOrderItemImpl mockOrderItem = Spy(DiscreteOrderItemImpl)
-        SkuImpl mockSku = Spy(SkuImpl)
-        mockSku.getId() >> 1
-        
-        context.seedData.itemRequest.getQuantity() >> 0
-        context.seedData.itemRequest.getOrderItemId() >> 1
-        mockOrderItemService.readOrderItemById(_) >> mockOrderItem
-        
-        when: "the activity is executed"
-        context = activity.execute(context);
-        
-        then: "that sku is checked for availability"
-        1 * mockOrderItem.getSku() >> mockSku
-        1 * mockSku.isAvailable() >> true
-    }
-    
-    def "If the order item id is non-null, and there is a BundleOrderItem, then a sku from that BundleOrderItem will be tested for availability"(){
-        setup: "setup a bundle order item and non-null orderitemId"
-        BundleOrderItemImpl mockOrderItem = Spy(BundleOrderItemImpl)
-        SkuImpl mockSku = Spy(SkuImpl)
-        mockSku.getId() >> 1
-        
-        context.seedData.itemRequest.getQuantity() >> 0
-        context.seedData.itemRequest.getOrderItemId() >> 1
-        mockOrderItemService.readOrderItemById(_) >> mockOrderItem
-        
-        when: "the activity is executed"
-        context = activity.execute(context);
-        
-        then: "that sku is checked for availability"
-        1 * mockOrderItem.getSku() >> mockSku
-        1 * mockSku.isAvailable() >> true
-    }
-    
-    def "If the order item id is non-null, and the order item is not a familiar item, then availability is not checked"(){
-        setup: "setup a discrete order item and non-null orderitemId"
-        OrderItemImpl mockOrderItem = Spy(OrderItemImpl)
-        SkuImpl mockSku = Spy(SkuImpl)
-        mockSku.getId() >> 1
-    
-        
-        context.seedData.itemRequest.getQuantity() >> 0
-        context.seedData.itemRequest.getOrderItemId() >> 1
-        mockOrderItemService.readOrderItemById(_) >> mockOrderItem
-        
-        when: "the activity is executed"
-        context = activity.execute(context);
-        
-        then: "availability is not checked"
-        0 * mockOrderItem.getSku() >> mockSku
-        0 * mockSku.isAvailable()
     }
     
     def "If the order item id is null, the catalog service is used to find the sku, and that sku is checked for availability"(){
@@ -141,7 +75,7 @@ class CheckAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         
         
         when: "the activity is executed"
-        context = activity.execute(context);
+        context = activity.execute(context)
         
         then: "that sku is checked for availability"
         1 * mockCatalogService.findSkuById(_) >> mockSku
@@ -159,7 +93,7 @@ class CheckAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         
         
         when: "the activity is executed"
-        context = activity.execute(context);
+        context = activity.execute(context)
         
         then: "InventoryUnavailableException is thrown"
         1 * mockCatalogService.findSkuById(_) >> mockSku
@@ -180,7 +114,7 @@ class CheckAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         mockSku.getInventoryType() >> InventoryType.CHECK_QUANTITY
         
         when: "the activity is executed"
-        context = activity.execute(context);
+        context = activity.execute(context)
         
         then: "that sku is checked for availability"
         1 * mockCatalogService.findSkuById(_) >> mockSku
@@ -201,7 +135,7 @@ class CheckAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         mockSku.getInventoryType() >> InventoryType.CHECK_QUANTITY
         
         when: "the activity is executed"
-        context = activity.execute(context);
+        context = activity.execute(context)
         
         then: "that sku is checked for availability"
         1 * mockCatalogService.findSkuById(_) >> mockSku

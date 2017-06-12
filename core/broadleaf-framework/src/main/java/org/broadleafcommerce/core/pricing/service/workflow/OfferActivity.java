@@ -24,18 +24,26 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 import javax.annotation.Resource;
 
+@Component("blOfferActivity")
 public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
 
+    public static final int ORDER = 1000;
+    
     @Resource(name="blOfferService")
     protected OfferService offerService;
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
+    
+    public OfferActivity() {
+        setOrder(ORDER);
+    }
 
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {

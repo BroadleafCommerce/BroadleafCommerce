@@ -34,7 +34,7 @@ import org.broadleafcommerce.core.order.service.OrderItemService
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService
 import org.broadleafcommerce.core.order.service.OrderService
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest
-import org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity
+import org.broadleafcommerce.core.order.service.workflow.AddWorkflowPriceOrderIfNecessaryActivity
 
 
 
@@ -89,7 +89,7 @@ class PriceOrderIfNecessaryActivitySpec extends BaseOrderWorkflowSpec {
     OrderMultishipOptionService mockOrderMultishipOptionService = Mock()
     
     def setup(){
-        activity = Spy(PriceOrderIfNecessaryActivity).with {
+        activity = Spy(AddWorkflowPriceOrderIfNecessaryActivity).with {
             orderService = mockOrderService
             orderItemService = mockOrderItemService
             fgItemDao = mockFgItemDao

@@ -29,7 +29,7 @@ import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
+import org.broadleafcommerce.core.order.service.workflow.CheckAddAvailabilityActivity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -622,7 +622,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
     
     /**
      * <p>Used in conjuction with {@link InventoryType#CHECK_QUANTITY} within the blAddItemWorkflow and blUpdateItemWorkflow.
-     * This field is checked within the {@link CheckAvailabilityActivity} to determine if inventory is actually available
+     * This field is checked within the {@link CheckAddAvailabilityActivity} to determine if inventory is actually available
      * for this Sku.
      */
     public Integer getQuantityAvailable();

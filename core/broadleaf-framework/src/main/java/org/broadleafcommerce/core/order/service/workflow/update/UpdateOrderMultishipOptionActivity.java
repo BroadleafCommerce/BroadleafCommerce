@@ -25,17 +25,25 @@ import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 
+@Component("blUdateOrderMultishipOptionActivity")
 public class UpdateOrderMultishipOptionActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
+    
+    public static final int ORDER = 4000;
     
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
 
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
+    
+    public UpdateOrderMultishipOptionActivity() {
+        setOrder(ORDER);
+    }
     
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {

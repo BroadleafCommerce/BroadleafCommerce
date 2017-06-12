@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,9 +15,11 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.order.service.workflow.add;
+/**
+ * 
+ */
+package org.broadleafcommerce.core.order.service.workflow;
 
-import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.order.strategy.FulfillmentGroupItemStrategy;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
@@ -25,15 +27,20 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-@Component("blAddFulfillmentGroupItemActivity")
-public class AddFulfillmentGroupItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
-    
-    public static final int ORDER = 4000;
-    
+/**
+ * 
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
+ */
+@Component("blUpdateWorkflowVerifyFulfillmentGroupItemsActivity")
+public class UpdateWorkflowVerifyFulfillmentGroupItemsActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
+
+    public static final int ORDER = 7000;
+
     @Resource(name = "blFulfillmentGroupItemStrategy")
     protected FulfillmentGroupItemStrategy fgItemStrategy;
 
-    public AddFulfillmentGroupItemActivity() {
+    public UpdateWorkflowVerifyFulfillmentGroupItemsActivity() {
         setOrder(ORDER);
     }
     
@@ -41,10 +48,9 @@ public class AddFulfillmentGroupItemActivity extends BaseActivity<ProcessContext
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         
-        request = fgItemStrategy.onItemAdded(request);
+        request = fgItemStrategy.verify(request);
         
         context.setSeedData(request);
         return context;
     }
-
 }

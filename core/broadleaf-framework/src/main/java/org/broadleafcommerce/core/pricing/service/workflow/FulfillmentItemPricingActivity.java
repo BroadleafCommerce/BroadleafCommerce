@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -41,10 +42,17 @@ import java.util.Map;
  * 
  * @author Brian Polster 
  */
+@Component("blFulfillmentItemPricingActivity")
 public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<Order>> {
     
     private static final Log LOG = LogFactory.getLog(FulfillmentItemPricingActivity.class);
 
+    public static final int ORDER = 3000;
+    
+    public FulfillmentItemPricingActivity() {
+        setOrder(ORDER);
+    }
+    
     protected BroadleafCurrency getCurrency(FulfillmentGroup fg) {
         return fg.getOrder().getCurrency();
     }
@@ -75,7 +83,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
-        Map<OrderItem,List<FulfillmentGroupItem>> partialOrderItemMap = new HashMap<OrderItem,List<FulfillmentGroupItem>>();
+        Map<OrderItem,List<FulfillmentGroupItem>> partialOrderItemMap = new HashMap<>();
 
         // Calculate the fulfillmentGroupItem total
         populateItemTotalAmount(order, partialOrderItemMap);
@@ -113,7 +121,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
                     // to one or more of the items.
                     List<FulfillmentGroupItem> fgItemList = partialOrderItemMap.get(orderItem);
                     if (fgItemList == null) {
-                        fgItemList = new ArrayList<FulfillmentGroupItem>();
+                        fgItemList = new ArrayList<>();
                         partialOrderItemMap.put(orderItem, fgItemList);
                     }
                     fgItemList.add(fgItem);

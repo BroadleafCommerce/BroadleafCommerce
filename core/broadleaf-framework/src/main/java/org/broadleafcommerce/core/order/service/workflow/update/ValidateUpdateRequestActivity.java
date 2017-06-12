@@ -24,13 +24,21 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+@Component("blValidateUpdateRequestActivity")
 public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
+    
+    public static final int ORDER = 1000;
     
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
+    
+    public ValidateUpdateRequestActivity() {
+        setOrder(ORDER);
+    }
     
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {

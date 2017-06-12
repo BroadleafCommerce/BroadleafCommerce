@@ -49,17 +49,6 @@
     </bean>
     
     <!-- Pricing Workflow configuration -->
-    <bean p:order="1000" id="blOfferActivity" class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity" />
-    <bean p:order="2000" id="blConsolidateFulfillmentFeesActivity" class="org.broadleafcommerce.core.pricing.service.workflow.ConsolidateFulfillmentFeesActivity" />
-    <bean p:order="3000" id="blFulfillmentItemPricingActivity" class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentItemPricingActivity" />
-    <bean p:order="4000" id="blFulfillmentGroupMerchandiseTotalActivity" class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupMerchandiseTotalActivity" />
-    <bean p:order="5000" id="blFulfillmentGroupPricingActivity" class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity" />
-    <bean p:order="6000" id="blShippingOfferActivity" class="org.broadleafcommerce.core.pricing.service.workflow.ShippingOfferActivity" />
-    <bean p:order="7000" id="blTaxActivity" class="org.broadleafcommerce.core.pricing.service.workflow.TaxActivity" />
-    <bean p:order="8000" id="blTotalActivity" class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity" />
-    <bean p:order="9000" id="blAdjustOrderPaymentsActivity" class="org.broadleafcommerce.core.pricing.service.workflow.AdjustOrderPaymentsActivity" />
-
-
     <bean id="blPricingWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
             <bean class="org.broadleafcommerce.core.pricing.service.workflow.PricingProcessContextFactory"/>
@@ -93,13 +82,6 @@
     </bean>
     
     <!-- Add Item Workflow Configuration -->
-    <bean p:order="1000" id="blValidateAddRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity"/>
-    <bean p:order="2000" id="blCheckAddAvailabilityActivity" class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
-    <bean p:order="3000" id="blAddOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
-    <bean p:order="4000" id="blAddFulfillmentGroupItemActivity" class="org.broadleafcommerce.core.order.service.workflow.add.AddFulfillmentGroupItemActivity"/>
-    <bean p:order="5000" id="blAddWorkflowPriceOrderIfNecessaryActivity" class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
-    <bean p:order="6000" id="blAddWorkflowVerifyFulfillmentGroupItemsActivity" class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
-    
     <bean id="blAddItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
             <bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
@@ -130,14 +112,6 @@
     </bean>
 
     <!-- Update Item Workflow Configuration -->
-    <bean p:order="1000" id="blValidateUpdateRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.update.ValidateUpdateRequestActivity"/>
-    <bean p:order="2000" id="blCheckUpdateAvailabilityActivity" class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
-    <bean p:order="3000" id="blUpdateOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderItemActivity"/>
-    <bean p:order="4000" id="blUdateOrderMultishipOptionActivity" class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderMultishipOptionActivity"/>
-    <bean p:order="5000" id="blUpdateFulfillmentGroupItemActivity" class="org.broadleafcommerce.core.order.service.workflow.update.UpdateFulfillmentGroupItemActivity"/>
-    <bean p:order="6000" id="blUpdateWorkflowPriceOrderIfNecessaryActivity" class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
-    <bean p:order="7000" id="blUpdateWorkflowVerifyFulfillmentGroupItemsActivity" class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
-    
     <bean id="blUpdateItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
             <bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
@@ -169,9 +143,6 @@
     </bean>
 
     <!-- Update Item Workflow Configuration -->
-    <bean p:order="1000" id="blValidateUpdateProductOptionsRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.update.options.ValidateUpdateProductOptionsRequestActivity"/>
-    <bean p:order="2000" id="blUpdateProductOptionsOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.update.options.UpdateProductOptionsOrderItemActivity"/>
- 
     <bean id="blUpdateProductOptionsForItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
             <bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
@@ -190,13 +161,6 @@
     </bean>
     
     <!-- Remove Item Workflow Configuration -->
-    <bean p:order="1000" id="blValidateRemoveRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.ValidateRemoveRequestActivity"/>
-    <bean p:order="2000" id="blRemoveOrderMultishipOptionActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderMultishipOptionActivity"/>
-    <bean p:order="3000" id="blRemoveFulfillmentGroupItemActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveFulfillmentGroupItemActivity"/>
-    <bean p:order="4000" id="blRemoveOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderItemActivity"/>
-    <bean p:order="5000" id="blRemoveWorkflowPriceOrderIfNecessaryActivity" class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
-    <bean p:order="6000" id="blRemoveWorkflowVerifyFulfillmentGroupItemsActivity" class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
-    
     <bean id="blRemoveItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
             <bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
@@ -219,25 +183,6 @@
     </bean>
 
     <!-- Checkout Workflow Configuration -->
-    <bean p:order="500" id="blValidateCheckoutActivity" class="org.broadleafcommerce.core.checkout.service.workflow.ValidateCheckoutActivity"/>
-    <bean p:order="1000" id="blVerifyCustomerMaxOfferUsesActivity" class="org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity"/>
-    <bean p:order="2000" id="blValidateProductOptionsActivity" class="org.broadleafcommerce.core.checkout.service.workflow.ValidateProductOptionsActivity"/>
-    <bean p:order="3000" id="blValidateAndConfirmPaymentActivity" class="org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity">
-        <property name="rollbackHandler" ref="blConfirmPaymentsRollbackHandler" />
-    </bean>
-    <bean p:order="4000" id="blRecordOfferUsageActivity" class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity">
-        <property name="rollbackHandler" ref="blRecordOfferUsageRollbackHandler" />
-    </bean>
-    <bean p:order="5000" id="blCommitTaxActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CommitTaxActivity">
-        <property name="rollbackHandler" ref="blCommitTaxRollbackHandler" />
-    </bean>
-    <bean p:order="6000" id="blDecrementInventoryActivity" class="org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryActivity">
-        <property name="rollbackHandler" ref="blDecrementInventoryRollbackHandler" />
-    </bean>
-    <bean p:order="7000" id="blCompleteOrderActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity">
-        <property name="rollbackHandler" ref="blCompleteOrderRollbackHandler" />
-    </bean>
-
     <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
             <bean class="org.broadleafcommerce.core.checkout.service.workflow.CheckoutProcessContextFactory"/>

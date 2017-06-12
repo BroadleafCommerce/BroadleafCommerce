@@ -17,17 +17,17 @@
  */
 package org.broadleafcommerce.core.workflow;
 
-import java.util.Map;
-
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.core.Ordered;
+
+import java.util.Map;
 
 public abstract class BaseActivity<T extends ProcessContext<?>> implements Activity<T> {
     
     protected ErrorHandler errorHandler;
     protected String beanName;
 
-    protected RollbackHandler<T> rollbackHandler;
+    protected RollbackHandler<?> rollbackHandler;
     protected String rollbackRegion;
     protected Map<String, Object> stateConfiguration;
     protected boolean automaticallyRegisterRollbackHandler = false;
@@ -59,12 +59,12 @@ public abstract class BaseActivity<T extends ProcessContext<?>> implements Activ
     }
 
     @Override
-    public RollbackHandler<T> getRollbackHandler() {
+    public RollbackHandler<?> getRollbackHandler() {
         return rollbackHandler;
     }
 
     @Override
-    public void setRollbackHandler(RollbackHandler<T> rollbackHandler) {
+    public void setRollbackHandler(RollbackHandler<?> rollbackHandler) {
         this.rollbackHandler = rollbackHandler;
     }
 

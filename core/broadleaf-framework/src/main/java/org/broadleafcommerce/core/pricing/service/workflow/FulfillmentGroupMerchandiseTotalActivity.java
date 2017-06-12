@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
@@ -35,8 +36,15 @@ import java.math.BigDecimal;
  * @author Phillip Verheyden
  * @see {@link FulfillmentGroup#setMerchandiseTotal(Money)}, {@link FulfillmentGroup#getMerchandiseTotal()}
  */
+@Component("blFulfillmentGroupMerchandiseTotalActivity")
 public class FulfillmentGroupMerchandiseTotalActivity extends BaseActivity<ProcessContext<Order>> {
 
+    public static final int ORDER = 4000;
+    
+    public FulfillmentGroupMerchandiseTotalActivity() {
+        setOrder(ORDER);
+    }
+    
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();

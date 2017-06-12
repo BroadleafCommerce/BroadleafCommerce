@@ -17,12 +17,12 @@
  */
 package org.broadleafcommerce.core.workflow;
 
-import java.util.Map;
-
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.core.Ordered;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -80,7 +80,7 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
      *
      * @return the handler responsible for reverting state for the activity
      */
-    public RollbackHandler<T> getRollbackHandler();
+    public RollbackHandler<?> getRollbackHandler();
 
     /**
      * Set the RollbackHandler instance that should be called by the ActivityStateManager in the
@@ -89,7 +89,7 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
      *
      * @param rollbackHandler the handler responsible for reverting state for the activity
      */
-    public void setRollbackHandler(RollbackHandler<T> rollbackHandler);
+    public void setRollbackHandler(RollbackHandler<?> rollbackHandler);
 
     /**
      * Retrieve the optional region label for the RollbackHandler. Setting a region allows

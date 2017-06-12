@@ -21,7 +21,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryActivity;
 import org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryRollbackHandler;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
+import org.broadleafcommerce.core.order.service.workflow.CheckAddAvailabilityActivity;
 
 import java.util.Collection;
 import java.util.Map;
@@ -33,7 +33,7 @@ import java.util.Map;
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link InventoryService}
  * @see {@link InventoryServiceExtensionHandler}
- * @see {@link CheckAvailabilityActivity}
+ * @see {@link CheckAddAvailabilityActivity}
  * @see {@link DecrementInventoryActivity}
  */
 public interface ContextualInventoryService extends InventoryService {

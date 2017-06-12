@@ -15,65 +15,60 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.order.service.workflow.add;
+package org.broadleafcommerce.core.order.service.workflow;
 
-import org.broadleafcommerce.common.dao.GenericEntityDao;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
-import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
-import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-@Component("blAddOrderItemActivity")
-public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
+/**
+ * This activity handles both adds and updates. In both cases, this will check the availability and quantities (if applicable)
+ * of the passed in request. If this is an update request, this will use the {@link Sku} from {@link OrderItemRequestDTO#getOrderItemId()}.
+ * If this is an add request, there is no order item yet so the {@link Sku} is looked up via the {@link OrderItemRequestDTO#getSkuId()}.
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
+ */
+@Component("blCheckAddAvailabilityActivity")
+public class CheckAddAvailabilityActivity extends AbstractCheckAvailabilityActivity {
+
+    private static final Log LOG = LogFactory.getLog(CheckAddAvailabilityActivity.class);
+
+    public static final int ORDER = 2000;
     
-    public static final int ORDER = 3000;
-    
-    @Resource(name = "blOrderService")
-    protected OrderService orderService;
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
     
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
     
-    @Resource(name = "blCatalogService")
-    protected CatalogService catalogService;
-
-    @Resource(name = "blGenericEntityDao")
-    protected GenericEntityDao genericEntityDao;
-    
-    public AddOrderItemActivity() {
+    public CheckAddAvailabilityActivity() {
         setOrder(ORDER);
     }
-
+    
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
-
-        // Order has been verified in a previous activity -- the values in the request can be trusted
-        Order order = request.getOrder();
-
-        // Build the order item
-        OrderItem item = orderItemService.buildOrderItemFromDTO(order, orderItemRequestDTO);
-
-        // Check for special pricing
-        orderItemService.priceOrderItem(item);
-
-        order.getOrderItems().add(item);
-        request.setOrderItem(item);
-
-        if (!request.isPriceOrder()) {
-            //persist the newly created order if we're not going through the pricing flow. This helps with proper
-            //fulfillment group association
-            genericEntityDao.persist(item);
+        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO){
+            return context;
         }
+        
+        // No order item, this must be a new item add request
+        Long skuId = request.getItemRequest().getSkuId();
+        Sku sku = catalogService.findSkuById(skuId);
+
+        Order order = context.getSeedData().getOrder();
+        Integer requestedQuantity = request.getItemRequest().getQuantity();
+        checkSkuAvailability(order, sku, requestedQuantity);
 
         return context;
     }

@@ -34,6 +34,7 @@ import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,14 +51,21 @@ import javax.annotation.Resource;
  * @author Priyesh Patel
  *
  */
+@Component("blValidateProductOptionsActivity")
 public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
+    public static final int ORDER = 2000;
+    
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
 
     @Resource(name = "blProductOptionValidationService")
     protected ProductOptionValidationService productOptionValidationService;
 
+    public ValidateProductOptionsActivity() {
+        setOrder(ORDER);
+    }
+    
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         if(!useSku) {

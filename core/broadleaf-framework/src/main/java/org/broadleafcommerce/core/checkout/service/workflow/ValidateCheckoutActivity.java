@@ -22,6 +22,8 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.checkout.service.workflow.extension.ValidateCheckoutActivityExtensionManager;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
+
 import javax.annotation.Resource;
 
 /**
@@ -29,10 +31,17 @@ import javax.annotation.Resource;
  *
  * @author Nick Crum ncrum
  */
+@Component("blValidateCheckoutActivity")
 public class ValidateCheckoutActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
+    public static final int ORDER = 500;
+    
     @Resource(name = "blValidateCheckoutActivityExtensionManager")
     protected ValidateCheckoutActivityExtensionManager extensionManager;
+    
+    public ValidateCheckoutActivity() {
+        setOrder(ORDER);
+    }
 
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {

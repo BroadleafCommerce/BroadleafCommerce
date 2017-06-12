@@ -26,14 +26,22 @@ import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+@Component("blUpdateOrderItemActivity")
 public class UpdateOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
+
+    public static final int ORDER = 3000;
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-
+    
+    public UpdateOrderItemActivity() {
+        setOrder(ORDER);
+    }
+    
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();

@@ -21,6 +21,9 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.TaxService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
@@ -31,15 +34,20 @@ import javax.annotation.Resource;
  * @author Kelly Tisdell
  *
  */
+@Component("blCommitTaxActivity")
 public class CommitTaxActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
+    
+    public static final int ORDER = 5000;
     
     @Resource(name = "blTaxService")
     protected TaxService taxService;
 
-    public CommitTaxActivity() {
-        super();
+    @Autowired
+    public CommitTaxActivity(@Qualifier("blCommitTaxRollbackHandler") CommitTaxRollbackHandler rollbackHandler) {
         //We can automatically register a rollback handler because the state will be in the process context.
         super.setAutomaticallyRegisterRollbackHandler(true);
+        setRollbackHandler(rollbackHandler);
+        setOrder(ORDER);
     }
 
     @Override
