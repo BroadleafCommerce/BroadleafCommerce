@@ -17,15 +17,16 @@
  */
 package org.broadleafcommerce.common.web.controller.annotation;
 
+import org.broadleafcommerce.common.config.BroadleafBeanNameGenerator;
 import org.broadleafcommerce.common.web.controller.FrameworkControllerHandlerMapping;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import static org.springframework.context.annotation.ComponentScan.Filter;
 
 /**
  * Enables {@link FrameworkController} and {@link FrameworkRestController} annotations.
@@ -69,6 +70,7 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
 @ComponentScan(
         useDefaultFilters = false,
         basePackages = {"org.broadleafcommerce", "com.broadleafcommerce"},
-        includeFilters = @Filter({FrameworkController.class, FrameworkRestController.class}))
+        includeFilters = @Filter({FrameworkController.class, FrameworkRestController.class}),
+        nameGenerator = BroadleafBeanNameGenerator.class)
 public @interface EnableAllFrameworkControllers {
 }
