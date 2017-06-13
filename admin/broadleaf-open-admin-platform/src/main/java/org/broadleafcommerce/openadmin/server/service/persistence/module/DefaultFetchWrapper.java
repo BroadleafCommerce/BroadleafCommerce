@@ -57,6 +57,6 @@ public class DefaultFetchWrapper implements FetchWrapper {
     public Entity[] getRecords(FetchExtractionRequest fetchExtractionRequest) {
         return getBasicPersistenceModule().getRecords(fetchExtractionRequest.getPrimaryUnfilteredMergedProperties(),
                 fetchExtractionRequest.getRecords(), fetchExtractionRequest.getAlternateUnfilteredMergedProperties(),
-                fetchExtractionRequest.getPathToTargetObject());
+                fetchExtractionRequest.getPathToTargetObject(), fetchExtractionRequest.getPersistencePackage().getCustomCriteria());
     }
 }
