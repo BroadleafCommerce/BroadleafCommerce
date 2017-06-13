@@ -16,7 +16,7 @@
                         data-path=@{${listGrid.path}},
                         data-hiddenid=${listGrid.jsonFieldName},
                         data-currentparams=${currentParams},
-                        data-sectioncrumbs=${sectionCrumbs}
+                        data-sectioncrumbs=${sectionCrumbs},
                         data-fetchType=${listGrid.fetchType}"
                blc_admin:component_id="${listGrid}">
             <thead>
@@ -92,11 +92,11 @@
             </thead>
             <tbody th:attr="data-recordranges=${listGrid.startIndex + '-' + (listGrid.startIndex + #lists.size(listGrid.records) - 1)},
                             data-totalrecords=${listGrid.totalRecords},
-                            data-pagesize=${listGrid.pageSize}
+                            data-pagesize=${listGrid.pageSize},
                             data-firstid=${listGrid.firstId},
                             data-lastid=${listGrid.lastId},
                             data-uppercount=${listGrid.upperCount},
-                            data-lowercount=${listGrid.lowerCount}
+                            data-lowercount=${listGrid.lowerCount},
                             data-lessthanpagesize=${listGrid.totalCountLessThanPageSize}">
 
                 <tr th:if="${#lists.isEmpty(listGrid.records)}" class="list-grid-no-results">
@@ -260,7 +260,7 @@
                 -
                 <span class="last-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}" />
                 <a class="next-page" th:text="#{listgrid.page.next}+'&gt;'"/>
-                <div class="result-page-size"><span th:text="#{listgrid.page.size}+'&nbsp;&nbsp;:&nbsp;&nbsp;'"/><input type="text" class="result-page-size-input"/></div>
+                <div class="result-page-size" style="padding-top: 5px"><span th:text="#{listgrid.page.size}+'&nbsp;&nbsp;:&nbsp;&nbsp;'"/><input type="text" class="result-page-size-input" style="height: 24px"/></div>
             </span>
             <span th:style="${listGrid.fetchType=='DEFAULT'?'display:inline':'display:none'}" class="scroll-results">
                 <span class="low-index" th:if="${records}" th:text="${listGrid.startIndex + 1}" />

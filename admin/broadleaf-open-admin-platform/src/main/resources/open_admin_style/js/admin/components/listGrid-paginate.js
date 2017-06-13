@@ -570,14 +570,14 @@
             }
             $footer.find('.total-records').text(totalRecords);
             if (upperCount - totalRecords > 1) {
-                $footer.find('.previous-page').css('visibility', 'visible');
+                $footer.find('.previous-page').css('display', 'inline');
             } else {
-                $footer.find('.previous-page').css('visibility', 'hidden');
+                $footer.find('.previous-page').css('display', 'none');
             }
             if (totalRecords >= pageSize || (!totalCountLessThanPageSize && totalRecords - upperCount === 0)) {
-                $footer.find('.next-page').css('visibility', 'visible');
+                $footer.find('.next-page').css('display', 'inline');
             } else {
-                $footer.find('.next-page').css('visibility', 'hidden');
+                $footer.find('.next-page').css('display', 'none');
             }
             $footer.find('.first-index').text(lowerCount);
             $footer.find('.last-index').text(upperCount);
@@ -1012,7 +1012,7 @@ $(document).ready(function() {
 
     $('body').on('click', 'a.previous-page', function(event) {
         var $pageLink = $(this);
-        var $parentSpan = $pageLink.closest('span.listgrid-table-footer');
+        var $parentSpan = $pageLink.closest('div.listgrid-table-footer');
         var $headerWrapper = $parentSpan.siblings('div.listgrid-header-wrapper');
         var $bodyWrapper = $parentSpan.siblings('div.listgrid-body-wrapper');
         var $tbody = $bodyWrapper.find('table.list-grid-table').find('tbody');
@@ -1042,7 +1042,7 @@ $(document).ready(function() {
 
     $('body').on('click', 'a.next-page', function(event) {
         var $pageLink = $(this);
-        var $parentSpan = $pageLink.closest('span.listgrid-table-footer');
+        var $parentSpan = $pageLink.closest('div.listgrid-table-footer');
         var $headerWrapper = $parentSpan.siblings('div.listgrid-header-wrapper');
         var $bodyWrapper = $parentSpan.siblings('div.listgrid-body-wrapper');
         var $tbody = $bodyWrapper.find('table.list-grid-table').find('tbody');
@@ -1069,9 +1069,9 @@ $(document).ready(function() {
             var totalRecords = BLCAdmin.listGrid.paginate.getTotalRecords($newTBody);
             var $footer = $tbody.closest('.listgrid-container').find('.listgrid-table-footer');
             if (totalRecords === 0) {
-                $footer.find('.next-page').css('visibility', 'hidden');
+                $footer.find('.next-page').css('display', 'none');
             } else {
-                $footer.find('.next-page').css('visibility', 'visible');
+                $footer.find('.next-page').css('display', 'inline');
                 BLCAdmin.listGrid.replaceRelatedListGrid($(data), null, { isRefresh : false});
             }
         });
