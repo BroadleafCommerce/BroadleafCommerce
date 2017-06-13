@@ -397,13 +397,13 @@ circle {
 a.previous-page {
     cursor: pointer;
     padding-right: 50px;
-    visibility: hidden;
+    display: none;
 }
 
 a.next-page {
     cursor: pointer;
     padding-left: 50px;
-    visibility: hidden;
+    display: none;
 }
 
 div.result-page-size {
@@ -413,8 +413,7 @@ div.result-page-size {
 }
 
 input.result-page-size-input {
-    height: 18px;
     width: 50px;
     float: right;
-    padding-left: 10px
+    padding-left: 10px;
 }
