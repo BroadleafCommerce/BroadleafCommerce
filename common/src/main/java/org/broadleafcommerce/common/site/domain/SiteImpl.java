@@ -62,7 +62,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SITE")
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
+@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blSiteElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
@@ -113,7 +113,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
     @ManyToMany(targetEntity = CatalogImpl.class, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "BLC_SITE_CATALOG", joinColumns = @JoinColumn(name = "SITE_ID"), inverseJoinColumns = @JoinColumn(name = "CATALOG_ID"))
     @BatchSize(size = 50)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSiteElements")
     @AdminPresentation(excluded = true)
     protected List<Catalog> catalogs = new ArrayList<Catalog>();
 
@@ -271,10 +271,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
             if (getCatalogs() != null) {
                 for (Catalog catalog : getCatalogs()) {
                     if (catalog != null) {
-                        Catalog cloneCatalog = (Catalog) Class.forName(catalog.getClass().getName()).newInstance();
-
-                        cloneCatalog.setId(catalog.getId());
-                        cloneCatalog.setName(catalog.getName());
+                        Catalog cloneCatalog = catalog.clone();
                         if (clone.getCatalogs() != null) {
                             clone.getCatalogs().add(cloneCatalog);
                         } else {

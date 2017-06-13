@@ -50,6 +50,7 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.exception.EntityNotFoundException;
+import org.broadleafcommerce.openadmin.server.domain.FetchPageRequest;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
@@ -315,17 +316,22 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return getRecordsForCollection(containingClassMetadata, containingEntity, collectionProperty, fascs, startIndex, 
                 maxIndex, null, sectionCrumb);
     }
-    
+
     @Override
-    public PersistenceResponse getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
-            Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex,
+    public PersistenceResponse getPagedRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
+            Property collectionProperty, FilterAndSortCriteria[] fascs, FetchPageRequest fetchPageRequest,
             String idValueOverride, List<SectionCrumb> sectionCrumbs) throws ServiceException {
-        
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata(), sectionCrumbs)
-                .withFilterAndSortCriteria(fascs)
-                .withStartIndex(startIndex)
-                .withMaxIndex(maxIndex);
-        
+            .withFilterAndSortCriteria(fascs)
+            .withStartIndex(fetchPageRequest.getStartIndex())
+            .withMaxIndex(fetchPageRequest.getMaxIndex())
+            .withFirstId(fetchPageRequest.getFirstId())
+            .withLastId(fetchPageRequest.getLastId())
+            .withLowerCount(fetchPageRequest.getLowerCount())
+            .withUpperCount(fetchPageRequest.getUpperCount())
+            .withPageSize(fetchPageRequest.getPageSize())
+            .withPresentationFetch(true);
+
         FilterAndSortCriteria fasc;
 
         FieldMetadata md = collectionProperty.getMetadata();
@@ -359,6 +365,15 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         ppr.setSectionEntityField(collectionProperty.getName());
 
         return fetch(ppr);
+    }
+    
+    @Override
+    public PersistenceResponse getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
+            Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex,
+            String idValueOverride, List<SectionCrumb> sectionCrumbs) throws ServiceException {
+        FetchPageRequest pageRequest = new FetchPageRequest().withStartIndex(startIndex).withMaxIndex(maxIndex);
+        return getPagedRecordsForCollection(containingClassMetadata, containingEntity, collectionProperty, fascs,
+                pageRequest, idValueOverride, sectionCrumbs);
     }
 
     @Override
@@ -917,6 +932,15 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 cto.setMaxResults(requestedMaxResults);
             }
         }
+
+        cto.setLastId(request.getLastId());
+        cto.setFirstId(request.getFirstId());
+        cto.setUpperCount(request.getUpperCount());
+        cto.setLowerCount(request.getLowerCount());
+        if (request.getPageSize() != null) {
+            cto.setMaxResults(request.getPageSize());
+        }
+        cto.setPresentationFetch(request.getPresentationFetch());
         
         return service.fetch(pkg, cto);
     }
