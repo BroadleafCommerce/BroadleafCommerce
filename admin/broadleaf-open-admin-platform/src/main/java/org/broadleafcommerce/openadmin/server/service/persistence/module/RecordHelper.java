@@ -55,8 +55,6 @@ public interface RecordHelper extends DataFormatProvider {
                                                      Map<String, FieldMetadata> mergedUnfilteredProperties,
                                                      RestrictionFactory customRestrictionFactory);
 
-    Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records,
-                                   Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject);
     /**
      * Based on retrieved persistent entities and entity metadata, construct data transfer object instances to represent these records
      * to the caller.
@@ -66,11 +64,20 @@ public interface RecordHelper extends DataFormatProvider {
      */
     Entity[] getRecords(FetchExtractionRequest fetchExtractionRequest);
 
+    /**
+     * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead
+     * @param primaryMergedProperties
+     * @param records
+     * @param alternateMergedProperties
+     * @param pathToTargetObject
+     * @param customCriteria
+     * @return
+     */
+    @Deprecated
     Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records,
                                Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject,
                                String[] customCriteria);
 
-    Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records);
     /**
      * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead
      * @param primaryMergedProperties
@@ -79,6 +86,7 @@ public interface RecordHelper extends DataFormatProvider {
      * @param pathToTargetObject
      * @return
      */
+    @Deprecated
     Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject);
 
     /**
