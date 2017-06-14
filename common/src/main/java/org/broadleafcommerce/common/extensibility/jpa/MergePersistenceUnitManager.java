@@ -263,8 +263,9 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 + "\nbut were not detected as being transformed by the EntityMarkerClassTransformer. There can be multiple causes for this:"
                 + "\n1. Session persistence is enabled in your servlet container (like Tomcat) and an entity object has been loaded by the container before"
                 + " being loaded by the application's classloader. Ensure that session persistence is disabled; in Tomcat ensure that a <Manager pathname=\"\" /> element exists in your context.xml."
-                + "\n2. You are inadvertently using class scanning to find a ServletContainerInitializer class, triggering a class load of all classes before transformers have been registered."
-                + " If you are using a web.xml, ensure that there is an <absolute-ordering /> element somewhere in that file."
+                + "\n2. You are inadvertently using class scanning to find a ServletContainerInitializer class, and your servlet container is loading all classes before transformers have been registered."
+                + " If you are using a web.xml, ensure that there is an <absolute-ordering /> element somewhere in that file. If you are not using a web.xml and are using Spring Boot,"
+                + " then you likely need to add one. See https://www.broadleafcommerce.com/docs/core/5.2/broadleaf-concepts/key-aspects-and-configuration/app-server-configuration/tomcat for the example web.xml"
                 + "\n3. The classes are being used as apart of an @Bean method or in some other runtime capacity that is initialized prior to persistence manager startup";
         if (devtoolsFound) {
             msg += "\n4. Spring Boot Devtools is on the classpath and the Restarter capabilities are interfering. Spring Boot Devtools restarter functionality works by creating multiple ClassLoaders"
