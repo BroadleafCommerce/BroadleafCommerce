@@ -47,4 +47,13 @@ public interface ListGridErrorMessageExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType determineErrorMessageForEntity(Entity entity, ListGridRecord lgr);
 
+    /**
+     * Allows the extension handler to determine a custom status message for the entity.
+     *
+     * @param entity
+     * @param lgr
+     * @return
+     */
+    public ExtensionResultStatusType determineStatusMessageForEntity(Entity entity, ListGridRecord lgr);
+
 }
