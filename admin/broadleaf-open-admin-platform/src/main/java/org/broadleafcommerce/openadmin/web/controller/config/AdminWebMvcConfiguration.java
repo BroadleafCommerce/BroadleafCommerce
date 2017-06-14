@@ -18,37 +18,61 @@
 package org.broadleafcommerce.openadmin.web.controller.config;
 
 import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
+import org.broadleafcommerce.common.config.PostAutoConfigurationImport;
+import org.broadleafcommerce.openadmin.web.compatibility.JSFieldNameCompatibilityInterceptor;
 import org.broadleafcommerce.openadmin.web.controller.AdminRequestMappingHandlerMapping;
+import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.WebMvcRegistrationsAdapter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
- * Configure WebMvc for the admin application.
+ * Configure WebMvc for the admin application. This plays nicely with and without Spring AutoConfiguration support
  *
  * @author Philip Baggett (pbaggett)
  */
-@Configuration("blAdminWebMvcConfiguration")
+@Configuration
+@PostAutoConfigurationImport(AdminWebMvcConfigurationSupport.class)
 @ConditionalOnAdmin
-public class AdminWebMvcConfiguration extends WebMvcConfigurationSupport {
-
-    /**
-     * Modify the default handler mapping.
-     *
-     * @see AdminRequestMappingHandlerMapping
-     */
-    @Override
-    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
-        return new AdminRequestMappingHandlerMapping();
+public class AdminWebMvcConfiguration {
+    
+    @Configuration
+    public static class AdminDefaultWebMvcConfigurerAdapter extends WebMvcConfigurerAdapter {
+        
+        /**
+         * Set the default media type to JSON because AJAX calls from the admin UI are expecting JSON.
+         */
+        @Override
+        public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+            configurer.defaultContentType(MediaType.APPLICATION_JSON);
+        }
+        
+        @Override
+        public void addInterceptors(InterceptorRegistry registry) {
+            registry.addInterceptor(new JSFieldNameCompatibilityInterceptor());
+        }
+        
+        /**
+         * At time of writing, this bean only gets hooked up within {@link WebMvcAutoConfiguration}. Providing it here
+         * regardless since it is harmless in general, and it is likely that perhaps Spring Web in its {@link DelegatingWebMvcConfiguration}
+         * eventually goes to this pattern instead of requiring the workaround from {@link AdminWebMvcConfigurationSupport}
+         * SPRING-UPGRADE-CHECK
+         */
+        @Bean
+        public WebMvcRegistrationsAdapter blAdminMvcRegistrations() {
+            return new WebMvcRegistrationsAdapter() {
+                @Override
+                public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
+                    return new AdminRequestMappingHandlerMapping();
+                }
+            };
+        }
     }
-
-    /**
-     * Set the default media type to JSON because AJAX calls from the admin UI are expecting JSON.
-     */
-    @Override
-    protected void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.defaultContentType(MediaType.APPLICATION_JSON);
-    }
+    
 }
