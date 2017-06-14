@@ -28,9 +28,13 @@
             http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <aop:config/>
-
+    
+    <mvc:annotation-driven />
+    
     <!-- Scan Broadleaf defined web utility classes -->
-    <context:component-scan base-package="org.broadleafcommerce.openadmin.web.controller"/>
+    <context:component-scan base-package="org.broadleafcommerce.openadmin.web.controller">
+        <context:exclude-filter type="annotation" expression="org.broadleafcommerce.common.config.PostAutoConfiguration"/>
+    </context:component-scan>
     
     <bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
         <property name="order" value="1"/>
@@ -46,10 +50,5 @@
             </list>
         </property>
     </bean>
-
-    <mvc:interceptors>
-      <bean class="org.broadleafcommerce.openadmin.web.compatibility.JSFieldNameCompatibilityInterceptor" />
-    </mvc:interceptors>
-
-
+    
 </beans>

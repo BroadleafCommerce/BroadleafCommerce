@@ -28,14 +28,11 @@
 
     <!-- Component scan for custom admin controllers that need to occur in the servlet context. All other CMS beans should
         already be picked up in the global component scan included in the root context (from bl-cms-contentCreator-applicationContext)-->
-    <context:component-scan base-package="org.broadleafcommerce.cms.admin.web.controller" />
+    <context:component-scan base-package="org.broadleafcommerce.cms.admin.web.controller">
+        <context:exclude-filter type="annotation" expression="org.broadleafcommerce.common.config.PostAutoConfiguration"/>
+    </context:component-scan>
     
     <bean id="blAdminStructuredContentController" class="org.broadleafcommerce.cms.admin.web.controller.AdminStructuredContentController" />
-    
-    <bean id="multipartResolver"
-        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">     
-        <property name="maxUploadSize" value="${asset.server.max.uploadable.file.size}"/>
-    </bean>
     
     <aop:config/>
 
