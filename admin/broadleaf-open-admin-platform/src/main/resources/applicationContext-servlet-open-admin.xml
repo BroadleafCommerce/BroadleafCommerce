@@ -29,8 +29,6 @@
 
     <aop:config/>
     
-    <mvc:annotation-driven />
-    
     <!-- Scan Broadleaf defined web utility classes -->
     <context:component-scan base-package="org.broadleafcommerce.openadmin.web.controller">
         <context:exclude-filter type="annotation" expression="org.broadleafcommerce.common.config.PostAutoConfiguration"/>
