@@ -29,6 +29,9 @@
     var SCROLLBAR_WIDTH = 15;
     var TREE_COLUMN_WIDTH = 320;
 
+    var MIN_WIDTH = 60;
+    var CONTROL_WIDTH = 45;
+
     var tableResizing = {
         active : false,
         headerTable : undefined,
@@ -227,9 +230,6 @@
         },
         
         initializeTableResizing : function($headerTable, $bodyTable) {
-            var MIN_WIDTH = 60;
-            var CONTROL_WIDTH = 45;
-
             $headerTable.find('th div.resizer').mousedown(function(e) {
                 var $this = $(this).closest('th');
                 
@@ -288,7 +288,10 @@
                 }
             });
 
-            // Initialize the headers for the initial load
+            BLCAdmin.listGrid.paginate.initializeHeaderWidths($headerTable, CONTROL_WIDTH);
+        },
+
+        initializeHeaderWidths : function($headerTable) {
             var $columnHeaders = $headerTable.find('thead tr th');
             $columnHeaders.each(function(index, header) {
                 var currentHeader = $($columnHeaders[index])[0];

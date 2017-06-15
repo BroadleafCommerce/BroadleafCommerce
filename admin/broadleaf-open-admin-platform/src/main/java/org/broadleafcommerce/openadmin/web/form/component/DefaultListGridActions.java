@@ -58,6 +58,11 @@ public class DefaultListGridActions {
         .withButtonClass("sub-list-grid-fetch")
         .withDisplayText("Fetch");
 
+    public static final ListGridAction REFRESH = new ListGridAction(ListGridAction.REFRESH)
+        .withButtonClass("collection-refresh")
+        .withIconClass("fa fa-refresh")
+        .withDisplayText("Refresh Collection");
+
     // Actions for row-level
     public static final ListGridAction REMOVE = new ListGridAction(ListGridAction.REMOVE)
         .withButtonClass("sub-list-grid-remove")
@@ -99,19 +104,18 @@ public class DefaultListGridActions {
         .withDisplayText("Jump to Context");
 
     public static final ListGridAction ASSET_GRID_SINGLE_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
-            .withButtonClass("asset-grid-single-select")
-            .withDisplayText("Select")
-            .withSingleActionOnly(true);
+        .withButtonClass("asset-grid-single-select")
+        .withDisplayText("Select")
+        .withSingleActionOnly(true);
 
     public static final ListGridAction ASSET_ADD = new ListGridAction(ListGridAction.ASSET_ADD)
-            .withButtonClass("upload-asset additional-action")
-            .withUrlPostfix("/assets")
-            .withDisplayText("Upload_Asset");
+        .withButtonClass("upload-asset additional-action")
+        .withUrlPostfix("/assets")
+        .withDisplayText("Upload_Asset");
 
     public static final ListGridAction MULTI_SELECT = new ListGridAction(ListGridAction.MULTI_SELECT)
         .withButtonClass("list-grid-multi-select")
         .withDisplayText("Select");
-
 
     public static final ListGridAction PREVIEW = new ListGridAction("PREVIEW")
         .withButtonClass("workflow-preview")
