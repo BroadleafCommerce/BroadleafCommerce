@@ -30,6 +30,7 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
@@ -54,12 +55,21 @@ public class AdminWebMvcConfiguration {
             configurer.defaultContentType(MediaType.APPLICATION_JSON);
         }
         
-        @Override
-        public void addInterceptors(InterceptorRegistry registry) {
-            registry.addInterceptor(new JSFieldNameCompatibilityInterceptor());
-            registry.addInterceptor(new LocaleChangeInterceptor());
+        /**
+         * Since in the admin we have multiple handler mappings, we need to register a {@link MappedInterceptor}
+         * to apply to all of them. Modifying just tine {@link InterceptorRegistry} will apply those 
+         * interceptors to _only_ the default RequestMappingHandlerMapping.
+         */
+        @Bean
+        public MappedInterceptor blJsFieldNameCompatibilityInterceptor() {
+            return new MappedInterceptor(null, new JSFieldNameCompatibilityInterceptor());
         }
         
+        @Bean
+        public MappedInterceptor blLocaleChangeInterceptor() {
+            return new MappedInterceptor(null, new LocaleChangeInterceptor());
+        }
+       
         /**
          * At time of writing, this bean only gets hooked up within {@link WebMvcAutoConfiguration}. Providing it here
          * regardless since it is harmless in general, and it is likely that perhaps Spring Web in its {@link DelegatingWebMvcConfiguration}
