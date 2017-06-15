@@ -30,6 +30,7 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
@@ -56,6 +57,7 @@ public class AdminWebMvcConfiguration {
         @Override
         public void addInterceptors(InterceptorRegistry registry) {
             registry.addInterceptor(new JSFieldNameCompatibilityInterceptor());
+            registry.addInterceptor(new LocaleChangeInterceptor());
         }
         
         /**
