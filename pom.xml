@@ -62,7 +62,7 @@
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</connection>
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</developerConnection>
-        <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
+        <url>https://github.com/BroadleafCommerce/BroadleafCommercePrivate</url>
         <tag>HEAD</tag>
     </scm>
     <build>
