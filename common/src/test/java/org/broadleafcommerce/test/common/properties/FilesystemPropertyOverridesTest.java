@@ -54,6 +54,7 @@ public class FilesystemPropertyOverridesTest {
     public static void setOverrideProperty() {
         String overridePropertiesPath = FilesystemPropertyOverridesTest.class.getClassLoader().getResource("overridestest.properties").getFile();
         overridePropertiesPath = overridePropertiesPath.replace("%20", " ");
+        overridePropertiesPath = overridePropertiesPath.replace("%40", "@");
         System.setProperty(BroadleafEnvironmentConfiguringApplicationListener.PROPERTY_OVERRIDES_PROPERTY, overridePropertiesPath);
     }
     

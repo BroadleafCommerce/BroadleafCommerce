@@ -53,6 +53,7 @@ public class FilesystemSharedRuntimeEnvironmentTest {
     public static void setOverrideProperty() {
         String sharedOverridePropertiesPath = FilesystemSharedRuntimeEnvironmentTest.class.getClassLoader().getResource("sharedoverridestest.properties").getFile();
         sharedOverridePropertiesPath = sharedOverridePropertiesPath.replace("%20", " ");
+        sharedOverridePropertiesPath = sharedOverridePropertiesPath.replace("%40", "@");
         System.setProperty(BroadleafEnvironmentConfiguringApplicationListener.PROPERTY_SHARED_OVERRIDES_PROPERTY, sharedOverridePropertiesPath);
     }
     
