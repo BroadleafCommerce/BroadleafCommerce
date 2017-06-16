@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.persistence.module.provider.extension.CategoryParentCategoryFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
@@ -62,7 +63,7 @@ public class CategoryParentCategoryFieldPersistenceProvider extends FieldPersist
             ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategory(populateValueRequest.getProperty(), (Category) instance);
             handled = ExtensionResultStatusType.NOT_HANDLED != result;
         }
-        if (!handled) {
+        if (!handled || BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
             Long requestedValue = null;
             if (!StringUtils.isEmpty(populateValueRequest.getRequestedValue())) {
                 requestedValue = Long.parseLong(populateValueRequest.getRequestedValue());
