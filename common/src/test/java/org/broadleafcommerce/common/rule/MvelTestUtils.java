@@ -143,6 +143,7 @@ public class MvelTestUtils {
     private static void assembleClassPathElement(StringBuilder buffer, URL val) {
         String path = val.getPath();
         path = path.replace("%20", " ");
+        path = path.replace("%40", "@");
         buffer.append(path);
         buffer.append(System.getProperty("path.separator"));
     }
