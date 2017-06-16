@@ -288,7 +288,7 @@
                 }
             });
 
-            BLCAdmin.listGrid.paginate.initializeHeaderWidths($headerTable, CONTROL_WIDTH);
+            BLCAdmin.listGrid.paginate.initializeHeaderWidths($headerTable);
         },
 
         initializeHeaderWidths : function($headerTable) {
