@@ -221,7 +221,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
                 LOG.error("An exception was caught either from processing the response and applying the payment to " +
                         "the order, or an activity in the checkout workflow threw an exception. Attempting to " +
                         "mark the payment as invalid and delegating to the payment module to handle any other " +
-                        "exception processing. The error caught was: " + e);
+                        "exception processing", e);
             }
             
             if (paymentGatewayCheckoutService != null && orderPaymentId != null) {
