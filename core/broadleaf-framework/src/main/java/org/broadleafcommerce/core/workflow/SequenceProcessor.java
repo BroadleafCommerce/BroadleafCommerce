@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManager;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
+import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
 import org.broadleafcommerce.core.workflow.state.RollbackStateLocal;
 
 import java.util.List;
@@ -72,30 +73,34 @@ public class SequenceProcessor extends BaseProcessor {
     
                     try {
                         context = activity.execute(context);
-                    } catch (Throwable th) {
-                        try {
-                            if (getAutoRollbackOnError()) {
-                                LOG.info("Automatically rolling back state for any previously registered " +
-                                        "RollbackHandlers. RollbackHandlers may be registered for workflow activities" +
-                                        " in appContext.");
+                    } catch (Throwable activityException) {
+                        RollbackFailureException rollbackFailure = null;
+                        if (getAutoRollbackOnError()) {
+                            LOG.info(String.format("Exception ocurred in %s, executing rollback handlers", rollbackStateLocal.getWorkflowId()));
+                            
+                            try {
                                 ActivityStateManagerImpl.getStateManager().rollbackAllState();
+                            } catch (Throwable rollbackException) {
+                                LOG.fatal(String.format("There was an exception rolling back %s", rollbackStateLocal.getWorkflowId()), rollbackException);
+                                
+                                if (rollbackException instanceof RollbackFailureException) {
+                                    rollbackFailure = (RollbackFailureException) rollbackException;
+                                } else {
+                                    rollbackFailure = new RollbackFailureException(rollbackException);
+                                }
+                                
+                                LOG.error(String.format("The original cause of the rollback for %s was", rollbackStateLocal.getWorkflowId()), activityException);
+                                rollbackFailure.setOriginalWorkflowException(activityException);
+                                throw rollbackFailure;
                             }
-                            ErrorHandler errorHandler = activity.getErrorHandler();
-                            if (errorHandler == null) {
-                                LOG.info("no error handler for this action, run default error" + "handler and abort " +
-                                        "processing ");
-                                getDefaultErrorHandler().handleError(context, th);
-                                break;
-                            } else {
-                                LOG.info("run error handler and continue");
-                                errorHandler.handleError(context, th);
-                            }
-                        } catch (RuntimeException e) {
-                            LOG.error("An exception was caught while attempting to handle an activity generated exception", e);
-                            throw e;
-                        } catch (WorkflowException e) {
-                            LOG.error("An exception was caught while attempting to handle an activity generated exception", e);
-                            throw e;
+                        }
+                        
+                        ErrorHandler errorHandler = activity.getErrorHandler();
+                        if (errorHandler == null) {
+                            getDefaultErrorHandler().handleError(context, activityException);
+                            break;
+                        } else {
+                            errorHandler.handleError(context, activityException);
                         }
                     }
     
