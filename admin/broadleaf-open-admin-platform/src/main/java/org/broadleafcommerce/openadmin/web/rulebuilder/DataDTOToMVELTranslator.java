@@ -46,22 +46,17 @@ public class DataDTOToMVELTranslator {
     public static final String LESS_THAN_EQUALS_OPERATOR = "<=";
     public static final String GREATER_THAN_OPERATOR = ">";
     public static final String LESS_THAN_OPERATOR = "<";
-    public static final String LENGTH_GREATER_THAN_EQUALS_OPERATOR = "org.apache.commons.lang3.StringUtils.length()>=";
-    public static final String LENGTH_LESS_THAN_EQUALS_OPERATOR = "org.apache.commons.lang3.StringUtils.length()<=";
-    public static final String LENGTH_GREATER_THAN_OPERATOR = "org.apache.commons.lang3.StringUtils.length()>";
-    public static final String LENGTH_LESS_THAN_OPERATOR = "org.apache.commons.lang3.StringUtils.length()<";
-    public static final String LENGTH_EQUALS_OPERATOR = "org.apache.commons.lang3.StringUtils.length()==";
     public static final String COLLECTION_OPERATOR = "CollectionUtils.intersection";
+    public static final String SIZE_GREATER_THAN_OPERATOR = ".size()>";
+    public static final String SIZE_GREATER_THAN_EQUALS_OPERATOR = ".size()>=";
+    public static final String SIZE_LESS_THAN_OPERATOR = ".size()<";
+    public static final String SIZE_LESS_THAN_EQUALS_OPERATOR = ".size()<=";
+    public static final String SIZE_EQUALS_OPERATOR = ".size()==";
     public static final String ZERO_OPERATOR = "0";
 
     public static final String OLD_CONTAINS_OPERATOR = ".contains";
     public static final String OLD_STARTS_WITH_OPERATOR = ".startsWith";
     public static final String OLD_ENDS_WITH_OPERATOR = ".endsWith";
-    public static final String OLD_SIZE_GREATER_THAN_OPERATOR = ".size()>";
-    public static final String OLD_SIZE_GREATER_THAN_EQUAL_OPERATOR = ".size()>=";
-    public static final String OLD_SIZE_LESS_THAN_OPERATOR = ".size()<";
-    public static final String OLD_SIZE_LESS_THAN_EQUAL_OPERATOR = ".size()<=";
-    public static final String OLD_SIZE_EQUAL_OPERATOR = ".size()==";
 
 
     public String createMVEL(String entityKey, DataDTO dataDTO, RuleBuilderFieldService fieldService)
@@ -278,31 +273,31 @@ public class DataDTOToMVELTranslator {
                 break;
             }
             case COUNT_GREATER_THAN: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_GREATER_THAN_OPERATOR, false, false, false, false, true);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, SIZE_GREATER_THAN_OPERATOR, false, false, false, false, true);
                 break;
             }
             case COUNT_GREATER_OR_EQUAL:{
-                buildExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_GREATER_THAN_EQUALS_OPERATOR, false, false, false, false, true);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, SIZE_GREATER_THAN_EQUALS_OPERATOR, false, false, false, false, true);
                 break;
             }
             case COUNT_LESS_THAN:{
-                buildExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_LESS_THAN_OPERATOR, false, false, false, false, true);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, SIZE_LESS_THAN_OPERATOR, false, false, false, false, true);
                 break;
             }
             case COUNT_LESS_OR_EQUAL:{
-                buildExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_LESS_THAN_EQUALS_OPERATOR, false, false, false, false, true);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, SIZE_LESS_THAN_EQUALS_OPERATOR, false, false, false, false, true);
                 break;
             }
             case COUNT_EQUALS:{
-                buildExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_EQUALS_OPERATOR, false, false, false, false, true);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, SIZE_EQUALS_OPERATOR, false, false, false, false, true);
                 break;
             }
             case COLLECTION_IN:{
-                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_GREATER_THAN_OPERATOR + ZERO_OPERATOR, false, false, false, false, true);
+                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, SIZE_GREATER_THAN_OPERATOR + ZERO_OPERATOR, false, false, false, false, true);
                 break;
             }
             case COLLECTION_NOT_IN:{
-                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_EQUALS_OPERATOR + ZERO_OPERATOR, false, false, false, false, true);
+                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, SIZE_EQUALS_OPERATOR + ZERO_OPERATOR, false, false, false, false, true);
                 break;
             }
             case BETWEEN: {
@@ -376,7 +371,6 @@ public class DataDTOToMVELTranslator {
             SupportedFieldType type, SupportedFieldType secondaryType, String operator,
             boolean includeParenthesis, boolean isFieldComparison, boolean ignoreCase,
             boolean isNegation, boolean ignoreQuotes) throws MVELTranslationException {
-        sb.append(operator.substring(0, operator.indexOf(")")));
         sb.append(COLLECTION_OPERATOR);
         sb.append("(");
         sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
@@ -385,7 +379,7 @@ public class DataDTOToMVELTranslator {
         sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
                 ignoreCase, ignoreQuotes));
         sb.append("])");
-        sb.append(operator.substring(operator.indexOf(")")));
+        sb.append(operator);
     }
 
     protected void buildExpression(StringBuffer sb, String entityKey, String field, Object[] value,
@@ -408,17 +402,10 @@ public class DataDTOToMVELTranslator {
             sb.append(")");
         } else if (CONTAINS_OPERATOR.equals(operator) || STARTS_WITH_OPERATOR.equals(operator) || ENDS_WITH_OPERATOR.equals(operator)) {
             sb.append(operator.substring(0, operator.indexOf(")")));
-            sb.append("(");
             sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
             sb.append(",");
             sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison, ignoreCase, ignoreQuotes));
             sb.append(")");
-        } else if (LENGTH_EQUALS_OPERATOR.equals(operator) || LENGTH_GREATER_THAN_EQUALS_OPERATOR.equals(operator) || LENGTH_GREATER_THAN_OPERATOR.equals(operator) ||
-                LENGTH_LESS_THAN_EQUALS_OPERATOR.equals(operator) || LENGTH_LESS_THAN_OPERATOR.equals(operator)) {
-            sb.append(operator.substring(0, operator.indexOf(")")));
-            sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
-            sb.append(operator.substring(operator.indexOf(")")));
-            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison, ignoreCase, ignoreQuotes));
         } else {
             sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
             sb.append(operator);

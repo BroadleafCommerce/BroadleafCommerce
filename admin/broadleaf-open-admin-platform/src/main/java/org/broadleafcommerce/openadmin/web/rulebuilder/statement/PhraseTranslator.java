@@ -31,37 +31,30 @@ import java.text.ParseException;
  */
 public class PhraseTranslator {
 
-    private static final String COLLECTION_CASE = "CollectionUtils.intersection";
-
     private static final String[] OLD_SPECIAL_CASES = {
-            ".startsWith",
-            ".endsWith",
-            ".contains"
+            DataDTOToMVELTranslator.OLD_STARTS_WITH_OPERATOR,
+            DataDTOToMVELTranslator.OLD_ENDS_WITH_OPERATOR,
+            DataDTOToMVELTranslator.OLD_CONTAINS_OPERATOR
     };
 
     private static final String[] SPECIAL_CASES = {
-            "org.apache.commons.lang3.StringUtils.startsWith()",
-            "org.apache.commons.lang3.StringUtils.endsWith()",
-            "org.apache.commons.lang3.StringUtils.contains()",
-            "org.apache.commons.lang3.StringUtils.length()>",
-            "org.apache.commons.lang3.StringUtils.length()>=",
-            "org.apache.commons.lang3.StringUtils.length()<",
-            "org.apache.commons.lang3.StringUtils.length()<=",
-            "org.apache.commons.lang3.StringUtils.length()=="
+            DataDTOToMVELTranslator.STARTS_WITH_OPERATOR,
+            DataDTOToMVELTranslator.ENDS_WITH_OPERATOR,
+            DataDTOToMVELTranslator.CONTAINS_OPERATOR
     };
 
     private static final String[] STANDARD_OPERATORS = {
-            ".size()>",
-            ".size()>=",
-            ".size()<",
-            ".size()<=",
-            ".size()==",
-            "==",
-            "!=",
-            "<=",
-            "<",
-            ">=",
-            ">"
+            DataDTOToMVELTranslator.SIZE_GREATER_THAN_OPERATOR,
+            DataDTOToMVELTranslator.SIZE_GREATER_THAN_EQUALS_OPERATOR,
+            DataDTOToMVELTranslator.SIZE_LESS_THAN_OPERATOR,
+            DataDTOToMVELTranslator.SIZE_LESS_THAN_EQUALS_OPERATOR,
+            DataDTOToMVELTranslator.SIZE_EQUALS_OPERATOR,
+            DataDTOToMVELTranslator.EQUALS_OPERATOR,
+            DataDTOToMVELTranslator.NOT_EQUALS_OPERATOR,
+            DataDTOToMVELTranslator.GREATER_THAN_EQUALS_OPERATOR,
+            DataDTOToMVELTranslator.LESS_THAN_EQUALS_OPERATOR,
+            DataDTOToMVELTranslator.GREATER_THAN_OPERATOR,
+            DataDTOToMVELTranslator.LESS_THAN_OPERATOR
     };
 
     public Expression createExpression(String phrase) throws MVELTranslationException {
@@ -77,7 +70,7 @@ public class PhraseTranslator {
 
         boolean isIgnoreCase = false;
         boolean isCollectionCase = false;
-        if (phrase.contains(COLLECTION_CASE)) {
+        if (phrase.contains(DataDTOToMVELTranslator.COLLECTION_OPERATOR)) {
             isCollectionCase = true;
         }
 
@@ -202,15 +195,8 @@ public class PhraseTranslator {
 
         //If the phrase is a CollectionUtils case - this will need to be evaluated first
         //e.g. CollectionUtils.intersection(groupIds,["100","300"]).size()>0
-        if (phrase.contains(COLLECTION_CASE)) {
-            components = new String[3];
-
-            if (phrase.startsWith(COLLECTION_CASE)) {
-                components = extractOldCollectionCase(phrase);
-            } else {
-                components = extractCollectionCase(phrase);
-            }
-
+        if (phrase.startsWith(DataDTOToMVELTranslator.COLLECTION_OPERATOR)) {
+            components = extractCollectionCase(phrase);
             componentsExtracted = true;
         }
 
@@ -218,8 +204,19 @@ public class PhraseTranslator {
             for (String operator : STANDARD_OPERATORS) {
                 if (phrase.contains(operator)) {
                     components = extractStandardComponents(phrase, operator);
-
                     componentsExtracted = true;
+                    break;
+                }
+            }
+        }
+
+        if (!componentsExtracted) {
+            for (String operator: SPECIAL_CASES) {
+                int operatorLastIndex = operator.indexOf(")");
+                if (phrase.contains(operator.substring(0, operatorLastIndex))) {
+                    components = extractSpecialComponents(phrase, operator);
+                    componentsExtracted = true;
+                    break;
                 }
             }
         }
@@ -231,20 +228,11 @@ public class PhraseTranslator {
                     if (phrase.indexOf(key) >= 0) {
                         components = extractOldSpecialComponents(phrase, key);
                         componentsExtracted = true;
+                        break;
                     }
                 }
             } catch (Exception e) {
                 //do nothing
-            }
-        }
-
-        if (!componentsExtracted) {
-            for (String operator: SPECIAL_CASES) {
-                int operatorLastIndex = operator.indexOf(")");
-                if (phrase.contains(operator.substring(0, operatorLastIndex)) && phrase.contains(operator.substring(operatorLastIndex))) {
-                    components = extractSpecialComponents(phrase, operator);
-                    componentsExtracted = true;
-                }
             }
         }
 
@@ -305,10 +293,10 @@ public class PhraseTranslator {
         return temp;
     }
 
-    protected String[] extractOldCollectionCase(String phrase) {
+    protected String[] extractCollectionCase(String phrase) {
         String[] temp = new String[3];
         //field
-        temp[0] = phrase.substring((COLLECTION_CASE + "(").length(), phrase.indexOf(","));
+        temp[0] = phrase.substring(phrase.indexOf("(") + 1, phrase.indexOf(","));
         //value
         temp[2] = phrase.substring(phrase.indexOf("["), phrase.indexOf("]") + 1);
         //operator
@@ -317,27 +305,15 @@ public class PhraseTranslator {
         return temp;
     }
 
-    protected String[] extractCollectionCase(String phrase) {
-        String[] temp = new String[3];
-        //field
-        int fieldIndex = phrase.indexOf("(", phrase.indexOf(COLLECTION_CASE)) + 1;
-        temp[0] = phrase.substring(fieldIndex, phrase.indexOf(","));
-        //value
-        temp[2] = phrase.substring(phrase.indexOf("["), phrase.indexOf("]") + 1);
-        //operator
-        String operatorBeginning = phrase.substring(0, phrase.indexOf("(") + 1);
-        String operatorEnd = phrase.substring(phrase.lastIndexOf(")"));
-        temp[1] = operatorBeginning + operatorEnd;
-
-        return temp;
-    }
-
     protected String[] extractOldSpecialComponents(String phrase, String operator) {
         String[] temp = new String[3];
-        int startsWithIndex = phrase.indexOf(operator);
-        temp[0] = phrase.substring(0, startsWithIndex);
+        int specialIndex = phrase.indexOf(operator);
+        //field
+        temp[0] = phrase.substring(0, specialIndex);
+        //operator
         temp[1] = operator;
-        temp[2] = phrase.substring(startsWithIndex + operator.length() + 1, phrase.lastIndexOf(")"));
+        //value
+        temp[2] = phrase.substring(specialIndex + operator.length() + 1, phrase.lastIndexOf(")"));
 
         return temp;
     }
@@ -357,13 +333,12 @@ public class PhraseTranslator {
     protected String[] extractSpecialComponents(String phrase, String operator) {
         String[] temp = new String[3];
         //field
-        temp[0] = phrase.substring(phrase.indexOf("(") + 1, phrase.indexOf(")"));
+        String operatorBegin = operator.substring(0, operator.indexOf(")"));
+        temp[0] = phrase.substring(operatorBegin.length(), phrase.indexOf(","));
         //operator
         temp[1] = operator;
         //value
-        String operatorEnd = operator.substring(phrase.indexOf(")"));
-        int operatorLastIndex = phrase.indexOf(operatorEnd);
-        temp[2] = phrase.substring(operatorLastIndex + operatorEnd.length());
+        temp[2] = phrase.substring(phrase.indexOf(",") + 1, phrase.lastIndexOf(")"));
 
         return temp;
     }
@@ -463,21 +438,19 @@ public class PhraseTranslator {
                     return BLCOperator.ENDS_WITH;
                 }
             }
-        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_GREATER_THAN_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_SIZE_GREATER_THAN_OPERATOR)) {
+        } else if (operator.equals(DataDTOToMVELTranslator.SIZE_GREATER_THAN_OPERATOR)) {
             return BLCOperator.COUNT_GREATER_THAN;
-        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_GREATER_THAN_EQUALS_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_SIZE_GREATER_THAN_EQUAL_OPERATOR)) {
+        } else if (operator.equals(DataDTOToMVELTranslator.SIZE_GREATER_THAN_EQUALS_OPERATOR)) {
             return BLCOperator.COUNT_GREATER_OR_EQUAL;
-        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_LESS_THAN_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_SIZE_LESS_THAN_OPERATOR)) {
+        } else if (operator.equals(DataDTOToMVELTranslator.SIZE_LESS_THAN_OPERATOR)) {
             return BLCOperator.COUNT_LESS_THAN;
-        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_LESS_THAN_EQUALS_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_SIZE_LESS_THAN_EQUAL_OPERATOR)) {
+        } else if (operator.equals(DataDTOToMVELTranslator.SIZE_LESS_THAN_EQUALS_OPERATOR)) {
             return BLCOperator.COUNT_LESS_OR_EQUAL;
-        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_EQUALS_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_SIZE_EQUAL_OPERATOR)) {
+        } else if (operator.equals(DataDTOToMVELTranslator.SIZE_EQUALS_OPERATOR)) {
             return BLCOperator.COUNT_EQUALS;
-        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_GREATER_THAN_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR) ||
-                operator.equals(DataDTOToMVELTranslator.OLD_SIZE_GREATER_THAN_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR)){
+        } else if (operator.equals(DataDTOToMVELTranslator.SIZE_GREATER_THAN_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR)){
             return BLCOperator.COLLECTION_IN;
-        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_EQUALS_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR) ||
-                operator.equals(DataDTOToMVELTranslator.OLD_SIZE_EQUAL_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR)){
+        } else if (operator.equals(DataDTOToMVELTranslator.SIZE_EQUALS_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR)){
             return BLCOperator.COLLECTION_NOT_IN;
         }
         throw new MVELTranslationException(MVELTranslationException.OPERATOR_NOT_FOUND, "Unable to identify an operator compatible with the " +
