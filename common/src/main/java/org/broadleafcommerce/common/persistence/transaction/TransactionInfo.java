@@ -20,17 +20,17 @@
 package org.broadleafcommerce.common.persistence.transaction;
 
 import org.broadleafcommerce.common.util.FormatUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.transaction.TransactionDefinition;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
@@ -46,10 +46,17 @@ public class TransactionInfo {
         initialize();
     }
 
-    public TransactionInfo(EntityManager em, TransactionDefinition definition, boolean isCompressed) {
+    public TransactionInfo(EntityManager em, TransactionDefinition definition, boolean isCompressed, boolean isAbbreviated,
+                           int abbreviatedLength, boolean decompressStatementForLog, int maxQueryListLength) {
         this.entityManager = new WeakReference<EntityManager>(em);
         this.definition = new WeakReference<TransactionDefinition>(definition);
         this.isCompressed = isCompressed;
+        this.isAbbreviated = isAbbreviated;
+        this.abbreviatedLength = abbreviatedLength;
+        this.decompressStatementForLog = decompressStatementForLog;
+        this.maxQueryListLength = maxQueryListLength;
+        queries = new LinkedBlockingQueue<String>(maxQueryListLength==-1?Integer.MAX_VALUE:maxQueryListLength);
+        compressedQueries = new LinkedBlockingQueue<CompressedItem>(maxQueryListLength==-1?Integer.MAX_VALUE:maxQueryListLength);
         initialize();
     }
 
@@ -61,14 +68,20 @@ public class TransactionInfo {
     protected String threadName;
     protected String threadId;
     protected Long startTime;
-    protected List<String> queries = new ArrayList<String>();
-    protected List<CompressedItem> compressedQueries = new ArrayList<CompressedItem>();
+    protected LinkedBlockingQueue<String> queries;
+    protected LinkedBlockingQueue<CompressedItem> compressedQueries;
     protected Map<String, String> additionalParams = new HashMap<String, String>();
     protected String currentStackElement;
     protected Long lastLogTime;
     protected Long stuckThreadStartTime;
     protected Boolean faultStateDetected = false;
     protected Boolean isCompressed = true;
+    protected String requestContext;
+    protected Boolean isAbbreviated;
+    protected Integer abbreviatedLength;
+    protected Boolean decompressStatementForLog;
+    protected Integer maxQueryListLength;
+    protected Integer totalQueries = 0;
 
     public EntityManager getEntityManager() {
         return entityManager.get();
@@ -166,20 +179,28 @@ public class TransactionInfo {
         this.additionalParams = additionalParams;
     }
 
-    public List<String> getQueries() {
+    public LinkedBlockingQueue<String> getQueries() {
         return queries;
     }
 
-    public void setQueries(List<String> queries) {
+    public void setQueries(LinkedBlockingQueue<String> queries) {
         this.queries = queries;
     }
 
-    public List<CompressedItem> getCompressedQueries() {
+    public LinkedBlockingQueue<CompressedItem> getCompressedQueries() {
         return compressedQueries;
     }
 
-    public void setCompressedQueries(List<CompressedItem> compressedQueries) {
+    public void setCompressedQueries(LinkedBlockingQueue<CompressedItem> compressedQueries) {
         this.compressedQueries = compressedQueries;
+    }
+
+    public Boolean getDecompressStatementForLog() {
+        return decompressStatementForLog;
+    }
+
+    public void setDecompressStatementForLog(Boolean decompressStatementForLog) {
+        this.decompressStatementForLog = decompressStatementForLog;
     }
 
     public Boolean getFaultStateDetected() {
@@ -190,6 +211,30 @@ public class TransactionInfo {
         this.faultStateDetected = faultStateDetected;
     }
 
+    public Boolean getAbbreviated() {
+        return isAbbreviated;
+    }
+
+    public void setAbbreviated(Boolean abbreviated) {
+        isAbbreviated = abbreviated;
+    }
+
+    public Integer getAbbreviatedLength() {
+        return abbreviatedLength;
+    }
+
+    public void setAbbreviatedLength(Integer abbreviatedLength) {
+        this.abbreviatedLength = abbreviatedLength;
+    }
+
+    public Integer getMaxQueryListLength() {
+        return maxQueryListLength;
+    }
+
+    public void setMaxQueryListLength(Integer maxQueryListLength) {
+        this.maxQueryListLength = maxQueryListLength;
+    }
+
     public void clear() {
         entityManager.clear();
         thread.clear();
@@ -197,13 +242,20 @@ public class TransactionInfo {
     }
 
     public void logStatement(String statement) {
+        String logItem = statement;
+        if (isAbbreviated && logItem.length() > abbreviatedLength) {
+            logItem = logItem.substring(0, abbreviatedLength);
+        }
         boolean isLogged = false;
         if (isCompressed) {
             try {
                 if (getCompressedQueries().isEmpty()) {
-                    getCompressedQueries().add(new CompressedItem("\n" + statement + "\n"));
+                    getCompressedQueries().add(new CompressedItem("\n" + logItem + "\n", decompressStatementForLog));
                 } else {
-                    getCompressedQueries().add(new CompressedItem(statement + "\n"));
+                    if (getCompressedQueries().remainingCapacity() == 0) {
+                        getCompressedQueries().poll();
+                    }
+                    getCompressedQueries().add(new CompressedItem(logItem + "\n", decompressStatementForLog));
                 }
                 isLogged = true;
             } catch (IOException e) {
@@ -212,12 +264,16 @@ public class TransactionInfo {
         }
         if (!isLogged) {
             if (getQueries().isEmpty()) {
-                getQueries().add("\n" + statement + "\n");
+                getQueries().add("\n" + logItem + "\n");
             } else {
-                getQueries().add(statement + "\n");
+                if (getQueries().remainingCapacity() == 0) {
+                    getQueries().poll();
+                }
+                getQueries().add(logItem + "\n");
             }
         }
         lastLogTime = System.currentTimeMillis();
+        totalQueries++;
     }
 
     protected void initialize() {
@@ -227,7 +283,7 @@ public class TransactionInfo {
         boolean isLogged = false;
         if (isCompressed) {
             try {
-                compressedBeginStack = new CompressedItem(sw.toString());
+                compressedBeginStack = new CompressedItem(sw.toString(), true);
                 isLogged = true;
             } catch (IOException e1) {
                 //do nothing
@@ -241,6 +297,12 @@ public class TransactionInfo {
         threadId = String.valueOf(thread.get().getId());
         startTime = System.currentTimeMillis();
         lastLogTime = startTime;
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null) {
+            requestContext = context.createLightWeightCloneJson();
+        } else {
+            requestContext = "none";
+        }
     }
 
     @Override
@@ -248,11 +310,29 @@ public class TransactionInfo {
         final StringBuilder sb = new StringBuilder("TransactionInfo{");
         sb.append("threadName='").append(threadName).append('\'').append("\n");
         sb.append(", threadId=").append(threadId).append("\n");
+        EntityManager em = getEntityManager();
+        if (em != null) {
+            sb.append(", entityManager='").append(em.hashCode()).append('\'').append("\n");
+        }
         if (isCompressed) {
-            sb.append(", queries=").append(compressedQueries);
+            if (!decompressStatementForLog) {
+                try {
+                    StringBuilder queryBuilder = new StringBuilder();
+                    for (CompressedItem compressedItem : compressedQueries) {
+                        queryBuilder.append(compressedItem.decompress());
+                    }
+                    CompressedItem allQueries = new CompressedItem(queryBuilder.toString(), false);
+                    sb.append(", queries=").append(allQueries);
+                } catch (IOException e) {
+                    sb.append(", queries='Unable to build compressed representation of queries because of an exception: ").append(e.getMessage()).append('\'');
+                }
+            } else {
+                sb.append(", queries=").append(compressedQueries);
+            }
         } else {
             sb.append(", queries=").append(queries);
         }
+        sb.append(", totalQueries=").append(totalQueries).append("\n");
         sb.append(", additionalParams=").append(additionalParams).append("\n");
         if (startTime != null) {
             Date start = new Date(getStartTime());
@@ -272,10 +352,11 @@ public class TransactionInfo {
             sb.append(", duration=").append(durationString).append("\n");
         }
         if (isCompressed) {
-            sb.append(", beginStack='").append(compressedBeginStack).append('\'');
+            sb.append(", beginStack='").append(compressedBeginStack).append('\'').append("\n");
         } else {
-            sb.append(", beginStack='").append(beginStack).append('\'');
+            sb.append(", beginStack='").append(beginStack).append('\'').append("\n");
         }
+        sb.append(", requestContext='").append(requestContext).append('\'');
         sb.append('}');
         return sb.toString();
     }

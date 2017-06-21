@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.persistence.transaction;
 
+import org.springframework.security.crypto.codec.Base64;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -61,22 +63,45 @@ public class CompressedItem {
     }
 
     protected byte[] compressed;
+    protected boolean decompressInToString = true;
 
-    public CompressedItem(String start) throws IOException {
+    public CompressedItem(String start, boolean decompressInToString) throws IOException {
+        this.decompressInToString = decompressInToString;
         this.compressed = compress(start);
+    }
+
+    public CompressedItem(byte[] compressed, boolean decompressInToString) {
+        this.decompressInToString = decompressInToString;
+        this.compressed = compressed;
     }
 
     public String decompress() throws IOException {
         return decompress(compressed);
     }
 
+    public boolean isDecompressInToString() {
+        return decompressInToString;
+    }
+
+    public void setDecompressInToString(boolean decompressInToString) {
+        this.decompressInToString = decompressInToString;
+    }
+
+    public byte[] getCompressed() {
+        return compressed;
+    }
+
     @Override
     public String toString() {
         String response = null;
-        try {
-            response = decompress(compressed);
-        } catch (IOException e) {
-            //do nothing
+        if (decompressInToString) {
+            try {
+                response = decompress(compressed);
+            } catch (IOException e) {
+                //do nothing
+            }
+        } else {
+            response = compressed!=null?new String(Base64.encode(compressed)):"" + "\n";
         }
         return response;
     }
