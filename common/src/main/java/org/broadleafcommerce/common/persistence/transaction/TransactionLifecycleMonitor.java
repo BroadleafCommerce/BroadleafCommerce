@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.persistence.transaction;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.broadleafcommerce.common.event.BroadleafApplicationListener;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.logging.SupportLogManager;
@@ -31,8 +32,6 @@ import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.thymeleaf.util.ArrayUtils;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
@@ -43,7 +42,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 
