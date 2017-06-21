@@ -29,9 +29,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.orm.jpa.EntityManagerHolder;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
@@ -42,6 +45,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 
@@ -92,7 +96,20 @@ import javax.persistence.EntityManager;
  * </p>
  * The {@link #countMax} variable can be controlled via the 'log.transaction.lifecycle.info.count.max' property. The default value is 5000.
  * </p>
- * The {@link #useCompression} variable can be controlled via the 'log.transaction.lifecycle.use.compression' property. The default value is true.
+ * The {@link #useCompression} variable can be controlled via the 'log.transaction.lifecycle.use.compression' property.
+ * The default value is true.
+ * </p>
+ * The {@link #abbreviateStatements} variable can be controlled via the 'log.transaction.lifecycle.abbreviate.statements' property.
+ * The default value is true.
+ * </p>
+ * The {@link #abbreviateStatementsLength} variable can be controlled via the 'log.transaction.lifecycle.abbreviate.statements.length' property.
+ * The default value is 200.
+ * </p>
+ * The {@link #decompressStatementForLog} variable can be controlled via the 'log.transaction.lifecycle.decompress.statement' property.
+ * The default value is false.
+ * </p>
+ * The {@link #maxQueryListSize} variable can be controlled via the 'log.transaction.lifecycle.query.list.max.size' property.
+ * The default value is 100.
  * </p>
  * This monitor is intended for temporary usage as part of transaction related debugging efforts. From both a heap utilization
  * and performance standpoint, this monitor is suitable for production with default settings. Performance impacts should be minor and will generally
@@ -102,6 +119,16 @@ import javax.persistence.EntityManager;
  * happens to be reached, new transactions will not be monitored. This is more a safety net feature than anything and it's not
  * anticipated that the default max count will be reached during normal usage. Set 'log.transaction.lifecycle.info.count.max' to
  * -1 to uncap growth.
+ * </p>
+ * To avoid overly large disk usage in logs (in case many log statements are emitted with many queries per), the system will truncate
+ * statements to a default length of 200 characters and leave those statements compressed in the logs (if they were configured to be
+ * compressed). See the {@link #abbreviateStatements} and {@link #abbreviateStatementsLength} variable to change this behavior.
+ * To view the decompressed version, you'll need to pass the compressed string from the log line to the
+ * {@link #decompressLogLine(String)} method to see the decompressed version. This can be easily done by writing a simple
+ * main program that instantiates TransactionLifecycleMonitor and calls this method. To emit the uncompressed version of the
+ * queries instead to the logs, change the {@link #decompressStatementForLog} property value. Finally, by default, the system
+ * will only remember and emit the last 100 queries in the transaction. This value can be tweaked via the {@link #maxQueryListSize}
+ * variable. Set this value to -1 to uncap the expansion of the query list.
  *
  * @author Jeff Fischer
  */
@@ -142,6 +169,18 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
 
     @Value("${log.transaction.lifecycle.use.compression:true}")
     protected boolean useCompression = true;
+
+    @Value("${log.transaction.lifecycle.abbreviate.statements:true}")
+    protected boolean abbreviateStatements = true;
+
+    @Value("${log.transaction.lifecycle.abbreviate.statements.length:200}")
+    protected int abbreviateStatementsLength = 200;
+
+    @Value("${log.transaction.lifecycle.decompress.statement:false}")
+    protected boolean decompressStatementForLog = false;
+
+    @Value("${log.transaction.lifecycle.query.list.max.size:100}")
+    protected int maxQueryListSize = 100;
 
     protected Map<Integer, TransactionInfo> infos = new ConcurrentHashMap<Integer, TransactionInfo>();
     protected boolean isStarted = false;
@@ -228,7 +267,9 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                     EntityManager em = getEntityManagerFromTransactionObject(event.getParams()[0]);
                     if (em != null) {
                         if (countMax == -1 || infos.size() <= countMax) {
-                            TransactionInfo info = new TransactionInfo(em, (TransactionDefinition) event.getParams()[1], useCompression);
+                            TransactionInfo info = new TransactionInfo(em, (TransactionDefinition) event.getParams()[1],
+                                    useCompression, abbreviateStatements, abbreviateStatementsLength,
+                                    decompressStatementForLog, maxQueryListSize);
                             if (modifiers != null) {
                                 for (TransactionInfoCustomModifier modifier : modifiers) {
                                     modifier.modify(info);
@@ -266,6 +307,17 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                 info.logStatement(statement);
             }
         }
+    }
+
+    @Override
+    public String decompressLogLine(String compressedFromLog) throws IOException {
+        String fixed = compressedFromLog;
+        if (fixed.contains(":")) {
+            fixed = fixed.substring(fixed.indexOf(":") + 1, fixed.length());
+        }
+        fixed = fixed.trim();
+
+        return CompressedItem.decompress(Base64.decode(fixed.getBytes()));
     }
 
     public long getLoggingThreshold() {
