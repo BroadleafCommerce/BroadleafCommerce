@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.persistence.transaction;
 
+import java.io.IOException;
+
 /**
  * Capable of logging sql statements
  *
@@ -25,5 +27,7 @@ package org.broadleafcommerce.common.persistence.transaction;
 public interface SqlStatementLoggable {
 
     void log(String statement);
+
+    String decompressLogLine(String compressedLogLine) throws IOException;
 
 }
