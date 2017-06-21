@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.web.rulebuilder.statement;
 
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.rulebuilder.BLCOperator;
+import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTOToMVELTranslator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.RuleBuilderFormatUtil;
 
@@ -30,15 +31,26 @@ import java.text.ParseException;
  */
 public class PhraseTranslator {
 
-    private static final String COLLECTIONCASE = "CollectionUtils.intersection";
+    private static final String COLLECTION_CASE = "CollectionUtils.intersection";
 
-    private static final String[] SPECIALCASES = {
+    private static final String[] OLD_SPECIAL_CASES = {
             ".startsWith",
             ".endsWith",
             ".contains"
     };
 
-    private static final String[] STANDARDOPERATORS = {
+    private static final String[] SPECIAL_CASES = {
+            "org.apache.commons.lang3.StringUtils.startsWith()",
+            "org.apache.commons.lang3.StringUtils.endsWith()",
+            "org.apache.commons.lang3.StringUtils.contains()",
+            "org.apache.commons.lang3.StringUtils.length()>",
+            "org.apache.commons.lang3.StringUtils.length()>=",
+            "org.apache.commons.lang3.StringUtils.length()<",
+            "org.apache.commons.lang3.StringUtils.length()<=",
+            "org.apache.commons.lang3.StringUtils.length()=="
+    };
+
+    private static final String[] STANDARD_OPERATORS = {
             ".size()>",
             ".size()>=",
             ".size()<",
@@ -65,7 +77,7 @@ public class PhraseTranslator {
 
         boolean isIgnoreCase = false;
         boolean isCollectionCase = false;
-        if (phrase.startsWith(COLLECTIONCASE)) {
+        if (phrase.contains(COLLECTION_CASE)) {
             isCollectionCase = true;
         }
 
@@ -184,69 +196,70 @@ public class PhraseTranslator {
     }
 
     protected String[] extractComponents(String phrase) throws MVELTranslationException {
-        String[] components = new String[]{};
+        String[] components = new String[3];
+
+        boolean componentsExtracted = false;
 
         //If the phrase is a CollectionUtils case - this will need to be evaluated first
         //e.g. CollectionUtils.intersection(groupIds,["100","300"]).size()>0
-        if (phrase.startsWith(COLLECTIONCASE)) {
+        if (phrase.contains(COLLECTION_CASE)) {
             components = new String[3];
-            //field
-            components[0] = phrase.substring((COLLECTIONCASE+"(").length(), phrase.indexOf(","));
-            //value
-            components[2] = phrase.substring(((COLLECTIONCASE+"(")+components[0]+",").length(), phrase.indexOf(").size"));
-            //operator
-            components[1] = phrase.substring(phrase.indexOf(".size"));
 
-            components[0] = convertMapAccessSyntax(components[0]);
-
-            return components;
-        }
-
-        for (String operator : STANDARDOPERATORS) {
-            String[] temp;
-            if (phrase.contains(operator)) {
-                temp = new String[2];
-                temp[0] = phrase.substring(0, phrase.indexOf(operator));
-                temp[1] = phrase.substring(phrase.indexOf(operator) + operator.length(), phrase.length());
+            if (phrase.startsWith(COLLECTION_CASE)) {
+                components = extractOldCollectionCase(phrase);
             } else {
-                temp = new String[1];
-                temp[0] = phrase;
+                components = extractCollectionCase(phrase);
             }
-            if (temp.length == 2) {
-                components = new String[3];
-                components[0] = temp[0];
-                components[1] = operator;
-                components[2] = temp[1];
-                break;
-            }
-            components = temp;
+
+            componentsExtracted = true;
         }
-        if (components.length != 3) {
-            //may be a special expression
+
+        if (!componentsExtracted) {
+            for (String operator : STANDARD_OPERATORS) {
+                if (phrase.contains(operator)) {
+                    components = extractStandardComponents(phrase, operator);
+
+                    componentsExtracted = true;
+                }
+            }
+        }
+
+        if (!componentsExtracted) {
+            //may be an old special expression
             try {
-                for (String key : SPECIALCASES) {
-                    if (components[0].indexOf(key) >= 0) {
-                        String[] temp = extractSpecialComponents(components, key);
-                        components = temp;
-                        break;
+                for (String key : OLD_SPECIAL_CASES) {
+                    if (phrase.indexOf(key) >= 0) {
+                        components = extractOldSpecialComponents(phrase, key);
+                        componentsExtracted = true;
                     }
                 }
             } catch (Exception e) {
                 //do nothing
             }
-            if (components.length != 3) {
-                //may be a projection
-                try {
-                    String[] temp = extractProjection(components);
-                    components = temp;
-                } catch (Exception e1) {
-                    //do nothing
-                }
+        }
 
-                if (components.length != 3) {
-                    throw new MVELTranslationException(MVELTranslationException.UNRECOGNIZABLE_RULE, "Could not parse the MVEL expression to a " +
-                            "compatible form for the rules builder (" + phrase + ")");
+        if (!componentsExtracted) {
+            for (String operator: SPECIAL_CASES) {
+                int operatorLastIndex = operator.indexOf(")");
+                if (phrase.contains(operator.substring(0, operatorLastIndex)) && phrase.contains(operator.substring(operatorLastIndex))) {
+                    components = extractSpecialComponents(phrase, operator);
+                    componentsExtracted = true;
                 }
+            }
+        }
+
+        if (!componentsExtracted) {
+            //may be a projection
+            try {
+                components = extractProjection(components);
+                componentsExtracted = true;
+            } catch (Exception e1) {
+                //do nothing
+            }
+
+            if (!componentsExtracted) {
+                throw new MVELTranslationException(MVELTranslationException.UNRECOGNIZABLE_RULE, "Could not parse the MVEL expression to a " +
+                        "compatible form for the rules builder (" + phrase + ")");
             }
         }
 
@@ -292,119 +305,179 @@ public class PhraseTranslator {
         return temp;
     }
 
-    protected String[] extractSpecialComponents(String[] components, String key) {
+    protected String[] extractOldCollectionCase(String phrase) {
         String[] temp = new String[3];
-        int startsWithIndex = components[0].indexOf(key);
-        temp[0] = components[0].substring(0, startsWithIndex);
-        temp[1] = key.substring(1, key.length());
-        temp[2] = components[0].substring(startsWithIndex + key.length() + 1, components[0].lastIndexOf(")"));
+        //field
+        temp[0] = phrase.substring((COLLECTION_CASE + "(").length(), phrase.indexOf(","));
+        //value
+        temp[2] = phrase.substring(phrase.indexOf("["), phrase.indexOf("]") + 1);
+        //operator
+        temp[1] = phrase.substring(phrase.indexOf(".size"));
+
+        return temp;
+    }
+
+    protected String[] extractCollectionCase(String phrase) {
+        String[] temp = new String[3];
+        //field
+        int fieldIndex = phrase.indexOf("(", phrase.indexOf(COLLECTION_CASE)) + 1;
+        temp[0] = phrase.substring(fieldIndex, phrase.indexOf(","));
+        //value
+        temp[2] = phrase.substring(phrase.indexOf("["), phrase.indexOf("]") + 1);
+        //operator
+        String operatorBeginning = phrase.substring(0, phrase.indexOf("(") + 1);
+        String operatorEnd = phrase.substring(phrase.lastIndexOf(")"));
+        temp[1] = operatorBeginning + operatorEnd;
+
+        return temp;
+    }
+
+    protected String[] extractOldSpecialComponents(String phrase, String operator) {
+        String[] temp = new String[3];
+        int startsWithIndex = phrase.indexOf(operator);
+        temp[0] = phrase.substring(0, startsWithIndex);
+        temp[1] = operator;
+        temp[2] = phrase.substring(startsWithIndex + operator.length() + 1, phrase.lastIndexOf(")"));
+
+        return temp;
+    }
+
+    protected String[] extractStandardComponents(String phrase, String operator) {
+        String[] temp = new String[3];
+        //field
+        temp[0] = phrase.substring(0, phrase.indexOf(operator));
+        //operator
+        temp[1] = operator;
+        //value
+        temp[2] = phrase.substring(phrase.indexOf(operator) + operator.length(), phrase.length());
+
+        return temp;
+    }
+
+    protected String[] extractSpecialComponents(String phrase, String operator) {
+        String[] temp = new String[3];
+        //field
+        temp[0] = phrase.substring(phrase.indexOf("(") + 1, phrase.indexOf(")"));
+        //operator
+        temp[1] = operator;
+        //value
+        String operatorEnd = operator.substring(phrase.indexOf(")"));
+        int operatorLastIndex = phrase.indexOf(operatorEnd);
+        temp[2] = phrase.substring(operatorLastIndex + operatorEnd.length());
+
         return temp;
     }
 
     protected BLCOperator getOperator(String field, String operator, String value, boolean isNegation,
                                      boolean isFieldComparison, boolean isIgnoreCase) throws MVELTranslationException {
-        if (operator.equals("==") && value.equals("null")) {
-            return BLCOperator.IS_NULL;
-        } else if (operator.equals("==") && isFieldComparison) {
-            return BLCOperator.EQUALS_FIELD;
-        } else if (
-                isIgnoreCase &&
-                        operator.equals("==")
-                ) {
-            return BLCOperator.IEQUALS;
-        } else if (operator.equals("==")) {
-            return BLCOperator.EQUALS;
-        } else if (operator.equals("!=") && value.equals("null")) {
-            return BLCOperator.NOT_NULL;
-        } else if (operator.equals("!=") && isFieldComparison) {
-            return BLCOperator.NOT_EQUAL_FIELD;
-        } else if (
-                isIgnoreCase &&
-                        operator.equals("!=")
-                ) {
-            return BLCOperator.INOT_EQUAL;
-        } else if (operator.equals("!=")) {
-            return BLCOperator.NOT_EQUAL;
-        } else if (operator.equals(">") && isFieldComparison) {
-            return BLCOperator.GREATER_THAN_FIELD;
-        } else if (operator.equals(">")) {
-            return BLCOperator.GREATER_THAN;
-        } else if (operator.equals("<") && isFieldComparison) {
-            return BLCOperator.LESS_THAN_FIELD;
-        } else if (operator.equals("<")) {
-            return BLCOperator.LESS_THAN;
-        } else if (operator.equals(">=") && isFieldComparison) {
-            return BLCOperator.GREATER_OR_EQUAL_FIELD;
-        } else if (operator.equals(">=")) {
-            return BLCOperator.GREATER_OR_EQUAL;
-        } else if (operator.equals("<=") && isFieldComparison) {
-            return BLCOperator.LESS_OR_EQUAL_FIELD;
-        } else if (operator.equals("<=")) {
-            return BLCOperator.LESS_OR_EQUAL;
-        } else if (
-                isIgnoreCase &&
-                        operator.equals("contains") &&
-                        isNegation
-                ) {
-            return BLCOperator.INOT_CONTAINS;
-        } else if (operator.equals("contains") && isNegation) {
-            return BLCOperator.NOT_CONTAINS;
-        } else if (
-                isIgnoreCase &&
-                        operator.equals("contains")
-                ) {
-            return BLCOperator.ICONTAINS;
-        } else if (operator.equals("contains") && isFieldComparison) {
-            return BLCOperator.CONTAINS_FIELD;
-        } else if (operator.equals("contains")) {
-            return BLCOperator.CONTAINS;
-        } else if (
-                isIgnoreCase &&
-                        operator.equals("startsWith") &&
-                        isNegation
-                ) {
-            return BLCOperator.INOT_STARTS_WITH;
-        } else if (operator.equals("startsWith") && isNegation) {
-            return BLCOperator.NOT_STARTS_WITH;
-        } else if (
-                isIgnoreCase &&
-                        operator.equals("startsWith")
-                ) {
-            return BLCOperator.ISTARTS_WITH;
-        } else if (operator.equals("startsWith") && isFieldComparison) {
-            return BLCOperator.STARTS_WITH_FIELD;
-        } else if (operator.equals("startsWith")) {
-            return BLCOperator.STARTS_WITH;
-        } else if (
-                isIgnoreCase &&
-                        operator.equals("endsWith") &&
-                        isNegation
-                ) {
-            return BLCOperator.INOT_ENDS_WITH;
-        } else if (operator.equals("endsWith") && isNegation) {
-            return BLCOperator.NOT_ENDS_WITH;
-        } else if (
-                isIgnoreCase &&
-                        operator.equals("endsWith")
-                ) {
-            return BLCOperator.IENDS_WITH;
-        } else if (operator.equals("endsWith") && isFieldComparison) {
-            return BLCOperator.ENDS_WITH_FIELD;
-        } else if (operator.equals("endsWith")) {
-            return BLCOperator.ENDS_WITH;
-        } else if (operator.equals(".size()>")) {
+        if (operator.equals(DataDTOToMVELTranslator.EQUALS_OPERATOR)) {
+            if (value.equals("null")) {
+                return BLCOperator.IS_NULL;
+            } else if (isFieldComparison) {
+                return BLCOperator.EQUALS_FIELD;
+            } else if (isIgnoreCase) {
+                return BLCOperator.IEQUALS;
+            } else {
+                return BLCOperator.EQUALS;
+            }
+        } else if (operator.equals(DataDTOToMVELTranslator.NOT_EQUALS_OPERATOR)) {
+            if (value.equals("null")) {
+                return BLCOperator.NOT_NULL;
+            } else if (isFieldComparison) {
+                return BLCOperator.NOT_EQUAL_FIELD;
+            } else if (isIgnoreCase) {
+                return BLCOperator.INOT_EQUAL;
+            } else {
+                return BLCOperator.NOT_EQUAL;
+            }
+        } else if (operator.equals(DataDTOToMVELTranslator.GREATER_THAN_OPERATOR)) {
+            if (isFieldComparison) {
+                return BLCOperator.GREATER_THAN_FIELD;
+            } else {
+                return BLCOperator.GREATER_THAN;
+            }
+        } else if (operator.equals(DataDTOToMVELTranslator.LESS_THAN_OPERATOR)) {
+            if (isFieldComparison) {
+                return BLCOperator.LESS_THAN_FIELD;
+            } else {
+                return BLCOperator.LESS_THAN;
+            }
+        } else if (operator.equals(DataDTOToMVELTranslator.GREATER_THAN_EQUALS_OPERATOR)) {
+            if (isFieldComparison) {
+                return BLCOperator.GREATER_OR_EQUAL_FIELD;
+            } else {
+                return BLCOperator.GREATER_OR_EQUAL;
+            }
+        } else if (operator.equals(DataDTOToMVELTranslator.LESS_THAN_EQUALS_OPERATOR)) {
+            if (isFieldComparison) {
+                return BLCOperator.LESS_OR_EQUAL_FIELD;
+            } else {
+                return BLCOperator.LESS_OR_EQUAL;
+            }
+        } else if (operator.equals(DataDTOToMVELTranslator.CONTAINS_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_CONTAINS_OPERATOR)) {
+            if (isNegation) {
+                if (isIgnoreCase) {
+                    return BLCOperator.INOT_CONTAINS;
+                } else {
+                    return BLCOperator.NOT_CONTAINS;
+                }
+            } else {
+                if (isIgnoreCase) {
+                    return BLCOperator.ICONTAINS;
+                }
+                if (isFieldComparison) {
+                    return BLCOperator.CONTAINS_FIELD;
+                } else {
+                    return BLCOperator.CONTAINS;
+                }
+            }
+        } else if (operator.equals(DataDTOToMVELTranslator.STARTS_WITH_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_STARTS_WITH_OPERATOR)) {
+            if (isNegation) {
+                if (isIgnoreCase) {
+                    return BLCOperator.INOT_STARTS_WITH;
+                } else {
+                    return BLCOperator.NOT_STARTS_WITH;
+                }
+            } else {
+                if (isIgnoreCase) {
+                    return BLCOperator.ISTARTS_WITH;
+                } else if (isFieldComparison){
+                    return BLCOperator.STARTS_WITH_FIELD;
+                } else {
+                    return BLCOperator.STARTS_WITH;
+                }
+            }
+        } else if (operator.equals(DataDTOToMVELTranslator.ENDS_WITH_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_ENDS_WITH_OPERATOR)) {
+            if (isNegation) {
+                if (isIgnoreCase) {
+                    return BLCOperator.INOT_ENDS_WITH;
+                } else {
+                    return BLCOperator.NOT_ENDS_WITH;
+                }
+            } else {
+                if (isIgnoreCase) {
+                    return BLCOperator.IENDS_WITH;
+                } else if (isFieldComparison) {
+                    return BLCOperator.ENDS_WITH_FIELD;
+                } else {
+                    return BLCOperator.ENDS_WITH;
+                }
+            }
+        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_GREATER_THAN_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_SIZE_GREATER_THAN_OPERATOR)) {
             return BLCOperator.COUNT_GREATER_THAN;
-        } else if (operator.equals(".size()>=")) {
+        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_GREATER_THAN_EQUALS_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_SIZE_GREATER_THAN_EQUAL_OPERATOR)) {
             return BLCOperator.COUNT_GREATER_OR_EQUAL;
-        } else if (operator.equals(".size()<")) {
+        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_LESS_THAN_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_SIZE_LESS_THAN_OPERATOR)) {
             return BLCOperator.COUNT_LESS_THAN;
-        } else if (operator.equals(".size()<=")) {
+        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_LESS_THAN_EQUALS_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_SIZE_LESS_THAN_EQUAL_OPERATOR)) {
             return BLCOperator.COUNT_LESS_OR_EQUAL;
-        } else if (operator.equals(".size()==")) {
+        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_EQUALS_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_SIZE_EQUAL_OPERATOR)) {
             return BLCOperator.COUNT_EQUALS;
-        } else if (operator.equals(".size()>0")){
+        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_GREATER_THAN_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR) ||
+                operator.equals(DataDTOToMVELTranslator.OLD_SIZE_GREATER_THAN_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR)){
             return BLCOperator.COLLECTION_IN;
-        } else if (operator.equals(".size()==0")){
+        } else if (operator.equals(DataDTOToMVELTranslator.LENGTH_EQUALS_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR) ||
+                operator.equals(DataDTOToMVELTranslator.OLD_SIZE_EQUAL_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR)){
             return BLCOperator.COLLECTION_NOT_IN;
         }
         throw new MVELTranslationException(MVELTranslationException.OPERATOR_NOT_FOUND, "Unable to identify an operator compatible with the " +

@@ -37,6 +37,33 @@ import java.util.List;
  */
 public class DataDTOToMVELTranslator {
 
+    public static final String CONTAINS_OPERATOR = "org.apache.commons.lang3.StringUtils.contains()";
+    public static final String STARTS_WITH_OPERATOR = "org.apache.commons.lang3.StringUtils.startsWith()";
+    public static final String ENDS_WITH_OPERATOR = "org.apache.commons.lang3.StringUtils.endsWith()";
+    public static final String EQUALS_OPERATOR = "==";
+    public static final String NOT_EQUALS_OPERATOR = "!=";
+    public static final String GREATER_THAN_EQUALS_OPERATOR = ">=";
+    public static final String LESS_THAN_EQUALS_OPERATOR = "<=";
+    public static final String GREATER_THAN_OPERATOR = ">";
+    public static final String LESS_THAN_OPERATOR = "<";
+    public static final String LENGTH_GREATER_THAN_EQUALS_OPERATOR = "org.apache.commons.lang3.StringUtils.length()>=";
+    public static final String LENGTH_LESS_THAN_EQUALS_OPERATOR = "org.apache.commons.lang3.StringUtils.length()<=";
+    public static final String LENGTH_GREATER_THAN_OPERATOR = "org.apache.commons.lang3.StringUtils.length()>";
+    public static final String LENGTH_LESS_THAN_OPERATOR = "org.apache.commons.lang3.StringUtils.length()<";
+    public static final String LENGTH_EQUALS_OPERATOR = "org.apache.commons.lang3.StringUtils.length()==";
+    public static final String COLLECTION_OPERATOR = "CollectionUtils.intersection";
+    public static final String ZERO_OPERATOR = "0";
+
+    public static final String OLD_CONTAINS_OPERATOR = ".contains";
+    public static final String OLD_STARTS_WITH_OPERATOR = ".startsWith";
+    public static final String OLD_ENDS_WITH_OPERATOR = ".endsWith";
+    public static final String OLD_SIZE_GREATER_THAN_OPERATOR = ".size()>";
+    public static final String OLD_SIZE_GREATER_THAN_EQUAL_OPERATOR = ".size()>=";
+    public static final String OLD_SIZE_LESS_THAN_OPERATOR = ".size()<";
+    public static final String OLD_SIZE_LESS_THAN_EQUAL_OPERATOR = ".size()<=";
+    public static final String OLD_SIZE_EQUAL_OPERATOR = ".size()==";
+
+
     public String createMVEL(String entityKey, DataDTO dataDTO, RuleBuilderFieldService fieldService)
             throws MVELTranslationException {
         StringBuffer sb = new StringBuffer();
@@ -108,183 +135,183 @@ public class DataDTOToMVELTranslator {
 
         switch(operator) {
             case CONTAINS: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, CONTAINS_OPERATOR,
                         true, false, false, false, false);
                 break;
             }
             case CONTAINS_FIELD: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, CONTAINS_OPERATOR,
                         true, true, false, false, false);
                 break;
             }
             case ENDS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ENDS_WITH_OPERATOR,
                         true, false, false, false, false);
                 break;
             }
             case ENDS_WITH_FIELD: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ENDS_WITH_OPERATOR,
                         true, true, false, false, false);
                 break;
             }
             case EQUALS: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, "==", false, false, false, false, false);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, EQUALS_OPERATOR, false, false, false, false, false);
                 break;
             }
             case EQUALS_FIELD: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, "==", false, true, false, false, false);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, EQUALS_OPERATOR, false, true, false, false, false);
                 break;
             }
             case GREATER_OR_EQUAL: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ">=", false, false, false, false, false);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, GREATER_THAN_EQUALS_OPERATOR, false, false, false, false, false);
                 break;
             }
             case GREATER_OR_EQUAL_FIELD: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ">=", false, true, false, false, false);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, GREATER_THAN_EQUALS_OPERATOR, false, true, false, false, false);
                 break;
             }
             case GREATER_THAN: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ">", false, false, false, false, false);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, GREATER_THAN_OPERATOR, false, false, false, false, false);
                 break;
             }
             case GREATER_THAN_FIELD: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ">", false, true, false, false, false);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, GREATER_THAN_OPERATOR, false, true, false, false, false);
                 break;
             }
             case ICONTAINS: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, CONTAINS_OPERATOR,
                         true, false, true, false, false);
                 break;
             }
             case IENDS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ENDS_WITH_OPERATOR,
                         true, false, true, false, false);
                 break;
             }
             case IEQUALS: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, "==", false, false, true, false, false);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, EQUALS_OPERATOR, false, false, true, false, false);
                 break;
             }
             case INOT_CONTAINS: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, CONTAINS_OPERATOR,
                         true, false, true, true, false);
                 break;
             }
             case INOT_ENDS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ENDS_WITH_OPERATOR,
                         true, false, true, true, false);
                 break;
             }
             case INOT_EQUAL: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, "!=", false, false, true, false, false);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, NOT_EQUALS_OPERATOR, false, false, true, false, false);
                 break;
             }
             case INOT_STARTS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, STARTS_WITH_OPERATOR,
                         true, false, true, true, false);
                 break;
             }
             case IS_NULL: {
-                buildExpression(sb, entityKey, field, new Object[]{"null"}, type, secondaryType, "==",
+                buildExpression(sb, entityKey, field, new Object[]{"null"}, type, secondaryType, EQUALS_OPERATOR,
                         false, false, false, false, true);
                 break;
             }
             case ISTARTS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, STARTS_WITH_OPERATOR,
                         true, false, true, false, false);
                 break;
             }
             case LESS_OR_EQUAL: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, "<=", false, false, false, false, false);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, LESS_THAN_EQUALS_OPERATOR, false, false, false, false, false);
                 break;
             }
             case LESS_OR_EQUAL_FIELD: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, "<=", false, true, false, false, false);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, LESS_THAN_EQUALS_OPERATOR, false, true, false, false, false);
                 break;
             }
             case LESS_THAN: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, "<", false, false, false, false, false);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, LESS_THAN_OPERATOR, false, false, false, false, false);
                 break;
             }
             case LESS_THAN_FIELD: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, "<",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, LESS_THAN_OPERATOR,
                         false, true, false, false, false);
                 break;
             }
             case NOT_CONTAINS: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, CONTAINS_OPERATOR,
                         true, false, false, true, false);
                 break;
             }
             case NOT_ENDS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ENDS_WITH_OPERATOR,
                         true, false, false, true, false);
                 break;
             }
             case NOT_EQUAL: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, "!=", false, false, false, false, false);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, NOT_EQUALS_OPERATOR, false, false, false, false, false);
                 break;
             }
             case NOT_EQUAL_FIELD: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, "!=",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, NOT_EQUALS_OPERATOR,
                         false, true, false, false, false);
                 break;
             }
             case NOT_NULL: {
-                buildExpression(sb, entityKey, field, new Object[]{"null"}, type, secondaryType, "!=",
+                buildExpression(sb, entityKey, field, new Object[]{"null"}, type, secondaryType, NOT_EQUALS_OPERATOR,
                         false, false, false, false, true);
                 break;
             }
             case NOT_STARTS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, STARTS_WITH_OPERATOR,
                         true, false, false, true, false);
                 break;
             }
             case STARTS_WITH: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, STARTS_WITH_OPERATOR,
                         true, false, false, false, false);
                 break;
             }
             case STARTS_WITH_FIELD: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith",
+                buildExpression(sb, entityKey, field, value, type, secondaryType, STARTS_WITH_OPERATOR,
                         true, true, false, false, false);
                 break;
             }
             case COUNT_GREATER_THAN: {
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".size()>", false, false, false, false, true);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_GREATER_THAN_OPERATOR, false, false, false, false, true);
                 break;
             }
             case COUNT_GREATER_OR_EQUAL:{
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".size()>=", false, false, false, false, true);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_GREATER_THAN_EQUALS_OPERATOR, false, false, false, false, true);
                 break;
             }
             case COUNT_LESS_THAN:{
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".size()<", false, false, false, false, true);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_LESS_THAN_OPERATOR, false, false, false, false, true);
                 break;
             }
             case COUNT_LESS_OR_EQUAL:{
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".size()<=", false, false, false, false, true);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_LESS_THAN_EQUALS_OPERATOR, false, false, false, false, true);
                 break;
             }
             case COUNT_EQUALS:{
-                buildExpression(sb, entityKey, field, value, type, secondaryType, ".size()==", false, false, false, false, true);
+                buildExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_EQUALS_OPERATOR, false, false, false, false, true);
                 break;
             }
             case COLLECTION_IN:{
-                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, ".size()>0", false, false, false, false, true);
+                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_GREATER_THAN_OPERATOR + ZERO_OPERATOR, false, false, false, false, true);
                 break;
             }
             case COLLECTION_NOT_IN:{
-                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, ".size()==0", false, false, false, false, true);
+                buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, LENGTH_EQUALS_OPERATOR + ZERO_OPERATOR, false, false, false, false, true);
                 break;
             }
             case BETWEEN: {
                 if (value != null && value.length==2) {
                     sb.append("(");
-                    buildExpression(sb, entityKey, field, new Object[]{value[0]}, type, secondaryType, ">",
+                    buildExpression(sb, entityKey, field, new Object[]{value[0]}, type, secondaryType, GREATER_THAN_OPERATOR,
                             false, false, false, false, true);
                     sb.append("&&");
-                    buildExpression(sb, entityKey, field, new Object[]{value[1]}, type, secondaryType, "<",
+                    buildExpression(sb, entityKey, field, new Object[]{value[1]}, type, secondaryType, LESS_THAN_OPERATOR,
                             false, false, false, false, true);
                     sb.append(")");
                 }
@@ -293,10 +320,10 @@ public class DataDTOToMVELTranslator {
             case BETWEEN_INCLUSIVE: {
                 if (value != null && value.length==2) {
                     sb.append("(");
-                    buildExpression(sb, entityKey, field, new Object[]{value[0]}, type, secondaryType, ">=",
+                    buildExpression(sb, entityKey, field, new Object[]{value[0]}, type, secondaryType, GREATER_THAN_EQUALS_OPERATOR,
                             false, false, false, false, true);
                     sb.append("&&");
-                    buildExpression(sb, entityKey, field, new Object[]{value[1]}, type, secondaryType, "<=",
+                    buildExpression(sb, entityKey, field, new Object[]{value[1]}, type, secondaryType, LESS_THAN_EQUALS_OPERATOR,
                             false, false, false, false, true);
                     sb.append(")");
                 }
@@ -349,15 +376,16 @@ public class DataDTOToMVELTranslator {
             SupportedFieldType type, SupportedFieldType secondaryType, String operator,
             boolean includeParenthesis, boolean isFieldComparison, boolean ignoreCase,
             boolean isNegation, boolean ignoreQuotes) throws MVELTranslationException {
-        sb.append("CollectionUtils.intersection(");
+        sb.append(operator.substring(0, operator.indexOf(")")));
+        sb.append(COLLECTION_OPERATOR);
+        sb.append("(");
         sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
         sb.append(",");
         sb.append("[");
         sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
                 ignoreCase, ignoreQuotes));
         sb.append("])");
-
-        sb.append(operator);
+        sb.append(operator.substring(operator.indexOf(")")));
     }
 
     protected void buildExpression(StringBuffer sb, String entityKey, String field, Object[] value,
@@ -366,7 +394,7 @@ public class DataDTOToMVELTranslator {
                                    boolean isNegation, boolean ignoreQuotes)
             throws MVELTranslationException {
 
-        if (operator.equals("==") && !isFieldComparison && value.length > 1) {
+        if (operator.equals(EQUALS_OPERATOR) && !isFieldComparison && value.length > 1) {
             sb.append("(");
             sb.append("[");
             sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
@@ -378,6 +406,19 @@ public class DataDTOToMVELTranslator {
                 sb.append(".intValue()");
             }
             sb.append(")");
+        } else if (CONTAINS_OPERATOR.equals(operator) || STARTS_WITH_OPERATOR.equals(operator) || ENDS_WITH_OPERATOR.equals(operator)) {
+            sb.append(operator.substring(0, operator.indexOf(")")));
+            sb.append("(");
+            sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+            sb.append(",");
+            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison, ignoreCase, ignoreQuotes));
+            sb.append(")");
+        } else if (LENGTH_EQUALS_OPERATOR.equals(operator) || LENGTH_GREATER_THAN_EQUALS_OPERATOR.equals(operator) || LENGTH_GREATER_THAN_OPERATOR.equals(operator) ||
+                LENGTH_LESS_THAN_EQUALS_OPERATOR.equals(operator) || LENGTH_LESS_THAN_OPERATOR.equals(operator)) {
+            sb.append(operator.substring(0, operator.indexOf(")")));
+            sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+            sb.append(operator.substring(operator.indexOf(")")));
+            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison, ignoreCase, ignoreQuotes));
         } else {
             sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
             sb.append(operator);
