@@ -353,6 +353,17 @@ circle {
 .tabError span {
     display: block;
 }
+.tab-warning-indicator {
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    left: 16px;
+    top: 20px;
+    animation: pulse 1s ease infinite;
+}
 .tab-error-indicator {
     -moz-border-radius: 50%;
     -webkit-border-radius: 50%;

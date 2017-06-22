@@ -102,6 +102,8 @@
                 }
             }
 
+            BLCAdmin.listGrid.paginate.initializeHeaderWidths($listGridContainer.find('table.list-grid-table'));
+
             $listGridContainer.trigger('blc-listgrid-replaced', $listGridContainer);
         },
 
@@ -137,6 +139,39 @@
             }
 
             $container.trigger('blc-listgrid-replaced', $container);
+        },
+
+
+        /**
+         * Refreshes the collection to have the latest available data according to the collection's 'actionurl'
+         *
+         * @param {element} $actionButton - the refresh button
+         */
+        handleCollectionRefreshAction: function ($actionButton) {
+            var $listGridContainer = $actionButton.closest(".listgrid-container");
+            var actionUrl = $actionButton.data('actionurl');
+
+            BLCAdmin.listGrid.refreshCollection($listGridContainer, actionUrl);
+        },
+
+        /**
+         * Refreshes the collection to have the latest available data according to the provided url
+         *
+         * Note: this is expecting to hit a Spring controller with the given url that returns
+         *  a rendered collection using "views/standaloneListGrid"
+         *
+         * @param {element} $listGridContainer - the ListGrid collection's container element
+         * @param {String} url - the url that will return the latest collection data
+         */
+        refreshCollection: function ($listGridContainer, url) {
+            var params = BLCAdmin.filterBuilders.getListGridFiltersAsURLParams($listGridContainer);
+
+            BLC.ajax({
+                url: BLCAdmin.buildUrlWithParams(url, params),
+                type: "GET"
+            }, function (data) {
+                BLCAdmin.listGrid.replaceRelatedCollection($(data));
+            });
         },
 
         getActionLink: function ($trigger) {
@@ -241,7 +276,10 @@
             function updateListGridActionsForEmptyContainer($containerActions, isEmpty) {
                 if (isEmpty) {
                     if (!$containerActions.prop('disabled')) {
-                        $containerActions.prop('disabled', true).prop("forceDisabled", true);
+                        $containerActions.prop('disabled', true);
+                    }
+                    if (!$containerActions.prop('forceDisabled')) {
+                        $containerActions.prop("forceDisabled", true);
                     }
                 } else {
                     if ($containerActions.prop('disabled')) {
@@ -1054,6 +1092,18 @@ $(document).ready(function () {
 
     $('body').on('click', 'td.listgrid-row-actions span', function (event) {
         return false;
+    });
+
+    $('body').on('click', '.collection-refresh', function (e) {
+        var $this = $(this);
+        var $contents = $this.html();
+        $this.html('<i class="fa-pulse fa fa-spinner"/>');
+        $this.removeClass('collection-refresh').addClass('disabled');
+
+        BLCAdmin.listGrid.handleCollectionRefreshAction($this);
+
+        $this.html($contents);
+        $this.addClass('collection-refresh').removeClass('disabled');
     });
 
     $("input[type=checkbox].listgrid-checkbox").prop('checked', false);

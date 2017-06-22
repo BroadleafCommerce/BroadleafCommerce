@@ -33,6 +33,7 @@ public class ListGridAction implements Cloneable {
     public static final String REMOVE = "REMOVE";
     public static final String UPDATE = "UPDATE";
     public static final String MANUAL_FETCH = "MANUAL_FETCH";
+    public static final String REFRESH = "REFRESH";
     public static final String VIEW = "VIEW";
     public static final String EDIT = "EDIT";
     public static final String TREE_ADD = "TREE_ADD";
