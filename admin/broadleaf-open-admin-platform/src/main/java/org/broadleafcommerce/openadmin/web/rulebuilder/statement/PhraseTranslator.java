@@ -333,7 +333,7 @@ public class PhraseTranslator {
     protected String[] extractSpecialComponents(String phrase, String operator) {
         String[] temp = new String[3];
         //field
-        String operatorBegin = operator.substring(0, operator.indexOf(")"));
+        String operatorBegin = operator + "(";
         temp[0] = phrase.substring(operatorBegin.length(), phrase.indexOf(","));
         //operator
         temp[1] = operator;

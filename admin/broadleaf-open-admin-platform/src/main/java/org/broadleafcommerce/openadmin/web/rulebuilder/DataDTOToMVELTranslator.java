@@ -37,9 +37,9 @@ import java.util.List;
  */
 public class DataDTOToMVELTranslator {
 
-    public static final String CONTAINS_OPERATOR = "org.apache.commons.lang3.StringUtils.contains()";
-    public static final String STARTS_WITH_OPERATOR = "org.apache.commons.lang3.StringUtils.startsWith()";
-    public static final String ENDS_WITH_OPERATOR = "org.apache.commons.lang3.StringUtils.endsWith()";
+    public static final String CONTAINS_OPERATOR = "org.apache.commons.lang3.StringUtils.contains";
+    public static final String STARTS_WITH_OPERATOR = "org.apache.commons.lang3.StringUtils.startsWith";
+    public static final String ENDS_WITH_OPERATOR = "org.apache.commons.lang3.StringUtils.endsWith";
     public static final String EQUALS_OPERATOR = "==";
     public static final String NOT_EQUALS_OPERATOR = "!=";
     public static final String GREATER_THAN_EQUALS_OPERATOR = ">=";
@@ -401,7 +401,8 @@ public class DataDTOToMVELTranslator {
             }
             sb.append(")");
         } else if (CONTAINS_OPERATOR.equals(operator) || STARTS_WITH_OPERATOR.equals(operator) || ENDS_WITH_OPERATOR.equals(operator)) {
-            sb.append(operator.substring(0, operator.indexOf(")")));
+            sb.append(operator);
+            sb.append("(");
             sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
             sb.append(",");
             sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison, ignoreCase, ignoreQuotes));
