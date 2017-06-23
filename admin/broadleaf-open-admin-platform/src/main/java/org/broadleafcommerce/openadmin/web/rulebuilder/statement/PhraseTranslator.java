@@ -295,10 +295,11 @@ public class PhraseTranslator {
 
     protected String[] extractCollectionCase(String phrase) {
         String[] temp = new String[3];
+        String collectionBegin = DataDTOToMVELTranslator.COLLECTION_OPERATOR + "(";
         //field
-        temp[0] = phrase.substring(phrase.indexOf("(") + 1, phrase.indexOf(","));
+        temp[0] = phrase.substring(collectionBegin.length(), phrase.indexOf(","));
         //value
-        temp[2] = phrase.substring(phrase.indexOf("["), phrase.indexOf("]") + 1);
+        temp[2] = phrase.substring(phrase.indexOf(",") + 1, phrase.lastIndexOf("]") + 1);
         //operator
         temp[1] = phrase.substring(phrase.indexOf(".size"));
 
