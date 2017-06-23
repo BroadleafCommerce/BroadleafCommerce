@@ -120,7 +120,7 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
                 extensionManager.getProxy().modifyPriceForOverrides(sku, priceHolder, context, tagAttributes);
             }
             
-            dto.setPrice(BLCMoneyFormatUtils.formatPrice(currentPrice));
+            dto.setPrice(BLCMoneyFormatUtils.formatPrice(priceHolder.getResult()));
             dto.setSelectedOptions(values);
             skuPricing.add(dto);
         }
