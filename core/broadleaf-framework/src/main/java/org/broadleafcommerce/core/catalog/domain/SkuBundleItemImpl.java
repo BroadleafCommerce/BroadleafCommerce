@@ -58,6 +58,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+/**
+ * @deprecated instead, use the ProductType Module's Product Add-Ons to build and configure bundles
+ */
+@Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_BUNDLE_ITEM")
