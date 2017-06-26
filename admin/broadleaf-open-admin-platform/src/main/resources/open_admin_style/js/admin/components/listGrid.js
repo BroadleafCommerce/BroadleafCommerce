@@ -167,7 +167,7 @@
             var params = BLCAdmin.filterBuilders.getListGridFiltersAsURLParams($listGridContainer);
 
             BLC.ajax({
-                url: BLCAdmin.buildUrlWithParams(url, params),
+                url: BLC.buildUrlWithParams(url, params),
                 type: "GET"
             }, function (data) {
                 BLCAdmin.listGrid.replaceRelatedCollection($(data));

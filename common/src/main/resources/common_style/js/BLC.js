@@ -330,6 +330,21 @@ var BLC = (function($) {
 
         return document.location.search = params;
     }
+
+    /**
+     * Add URL parameters to an existing url
+     * @param {url}     string
+     * @param {params}    map of parameter keys to values
+     */
+    function buildUrlWithParams (url, params) {
+        if (url.lastIndexOf("?") > -1) {
+            url = url + "&" + $.param(params);
+        } else {
+            url = url + "?" + $.param(params);
+        }
+
+        return url;
+    }
     
     addPreAjaxCallbackHandler(function($data) {
         return BLC.redirectIfNecessary($data);
@@ -347,6 +362,7 @@ var BLC = (function($) {
         defaultErrorHandler : defaultErrorHandler,
         serializeObject : serializeObject,
         addUrlParam : addUrlParam,
+        buildUrlWithParams : buildUrlWithParams,
         servletContext : servletContext,
         siteBaseUrl : siteBaseUrl
     }

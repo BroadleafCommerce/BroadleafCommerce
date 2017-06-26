@@ -1083,21 +1083,6 @@ var BLCAdmin = (function($) {
         },
 
         /**
-         * Add URL parameters to an existing url
-         * @param {url}     string
-         * @param {params}    map of parameter keys to values
-         */
-        buildUrlWithParams : function addUrlParam(url, params) {
-            if (url.lastIndexOf("?") > -1) {
-                url = url + "&" + $.param(params);
-            } else {
-                url = url + "?" + $.param(params);
-            }
-
-            return url;
-        },
-
-        /**
          * Ensure that disabled fields are included in the serialized form
          * @param {form}
          */
