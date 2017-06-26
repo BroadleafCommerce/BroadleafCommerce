@@ -29,6 +29,8 @@ import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,9 +52,11 @@ import javax.servlet.http.HttpServletResponse;
  * @author bpolster
  */
 public class BroadleafProductController extends BroadleafAbstractController implements Controller, TemplateTypeAware {
-    
+
+    public static final String PAGE_TYPE_ATTRIBUTE_NAME = "BLC_PAGE_TYPE";
     protected String defaultProductView = "catalog/product";
     protected static String MODEL_ATTRIBUTE_NAME = "product";
+    protected static String CONFIGURATION_ATTRIBUTE_NAME = "configRequest";
     protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
     
     @Autowired(required = false)
@@ -62,6 +66,8 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     @Resource(name="blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
 
+    @Resource(name = "blOrderItemService")
+    protected OrderItemService orderItemService;
 
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
@@ -72,15 +78,17 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
         assert(product != null);
         model.addObject(MODEL_ATTRIBUTE_NAME, product);
-        Set<Product> allProductsSet = new HashSet<Product>();
-        allProductsSet.add(product);
-        model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(allProductsSet));
-        model.addObject("BLC_PAGE_TYPE", "product");
+        model.addObject(PAGE_TYPE_ATTRIBUTE_NAME, "product");
+
+        // Build the add to cart request and add it to the page
+        ConfigurableOrderItemRequest itemRequest = orderItemService.createConfigurableOrderItemRequestFromProduct(product);
+        orderItemService.modifyOrderItemRequest(itemRequest);
+        model.addObject(CONFIGURATION_ATTRIBUTE_NAME, itemRequest);
+        model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, orderItemService.findAllProductsInRequest(itemRequest));
 
         addDeepLink(model, deepLinkService, product);
         
-        String templatePath = null;
-
+        String templatePath;
         // Use the products custom template if available
         if (StringUtils.isNotBlank(product.getDisplayTemplate())) {
             templatePath = product.getDisplayTemplate();
