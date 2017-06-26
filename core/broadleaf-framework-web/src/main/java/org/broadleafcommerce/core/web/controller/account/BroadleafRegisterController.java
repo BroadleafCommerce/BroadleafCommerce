@@ -28,9 +28,9 @@ import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
-import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
 import org.broadleafcommerce.profile.web.core.service.login.LoginService;
+import org.broadleafcommerce.profile.web.core.service.register.RegistrationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -60,6 +60,9 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
     protected static String registerSuccessView = "ajaxredirect:";
     protected static String registerView = "authentication/register";
     
+    @Resource(name="blRegistrationService")
+    protected RegistrationService registrationService;
+
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
 
@@ -74,17 +77,11 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
     
     public String register(RegisterCustomerForm registerCustomerForm, HttpServletRequest request, 
             HttpServletResponse response, Model model) {
-        String redirectUrl = request.getParameter("successUrl");
-        
-        if (StringUtils.isNotBlank(redirectUrl)) {
-            registerCustomerForm.setRedirectUrl(redirectUrl);
-        } else {
-            registerCustomerForm.setRedirectUrl(request.getContextPath());
-        }
-        
+        registrationService.addRedirectUrlToForm(registerCustomerForm);
+
         return getRegisterView();
     }
-    
+
     public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors, 
             HttpServletRequest request, HttpServletResponse response, Model model)
             throws ServiceException, PricingException {
@@ -122,14 +119,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
     }
     
     public RegisterCustomerForm initCustomerRegistrationForm() {
-        Customer customer = CustomerState.getCustomer();
-        if (customer == null || ! customer.isAnonymous()) {
-            customer = customerService.createCustomerFromId(null);
-        }
-        
-        RegisterCustomerForm customerRegistrationForm = new RegisterCustomerForm();
-        customerRegistrationForm.setCustomer(customer);
-        return customerRegistrationForm;
+        return registrationService.initCustomerRegistrationForm();
     }
 
     public boolean isUseEmailForLogin() {
