@@ -53,5 +53,17 @@
         <property name="collectionRef" value="blMergedPersistenceXmlLocations-open-admin"/>
         <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
     </bean>
+    
+    <bean id="blDirectCopyTransformTokenMap-open-admin" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="auditableOnly" value="org.broadleafcommerce.openadmin.weave.WeaveAdminAuditable"/>
+            </map>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blDirectCopyTransformTokenMap-open-admin"/>
+        <property name="targetRef" value="blDirectCopyTransformTokenMap"/>
+    </bean>
 
 </beans>

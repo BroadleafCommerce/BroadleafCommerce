@@ -187,6 +187,10 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
 
                 List results;
                 BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+                if (context == null) {
+                    context = new BroadleafRequestContext();
+                    BroadleafRequestContext.setBroadleafRequestContext(context);
+                }
                 try {
                     context.setInternalIgnoreFilters(true);
                     results = em.createQuery(sb.toString()).getResultList();

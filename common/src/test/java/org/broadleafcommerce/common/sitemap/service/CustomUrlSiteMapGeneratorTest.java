@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConf
 import org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntry;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntryImpl;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
+import org.broadleafcommerce.common.sitemap.service.CustomUrlSiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
@@ -109,7 +110,7 @@ public class CustomUrlSiteMapGeneratorTest extends SiteMapGeneratorTest {
         urlEntry3.setSiteMapChangeFreq(SiteMapChangeFreqType.HOURLY);
         urlEntry3.setSiteMapPriority(SiteMapPriorityType.POINT5);
 
-        List<SiteMapUrlEntry> urlEntries = new ArrayList<SiteMapUrlEntry>();
+        List<SiteMapUrlEntry> urlEntries = new ArrayList<>();
         urlEntries.add(urlEntry1);
         urlEntries.add(urlEntry2);
         urlEntries.add(urlEntry3);

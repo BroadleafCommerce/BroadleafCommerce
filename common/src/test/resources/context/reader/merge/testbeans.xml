@@ -25,11 +25,11 @@
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <bean id="exampleBean" class="org.broadleafcommerce.common.context.merge.reader.MergeBeanDefinitionTest.ExampleBean">
+    <bean id="exampleBean" class="org.broadleafcommerce.test.common.context.merge.reader.MergeBeanDefinitionTest.ExampleBean">
         <property name="field1" value="file1" />
         <property name="field2" value="file1" />
     </bean>
     
-    <bean class="org.broadleafcommerce.common.context.merge.reader.MergeBeanDefinitionTest.AnonymousBean" />
+    <bean class="org.broadleafcommerce.test.common.context.merge.reader.MergeBeanDefinitionTest.AnonymousBean" />
 
 </beans>

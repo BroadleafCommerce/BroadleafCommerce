@@ -48,6 +48,6 @@
         <property name="targetRef" value="mergedList"/>
     </bean>
     
-    <context:component-scan base-package="org.broadleafcommerce.common.test.merge.config.framework"/>
+    <context:component-scan base-package="org.broadleafcommerce.test.common.test.merge.config.framework"/>
 
 </beans>
