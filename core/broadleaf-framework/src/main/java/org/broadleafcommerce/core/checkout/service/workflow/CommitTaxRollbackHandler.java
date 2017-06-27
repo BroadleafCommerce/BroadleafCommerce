@@ -31,13 +31,13 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 @Component("blCommitTaxRollbackHandler")
-public class CommitTaxRollbackHandler implements RollbackHandler<CheckoutSeed> {
+public class CommitTaxRollbackHandler implements RollbackHandler<ProcessContext<CheckoutSeed>> {
 
     @Resource(name = "blTaxService")
     protected TaxService taxService;
 
     @Override
-    public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
+    public void rollbackState(Activity<ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
         ProcessContext<CheckoutSeed> ctx = processContext;
         Order order = ctx.getSeedData().getOrder();
         try {

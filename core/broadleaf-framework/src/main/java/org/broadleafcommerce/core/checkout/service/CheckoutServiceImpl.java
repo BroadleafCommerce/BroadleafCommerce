@@ -41,7 +41,7 @@ import javax.annotation.Resource;
 public class CheckoutServiceImpl implements CheckoutService {
 
     @Resource(name="blCheckoutWorkflow")
-    protected Processor checkoutWorkflow;
+    protected Processor<CheckoutSeed, CheckoutSeed> checkoutWorkflow;
 
     @Resource(name="blOrderService")
     protected OrderService orderService;
@@ -50,7 +50,7 @@ public class CheckoutServiceImpl implements CheckoutService {
      * Map of locks for given order ids. This lock map ensures that only a single request can handle a particular order
      * at a time
      */
-    protected static ConcurrentMap<Long, Object> lockMap = new ConcurrentHashMap<Long, Object>();
+    protected static ConcurrentMap<Long, Object> lockMap = new ConcurrentHashMap<>();
 
     @Override
     public CheckoutResponse performCheckout(Order order) throws CheckoutException {
@@ -71,7 +71,7 @@ public class CheckoutServiceImpl implements CheckoutService {
             order = orderService.save(order, false);
             seed = new CheckoutSeed(order, new HashMap<String, Object>());
 
-            ProcessContext<CheckoutSeed> context = (ProcessContext<CheckoutSeed>) checkoutWorkflow.doActivities(seed);
+            ProcessContext<CheckoutSeed> context = checkoutWorkflow.doActivities(seed);
 
             // We need to pull the order off the seed and save it here in case any activity modified the order.
             order = orderService.save(seed.getOrder(), false);

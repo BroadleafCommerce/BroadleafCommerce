@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.core.workflow.state;
 
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
@@ -26,16 +24,18 @@ import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blNullCheckoutRollbackHandler")
-public class NullCheckoutRollbackHandler implements RollbackHandler<CheckoutSeed> {
+public class NullCheckoutRollbackHandler implements RollbackHandler<ProcessContext<CheckoutSeed>> {
 
     private static final Log LOG = LogFactory.getLog(NullCheckoutRollbackHandler.class);
 
     @Override
-    public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext,
+    public void rollbackState(Activity<ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext,
                               Map<String, Object> stateConfiguration) throws RollbackFailureException {
 
         LOG.warn("NullCheckoutRollbackHandler invoked - Override to provide a " +

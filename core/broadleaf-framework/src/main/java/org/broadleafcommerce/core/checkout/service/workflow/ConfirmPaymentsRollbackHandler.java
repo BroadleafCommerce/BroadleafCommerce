@@ -56,7 +56,7 @@ import javax.annotation.Resource;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blConfirmPaymentsRollbackHandler")
-public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutSeed> {
+public class ConfirmPaymentsRollbackHandler implements RollbackHandler<ProcessContext<CheckoutSeed>> {
 
     protected static final Log LOG = LogFactory.getLog(ConfirmPaymentsRollbackHandler.class);
     
@@ -77,7 +77,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
     protected OrderService orderService;
     
     @Override
-    public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
+    public void rollbackState(Activity<ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
         CheckoutSeed seed = processContext.getSeedData();
 
         if (paymentConfigurationServiceProvider == null) {
@@ -85,7 +85,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
                     + " payments");
         }
 
-        Map<OrderPayment, PaymentTransaction> rollbackResponseTransactions = new HashMap<OrderPayment, PaymentTransaction>();
+        Map<OrderPayment, PaymentTransaction> rollbackResponseTransactions = new HashMap<>();
         Collection<PaymentTransaction> transactions = (Collection<PaymentTransaction>) stateConfiguration.get(ValidateAndConfirmPaymentActivity.ROLLBACK_TRANSACTIONS);
         
         if (CollectionUtils.isNotEmpty(transactions)) {
@@ -135,7 +135,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
             }
     
             Order order = seed.getOrder();
-            List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
+            List<OrderPayment> paymentsToInvalidate = new ArrayList<>();
     
             // Add the new rollback transactions to the appropriate payment and mark the payment as invalid.
             // If there was a failed transaction rolling back we will need to throw a RollbackFailureException after saving the

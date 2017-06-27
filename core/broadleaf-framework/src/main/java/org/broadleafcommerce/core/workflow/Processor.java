@@ -20,18 +20,18 @@ package org.broadleafcommerce.core.workflow;
 import java.util.List;
 
 
-public interface Processor {
+public interface Processor<U, T> {
 
-    public boolean supports(Activity<? extends ProcessContext<?>> activity);
+    public boolean supports(Activity<? extends ProcessContext<U>> activity);
     
-    public ProcessContext<?> doActivities() throws WorkflowException;
+    public <P extends ProcessContext<U>> P doActivities() throws WorkflowException;
     
-    public ProcessContext<?> doActivities(Object seedData) throws WorkflowException;
+    public <P extends ProcessContext<U>> P doActivities(T seedData) throws WorkflowException;
     
-    public void setActivities(List<Activity<ProcessContext<?>>> activities);
+    public void setActivities(List<Activity<ProcessContext<U>>> activities);
     
     public void setDefaultErrorHandler(ErrorHandler defaultErrorHandler);
     
-    public void setProcessContextFactory(ProcessContextFactory<Object, Object> processContextFactory);
+    public void setProcessContextFactory(ProcessContextFactory<U, T> processContextFactory);
 
 }
