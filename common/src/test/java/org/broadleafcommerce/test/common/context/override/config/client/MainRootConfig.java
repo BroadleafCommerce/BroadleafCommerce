@@ -24,5 +24,5 @@ import org.springframework.context.annotation.Configuration;
  * @author Nick Crum ncrum
  */
 @Configuration
-@ComponentScan("org.broadleafcommerce.common.context.override.config.client.scan")
+@ComponentScan("org.broadleafcommerce.test.common.context.override.config.client.scan")
 public class MainRootConfig {}
