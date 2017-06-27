@@ -29,6 +29,9 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
+import org.broadleafcommerce.common.sitemap.service.SiteMapGenerationResponse;
+import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
+import org.broadleafcommerce.common.sitemap.service.SiteMapServiceImpl;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -90,7 +93,7 @@ public class SiteMapGeneratorTest {
 
     protected void testGenerator(SiteMapGeneratorConfiguration smgc, SiteMapGenerator smg, int maxEntriesPerFile)
             throws SiteMapException, IOException {
-        List<SiteMapGeneratorConfiguration> smgcList = new ArrayList<SiteMapGeneratorConfiguration>();
+        List<SiteMapGeneratorConfiguration> smgcList = new ArrayList<>();
         smgcList.add(smgc);
         testGenerator(smgcList, smg, maxEntriesPerFile);
     }
@@ -109,14 +112,14 @@ public class SiteMapGeneratorTest {
                 smgc.setSiteMapConfiguration(smc);
             }
 
-            List<ModuleConfiguration> mcList = new ArrayList<ModuleConfiguration>();
+            List<ModuleConfiguration> mcList = new ArrayList<>();
             mcList.add(smc);
 
             ModuleConfigurationService mcs = EasyMock.createMock(ModuleConfigurationService.class);
             EasyMock.expect(mcs.findActiveConfigurationsByType(ModuleConfigurationType.SITE_MAP)).andReturn(mcList);
             EasyMock.replay(mcs);
 
-            List<SiteMapGenerator> smgList = new ArrayList<SiteMapGenerator>();
+            List<SiteMapGenerator> smgList = new ArrayList<>();
             smgList.add(smg);
 
             siteMapService.setGzipSiteMapFiles(false);
