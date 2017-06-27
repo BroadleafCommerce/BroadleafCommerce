@@ -212,8 +212,7 @@ public class PhraseTranslator {
 
         if (!componentsExtracted) {
             for (String operator: SPECIAL_CASES) {
-                int operatorLastIndex = operator.indexOf(")");
-                if (phrase.contains(operator.substring(0, operatorLastIndex))) {
+                if (phrase.contains(operator)) {
                     components = extractSpecialComponents(phrase, operator);
                     componentsExtracted = true;
                     break;
@@ -224,9 +223,9 @@ public class PhraseTranslator {
         if (!componentsExtracted) {
             //may be an old special expression
             try {
-                for (String key : OLD_SPECIAL_CASES) {
-                    if (phrase.indexOf(key) >= 0) {
-                        components = extractOldSpecialComponents(phrase, key);
+                for (String operator : OLD_SPECIAL_CASES) {
+                    if (phrase.contains(operator)) {
+                        components = extractOldSpecialComponents(phrase, operator);
                         componentsExtracted = true;
                         break;
                     }
