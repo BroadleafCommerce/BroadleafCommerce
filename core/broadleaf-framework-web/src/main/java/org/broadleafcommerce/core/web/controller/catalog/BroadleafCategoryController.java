@@ -30,31 +30,23 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.linked.data.CategorySearchLinkedDataService;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
-import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * This class works in combination with the CategoryHandlerMapping which finds a category based upon
@@ -87,6 +79,9 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
 
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
+
+    @Resource(name = "blCategorySearchLinkedDataService")
+    protected CategorySearchLinkedDataService categorySearchLinkedDataService;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -124,26 +119,15 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             Category category = (Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME);
             assert(category != null);
 
-            /////////////////////
 
             List<CategoryProductXref> productXrefs = category.getActiveProductXrefs(); //TODO: performance?
-
-            JSONObject linkedData = new JSONObject();
-            linkedData.put("@context", "http://schema.org");
-            linkedData.put("@type", "ItemList");
-            JSONArray itemList = new JSONArray();
-            for(int i = 0; i < productXrefs.size(); i++) {
-                JSONObject item = new JSONObject();
-                item.put("@type", "ListItem");
-                item.put("position", i + 1);
-                item.put("url", productXrefs.get(i).getProduct().getUrl());
-                itemList.put(item);
+            List<Product> products = new ArrayList<>(productXrefs.size());
+            for(CategoryProductXref productXref : productXrefs)
+            {
+                products.add(productXref.getProduct());
             }
-            linkedData.put("itemListElement", itemList);
+            categorySearchLinkedDataService.addLinkedData(model, products);
 
-            model.addObject("linkedData", linkedData.toString(2));
-
-            ///////////////////
 
             SearchCriteria searchCriteria = facetService.buildSearchCriteria(request);
             SearchResult result = getSearchService().findSearchResults(searchCriteria);
