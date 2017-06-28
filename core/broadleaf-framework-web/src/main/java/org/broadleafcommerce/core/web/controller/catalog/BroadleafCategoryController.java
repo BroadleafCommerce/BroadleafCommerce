@@ -27,10 +27,8 @@ import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.linked.data.CategorySearchLinkedDataService;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.service.SearchService;
@@ -80,9 +78,6 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
 
-    @Resource(name = "blCategorySearchLinkedDataService")
-    protected CategorySearchLinkedDataService categorySearchLinkedDataService;
-
     @Override
     @SuppressWarnings("unchecked")
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -118,16 +113,6 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             
             Category category = (Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME);
             assert(category != null);
-
-
-            List<CategoryProductXref> productXrefs = category.getActiveProductXrefs(); //TODO: performance?
-            List<Product> products = new ArrayList<>(productXrefs.size());
-            for(CategoryProductXref productXref : productXrefs)
-            {
-                products.add(productXref.getProduct());
-            }
-            categorySearchLinkedDataService.addLinkedData(model, products);
-
 
             SearchCriteria searchCriteria = facetService.buildSearchCriteria(request);
             SearchResult result = getSearchService().findSearchResults(searchCriteria);

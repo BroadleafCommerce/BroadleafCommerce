@@ -3,16 +3,15 @@ package org.broadleafcommerce.core.linked.data;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by jacobmitash on 6/28/17.
  */
-@Service("blPageLinkedDataService")
-public class PageLinkedDataServiceImpl implements PageLinkedDataService {
+@Service("blHomepageLinkedDataService")
+public class HomepageLinkedDataServiceImpl implements HomepageLinkedDataService {
 
     @Override
-    public void addLinkedData(ModelAndView model, String url) throws JSONException {
+    public String getLinkedData(String url) throws JSONException {
 
         JSONObject linkedData = new JSONObject();
         linkedData.put("@context", "http://schema.org");
@@ -28,6 +27,6 @@ public class PageLinkedDataServiceImpl implements PageLinkedDataService {
 
         linkedData.put("potentialAction", potentialAction);
 
-        model.addObject("linkedData", linkedData.toString(2));
+        return linkedData.toString();
     }
 }

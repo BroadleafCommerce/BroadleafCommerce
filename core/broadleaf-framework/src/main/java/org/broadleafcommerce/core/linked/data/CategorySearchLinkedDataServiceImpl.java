@@ -5,7 +5,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ import java.util.List;
 public class CategorySearchLinkedDataServiceImpl implements CategorySearchLinkedDataService {
 
     @Override
-    public void addLinkedData(ModelAndView model, List<Product> products) throws JSONException {
+    public String getLinkedData(List<Product> products) throws JSONException {
         JSONObject linkedData = new JSONObject();
         linkedData.put("@context", "http://schema.org");
         linkedData.put("@type", "ItemList");
@@ -30,6 +29,6 @@ public class CategorySearchLinkedDataServiceImpl implements CategorySearchLinked
         }
         linkedData.put("itemListElement", itemList);
 
-        model.addObject("linkedData", linkedData.toString(2));
+        return linkedData.toString();
     }
 }

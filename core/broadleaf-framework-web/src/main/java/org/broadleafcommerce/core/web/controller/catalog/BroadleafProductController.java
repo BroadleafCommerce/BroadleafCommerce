@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.linked.data.ProductLinkedDataService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
@@ -68,14 +67,11 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
 
-    @Resource(name = "blProductLinkedDataService")
-    protected ProductLinkedDataService productLinkedDataService;
-
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView model = new ModelAndView();
         Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
-        assert (product != null);
+        assert(product != null);
         model.addObject(MODEL_ATTRIBUTE_NAME, product);
         model.addObject(PAGE_TYPE_ATTRIBUTE_NAME, "product");
 
@@ -102,8 +98,6 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
             templatePath = erh.getResult();
         }
-
-        productLinkedDataService.addLinkedData(model, product, request.getRequestURL().toString());
         
         model.setViewName(templatePath);
         return model;

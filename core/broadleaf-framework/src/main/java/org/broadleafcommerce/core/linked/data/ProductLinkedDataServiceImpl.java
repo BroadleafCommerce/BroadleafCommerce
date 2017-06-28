@@ -11,7 +11,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import java.text.DateFormat;
@@ -27,7 +26,7 @@ public class ProductLinkedDataServiceImpl implements ProductLinkedDataService {
     protected RatingService ratingService;
 
     @Override
-    public void addLinkedData(ModelAndView model, Product product, String url) throws JSONException {
+    public String getLinkedData(Product product, String url) throws JSONException {
         DateFormat iso8601Format = new SimpleDateFormat("YYYY-MM-DD");
 
         JSONObject linkedData = new JSONObject();
@@ -107,6 +106,6 @@ public class ProductLinkedDataServiceImpl implements ProductLinkedDataService {
             linkedData.put("review", reviews);
         }
 
-        model.addObject("linkedData", linkedData.toString(2));
+        return linkedData.toString();
     }
 }
