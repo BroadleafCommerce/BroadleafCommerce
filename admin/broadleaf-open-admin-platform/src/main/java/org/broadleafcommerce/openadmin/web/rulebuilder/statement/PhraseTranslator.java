@@ -64,7 +64,7 @@ public class PhraseTranslator {
         String value = components[2];
 
         boolean isNegation = false;
-        if (field.startsWith("!")) {
+        if (field.startsWith("!") || phrase.startsWith("!")) {
             isNegation = true;
         }
 
@@ -87,18 +87,14 @@ public class PhraseTranslator {
         } else {
             caseInsensitivityKey = newCaseInsensitivityKey;
         }
-        if (field.startsWith(caseInsensitivityKey)) {
+        if (field.contains(caseInsensitivityKey)) {
             isIgnoreCase = true;
-            field = field.substring(caseInsensitivityKey.length(), field.length()-1);
-        }
-        //check for NOT operator
-        if (field.startsWith("!" + caseInsensitivityKey)) {
-            isIgnoreCase = true;
-            field = field.substring(("!" + caseInsensitivityKey).length(), field.length()-1);
+            field = field.substring(field.indexOf(caseInsensitivityKey) + caseInsensitivityKey.length(), field.length()-1);
         }
         while(value.contains(caseInsensitivityKey)) {
-            value = value.substring(0, value.indexOf(caseInsensitivityKey)) +
-                    value.substring(value.indexOf(caseInsensitivityKey) + caseInsensitivityKey.length());
+            int caseIndex = value.indexOf(caseInsensitivityKey);
+            value = value.substring(0, caseIndex) +
+                    value.substring(caseIndex + caseInsensitivityKey.length());
             if (value.contains("\")")) {
                 value = value.substring(0, value.indexOf("\")") + 1) + value.substring(value.indexOf("\")") + 2);
             } else {

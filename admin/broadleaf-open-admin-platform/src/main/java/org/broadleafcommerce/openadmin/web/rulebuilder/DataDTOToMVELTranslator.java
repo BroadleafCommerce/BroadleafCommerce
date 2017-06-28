@@ -373,7 +373,7 @@ public class DataDTOToMVELTranslator {
             boolean isNegation, boolean ignoreQuotes) throws MVELTranslationException {
         sb.append(COLLECTION_OPERATOR);
         sb.append("(");
-        sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+        sb.append(formatField(entityKey, type, field, ignoreCase));
         sb.append(",");
         sb.append("[");
         sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
@@ -394,21 +394,24 @@ public class DataDTOToMVELTranslator {
             sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
                     ignoreCase, ignoreQuotes));
             sb.append("] contains ");
-            sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+            sb.append(formatField(entityKey, type, field, ignoreCase));
             if ((type.equals(SupportedFieldType.ID) && secondaryType != null &&
                     secondaryType.equals(SupportedFieldType.INTEGER)) || type.equals(SupportedFieldType.INTEGER)) {
                 sb.append(".intValue()");
             }
             sb.append(")");
         } else if (CONTAINS_OPERATOR.equals(operator) || STARTS_WITH_OPERATOR.equals(operator) || ENDS_WITH_OPERATOR.equals(operator)) {
+            if(isNegation) {
+                sb.append("!");
+            }
             sb.append(operator);
             sb.append("(");
-            sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+            sb.append(formatField(entityKey, type, field, ignoreCase));
             sb.append(",");
             sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison, ignoreCase, ignoreQuotes));
             sb.append(")");
         } else {
-            sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+            sb.append(formatField(entityKey, type, field, ignoreCase));
             sb.append(operator);
             if (includeParenthesis) {
                 sb.append("(");
@@ -428,11 +431,8 @@ public class DataDTOToMVELTranslator {
     }
 
     protected String formatField(String entityKey, SupportedFieldType type, String field,
-                                 boolean ignoreCase, boolean isNegation) {
+                                 boolean ignoreCase) {
         StringBuilder response = new StringBuilder();
-        if (isNegation) {
-            response.append("!");
-        }
         String convertedField = field;
         boolean isMapField = false;
         if (convertedField.contains(FieldManager.MAPFIELDSEPARATOR)) {
