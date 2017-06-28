@@ -98,8 +98,12 @@ public class PhraseTranslator {
         }
         while(value.contains(caseInsensitivityKey)) {
             value = value.substring(0, value.indexOf(caseInsensitivityKey)) +
-                    value.substring(value.indexOf(caseInsensitivityKey) + caseInsensitivityKey.length(), value.length());
-            value = value.substring(0, value.indexOf(")")) + value.substring(value.indexOf(")")+1, value.length());
+                    value.substring(value.indexOf(caseInsensitivityKey) + caseInsensitivityKey.length());
+            if (value.contains("\")")) {
+                value = value.substring(0, value.indexOf("\")") + 1) + value.substring(value.indexOf("\")") + 2);
+            } else {
+                value = value.substring(0, value.indexOf(")")) + value.substring(value.indexOf(")") + 1);
+            }
         }
         if (value.startsWith("[") && value.endsWith("]") && !isCollectionCase) {
             value = value.substring(1, value.length() - 1);
