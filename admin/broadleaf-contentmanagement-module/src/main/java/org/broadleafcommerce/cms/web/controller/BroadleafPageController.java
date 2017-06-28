@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
@@ -72,6 +73,22 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
                 response.setContentType("text/plain");
             }
         }
+
+        JSONObject linkedData = new JSONObject();
+        linkedData.put("@context", "http://schema.org");
+        linkedData.put("@type", "WebSite");
+        linkedData.put("name", "The Heat Clinic"); //TODO: website name
+        linkedData.put("url", request.getRequestURL().toString());
+        linkedData.put("logo", "https://example.com/img.png");
+
+        JSONObject potentialAction = new JSONObject();
+        potentialAction.put("@type", "SearchAction");
+        potentialAction.put("target", request.getRequestURL().toString().concat("search?q={query}"));
+        potentialAction.put("query-input", "required name=query");
+
+        linkedData.put("potentialAction", potentialAction);
+
+        System.out.println(linkedData.toString(2));
         
         String templatePath = page.getTemplatePath();
         
