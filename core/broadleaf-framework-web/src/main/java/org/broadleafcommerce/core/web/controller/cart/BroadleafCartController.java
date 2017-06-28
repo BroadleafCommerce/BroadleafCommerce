@@ -143,6 +143,12 @@ public class BroadleafCartController extends AbstractCartController {
     protected void updateAddRequestQuantities(OrderItemRequestDTO itemRequest, Long originalOrderItemId) {
         // Update the request to match the quantity of the order item it's replacing
         OrderItem orderItem = orderItemService.readOrderItemById(originalOrderItemId);
+
+        // Make sure there is actually an order item to process
+        if (orderItem == null) {
+            return;
+        }
+
         itemRequest.setQuantity(orderItem.getQuantity());
         for (OrderItemRequestDTO childDTO : itemRequest.getChildOrderItems()) {
             childDTO.setQuantity(childDTO.getQuantity() * orderItem.getQuantity());
