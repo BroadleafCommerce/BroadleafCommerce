@@ -29,14 +29,24 @@ import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
+import org.broadleafcommerce.core.rating.domain.RatingSummary;
+import org.broadleafcommerce.core.rating.domain.ReviewDetail;
+import org.broadleafcommerce.core.rating.service.RatingService;
+import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -72,11 +82,14 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
 
+    @Resource(name = "blRatingService")
+    protected RatingService ratingService;
+
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView model = new ModelAndView();
         Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
-        assert(product != null);
+        assert (product != null);
         model.addObject(MODEL_ATTRIBUTE_NAME, product);
         model.addObject(PAGE_TYPE_ATTRIBUTE_NAME, "product");
 
@@ -85,6 +98,81 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         orderItemService.modifyOrderItemRequest(itemRequest);
         model.addObject(CONFIGURATION_ATTRIBUTE_NAME, itemRequest);
         model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, orderItemService.findAllProductsInRequest(itemRequest));
+
+
+
+
+        DateFormat iso8601Format = new SimpleDateFormat("YYYY-MM-DD");
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("@context", "http://schema.org");
+        jsonObject.put("@type", "Product");
+        jsonObject.put("name", product.getName());
+        if(product.getMedia().size() > 0) {
+            String imageUrl = product.getMedia().get("primary").getUrl();
+            if(imageUrl == null) {
+                imageUrl = product.getMedia().entrySet().iterator().next().getValue().getUrl();
+            }
+            jsonObject.put("image", imageUrl);
+        }
+        jsonObject.put("description", product.getLongDescription());
+        jsonObject.put("brand", product.getManufacturer());
+        jsonObject.put("url", request.getRequestURL().toString()); //TODO: verify
+        jsonObject.put("sku", product.getDefaultSku().getId()); //TODO: actual SKU
+        jsonObject.put("category", product.getCategory().getName());
+
+        JSONArray offers = new JSONArray();
+        for (Sku sku : product.getAllSellableSkus()) {
+            JSONObject offer = new JSONObject();
+            offer.put("sku", sku.getId()); //TODO: actual SKU
+            offer.put("price", sku.getPriceData().getPrice().doubleValue());
+            offer.put("priceCurrency", sku.getPriceData().getPrice().getCurrency().getCurrencyCode());
+            if (sku.getActiveEndDate() != null) { //TODO: correct date?
+                offer.put("priceValidUntil", iso8601Format.format(sku.getActiveEndDate()));
+            }
+//            if(sku.isActive() && sku.getInventoryType().equals(InventoryType.ALWAYS_AVAILABLE)
+//                || (sku.getInventoryType().equals(InventoryType.CHECK_QUANTITY) && sku.getQuantityAvailable() > 0)) { //TODO: availability
+            offer.put("availability", "InStock");
+//            }
+//            else
+//            {
+//                offer.put("availability", "OutOfStock");
+//            }
+
+            offer.put("url", request.getRequestURL().toString()); //TODO: verify
+            offer.put("category", product.getCategory().getName());
+
+
+            offers.put(offer);
+        }
+
+        jsonObject.put("offers", offers);
+
+        RatingSummary ratingSummary = ratingService.readRatingSummary(product.getId().toString(), RatingType.PRODUCT);
+
+        if (ratingSummary.getNumberOfRatings() > 0) {
+            JSONObject aggregateRating = new JSONObject();
+            aggregateRating.put("ratingCount", ratingSummary.getNumberOfRatings());
+            aggregateRating.put("ratingValue", ratingSummary.getAverageRating());
+
+            jsonObject.put("aggregateRating", aggregateRating);
+
+            JSONArray reviews = new JSONArray();
+
+            for(ReviewDetail reviewDetail : ratingSummary.getReviews()) {
+                JSONObject review = new JSONObject();
+                review.put("reviewBody", reviewDetail.getReviewText());
+                review.put("reviewRating", new JSONObject().put("ratingValue", reviewDetail.getRatingDetail().getRating()));
+                review.put("author", reviewDetail.getCustomer().getFirstName());
+                review.put("datePublished", iso8601Format.format(reviewDetail.getReviewSubmittedDate()));
+                reviews.put(review);
+            }
+
+            jsonObject.put("review", reviews);
+        }
+
+        System.out.println(jsonObject.toString(2));
+
 
         addDeepLink(model, deepLinkService, product);
         
