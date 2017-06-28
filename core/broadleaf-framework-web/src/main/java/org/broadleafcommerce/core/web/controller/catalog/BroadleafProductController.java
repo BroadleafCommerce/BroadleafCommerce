@@ -130,14 +130,24 @@ public class BroadleafProductController extends BroadleafAbstractController impl
             if (sku.getActiveEndDate() != null) { //TODO: correct date?
                 offer.put("priceValidUntil", iso8601Format.format(sku.getActiveEndDate()));
             }
-//            if(sku.isActive() && sku.getInventoryType().equals(InventoryType.ALWAYS_AVAILABLE)
-//                || (sku.getInventoryType().equals(InventoryType.CHECK_QUANTITY) && sku.getQuantityAvailable() > 0)) { //TODO: availability
-            offer.put("availability", "InStock");
-//            }
-//            else
-//            {
-//                offer.put("availability", "OutOfStock");
-//            }
+
+            //TODO: verify correct
+            boolean purchasable = false;
+            if(sku.isActive()) {
+                if(sku.getInventoryType() != null) {
+                    if(sku.getInventoryType().equals(InventoryType.ALWAYS_AVAILABLE))
+                    {
+                        purchasable = true;
+                    }
+                    else if(sku.getInventoryType().equals(InventoryType.CHECK_QUANTITY) && sku.getQuantityAvailable() > 0)
+                    {
+                        purchasable = true;
+                    }
+                } else {
+                    purchasable = true;
+                }
+            }
+            offer.put("availability", purchasable ? "InStock" : "OutOfStock");
 
             offer.put("url", request.getRequestURL().toString()); //TODO: verify
             offer.put("category", product.getCategory().getName());
@@ -150,7 +160,7 @@ public class BroadleafProductController extends BroadleafAbstractController impl
 
         RatingSummary ratingSummary = ratingService.readRatingSummary(product.getId().toString(), RatingType.PRODUCT);
 
-        if (ratingSummary.getNumberOfRatings() > 0) {
+        if (ratingSummary != null && ratingSummary.getNumberOfRatings() > 0) {
             JSONObject aggregateRating = new JSONObject();
             aggregateRating.put("ratingCount", ratingSummary.getNumberOfRatings());
             aggregateRating.put("ratingValue", ratingSummary.getAverageRating());
