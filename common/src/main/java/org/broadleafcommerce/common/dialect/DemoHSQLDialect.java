@@ -28,9 +28,36 @@ import org.hibernate.dialect.HSQLDialect;
  */
 public class DemoHSQLDialect extends HSQLDialect {
 
+    /**
+     * To avoid seeing all of the hibernate errors on first startup, disable dropping constraints.
+     */
     @Override
     public boolean dropConstraints() {
         return false;
     }
 
+    /**
+     * Since we aren't dropping constraints anymore, we must cascade when dropping tables to avoid violating FKs.
+     */
+    @Override
+    public String getCascadeConstraintsString() {
+        return " cascade ";
+    }
+
+    /**
+     * Due to HSQL syntax and the way {@link org.hibernate.dialect.Dialect#getDropTableString(String)} arranges the
+     * statements, we must put the {@code if exists} before the table name.
+     */
+    @Override
+    public boolean supportsIfExistsBeforeTableName() {
+        return true;
+    }
+
+    /**
+     * @see #supportsIfExistsBeforeTableName()
+     */
+    @Override
+    public boolean supportsIfExistsAfterTableName() {
+        return false;
+    }
 }
