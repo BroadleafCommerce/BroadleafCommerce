@@ -87,12 +87,16 @@
         </property>
     </bean>    
 
-    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
-        <property name="converters">
+    <bean id="blConverters" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
             <set>
                 <bean class="org.broadleafcommerce.common.locale.util.LocaleConverter" />
             </set>
         </property>
+    </bean>
+    
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters" ref="blConverters" />
     </bean>
     
     <bean id="blFrameworkSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
