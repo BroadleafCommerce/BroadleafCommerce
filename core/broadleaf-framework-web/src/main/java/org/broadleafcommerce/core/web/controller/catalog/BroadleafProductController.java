@@ -104,22 +104,22 @@ public class BroadleafProductController extends BroadleafAbstractController impl
 
         DateFormat iso8601Format = new SimpleDateFormat("YYYY-MM-DD");
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("@context", "http://schema.org");
-        jsonObject.put("@type", "Product");
-        jsonObject.put("name", product.getName());
+        JSONObject linkedData = new JSONObject();
+        linkedData.put("@context", "http://schema.org");
+        linkedData.put("@type", "Product");
+        linkedData.put("name", product.getName());
         if(product.getMedia().size() > 0) {
             String imageUrl = product.getMedia().get("primary").getUrl();
             if(imageUrl == null) {
                 imageUrl = product.getMedia().entrySet().iterator().next().getValue().getUrl();
             }
-            jsonObject.put("image", imageUrl);
+            linkedData.put("image", imageUrl);
         }
-        jsonObject.put("description", product.getLongDescription());
-        jsonObject.put("brand", product.getManufacturer());
-        jsonObject.put("url", request.getRequestURL().toString()); //TODO: verify
-        jsonObject.put("sku", product.getDefaultSku().getId()); //TODO: actual SKU
-        jsonObject.put("category", product.getCategory().getName());
+        linkedData.put("description", product.getLongDescription());
+        linkedData.put("brand", product.getManufacturer());
+        linkedData.put("url", request.getRequestURL().toString()); //TODO: verify
+        linkedData.put("sku", product.getDefaultSku().getId()); //TODO: actual SKU
+        linkedData.put("category", product.getCategory().getName());
 
         JSONArray offers = new JSONArray();
         for (Sku sku : product.getAllSellableSkus()) {
@@ -156,7 +156,7 @@ public class BroadleafProductController extends BroadleafAbstractController impl
             offers.put(offer);
         }
 
-        jsonObject.put("offers", offers);
+        linkedData.put("offers", offers);
 
         RatingSummary ratingSummary = ratingService.readRatingSummary(product.getId().toString(), RatingType.PRODUCT);
 
@@ -165,7 +165,7 @@ public class BroadleafProductController extends BroadleafAbstractController impl
             aggregateRating.put("ratingCount", ratingSummary.getNumberOfRatings());
             aggregateRating.put("ratingValue", ratingSummary.getAverageRating());
 
-            jsonObject.put("aggregateRating", aggregateRating);
+            linkedData.put("aggregateRating", aggregateRating);
 
             JSONArray reviews = new JSONArray();
 
@@ -178,10 +178,10 @@ public class BroadleafProductController extends BroadleafAbstractController impl
                 reviews.put(review);
             }
 
-            jsonObject.put("review", reviews);
+            linkedData.put("review", reviews);
         }
 
-        System.out.println(jsonObject.toString(2));
+        model.addObject("linkedData", linkedData.toString(2));
 
 
         addDeepLink(model, deepLinkService, product);

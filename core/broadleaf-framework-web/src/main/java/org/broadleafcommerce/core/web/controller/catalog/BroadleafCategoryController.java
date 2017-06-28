@@ -141,7 +141,7 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             }
             linkedData.put("itemListElement", itemList);
 
-            System.out.println(linkedData.toString(2));
+            model.addObject("linkedData", linkedData.toString(2));
 
             ///////////////////
 

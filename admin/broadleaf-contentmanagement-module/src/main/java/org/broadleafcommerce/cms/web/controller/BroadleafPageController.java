@@ -79,7 +79,7 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
         linkedData.put("@type", "WebSite");
         linkedData.put("name", "The Heat Clinic"); //TODO: website name
         linkedData.put("url", request.getRequestURL().toString());
-        linkedData.put("logo", "https://example.com/img.png");
+        linkedData.put("image", "https://example.com/img.png"); //TODO: logo/image?
 
         JSONObject potentialAction = new JSONObject();
         potentialAction.put("@type", "SearchAction");
@@ -88,7 +88,7 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
 
         linkedData.put("potentialAction", potentialAction);
 
-        System.out.println(linkedData.toString(2));
+        model.addObject("linkedData", linkedData.toString(2));
         
         String templatePath = page.getTemplatePath();
         
