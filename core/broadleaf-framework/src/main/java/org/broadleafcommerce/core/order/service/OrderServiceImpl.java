@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -475,13 +476,21 @@ public class OrderServiceImpl implements OrderService {
             cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
         }
         List<OrderItem> items = new ArrayList<OrderItem>(namedOrder.getOrderItems());
+
+        // Remove any order items that are children
+        CollectionUtils.filter(items,  new TypedPredicate<OrderItem>() {
+            @Override
+            public boolean eval(OrderItem orderItem) {
+                return orderItem.getParentOrderItem() == null;
+            }
+        });
         for (OrderItem item : items) {
+            OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
+            cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
+
             if (moveNamedOrderItems) {
                 removeItem(namedOrder.getId(), item.getId(), false);
             }
-            
-            OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
-            cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
         }
         
         if (deleteEmptyNamedOrders) {
@@ -498,14 +507,14 @@ public class OrderServiceImpl implements OrderService {
         if (cartOrder == null) {
             cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
         }
-        
+
+        OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
+        cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
+
         if (moveNamedOrderItems) {
             removeItem(namedOrder.getId(), item.getId(), false);
         }
-            
-        OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
-        cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
-        
+
         if (namedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
             cancelOrder(namedOrder);
         }
@@ -527,7 +536,11 @@ public class OrderServiceImpl implements OrderService {
         if (cartOrder == null) {
             cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
         }
-        
+
+        OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
+        orderItemRequest.setQuantity(quantity);
+        cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
+
         if (moveNamedOrderItems) {
             // Update the old item to its new quantity only if we're moving items
             OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
@@ -535,11 +548,6 @@ public class OrderServiceImpl implements OrderService {
             orderItemRequestDTO.setQuantity(item.getQuantity() - quantity);
             updateItemQuantity(namedOrder.getId(), orderItemRequestDTO, false);
         }
-            
-        OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
-        orderItemRequest.setQuantity(quantity);
-        cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
-            
         return cartOrder;
     }
     
