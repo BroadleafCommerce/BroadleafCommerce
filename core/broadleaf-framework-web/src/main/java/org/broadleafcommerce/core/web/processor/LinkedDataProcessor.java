@@ -25,7 +25,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by jacobmitash on 6/28/17.
+ * This processor replaces linkedData tags with metadata for search engine optimization. The
+ * data is formatted to Schema.org and Google standards.
+ *
+ * @author Jacob Mitash
  */
 @Component("blLinkedDataProcessor")
 public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcessor
@@ -62,6 +65,11 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
         return model;
     }
 
+    /**
+     * Find out which page the user has requested
+     * @param request the user HttpServletRequest
+     * @return the destination page type
+     */
     protected Destination resolveDestination(HttpServletRequest request) {
         if(request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME) != null) {
             return Destination.PRODUCT;
@@ -74,6 +82,12 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
         }
     }
 
+    /**
+     * Get the metadata for the specific page
+     * @param request the user request
+     * @param destination the type of page trying to be visited
+     * @return the JSON string representation of the linked data
+     */
     protected String getDataForDestination(HttpServletRequest request, Destination destination) {
         try {
 
