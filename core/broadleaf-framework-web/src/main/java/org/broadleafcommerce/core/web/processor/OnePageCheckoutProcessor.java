@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.BLCPaymentMethodUtils;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -76,6 +77,13 @@ import javax.servlet.http.HttpServletRequest;
  * groups on the order, then the shipping section should not be shown. Or, if the user is redirected
  * back from a Third Party Payment gateway to complete the order (e.g. PayPal Express Checkout), then
  * the billing section will not be shown.
+ *
+ * @deprecated in favor of using the following {@link BroadleafVariableExpression} implementations:
+ *  {@link org.broadleafcommerce.core.web.expression.checkout.CheckoutFormVariableExpression}
+ *  {@link org.broadleafcommerce.core.web.expression.checkout.CheckoutStageVariableExpression}
+ *  {@link org.broadleafcommerce.core.web.expression.checkout.FulfillmentVariableExpression}
+ *  {@link org.broadleafcommerce.core.web.expression.checkout.PaymentMethodVariableExpression}
+ *  {@link org.broadleafcommerce.core.web.expression.BasicAddressVariableExpression}
  *
  * @author Elbert Bautista (elbertbautista)
  */
