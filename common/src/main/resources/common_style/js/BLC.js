@@ -332,6 +332,23 @@ var BLC = (function($) {
     }
 
     /**
+     * Gathers all parameters from the current url
+     */
+    function getUrlParameters() {
+        var baseUrl = window.location.href;
+        var indexOfQ = baseUrl.indexOf('?');
+        var urlParams = null;
+        if (indexOfQ >= 0) {
+            urlParams = baseUrl.substring(indexOfQ + 1);
+            if (urlParams != null && urlParams != '') {
+                return JSON.parse('{"'
+                    + decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\""))) + '"}');
+            }
+        }
+        return {};
+    }
+
+    /**
      * Add URL parameters to an existing url
      * @param {url}     string
      * @param {params}    map of parameter keys to values
@@ -340,7 +357,9 @@ var BLC = (function($) {
         if (url.lastIndexOf("?") > -1) {
             url = url + "&" + $.param(params);
         } else {
-            url = url + "?" + $.param(params);
+            if (!$.isEmptyObject(params)) {
+                url = url + "?" + $.param(params);
+            }
         }
 
         return url;
@@ -361,6 +380,7 @@ var BLC = (function($) {
         getStateVersionToken : getStateVersionToken,
         defaultErrorHandler : defaultErrorHandler,
         serializeObject : serializeObject,
+        getUrlParameters : getUrlParameters,
         addUrlParam : addUrlParam,
         buildUrlWithParams : buildUrlWithParams,
         servletContext : servletContext,
