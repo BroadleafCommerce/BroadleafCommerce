@@ -1,32 +1,38 @@
 package org.broadleafcommerce.core.linked.data;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 /**
  * Created by jacobmitash on 6/28/17.
  */
 @Service("blHomepageLinkedDataService")
-public class HomepageLinkedDataServiceImpl implements HomepageLinkedDataService {
+public class HomepageLinkedDataServiceImpl extends AbstractLinkedDataService implements HomepageLinkedDataService {
+
+    @Autowired
+    protected Environment environment;
 
     @Override
     public String getLinkedData(String url) throws JSONException {
+        JSONArray schemaObjects = new JSONArray();
 
-        JSONObject linkedData = new JSONObject();
-        linkedData.put("@context", "http://schema.org");
-        linkedData.put("@type", "WebSite");
-        linkedData.put("name", "The Heat Clinic"); //TODO: website name
-        linkedData.put("url", url);
-        linkedData.put("image", "https://example.com/img.png"); //TODO: logo/image?
+        JSONObject webSite = getDefaultWebSite(url);
 
         JSONObject potentialAction = new JSONObject();
         potentialAction.put("@type", "SearchAction");
-        potentialAction.put("target", url.concat("search?q={query}")); //TODO: probably not a good way to do that
+        potentialAction.put("target", url.concat(environment.getProperty("site.search")));
         potentialAction.put("query-input", "required name=query");
 
-        linkedData.put("potentialAction", potentialAction);
+        webSite.put("potentialAction", potentialAction);
 
-        return linkedData.toString();
+        schemaObjects.put(webSite);
+        schemaObjects.put(getDefaultBreadcrumbList());
+        schemaObjects.put(getDefaultOrganization(url));
+
+        return schemaObjects.toString();
     }
 }

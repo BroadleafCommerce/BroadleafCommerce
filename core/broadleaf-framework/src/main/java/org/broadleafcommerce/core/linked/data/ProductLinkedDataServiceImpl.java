@@ -20,52 +20,66 @@ import java.text.SimpleDateFormat;
  * Created by jacobmitash on 6/28/17.
  */
 @Service("blProductLinkedDataService")
-public class ProductLinkedDataServiceImpl implements ProductLinkedDataService {
+public class ProductLinkedDataServiceImpl extends AbstractLinkedDataService implements ProductLinkedDataService {
+
+    protected final static DateFormat iso8601Format = new SimpleDateFormat("YYYY-MM-DD");
 
     @Resource(name = "blRatingService")
     protected RatingService ratingService;
 
     @Override
     public String getLinkedData(Product product, String url) throws JSONException {
-        DateFormat iso8601Format = new SimpleDateFormat("YYYY-MM-DD");
 
-        JSONObject linkedData = new JSONObject();
-        linkedData.put("@context", "http://schema.org");
-        linkedData.put("@type", "Product");
-        linkedData.put("name", product.getName());
+        JSONArray schemaObjects = new JSONArray();
+
+        JSONObject productData = getProductLinkedData(product, url);
+        addReviewData(product, productData);
+
+        schemaObjects.put(productData);
+        schemaObjects.put(getDefaultBreadcrumbList());
+        schemaObjects.put(getDefaultOrganization(url));
+        schemaObjects.put(getDefaultWebSite(url));
+
+        return schemaObjects.toString();
+    }
+
+    protected JSONObject getProductLinkedData(Product product, String url) throws JSONException {
+        JSONObject productData = new JSONObject();
+        productData.put("@context", "http://schema.org");
+        productData.put("@type", "Product");
+        productData.put("name", product.getName());
         if(product.getMedia().size() > 0) {
             String imageUrl = product.getMedia().get("primary").getUrl();
             if(imageUrl == null) {
                 imageUrl = product.getMedia().entrySet().iterator().next().getValue().getUrl();
             }
-            linkedData.put("image", imageUrl);
+            productData.put("image", imageUrl);
         }
-        linkedData.put("description", product.getLongDescription());
-        linkedData.put("brand", product.getManufacturer());
-        linkedData.put("url", url); //TODO: verify
-        linkedData.put("sku", product.getDefaultSku().getId()); //TODO: actual SKU
-        linkedData.put("category", product.getCategory().getName());
+        productData.put("description", product.getLongDescription());
+        productData.put("brand", product.getManufacturer());
+        productData.put("url", url);
+        productData.put("sku", product.getDefaultSku().getId());
+        productData.put("category", product.getCategory().getName());
 
         JSONArray offers = new JSONArray();
         for (Sku sku : product.getAllSellableSkus()) {
             JSONObject offer = new JSONObject();
-            offer.put("sku", sku.getId()); //TODO: actual SKU
+            offer.put("sku", sku.getId());
             offer.put("price", sku.getPriceData().getPrice().doubleValue());
             offer.put("priceCurrency", sku.getPriceData().getPrice().getCurrency().getCurrencyCode());
-            if (sku.getActiveEndDate() != null) { //TODO: correct date?
+            if (sku.getActiveEndDate() != null) {
                 offer.put("priceValidUntil", iso8601Format.format(sku.getActiveEndDate()));
             }
 
-            //TODO: verify correct
             boolean purchasable = false;
             if(sku.isActive()) {
                 if(sku.getInventoryType() != null) {
-                    if(sku.getInventoryType().equals(InventoryType.ALWAYS_AVAILABLE))
-                    {
+                    if(sku.getInventoryType().equals(InventoryType.ALWAYS_AVAILABLE)) {
                         purchasable = true;
                     }
-                    else if(sku.getInventoryType().equals(InventoryType.CHECK_QUANTITY) && sku.getQuantityAvailable() > 0)
-                    {
+                    else if(sku.getInventoryType().equals(InventoryType.CHECK_QUANTITY)
+                            && sku.getQuantityAvailable() != null
+                            && sku.getQuantityAvailable() > 0) {
                         purchasable = true;
                     }
                 } else {
@@ -74,15 +88,19 @@ public class ProductLinkedDataServiceImpl implements ProductLinkedDataService {
             }
             offer.put("availability", purchasable ? "InStock" : "OutOfStock");
 
-            offer.put("url", url); //TODO: verify
+            offer.put("url", url);
             offer.put("category", product.getCategory().getName());
 
 
             offers.put(offer);
         }
 
-        linkedData.put("offers", offers);
+        productData.put("offers", offers);
 
+        return productData;
+    }
+
+    protected void addReviewData(Product product, JSONObject productData) throws JSONException {
         RatingSummary ratingSummary = ratingService.readRatingSummary(product.getId().toString(), RatingType.PRODUCT);
 
         if (ratingSummary != null && ratingSummary.getNumberOfRatings() > 0) {
@@ -90,7 +108,7 @@ public class ProductLinkedDataServiceImpl implements ProductLinkedDataService {
             aggregateRating.put("ratingCount", ratingSummary.getNumberOfRatings());
             aggregateRating.put("ratingValue", ratingSummary.getAverageRating());
 
-            linkedData.put("aggregateRating", aggregateRating);
+            productData.put("aggregateRating", aggregateRating);
 
             JSONArray reviews = new JSONArray();
 
@@ -103,9 +121,7 @@ public class ProductLinkedDataServiceImpl implements ProductLinkedDataService {
                 reviews.put(review);
             }
 
-            linkedData.put("review", reviews);
+            productData.put("review", reviews);
         }
-
-        return linkedData.toString();
     }
 }

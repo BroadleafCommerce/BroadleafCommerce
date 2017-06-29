@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.linked.data.CategorySearchLinkedDataService;
+import org.broadleafcommerce.core.linked.data.CategoryLinkedDataService;
 import org.broadleafcommerce.core.linked.data.HomepageLinkedDataService;
 import org.broadleafcommerce.core.linked.data.ProductLinkedDataService;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
@@ -31,13 +31,13 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
 {
     private final String TAG_NAME = "linkedData";
     private final Log LOG = LogFactory.getLog(LinkedDataProcessor.class);
-    protected enum Destination { PRODUCT, CATEGORY_SEARCH, HOME, DEFAULT }
+    protected enum Destination { PRODUCT, CATEGORY, HOME, DEFAULT }
 
     @Resource(name = "blProductLinkedDataService")
     ProductLinkedDataService productLinkedDataService;
 
-    @Resource(name = "blCategorySearchLinkedDataService")
-    CategorySearchLinkedDataService categorySearchLinkedDataService;
+    @Resource(name = "blCategoryLinkedDataService")
+    CategoryLinkedDataService categoryLinkedDataService;
 
     @Resource(name = "blHomepageLinkedDataService")
     HomepageLinkedDataService homepageLinkedDataService;
@@ -62,7 +62,7 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
         if(request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME) != null) {
             return Destination.PRODUCT;
         } else if(request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME) != null) {
-            return Destination.CATEGORY_SEARCH;
+            return Destination.CATEGORY;
         } else if(request.getRequestURI().equals("/")) {
             return Destination.HOME;
         } else {
@@ -77,14 +77,14 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
                 Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
                 return productLinkedDataService.getLinkedData(product, request.getRequestURL().toString());
 
-            } else if(destination == Destination.CATEGORY_SEARCH) {
+            } else if(destination == Destination.CATEGORY) {
                 Category category = (Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME);
                 List<CategoryProductXref> productXrefs = category.getActiveProductXrefs();
                 List<Product> products = new ArrayList<>(productXrefs.size());
                 for(CategoryProductXref productXref : productXrefs) {
                     products.add(productXref.getProduct());
                 }
-                return categorySearchLinkedDataService.getLinkedData(products);
+                return categoryLinkedDataService.getLinkedData(products, request.getRequestURL().toString());
             } else if(destination == Destination.HOME) {
                 return homepageLinkedDataService.getLinkedData(request.getRequestURL().toString());
             } else {
