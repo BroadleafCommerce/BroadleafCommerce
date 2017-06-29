@@ -342,9 +342,8 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         Money totalPayments = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderPayment payment : getPayments()) {
             //add up all active payments that are not UNCONFIRMED Final Payments
-            if (payment.isActive() && payment.getAmount() != null && !payment.isFinalPayment()) {
-                totalPayments = totalPayments.add(payment.getAmount());
-            } else if (payment.isActive() && payment.getAmount() != null && payment.isFinalPayment() && payment.isConfirmed()) {
+            if (payment.isActive() && payment.getAmount() != null && 
+                (!payment.isFinalPayment() || payment.isConfirmed())) {
                 totalPayments = totalPayments.add(payment.getAmount());
             }
         }
