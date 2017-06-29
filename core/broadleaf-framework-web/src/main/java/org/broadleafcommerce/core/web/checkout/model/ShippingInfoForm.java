@@ -36,13 +36,13 @@ public class ShippingInfoForm implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-	protected Address address = new AddressImpl();
+    protected Address address = new AddressImpl();
     protected String addressName;
     protected FulfillmentOption fulfillmentOption;
     protected Long fulfillmentOptionId;
     protected PersonalMessage personalMessage = new PersonalMessageImpl();
     protected String deliveryMessage;
-    protected boolean useBillingAddress;
+    protected boolean useBillingAddress = false;
 
     public ShippingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
@@ -98,7 +98,7 @@ public class ShippingInfoForm implements Serializable {
         return personalMessage;
     }
 
-    public boolean isUseBillingAddress() {
+    public boolean shouldUseBillingAddress() {
         return useBillingAddress;
     }
 
