@@ -6,6 +6,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.linked.data.CategoryLinkedDataService;
+import org.broadleafcommerce.core.linked.data.DefaultLinkedDataService;
 import org.broadleafcommerce.core.linked.data.HomepageLinkedDataService;
 import org.broadleafcommerce.core.linked.data.ProductLinkedDataService;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
@@ -41,6 +42,9 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
 
     @Resource(name = "blHomepageLinkedDataService")
     HomepageLinkedDataService homepageLinkedDataService;
+
+    @Resource(name = "blDefaultLinkedDataService")
+    DefaultLinkedDataService defaultLinkedDataService;
 
     @Override
     public BroadleafTemplateModel getReplacementModel(String s, Map<String, String> map, BroadleafTemplateContext context) {
@@ -88,7 +92,7 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
             } else if(destination == Destination.HOME) {
                 return homepageLinkedDataService.getLinkedData(request.getRequestURL().toString());
             } else {
-                return "";
+                return defaultLinkedDataService.getLinkedData(request.getRequestURL().toString());
             }
 
         } catch (JSONException e) {
