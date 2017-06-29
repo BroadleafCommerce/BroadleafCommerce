@@ -72,6 +72,7 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     protected static String cartPageRedirect = "redirect:/cart";
     protected static String checkoutView = "checkout/checkout";
+    protected static String checkoutStagesPartial = "checkout/partial/checkoutStages";
     protected static String checkoutPageRedirect = "redirect:/checkout";
     protected static String baseConfirmationView = "ajaxredirect:/confirmation";
 
@@ -156,6 +157,10 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     public String getCheckoutView() {
         return checkoutView;
+    }
+
+    public String getCheckoutStagesPartial() {
+        return checkoutStagesPartial;
     }
 
     public String getCheckoutPageRedirect() {
