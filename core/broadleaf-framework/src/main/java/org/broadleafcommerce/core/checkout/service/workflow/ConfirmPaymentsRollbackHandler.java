@@ -164,7 +164,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<ProcessCo
             }
     
             try {
-                orderService.save(order, false);
+                processContext.getSeedData().setOrder(orderService.save(order, false));
             } catch (PricingException e) {
                 throw new RollbackFailureException("Unable to save the order with invalidated payments.");
             }

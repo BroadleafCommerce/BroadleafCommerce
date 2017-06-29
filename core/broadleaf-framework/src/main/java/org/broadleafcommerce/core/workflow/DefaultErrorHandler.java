@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.workflow.state.RollbackStateLocal;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -31,11 +32,12 @@ public class DefaultErrorHandler implements ErrorHandler {
     @SuppressWarnings("unused")
     private String name;
     
-    protected List<String> unloggedExceptionClasses = new ArrayList<String>();
+    protected List<String> unloggedExceptionClasses = new ArrayList<>();
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.workflow.ErrorHandler#handleError(org.broadleafcommerce.core.workflow.ProcessContext, java.lang.Throwable)
      */
+    @Override
     public void handleError(ProcessContext context, Throwable th) throws WorkflowException {
         context.stopProcess();
 
@@ -52,7 +54,7 @@ public class DefaultErrorHandler implements ErrorHandler {
             }
         }
         if (shouldLog) {
-            LOG.error("An error occurred during the workflow", th);
+            LOG.error(String.format("An error occurred during the %s workflow", RollbackStateLocal.getRollbackStateLocal().getWorkflowId()), th);
         }
         
         throw new WorkflowException(th);
@@ -61,6 +63,7 @@ public class DefaultErrorHandler implements ErrorHandler {
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.BeanNameAware#setBeanName(java.lang.String)
      */
+    @Override
     public void setBeanName(String name) {
         this.name = name;
     }
