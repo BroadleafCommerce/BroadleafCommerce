@@ -33,6 +33,7 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.common.web.controller.*"/>
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.common.web.site.*"/>
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.common.web.api.*"/>
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.common.web.config.*"/>
     </context:component-scan>
     
     <!-- Ensures the @Value annotations are resolved -->
