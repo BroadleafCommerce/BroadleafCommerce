@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.currency.service.BroadleafCurrencyService;
 import org.broadleafcommerce.common.encryption.EncryptionModule;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
+import org.broadleafcommerce.common.money.CurrencyConversionContext;
+import org.broadleafcommerce.common.money.CurrencyConversionService;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -64,6 +66,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -97,6 +101,15 @@ public class CheckoutTest extends TestNGSiteIntegrationSetup {
     @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" }, dataProvider = "USCurrency", dataProviderClass = BroadleafCurrencyProvider.class)
     @Transactional
     public void testCheckout(BroadleafCurrency usCurrency) throws Exception {
+        HashMap currencyConsiderationContext = new HashMap();
+        currencyConsiderationContext.put("aa","bb");
+        CurrencyConversionContext.setCurrencyConversionContext(currencyConsiderationContext);
+        CurrencyConversionContext.setCurrencyConversionService(new CurrencyConversionService() {
+            @Override
+            public Money convertCurrency(Money source, Currency destinationCurrency, int destinationScale) {
+                return source;
+            }
+        });
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Order order = orderService.createNewCartForCustomer(customer);
