@@ -914,7 +914,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         }
         
         if (request.getMaxIndex() != null) {
-            int requestedMaxResults = request.getMaxIndex() - request.getStartIndex() + 1;
+            Integer startIndex = request.getStartIndex() != null ? request.getStartIndex() : 0;
+            int requestedMaxResults = request.getMaxIndex() - startIndex + 1;
             if (requestedMaxResults >= 0 && requestedMaxResults < cto.getMaxResults()) {
                 cto.setMaxResults(requestedMaxResults);
             }
