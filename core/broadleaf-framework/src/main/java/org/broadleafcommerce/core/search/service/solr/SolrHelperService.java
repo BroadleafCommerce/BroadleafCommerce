@@ -472,4 +472,10 @@ public interface SolrHelperService {
     List<IndexField> getSearchableIndexFields();
 
     public List<Long> getCategoryFilterIds(Category category, SearchCriteria searchCriteria);
+
+    /**
+     * Create a new {@code SolrInputDocument}.
+     * @return the new document
+     */
+    public SolrInputDocument createSolrInputDocument();
 }

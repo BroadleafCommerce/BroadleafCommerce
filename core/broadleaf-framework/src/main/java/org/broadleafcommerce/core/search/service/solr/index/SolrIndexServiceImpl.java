@@ -25,11 +25,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.SolrInputField;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
@@ -67,7 +69,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -75,11 +76,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.annotation.Resource;
 
 
@@ -528,7 +529,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     
     @Override
     public SolrInputDocument buildDocument(final Indexable indexable, List<IndexField> fields, List<Locale> locales) {
-        final SolrInputDocument document = new SolrInputDocument();
+        final SolrInputDocument document = shs.createSolrInputDocument();
 
         attachBasicDocumentFields(indexable, document);
 

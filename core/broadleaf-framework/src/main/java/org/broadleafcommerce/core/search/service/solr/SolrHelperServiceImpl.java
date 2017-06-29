@@ -40,6 +40,7 @@ import org.apache.solr.client.solrj.response.GroupResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.SolrInputField;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
@@ -48,6 +49,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TypedClosure;
@@ -71,10 +73,8 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -85,11 +85,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-
 import javax.annotation.Resource;
 import javax.jms.IllegalStateException;
 
@@ -932,6 +932,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     propertyObject = getPropertyValueInternal(propertyObject, components, currentPosition + 1);
                 }
             }
+
+            if (propertyObject instanceof Money) {
+                // Convert Money object to a Double to allow for Compatibility with SolrCloud replication
+                propertyObject = ((Money) propertyObject).doubleValue();
+            }
         }
 
         return propertyObject;
@@ -988,6 +993,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         searchExtensionManager.getProxy().addAdditionalCategoryIds(category, searchCriteria, categoryIds);
 
         return categoryIds;
+    }
+
+    @Override
+    public SolrInputDocument createSolrInputDocument() {
+        return new SolrInputDocument(new LinkedHashMap<String, SolrInputField>());
     }
 
 }
