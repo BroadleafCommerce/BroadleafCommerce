@@ -35,12 +35,13 @@ public class BillingInfoForm implements Serializable {
     private static final long serialVersionUID = 1L;
 
     protected Address address = new AddressImpl();
-    protected boolean useShippingAddress;
+    protected boolean useShippingAddress = false;
     protected Long customerPaymentId;
     protected CustomerPayment customerPayment;
     protected Boolean saveNewPayment = true;
     protected Boolean useCustomerPayment = false;
     protected String paymentName;
+    protected String emailAddress;
 
     public BillingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
@@ -102,5 +103,13 @@ public class BillingInfoForm implements Serializable {
 
     public void setPaymentName(String paymentName) {
         this.paymentName = paymentName;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 }
