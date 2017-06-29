@@ -79,6 +79,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -1047,6 +1048,13 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets() {
+        Set<Category> categoryHierarchy = new HashSet<>();
+        return getCumulativeSearchFacets(categoryHierarchy);
+    }
+
+    @Override
+    public List<CategorySearchFacet> getCumulativeSearchFacets(Set<Category> categoryHierarchy) {
+        categoryHierarchy.add(this);
         List<CategorySearchFacet> returnCategoryFacets = new ArrayList<CategorySearchFacet>();
         returnCategoryFacets.addAll(getSearchFacets());
         Collections.sort(returnCategoryFacets, facetPositionComparator);
@@ -1060,9 +1068,10 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         });
 
         // Add in parent facets unless they are excluded
+        Category parentCategory = getDefaultParentCategory();
         List<CategorySearchFacet> parentFacets = null;
-        if (getDefaultParentCategory() != null) {
-            parentFacets = getDefaultParentCategory().getCumulativeSearchFacets();   
+        if (parentCategory != null && !categoryHierarchy.contains(parentCategory)) {
+            parentFacets = parentCategory.getCumulativeSearchFacets(categoryHierarchy);
             CollectionUtils.filter(parentFacets, new Predicate() {
                 @Override
                 public boolean evaluate(Object arg) {

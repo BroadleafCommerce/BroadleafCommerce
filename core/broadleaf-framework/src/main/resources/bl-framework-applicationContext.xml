@@ -40,6 +40,7 @@
         <property name="autodetect" value="true"/>
         <property name="assembler" ref="blAssembler"/>
         <property name="namingStrategy" ref="blNamingStrategy"/>
+        <property name="registrationPolicy" value="IGNORE_EXISTING" />
     </bean>
     
     <bean id="blAttributeSource" class="org.broadleafcommerce.common.jmx.AnnotationJmxAttributeSource">

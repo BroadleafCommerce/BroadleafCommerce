@@ -251,18 +251,22 @@ var BLCAdmin = (function($) {
     	},
     	
     	showMessageAsModal : function(header, message) {
-			if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
-			    BLCAdmin.hideCurrentModal();
-			}
-			
-    	    var $modal = getModalSkeleton();
-    	    
-    	    $modal.find('.modal-header h3').text(header);
-    	    $modal.find('.modal-body').text(message);
-    	    $modal.find('.modal-body').css('padding-bottom', '20px');
-    	    
-            this.showElementAsModal($modal);
+			this.showMessageAsModalWithCallback(header, message);
     	},
+
+		showMessageAsModalWithCallback : function(header, message, onModalHide, onModalHideArgs) {
+			if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
+				BLCAdmin.hideCurrentModal();
+			}
+
+			var $modal = getModalSkeleton();
+
+			$modal.find('.modal-header h3').text(header);
+			$modal.find('.modal-body').text(message);
+			$modal.find('.modal-body').css('padding-bottom', '20px');
+
+			this.showElementAsModal($modal, onModalHide, onModalHideArgs);
+		},
     	
     	showElementAsModal : function($element, onModalHide, onModalHideArgs) {
 			if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {

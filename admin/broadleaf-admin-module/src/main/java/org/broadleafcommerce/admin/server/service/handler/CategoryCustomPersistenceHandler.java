@@ -136,7 +136,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
                 ? entity.findProperty(DEFAULT_PARENT_CATEGORY).getValue() : null;
         String categoryId = entity.findProperty("id").getValue();
 
-        if (Objects.equals(defaultParentCategoryId, categoryId)) {
+        if (!isAdd && Objects.equals(defaultParentCategoryId, categoryId)) {
             entity.addValidationError(DEFAULT_PARENT_CATEGORY, "admin.cantAddCategoryAsOwnParent");
         }
 
