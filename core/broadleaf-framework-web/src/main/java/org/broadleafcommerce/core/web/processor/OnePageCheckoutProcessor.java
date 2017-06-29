@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceExc
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -43,16 +42,15 @@ import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionDTO;
 import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionStateType;
 import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionViewType;
+import org.broadleafcommerce.core.web.checkout.service.CheckoutFormService;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.order.service.CartStateService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.StateService;
-import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -116,6 +114,9 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
     @Resource(name = "blCartStateService")
     protected CartStateService cartStateService;
 
+    @Resource(name = "blCheckoutFormService")
+    protected CheckoutFormService checkoutFormService;
+
     @Override
     public String getName() {
         return "one_page_checkout";
@@ -134,17 +135,17 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
     @Override
     public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         //Pre-populate the command objects
-        OrderInfoForm orderInfoForm = (OrderInfoForm) context.parseExpression(tagAttributes.get("orderInfoForm"));
+        OrderInfoForm orderInfoForm = context.parseExpression(tagAttributes.get("orderInfoForm"));
 
-        ShippingInfoForm shippingInfoForm = (ShippingInfoForm) context.parseExpression(tagAttributes.get("shippingInfoForm"));
+        ShippingInfoForm shippingInfoForm = context.parseExpression(tagAttributes.get("shippingInfoForm"));
 
-        BillingInfoForm billingInfoForm = (BillingInfoForm) context.parseExpression(tagAttributes.get("billingInfoForm"));
+        BillingInfoForm billingInfoForm = context.parseExpression(tagAttributes.get("billingInfoForm"));
 
-        String orderInfoHelpMessage = (String) context.parseExpression(tagAttributes.get("orderInfoHelpMessage"));
+        String orderInfoHelpMessage = context.parseExpression(tagAttributes.get("orderInfoHelpMessage"));
 
-        String billingInfoHelpMessage = (String) context.parseExpression(tagAttributes.get("billingInfoHelpMessage"));
+        String billingInfoHelpMessage = context.parseExpression(tagAttributes.get("billingInfoHelpMessage"));
 
-        String shippingInfoHelpMessage = (String) context.parseExpression(tagAttributes.get("shippingInfoHelpMessage"));
+        String shippingInfoHelpMessage = context.parseExpression(tagAttributes.get("shippingInfoHelpMessage"));
 
         prepopulateCheckoutForms(CartState.getCart(), orderInfoForm, shippingInfoForm, billingInfoForm);
 
@@ -185,45 +186,11 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
      * associated with it. It also assumes that if there is only one order payment of type
      * credit card on the order, then the billing address will be pre-populated with that payment.
     */
-    protected void prepopulateCheckoutForms(Order cart,
-                                            OrderInfoForm orderInfoForm,
-                                            ShippingInfoForm shippingForm,
-                                            BillingInfoForm billingForm) {
-
-        if (orderInfoForm != null) {
-            orderInfoForm.setEmailAddress(cart.getEmailAddress());
-        }
-
-        FulfillmentGroup firstShippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
-        if (firstShippableFulfillmentGroup != null) {
-            //if the cart has already has fulfillment information
-            if (firstShippableFulfillmentGroup.getAddress() != null) {
-                shippingForm.setAddress(firstShippableFulfillmentGroup.getAddress());
-            } else {
-                //check for a default address for the customer
-                CustomerAddress defaultAddress = customerAddressService.findDefaultCustomerAddress(CustomerState.getCustomer().getId());
-                if (defaultAddress != null) {
-                    shippingForm.setAddress(defaultAddress.getAddress());
-                    shippingForm.setAddressName(defaultAddress.getAddressName());
-                }
-            }
-
-            FulfillmentOption fulfillmentOption = firstShippableFulfillmentGroup.getFulfillmentOption();
-            if (fulfillmentOption != null) {
-                shippingForm.setFulfillmentOption(fulfillmentOption);
-                shippingForm.setFulfillmentOptionId(fulfillmentOption.getId());
-            }
-        }
-
-        if (cart.getPayments() != null) {
-            for (OrderPayment payment : cart.getPayments()) {
-                if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
-                    if (payment.getBillingAddress() != null) {
-                        billingForm.setAddress(payment.getBillingAddress());
-                    }
-                }
-            }
-        }
+    protected void prepopulateCheckoutForms(Order cart, OrderInfoForm orderInfoForm, ShippingInfoForm shippingForm,
+            BillingInfoForm billingForm) {
+        checkoutFormService.prePopulateOrderInfoForm(orderInfoForm, cart);
+        checkoutFormService.prePopulateShippingInfoForm(shippingForm, cart);
+        checkoutFormService.prePopulateBillingInfoForm(billingForm, cart);
     }
 
     protected int calculateNumShippableFulfillmentGroups() {
