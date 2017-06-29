@@ -158,5 +158,11 @@ public interface FulfillmentGroupService {
      */
     public List<FulfillmentGroupItem> getFulfillmentGroupItemsForOrderItem(Order order, OrderItem orderItem);
 
+    /**
+     * @param order
+     * @return
+     */
+    Integer calculateNumShippableFulfillmentGroups(Order order);
+
 
 }

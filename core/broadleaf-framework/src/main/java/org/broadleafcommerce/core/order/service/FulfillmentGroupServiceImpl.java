@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -508,6 +509,19 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             }
         }
         return null;
+    }
+
+    @Override
+    public Integer calculateNumShippableFulfillmentGroups(Order order) {
+        Integer numShippableFulfillmentGroups = 0;
+
+        List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
+        for (FulfillmentGroup fulfillmentGroup : CollectionUtils.emptyIfNull(fulfillmentGroups)) {
+            if (isShippable(fulfillmentGroup.getType())) {
+                numShippableFulfillmentGroups++;
+            }
+        }
+        return numShippableFulfillmentGroups;
     }
 
 }
