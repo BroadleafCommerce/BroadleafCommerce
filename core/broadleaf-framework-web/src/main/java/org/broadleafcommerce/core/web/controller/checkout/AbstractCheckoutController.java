@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.web.checkout.validator.GiftCardInfoFormValidat
 import org.broadleafcommerce.core.web.checkout.validator.MultishipAddAddressFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.OrderInfoFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidator;
+import org.broadleafcommerce.core.web.order.service.CartStateService;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
@@ -147,6 +148,9 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     @Resource(name = "blOrderInfoFormValidator")
     protected OrderInfoFormValidator orderInfoFormValidator;
+
+    @Resource(name = "blCartStateService")
+    protected CartStateService cartStateService;
 
     /* Extension Managers */
     @Resource(name = "blCheckoutControllerExtensionManager")
