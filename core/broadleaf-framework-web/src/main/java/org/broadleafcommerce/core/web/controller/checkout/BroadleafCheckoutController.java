@@ -62,15 +62,14 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param request
      * @param response
      * @param model
-     * @param activeStage
+     * @param model
      * @return the checkout view path
      */
     public String checkout(HttpServletRequest request, HttpServletResponse response, Model model,
-            String activeStage, RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         preValidateCartOperation(model);
         populateModelWithReferenceData(request, model);
 
-        model.addAttribute("activeStage", activeStage);
         return getCheckoutView();
     }
 
