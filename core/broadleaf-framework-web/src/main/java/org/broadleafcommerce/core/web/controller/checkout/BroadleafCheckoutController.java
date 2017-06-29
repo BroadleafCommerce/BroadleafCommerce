@@ -93,7 +93,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      */
     public String getCheckoutStagePartial(HttpServletRequest request, HttpServletResponse response, Model model,
             String stage, RedirectAttributes redirectAttributes) {
-        model.addAttribute("activeStage", stage);
+        model.addAttribute(ACTIVE_STAGE, stage);
         return getCheckoutStagesPartial();
     }
 
