@@ -28,8 +28,6 @@ import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 /**
@@ -52,7 +50,7 @@ public class CartStateServiceImpl implements CartStateService {
     public boolean hasPopulatedBillingAddress() {
         Order cart = CartState.getCart();
 
-        for (OrderPayment payment : cart.getPayments()) {
+        for (OrderPayment payment : CollectionUtils.emptyIfNull(cart.getPayments())) {
             boolean isCreditCardPayment = PaymentType.CREDIT_CARD.equals(payment.getType());
             boolean paymentHasBillingAddress = (payment.getBillingAddress() != null);
 
@@ -67,7 +65,7 @@ public class CartStateServiceImpl implements CartStateService {
     public boolean hasPopulatedShippingAddress() {
         Order cart = CartState.getCart();
 
-        for (FulfillmentGroup fulfillmentGroup : cart.getFulfillmentGroups()) {
+        for (FulfillmentGroup fulfillmentGroup : CollectionUtils.emptyIfNull(cart.getFulfillmentGroups())) {
             if (fulfillmentGroupService.isShippable(fulfillmentGroup.getType())) {
                 if (fulfillmentGroup.getAddress() != null && fulfillmentGroup.getFulfillmentOption() != null) {
                     return true;
@@ -79,15 +77,14 @@ public class CartStateServiceImpl implements CartStateService {
 
     @Override
     public boolean orderContainsThirdPartyPayment() {
-        boolean orderContainsThirdPartyPayment = false;
+        Order cart = CartState.getCart();
 
-        List<OrderPayment> payments = CartState.getCart().getPayments();
-        for (OrderPayment payment : CollectionUtils.emptyIfNull(payments)) {
+        for (OrderPayment payment : CollectionUtils.emptyIfNull(cart.getPayments())) {
             if (payment.isActive() && PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType())) {
-                orderContainsThirdPartyPayment = true;
+                return true;
             }
         }
-        return orderContainsThirdPartyPayment;
+        return false;
     }
 
     @Override
@@ -98,8 +95,8 @@ public class CartStateServiceImpl implements CartStateService {
     protected OrderPayment getUnconfirmedCCFromCart() {
         OrderPayment unconfirmedCC = null;
 
-        List<OrderPayment> payments = CartState.getCart().getPayments();
-        for (OrderPayment payment : CollectionUtils.emptyIfNull(payments)) {
+        Order cart = CartState.getCart();
+        for (OrderPayment payment : CollectionUtils.emptyIfNull(cart.getPayments())) {
             boolean isCreditCartPayment = PaymentType.CREDIT_CARD.equals(payment.getType());
             boolean isTemporaryPaymentGateway = PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType());
 
