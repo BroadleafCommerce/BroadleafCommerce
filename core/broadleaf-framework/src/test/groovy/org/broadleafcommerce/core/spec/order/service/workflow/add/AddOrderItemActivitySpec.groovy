@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.spec.order.service.workflow.add
 
+import org.broadleafcommerce.common.dao.GenericEntityDao
 import org.broadleafcommerce.common.money.Money
 import org.broadleafcommerce.core.catalog.service.CatalogService
 import org.broadleafcommerce.core.order.domain.*
@@ -48,6 +49,7 @@ class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
     OrderService mockOrderService = Mock()
     OrderItemService mockOrderItemService = Mock()
     CatalogService mockCatalogService = Mock()
+    GenericEntityDao mockGenericDao = Mock()
 
     
     def setup() {
@@ -55,6 +57,7 @@ class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
             orderService = mockOrderService
             orderItemService = mockOrderItemService
             catalogService = mockCatalogService
+            genericEntityDao = mockGenericDao
             it
         }
         
