@@ -83,6 +83,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         TypedQuery<AdminPermission> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityQuery");
         List<AdminPermission> results = query.getResultList();
         if (results == null || results.size() == 0) {
             return null;
@@ -105,6 +106,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         TypedQuery<AdminPermission> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityQuery");
         List<AdminPermission> results = query.getResultList();
         if (results == null || results.size() == 0) {
             return null;
@@ -121,6 +123,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
     public List<AdminPermission> readAllAdminPermissions() {
         Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_PERMISSIONS");
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityQuery");
         List<AdminPermission> permissions = query.getResultList();
         return permissions;
     }
@@ -144,6 +147,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
             query.setParameter("type", permissionType.getType());
             query.setParameter("ceilingEntity", testClass);
             query.setHint(QueryHints.HINT_CACHEABLE, true);
+            query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityQuery");
 
             Long count = (Long) query.getSingleResult();
             if (count > 0) {
@@ -171,6 +175,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
             query.setParameter("permissionNames", Arrays.asList(AdminSecurityService.DEFAULT_PERMISSIONS));
             query.setParameter("ceilingEntity", testClass);
             query.setHint(QueryHints.HINT_CACHEABLE, true);
+            query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityQuery");
 
             Long count = (Long) query.getSingleResult();
             if (count > 0) {
@@ -198,6 +203,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
             query.setParameter("type", permissionType.getType());
             query.setParameter("ceilingEntity", testClass);
             query.setHint(QueryHints.HINT_CACHEABLE, true);
+            query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityQuery");
 
             Long count = (Long) query.getSingleResult();
             if (count > 0) {

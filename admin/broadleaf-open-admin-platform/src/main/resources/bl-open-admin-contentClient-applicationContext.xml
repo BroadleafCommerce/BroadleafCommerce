@@ -135,4 +135,12 @@
 
     <bean id="blAdminPasswordEncoder" class="${password.admin.encoder}"/>
 
+    <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:bl-open-admin-ehcache.xml</value>
+            </list>
+        </property>
+    </bean>
+
 </beans>

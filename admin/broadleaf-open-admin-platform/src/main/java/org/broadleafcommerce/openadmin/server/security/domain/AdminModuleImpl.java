@@ -49,7 +49,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADMIN_MODULE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurity")
 @AdminPresentationClass(friendlyName = "AdminModuleImpl_baseAdminModule")
 public class AdminModuleImpl implements AdminModule {
 
@@ -83,7 +83,7 @@ public class AdminModuleImpl implements AdminModule {
     protected String icon;
 
     @OneToMany(mappedBy = "module", targetEntity = AdminSectionImpl.class)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurity")
     @BatchSize(size = 50)
     protected List<AdminSection> sections = new ArrayList<AdminSection>();
 

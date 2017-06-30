@@ -786,7 +786,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withFilterAndSortCriteria(getCriteria(requestParams))
                 .withStartIndex(getStartIndex(requestParams))
-                .withMaxIndex(getMaxIndex(requestParams));
+                .withMaxIndex(getMaxIndex(requestParams))
+                .withLastId(getLastId(requestParams))
+                .withFirstId(getFirstId(requestParams))
+                .withUpperCount(getUpperCount(requestParams))
+                .withLowerCount(getLowerCount(requestParams))
+                .withPageSize(getPageSize(requestParams))
+                .withPresentationFetch(true);
 
         if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;

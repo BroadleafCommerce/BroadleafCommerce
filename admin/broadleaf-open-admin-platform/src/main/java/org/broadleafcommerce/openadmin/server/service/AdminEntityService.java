@@ -29,8 +29,10 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.server.domain.FetchPageRequest;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
+import org.broadleafcommerce.openadmin.server.service.type.FetchType;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 import java.util.List;
@@ -238,6 +240,27 @@ public interface AdminEntityService {
     public PersistenceResponse getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex, 
             String idValueOverride, List<SectionCrumb> sectionCrumb) throws ServiceException;
+
+    /**
+     * The same as the other getRecordsForCollection method, except that this one expects allow the caller to explicitly
+     * set the id value that will be used in the fetch instead of delegating to {@link #getContextSpecificRelationshipId()}.
+     * Also utilizes a {@link FetchPageRequest} to encapsulate result set paging configuration, which is needed for
+     * {@link FetchType#LARGERESULTSET} cases, if applicable.
+     *
+     * @param containingClassMetadata
+     * @param containingEntity
+     * @param collectionProperty
+     * @param fascs
+     * @param fetchPageRequest
+     * @param idValueOverride
+     * @param sectionCrumbs
+     * @return
+     * @throws ServiceException
+     */
+    PersistenceResponse getPagedRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
+                Property collectionProperty, FilterAndSortCriteria[] fascs, FetchPageRequest fetchPageRequest,
+                String idValueOverride, List<SectionCrumb> sectionCrumbs) throws ServiceException;
+
     /**
      * Returns all records for all subcollections of the specified request and its primary key
      * 

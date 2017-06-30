@@ -22,12 +22,7 @@ package org.broadleafcommerce.openadmin.server.security.domain;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +48,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADMIN_SECTION")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurity")
 @AdminPresentationClass(friendlyName = "AdminSectionImpl_baseAdminSection")
 public class AdminSectionImpl implements AdminSection {
 
@@ -87,13 +82,14 @@ public class AdminSectionImpl implements AdminSection {
     protected String url;
 
     @ManyToOne(optional=false, targetEntity = AdminModuleImpl.class)
+    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "ADMIN_MODULE_ID")
     @Index(name="ADMINSECTION_MODULE_INDEX", columnNames={"ADMIN_MODULE_ID"})
     protected AdminModule module;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
     @JoinTable(name = "BLC_ADMIN_SEC_PERM_XREF", joinColumns = @JoinColumn(name = "ADMIN_SECTION_ID", referencedColumnName = "ADMIN_SECTION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurity")
     @BatchSize(size = 50)
     protected List<AdminPermission> permissions = new ArrayList<AdminPermission>();
 
