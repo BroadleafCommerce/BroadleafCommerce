@@ -23,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.broadleafcommerce.openadmin.server.service.type.FetchType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +56,27 @@ public class DynamicResultSet implements Serializable {
 
     @JsonProperty
     private Integer batchId;
+
+    @JsonProperty
+    private Long firstId;
+
+    @JsonProperty
+    private Long lastId;
+
+    @JsonProperty
+    private Integer upperCount;
+
+    @JsonProperty
+    private Integer lowerCount;
+
+    @JsonProperty
+    private FetchType fetchType;
+
+    @JsonProperty
+    private Boolean totalCountLessThanPageSize;
+
+    @JsonProperty
+    private Boolean promptSearch;
 
     @JsonIgnore
     private Map<String, Tab> unselectedTabMetadata = new HashMap<String, Tab>();
@@ -125,16 +148,71 @@ public class DynamicResultSet implements Serializable {
         this.pageSize = pageSize;
     }
 
-    
+
     public Map<String, Tab> getUnselectedTabMetadata() {
         return unselectedTabMetadata;
     }
 
-    
+
     public void setUnselectedTabMetadata(Map<String, Tab> unselectedTabMetadata) {
         this.unselectedTabMetadata = unselectedTabMetadata;
     }
-    
-    
 
+
+
+    public Long getFirstId() {
+        return firstId;
+    }
+
+    public void setFirstId(Long firstId) {
+        this.firstId = firstId;
+    }
+
+    public Long getLastId() {
+        return lastId;
+    }
+
+    public void setLastId(Long lastId) {
+        this.lastId = lastId;
+    }
+
+    public Integer getUpperCount() {
+        return upperCount;
+    }
+
+    public void setUpperCount(Integer upperCount) {
+        this.upperCount = upperCount;
+    }
+
+    public Integer getLowerCount() {
+        return lowerCount;
+    }
+
+    public void setLowerCount(Integer lowerCount) {
+        this.lowerCount = lowerCount;
+    }
+
+    public FetchType getFetchType() {
+        return fetchType;
+    }
+
+    public void setFetchType(FetchType fetchType) {
+        this.fetchType = fetchType;
+    }
+
+    public Boolean getTotalCountLessThanPageSize() {
+        return totalCountLessThanPageSize;
+    }
+
+    public void setTotalCountLessThanPageSize(Boolean totalCountLessThanPageSize) {
+        this.totalCountLessThanPageSize = totalCountLessThanPageSize;
+    }
+
+    public Boolean getPromptSearch() {
+        return promptSearch;
+    }
+
+    public void setPromptSearch(Boolean promptSearch) {
+        this.promptSearch = promptSearch;
+    }
 }
