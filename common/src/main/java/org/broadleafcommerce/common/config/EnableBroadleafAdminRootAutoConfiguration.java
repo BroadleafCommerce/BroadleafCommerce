@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.config;
 
+import org.broadleafcommerce.common.config.EnableBroadleafAdminRootAutoConfiguration.BroadleafAdminRootAutoConfiguration;
+import org.broadleafcommerce.common.config.EnableBroadleafAdminRootAutoConfiguration.BroadleafAdminRootAutoConfigurationOverrides;
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
@@ -82,7 +84,8 @@ import java.lang.annotation.Target;
 @Documented
 @Import({
     EnableBroadleafRootAutoConfiguration.BroadleafRootAutoConfiguration.class,
-    EnableBroadleafAdminRootAutoConfiguration.BroadleafAdminRootAutoConfiguration.class
+    BroadleafAdminRootAutoConfiguration.class,
+    BroadleafAdminRootAutoConfigurationOverrides.class
 })
 public @interface EnableBroadleafAdminRootAutoConfiguration {
 
@@ -99,4 +102,7 @@ public @interface EnableBroadleafAdminRootAutoConfiguration {
             "classpath*:/blc-config/admin/late/bl-*-applicationContext.xml"
     }, reader = FrameworkXmlBeanDefinitionReader.class)
     class BroadleafAdminRootAutoConfiguration {}
+    
+    @ImportResource("classpath:/override-contexts/admin-root-autoconfiguration-overrides.xml")
+    class BroadleafAdminRootAutoConfigurationOverrides {}
 }
