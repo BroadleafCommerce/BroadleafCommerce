@@ -262,7 +262,7 @@ public class SiteServiceImpl implements SiteService {
         if (persistentSite == null) {
             return null;
         }
-        NonPersistentSiteTheadLocalCache cache = NonPersistentSiteTheadLocalCache.getSitesCache();
+        NonPersistentSiteThreadLocalCache cache = NonPersistentSiteThreadLocalCache.getSitesCache();
         Site clone = cache.getSites().get(persistentSite.getId());
         if (clone == null) {
             clone = persistentSite.clone();
