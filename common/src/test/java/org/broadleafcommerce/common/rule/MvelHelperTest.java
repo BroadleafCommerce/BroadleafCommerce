@@ -134,66 +134,49 @@ public class MvelHelperTest extends TestCase {
      * state from which it will never recover.
      */
     public void testMvelMethodOverloadFailureCase() throws IOException {
-        String classpath = MvelTestUtils.getClassPath();
-
-        boolean result = false;
         //Test multiple iterations to make sure we hit the undetermined ordering case we need to confirm
+        String output = "";
         for (int j=0; j<100; j++) {
-            //See javadoc on MvelOverloadFailureReproduction for description of why we need to execute the test in a new JVM
-            CommandLine cmdLine = new CommandLine("java");
-            cmdLine.addArgument("-cp");
-            cmdLine.addArgument(classpath, true);
-            cmdLine.addArgument(MvelOverloadFailureReproduction.class.getName());
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Executor executor = new DefaultExecutor();
-            executor.setStreamHandler(new PumpStreamHandler(baos));
-            try {
-                executor.execute(cmdLine);
-            } catch (IOException e) {
-                throw new IOException(new String(baos.toByteArray()));
-            }
-            String run = new String(baos.toByteArray());
-            result = Boolean.valueOf(run.trim());
+            output = executeExternalJavaProcess(MvelOverloadFailureReproduction.class);
+            boolean result = Boolean.valueOf(output.trim());
             if (result) {
                 //We found the case. Exit the loop, since we don't need to try anymore.
                 break;
             }
         }
-        assertTrue(result);
+        assertEquals("true", output);
     }
-
+    
     /**
      * Confirms repeated success for method overload workaround in SelectizeCollectionUtils
      * </p>
      * See {@link #testMvelMethodOverloadFailureCase()} for a more complete description of the problem case.
      */
     public void testMvelMethodOverloadWorkaroundCase() throws IOException {
-        String classpath = MvelTestUtils.getClassPath();
-
-        boolean result = false;
         //Test multiple iterations to make sure we no longer fail at all
         for (int j=0; j<20; j++) {
-            CommandLine cmdLine = new CommandLine("java");
-            cmdLine.addArgument("-cp");
-            cmdLine.addArgument(classpath, true);
-            cmdLine.addArgument(MvelOverloadWorkaroundReproduction.class.getName());
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Executor executor = new DefaultExecutor();
-            executor.setStreamHandler(new PumpStreamHandler(baos));
-            try {
-                executor.execute(cmdLine);
-            } catch (IOException e) {
-                throw new IOException(new String(baos.toByteArray()));
-            }
-            String run = new String(baos.toByteArray());
-            result = Boolean.valueOf(run.trim());
-            if (!result) {
-                //We should never get this. Break immediately and report.
-                break;
-            }
+            String output = executeExternalJavaProcess(MvelOverloadWorkaroundReproduction.class);
+            assertEquals("true", output);
         }
-        assertTrue(result);
+    }
+    
+    protected String executeExternalJavaProcess(Class<?> mainClass) throws IOException {
+        String classpath = MvelTestUtils.getClassPath();
+        
+        //See javadoc on MvelOverloadFailureReproduction for description of why we need to execute the test in a new JVM
+        CommandLine cmdLine = new CommandLine("java");
+        cmdLine.addArgument("-cp");
+        cmdLine.addArgument(classpath, true);
+        cmdLine.addArgument(mainClass.getName());
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Executor executor = new DefaultExecutor();
+        executor.setStreamHandler(new PumpStreamHandler(baos));
+        try {
+            executor.execute(cmdLine, new HashMap<String, String>());
+        } catch (IOException e) {
+            throw new IOException(new String(baos.toByteArray()));
+        }
+        return new String(baos.toByteArray());
     }
 }
