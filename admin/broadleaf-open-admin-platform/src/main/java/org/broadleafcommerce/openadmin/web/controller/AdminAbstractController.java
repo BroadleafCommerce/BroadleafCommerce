@@ -211,6 +211,8 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         FetchPageRequest pageRequest = new FetchPageRequest()
             .withLastId(getLastId(requestParams))
             .withFirstId(getFirstId(requestParams))
+            .withStartIndex(getStartIndex(requestParams))
+            .withMaxIndex(getMaxIndex(requestParams))
             .withUpperCount(getUpperCount(requestParams))
             .withLowerCount(getLowerCount(requestParams))
             .withPageSize(getPageSize(requestParams));
