@@ -31,9 +31,11 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.TypedTransformer;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
@@ -71,9 +73,9 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
+import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,7 +85,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
