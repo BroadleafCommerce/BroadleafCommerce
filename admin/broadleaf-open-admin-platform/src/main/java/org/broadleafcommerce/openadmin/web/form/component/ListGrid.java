@@ -281,7 +281,7 @@ public class ListGrid {
     public void addModalRowAction(ListGridAction action) {
         getModalRowActions().add(action);
     }
-    
+
     public void addToolbarAction(ListGridAction action) {
         getToolbarActions().add(action);
     }
@@ -313,7 +313,7 @@ public class ListGrid {
     public void removeAllModalRowActions() {
         getModalRowActions().clear();
     }
-    
+
     public ListGridAction findToolbarAction(String actionId) {
         for (ListGridAction action : getToolbarActions()) {
             if (action.getActionId().equals(actionId)) {
@@ -391,7 +391,7 @@ public class ListGrid {
     public void setSelectTypeString(String selectType) {
         this.selectType = selectType;
     }
-    
+
     public Boolean getCanFilterAndSort() {
         return (canFilterAndSort == null ? true : canFilterAndSort);
     }
