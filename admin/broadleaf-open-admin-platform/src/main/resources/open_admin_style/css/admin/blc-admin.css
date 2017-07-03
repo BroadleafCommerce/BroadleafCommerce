@@ -391,3 +391,26 @@ circle {
 .back-button:hover {
     color: #F2B95A;
 }
+a.previous-page {
+    cursor: pointer;
+    padding-right: 50px;
+    display: none;
+}
+
+a.next-page {
+    cursor: pointer;
+    padding-left: 50px;
+    display: none;
+}
+
+div.result-page-size {
+    padding-left: 50px;
+    display: inline;
+    float: right;
+}
+
+input.result-page-size-input {
+    width: 50px;
+    float: right;
+    padding-left: 10px;
+}
