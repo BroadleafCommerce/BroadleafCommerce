@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
@@ -87,10 +88,10 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     protected PersistenceService persistenceService;
 
     @Resource(name="blCustomPersistenceHandlers")
-    protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
+    protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<>();
 
     @Resource(name="blCustomPersistenceHandlerFilters")
-    protected List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters = new ArrayList<CustomPersistenceHandlerFilter>();
+    protected List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters = new ArrayList<>();
 
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
@@ -152,7 +153,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     public Property[] processMergedProperties(Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) {
-        List<Property> propertiesList = new ArrayList<Property>();
+        List<Property> propertiesList = new ArrayList<>();
         for (PersistenceModule module : modules) {
             module.extractProperties(entities, mergedProperties, propertiesList);
         }
@@ -236,7 +237,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
         adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.INSPECT);
         Class<?>[] entities = getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
-        Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+        Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<>();
         for (PersistenceModule module : modules) {
             module.updateMergedProperties(persistencePackage, allMergedProperties);
         }
@@ -462,7 +463,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             String idProperty = (String) idMetadata.get("name");
             String idVal = response.findProperty(idProperty).getValue();
 
-            Map<String, List<String>> subPackageValidationErrors = new HashMap<String, List<String>>();
+            Map<String, List<String>> subPackageValidationErrors = new HashMap<>();
             for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
                 Entity subResponse;
                 try {
@@ -630,7 +631,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         }
 
-        Map<String, List<String>> subPackageValidationErrors = new HashMap<String, List<String>>();
+        Map<String, List<String>> subPackageValidationErrors = new HashMap<>();
         for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
             try {
                 //Run through any subPackages -- add up any validation errors
@@ -837,7 +838,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     @Override
     public List<CustomPersistenceHandler> getCustomPersistenceHandlers() {
-        List<CustomPersistenceHandler> cloned = new ArrayList<CustomPersistenceHandler>();
+        List<CustomPersistenceHandler> cloned = new ArrayList<>();
         cloned.addAll(customPersistenceHandlers);
         if (getCustomPersistenceHandlerFilters() != null) {
             for (CustomPersistenceHandlerFilter filter : getCustomPersistenceHandlerFilters()) {
