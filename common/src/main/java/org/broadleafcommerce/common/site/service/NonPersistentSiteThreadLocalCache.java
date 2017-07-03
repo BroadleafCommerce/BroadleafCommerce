@@ -26,15 +26,15 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-public class NonPersistentSiteTheadLocalCache {
+public class NonPersistentSiteThreadLocalCache {
 
-    private static final ThreadLocal<NonPersistentSiteTheadLocalCache> SITES_CACHE = ThreadLocalManager.createThreadLocal(NonPersistentSiteTheadLocalCache.class);
+    private static final ThreadLocal<NonPersistentSiteThreadLocalCache> SITES_CACHE = ThreadLocalManager.createThreadLocal(NonPersistentSiteThreadLocalCache.class);
 
-    public static NonPersistentSiteTheadLocalCache getSitesCache() {
+    public static NonPersistentSiteThreadLocalCache getSitesCache() {
         return SITES_CACHE.get();
     }
 
-    public static void setSitesCache(NonPersistentSiteTheadLocalCache sitesCache) {
+    public static void setSitesCache(NonPersistentSiteThreadLocalCache sitesCache) {
         SITES_CACHE.set(sitesCache);
     }
 
