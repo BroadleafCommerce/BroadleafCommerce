@@ -24,17 +24,21 @@ import org.hibernate.exception.LockAcquisitionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
+import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 /**
  * @author Jeff Fischer
@@ -127,6 +131,25 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     public <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
                                             Class<G> exceptionType, boolean useTransaction, int transactionBehavior, int isolationLevel) throws G {
         runOptionalTransactionalOperation(operation, exceptionType, useTransaction, transactionBehavior, isolationLevel, false, getTransactionManager());
+    }
+
+    @Override
+    public void runOptionalEntityManagerInViewOperation(Runnable runnable) {
+        EntityManagerFactory emf = ((JpaTransactionManager) getTransactionManager()).getEntityManagerFactory();
+        boolean isEntityManagerInView = TransactionSynchronizationManager.hasResource(emf);
+        try {
+            if (!isEntityManagerInView) {
+                EntityManager em = emf.createEntityManager();
+                EntityManagerHolder emHolder = new EntityManagerHolder(em);
+                TransactionSynchronizationManager.bindResource(emf, emHolder);
+            }
+            runnable.run();
+        } finally {
+            if (!isEntityManagerInView) {
+                EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager.unbindResource(emf);
+                EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
+            }
+        }
     }
 
     @Override

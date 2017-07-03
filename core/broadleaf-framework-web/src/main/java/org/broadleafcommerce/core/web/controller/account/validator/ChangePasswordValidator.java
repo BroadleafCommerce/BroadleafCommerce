@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.web.controller.account.validator;
 
 import org.broadleafcommerce.common.security.util.PasswordChange;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
@@ -30,9 +31,7 @@ import javax.annotation.Resource;
 @Component("blChangePasswordValidator")
 public class ChangePasswordValidator implements Validator {
 
-    public static final String DEFAULT_VALID_PASSWORD_REGEX = "[0-9A-Za-z]{4,15}";
-
-    private String validPasswordRegex = DEFAULT_VALID_PASSWORD_REGEX;
+    private static final String DEFAULT_VALID_PASSWORD_REGEX = "[^\\s]{6,}";
 
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
@@ -64,12 +63,8 @@ public class ChangePasswordValidator implements Validator {
 
     }
 
-    public String getValidPasswordRegex() {
-        return validPasswordRegex;
-    }
-
-    public void setValidPasswordRegex(String validPasswordRegex) {
-        this.validPasswordRegex = validPasswordRegex;
+    public static String getValidPasswordRegex() {
+        return BLCSystemProperty.resolveSystemProperty("password.valid.regex", DEFAULT_VALID_PASSWORD_REGEX);
     }
 
     @Override
@@ -78,8 +73,6 @@ public class ChangePasswordValidator implements Validator {
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
-
-    }
+    public void validate(Object target, Errors errors) {}
 
 }

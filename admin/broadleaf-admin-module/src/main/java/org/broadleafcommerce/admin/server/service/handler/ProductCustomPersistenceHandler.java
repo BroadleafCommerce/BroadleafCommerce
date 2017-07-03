@@ -26,7 +26,6 @@ import org.broadleafcommerce.admin.server.service.extension.ProductCustomPersist
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
@@ -62,12 +61,10 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -228,33 +225,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                                                                                            })
                                                                   ));
         }
-
-        if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
-                (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
-            extensionManager.getProxy().manageAdditionalFilterMappings(cto);
-
-            //Add special handling for product list grid fetches
-            boolean hasExplicitSort = false;
-            for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
-                hasExplicitSort = filter.getSortDirection() != null;
-                if (hasExplicitSort) {
-                    break;
-                }
-            }
-            if (!hasExplicitSort) {
-                FilterAndSortCriteria filter = cto.get("id");
-                filter.setNullsLast(false);
-                filter.setSortAscending(true);
-            }
-            try {
-                extensionManager.getProxy().initiateFetchState();
-                return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
-            } finally {
-                extensionManager.getProxy().endFetchState();
-            }
-        } else {
-            return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
-        }
+        return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
     }
 
     @Override

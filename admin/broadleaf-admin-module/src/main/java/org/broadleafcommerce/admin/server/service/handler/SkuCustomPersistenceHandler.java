@@ -26,17 +26,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.TypedTransformer;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -59,17 +63,19 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaTranslator;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
+import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,14 +85,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
+
+import static com.google.common.base.CharMatcher.DIGIT;
 
 /**
  * @author Phillip Verheyden
@@ -106,6 +114,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
     @Value("${cache.entity.dao.metadata.ttl}")
     protected int cacheEntityMetaDataTtl;
+
+    @Value("${use.to.one.lookup.sku.product.option.value:false}")
+    protected boolean useToOneLookupSkuProductOptionValue = false;
 
     protected long lastCacheFlushTime = System.currentTimeMillis();
 
@@ -131,6 +142,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
+
+    @Resource(name = "blCriteriaTranslator")
+    protected CriteriaTranslator criteriaTranslator;
+
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
@@ -217,8 +234,11 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 //Grab the default properties for the Sku
                 properties = helper.getSimpleMergedProperties(SkuImpl.class.getName(), persistencePerspective);
 
-
-                if (persistencePackage.getCustomCriteria() == null || persistencePackage.getCustomCriteria().length == 0) {
+                boolean isFirstCriteriaNAN = persistencePackage.getCustomCriteria() == null || persistencePackage.getCustomCriteria().length == 0;
+                if (!isFirstCriteriaNAN && useToOneLookupSkuProductOptionValue) {
+                    isFirstCriteriaNAN = !DIGIT.matchesAllOf(persistencePackage.getCustomCriteria()[0]);
+                }
+                if (isFirstCriteriaNAN) {
                     //look up all the ProductOptions and then create new fields for each of them
                     List<ProductOption> options = catalogService.readAllProductOptions();
                     int order = 0;
@@ -384,7 +404,14 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * @return
      */
     public FieldMetadata createIndividualOptionField(ProductOption option, int order) {
+        if (useToOneLookupSkuProductOptionValue) {
+            return createToOneIndividualOptionField(option, order);
+        } else {
+            return createExplicitEnumerationIndividualOptionField(option, order);
+        }
+    }
 
+    protected FieldMetadata createExplicitEnumerationIndividualOptionField(ProductOption option, int order) {
         BasicFieldMetadata metadata = new BasicFieldMetadata();
         List<ProductOptionValue> allowedValues = option.getAllowedValues();
         if (CollectionUtils.isNotEmpty(allowedValues)) {
@@ -394,7 +421,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class, em, useCache()));
             metadata.setForeignKeyCollection(false);
             metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
-    
+
             //Set up the enumeration based on the product option values
             String[][] optionValues = new String[allowedValues.size()][2];
             for (int i = 0; i < allowedValues.size(); i++) {
@@ -403,7 +430,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 optionValues[i][1] = value.getAttributeValue();
             }
             metadata.setEnumerationValues(optionValues);
-    
+
             metadata.setName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
             metadata.setFriendlyName(option.getLabel());
             metadata.setGroup("productOption_group");
@@ -419,6 +446,62 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             return metadata;
         }
         return null;
+    }
+
+    /**
+     * Using a ToOne lookup performs much better for large product option value lists, speeds up initial page load,
+     * and is generally more accurate in relation to option value updates and how they impact available selections and cache.
+     *
+     * @param option
+     * @param order
+     * @return
+     */
+    protected FieldMetadata createToOneIndividualOptionField(ProductOption option, int order) {
+        PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
+        FilterMapping filterMapping = new FilterMapping().withDirectFilterValues(
+                sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, option.getId())).withRestriction(new Restriction()
+            .withPredicateProvider(new PredicateProvider() {
+                public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
+                                                String ceilingEntity, String fullPropertyName, Path explicitPath, List directValues) {
+                    return root.get("productOption").get("id").in(directValues);
+            }
+        }));
+        List<FilterMapping> mappings = new ArrayList<FilterMapping>();
+        mappings.add(filterMapping);
+        TypedQuery<Serializable> countQuery = criteriaTranslator.translateCountQuery(persistenceManager.getDynamicEntityDao(),
+                ProductOptionValueImpl.class.getName(), mappings);
+        Long count = (Long) countQuery.getSingleResult();
+        BasicFieldMetadata metadata = null;
+        if (count > 0) {
+            metadata = new BasicFieldMetadata();
+            metadata.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
+            metadata.setSecondaryType(SupportedFieldType.INTEGER);
+            metadata.setForeignKeyProperty("id");
+            metadata.setForeignKeyClass(ProductOptionValueImpl.class.getName());
+            metadata.setForeignKeyDisplayValueProperty("attributeValue");
+            metadata.setLookupDisplayProperty("attributeValue");
+            metadata.setForeignKeyCollection(false);
+            metadata.setCustomCriteria(new String[]{"option=" + String.valueOf(option.getId())});
+            metadata.setName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
+            metadata.setFriendlyName(option.getLabel());
+            metadata.setGroup("productOption_group");
+            metadata.setGroupOrder(-1);
+            metadata.setOrder(order);
+            metadata.setExplicitFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
+            metadata.setProminent(false);
+            metadata.setVisibility(VisibilityEnum.FORM_EXPLICITLY_SHOWN);
+            metadata.setReadOnly(false);
+            //these may not be actually required, but the CPH has this as a requirement for parsing the data, so we'll stick with it here
+            metadata.setRequiredOverride(true);
+            metadata.setLookupType(LookupType.STANDARD);
+            metadata.setMutable(true);
+            metadata.setInheritedFromType(SkuImpl.class.getName());
+            metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class, em, useCache()));
+            metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+            metadata.setTargetClass(SkuImpl.class.getName());
+            metadata.setFieldName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
+        }
+        return metadata;
     }
 
     @SuppressWarnings("unchecked")
@@ -476,6 +559,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 Property optionProperty = new Property();
                 optionProperty.setName(PRODUCT_OPTION_FIELD_PREFIX + value.getProductOption().getId());
                 optionProperty.setValue(value.getId().toString());
+                optionProperty.setDisplayValue(value.getAttributeValue());
                 entity.addProperty(optionProperty);
             }
 
@@ -686,6 +770,17 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         } catch (Exception e) {
             throw new ServiceException("Unable to perform update for entity: " + Sku.class.getName(), e);
         }
+    }
+
+    protected String[] getPolymorphicClasses(Class<?> clazz, EntityManager em, boolean useCache) {
+        DynamicDaoHelperImpl helper = new DynamicDaoHelperImpl();
+        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(clazz,
+                helper.getSessionFactory((HibernateEntityManager) em), true, useCache);
+        String[] result = new String[classes.length];
+        for (int i = 0; i < classes.length; i++) {
+            result[i] = classes[i].getName();
+        }
+        return result;
     }
 
     /**

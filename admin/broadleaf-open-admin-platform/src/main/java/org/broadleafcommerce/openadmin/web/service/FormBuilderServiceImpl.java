@@ -882,6 +882,28 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             listGrid.getRecords().add(record);
         }
 
+        if (drs.getFirstId() != null) {
+            listGrid.setFirstId(drs.getFirstId());
+        }
+        if (drs.getLastId() != null) {
+            listGrid.setLastId(drs.getLastId());
+        }
+        if (drs.getUpperCount() != null) {
+            listGrid.setUpperCount(drs.getUpperCount());
+        }
+        if (drs.getLowerCount() != null) {
+            listGrid.setLowerCount(drs.getLowerCount());
+        }
+        if (drs.getFetchType() != null) {
+            listGrid.setFetchType(drs.getFetchType().toString());
+        }
+        if (drs.getTotalCountLessThanPageSize() != null) {
+            listGrid.setTotalCountLessThanPageSize(drs.getTotalCountLessThanPageSize());
+        }
+        if (drs.getPromptSearch() != null) {
+            listGrid.setPromptSearch(drs.getPromptSearch());
+        }
+
         return listGrid;
     }
     
