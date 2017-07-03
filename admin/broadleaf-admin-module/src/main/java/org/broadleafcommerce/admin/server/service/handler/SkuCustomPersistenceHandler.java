@@ -18,6 +18,8 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
+import static com.google.common.base.CharMatcher.DIGIT;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.BooleanUtils;
@@ -25,6 +27,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.admin.server.service.SkuMetadataCacheService;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -33,7 +36,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
-import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -94,8 +96,6 @@ import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 
-import static com.google.common.base.CharMatcher.DIGIT;
-
 /**
  * @author Phillip Verheyden
  *
@@ -112,16 +112,11 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
 
-    @Value("${cache.entity.dao.metadata.ttl}")
-    protected int cacheEntityMetaDataTtl;
-
     @Value("${use.to.one.lookup.sku.product.option.value:false}")
     protected boolean useToOneLookupSkuProductOptionValue = false;
 
-    protected long lastCacheFlushTime = System.currentTimeMillis();
-
-    protected static final Map<String, Map<String, FieldMetadata>> METADATA_CACHE =
-            new EfficientLRUMap<>(1000);
+    @Resource(name ="blSkuMetadataCacheService")
+    protected SkuMetadataCacheService skuMetadataCacheService;
 
     @Resource(name="blAdornedTargetListPersistenceModule")
     protected PersistenceModule adornedPersistenceModule;
@@ -173,23 +168,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         return canHandle(persistencePackage, updateType);
     }
 
-    protected boolean useCache() {
-        if (cacheEntityMetaDataTtl < 0) {
-            return true;
-        }
-        if (cacheEntityMetaDataTtl == 0) {
-            return false;
-        } else {
-            if ((System.currentTimeMillis() - lastCacheFlushTime) > cacheEntityMetaDataTtl) {
-                lastCacheFlushTime = System.currentTimeMillis();
-                METADATA_CACHE.clear();
-                return true;
-            } else {
-                return true;
-            }
-        }
-    }
-
     /**
      * Since this is the default for all Skus, it's possible that we are providing custom criteria for this
      * Sku lookup. In that case, we probably want to delegate to a child class, so only use this particular
@@ -221,14 +199,16 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<>();
 
-            Map<String, FieldMetadata> properties = null;
-            boolean isCache = useCache();
-            String key = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+            String productIdStr = null;
             if (persistencePackage.getCustomCriteria() != null && persistencePackage.getCustomCriteria().length > 0) {
-                key += persistencePackage.getCustomCriteria()[0];
+                productIdStr = persistencePackage.getCustomCriteria()[0];
             }
-            if (isCache) {
-                properties = METADATA_CACHE.get(key);
+            String cacheKey = skuMetadataCacheService.buildCacheKey(productIdStr);
+            
+            Map<String, FieldMetadata> properties = null;
+            boolean useCache = skuMetadataCacheService.useCache();
+            if (useCache) {
+                properties = skuMetadataCacheService.getFromCache(cacheKey);
             }
             if (properties == null) {
                 //Grab the default properties for the Sku
@@ -268,9 +248,10 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 //also build the consolidated field; if using the SkuBasicClientEntityModule then this field will be
                 //permanently hidden
                 properties.put(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME, createConsolidatedOptionField(SkuImpl.class));
-            }
-            if (isCache) {
-                METADATA_CACHE.put(key, properties);
+                
+                if (useCache) {
+                    skuMetadataCacheService.addToCache(cacheKey, properties);
+                }
             }
 
             allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
@@ -329,7 +310,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         metadata.setMutable(false);
         metadata.setInheritedFromType(inheritedFromType.getName());
         
-        metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class, em, useCache()));
+        metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class, em, skuMetadataCacheService.useCache()));
         metadata.setForeignKeyCollection(false);
         metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
 
@@ -346,7 +327,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
         return metadata;
     }
-    
+
     /**
      * Returns a {@link Property} filled out with a delimited list of the <b>values</b> that are passed in. This should be
      * invoked on a fetch and the returned property should be added to the fetched {@link Entity} dto.
@@ -418,7 +399,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             metadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
             metadata.setMutable(true);
             metadata.setInheritedFromType(SkuImpl.class.getName());
-            metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class, em, useCache()));
+            metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class, em, skuMetadataCacheService.useCache()));
             metadata.setForeignKeyCollection(false);
             metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
 
@@ -461,12 +442,13 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         FilterMapping filterMapping = new FilterMapping().withDirectFilterValues(
                 sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, option.getId())).withRestriction(new Restriction()
             .withPredicateProvider(new PredicateProvider() {
+                @Override
                 public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
                                                 String ceilingEntity, String fullPropertyName, Path explicitPath, List directValues) {
                     return root.get("productOption").get("id").in(directValues);
             }
         }));
-        List<FilterMapping> mappings = new ArrayList<FilterMapping>();
+        List<FilterMapping> mappings = new ArrayList<>();
         mappings.add(filterMapping);
         TypedQuery<Serializable> countQuery = criteriaTranslator.translateCountQuery(persistenceManager.getDynamicEntityDao(),
                 ProductOptionValueImpl.class.getName(), mappings);
@@ -496,7 +478,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             metadata.setLookupType(LookupType.STANDARD);
             metadata.setMutable(true);
             metadata.setInheritedFromType(SkuImpl.class.getName());
-            metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class, em, useCache()));
+            metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class, em, skuMetadataCacheService.useCache()));
             metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
             metadata.setTargetClass(SkuImpl.class.getName());
             metadata.setFieldName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
@@ -772,6 +754,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
     }
 
+    @Override
     protected String[] getPolymorphicClasses(Class<?> clazz, EntityManager em, boolean useCache) {
         DynamicDaoHelperImpl helper = new DynamicDaoHelperImpl();
         Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(clazz,
@@ -835,7 +818,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * In this case, the following validation is skipped.
      * 
      * @param product
-     * @param productOptionValueIds
+     * @param productOptionProperties
      * @param currentSku - for update operations, this is the current Sku that is being updated; should be excluded from
      * attempting validation
      * @return <b>null</b> if successfully validation, the error entity otherwise
