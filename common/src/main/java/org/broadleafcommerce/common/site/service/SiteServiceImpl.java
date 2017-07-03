@@ -70,13 +70,14 @@ public class SiteServiceImpl implements SiteService {
     }
     
     protected Site retrieveSiteById(final Long id, final boolean persistentResult) {
-      //Since the methods on this class are frequently called during regular page requests and transactions are expensive,
-        //only run the operation under a transaction if there is not already an entity manager in the view
+        //Provide an entity manager in view, if we don't already have one, to facilitate a larger scope
+        //for the session and avoid lazy init problems. This should only cause a connection borrow from the
+        //connection pool if L2 cache is not effective.
         if (id == null) { return null; }
         final Site[] response = new Site[1];
-        transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+        transUtil.runOptionalEntityManagerInViewOperation(new Runnable() {
             @Override
-            public void execute() throws Throwable {
+            public void run() {
                 Site site = siteDao.retrieve(id);
                 if (persistentResult) {
                     response[0] = site;
@@ -84,7 +85,7 @@ public class SiteServiceImpl implements SiteService {
                     response[0] = getNonPersistentSite(site);
                 }
             }
-        }, RuntimeException.class, !TransactionSynchronizationManager.hasResource(((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory()));
+        });
 
         return response[0];
     }
@@ -106,12 +107,13 @@ public class SiteServiceImpl implements SiteService {
     }
     
     public Site retrieveSiteByDomainName(final String domainName, final boolean persistentResult) {
-        //Since the methods on this class are frequently called during regular page requests and transactions are expensive,
-        //only run the operation under a transaction if there is not already an entity manager in the view
+        //Provide an entity manager in view, if we don't already have one, to facilitate a larger scope
+        //for the session and avoid lazy init problems. This should only cause a connection borrow from the
+        //connection pool if L2 cache is not effective.
         final Site[] response = new Site[1];
-        transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+        transUtil.runOptionalEntityManagerInViewOperation(new Runnable() {
             @Override
-            public void execute() throws Throwable {
+            public void run() {
                 String domainPrefix = null;
                 String domain = domainName;
                 if (domainName != null) {
@@ -125,16 +127,15 @@ public class SiteServiceImpl implements SiteService {
                         domainPrefix = domainName;
                     }
                 }
-                
+
                 Site site = siteDao.retrieveSiteByDomainOrDomainPrefix(domain, domainPrefix);
                 if (persistentResult) {
                     response[0] = site;
                 } else {
                     response[0] = getNonPersistentSite(site);
                 }
-                
             }
-        }, RuntimeException.class, !TransactionSynchronizationManager.hasResource(((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory()));
+        });
 
         return response[0];
     }
@@ -201,12 +202,13 @@ public class SiteServiceImpl implements SiteService {
     }
     
     protected Site retrieveDefaultSite(final boolean persistentResult) {
-        //Since the methods on this class are frequently called during regular page requests and transactions are expensive,
-        //only run the operation under a transaction if there is not already an entity manager in the view
+        //Provide an entity manager in view, if we don't already have one, to facilitate a larger scope
+        //for the session and avoid lazy init problems. This should only cause a connection borrow from the
+        //connection pool if L2 cache is not effective.
         final Site[] response = new Site[1];
-        transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+        transUtil.runOptionalEntityManagerInViewOperation(new Runnable() {
             @Override
-            public void execute() throws Throwable {
+            public void run() {
                 Site defaultSite = siteDao.retrieveDefaultSite();
                 if (persistentResult) {
                     response[0] = defaultSite;
@@ -214,7 +216,7 @@ public class SiteServiceImpl implements SiteService {
                     response[0] = getNonPersistentSite(defaultSite);
                 }
             }
-        }, RuntimeException.class, !TransactionSynchronizationManager.hasResource(((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory()));
+        });
 
         return response[0];
     }
@@ -236,32 +238,38 @@ public class SiteServiceImpl implements SiteService {
     }
     
     protected List<Site> findAllSites(final boolean persistentResult) {
-        //Since the methods on this class are frequently called during regular page requests and transactions are expensive,
-          //only run the operation under a transaction if there is not already an entity manager in the view
-          final List<Site> response = new ArrayList<Site>();
-          transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
-              @Override
-              public void execute() throws Throwable {
-                  List<Site> sites = siteDao.readAllActiveSites();
-                  for (Site site : sites) {
-                      if (persistentResult) {
-                          response.add(site);
-                      } else {
-                          response.add(getNonPersistentSite(site));
-                      }
+        //Provide an entity manager in view, if we don't already have one, to facilitate a larger scope
+        //for the session and avoid lazy init problems. This should only cause a connection borrow from the
+        //connection pool if L2 cache is not effective.
+        final List<Site> response = new ArrayList<Site>();
+        transUtil.runOptionalEntityManagerInViewOperation(new Runnable() {
+            @Override
+            public void run() {
+              List<Site> sites = siteDao.readAllActiveSites();
+              for (Site site : sites) {
+                  if (persistentResult) {
+                      response.add(site);
+                  } else {
+                      response.add(getNonPersistentSite(site));
                   }
               }
-          }, RuntimeException.class, !TransactionSynchronizationManager.hasResource(((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory()));
+          }
+        });
 
-          return response;
+        return response;
       }
     
     protected Site getNonPersistentSite(Site persistentSite) {
         if (persistentSite == null) {
             return null;
         }
-        Site clone = persistentSite.clone();
-        extensionManager.getProxy().contributeNonPersitentSiteProperties(persistentSite, clone);
+        NonPersistentSiteTheadLocalCache cache = NonPersistentSiteTheadLocalCache.getSitesCache();
+        Site clone = cache.getSites().get(persistentSite.getId());
+        if (clone == null) {
+            clone = persistentSite.clone();
+            extensionManager.getProxy().contributeNonPersitentSiteProperties(persistentSite, clone);
+            cache.getSites().put(persistentSite.getId(), clone);
+        }
         return clone;
     }
     

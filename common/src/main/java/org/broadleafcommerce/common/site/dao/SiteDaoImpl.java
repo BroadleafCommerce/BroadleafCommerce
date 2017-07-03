@@ -81,6 +81,7 @@ public class SiteDaoImpl implements SiteDao {
         
         TypedQuery<Site> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blSiteElementsQuery");
         
         return query.getResultList();
     }
@@ -111,6 +112,7 @@ public class SiteDaoImpl implements SiteDao {
         );
         TypedQuery<Site> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blSiteElementsQuery");
 
         List<Site> results = query.getResultList();
         

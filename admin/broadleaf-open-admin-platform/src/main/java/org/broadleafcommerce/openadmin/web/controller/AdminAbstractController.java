@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.openadmin.dto.*;
+import org.broadleafcommerce.openadmin.server.domain.FetchPageRequest;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
@@ -56,11 +57,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * An abstract controller that provides convenience methods and resource declarations for the Admin
- *
+ * An abstract controller that provides convenience methods and resource declarations for the Admin.
  * Operations that are shared between all admin controllers belong here.
  *
- * @see org.broadleafcommerce.openadmin.web.handler.AdminNavigationHandlerMapping
  * @author elbertbautista
  * @author apazzolini
  */
@@ -177,10 +176,12 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * available, then this should be null (or empty)
      * 
      * @param mainMetadata class metadata for the root entity that this <b>collectionProperty</b> relates to
-     * @param id foreign key from the root entity for <b>collectionProperty</b>
+     * @param entity
      * @param collectionProperty property that this collection should be based on from the root entity
-     * @param form the criteria form model attribute
+     * @param requestParams
      * @param sectionKey the current main section key
+     * @param persistenceResponse
+     * @param sectionCrumbs
      * @return the list grid
      * @throws ServiceException
      */
@@ -191,8 +192,17 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         if (persistenceResponse != null && persistenceResponse.getAdditionalData().containsKey(PersistenceResponse.AdditionalData.CLONEID)) {
             entity.findProperty(idProperty).setValue((String) persistenceResponse.getAdditionalData().get(PersistenceResponse.AdditionalData.CLONEID));
         }
-        DynamicResultSet drs = service.getRecordsForCollection(mainMetadata, entity, collectionProperty,
-                getCriteria(requestParams), getStartIndex(requestParams), getMaxIndex(requestParams), sectionCrumbs).getDynamicResultSet();
+        FetchPageRequest pageRequest = new FetchPageRequest()
+            .withLastId(getLastId(requestParams))
+            .withFirstId(getFirstId(requestParams))
+            .withStartIndex(getStartIndex(requestParams))
+            .withMaxIndex(getMaxIndex(requestParams))
+            .withUpperCount(getUpperCount(requestParams))
+            .withLowerCount(getLowerCount(requestParams))
+            .withPageSize(getPageSize(requestParams));
+
+        DynamicResultSet drs = service.getPagedRecordsForCollection(mainMetadata, entity, collectionProperty,
+                getCriteria(requestParams), pageRequest, null, sectionCrumbs).getDynamicResultSet();
 
         ListGrid listGrid = formService.buildCollectionListGrid(entity.findProperty(idProperty).getValue(), drs,
                 collectionProperty, sectionKey, sectionCrumbs);
@@ -206,10 +216,11 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * available, then this should be null (or empty)
      *
      * @param mainMetadata class metadata for the root entity that this <b>collectionProperty</b> relates to
-     * @param id foreign key from the root entity for <b>collectionProperty</b>
+     * @param entity
      * @param collectionProperty property that this collection should be based on from the root entity
-     * @param form the criteria form model attribute
+     * @param requestParams
      * @param sectionKey the current main section key
+     * @param sectionCrumbs
      * @return the list grid
      * @throws ServiceException
      */
@@ -331,7 +342,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * 
      * @param info
      * @param entityId
-     * @param dynamicForm optional dynamic form that already has values to fill out
+     * @param dynamicFormOverride optional dynamic form that already has values to fill out
      * @return the entity form
      * @throws ServiceException
      */
@@ -635,7 +646,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     }
 
     /**
-     * A hook method that is invoked every time the {@link #getSectionPersistencePackageRequest(String)} method is invoked.
+     * A hook method that is invoked every time the getSectionPersistencePackageRequest(..) method is invoked.
      * This allows specialized controllers to hook into every request and manipulate the persistence package request as
      * desired.
      * 
@@ -673,6 +684,51 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         
         List<String> maxIndex = requestParams.get(FilterAndSortCriteria.MAX_INDEX_PARAMETER);
         return CollectionUtils.isEmpty(maxIndex) ? null : Integer.parseInt(maxIndex.get(0));
+    }
+
+    protected Long getLastId(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> lastId = requestParams.get(FilterAndSortCriteria.LAST_ID_PARAMETER);
+        return CollectionUtils.isEmpty(lastId) ? null : Long.parseLong(lastId.get(0));
+    }
+
+    protected Long getFirstId(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> firstId = requestParams.get(FilterAndSortCriteria.FIRST_ID_PARAMETER);
+        return CollectionUtils.isEmpty(firstId) ? null : Long.parseLong(firstId.get(0));
+    }
+
+    protected Integer getUpperCount(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> upperCount = requestParams.get(FilterAndSortCriteria.UPPER_COUNT_PARAMETER);
+        return CollectionUtils.isEmpty(upperCount) ? null : Integer.parseInt(upperCount.get(0));
+    }
+
+    protected Integer getLowerCount(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> lowerCount = requestParams.get(FilterAndSortCriteria.LOWER_COUNT_PARAMETER);
+        return CollectionUtils.isEmpty(lowerCount) ? null : Integer.parseInt(lowerCount.get(0));
+    }
+
+    protected Integer getPageSize(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+
+        List<String> pageSize = requestParams.get(FilterAndSortCriteria.PAGE_SIZE_PARAMETER);
+        return CollectionUtils.isEmpty(pageSize) ? null : Integer.parseInt(pageSize.get(0));
     }
     
     // ************************
@@ -737,11 +793,13 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     }
 
     /**
-     * Returns the result of a call to {@link #getSectionPersistencePackageRequest(String)} with the additional filter
+     * Returns the result of a call to getSectionPersistencePackageRequest(..) with the additional filter
      * and sort criteria attached.
      * 
      * @param sectionClassName
-     * @param filterAndSortCriteria
+     * @param requestParams
+     * @param sectionCrumbs
+     * @param pathVars
      * @return the PersistencePacakageRequest
      */
     protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, 
@@ -753,7 +811,13 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                 .withFilterAndSortCriteria(fascs)
                 .withStartIndex(getStartIndex(requestParams))
                 .withMaxIndex(getMaxIndex(requestParams))
-                .withSectionCrumbs(sectionCrumbs);
+                .withSectionCrumbs(sectionCrumbs)
+                .withLastId(getLastId(requestParams))
+                .withFirstId(getFirstId(requestParams))
+                .withUpperCount(getUpperCount(requestParams))
+                .withLowerCount(getLowerCount(requestParams))
+                .withPageSize(getPageSize(requestParams))
+                .withPresentationFetch(true);
 
         attachSectionSpecificInfo(ppr, pathVars);
 

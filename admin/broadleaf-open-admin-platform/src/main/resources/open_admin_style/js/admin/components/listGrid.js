@@ -208,6 +208,11 @@
             var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
             $spinner.parent().css('display', 'none');
         },
+
+        isLoading : function($tbody) {
+            var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
+            return $spinner.parent().css('display') === 'block';
+        },
         
         initialize : function($container) {
             BLCAdmin.listGrid.updateToolbarRowActionButtons($container);

@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
+import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
@@ -52,6 +53,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AdminCategoryController extends AdminBasicEntityController {
     
     protected static final String SECTION_KEY = "category";
+    protected static final String TREE_KEY = "tree";
     
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -67,6 +69,10 @@ public class AdminCategoryController extends AdminBasicEntityController {
     
     protected boolean getTreeViewEnabled() {
         return BLCSystemProperty.resolveBooleanSystemProperty("admin.category.treeViewEnabled");
+    }
+
+    protected boolean getTreeViewAsync() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("admin.category.treeView.async", false);
     }
 
     @Override
@@ -91,13 +97,35 @@ public class AdminCategoryController extends AdminBasicEntityController {
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
-        String returnPath = super.viewEntityList(request, response, model, pathVars, requestParams);
-
-        if (getTreeViewEnabled()) {
-            return entityListWithTreeView(model);
+        if (requestParams.containsKey(TREE_KEY)) {
+            String sectionKey = getSectionKey(pathVars);
+            setModelAttributes(model, sectionKey);
+            return entityListWithTreeViewModal(model);
         } else {
-            return returnPath;
+            String returnPath = super.viewEntityList(request, response, model, pathVars, requestParams);
+            boolean treeViewAsync = getTreeViewAsync();
+            if (getTreeViewEnabled() && !treeViewAsync) {
+                return entityListWithTreeView(model);
+            } else {
+                if (treeViewAsync) {
+                    List<EntityFormAction> mainActions = (List<EntityFormAction>) model.asMap().get("mainActions");
+                    mainActions.add(new EntityFormAction("CategoryTreeView")
+                            .withButtonClass("show-category-tree-view-modal")
+                            .withDisplayText("Category_Tree_View"));
+                }
+                return returnPath;
+            }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected String entityListWithTreeViewModal(Model model) {
+        List<Category> parentCategories = catalogService.findAllParentCategories();
+        model.addAttribute("parentCategories", parentCategories);
+        model.addAttribute("viewType", "modal/categoryTreeModal");
+        model.addAttribute("modalHeaderType", ModalHeaderType.CUSTOM.getType());
+        model.addAttribute("modalTitle", "Category_Tree_View");
+        return "modules/modalContainer";
     }
 
     @SuppressWarnings("unchecked")

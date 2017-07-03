@@ -65,6 +65,26 @@
         getTotalRecords : function($tbody) {
             return $tbody.data('totalrecords');
         },
+
+        getFirstId : function($tbody) {
+            return $tbody.data('firstid');
+        },
+
+        getLastId : function($tbody) {
+            return $tbody.data('lastid');
+        },
+
+        getUpperCount : function($tbody) {
+            return $tbody.data('uppercount');
+        },
+
+        getLowerCount : function($tbody) {
+            return $tbody.data('lowercount');
+        },
+
+        getTotalCountLessThanPageSize : function($tbody) {
+            return $tbody.data('lessthanpagesize');
+        },
         
         getRange : function(rangeDescription) {
             var range = rangeDescription.split('-');
@@ -465,11 +485,55 @@
             var topIndex = this.getTopVisibleIndex($tbody) + 1;
             var botIndex = this.getBottomVisibleIndex($tbody) + 1;
             var totalRecords = this.getTotalRecords($tbody);
+            var pageSize = this.getPageSize($tbody);
+            var lowerCount = this.getLowerCount($tbody);
+            var upperCount = this.getUpperCount($tbody);
+            var totalCountLessThanPageSize = this.getTotalCountLessThanPageSize($tbody);
             var $footer = $tbody.closest('.listgrid-container').find('.listgrid-table-footer');
             
             $footer.find('.low-index').text(topIndex);
             $footer.find('.high-index').text(botIndex);
             $footer.find('.total-records').text(totalRecords);
+            if (upperCount - totalRecords > 1) {
+                $footer.find('.previous-page').css('visibility', 'visible');
+            } else {
+                $footer.find('.previous-page').css('visibility', 'hidden');
+            }
+            if (totalRecords >= pageSize || (!totalCountLessThanPageSize && totalRecords - upperCount === 0)) {
+                $footer.find('.next-page').css('visibility', 'visible');
+            } else {
+                $footer.find('.next-page').css('visibility', 'hidden');
+            }
+            $footer.find('.first-index').text(lowerCount);
+            $footer.find('.last-index').text(upperCount);
+
+            //expose either the paging control or the standard scroll counter
+            var $header = $tbody.closest('div.listgrid-body-wrapper').siblings('div.listgrid-header-wrapper');
+            var $headerTable = $header.find("table");
+            var params = BLCAdmin.history.getUrlParameters();
+            if (!params) {
+                params = $headerTable.data('currentparams');
+            }
+            var foundFilterOrSort = false;
+            if (params) {
+                $.each(params, function(key, value) {
+                    var $criteriaInput = $header.find("input[data-name='" + key + "']");
+                    if (!$criteriaInput || $criteriaInput.length <= 0) {
+                        $criteriaInput = $header.find("select[data-name='" + key + "']");
+                    }
+                    if ($criteriaInput && $criteriaInput.length > 0) {
+                        foundFilterOrSort = true;
+                    }
+                });
+            }
+            var fetchType = $headerTable.data("fetchtype");
+            if (!foundFilterOrSort && fetchType === 'LARGERESULTSET') {
+                $footer.find('.page-results').css('display', 'inline');
+                $footer.find('.scroll-results').css('display', 'none');
+            } else {
+                $footer.find('.page-results').css('display', 'none');
+                $footer.find('.scroll-results').css('display', 'inline');
+            }
         },
         
         updateGridSize : function($tbody) {
@@ -755,6 +819,73 @@ $(document).ready(function() {
             });
         });
     });
-    
+
+    $('body').on('click', 'a.previous-page', function(event) {
+        var $pageLink = $(this);
+        var $parentSpan = $pageLink.closest('span.listgrid-table-footer');
+        var $headerWrapper = $parentSpan.siblings('div.listgrid-header-wrapper');
+        var $bodyWrapper = $parentSpan.siblings('div.listgrid-body-wrapper');
+        var $tbody = $bodyWrapper.find('table.list-grid-table').find('tbody');
+        var currentUrl = $tbody.closest('table').data('path');
+        if (BLCAdmin.listGrid.isLoading($tbody)) {
+            return false;
+        }
+        var firstId = BLCAdmin.listGrid.paginate.getFirstId($tbody);
+        currentUrl = BLCAdmin.history.getUrlWithParameter('firstId', firstId, null, currentUrl);
+        var lowerCount = BLCAdmin.listGrid.paginate.getLowerCount($tbody);
+        var upperCount = BLCAdmin.listGrid.paginate.getUpperCount($tbody);
+        currentUrl = BLCAdmin.history.getUrlWithParameter('upperCount', upperCount, null, currentUrl);
+        currentUrl = BLCAdmin.history.getUrlWithParameter('lowerCount', lowerCount, null, currentUrl);
+        var pageSize = $tbody.closest('.listgrid-container').find('.listgrid-table-footer').find('.result-page-size-input').val();
+        currentUrl = BLCAdmin.history.getUrlWithParameter('pageSize', pageSize, null, currentUrl);
+        var spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (BLCAdmin.listGrid.paginate.getRowHeight($tbody));
+        BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
+        BLC.ajax({
+            url: currentUrl,
+            type: "GET"
+        }, function(data) {
+            BLCAdmin.listGrid.hideLoadingSpinner($tbody);
+            BLCAdmin.listGrid.replaceRelatedListGrid($(data), null, { isRefresh : false});
+        });
+        return false;
+    });
+
+    $('body').on('click', 'a.next-page', function(event) {
+        var $pageLink = $(this);
+        var $parentSpan = $pageLink.closest('span.listgrid-table-footer');
+        var $headerWrapper = $parentSpan.siblings('div.listgrid-header-wrapper');
+        var $bodyWrapper = $parentSpan.siblings('div.listgrid-body-wrapper');
+        var $tbody = $bodyWrapper.find('table.list-grid-table').find('tbody');
+        var currentUrl = $tbody.closest('table').data('path');
+        if (BLCAdmin.listGrid.isLoading($tbody)) {
+            return false;
+        }
+        var lastId = BLCAdmin.listGrid.paginate.getLastId($tbody);
+        currentUrl = BLCAdmin.history.getUrlWithParameter('lastId', lastId, null, currentUrl);
+        var lowerCount = BLCAdmin.listGrid.paginate.getLowerCount($tbody);
+        var upperCount = BLCAdmin.listGrid.paginate.getUpperCount($tbody);
+        currentUrl = BLCAdmin.history.getUrlWithParameter('upperCount', upperCount, null, currentUrl);
+        currentUrl = BLCAdmin.history.getUrlWithParameter('lowerCount', lowerCount, null, currentUrl);
+        var pageSize = $tbody.closest('.listgrid-container').find('.listgrid-table-footer').find('.result-page-size-input').val();
+        currentUrl = BLCAdmin.history.getUrlWithParameter('pageSize', pageSize, null, currentUrl);
+        var spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (BLCAdmin.listGrid.paginate.getRowHeight($tbody));
+        BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
+        BLC.ajax({
+            url: currentUrl,
+            type: "GET"
+        }, function(data) {
+            BLCAdmin.listGrid.hideLoadingSpinner($tbody);
+            var $newTBody = $(data).find('tbody');
+            var totalRecords = BLCAdmin.listGrid.paginate.getTotalRecords($newTBody);
+            var $footer = $tbody.closest('.listgrid-container').find('.listgrid-table-footer');
+            if (totalRecords === 0) {
+                $footer.find('.next-page').css('visibility', 'hidden');
+            } else {
+                $footer.find('.next-page').css('visibility', 'visible');
+                BLCAdmin.listGrid.replaceRelatedListGrid($(data), null, { isRefresh : false});
+            }
+        });
+        return false;
+    });
 });
 

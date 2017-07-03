@@ -233,30 +233,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                             })
                     ));
         }
-        if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
-                (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
-            //Add special handling for product list grid fetches
-            boolean hasExplicitSort = false;
-            for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
-                hasExplicitSort = filter.getSortDirection() != null;
-                if (hasExplicitSort) {
-                    break;
-                }
-            }
-            if (!hasExplicitSort) {
-                FilterAndSortCriteria filter = cto.get("id");
-                filter.setNullsLast(false);
-                filter.setSortAscending(true);
-            }
-            try {
-                extensionManager.getProxy().initiateFetchState();
-                return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
-            } finally {
-                extensionManager.getProxy().endFetchState();
-            }
-        } else {
-            return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
-        }
+        return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
     }
 
     @Override

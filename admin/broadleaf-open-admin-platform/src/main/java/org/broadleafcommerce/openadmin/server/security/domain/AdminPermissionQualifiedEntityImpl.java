@@ -50,7 +50,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADMIN_PERMISSION_ENTITY")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurity")
 public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualifiedEntity, Serializable {
 
     private static final Log LOG = LogFactory.getLog(AdminPermissionQualifiedEntityImpl.class);

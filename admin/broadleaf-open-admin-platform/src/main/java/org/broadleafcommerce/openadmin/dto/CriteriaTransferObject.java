@@ -38,6 +38,11 @@ public class CriteriaTransferObject {
 
     private Integer firstResult;
     private Integer maxResults;
+    private Long lastId;
+    private Long firstId;
+    private Integer upperCount;
+    private Integer lowerCount;
+    private Boolean presentationFetch;
 
     private Map<String, FilterAndSortCriteria> criteriaMap = new HashMap<String, FilterAndSortCriteria>();
 
@@ -78,6 +83,46 @@ public class CriteriaTransferObject {
      */
     public void setMaxResults(Integer maxResults) {
         this.maxResults = maxResults;
+    }
+
+    public Long getLastId() {
+        return lastId;
+    }
+
+    public void setLastId(Long lastId) {
+        this.lastId = lastId;
+    }
+
+    public Long getFirstId() {
+        return firstId;
+    }
+
+    public void setFirstId(Long firstId) {
+        this.firstId = firstId;
+    }
+
+    public Integer getUpperCount() {
+        return upperCount;
+    }
+
+    public void setUpperCount(Integer upperCount) {
+        this.upperCount = upperCount;
+    }
+
+    public Integer getLowerCount() {
+        return lowerCount;
+    }
+
+    public void setLowerCount(Integer lowerCount) {
+        this.lowerCount = lowerCount;
+    }
+
+    public Boolean getPresentationFetch() {
+        return presentationFetch;
+    }
+
+    public void setPresentationFetch(Boolean presentationFetch) {
+        this.presentationFetch = presentationFetch;
     }
 
     /**

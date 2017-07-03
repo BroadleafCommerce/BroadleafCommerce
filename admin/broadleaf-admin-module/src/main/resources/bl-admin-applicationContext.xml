@@ -48,6 +48,7 @@
                 <ref bean="blSearchFacetRangeCustomPersistenceHandler" />
                 <ref bean="blIndexFieldCustomPersistenceHandler" />
                 <ref bean="blProductOptionsCustomPersistenceHandler" />
+                <ref bean="blProductOptionValuesCustomPersistenceHandler" />
             </list>
         </property>
     </bean>
