@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -28,7 +29,6 @@ import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
-import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.order.dao.OrderItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -428,8 +428,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         return createBundleOrderItem(itemRequest, true);
     }
 
-    
-    
     @Override
     public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item) {
         OrderItemRequestDTO orderItemRequest; 
@@ -453,6 +451,18 @@ public class OrderItemServiceImpl implements OrderItemService {
             if (doi.getOrderItemAttributes() != null) {
                 for (Entry<String, OrderItemAttribute> entry : item.getOrderItemAttributes().entrySet()) {
                     orderItemRequest.getItemAttributes().put(entry.getKey(), entry.getValue().getValue());
+                }
+            }
+
+            if (doi.getAdditionalAttributes() != null) {
+                for (Entry<String, String> entry : doi.getAdditionalAttributes().entrySet()) {
+                    orderItemRequest.getAdditionalAttributes().put(entry.getKey(), entry.getValue());
+                }
+            }
+
+            if (CollectionUtils.isNotEmpty(doi.getChildOrderItems())) {
+                for (OrderItem childItem : doi.getChildOrderItems()) {
+                    orderItemRequest.getChildOrderItems().add(buildOrderItemRequestDTOFromOrderItem(childItem));
                 }
             }
         } else {

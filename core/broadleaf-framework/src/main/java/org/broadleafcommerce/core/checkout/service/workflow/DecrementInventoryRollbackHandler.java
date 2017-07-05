@@ -40,7 +40,7 @@ import javax.annotation.Resource;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blDecrementInventoryRollbackHandler")
-public class DecrementInventoryRollbackHandler implements RollbackHandler<CheckoutSeed>{
+public class DecrementInventoryRollbackHandler implements RollbackHandler<ProcessContext<CheckoutSeed>>{
 
     private static final Log LOG = LogFactory.getLog(DecrementInventoryRollbackHandler.class);
     
@@ -53,7 +53,7 @@ public class DecrementInventoryRollbackHandler implements RollbackHandler<Checko
     protected ContextualInventoryService inventoryService;
     
     @Override
-    public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration)
+    public void rollbackState(Activity<ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration)
             throws RollbackFailureException {
 
         if (shouldExecute(activity, processContext, stateConfiguration)) {
@@ -68,7 +68,7 @@ public class DecrementInventoryRollbackHandler implements RollbackHandler<Checko
             @SuppressWarnings("unchecked")
             Map<Sku, Integer> inventoryToDecrement = (Map<Sku, Integer>) stateConfiguration.get(ROLLBACK_BLC_INVENTORY_INCREMENTED);
             
-            Map<String, Object> contextualInformation = new HashMap<String, Object>();
+            Map<String, Object> contextualInformation = new HashMap<>();
             contextualInformation.put(ContextualInventoryService.ROLLBACK_STATE_KEY, stateConfiguration.get(EXTENDED_ROLLBACK_STATE));
             contextualInformation.put(ContextualInventoryService.ORDER_KEY, processContext.getSeedData().getOrder());
             if (inventoryToIncrement != null && !inventoryToIncrement.isEmpty()) {

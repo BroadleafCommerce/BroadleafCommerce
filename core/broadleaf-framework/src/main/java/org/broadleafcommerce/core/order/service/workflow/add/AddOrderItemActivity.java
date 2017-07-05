@@ -69,11 +69,8 @@ public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperat
         order.getOrderItems().add(item);
         request.setOrderItem(item);
 
-        if (!request.isPriceOrder()) {
-            //persist the newly created order if we're not going through the pricing flow. This helps with proper
-            //fulfillment group association
-            genericEntityDao.persist(item);
-        }
+
+        genericEntityDao.persist(item);
 
         return context;
     }

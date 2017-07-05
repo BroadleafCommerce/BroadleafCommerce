@@ -96,10 +96,10 @@ public class RollbackTest extends TestNGSiteIntegrationSetup {
         
     }
     
-    public static class SimpleRollbackHandler implements RollbackHandler<List<String>> {
+    public static class SimpleRollbackHandler implements RollbackHandler<ProcessContext<List<String>>> {
 
         @Override
-        public void rollbackState(Activity<? extends ProcessContext<List<String>>> activity, ProcessContext<List<String>> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
+        public void rollbackState(Activity<ProcessContext<List<String>>> activity, ProcessContext<List<String>> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
             processContext.getSeedData().add("Rollback" + ((SimpleActivity) activity).getName());
         }
         

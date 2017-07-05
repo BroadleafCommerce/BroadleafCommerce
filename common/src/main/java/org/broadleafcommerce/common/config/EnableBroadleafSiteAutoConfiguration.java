@@ -17,9 +17,11 @@
  */
 package org.broadleafcommerce.common.config;
 
+import org.broadleafcommerce.common.config.EnableBroadleafSiteAutoConfiguration.BroadleafSiteAutoConfigurationOverrides;
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -80,6 +82,11 @@ import javax.servlet.ServletContainerInitializer;
 @Documented
 @Import({
     EnableBroadleafSiteRootAutoConfiguration.BroadleafSiteRootAutoConfiguration.class,
-    EnableBroadleafSiteServletAutoConfiguration.BroadleafSiteServletAutoConfiguration.class
+    EnableBroadleafSiteServletAutoConfiguration.BroadleafSiteServletAutoConfiguration.class,
+    BroadleafSiteAutoConfigurationOverrides.class
 })
-public @interface EnableBroadleafSiteAutoConfiguration {}
+public @interface EnableBroadleafSiteAutoConfiguration {
+    
+    @ImportResource("classpath:/override-contexts/site-root-autoconfiguration-overrides.xml")
+    class BroadleafSiteAutoConfigurationOverrides { }
+}

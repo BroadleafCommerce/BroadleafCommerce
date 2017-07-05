@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.workflow;
 
-public abstract class BaseExtensionActivity<T extends ProcessContext<? extends Object>> extends BaseActivity<T> {
+public abstract class BaseExtensionActivity<T extends ProcessContext<?>> extends BaseActivity<T> {
     
     @Override
     public T execute(T context) throws Exception {

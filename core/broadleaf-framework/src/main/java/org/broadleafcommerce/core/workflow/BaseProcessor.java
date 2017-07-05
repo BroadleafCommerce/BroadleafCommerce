@@ -49,11 +49,11 @@ import java.util.List;
  * @see Activity
  * 
  */
-public abstract class BaseProcessor implements BeanNameAware, BeanFactoryAware, Processor, ApplicationListener<ContextRefreshedEvent> {
+public abstract class BaseProcessor<U, T> implements BeanNameAware, BeanFactoryAware, Processor<U, T>, ApplicationListener<ContextRefreshedEvent> {
 
     protected BeanFactory beanFactory;
     protected String beanName;
-    protected List<Activity<ProcessContext<? extends Object>>> activities = new ArrayList<>();
+    protected List<Activity<ProcessContext<U>>> activities = new ArrayList<>();
     protected List<ModuleActivity> moduleActivities = new ArrayList<>();
     
     protected ErrorHandler defaultErrorHandler;
@@ -146,8 +146,8 @@ public abstract class BaseProcessor implements BeanNameAware, BeanFactoryAware, 
         OrderComparator.sort(activities);
 
         HashSet<String> moduleNames = new HashSet<>();
-        for (Iterator<Activity<ProcessContext<? extends Object>>> iter = activities.iterator(); iter.hasNext();) {
-            Activity<? extends ProcessContext<? extends Object>> activity = iter.next();
+        for (Iterator<Activity<ProcessContext<U>>> iter = activities.iterator(); iter.hasNext();) {
+            Activity<ProcessContext<U>> activity = iter.next();
             if ( !supports(activity)) {
                 throw new BeanInitializationException("The workflow processor ["+beanName+"] does " +
                         "not support the activity of type"+activity.getClass().getName());
@@ -197,7 +197,7 @@ public abstract class BaseProcessor implements BeanNameAware, BeanFactoryAware, 
      * @param activities ordered collection (List) of activities to be executed by the processor
      */
     @Override
-    public void setActivities(List<Activity<ProcessContext<? extends Object>>> activities) {
+    public void setActivities(List<Activity<ProcessContext<U>>> activities) {
         this.activities = activities;
     }
 
@@ -206,7 +206,7 @@ public abstract class BaseProcessor implements BeanNameAware, BeanFactoryAware, 
         this.defaultErrorHandler = defaultErrorHandler;
     }
 
-    public List<Activity<ProcessContext<? extends Object>>> getActivities() {
+    public List<Activity<ProcessContext<U>>> getActivities() {
         return activities;
     }
     

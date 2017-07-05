@@ -29,7 +29,7 @@ import java.util.Map;
  *
  * @author Jeff Fischer
  */
-public interface RollbackHandler<T> {
+public interface RollbackHandler<T extends ProcessContext<?>> {
 
     /**
      * Rollback the state of the activity to what it was prior to execution.
@@ -39,7 +39,7 @@ public interface RollbackHandler<T> {
      * @param stateConfiguration Any user-defined state configuration associated with the RollbackHandler
      * @throws RollbackFailureException if there is a failure during the execution of the rollback
      */
-    public void rollbackState(Activity<? extends ProcessContext<T>> activity,
-            ProcessContext<T> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException;
+    public void rollbackState(Activity<T> activity,
+            T processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException;
 
 }

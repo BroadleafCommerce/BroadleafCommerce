@@ -28,9 +28,11 @@ import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
+import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
@@ -100,7 +102,28 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         }
         
         model.setViewName(templatePath);
+
+        // Check if this is request to edit an existing order item
+        String isEditRequest = request.getParameter("edit");
+        String oidParam = request.getParameter("oid");
+        if (StringUtils.isNotEmpty(isEditRequest) && StringUtils.isNotEmpty(oidParam)) {
+            Long oid = Long.parseLong(oidParam);
+            OrderItem orderItem = orderItemService.readOrderItemById(oid);
+            if (orderItemBelongsToCurrentCustomer(orderItem)) {
+                // Update the itemRequest to contain user's previous input
+                orderItemService.mergeOrderItemRequest(itemRequest, orderItem);
+
+                // Add the order item to the model
+                model.addObject("isUpdateRequest", true);
+                model.addObject("orderItem", orderItem);
+            }
+        }
+
         return model;
+    }
+
+    protected boolean orderItemBelongsToCurrentCustomer(OrderItem orderItem) {
+        return orderItem != null && CustomerState.getCustomer() == orderItem.getOrder().getCustomer();
     }
 
     public String getDefaultProductView() {

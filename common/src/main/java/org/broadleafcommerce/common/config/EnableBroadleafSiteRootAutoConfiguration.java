@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.config;
 
+import org.broadleafcommerce.common.config.EnableBroadleafSiteRootAutoConfiguration.BroadleafSiteRootAutoConfiguration;
+import org.broadleafcommerce.common.config.EnableBroadleafSiteRootAutoConfiguration.BroadleafSiteRootAutoConfigurationOverrides;
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
@@ -80,8 +82,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import({
-    EnableBroadleafRootAutoConfiguration.BroadleafRootAutoConfiguration.class,
-    EnableBroadleafSiteRootAutoConfiguration.BroadleafSiteRootAutoConfiguration.class
+    BroadleafSiteRootAutoConfiguration.class,
+    BroadleafSiteRootAutoConfigurationOverrides.class
 })
 public @interface EnableBroadleafSiteRootAutoConfiguration {
 
@@ -98,4 +100,7 @@ public @interface EnableBroadleafSiteRootAutoConfiguration {
             "classpath*:/blc-config/site/late/bl-*-applicationContext.xml"
     }, reader = FrameworkXmlBeanDefinitionReader.class)
     class BroadleafSiteRootAutoConfiguration {}
+    
+    @ImportResource("classpath:/override-contexts/site-root-autoconfiguration-overrides.xml")
+    class BroadleafSiteRootAutoConfigurationOverrides {}
 }

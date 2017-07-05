@@ -38,7 +38,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "BLC_SITE_CATALOG")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSiteElements")
 @AdminPresentationClass(friendlyName = "SiteCatalogXrefImpl")
 public class SiteCatalogXrefImpl implements SiteCatalogXref, AdminMainEntity {
 

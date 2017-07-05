@@ -21,36 +21,37 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManager;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
+import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
 import org.broadleafcommerce.core.workflow.state.RollbackStateLocal;
 
 import java.util.List;
 
-public class SequenceProcessor extends BaseProcessor {
+public class SequenceProcessor<U, T> extends BaseProcessor<U, T> {
 
     private static final Log LOG = LogFactory.getLog(SequenceProcessor.class);
 
-    private ProcessContextFactory<Object, Object> processContextFactory;
+    private ProcessContextFactory<U, T> processContextFactory;
 
     @Override
-    public boolean supports(Activity<? extends ProcessContext<?>> activity) {
+    public boolean supports(Activity<? extends ProcessContext<U>> activity) {
         return true;
     }
 
     @Override
-    public ProcessContext<?> doActivities() throws WorkflowException {
+    public <P extends ProcessContext<U>> P doActivities() throws WorkflowException {
         return doActivities(null);
     }
 
     @Override
-    public ProcessContext<?> doActivities(Object seedData) throws WorkflowException {
+    public <P extends ProcessContext<U>> P doActivities(T seedData) throws WorkflowException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(getBeanName() + " processor is running..");
         }
-        ActivityStateManager activityStateManager = ((ActivityStateManager) getBeanFactory().getBean("blActivityStateManager"));
+        ActivityStateManager activityStateManager = getBeanFactory().getBean(ActivityStateManager.class, "blActivityStateManager");
         if (activityStateManager == null) {
             throw new IllegalStateException("Unable to find an instance of ActivityStateManager registered under bean id blActivityStateManager");
         }
-        ProcessContext<?> context = null;
+        ProcessContext<U> context = null;
         
         RollbackStateLocal rollbackStateLocal = new RollbackStateLocal();
         rollbackStateLocal.setThreadId(String.valueOf(Thread.currentThread().getId()));
@@ -59,12 +60,12 @@ public class SequenceProcessor extends BaseProcessor {
         
         try {
             //retrieve injected by Spring
-            List<Activity<ProcessContext<?>>> activities = getActivities();
+            List<Activity<ProcessContext<U>>> activities = getActivities();
 
             //retrieve a new instance of the Workflow ProcessContext
             context = createContext(seedData);
 
-            for (Activity<ProcessContext<?>> activity : activities) {
+            for (Activity<ProcessContext<U>> activity : activities) {
                 if (activity.shouldExecute(context)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("running activity:" + activity.getBeanName() + " using arguments:" + context);
@@ -72,30 +73,34 @@ public class SequenceProcessor extends BaseProcessor {
     
                     try {
                         context = activity.execute(context);
-                    } catch (Throwable th) {
-                        try {
-                            if (getAutoRollbackOnError()) {
-                                LOG.info("Automatically rolling back state for any previously registered " +
-                                        "RollbackHandlers. RollbackHandlers may be registered for workflow activities" +
-                                        " in appContext.");
+                    } catch (Throwable activityException) {
+                        RollbackFailureException rollbackFailure = null;
+                        if (getAutoRollbackOnError()) {
+                            LOG.info(String.format("Exception ocurred in %s, executing rollback handlers", rollbackStateLocal.getWorkflowId()));
+                            
+                            try {
                                 ActivityStateManagerImpl.getStateManager().rollbackAllState();
+                            } catch (Throwable rollbackException) {
+                                LOG.fatal(String.format("There was an exception rolling back %s", rollbackStateLocal.getWorkflowId()), rollbackException);
+                                
+                                if (rollbackException instanceof RollbackFailureException) {
+                                    rollbackFailure = (RollbackFailureException) rollbackException;
+                                } else {
+                                    rollbackFailure = new RollbackFailureException(rollbackException);
+                                }
+                                
+                                LOG.error(String.format("The original cause of the rollback for %s was", rollbackStateLocal.getWorkflowId()), activityException);
+                                rollbackFailure.setOriginalWorkflowException(activityException);
+                                throw rollbackFailure;
                             }
-                            ErrorHandler errorHandler = activity.getErrorHandler();
-                            if (errorHandler == null) {
-                                LOG.info("no error handler for this action, run default error" + "handler and abort " +
-                                        "processing ");
-                                getDefaultErrorHandler().handleError(context, th);
-                                break;
-                            } else {
-                                LOG.info("run error handler and continue");
-                                errorHandler.handleError(context, th);
-                            }
-                        } catch (RuntimeException e) {
-                            LOG.error("An exception was caught while attempting to handle an activity generated exception", e);
-                            throw e;
-                        } catch (WorkflowException e) {
-                            LOG.error("An exception was caught while attempting to handle an activity generated exception", e);
-                            throw e;
+                        }
+                        
+                        ErrorHandler errorHandler = activity.getErrorHandler();
+                        if (errorHandler == null) {
+                            getDefaultErrorHandler().handleError(context, activityException);
+                            break;
+                        } else {
+                            errorHandler.handleError(context, activityException);
                         }
                     }
     
@@ -120,7 +125,7 @@ public class SequenceProcessor extends BaseProcessor {
         }
         LOG.debug(getBeanName() + " processor is done.");
 
-        return context;
+        return (P) context;
     }
 
     /**
@@ -131,7 +136,7 @@ public class SequenceProcessor extends BaseProcessor {
      * @param activity
      *            the current activity in the iteration
      */
-    protected boolean processShouldStop(ProcessContext<?> context, Activity<? extends ProcessContext<?>> activity) {
+    protected boolean processShouldStop(ProcessContext<U> context, Activity<ProcessContext<U>> activity) {
         if (context == null || context.isStopped()) {
             LOG.info("Interrupted workflow as requested by:" + activity.getBeanName());
             return true;
@@ -139,12 +144,12 @@ public class SequenceProcessor extends BaseProcessor {
         return false;
     }
 
-    protected ProcessContext<Object> createContext(Object seedData) throws WorkflowException {
+    protected ProcessContext<U> createContext(T seedData) throws WorkflowException {
         return processContextFactory.createContext(seedData);
     }
 
     @Override
-    public void setProcessContextFactory(ProcessContextFactory<Object, Object> processContextFactory) {
+    public void setProcessContextFactory(ProcessContextFactory<U, T> processContextFactory) {
         this.processContextFactory = processContextFactory;
     }
 

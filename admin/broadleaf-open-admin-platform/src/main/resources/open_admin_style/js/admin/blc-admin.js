@@ -308,7 +308,7 @@ var BLCAdmin = (function($) {
                 }
                 $buttonDiv.remove().appendTo($footer);
             }
-        },
+    	},
 
         showMessageAsModal : function(header, message) {
             this.showMessageAsModalWithCallback(header, message);

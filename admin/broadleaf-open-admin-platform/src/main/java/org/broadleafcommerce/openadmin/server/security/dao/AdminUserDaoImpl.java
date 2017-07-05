@@ -82,6 +82,7 @@ public class AdminUserDaoImpl implements AdminUserDao {
     public AdminUser readAdminUserByUserName(String userName) {
         TypedQuery<AdminUser> query = em.createNamedQuery("BC_READ_ADMIN_USER_BY_USERNAME", AdminUser.class);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityVolatileQuery");
         query.setParameter("userName", userName);
         List<AdminUser> users = query.getResultList();
         //TODO rewrite on streams when upgraded to java 8
@@ -103,6 +104,7 @@ public class AdminUserDaoImpl implements AdminUserDao {
     public List<AdminUser> readAllAdminUsers() {
         TypedQuery<AdminUser> query = em.createNamedQuery("BC_READ_ALL_ADMIN_USERS", AdminUser.class);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityVolatileQuery");
         return query.getResultList();
     }
 

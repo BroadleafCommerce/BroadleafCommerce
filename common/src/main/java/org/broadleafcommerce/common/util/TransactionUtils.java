@@ -21,10 +21,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import javax.persistence.EntityManager;
 
 /**
  * @author Jeff Fischer
@@ -82,6 +85,12 @@ public class TransactionUtils {
         def.setPropagationBehavior(propagationBehavior);
         def.setIsolationLevel(isolationLevel);
         return transactionManager.getTransaction(def);
+    }
+
+    public static boolean isTransactionalEntityManager(EntityManager em) {
+        EntityManager target = EntityManagerFactoryUtils.doGetTransactionalEntityManager(
+        					em.getEntityManagerFactory(), em.getProperties(), true);
+        return target != null;
     }
 
     public static void finalizeTransaction(Transaction transaction, boolean isError) {

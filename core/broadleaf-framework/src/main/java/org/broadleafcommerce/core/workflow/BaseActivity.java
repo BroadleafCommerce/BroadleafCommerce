@@ -27,7 +27,7 @@ public abstract class BaseActivity<T extends ProcessContext<?>> implements Activ
     protected ErrorHandler errorHandler;
     protected String beanName;
 
-    protected RollbackHandler<?> rollbackHandler;
+    protected RollbackHandler<T> rollbackHandler;
     protected String rollbackRegion;
     protected Map<String, Object> stateConfiguration;
     protected boolean automaticallyRegisterRollbackHandler = false;
@@ -59,12 +59,12 @@ public abstract class BaseActivity<T extends ProcessContext<?>> implements Activ
     }
 
     @Override
-    public RollbackHandler<?> getRollbackHandler() {
+    public RollbackHandler<T> getRollbackHandler() {
         return rollbackHandler;
     }
 
     @Override
-    public void setRollbackHandler(RollbackHandler<?> rollbackHandler) {
+    public void setRollbackHandler(RollbackHandler<T> rollbackHandler) {
         this.rollbackHandler = rollbackHandler;
     }
 
