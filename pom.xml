@@ -119,7 +119,10 @@
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
-                    <version>1.3</version>
+                    <version>1.5</version>
+                    <configuration>
+                        <targetBytecode>1.7</targetBytecode>
+                    </configuration>
                     <executions>
                         <execution>
                             <goals>
