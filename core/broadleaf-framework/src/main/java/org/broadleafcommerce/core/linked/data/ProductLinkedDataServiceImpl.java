@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.linked.data;
 
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
  * This service generates metadata unique to product pages. The metadata includes the product and it's relevant
@@ -56,7 +58,7 @@ public class ProductLinkedDataServiceImpl extends AbstractLinkedDataService impl
         addReviewData(product, productData);
 
         schemaObjects.put(productData);
-        schemaObjects.put(getDefaultBreadcrumbList(url));
+        schemaObjects.put(getBreadcrumbList(product, url));
         schemaObjects.put(getDefaultOrganization(url));
         schemaObjects.put(getDefaultWebSite(url));
 
@@ -143,5 +145,41 @@ public class ProductLinkedDataServiceImpl extends AbstractLinkedDataService impl
 
             productData.put("review", reviews);
         }
+    }
+
+
+    protected JSONObject getBreadcrumbList(Product product, String url) throws JSONException {
+
+        JSONObject breadcrumbObjects = new JSONObject();
+
+        breadcrumbObjects.put("@context", DEFAULT_CONTEXT);
+        breadcrumbObjects.put("@type", "BreadcrumbList");
+
+        String homepageUrl = getHomepageUrl(url);
+        String homepageNoSlash = homepageUrl.substring(0, homepageUrl.length() - 1);
+
+        List<CategoryProductXref> categoryXrefs = product.getAllParentCategoryXrefs();
+
+        JSONArray itemListElement = new JSONArray();
+
+        //Iterate backwards since the highest ancestor is last
+        for(int i = 0; i < categoryXrefs.size(); i++) {
+            CategoryProductXref categoryXref = categoryXrefs.get(i);
+
+            JSONObject listItem = new JSONObject();
+            listItem.put("@type", "ListItem");
+            listItem.put("position", i + 1);
+
+            JSONObject item = new JSONObject();
+            item.put("@id", homepageNoSlash + categoryXref.getCategory().getUrl());
+            item.put("name", categoryXref.getCategory().getName());
+
+            listItem.put("item", item);
+            itemListElement.put(listItem);
+        }
+
+        breadcrumbObjects.put("itemListElement", itemListElement);
+
+        return breadcrumbObjects;
     }
 }

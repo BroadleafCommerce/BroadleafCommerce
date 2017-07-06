@@ -139,14 +139,14 @@ public abstract class AbstractLinkedDataService {
 
     /**
      * Generates a JSON array of the organization's social media sites
-     * TODO: implement
+     *
      * @return
      * @throws JSONException
      */
     protected JSONArray getSocialMediaList() throws JSONException {
         JSONArray socialMedia = new JSONArray();
-
-        throw new UnsupportedOperationException("getSocialMediaList is not yet implemented.");
+        //TODO: implement
+        return socialMedia;
     }
 
 

@@ -38,28 +38,27 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
     protected enum Destination { PRODUCT, CATEGORY, HOME, DEFAULT }
 
     @Resource(name = "blProductLinkedDataService")
-    ProductLinkedDataService productLinkedDataService;
+    protected ProductLinkedDataService productLinkedDataService;
 
     @Resource(name = "blCategoryLinkedDataService")
-    CategoryLinkedDataService categoryLinkedDataService;
+    protected CategoryLinkedDataService categoryLinkedDataService;
 
     @Resource(name = "blHomepageLinkedDataService")
-    HomepageLinkedDataService homepageLinkedDataService;
+    protected HomepageLinkedDataService homepageLinkedDataService;
 
     @Resource(name = "blDefaultLinkedDataService")
-    DefaultLinkedDataService defaultLinkedDataService;
+    protected DefaultLinkedDataService defaultLinkedDataService;
 
     @Override
     public BroadleafTemplateModel getReplacementModel(String s, Map<String, String> map, BroadleafTemplateContext context) {
         Destination destination = resolveDestination(context.getRequest());
 
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("<script type=\"application/ld+json\">\n");
-        buffer.append(getDataForDestination(context.getRequest(), destination));
-        buffer.append("\n</script>");
+        String linkedDataText = "<script type=\"application/ld+json\">\n" +
+                getDataForDestination(context.getRequest(), destination) +
+                "\n</script>";
 
         BroadleafTemplateModel model = context.createModel();
-        BroadleafTemplateElement linkedData = context.createTextElement(buffer.toString());
+        BroadleafTemplateElement linkedData = context.createTextElement(linkedDataText);
         model.addElement(linkedData);
 
         return model;
