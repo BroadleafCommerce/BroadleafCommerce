@@ -25,6 +25,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 /**
+ * This service generates metadata specialized for the homepage, namely the search action. The search action allows
+ * search engines to recognize the site has a search feature and allows users to search the site directly from the
+ * search engine.
  *
  * @author Jacob Mitash
  */
@@ -48,7 +51,7 @@ public class HomepageLinkedDataServiceImpl extends AbstractLinkedDataService imp
         webSite.put("potentialAction", potentialAction);
 
         schemaObjects.put(webSite);
-        schemaObjects.put(getDefaultBreadcrumbList());
+        schemaObjects.put(getDefaultBreadcrumbList(url));
         schemaObjects.put(getDefaultOrganization(url));
 
         return schemaObjects.toString();

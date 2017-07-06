@@ -34,7 +34,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 /**
- * Created by jacobmitash on 6/28/17.
+ * This service generates metadata unique to product pages. The metadata includes the product and it's relevant
+ * information as well as reviews and ratings of the product.
+ *
+ * @author Jacob Mitash
  */
 @Service("blProductLinkedDataService")
 public class ProductLinkedDataServiceImpl extends AbstractLinkedDataService implements ProductLinkedDataService {
@@ -53,7 +56,7 @@ public class ProductLinkedDataServiceImpl extends AbstractLinkedDataService impl
         addReviewData(product, productData);
 
         schemaObjects.put(productData);
-        schemaObjects.put(getDefaultBreadcrumbList());
+        schemaObjects.put(getDefaultBreadcrumbList(url));
         schemaObjects.put(getDefaultOrganization(url));
         schemaObjects.put(getDefaultWebSite(url));
 

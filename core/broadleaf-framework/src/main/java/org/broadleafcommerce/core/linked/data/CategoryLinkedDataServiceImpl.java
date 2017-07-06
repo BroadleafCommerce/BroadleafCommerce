@@ -26,7 +26,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Created by jacobmitash on 6/28/17.
+ * This service generates metadata unique to the category pages. It will list all the products in a category for SEO.
+ *
+ * @author Jacob Mitash
  */
 @Service("blCategoryLinkedDataService")
 public class CategoryLinkedDataServiceImpl extends AbstractLinkedDataService implements CategoryLinkedDataService {
@@ -49,7 +51,7 @@ public class CategoryLinkedDataServiceImpl extends AbstractLinkedDataService imp
         categoryData.put("itemListElement", itemList);
 
         schemaObjects.put(categoryData);
-        schemaObjects.put(getDefaultBreadcrumbList());
+        schemaObjects.put(getDefaultBreadcrumbList(url));
         schemaObjects.put(getDefaultOrganization(url));
         schemaObjects.put(getDefaultWebSite(url));
 

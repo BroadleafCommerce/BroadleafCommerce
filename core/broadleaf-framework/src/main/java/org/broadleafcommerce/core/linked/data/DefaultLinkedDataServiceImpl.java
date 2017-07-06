@@ -22,6 +22,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.springframework.stereotype.Service;
 
 /**
+ * This service generates metadata for pages that are not specialized. It includes the organization, website, and
+ * breadcrumb list.
+ *
  * @author Jacob Mitash
  */
 @Service("blDefaultLinkedDataService")
@@ -33,7 +36,7 @@ public class DefaultLinkedDataServiceImpl extends AbstractLinkedDataService impl
 
         schemaObjects.put(getDefaultOrganization(url));
         schemaObjects.put(getDefaultWebSite(url));
-        schemaObjects.put(getDefaultBreadcrumbList());
+        schemaObjects.put(getDefaultBreadcrumbList(url));
 
         return schemaObjects.toString();
     }

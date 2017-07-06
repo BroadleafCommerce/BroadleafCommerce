@@ -17,14 +17,21 @@
  */
 package org.broadleafcommerce.core.linked.data;
 
+import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
+import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbService;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
+import javax.annotation.Resource;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides a few methods for generating default schema objects
@@ -39,12 +46,14 @@ public abstract class AbstractLinkedDataService {
     @Autowired
     protected Environment environment;
 
+    @Resource(name = "blBreadcrumbService")
+    protected BreadcrumbService breadcrumbService;
+
     /**
      * Generates an object representing the Schema.org organization
      *
      * @param url The URL of the currently visited page
      * @return JSON representation of Organization from Schema.org
-     * @throws JSONException
      */
     protected JSONObject getDefaultOrganization(String url) throws JSONException {
         JSONObject organization = new JSONObject();
@@ -77,21 +86,43 @@ public abstract class AbstractLinkedDataService {
 
     /**
      * Generates an object representing the Schema.org BreadcrumbList
-     * TODO: implement
+     *
+     * @param url The full URL of the requested page
      * @return JSON representation of BreadcrumbList from Schema.org
      */
-    protected JSONObject getDefaultBreadcrumbList() throws JSONException {
-        JSONObject breadcrumb = new JSONObject();
+    protected JSONObject getDefaultBreadcrumbList(String url) throws JSONException {
+        JSONObject breadcrumbObjects = new JSONObject();
 
-        breadcrumb.put("@context", DEFAULT_CONTEXT);
-        breadcrumb.put("@type", "BreadcrumbList");
+        breadcrumbObjects.put("@context", DEFAULT_CONTEXT);
+        breadcrumbObjects.put("@type", "BreadcrumbList");
+
+        Map<String, String[]> params = new HashMap<>();
+
+        if(BroadleafRequestContext.getRequestParameterMap() != null) {
+            params = new HashMap<>(BroadleafRequestContext.getRequestParameterMap());
+        }
+
+        String homepageUrl = getHomepageUrl(url);
+        String homepageNoSlash = homepageUrl.substring(0, homepageUrl.length() - 1);
+
+        List<BreadcrumbDTO> breadcrumbs = breadcrumbService.buildBreadcrumbDTOs(homepageUrl, params);
 
         JSONArray breadcrumbList = new JSONArray();
-//        breadcrumbList.put();
+        for(int i = 1; i < breadcrumbs.size(); i++) {
+            JSONObject listItem = new JSONObject();
+            listItem.put("@type", "ListItem");
+            listItem.put("position", i);
+            JSONObject item = new JSONObject();
+            item.put("@id", homepageNoSlash + breadcrumbs.get(i).getLink());
+            item.put("name", breadcrumbs.get(i).getText());
 
-        breadcrumb.put("itemListElement", breadcrumbList);
+            listItem.put("item", item);
+            breadcrumbList.put(listItem);
+        }
 
-        return breadcrumb;
+        breadcrumbObjects.put("itemListElement", breadcrumbList);
+
+        return breadcrumbObjects;
     }
 
     /**
@@ -115,7 +146,7 @@ public abstract class AbstractLinkedDataService {
     protected JSONArray getSocialMediaList() throws JSONException {
         JSONArray socialMedia = new JSONArray();
 
-        return socialMedia;
+        throw new UnsupportedOperationException("getSocialMediaList is not yet implemented.");
     }
 
 
