@@ -147,7 +147,12 @@ public class ProductLinkedDataServiceImpl extends AbstractLinkedDataService impl
         }
     }
 
-
+    /**
+     * Gets the category breadcrumbs and appends the product breadcrumb
+     * @param product the product on the page visited
+     * @param url the full URL requested
+     * @return a JSON object representing the breadcrumb list
+     */
     protected JSONObject getBreadcrumbList(Product product, String url) throws JSONException {
 
         JSONObject breadcrumbObjects = new JSONObject();
@@ -162,8 +167,8 @@ public class ProductLinkedDataServiceImpl extends AbstractLinkedDataService impl
 
         JSONArray itemListElement = new JSONArray();
 
-        //Iterate backwards since the highest ancestor is last
-        for(int i = 0; i < categoryXrefs.size(); i++) {
+        int i;
+        for(i = 0; i < categoryXrefs.size(); i++) {
             CategoryProductXref categoryXref = categoryXrefs.get(i);
 
             JSONObject listItem = new JSONObject();
@@ -177,6 +182,18 @@ public class ProductLinkedDataServiceImpl extends AbstractLinkedDataService impl
             listItem.put("item", item);
             itemListElement.put(listItem);
         }
+
+        //Add the product last
+        JSONObject listItem = new JSONObject();
+        listItem.put("@type", "ListItem");
+        listItem.put("position", i + 1);
+
+        JSONObject item = new JSONObject();
+        item.put("@id", homepageNoSlash + product.getUrl());
+        item.put("name", product.getName());
+
+        listItem.put("item", item);
+        itemListElement.put(listItem);
 
         breadcrumbObjects.put("itemListElement", itemListElement);
 
