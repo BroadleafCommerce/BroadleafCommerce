@@ -324,7 +324,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             List<String> dirtyFields = new ArrayList<String>();
             Map<String, PageField> pageFieldMap = page.getPageFields();
             for (Property property : persistencePackage.getEntity().getProperties()) {
-                if (templateFieldNames.contains(property.getName())) {
+                if (property.getEnabled() && templateFieldNames.contains(property.getName())) {
                     PageField pageField = pageFieldMap.get(property.getName());
                     if (pageField != null) {
                         boolean isDirty = (pageField.getValue() == null && property.getValue() != null) ||
