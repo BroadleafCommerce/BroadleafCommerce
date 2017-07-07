@@ -132,6 +132,17 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
             shippingForm.getAddress().setPhoneFax(null);
         }
 
+        Customer customer = CustomerState.getCustomer();
+        if (!customer.isAnonymous() && shippingForm.isSaveAsDefault()) {
+            Address address = addressService.saveAddress(shippingForm.getAddress());
+            CustomerAddress customerAddress = customerAddressService.create();
+            customerAddress.setAddress(address);
+            customerAddress.setAddressName(shippingForm.getAddressName());
+            customerAddress.setCustomer(customer);
+            customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
+            customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
+        }
+
         FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
         if (shippableFulfillmentGroup != null) {
             shippableFulfillmentGroup.setAddress(shippingForm.getAddress());
@@ -170,7 +181,6 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
                     }
                 }
             }
-
         }
     }
 
