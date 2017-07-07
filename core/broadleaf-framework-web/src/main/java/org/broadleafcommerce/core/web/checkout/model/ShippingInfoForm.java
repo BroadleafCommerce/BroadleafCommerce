@@ -43,6 +43,7 @@ public class ShippingInfoForm implements Serializable {
     protected PersonalMessage personalMessage = new PersonalMessageImpl();
     protected String deliveryMessage;
     protected boolean useBillingAddress = false;
+    protected boolean saveAsDefault = false;
 
     public ShippingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
@@ -104,5 +105,13 @@ public class ShippingInfoForm implements Serializable {
 
     public void setUseBillingAddress(boolean useBillingAddress) {
         this.useBillingAddress = useBillingAddress;
+    }
+
+    public boolean isSaveAsDefault() {
+        return saveAsDefault;
+    }
+
+    public void setSaveAsDefault(boolean saveAsDefault) {
+        this.saveAsDefault = saveAsDefault;
     }
 }

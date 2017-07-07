@@ -65,21 +65,30 @@ public class CheckoutFormVariableExpression implements BroadleafVariableExpressi
                 && !cartStateService.orderContainsUnconfirmedCreditCard();
     }
 
-    public OrderInfoForm prePopulateOrderInfoForm(OrderInfoForm orderInfoForm) {
-        Order cart = CartState.getCart();
+    public OrderInfoForm prePopulateOrderInfoForm(OrderInfoForm orderInfoForm, boolean submissionErrors) {
+        if (submissionErrors) {
+            return orderInfoForm;
+        }
 
+        Order cart = CartState.getCart();
         return checkoutFormService.prePopulateOrderInfoForm(orderInfoForm, cart);
     }
 
-    public ShippingInfoForm prePopulateShippingInfoForm(ShippingInfoForm shippingInfoForm) {
-        Order cart = CartState.getCart();
+    public ShippingInfoForm prePopulateShippingInfoForm(ShippingInfoForm shippingInfoForm, boolean submissionErrors) {
+        if (submissionErrors) {
+            return shippingInfoForm;
+        }
 
+        Order cart = CartState.getCart();
         return checkoutFormService.prePopulateShippingInfoForm(shippingInfoForm, cart);
     }
 
-    public BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm) {
-        Order cart = CartState.getCart();
+    public BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm, boolean submissionErrors) {
+        if (submissionErrors) {
+            return billingInfoForm;
+        }
 
+        Order cart = CartState.getCart();
         return checkoutFormService.prePopulateBillingInfoForm(billingInfoForm, cart);
     }
 

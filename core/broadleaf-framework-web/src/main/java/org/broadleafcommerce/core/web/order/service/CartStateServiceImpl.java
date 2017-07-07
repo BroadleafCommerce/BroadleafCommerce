@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.web.order.service;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -43,7 +42,7 @@ public class CartStateServiceImpl implements CartStateService {
     public boolean hasPopulatedOrderInfo() {
         Order cart = CartState.getCart();
 
-        return StringUtils.isNotBlank(cart.getEmailAddress());
+        return orderContainsThirdPartyPayment() || orderContainsUnconfirmedCreditCard();
     }
 
     @Override
