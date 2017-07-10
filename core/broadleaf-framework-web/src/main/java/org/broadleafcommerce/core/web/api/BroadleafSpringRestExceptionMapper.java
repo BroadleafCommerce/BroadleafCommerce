@@ -17,10 +17,10 @@
  */
 package org.broadleafcommerce.core.web.api;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpStatus;
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.web.api.wrapper.ErrorMessageWrapper;
