@@ -22,7 +22,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
 
 /**
  * This service generates metadata specialized for the homepage, namely the search action. The search action allows
@@ -31,17 +30,20 @@ import org.springframework.stereotype.Service;
  *
  * @author Jacob Mitash
  */
-@Service("blHomepageLinkedDataService")
-public class HomepageLinkedDataServiceImpl extends AbstractLinkedDataService implements HomepageLinkedDataService {
+public class HomepageLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
     @Autowired
     protected Environment environment;
 
+    HomepageLinkedDataServiceImpl(String url) {
+        super(url);
+    }
+
     @Override
-    public String getLinkedData(String url) throws JSONException {
+    protected JSONArray getLinkedDataJson() throws JSONException {
         JSONArray schemaObjects = new JSONArray();
 
-        JSONObject webSite = getDefaultWebSite(url);
+        JSONObject webSite = LinkedDataUtil.getDefaultWebSite(url);
 
         JSONObject potentialAction = new JSONObject();
         potentialAction.put("@type", "SearchAction");
@@ -51,9 +53,9 @@ public class HomepageLinkedDataServiceImpl extends AbstractLinkedDataService imp
         webSite.put("potentialAction", potentialAction);
 
         schemaObjects.put(webSite);
-        schemaObjects.put(getDefaultBreadcrumbList(url));
-        schemaObjects.put(getDefaultOrganization(url));
+        schemaObjects.put(LinkedDataUtil.getDefaultBreadcrumbList(url));
+        schemaObjects.put(LinkedDataUtil.getDefaultOrganization(url));
 
-        return schemaObjects.toString();
+        return schemaObjects;
     }
 }

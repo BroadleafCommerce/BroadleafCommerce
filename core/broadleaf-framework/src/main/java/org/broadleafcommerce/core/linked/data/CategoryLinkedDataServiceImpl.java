@@ -21,7 +21,6 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -30,12 +29,18 @@ import java.util.List;
  *
  * @author Jacob Mitash
  */
-@Service("blCategoryLinkedDataService")
-public class CategoryLinkedDataServiceImpl extends AbstractLinkedDataService implements CategoryLinkedDataService {
+public class CategoryLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
+
+    final protected List<Product> products;
+
+    CategoryLinkedDataServiceImpl(String url, List<Product> products) {
+        super(url);
+        this.products = products;
+    }
 
     @Override
-    public String getLinkedData(List<Product> products, String url) throws JSONException {
-        JSONArray schemaObjects = new JSONArray();
+    protected JSONArray getLinkedDataJson() throws JSONException {
+        JSONArray schemaObjects = super.getLinkedDataJson();
 
         JSONObject categoryData = new JSONObject();
         categoryData.put("@context", "http://schema.org");
@@ -51,10 +56,7 @@ public class CategoryLinkedDataServiceImpl extends AbstractLinkedDataService imp
         categoryData.put("itemListElement", itemList);
 
         schemaObjects.put(categoryData);
-        schemaObjects.put(getDefaultBreadcrumbList(url));
-        schemaObjects.put(getDefaultOrganization(url));
-        schemaObjects.put(getDefaultWebSite(url));
 
-        return schemaObjects.toString();
+        return schemaObjects;
     }
 }

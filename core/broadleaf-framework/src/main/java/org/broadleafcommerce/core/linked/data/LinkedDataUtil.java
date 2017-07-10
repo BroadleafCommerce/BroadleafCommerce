@@ -39,15 +39,15 @@ import java.util.Map;
  *
  * @author Jacob Mitash
  */
-public abstract class AbstractLinkedDataService {
+public abstract class LinkedDataUtil {
 
     protected final static String DEFAULT_CONTEXT = "http://schema.org/";
 
     @Autowired
-    protected Environment environment;
+    protected static Environment environment;
 
     @Resource(name = "blBreadcrumbService")
-    protected BreadcrumbService breadcrumbService;
+    protected static BreadcrumbService breadcrumbService;
 
     /**
      * Generates an object representing the Schema.org organization
@@ -55,7 +55,7 @@ public abstract class AbstractLinkedDataService {
      * @param url The URL of the currently visited page
      * @return JSON representation of Organization from Schema.org
      */
-    protected JSONObject getDefaultOrganization(String url) throws JSONException {
+    protected static JSONObject getDefaultOrganization(String url) throws JSONException {
         JSONObject organization = new JSONObject();
 
         organization.put("@context", DEFAULT_CONTEXT);
@@ -74,7 +74,7 @@ public abstract class AbstractLinkedDataService {
      * @param url The URL of the currently visited page
      * @return JSON representation of WebSite from Schema.org
      */
-    protected JSONObject getDefaultWebSite(String url) throws JSONException {
+    protected static JSONObject getDefaultWebSite(String url) throws JSONException {
         JSONObject webSite = new JSONObject();
         webSite.put("@context", DEFAULT_CONTEXT);
         webSite.put("@type", "WebSite");
@@ -90,7 +90,7 @@ public abstract class AbstractLinkedDataService {
      * @param url The full URL of the requested page
      * @return JSON representation of BreadcrumbList from Schema.org
      */
-    protected JSONObject getDefaultBreadcrumbList(String url) throws JSONException {
+    protected static JSONObject getDefaultBreadcrumbList(String url) throws JSONException {
         JSONObject breadcrumbObjects = new JSONObject();
 
         breadcrumbObjects.put("@context", DEFAULT_CONTEXT);
@@ -130,7 +130,7 @@ public abstract class AbstractLinkedDataService {
      *
      * @return JSON representation of Schema.org image for site logo
      */
-    protected JSONObject getLogoObject() throws JSONException {
+    protected static JSONObject getLogoObject() throws JSONException {
         JSONObject logoImage = new JSONObject();
         logoImage.put("@type", "ImageObject");
         logoImage.put("url", environment.getProperty("site.logo"));
@@ -143,7 +143,7 @@ public abstract class AbstractLinkedDataService {
      * @return
      * @throws JSONException
      */
-    protected JSONArray getSocialMediaList() throws JSONException {
+    protected static JSONArray getSocialMediaList() throws JSONException {
         JSONArray socialMedia = new JSONArray();
         //TODO: implement
         return socialMedia;
@@ -156,7 +156,7 @@ public abstract class AbstractLinkedDataService {
      * @param urlFull the full URL of any page on the site
      * @return the URL of the homepage of the site
      */
-    protected String getHomepageUrl(String urlFull) {
+    protected static String getHomepageUrl(String urlFull) {
         try {
             URL url = new URL(urlFull);
             return url.getProtocol() + "://" + url.getHost() + "/";

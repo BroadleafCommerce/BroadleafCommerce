@@ -28,7 +28,6 @@ import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.DateFormat;
@@ -41,17 +40,22 @@ import java.util.List;
  *
  * @author Jacob Mitash
  */
-@Service("blProductLinkedDataService")
-public class ProductLinkedDataServiceImpl extends AbstractLinkedDataService implements ProductLinkedDataService {
+public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
     protected final static DateFormat iso8601Format = new SimpleDateFormat("YYYY-MM-DD");
+
+    protected final Product product;
 
     @Resource(name = "blRatingService")
     protected RatingService ratingService;
 
-    @Override
-    public String getLinkedData(Product product, String url) throws JSONException {
+    ProductLinkedDataServiceImpl(String url, Product product) {
+        super(url);
+        this.product = product;
+    }
 
+    @Override
+    protected JSONArray getLinkedDataJson() throws JSONException {
         JSONArray schemaObjects = new JSONArray();
 
         JSONObject productData = getProductLinkedData(product, url);
@@ -59,11 +63,12 @@ public class ProductLinkedDataServiceImpl extends AbstractLinkedDataService impl
 
         schemaObjects.put(productData);
         schemaObjects.put(getBreadcrumbList(product, url));
-        schemaObjects.put(getDefaultOrganization(url));
-        schemaObjects.put(getDefaultWebSite(url));
+        schemaObjects.put(LinkedDataUtil.getDefaultOrganization(url));
+        schemaObjects.put(LinkedDataUtil.getDefaultWebSite(url));
 
-        return schemaObjects.toString();
+        return schemaObjects;
     }
+
 
     protected JSONObject getProductLinkedData(Product product, String url) throws JSONException {
         JSONObject productData = new JSONObject();
@@ -157,10 +162,10 @@ public class ProductLinkedDataServiceImpl extends AbstractLinkedDataService impl
 
         JSONObject breadcrumbObjects = new JSONObject();
 
-        breadcrumbObjects.put("@context", DEFAULT_CONTEXT);
+        breadcrumbObjects.put("@context", LinkedDataUtil.DEFAULT_CONTEXT);
         breadcrumbObjects.put("@type", "BreadcrumbList");
 
-        String homepageUrl = getHomepageUrl(url);
+        String homepageUrl = LinkedDataUtil.getHomepageUrl(url);
         String homepageNoSlash = homepageUrl.substring(0, homepageUrl.length() - 1);
 
         List<CategoryProductXref> categoryXrefs = product.getAllParentCategoryXrefs();

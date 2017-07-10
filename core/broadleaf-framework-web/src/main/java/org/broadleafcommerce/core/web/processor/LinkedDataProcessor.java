@@ -1,3 +1,20 @@
+/*
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.logging.Log;
@@ -5,10 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.linked.data.CategoryLinkedDataService;
-import org.broadleafcommerce.core.linked.data.DefaultLinkedDataService;
-import org.broadleafcommerce.core.linked.data.HomepageLinkedDataService;
-import org.broadleafcommerce.core.linked.data.ProductLinkedDataService;
+import org.broadleafcommerce.core.linked.data.*;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
@@ -33,21 +47,11 @@ import java.util.Map;
 @Component("blLinkedDataProcessor")
 public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcessor
 {
-    private final String TAG_NAME = "linkedData";
     private final Log LOG = LogFactory.getLog(LinkedDataProcessor.class);
     protected enum Destination { PRODUCT, CATEGORY, HOME, DEFAULT }
 
-    @Resource(name = "blProductLinkedDataService")
-    protected ProductLinkedDataService productLinkedDataService;
-
-    @Resource(name = "blCategoryLinkedDataService")
-    protected CategoryLinkedDataService categoryLinkedDataService;
-
-    @Resource(name = "blHomepageLinkedDataService")
-    protected HomepageLinkedDataService homepageLinkedDataService;
-
-    @Resource(name = "blDefaultLinkedDataService")
-    protected DefaultLinkedDataService defaultLinkedDataService;
+    @Resource(name = "blLinkedDataServiceFactory")
+    protected LinkedDataServiceFactory linkedDataServiceFactory;
 
     @Override
     public BroadleafTemplateModel getReplacementModel(String s, Map<String, String> map, BroadleafTemplateContext context) {
@@ -92,7 +96,8 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
 
             if(destination == Destination.PRODUCT) {
                 Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
-                return productLinkedDataService.getLinkedData(product, request.getRequestURL().toString());
+                return linkedDataServiceFactory
+                        .productLinkedDataService(request.getRequestURL().toString(), product).getLinkedData();
 
             } else if(destination == Destination.CATEGORY) {
                 Category category = (Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME);
@@ -101,11 +106,14 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
                 for(CategoryProductXref productXref : productXrefs) {
                     products.add(productXref.getProduct());
                 }
-                return categoryLinkedDataService.getLinkedData(products, request.getRequestURL().toString());
+                return linkedDataServiceFactory
+                        .categoryLinkedDataService(request.getRequestURL().toString(), products).getLinkedData();
             } else if(destination == Destination.HOME) {
-                return homepageLinkedDataService.getLinkedData(request.getRequestURL().toString());
+                return linkedDataServiceFactory
+                        .homepageLinkedDataService(request.getRequestURL().toString()).getLinkedData();
             } else {
-                return defaultLinkedDataService.getLinkedData(request.getRequestURL().toString());
+                return linkedDataServiceFactory
+                        .defaultLinkedDataService(request.getRequestURL().toString()).getLinkedData();
             }
 
         } catch (JSONException e) {
@@ -116,6 +124,6 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
 
     @Override
     public String getName() {
-        return TAG_NAME;
+        return "linkedData";
     }
 }

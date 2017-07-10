@@ -17,22 +17,30 @@
  */
 package org.broadleafcommerce.core.linked.data;
 
-import org.codehaus.jettison.json.JSONException;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
- * Service for getting the linked data for category pages. Implemented in
- * {@link HomepageLinkedDataServiceImpl} which can be extended to modify
- * or add additional metadata.
- *
  * @author Jacob Mitash
  */
-public interface HomepageLinkedDataService {
+@Component("blLinkedDataServiceFactory")
+public class LinkedDataServiceFactory {
 
-    /**
-     * Adds linked data to the homepage
-     *
-     * @param url the URL of the home page
-     * @return JSON string of linked data
-     */
-    String getLinkedData(String url) throws JSONException;
+    public LinkedDataService categoryLinkedDataService(String url, List<Product> products) {
+        return new CategoryLinkedDataServiceImpl(url, products);
+    }
+
+    public LinkedDataService defaultLinkedDataService(String url) {
+        return new DefaultLinkedDataServiceImpl(url);
+    }
+
+    public LinkedDataService homepageLinkedDataService(String url) {
+        return new HomepageLinkedDataServiceImpl(url);
+    }
+
+    public LinkedDataService productLinkedDataService(String url, Product product) {
+        return new ProductLinkedDataServiceImpl(url, product);
+    }
 }
