@@ -17,12 +17,29 @@
  */
 package org.broadleafcommerce.core.web.config;
 
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
+import org.springframework.boot.web.filter.OrderedRequestContextFilter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.RequestContextFilter;
 
 /**
  * @author Jeff Fischer
  */
 @Configuration
 public class FrameworkWebConfig {
+
+    /**
+     * Place a RequestContextFilter very high in the pre-security filter chain in order to guarantee
+     * the RequestContext is set for any subsequent need. This should only impact Spring Boot implementations.
+     *
+     * @return the RequestFilter bean
+     */
+    @Bean
+    public RequestContextFilter blRequestContextFilter() {
+        OrderedRequestContextFilter filter = new OrderedRequestContextFilter();
+        filter.setOrder(FilterOrdered.PRE_SECURITY_HIGH - 1000);
+        return filter;
+    }
 
 }

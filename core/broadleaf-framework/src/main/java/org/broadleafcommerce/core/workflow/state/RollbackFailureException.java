@@ -35,15 +35,21 @@ public class RollbackFailureException extends WorkflowException {
 
     private static final long serialVersionUID = 1L;
 
-    private Activity<? extends ProcessContext<?>> activity;
-    private ProcessContext<?> processContext;
-    private Map<String, Object> stateItems;
+    protected Activity<? extends ProcessContext<?>> activity;
+    protected ProcessContext<?> processContext;
+    protected Map<String, Object> stateItems;
+    protected Throwable originalWorkflowException;
 
     public RollbackFailureException() {
     }
 
     public RollbackFailureException(Throwable cause) {
         super(cause);
+    }
+    
+    public RollbackFailureException(Throwable rollbackFailureCause, Throwable originalWorkflowException) {
+        super(rollbackFailureCause);
+        this.originalWorkflowException = originalWorkflowException;
     }
 
     public RollbackFailureException(String message) {
@@ -76,5 +82,13 @@ public class RollbackFailureException extends WorkflowException {
 
     public void setStateItems(Map<String, Object> stateItems) {
         this.stateItems = stateItems;
+    }
+    
+    public void setOriginalWorkflowException(Throwable originalWorkflowException) {
+        this.originalWorkflowException = originalWorkflowException;
+    }
+    
+    public Throwable getOriginalWorkflowException() {
+        return originalWorkflowException;
     }
 }

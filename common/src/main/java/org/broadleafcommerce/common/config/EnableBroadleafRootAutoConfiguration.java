@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.config;
 
+import org.broadleafcommerce.common.config.EnableBroadleafRootAutoConfiguration.BroadleafRootAutoConfiguration;
+import org.broadleafcommerce.common.config.EnableBroadleafRootAutoConfiguration.BroadleafRootAutoConfigurationOverrides;
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
@@ -43,7 +45,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(EnableBroadleafRootAutoConfiguration.BroadleafRootAutoConfiguration.class)
+@Import({
+    BroadleafRootAutoConfiguration.class,
+    BroadleafRootAutoConfigurationOverrides.class
+})
 public @interface EnableBroadleafRootAutoConfiguration {
 
     /**
@@ -58,4 +63,7 @@ public @interface EnableBroadleafRootAutoConfiguration {
             "classpath*:/blc-config/late/bl-*-applicationContext.xml"
     }, reader = FrameworkXmlBeanDefinitionReader.class)
     class BroadleafRootAutoConfiguration {}
+    
+    @ImportResource("classpath:/override-contexts/autoconfiguration-overrides.xml")
+    class BroadleafRootAutoConfigurationOverrides { }
 }

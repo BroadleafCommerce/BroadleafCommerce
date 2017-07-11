@@ -18,11 +18,13 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
@@ -54,6 +56,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
@@ -85,10 +88,10 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     protected PersistenceService persistenceService;
 
     @Resource(name="blCustomPersistenceHandlers")
-    protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
+    protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<>();
 
     @Resource(name="blCustomPersistenceHandlerFilters")
-    protected List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters = new ArrayList<CustomPersistenceHandlerFilter>();
+    protected List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters = new ArrayList<>();
 
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
@@ -99,6 +102,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     @Resource(name="blPersistenceManagerEventHandlers")
     protected List<PersistenceManagerEventHandler> persistenceManagerEventHandlers;
 
+    @Autowired(required = false)
+    protected FetchTypeDetection fetchDetection = null;
+
     protected TargetModeType targetMode;
     protected ApplicationContext applicationContext;
 
@@ -108,8 +114,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             module.setPersistenceManager(this);
         }
         Collections.sort(persistenceManagerEventHandlers, new Comparator<PersistenceManagerEventHandler>() {
-                    @Override
-                    public int compare(PersistenceManagerEventHandler o1, PersistenceManagerEventHandler o2) {
+            @Override
+            public int compare(PersistenceManagerEventHandler o1, PersistenceManagerEventHandler o2) {
                 return Integer.valueOf(o1.getOrder()).compareTo(Integer.valueOf(o2.getOrder()));
             }
         });
@@ -147,7 +153,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     public Property[] processMergedProperties(Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) {
-        List<Property> propertiesList = new ArrayList<Property>();
+        List<Property> propertiesList = new ArrayList<>();
         for (PersistenceModule module : modules) {
             module.extractProperties(entities, mergedProperties, propertiesList);
         }
@@ -231,7 +237,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
         adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.INSPECT);
         Class<?>[] entities = getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
-        Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+        Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<>();
         for (PersistenceModule module : modules) {
             module.updateMergedProperties(persistencePackage, allMergedProperties);
         }
@@ -239,6 +245,24 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         DynamicResultSet results = new DynamicResultSet(classMetadata);
 
         return executePostInspectHandlers(persistencePackage, new PersistenceResponse().withDynamicResultSet(results));
+    }
+
+    @Override
+    public String getIdPropertyName(String entityClass) {
+        String response = null;
+        try {
+            Class<?> clazz = Class.forName(entityClass);
+            Class<?>[] entities = getUpDownInheritance(clazz);
+            if (!org.apache.commons.lang.ArrayUtils.isEmpty(entities)) {
+                Map<String, Object> idData = getDynamicEntityDao().getIdMetadata(entities[0]);
+                if (idData != null) {
+                    response = (String) idData.get("name");
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            throw ExceptionHelper.refineException(e);
+        }
+        return response;
     }
 
     protected PersistenceResponse executePostInspectHandlers(PersistencePackage persistencePackage,
@@ -315,6 +339,59 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         persistenceResponse.setDynamicResultSet(postFetch(persistenceResponse.getDynamicResultSet(), persistencePackage, cto));
         persistenceResponse.getDynamicResultSet().setStartIndex(cto.getFirstResult());
         persistenceResponse.getDynamicResultSet().setPageSize(cto.getMaxResults());
+        Integer upperCount;
+        Integer lowerCount;
+        if (cto.getFirstId() != null) {
+            upperCount = cto.getLowerCount() - 1;
+            lowerCount = cto.getLowerCount() - persistenceResponse.getDynamicResultSet().getTotalRecords();
+        } else {
+            if (cto.getLowerCount() == null) {
+                lowerCount = 1;
+            } else {
+                lowerCount = cto.getUpperCount() + 1;
+            }
+            upperCount = lowerCount + persistenceResponse.getDynamicResultSet().getTotalRecords() - 1;
+            if (lowerCount == 1 && persistenceResponse.getDynamicResultSet().getTotalRecords() == 0) {
+                lowerCount = 0;
+            }
+        }
+        if (cto.getFirstId() == null && cto.getLastId() == null) {
+            persistenceResponse.getDynamicResultSet().setTotalCountLessThanPageSize(persistenceResponse.getDynamicResultSet().getTotalRecords() < cto.getMaxResults());
+        }
+        persistenceResponse.getDynamicResultSet().setUpperCount(upperCount);
+        persistenceResponse.getDynamicResultSet().setLowerCount(lowerCount);
+        Entity[] payload = persistenceResponse.getDynamicResultSet().getRecords();
+        if (!ArrayUtils.isEmpty(payload)) {
+            Entity first = payload[0];
+            Entity last = payload[payload.length-1];
+            String idProperty = getIdPropertyName(persistencePackage.getCeilingEntityFullyQualifiedClassname());
+            if (!StringUtils.isEmpty(idProperty)) {
+                {
+                    Property property = first.findProperty(idProperty);
+                    if (property != null) {
+                        try {
+                            persistenceResponse.getDynamicResultSet().setFirstId(Long.parseLong(property.getValue()));
+                        } catch (NumberFormatException e) {
+                            //do nothing
+                        }
+                    }
+                }
+                {
+                    Property property = last.findProperty(idProperty);
+                    if (property != null) {
+                        try {
+                            persistenceResponse.getDynamicResultSet().setLastId(Long.parseLong(property.getValue()));
+                        } catch (NumberFormatException e) {
+                            //do nothing
+                        }
+                    }
+                }
+            }
+        }
+        if (fetchDetection != null) {
+            persistenceResponse.getDynamicResultSet().setFetchType(fetchDetection.getFetchType(persistencePackage, cto));
+            persistenceResponse.getDynamicResultSet().setPromptSearch(fetchDetection.shouldPromptForSearch(persistencePackage, cto));
+        }
 
         return persistenceResponse;
     }
@@ -386,7 +463,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             String idProperty = (String) idMetadata.get("name");
             String idVal = response.findProperty(idProperty).getValue();
 
-            Map<String, List<String>> subPackageValidationErrors = new HashMap<String, List<String>>();
+            Map<String, List<String>> subPackageValidationErrors = new HashMap<>();
             for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
                 Entity subResponse;
                 try {
@@ -554,7 +631,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         }
 
-        Map<String, List<String>> subPackageValidationErrors = new HashMap<String, List<String>>();
+        Map<String, List<String>> subPackageValidationErrors = new HashMap<>();
         for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
             try {
                 //Run through any subPackages -- add up any validation errors
@@ -761,7 +838,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     @Override
     public List<CustomPersistenceHandler> getCustomPersistenceHandlers() {
-        List<CustomPersistenceHandler> cloned = new ArrayList<CustomPersistenceHandler>();
+        List<CustomPersistenceHandler> cloned = new ArrayList<>();
         cloned.addAll(customPersistenceHandlers);
         if (getCustomPersistenceHandlerFilters() != null) {
             for (CustomPersistenceHandlerFilter filter : getCustomPersistenceHandlerFilters()) {

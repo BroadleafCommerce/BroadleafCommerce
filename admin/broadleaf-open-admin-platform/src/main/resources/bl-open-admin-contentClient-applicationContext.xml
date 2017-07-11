@@ -66,4 +66,16 @@
         <property name="targetRef" value="blDirectCopyTransformTokenMap"/>
     </bean>
 
+    <bean id="blMergedCacheConfigLocations-open-admin" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:bl-open-admin-ehcache.xml</value>
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMergedCacheConfigLocations-open-admin"/>
+        <property name="targetRef" value="blMergedCacheConfigLocations"/>
+    </bean>
+
 </beans>

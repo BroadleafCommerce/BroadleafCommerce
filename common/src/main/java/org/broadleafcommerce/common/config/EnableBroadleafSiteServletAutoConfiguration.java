@@ -20,6 +20,11 @@
  */
 package org.broadleafcommerce.common.config;
 
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import org.broadleafcommerce.common.config.EnableBroadleafSiteServletAutoConfiguration.BroadleafSiteServletAutoConfiguration;
+import org.broadleafcommerce.common.config.EnableBroadleafSiteServletAutoConfiguration.BroadleafSiteServletAutoConfigurationOverrides;
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
@@ -30,9 +35,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import javax.servlet.ServletContainerInitializer;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 
 /**
@@ -88,8 +90,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Target(TYPE)
 @Import({
-    EnableBroadleafServletAutoConfiguration.BroadleafServletAutoConfiguration.class,
-    EnableBroadleafSiteServletAutoConfiguration.BroadleafSiteServletAutoConfiguration.class
+    BroadleafSiteServletAutoConfiguration.class,
+    BroadleafSiteServletAutoConfigurationOverrides.class
 })
 public @interface EnableBroadleafSiteServletAutoConfiguration {
 
@@ -106,4 +108,7 @@ public @interface EnableBroadleafSiteServletAutoConfiguration {
             "classpath*:/blc-config/site/late/bl-*-applicationContext-servlet.xml"
     }, reader = FrameworkXmlBeanDefinitionReader.class)
     class BroadleafSiteServletAutoConfiguration {}
+    
+    @ImportResource("classpath:/override-contexts/site-servlet-autoconfiguration-overrides.xml")
+    class BroadleafSiteServletAutoConfigurationOverrides {}
 }

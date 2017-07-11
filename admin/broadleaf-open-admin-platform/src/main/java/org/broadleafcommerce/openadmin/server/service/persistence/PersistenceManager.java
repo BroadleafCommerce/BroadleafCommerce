@@ -75,4 +75,7 @@ public interface PersistenceManager {
     public abstract Class<?>[] getUpDownInheritance(Class<?> testClass);
 
     public abstract Class<?>[] getUpDownInheritance(String testClassname) throws ClassNotFoundException;
+
+    String getIdPropertyName(String entityClass);
+
 }

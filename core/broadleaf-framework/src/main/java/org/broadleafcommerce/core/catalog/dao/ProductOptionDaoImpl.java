@@ -73,6 +73,7 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         return query.getResultList();
     }
     
+    @Override
     public ProductOption saveProductOption(ProductOption option) {
         return em.merge(option);
     }
@@ -106,7 +107,7 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
             ).setResultTransformer(Transformers.aliasToBean(AssignedProductOptionDTO.class))
             .add(Restrictions.eq("product.id", productId))
             .addOrder(Order.asc("productOption.attributeName")).list();
-        List<AssignedProductOptionDTO> results = new ArrayList<AssignedProductOptionDTO>();
+        List<AssignedProductOptionDTO> results = new ArrayList<>();
         for (Object o : dtoList) {
             AssignedProductOptionDTO dto = (AssignedProductOptionDTO) o;
             if (dto.getSku().isActive()) {
@@ -128,7 +129,7 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         Root<ProductOptionValueImpl> root = criteria.from(ProductOptionValueImpl.class);
         criteria.select(builder.count(root));
 
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         List<Long> mergedIds = sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, productOptionId);
         restrictions.add(root.get("productOption").in(mergedIds));
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
@@ -179,7 +180,12 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         final List<Long> validCandidateSkuIds = new ArrayList<>();
         
         for (final Sku sku : candidateSkus) {
-            if (sku instanceof Status && !Objects.equals(((Status) sku).getArchived(), 'Y')) {
+            if (Status.class.isAssignableFrom(sku.getClass())) {
+                if (!Objects.equals(((Status) sku).getArchived(), 'Y')) {
+                    validCandidateSkuIds.add(sku.getId());
+                }
+            } else {
+                // if Sku doesn't implement Status from bytecode weaving, assume it's non-archived
                 validCandidateSkuIds.add(sku.getId());
             }
         }
