@@ -179,6 +179,11 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
                     fgOffers.remove(j);
                 }
             }
+            for (int j = 0; j < fgOffers.size(); j++) {
+                if (!orderMeetsQualifyingSubtotalRequirements(order, fgOffers.get(j)) || !orderMeetsSubtotalRequirements(order, fgOffers.get(j))) {
+                    fgOffers.remove(j);
+                }
+            }
             for (PromotableCandidateFulfillmentGroupOffer candidate : fgOffers) {
                 if (potential.getTotalSavings().getAmount().equals(BankersRounding.zeroAmount())) {
                     BroadleafCurrency currency = order.getOrderCurrency();
@@ -228,6 +233,14 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
         }
 
         return fgOfferApplied;
+    }
+
+    protected boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, PromotableCandidateFulfillmentGroupOffer fgOffer) {
+        return offerServiceUtilities.orderMeetsQualifyingSubtotalRequirements(order, fgOffer.getOffer(), fgOffer.getCandidateQualifiersMap());
+    }
+
+    protected boolean orderMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateFulfillmentGroupOffer fgOffer) {
+        return offerServiceUtilities.orderMeetsSubtotalRequirements(order, fgOffer.getOffer());
     }
 
     protected boolean compareAndAdjustFulfillmentGroupOffers(PromotableOrder order, boolean fgOfferApplied) {
