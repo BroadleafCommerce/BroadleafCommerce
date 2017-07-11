@@ -43,7 +43,7 @@ public class HomepageLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl 
     protected JSONArray getLinkedDataJson() throws JSONException {
         JSONArray schemaObjects = new JSONArray();
 
-        JSONObject webSite = LinkedDataUtil.getDefaultWebSite(url);
+        JSONObject webSite = linkedDataUtil.getDefaultWebSite(url);
 
         JSONObject potentialAction = new JSONObject();
         potentialAction.put("@type", "SearchAction");
@@ -53,8 +53,8 @@ public class HomepageLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl 
         webSite.put("potentialAction", potentialAction);
 
         schemaObjects.put(webSite);
-        schemaObjects.put(LinkedDataUtil.getDefaultBreadcrumbList(url));
-        schemaObjects.put(LinkedDataUtil.getDefaultOrganization(url));
+        schemaObjects.put(linkedDataUtil.getDefaultBreadcrumbList(url));
+        schemaObjects.put(linkedDataUtil.getDefaultOrganization(url));
 
         return schemaObjects;
     }

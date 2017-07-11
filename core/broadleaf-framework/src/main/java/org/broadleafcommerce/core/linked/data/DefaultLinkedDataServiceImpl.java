@@ -19,6 +19,9 @@ package org.broadleafcommerce.core.linked.data;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * This service generates metadata for pages that are not specialized. It includes the organization, website, and
@@ -26,9 +29,13 @@ import org.codehaus.jettison.json.JSONException;
  *
  * @author Jacob Mitash
  */
+@Service
 public class DefaultLinkedDataServiceImpl implements LinkedDataService {
 
     protected String url;
+
+    @Resource(name = "blLinkedDataUtil")
+    protected LinkedDataUtil linkedDataUtil;
 
     public DefaultLinkedDataServiceImpl(String url) {
         this.url = url;
@@ -37,9 +44,9 @@ public class DefaultLinkedDataServiceImpl implements LinkedDataService {
     protected JSONArray getLinkedDataJson() throws JSONException {
         JSONArray schemaObjects = new JSONArray();
 
-        schemaObjects.put(LinkedDataUtil.getDefaultOrganization(url));
-        schemaObjects.put(LinkedDataUtil.getDefaultWebSite(url));
-        schemaObjects.put(LinkedDataUtil.getDefaultBreadcrumbList(url));
+        schemaObjects.put(linkedDataUtil.getDefaultOrganization(url));
+        schemaObjects.put(linkedDataUtil.getDefaultWebSite(url));
+        schemaObjects.put(linkedDataUtil.getDefaultBreadcrumbList(url));
 
         return schemaObjects;
     }

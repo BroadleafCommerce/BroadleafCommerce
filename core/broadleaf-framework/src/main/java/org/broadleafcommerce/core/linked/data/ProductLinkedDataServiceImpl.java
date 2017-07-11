@@ -42,7 +42,7 @@ import java.util.List;
  */
 public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
-    protected final static DateFormat iso8601Format = new SimpleDateFormat("YYYY-MM-DD");
+    protected final static DateFormat ISO_8601_FORMAT = new SimpleDateFormat("YYYY-MM-DD");
 
     protected final Product product;
 
@@ -63,8 +63,8 @@ public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
         schemaObjects.put(productData);
         schemaObjects.put(getBreadcrumbList(product, url));
-        schemaObjects.put(LinkedDataUtil.getDefaultOrganization(url));
-        schemaObjects.put(LinkedDataUtil.getDefaultWebSite(url));
+        schemaObjects.put(linkedDataUtil.getDefaultOrganization(url));
+        schemaObjects.put(linkedDataUtil.getDefaultWebSite(url));
 
         return schemaObjects;
     }
@@ -95,7 +95,7 @@ public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
             offer.put("price", sku.getPriceData().getPrice().doubleValue());
             offer.put("priceCurrency", sku.getPriceData().getPrice().getCurrency().getCurrencyCode());
             if (sku.getActiveEndDate() != null) {
-                offer.put("priceValidUntil", iso8601Format.format(sku.getActiveEndDate()));
+                offer.put("priceValidUntil", ISO_8601_FORMAT.format(sku.getActiveEndDate()));
             }
 
             boolean purchasable = false;
@@ -144,7 +144,7 @@ public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
                 review.put("reviewBody", reviewDetail.getReviewText());
                 review.put("reviewRating", new JSONObject().put("ratingValue", reviewDetail.getRatingDetail().getRating()));
                 review.put("author", reviewDetail.getCustomer().getFirstName());
-                review.put("datePublished", iso8601Format.format(reviewDetail.getReviewSubmittedDate()));
+                review.put("datePublished", ISO_8601_FORMAT.format(reviewDetail.getReviewSubmittedDate()));
                 reviews.put(review);
             }
 
@@ -165,7 +165,7 @@ public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
         breadcrumbObjects.put("@context", LinkedDataUtil.DEFAULT_CONTEXT);
         breadcrumbObjects.put("@type", "BreadcrumbList");
 
-        String homepageUrl = LinkedDataUtil.getHomepageUrl(url);
+        String homepageUrl = linkedDataUtil.getHomepageUrl(url);
         String homepageNoSlash = homepageUrl.substring(0, homepageUrl.length() - 1);
 
         List<CategoryProductXref> categoryXrefs = product.getAllParentCategoryXrefs();

@@ -18,6 +18,12 @@
 package org.broadleafcommerce.core.linked.data;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,21 +32,50 @@ import java.util.List;
  * @author Jacob Mitash
  */
 @Component("blLinkedDataServiceFactory")
-public class LinkedDataServiceFactory {
+public class LinkedDataServiceFactory implements ApplicationContextAware {
 
+    private static ApplicationContext applicationContext;
+
+    @Bean
+    @Scope("prototype")
     public LinkedDataService categoryLinkedDataService(String url, List<Product> products) {
-        return new CategoryLinkedDataServiceImpl(url, products);
+        CategoryLinkedDataServiceImpl service = new CategoryLinkedDataServiceImpl(url, products);
+        initializeService(service);
+        return service;
     }
 
+    @Bean
+    @Scope("prototype")
     public LinkedDataService defaultLinkedDataService(String url) {
-        return new DefaultLinkedDataServiceImpl(url);
+        DefaultLinkedDataServiceImpl service = new DefaultLinkedDataServiceImpl(url);
+        initializeService(service);
+        return service;
     }
 
+    @Bean
+    @Scope("prototype")
     public LinkedDataService homepageLinkedDataService(String url) {
-        return new HomepageLinkedDataServiceImpl(url);
+        HomepageLinkedDataServiceImpl service = new HomepageLinkedDataServiceImpl(url);
+        initializeService(service);
+        return service;
     }
 
+    @Bean
+    @Scope("prototype")
     public LinkedDataService productLinkedDataService(String url, Product product) {
-        return new ProductLinkedDataServiceImpl(url, product);
+        ProductLinkedDataServiceImpl service = new ProductLinkedDataServiceImpl(url, product);
+        initializeService(service);
+        return service;
+    }
+
+    protected void initializeService(LinkedDataService service) {
+        AutowireCapableBeanFactory factory = applicationContext.getAutowireCapableBeanFactory();
+        factory.autowireBean(service);
+        factory.initializeBean(service, service.getClass().getSimpleName());
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        LinkedDataServiceFactory.applicationContext = applicationContext;
     }
 }
