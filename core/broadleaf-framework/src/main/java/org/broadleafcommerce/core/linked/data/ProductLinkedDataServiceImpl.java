@@ -28,8 +28,8 @@ import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.springframework.core.env.Environment;
 
-import javax.annotation.Resource;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -46,12 +46,12 @@ public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
     protected final Product product;
 
-    @Resource(name = "blRatingService")
     protected RatingService ratingService;
 
-    ProductLinkedDataServiceImpl(String url, Product product) {
-        super(url);
+        ProductLinkedDataServiceImpl(Environment environment, RatingService ratingService, String url, Product product) {
+        super(environment, null, url);
         this.product = product;
+        this.ratingService = ratingService;
     }
 
     @Override
@@ -63,8 +63,8 @@ public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
         schemaObjects.put(productData);
         schemaObjects.put(getBreadcrumbList(product, url));
-        schemaObjects.put(linkedDataUtil.getDefaultOrganization(url));
-        schemaObjects.put(linkedDataUtil.getDefaultWebSite(url));
+        schemaObjects.put(LinkedDataUtil.getDefaultOrganization(environment, url));
+        schemaObjects.put(LinkedDataUtil.getDefaultWebSite(environment, url));
 
         return schemaObjects;
     }
@@ -165,7 +165,7 @@ public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
         breadcrumbObjects.put("@context", LinkedDataUtil.DEFAULT_CONTEXT);
         breadcrumbObjects.put("@type", "BreadcrumbList");
 
-        String homepageUrl = linkedDataUtil.getHomepageUrl(url);
+        String homepageUrl = LinkedDataUtil.getHomepageUrl(url);
         String homepageNoSlash = homepageUrl.substring(0, homepageUrl.length() - 1);
 
         List<CategoryProductXref> categoryXrefs = product.getAllParentCategoryXrefs();

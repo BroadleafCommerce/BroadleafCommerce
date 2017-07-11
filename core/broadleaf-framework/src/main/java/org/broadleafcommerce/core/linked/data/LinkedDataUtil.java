@@ -23,11 +23,8 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -40,16 +37,9 @@ import java.util.Map;
  *
  * @author Jacob Mitash
  */
-@Service("blLinkedDataUtil")
 public class LinkedDataUtil {
 
     protected final static String DEFAULT_CONTEXT = "http://schema.org/";
-
-    @Autowired
-    protected Environment environment;
-
-    @Resource(name = "blBreadcrumbService")
-    protected BreadcrumbService breadcrumbService;
 
     /**
      * Generates an object representing the Schema.org organization
@@ -57,14 +47,14 @@ public class LinkedDataUtil {
      * @param url The URL of the currently visited page
      * @return JSON representation of Organization from Schema.org
      */
-    protected JSONObject getDefaultOrganization(String url) throws JSONException {
+    protected static JSONObject getDefaultOrganization(Environment environment, String url) throws JSONException {
         JSONObject organization = new JSONObject();
 
         organization.put("@context", DEFAULT_CONTEXT);
         organization.put("@type", "Organization");
         organization.put("name", environment.getProperty("site.name"));
         organization.put("url", getHomepageUrl(url));
-        organization.put("logo", getLogoObject());
+        organization.put("logo", getLogoObject(environment));
         organization.put("sameAs", getSocialMediaList());
 
         return organization;
@@ -76,7 +66,7 @@ public class LinkedDataUtil {
      * @param url The URL of the currently visited page
      * @return JSON representation of WebSite from Schema.org
      */
-    protected JSONObject getDefaultWebSite(String url) throws JSONException {
+    protected static JSONObject getDefaultWebSite(Environment environment, String url) throws JSONException {
         JSONObject webSite = new JSONObject();
         webSite.put("@context", DEFAULT_CONTEXT);
         webSite.put("@type", "WebSite");
@@ -92,7 +82,7 @@ public class LinkedDataUtil {
      * @param url The full URL of the requested page
      * @return JSON representation of BreadcrumbList from Schema.org
      */
-    protected JSONObject getDefaultBreadcrumbList(String url) throws JSONException {
+    protected static JSONObject getDefaultBreadcrumbList(BreadcrumbService breadcrumbService, String url) throws JSONException {
         JSONObject breadcrumbObjects = new JSONObject();
 
         breadcrumbObjects.put("@context", DEFAULT_CONTEXT);
@@ -132,7 +122,7 @@ public class LinkedDataUtil {
      *
      * @return JSON representation of Schema.org image for site logo
      */
-    protected JSONObject getLogoObject() throws JSONException {
+    protected static JSONObject getLogoObject(Environment environment) throws JSONException {
         JSONObject logoImage = new JSONObject();
         logoImage.put("@type", "ImageObject");
         logoImage.put("url", environment.getProperty("site.logo"));
@@ -145,7 +135,7 @@ public class LinkedDataUtil {
      * @return
      * @throws JSONException
      */
-    protected JSONArray getSocialMediaList() throws JSONException {
+    protected static JSONArray getSocialMediaList() throws JSONException {
         JSONArray socialMedia = new JSONArray();
         //TODO: implement
         return socialMedia;
@@ -158,7 +148,7 @@ public class LinkedDataUtil {
      * @param urlFull the full URL of any page on the site
      * @return the URL of the homepage of the site
      */
-    protected String getHomepageUrl(String urlFull) {
+    protected static String getHomepageUrl(String urlFull) {
         try {
             URL url = new URL(urlFull);
             return url.getProtocol() + "://" + url.getHost() + "/";

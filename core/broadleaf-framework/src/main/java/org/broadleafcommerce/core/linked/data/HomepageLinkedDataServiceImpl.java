@@ -17,10 +17,10 @@
  */
 package org.broadleafcommerce.core.linked.data;
 
+import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbService;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
 /**
@@ -32,18 +32,15 @@ import org.springframework.core.env.Environment;
  */
 public class HomepageLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
-    @Autowired
-    protected Environment environment;
-
-    HomepageLinkedDataServiceImpl(String url) {
-        super(url);
+    HomepageLinkedDataServiceImpl(Environment environment, BreadcrumbService breadcrumbService, String url) {
+        super(environment, breadcrumbService, url);
     }
 
     @Override
     protected JSONArray getLinkedDataJson() throws JSONException {
         JSONArray schemaObjects = new JSONArray();
 
-        JSONObject webSite = linkedDataUtil.getDefaultWebSite(url);
+        JSONObject webSite = LinkedDataUtil.getDefaultWebSite(environment, url);
 
         JSONObject potentialAction = new JSONObject();
         potentialAction.put("@type", "SearchAction");
@@ -53,8 +50,8 @@ public class HomepageLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl 
         webSite.put("potentialAction", potentialAction);
 
         schemaObjects.put(webSite);
-        schemaObjects.put(linkedDataUtil.getDefaultBreadcrumbList(url));
-        schemaObjects.put(linkedDataUtil.getDefaultOrganization(url));
+        schemaObjects.put(LinkedDataUtil.getDefaultBreadcrumbList(breadcrumbService, url));
+        schemaObjects.put(LinkedDataUtil.getDefaultOrganization(environment, url));
 
         return schemaObjects;
     }

@@ -17,11 +17,10 @@
  */
 package org.broadleafcommerce.core.linked.data;
 
+import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbService;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
+import org.springframework.core.env.Environment;
 
 /**
  * This service generates metadata for pages that are not specialized. It includes the organization, website, and
@@ -29,24 +28,28 @@ import javax.annotation.Resource;
  *
  * @author Jacob Mitash
  */
-@Service
 public class DefaultLinkedDataServiceImpl implements LinkedDataService {
 
     protected String url;
 
-    @Resource(name = "blLinkedDataUtil")
-    protected LinkedDataUtil linkedDataUtil;
+    protected Environment environment;
 
-    public DefaultLinkedDataServiceImpl(String url) {
+    protected BreadcrumbService breadcrumbService;
+
+    public DefaultLinkedDataServiceImpl(Environment environment, BreadcrumbService breadcrumbService, String url) {
+        this.environment = environment;
+        this.breadcrumbService = breadcrumbService;
         this.url = url;
     }
 
     protected JSONArray getLinkedDataJson() throws JSONException {
         JSONArray schemaObjects = new JSONArray();
 
-        schemaObjects.put(linkedDataUtil.getDefaultOrganization(url));
-        schemaObjects.put(linkedDataUtil.getDefaultWebSite(url));
-        schemaObjects.put(linkedDataUtil.getDefaultBreadcrumbList(url));
+        schemaObjects.put(LinkedDataUtil.getDefaultOrganization(environment, url));
+        schemaObjects.put(LinkedDataUtil.getDefaultWebSite(environment, url));
+        if(breadcrumbService != null) {
+            schemaObjects.put(LinkedDataUtil.getDefaultBreadcrumbList(breadcrumbService, url));
+        }
 
         return schemaObjects;
     }

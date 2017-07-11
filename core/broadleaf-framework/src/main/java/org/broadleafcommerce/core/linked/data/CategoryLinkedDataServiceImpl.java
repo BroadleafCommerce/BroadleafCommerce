@@ -17,10 +17,12 @@
  */
 package org.broadleafcommerce.core.linked.data;
 
+import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbService;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.springframework.core.env.Environment;
 
 import java.util.List;
 
@@ -33,8 +35,8 @@ public class CategoryLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl 
 
     final protected List<Product> products;
 
-    CategoryLinkedDataServiceImpl(String url, List<Product> products) {
-        super(url);
+    CategoryLinkedDataServiceImpl(Environment environment, BreadcrumbService breadcrumbService, String url, List<Product> products) {
+        super(environment, breadcrumbService, url);
         this.products = products;
     }
 
