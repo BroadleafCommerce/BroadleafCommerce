@@ -27,10 +27,15 @@ import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
+import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.List;
 
@@ -94,5 +99,42 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
         }
 
         return billingInfoForm;
+    }
+
+    @Override
+    public void prePopulateInfoForms(ShippingInfoForm shippingInfoForm, BillingInfoForm billingInfoForm) {
+        Order cart = CartState.getCart();
+        prePopulateShippingInfoForm(shippingInfoForm, cart);
+        prePopulateBillingInfoForm(billingInfoForm, cart);
+    }
+
+    @Override
+    public void determineIfSavedAddressIsSelected(Model model, ShippingInfoForm shippingInfoForm, BillingInfoForm billingInfoForm) {
+        Customer customer = CustomerState.getCustomer();
+        boolean isSavedShippingAddress = false;
+        boolean isSavedBillingAddress = false;
+
+        for (CustomerAddress customerAddress : customer.getCustomerAddresses()) {
+            if (addressesAreEqual(shippingInfoForm.getAddress(), customerAddress)) {
+                isSavedShippingAddress = true;
+                break;
+            }
+        }
+
+        for (CustomerAddress customerAddress : customer.getCustomerAddresses()) {
+            if (addressesAreEqual(billingInfoForm.getAddress(), customerAddress)) {
+                isSavedBillingAddress = true;
+                break;
+            }
+        }
+
+        model.addAttribute("isSavedShippingAddress", isSavedShippingAddress);
+        model.addAttribute("isSavedBillingAddress", isSavedBillingAddress);
+    }
+
+    protected boolean addressesAreEqual(Address formAddress, CustomerAddress customerAddress) {
+        return customerAddress.getAddress().getAddressLine1().equals(formAddress.getAddressLine1()) &&
+                customerAddress.getAddress().getAddressLine2().equals(formAddress.getAddressLine2()) &&
+                customerAddress.getAddress().getPhonePrimary().getPhoneNumber().equals(formAddress.getPhonePrimary().getPhoneNumber());
     }
 }

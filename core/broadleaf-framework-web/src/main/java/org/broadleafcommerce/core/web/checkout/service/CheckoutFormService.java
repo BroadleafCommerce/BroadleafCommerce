@@ -21,6 +21,8 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 public interface CheckoutFormService {
 
@@ -30,4 +32,7 @@ public interface CheckoutFormService {
 
     BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm, Order cart);
 
+    void prePopulateInfoForms(ShippingInfoForm shippingInfoForm, BillingInfoForm billingInfoForm);
+
+    void determineIfSavedAddressIsSelected(Model model, ShippingInfoForm shippingInfoForm, BillingInfoForm billingInfoForm);
 }
