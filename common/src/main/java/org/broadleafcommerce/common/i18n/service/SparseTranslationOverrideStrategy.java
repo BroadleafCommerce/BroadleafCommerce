@@ -1,0 +1,208 @@
+/*
+ * #%L
+ * broadleaf-multitenant-singleschema
+ * %%
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
+ * %%
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Broadleaf Commerce, LLC
+ * The intellectual and technical concepts contained
+ * herein are proprietary to Broadleaf Commerce, LLC
+ * and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Broadleaf Commerce, LLC.
+ * #L%
+ */
+package org.broadleafcommerce.common.i18n.service;
+
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.cache.OverridePreCacheInitializer;
+import org.broadleafcommerce.common.cache.OverridePreCacheService;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.extension.ItemStatus;
+import org.broadleafcommerce.common.extension.StandardCacheItem;
+import org.broadleafcommerce.common.extension.TemplateOnlyQueryExtensionManager;
+import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
+import org.broadleafcommerce.common.i18n.domain.Translation;
+import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+/**
+ * @author Jeff Fischer
+ */
+@Component("blSparseTranslationOverrideStrategy")
+public class SparseTranslationOverrideStrategy implements TranslationOverrideStrategy, OverridePreCacheInitializer {
+
+    public static final int PRECACHED_SPARSE_OVERRIDE_ORDER = -1000;
+
+    @Resource(name = "blOverridePreCacheService")
+    protected OverridePreCacheService preCachedSparseOverrideService;
+
+    @Resource(name="blTemplateOnlyQueryExtensionManager")
+    protected TemplateOnlyQueryExtensionManager extensionManager;
+
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
+
+    /**
+     * Whether or not {@link #getLocaleBasedTemplateValue(String, String, TranslatedEntity, String, String, String, String, String)}
+     * will be utilized from this strategy. If false, the fallback
+     * {@link ThresholdCacheTranslationOverrideStrategy#getLocaleBasedTemplateValue(String, String, TranslatedEntity, String, String, String, String, String)}
+     * will be used instead.
+     * </p>
+     * If the 'template' repository (MT concept) is large, this value should be left true. However, if the 'template' repository
+     * is relatively small, you may want to consider setting this to false in order to leverage the possibility of complete
+     * caching in the default strategy. See {@link TranslationSupport#getThresholdForFullCache()} for more info on this
+     * option.
+     * </p>
+     * The default value is true. Set the 'precached.sparse.override.translation.template.enabled' property to change the value.
+     */
+    @Value("${precached.sparse.override.translation.template.enabled:true}")
+    protected boolean templateEnabled = true;
+
+    @Override
+    public LocalePair getLocaleBasedOverride(String property, TranslatedEntity entityType, String entityId,
+                                             String localeCode, String localeCountryCode, String basicCacheKey) {
+        LocalePair override = null;
+        if (preCachedSparseOverrideService.isActiveForType(Translation.class.getName())) {
+            String specificCacheKey = getCacheKey(entityType, entityId, property, localeCountryCode);
+            String generalCacheKey = getCacheKey(entityType, entityId, property, localeCode);
+            List<StandardCacheItem> overrides = preCachedSparseOverrideService.findElements(specificCacheKey, generalCacheKey);
+            override = new LocalePair();
+            if (!overrides.isEmpty()) {
+                if (ItemStatus.NONE != overrides.get(0).getItemStatus()) {
+                    StandardCacheItem specificTranslation = overrides.get(0);
+                    override.setSpecificItem(specificTranslation);
+                }
+                if (ItemStatus.NONE != overrides.get(1).getItemStatus()) {
+                    StandardCacheItem generalTranslation = overrides.get(1);
+                    override.setGeneralItem(generalTranslation);
+                }
+            }
+        }
+        return override;
+    }
+
+    @Override
+    public LocalePair getLocaleBasedTemplateValue(String templateCacheKey, String property, TranslatedEntity entityType,
+                                                  String entityId, String localeCode, String localeCountryCode,
+                                                  String specificPropertyKey, String generalPropertyKey) {
+        LocalePair override = null;
+        if (preCachedSparseOverrideService.isActiveForType(Translation.class.getName()) && templateEnabled) {
+            override = new LocalePair();
+            List<Translation> templateVals = getTemplateTranslations(entityType, entityId, property, localeCode);
+            List<String> codesToMatch = new ArrayList<String>();
+            if (specificPropertyKey.endsWith(localeCountryCode) && generalPropertyKey.endsWith(localeCountryCode)) {
+                codesToMatch.add(localeCountryCode);
+            } else if (specificPropertyKey.endsWith(localeCode) && generalPropertyKey.endsWith(localeCode)) {
+                codesToMatch.add(localeCode);
+            } else {
+                codesToMatch.add(localeCountryCode);
+                codesToMatch.add(localeCode);
+            }
+            for (Translation templateVal : templateVals) {
+                for (String code : codesToMatch) {
+                    if (templateVal.getLocaleCode().equals(code)) {
+                        StandardCacheItem cacheItem = new StandardCacheItem();
+                        cacheItem.setItemStatus(ItemStatus.NORMAL);
+                        cacheItem.setCacheItem(templateVal);
+                        override.setSpecificItem(cacheItem);
+                        break;
+                    }
+                }
+                if (override.getSpecificItem() != null) {
+                    break;
+                }
+            }
+        }
+        return override;
+    }
+
+    @Override
+    public boolean isOverrideQualified(Class<?> type) {
+        return Translation.class.isAssignableFrom(type);
+    }
+
+    @Override
+    public StandardCacheItem initializeOverride(Object entity) {
+        String key = getCacheKey((Translation) entity);
+        String dto = ((Translation) entity).getTranslatedValue();
+        StandardCacheItem cacheItem = new StandardCacheItem();
+        ItemStatus status = ItemStatus.NORMAL;
+        if (extensionManager != null) {
+            ExtensionResultHolder<ItemStatus> response = new ExtensionResultHolder<ItemStatus>();
+            ExtensionResultStatusType result = extensionManager.buildStatus(entity, response);
+            if (ExtensionResultStatusType.NOT_HANDLED != result && response.getResult() != null) {
+                status = response.getResult();
+            }
+        }
+        cacheItem.setItemStatus(status);
+        cacheItem.setKey(key);
+        cacheItem.setCacheItem(dto);
+        return cacheItem;
+    }
+
+    @Override
+    public int getOrder() {
+        return PRECACHED_SPARSE_OVERRIDE_ORDER;
+    }
+
+    protected List<Translation> getTemplateTranslations(final TranslatedEntity entityType, final String entityId, final String property, final String localeCode) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
+        Root<TranslationImpl> root = criteria.from(TranslationImpl.class);
+        criteria.select(root);
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(builder.equal(root.get("entityType"), entityType.getFriendlyType()));
+        restrictions.add(builder.equal(root.get("entityId"), entityId));
+        restrictions.add(builder.equal(root.get("fieldName"), property));
+        restrictions.add(builder.like(root.get("localeCode").as(String.class),localeCode + "%"));
+        try {
+            if (extensionManager != null) {
+                extensionManager.setup(TranslationImpl.class);
+                Object testObject;
+                try {
+                    //This should already be in level 1 cache and this should not cause a hit to the database.
+                    testObject = em.find(Class.forName(entityType.getType()), Long.parseLong(entityId));
+                } catch (ClassNotFoundException e) {
+                    throw ExceptionHelper.refineException(e);
+                }
+                extensionManager.refineRetrieve(TranslationImpl.class, testObject, builder, criteria, root, restrictions);
+            }
+            criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+            TypedQuery<Translation> query = em.createQuery(criteria);
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+            return query.getResultList();
+        } finally {
+            extensionManager.breakdown(TranslationImpl.class);
+        }
+    }
+
+    protected String getCacheKey(Translation translation) {
+        return getCacheKey(translation.getEntityType(), translation.getEntityId(), translation.getFieldName(), translation.getLocaleCode());
+    }
+
+    protected String getCacheKey(TranslatedEntity type, String entityId, String fieldName, String localeCode) {
+        return StringUtils.join(new String[]{"translation", type.getType(), entityId, fieldName, localeCode},"-");
+    }
+
+}
