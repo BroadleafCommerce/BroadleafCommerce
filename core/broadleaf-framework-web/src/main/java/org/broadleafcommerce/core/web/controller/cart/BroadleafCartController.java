@@ -60,7 +60,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BroadleafCartController extends AbstractCartController {
 
-    protected static String cartView = "checkout/cart";
+    protected static String cartView = "cart/cart";
     protected static String checkoutView = "checkout/checkout";
     protected static String cartPageRedirect = "redirect:/cart";
     protected static String configureView = "configure/partials/configure";
