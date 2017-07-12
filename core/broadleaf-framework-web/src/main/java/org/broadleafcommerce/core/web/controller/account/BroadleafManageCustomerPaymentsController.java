@@ -1,14 +1,30 @@
+/*
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
 package org.broadleafcommerce.core.web.controller.account;
+
 
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
-import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -24,11 +40,18 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     protected static String customerPaymentView = "account/manageCustomerPayments";
     protected static String customerPaymentRedirect = "redirect:/account/payments";
 
-    @Resource(name = "blCustomerPaymentService")
-    protected CustomerPaymentService customerPaymentService;
 
     public String viewCustomerPayments(HttpServletRequest request, Model model) {
-        //TODO: update model
+        Customer customer = CustomerState.getCustomer(request);
+
+        if(customer == null) {
+            throw new SecurityException("Customer is not found but tried to access account page");
+        }
+
+
+        //TODO: add customerPayments to model
+
+        model.addAttribute("savePaymentForm", new SavePaymentForm());
 
         return getCustomerPaymentView();
     }
@@ -39,30 +62,22 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
         return getCustomerPaymentView();
     }
 
-    public String updateCustomerPayment(HttpServletRequest request, Model model, Long customerPaymentId) {
+    public String addCustomerPayment(HttpServletRequest request, Model model, SavePaymentForm form, BindingResult result) {
         //TODO: update model, add form
 
         return getCustomerPaymentRedirect();
     }
 
-    public String removeCustomerPayment(HttpServletRequest request, Model model, Long customerPaymentId) {
+    public String updateCustomerPayment(HttpServletRequest request, Model model, SavePaymentForm form, BindingResult result, Long customerPaymentId) {
         //TODO: update model, add form
 
         return getCustomerPaymentRedirect();
     }
 
-    protected void validateCustomerOwnedData(CustomerPayment customerPayment) {
-        if (validateCustomerOwnedData) {
-            Customer activeCustomer = CustomerState.getCustomer();
-            if (activeCustomer != null
-                    && !(activeCustomer.equals(customerPayment.getCustomer()))) {
-                throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
-            }
+    public String removeCustomerPayment(HttpServletRequest request, Model model, SavePaymentForm form, Long customerPaymentId) {
+        //TODO: update model, add form
 
-            if (activeCustomer == null && customerPayment.getCustomer() != null) {
-                throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
-            }
-        }
+        return getCustomerPaymentRedirect();
     }
 
     public String getCustomerPaymentView() {
