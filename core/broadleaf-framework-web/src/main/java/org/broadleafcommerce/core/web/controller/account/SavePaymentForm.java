@@ -24,4 +24,49 @@ import java.io.Serializable;
  */
 public class SavePaymentForm implements Serializable {
 
+    protected String paymentName;
+    protected boolean defaultMethod;
+    protected String lastFourDigits;
+    protected String expiration;
+    protected String personName;
+
+    public String getPaymentName() {
+        return paymentName;
+    }
+
+    public void setPaymentName(String paymentName) {
+        this.paymentName = paymentName;
+    }
+
+    public boolean isDefaultMethod() {
+        return defaultMethod;
+    }
+
+    public void setDefaultMethod(boolean defaultMethod) {
+        this.defaultMethod = defaultMethod;
+    }
+
+    public String getLastFourDigits() {
+        return lastFourDigits;
+    }
+
+    public void setLastFourDigits(String lastFourDigits) {
+        this.lastFourDigits = lastFourDigits;
+    }
+
+    public String getExpiration() {
+        return expiration;
+    }
+
+    public void setExpiration(String expiration) {
+        this.expiration = expiration;
+    }
+
+    public String getPersonName() {
+        return personName;
+    }
+
+    public void setPersonName(String personName) {
+        this.personName = personName;
+    }
 }
