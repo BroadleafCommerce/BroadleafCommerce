@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.web.checkout.validator.GiftCardInfoFormValidat
 import org.broadleafcommerce.core.web.checkout.validator.MultishipAddAddressFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.OrderInfoFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidator;
+import org.broadleafcommerce.core.web.order.service.CartStateService;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
@@ -70,8 +71,11 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     private static final Log LOG = LogFactory.getLog(AbstractCheckoutController.class);
 
+    protected static String ACTIVE_STAGE = "activeStage";
+
     protected static String cartPageRedirect = "redirect:/cart";
     protected static String checkoutView = "checkout/checkout";
+    protected static String checkoutStagesPartial = "checkout/partials/checkoutStages";
     protected static String checkoutPageRedirect = "redirect:/checkout";
     protected static String baseConfirmationView = "ajaxredirect:/confirmation";
 
@@ -145,6 +149,9 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
     @Resource(name = "blOrderInfoFormValidator")
     protected OrderInfoFormValidator orderInfoFormValidator;
 
+    @Resource(name = "blCartStateService")
+    protected CartStateService cartStateService;
+
     /* Extension Managers */
     @Resource(name = "blCheckoutControllerExtensionManager")
     protected BroadleafCheckoutControllerExtensionManager checkoutControllerExtensionManager;
@@ -156,6 +163,10 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     public String getCheckoutView() {
         return checkoutView;
+    }
+
+    public String getCheckoutStagesPartial() {
+        return checkoutStagesPartial;
     }
 
     public String getCheckoutPageRedirect() {

@@ -350,7 +350,11 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
         <dependency>
             <groupId>de.jkeylockmanager</groupId>
             <artifactId>jkeylockmanager</artifactId>            

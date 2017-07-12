@@ -330,6 +330,40 @@ var BLC = (function($) {
 
         return document.location.search = params;
     }
+
+    /**
+     * Gathers all parameters from the current url
+     */
+    function getUrlParameters() {
+        var baseUrl = window.location.href;
+        var indexOfQ = baseUrl.indexOf('?');
+        var urlParams = null;
+        if (indexOfQ >= 0) {
+            urlParams = baseUrl.substring(indexOfQ + 1);
+            if (urlParams != null && urlParams != '') {
+                return JSON.parse('{"'
+                    + decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\""))) + '"}');
+            }
+        }
+        return {};
+    }
+
+    /**
+     * Add URL parameters to an existing url
+     * @param {url}     string
+     * @param {params}    map of parameter keys to values
+     */
+    function buildUrlWithParams (url, params) {
+        if (url.lastIndexOf("?") > -1) {
+            url = url + "&" + $.param(params);
+        } else {
+            if (!$.isEmptyObject(params)) {
+                url = url + "?" + $.param(params);
+            }
+        }
+
+        return url;
+    }
     
     addPreAjaxCallbackHandler(function($data) {
         return BLC.redirectIfNecessary($data);
@@ -346,7 +380,9 @@ var BLC = (function($) {
         getStateVersionToken : getStateVersionToken,
         defaultErrorHandler : defaultErrorHandler,
         serializeObject : serializeObject,
+        getUrlParameters : getUrlParameters,
         addUrlParam : addUrlParam,
+        buildUrlWithParams : buildUrlWithParams,
         servletContext : servletContext,
         siteBaseUrl : siteBaseUrl
     }
