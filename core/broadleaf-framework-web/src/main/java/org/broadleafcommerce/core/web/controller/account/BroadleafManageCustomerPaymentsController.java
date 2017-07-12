@@ -19,12 +19,14 @@ package org.broadleafcommerce.core.web.controller.account;
 
 
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.core.web.controller.account.validator.SavePaymentValidator;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -40,6 +42,9 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     protected static String customerPaymentView = "account/manageCustomerPayments";
     protected static String customerPaymentRedirect = "redirect:/account/payments";
 
+    @Resource(name = "blSavePaymentValidator")
+    protected SavePaymentValidator savePaymentValidator;
+
 
     public String viewCustomerPayments(HttpServletRequest request, Model model) {
         Customer customer = CustomerState.getCustomer(request);
@@ -48,8 +53,7 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
             throw new SecurityException("Customer is not found but tried to access account page");
         }
 
-
-        //TODO: add customerPayments to model
+        //TODO: add payment methods to model
 
         model.addAttribute("savePaymentForm", new SavePaymentForm());
 
@@ -63,7 +67,13 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     }
 
     public String addCustomerPayment(HttpServletRequest request, Model model, SavePaymentForm form, BindingResult result) {
-        //TODO: update model, add form
+        savePaymentValidator.validate(form, result);
+
+        if(result.hasErrors()) {
+            return getCustomerPaymentRedirect();
+        }
+
+        //TODO: save
 
         return getCustomerPaymentRedirect();
     }
