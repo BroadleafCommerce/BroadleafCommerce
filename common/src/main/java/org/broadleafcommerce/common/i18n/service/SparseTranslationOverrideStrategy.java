@@ -165,7 +165,7 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
         return PRECACHED_SPARSE_OVERRIDE_ORDER;
     }
 
-    protected List<Translation> getTemplateTranslations(final TranslatedEntity entityType, final String entityId, final String property, final String localeCode) {
+    protected List<Translation> getTemplateTranslations(TranslatedEntity entityType, String entityId, String property, String localeCode) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
         Root<TranslationImpl> root = criteria.from(TranslationImpl.class);
