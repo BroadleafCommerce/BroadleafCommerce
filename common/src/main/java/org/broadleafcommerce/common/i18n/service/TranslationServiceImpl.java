@@ -221,7 +221,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         StandardCacheItem generalTranslation = null;
         String specificPropertyKey = property + "_" + localeCountryCode;
         String generalPropertyKey = property + "_" + localeCode;
-        String response;
+        String response = null;
         String cacheKey = getCacheKey(ResultType.STANDARD, entityType);
         LocalePair override = null;
         for (TranslationOverrideStrategy strategy : strategies) {
@@ -261,7 +261,11 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
                 } else {
                     response = (String) generalTranslation.getCacheItem();
                 }
-                return replaceEmptyWithNullResponse(response);
+                if (specificTranslationDeleted) {
+                    return replaceEmptyWithNullResponse(response);
+                }
+                //We have a valid general override - don't check for general template value
+                generalTranslationDeleted = true;
             }
         }
 
@@ -274,8 +278,12 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
             generalPropertyKey = specificPropertyKey;
         }
 
-        return getTemplateTranslatedValue(cacheKey, property, entityType, entityId, localeCode,
+        String templateResponse = getTemplateTranslatedValue(cacheKey, property, entityType, entityId, localeCode,
                     localeCountryCode, specificPropertyKey, generalPropertyKey);
+        if (templateResponse != null) {
+            response = templateResponse;
+        }
+        return response;
     }
 
     protected String replaceEmptyWithNullResponse(String response) {
