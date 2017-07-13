@@ -22,7 +22,7 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.SavePaymentValidator;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.SavedPayment;
-import org.broadleafcommerce.profile.core.domain.SavedPaymentImpl;
+import org.broadleafcommerce.profile.core.service.CustomerSavedPaymentService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
@@ -30,7 +30,6 @@ import org.springframework.validation.BindingResult;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,6 +48,8 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     @Resource(name = "blSavePaymentValidator")
     protected SavePaymentValidator savePaymentValidator;
 
+    @Resource(name = "blCustomerSavedPaymentService")
+    protected CustomerSavedPaymentService savedPaymentService;
 
     public String viewCustomerPayments(HttpServletRequest request, Model model) {
         Customer customer = CustomerState.getCustomer(request);
@@ -57,21 +58,9 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
             throw new SecurityException("Customer is not found but tried to access account page");
         }
 
-        //TODO: actual saved payments
-        List<SavedPayment> savedPaymentList = new ArrayList<>();
-        SavedPayment savedPayment = new SavedPaymentImpl();
-        savedPayment.setDefaultMethod(true);
-        savedPayment.setExpiration("01/01");
-        savedPayment.setLastFourDigits("1234");
-        savedPayment.setPaymentName("Dad's Wallet");
-        savedPayment.setPersonName("Dad Dad");
-        savedPayment.setId(1L);
-        savedPaymentList.add(savedPayment);
-
+        List<SavedPayment> savedPaymentList = savedPaymentService.readSavedPaymentsByCustomerId(customer.getId());
 
         model.addAttribute("savedPayments", savedPaymentList);
-
-
         model.addAttribute("savePaymentForm", new SavePaymentForm());
 
         return getCustomerPaymentView();
@@ -90,7 +79,7 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     }
 
     public String removeCustomerPayment(HttpServletRequest request, Model model, Long customerPaymentId) {
-        //TODO: update model, add form
+        //savedPaymentService.deleteSavedPayment(); TODO: change type
 
         return getCustomerPaymentRedirect();
     }
