@@ -16,6 +16,7 @@ public class SavedPaymentImpl implements SavedPayment {
     protected String expiration;
     protected String token;
     protected Customer customer;
+    private String cardCompany;
 
 
     public Long getId() {
@@ -74,6 +75,16 @@ public class SavedPaymentImpl implements SavedPayment {
     @Override
     public void setToken(String token) {
         this.token = token;
+    }
+
+    @Override
+    public String getCardCompany() {
+        return cardCompany;
+    }
+
+    @Override
+    public void setCardCompany(String company) {
+        this.cardCompany = company;
     }
 
     @Override

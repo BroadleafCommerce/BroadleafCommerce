@@ -5,6 +5,10 @@ package org.broadleafcommerce.profile.core.domain;
  */
 public interface SavedPayment {
 
+    Long getId();
+
+    void setId(Long id);
+
     String getPaymentName();
 
     void setPaymentName(String paymentName);
@@ -28,6 +32,10 @@ public interface SavedPayment {
     String getToken();
 
     void setToken(String token);
+
+    String getCardCompany();
+
+    void setCardCompany(String company);
 
     Customer getCustomer();
 
