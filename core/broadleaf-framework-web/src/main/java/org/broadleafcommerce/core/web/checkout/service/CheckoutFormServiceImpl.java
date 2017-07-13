@@ -35,7 +35,6 @@ import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.List;
 
@@ -86,7 +85,11 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
 
     @Override
     public BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm, Order cart) {
-        billingInfoForm.setEmailAddress(cart.getEmailAddress());
+        Customer customer = CustomerState.getCustomer();
+
+        if (customer != null && customer.getEmailAddress() != null) {
+            billingInfoForm.setEmailAddress(customer.getEmailAddress());
+        }
 
         List<OrderPayment> orderPayments = cart.getPayments();
         for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments)) {
