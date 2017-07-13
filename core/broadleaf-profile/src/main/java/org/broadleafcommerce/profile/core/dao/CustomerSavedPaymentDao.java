@@ -1,4 +1,4 @@
-package org.broadleafcommerce.profile.core.service;
+package org.broadleafcommerce.profile.core.dao;
 
 import org.broadleafcommerce.profile.core.domain.SavedPayment;
 
@@ -7,9 +7,9 @@ import java.util.List;
 /**
  * @author Jacob Mitash
  */
-public interface CustomerSavedPaymentService {
+public interface CustomerSavedPaymentDao {
 
-    void saveSavedPayment(SavedPayment savedPayment);
+    void save(SavedPayment savedPayment);
 
     List<SavedPayment> readSavedPaymentsByCustomerId(Long customerId);
 

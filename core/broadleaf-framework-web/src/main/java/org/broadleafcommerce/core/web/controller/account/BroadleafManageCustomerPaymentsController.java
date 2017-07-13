@@ -77,12 +77,6 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
         return getCustomerPaymentView();
     }
 
-    public String viewCustomerPayment(HttpServletRequest request, Model model, Long customerPaymentId) {
-        //TODO: update model, add form
-
-        return getCustomerPaymentView();
-    }
-
     public String addCustomerPayment(HttpServletRequest request, Model model, SavePaymentForm form, BindingResult result) {
         savePaymentValidator.validate(form, result);
 
@@ -95,13 +89,7 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
         return getCustomerPaymentRedirect();
     }
 
-    public String updateCustomerPayment(HttpServletRequest request, Model model, SavePaymentForm form, BindingResult result, Long customerPaymentId) {
-        //TODO: update model, add form
-
-        return getCustomerPaymentRedirect();
-    }
-
-    public String removeCustomerPayment(HttpServletRequest request, Model model, SavePaymentForm form, Long customerPaymentId) {
+    public String removeCustomerPayment(HttpServletRequest request, Model model, Long customerPaymentId) {
         //TODO: update model, add form
 
         return getCustomerPaymentRedirect();

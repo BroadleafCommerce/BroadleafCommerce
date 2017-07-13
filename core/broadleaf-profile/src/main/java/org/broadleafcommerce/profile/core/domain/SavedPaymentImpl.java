@@ -1,21 +1,42 @@
 package org.broadleafcommerce.profile.core.domain;
 
+import javax.persistence.*;
+
 /**
  * @author Jacob Mitash
  */
-//@Entity
-//@Inheritance(strategy = InheritanceType.JOINED)
-//@Table(name = "BLC_SAVED_PAYMENT")
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "BLC_SAVED_PAYMENT")
 public class SavedPaymentImpl implements SavedPayment {
 
+    @Id
+    @Column(name = "SAVED_PAYMENT_ID")
     protected Long id;
+
+    @Column(name = "PAYMENT_NAME")
     protected String paymentName;
+
+    @Column(name = "PERSON_NAME")
     protected String personName;
+
+    @Column(name = "DEFAULT_METHOD")
     protected boolean defaultMethod;
+
+    @Column(name = "LAST_FOUR_DIGITS")
     protected String lastFourDigits;
+
+    @Column(name = "EXPIRATION")
     protected String expiration;
+
+    @Column(name = "TOKEN")
     protected String token;
+
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CustomerImpl.class, optional = false)
+    @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
+
+    @Column(name = "CARD_COMPANY")
     private String cardCompany;
 
 
