@@ -264,7 +264,11 @@ public class TranslationDaoImpl implements TranslationDao {
             List<Translation> translations = query.getResultList();
 
             if (!translations.isEmpty()) {
-                return findBestTranslation(localeCountryCode, translations);
+                if (!localeCode.equals(localeCountryCode)) {
+                    return findBestTranslation(localeCountryCode, translations);
+                } else {
+                    return findSpecificTranslation(localeCountryCode, translations);
+                }
             } else {
                 return null;
             }
@@ -299,6 +303,15 @@ public class TranslationDaoImpl implements TranslationDao {
             }
         }
         return translations.get(0);
+    }
+
+    protected Translation findSpecificTranslation(String localeCountryCode, List<Translation> translations) {
+        for (Translation translation : translations) {
+            if (translation.getLocaleCode().equals(localeCountryCode)) {
+                return translation;
+            }
+        }
+        return null;
     }
 
     public DynamicDaoHelper getDynamicDaoHelper() {

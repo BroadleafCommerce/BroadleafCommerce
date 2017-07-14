@@ -368,7 +368,8 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         }
     }
 
-    protected String getCacheKey(ResultType resultType, TranslatedEntity entityType) {
+    @Override
+    public String getCacheKey(ResultType resultType, TranslatedEntity entityType) {
         String cacheKey = StringUtils.join(new String[] { entityType.getFriendlyType()}, "|");
         if (extensionManager != null) {
             ExtensionResultHolder<String> result = new ExtensionResultHolder<String>();
@@ -388,6 +389,11 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
             // don't cache when not in a SandBox
             return -1;
         }
+    }
+
+    @Override
+    public void setThresholdForFullCache(int thresholdForFullCache) {
+        this.thresholdForFullCache = thresholdForFullCache;
     }
 
     @Override

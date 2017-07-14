@@ -39,6 +39,10 @@ public interface TranslationSupport {
 
     int getThresholdForFullCache();
 
+    void setThresholdForFullCache(int thresholdForFullCache);
+
     Translation findBestTemplateTranslation(String specificPropertyKey, String generalPropertyKey, Map<String, Map<String, Translation>> propertyTranslationMap, String entityId);
+
+    String getCacheKey(ResultType resultType, TranslatedEntity entityType);
 
 }

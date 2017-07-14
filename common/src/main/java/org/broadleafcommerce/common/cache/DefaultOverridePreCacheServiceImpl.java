@@ -50,4 +50,9 @@ public class DefaultOverridePreCacheServiceImpl implements OverridePreCacheServi
     public void groomCacheByTargetEntity(String entityType, Serializable id) {
         //do nothing
     }
+
+    @Override
+    public void refreshCache() {
+        //do nothing
+    }
 }

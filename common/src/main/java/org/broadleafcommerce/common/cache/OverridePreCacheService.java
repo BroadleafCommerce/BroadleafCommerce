@@ -37,4 +37,6 @@ public interface OverridePreCacheService {
 
     void groomCacheByTargetEntity(final String entityType, final Serializable id);
 
+    void refreshCache();
+
 }
