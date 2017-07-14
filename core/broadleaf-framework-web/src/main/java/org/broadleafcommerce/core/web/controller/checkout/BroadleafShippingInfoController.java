@@ -140,7 +140,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
             customerAddress.setAddressName(shippingForm.getAddressName());
             customerAddress.setCustomer(customer);
             customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
-            customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
+            customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customer.getId());
         }
 
         FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
