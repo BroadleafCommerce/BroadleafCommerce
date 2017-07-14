@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 /**
@@ -46,14 +47,23 @@ public class CustomerSavedPaymentDaoImpl implements CustomerSavedPaymentDao {
 
     @Override
     public List<SavedPayment> readSavedPaymentsByCustomerId(Long customerId) {
-        Query query = em.createNamedQuery("BC_READ_SAVED_PAYMENTS");
+        TypedQuery<SavedPayment> query = em.createNamedQuery("BC_READ_SAVED_PAYMENTS", SavedPayment.class);
         query.setParameter("customerId", customerId);
         return query.getResultList();
     }
 
     @Override
-    public void deleteSavedPayment(SavedPayment savedPayment) {
-        em.remove(savedPayment);
+    public SavedPayment readSavedPaymentById(Long savedPaymentId) {
+        TypedQuery<SavedPayment> query = em.createNamedQuery("BC_READ_SAVED_PAYMENT", SavedPayment.class);
+        query.setParameter("savedPaymentId", savedPaymentId);
+        return query.getSingleResult();
+    }
+
+    @Override
+    public void deleteSavedPayment(Long savedPaymentId) {
+        Query query = em.createNamedQuery("BC_REMOVE_SAVED_PAYMENT");
+        query.setParameter("savedPaymentId", savedPaymentId);
+        query.executeUpdate();
     }
 
     @Override

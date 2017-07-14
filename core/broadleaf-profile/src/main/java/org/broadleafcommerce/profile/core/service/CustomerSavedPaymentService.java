@@ -30,7 +30,11 @@ public interface CustomerSavedPaymentService {
 
     List<SavedPayment> readSavedPaymentsByCustomerId(Long customerId);
 
-    void deleteSavedPayment(SavedPayment savedPayment);
+    void makeDefaultSavedPayment(Long savedPaymentId);
 
-    SavedPayment create();
+    void deleteSavedPayment(Long savedPaymentId);
+
+    SavedPayment create(Long customerId);
+
+    boolean hasPaymentMethods(Long customerId);
 }

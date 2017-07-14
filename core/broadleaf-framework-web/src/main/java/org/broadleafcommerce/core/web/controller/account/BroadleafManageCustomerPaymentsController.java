@@ -60,26 +60,46 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
 
         List<SavedPayment> savedPaymentList = savedPaymentService.readSavedPaymentsByCustomerId(customer.getId());
 
+        SavePaymentForm savePaymentForm = new SavePaymentForm();
+        savePaymentForm.setDefaultMethod(!savedPaymentService.hasPaymentMethods(customer.getId()));
+
         model.addAttribute("savedPayments", savedPaymentList);
-        model.addAttribute("savePaymentForm", new SavePaymentForm());
+        model.addAttribute("savePaymentForm", savePaymentForm);
 
         return getCustomerPaymentView();
     }
 
     public String addCustomerPayment(HttpServletRequest request, Model model, SavePaymentForm form, BindingResult result) {
+        Customer customer = CustomerState.getCustomer();
+
         savePaymentValidator.validate(form, result);
 
         if(result.hasErrors()) {
             return getCustomerPaymentRedirect();
         }
 
-        //TODO: save
+        SavedPayment savedPayment = savedPaymentService.create(customer.getId());
+        savedPayment.setCustomer(customer);
+        savedPayment.setDefaultMethod(savedPayment.isDefaultMethod() || form.isDefaultMethod());
+        savedPayment.setExpiration(form.getExpiration());
+        savedPayment.setLastFourDigits(form.getLastFourDigits());
+        savedPayment.setPaymentName(form.getPaymentName());
+        savedPayment.setPersonName(form.getPersonName());
+//        savedPayment.setToken();
+
+        savedPaymentService.saveSavedPayment(savedPayment);
+
+        return getCustomerPaymentRedirect();
+    }
+
+    public String makeDefaultCustomerPayment(HttpServletRequest request, Model model, Long customerPaymentId) {
+        savedPaymentService.makeDefaultSavedPayment(customerPaymentId);
 
         return getCustomerPaymentRedirect();
     }
 
     public String removeCustomerPayment(HttpServletRequest request, Model model, Long customerPaymentId) {
-        //savedPaymentService.deleteSavedPayment(); TODO: change type
+        savedPaymentService.deleteSavedPayment(customerPaymentId);
 
         return getCustomerPaymentRedirect();
     }

@@ -30,7 +30,9 @@ public interface CustomerSavedPaymentDao {
 
     List<SavedPayment> readSavedPaymentsByCustomerId(Long customerId);
 
-    void deleteSavedPayment(SavedPayment savedPayment);
+    void deleteSavedPayment(Long savedPaymentId);
 
     SavedPayment create();
+
+    SavedPayment readSavedPaymentById(Long savedPaymentId);
 }

@@ -37,6 +37,19 @@ public class CustomerSavedPaymentServiceImpl implements CustomerSavedPaymentServ
     @Override
     @Transactional("blTransactionManager")
     public void saveSavedPayment(SavedPayment savedPayment) {
+
+        //Make sure all other payments are non-default if this one is
+        if(savedPayment.isDefaultMethod()) {
+            List<SavedPayment> savedPayments = readSavedPaymentsByCustomerId(savedPayment.getCustomer().getId());
+
+            for (SavedPayment payment : savedPayments) {
+                if (payment.isDefaultMethod() && payment != savedPayment) {
+                    payment.setDefaultMethod(false);
+                    saveSavedPayment(payment);
+                }
+            }
+        }
+
         customerSavedPaymentDao.save(savedPayment);
     }
 
@@ -46,14 +59,48 @@ public class CustomerSavedPaymentServiceImpl implements CustomerSavedPaymentServ
     }
 
     @Override
-    @Transactional("blTransactionManager")
-    public void deleteSavedPayment(SavedPayment savedPayment) {
-        customerSavedPaymentDao.deleteSavedPayment(savedPayment);
+    @Transactional
+    public void makeDefaultSavedPayment(Long savedPaymentId) {
+        SavedPayment payment = customerSavedPaymentDao.readSavedPaymentById(savedPaymentId);
+        payment.setDefaultMethod(true);
+        saveSavedPayment(payment);
     }
 
     @Override
     @Transactional("blTransactionManager")
-    public SavedPayment create() {
-        return customerSavedPaymentDao.create();
+    public void deleteSavedPayment(Long savedPaymentId) {
+        SavedPayment savedPayment = customerSavedPaymentDao.readSavedPaymentById(savedPaymentId);
+
+        if(savedPayment == null) {
+            return;
+        }
+
+        //Set new default if able
+        List<SavedPayment> savedPayments = readSavedPaymentsByCustomerId(savedPayment.getCustomer().getId());
+        if(savedPayments != null && savedPayments.size() > 1) {
+            SavedPayment futureDefault = savedPayments.get(1);
+            futureDefault.setDefaultMethod(true);
+            saveSavedPayment(futureDefault);
+        }
+
+        customerSavedPaymentDao.deleteSavedPayment(savedPayment.getId());
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public SavedPayment create(Long customerId) {
+        SavedPayment savedPayment = customerSavedPaymentDao.create();
+
+        //Make default if only payment
+        savedPayment.setDefaultMethod(!hasPaymentMethods(customerId));
+
+        return savedPayment;
+    }
+
+    @Override
+    public boolean hasPaymentMethods(Long customerId) {
+        List<SavedPayment> savedPayments = readSavedPaymentsByCustomerId(customerId);
+
+        return savedPayments != null && savedPayments.size() > 0;
     }
 }
