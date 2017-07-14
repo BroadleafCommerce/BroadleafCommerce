@@ -21,9 +21,6 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
-import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
-import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
-import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.broadleafcommerce.core.web.checkout.service.CheckoutFormService;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.order.service.CartStateService;
@@ -63,33 +60,6 @@ public class CheckoutFormVariableExpression implements BroadleafVariableExpressi
     public boolean shouldShowBillingInfoStage() {
         return !cartStateService.orderContainsThirdPartyPayment()
                 && !cartStateService.orderContainsUnconfirmedCreditCard();
-    }
-
-    public OrderInfoForm prePopulateOrderInfoForm(OrderInfoForm orderInfoForm, boolean submissionErrors) {
-        if (submissionErrors) {
-            return orderInfoForm;
-        }
-
-        Order cart = CartState.getCart();
-        return checkoutFormService.prePopulateOrderInfoForm(orderInfoForm, cart);
-    }
-
-    public ShippingInfoForm prePopulateShippingInfoForm(ShippingInfoForm shippingInfoForm, boolean submissionErrors) {
-        if (submissionErrors) {
-            return shippingInfoForm;
-        }
-
-        Order cart = CartState.getCart();
-        return checkoutFormService.prePopulateShippingInfoForm(shippingInfoForm, cart);
-    }
-
-    public BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm, boolean submissionErrors) {
-        if (submissionErrors) {
-            return billingInfoForm;
-        }
-
-        Order cart = CartState.getCart();
-        return checkoutFormService.prePopulateBillingInfoForm(billingInfoForm, cart);
     }
 
     /**
