@@ -35,9 +35,9 @@ import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
@@ -85,8 +85,14 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
     }
 
     @Override
-    public BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm, Order cart) {
-        billingInfoForm.setEmailAddress(cart.getEmailAddress());
+    public BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm, ShippingInfoForm shippingInfoForm, Order cart) {
+        Customer customer = CustomerState.getCustomer();
+
+        if (cart.getEmailAddress() != null) {
+            billingInfoForm.setEmailAddress(cart.getEmailAddress());
+        } else if (customer != null && customer.getEmailAddress() != null) {
+            billingInfoForm.setEmailAddress(customer.getEmailAddress());
+        }
 
         List<OrderPayment> orderPayments = cart.getPayments();
         for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments)) {
@@ -98,6 +104,9 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
             }
         }
 
+        boolean shippingAddressUsedForBilling = addressesContentsAreEqual(shippingInfoForm.getAddress(), billingInfoForm.getAddress());
+        billingInfoForm.setUseShippingAddress(shippingAddressUsedForBilling);
+
         return billingInfoForm;
     }
 
@@ -105,7 +114,7 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
     public void prePopulateInfoForms(ShippingInfoForm shippingInfoForm, BillingInfoForm billingInfoForm) {
         Order cart = CartState.getCart();
         prePopulateShippingInfoForm(shippingInfoForm, cart);
-        prePopulateBillingInfoForm(billingInfoForm, cart);
+        prePopulateBillingInfoForm(billingInfoForm, shippingInfoForm, cart);
     }
 
     @Override
@@ -115,14 +124,14 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
         boolean isSavedBillingAddress = false;
 
         for (CustomerAddress customerAddress : customer.getCustomerAddresses()) {
-            if (addressesAreEqual(shippingInfoForm.getAddress(), customerAddress)) {
+            if (addressesContentsAreEqual(shippingInfoForm.getAddress(), customerAddress.getAddress())) {
                 isSavedShippingAddress = true;
                 break;
             }
         }
 
         for (CustomerAddress customerAddress : customer.getCustomerAddresses()) {
-            if (addressesAreEqual(billingInfoForm.getAddress(), customerAddress)) {
+            if (addressesContentsAreEqual(billingInfoForm.getAddress(), customerAddress.getAddress())) {
                 isSavedBillingAddress = true;
                 break;
             }
@@ -132,9 +141,14 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
         model.addAttribute("isSavedBillingAddress", isSavedBillingAddress);
     }
 
-    protected boolean addressesAreEqual(Address formAddress, CustomerAddress customerAddress) {
-        return customerAddress.getAddress().getAddressLine1().equals(formAddress.getAddressLine1()) &&
-                customerAddress.getAddress().getAddressLine2().equals(formAddress.getAddressLine2()) &&
-                customerAddress.getAddress().getPhonePrimary().getPhoneNumber().equals(formAddress.getPhonePrimary().getPhoneNumber());
+    protected boolean addressesContentsAreEqual(Address address1, Address address2) {
+        return Objects.equals(address2.getAddressLine1(), address1.getAddressLine1()) &&
+                Objects.equals(address2.getAddressLine2(), address1.getAddressLine2()) &&
+                Objects.equals(address2.getCity(), address1.getCity()) &&
+                Objects.equals(address2.getStateProvinceRegion(), address1.getStateProvinceRegion()) &&
+                Objects.equals(address2.getPostalCode(), address1.getPostalCode()) &&
+                Objects.equals(address2.getIsoCountryAlpha2(), address1.getIsoCountryAlpha2()) &&
+                Objects.equals(address2.getIsoCountrySubdivision(), address1.getIsoCountrySubdivision()) &&
+                Objects.equals(address2.getPhonePrimary().getPhoneNumber(), address1.getPhonePrimary().getPhoneNumber());
     }
 }

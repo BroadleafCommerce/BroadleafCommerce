@@ -22,7 +22,6 @@ import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 public interface CheckoutFormService {
 
@@ -30,7 +29,7 @@ public interface CheckoutFormService {
 
     ShippingInfoForm prePopulateShippingInfoForm(ShippingInfoForm shippingInfoForm, Order cart);
 
-    BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm, Order cart);
+    BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm, ShippingInfoForm shippingInfoForm, Order cart);
 
     void prePopulateInfoForms(ShippingInfoForm shippingInfoForm, BillingInfoForm billingInfoForm);
 

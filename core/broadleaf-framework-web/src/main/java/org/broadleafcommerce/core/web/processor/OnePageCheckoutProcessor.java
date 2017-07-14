@@ -190,7 +190,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
             BillingInfoForm billingForm) {
         checkoutFormService.prePopulateOrderInfoForm(orderInfoForm, cart);
         checkoutFormService.prePopulateShippingInfoForm(shippingForm, cart);
-        checkoutFormService.prePopulateBillingInfoForm(billingForm, cart);
+        checkoutFormService.prePopulateBillingInfoForm(billingForm, shippingForm, cart);
     }
 
     protected int calculateNumShippableFulfillmentGroups() {
