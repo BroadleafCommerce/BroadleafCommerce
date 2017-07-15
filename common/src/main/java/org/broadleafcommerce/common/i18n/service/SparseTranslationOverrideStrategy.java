@@ -31,7 +31,11 @@ import org.broadleafcommerce.common.extension.TemplateOnlyQueryExtensionManager;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
+import org.hibernate.SessionFactory;
 import org.hibernate.ejb.QueryHints;
+import org.hibernate.ejb.criteria.CriteriaBuilderImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -63,6 +67,8 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
+
+    DynamicDaoHelper helper = new DynamicDaoHelperImpl();
 
     /**
      * Whether or not {@link #getLocaleBasedTemplateValue(String, String, TranslatedEntity, String, String, String, String, String)}
@@ -120,8 +126,8 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
                 codesToMatch.add(localeCountryCode);
                 codesToMatch.add(localeCode);
             }
-            for (Translation templateVal : templateVals) {
-                for (String code : codesToMatch) {
+            for (String code : codesToMatch) {
+                for (Translation templateVal : templateVals) {
                     if (templateVal.getLocaleCode().equals(code)) {
                         StandardCacheItem cacheItem = new StandardCacheItem();
                         cacheItem.setItemStatus(ItemStatus.NORMAL);
@@ -167,6 +173,14 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
         return PRECACHED_SPARSE_OVERRIDE_ORDER;
     }
 
+    public boolean isTemplateEnabled() {
+        return templateEnabled;
+    }
+
+    public void setTemplateEnabled(boolean templateEnabled) {
+        this.templateEnabled = templateEnabled;
+    }
+
     protected List<Translation> getTemplateTranslations(TranslatedEntity entityType, String entityId, String property, String localeCode) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
@@ -180,8 +194,10 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
         try {
             Object testObject;
             try {
+                SessionFactory sessionFactory = ((CriteriaBuilderImpl) em.getCriteriaBuilder()).getEntityManagerFactory().getSessionFactory();
+                Class<?>[] entities = helper.getAllPolymorphicEntitiesFromCeiling(Class.forName(entityType.getType()), sessionFactory, true, true);
                 //This should already be in level 1 cache and this should not cause a hit to the database.
-                testObject = em.find(Class.forName(entityType.getType()), Long.parseLong(entityId));
+                testObject = em.find(entities[entities.length-1], Long.parseLong(entityId));
             } catch (ClassNotFoundException e) {
                 throw ExceptionHelper.refineException(e);
             }
@@ -209,5 +225,4 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
     protected String getCacheKey(TranslatedEntity type, String entityId, String fieldName, String localeCode) {
         return StringUtils.join(new String[]{"translation", type.getType(), entityId, fieldName, localeCode},"-");
     }
-
 }
