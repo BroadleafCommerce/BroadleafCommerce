@@ -184,11 +184,14 @@ public class TranslationDaoImpl implements TranslationDao {
         try {
             if (extensionManager != null) {
                 extensionManager.getProxy().setup(TranslationImpl.class, stage);
-                extensionManager.getProxy().refineRetrieve(TranslationImpl.class, stage, builder, criteria, root, restrictions);
+                extensionManager.getProxy().refineParameterRetrieve(TranslationImpl.class, stage, builder, criteria, root, restrictions);
             }
             criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
             TypedQuery<Long> query = em.createQuery(criteria);
+            if (extensionManager != null) {
+                extensionManager.getProxy().refineQuery(TranslationImpl.class, stage, query);
+            }
             query.setHint(QueryHints.HINT_CACHEABLE, true);
             return query.getSingleResult();
         } finally {
@@ -216,11 +219,14 @@ public class TranslationDaoImpl implements TranslationDao {
         try {
             if (extensionManager != null) {
                 extensionManager.getProxy().setup(TranslationImpl.class, stage);
-                extensionManager.getProxy().refineRetrieve(TranslationImpl.class, stage, builder, criteria, root, restrictions);
+                extensionManager.getProxy().refineParameterRetrieve(TranslationImpl.class, stage, builder, criteria, root, restrictions);
             }
             criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
             TypedQuery<Translation> query = em.createQuery(criteria);
+            if (extensionManager != null) {
+                extensionManager.getProxy().refineQuery(TranslationImpl.class, stage, query);
+            }
             query.setHint(QueryHints.HINT_CACHEABLE, true);
             return query.getResultList();
         } finally {
@@ -255,11 +261,14 @@ public class TranslationDaoImpl implements TranslationDao {
         try {
             if (extensionManager != null) {
                 extensionManager.getProxy().setup(TranslationImpl.class, stage);
-                extensionManager.getProxy().refineRetrieve(TranslationImpl.class, stage, builder, criteria, root, restrictions);
+                extensionManager.getProxy().refineParameterRetrieve(TranslationImpl.class, stage, builder, criteria, root, restrictions);
             }
             criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
             TypedQuery<Translation> query = em.createQuery(criteria);
+            if (extensionManager != null) {
+                extensionManager.getProxy().refineQuery(TranslationImpl.class, stage, query);
+            }
             query.setHint(QueryHints.HINT_CACHEABLE, true);
             List<Translation> translations = query.getResultList();
 

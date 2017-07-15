@@ -21,6 +21,7 @@ package org.broadleafcommerce.common.extension;
 
 import java.util.List;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
@@ -58,6 +59,32 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      * @return the status of the extension operation
      */
     ExtensionResultStatusType refineRetrieve(Class<?> type, ResultType resultType, CriteriaBuilder builder, CriteriaQuery criteria, Root root, List<Predicate> restrictions);
+
+    /**
+     * Add additional restrictions to the fetch query. Uses parameters, rather than embedding values directly in the query. This is more
+     * efficient from a Hibernate statement cache and database prepared statement cache perspective. Use in conjunction with
+     * {@link #refineQuery(Class, ResultType, TypedQuery)} to pass the actual parameter values before retrieving the query
+     * results.
+     *
+     * @param type the class type for the query
+     * @param resultType pass a ResultType of IGNORE to explicitly ignore refineRetrieve, even if the multitenant module is loaded
+     * @param builder
+     * @param criteria
+     * @param root
+     * @param restrictions any additional JPA criteria restrictions should be added here
+     * @return the status of the extension operation
+     */
+    ExtensionResultStatusType refineParameterRetrieve(Class<?> type, ResultType resultType, CriteriaBuilder builder, CriteriaQuery criteria, Root root, List<Predicate> restrictions);
+
+    /**
+     * Finish the query - possibly setting parameters
+     *
+     * @param type the class type for the query
+     * @param resultType pass a ResultType of IGNORE to explicitly ignore refineQuery, even if the multitenant module is loaded
+     * @param query the final Query instance to embellish
+     * @return
+     */
+    ExtensionResultStatusType refineQuery(Class<?> type, ResultType resultType, TypedQuery query);
 
     /**
      * Perform any setup operations. This is usually done before executing the query and can serve to prepare the BroadleafRequestContext (if applicable).

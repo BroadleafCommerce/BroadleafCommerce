@@ -21,6 +21,7 @@ package org.broadleafcommerce.common.extension;
 
 import java.util.List;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
@@ -33,7 +34,18 @@ import javax.persistence.criteria.Root;
 public interface TemplateOnlyQueryExtensionHandler extends ExtensionHandler {
 
     /**
-     * Add additional restrictions to the fetch query
+     * Finish the query - possibly setting parameters
+     *
+     * @param type the class type for the query
+     * @param testObject supporting implementations may use this object to test for possible catalog query optimizations. This value can be null, in which case it is ignored.
+     * @param query the final Query instance to embellish
+     * @return
+     */
+    ExtensionResultStatusType refineQuery(Class<?> type, Object testObject, TypedQuery query);
+
+    /**
+     * Add additional restrictions to the fetch query. Use in conjunction with {@link #refineQuery(Class, Object, TypedQuery)} to set
+     * actual parameter values before retrieving results.
      *
      * @param type the class type for the query
      * @param testObject supporting implementations may use this object to test for possible catalog query optimizations. This value can be null, in which case it is ignored.
@@ -43,7 +55,7 @@ public interface TemplateOnlyQueryExtensionHandler extends ExtensionHandler {
      * @param restrictions any additional JPA criteria restrictions should be added here
      * @return the status of the extension operation
      */
-    ExtensionResultStatusType refineRetrieve(Class<?> type, Object testObject, CriteriaBuilder builder,
+    ExtensionResultStatusType refineParameterRetrieve(Class<?> type, Object testObject, CriteriaBuilder builder,
                                              CriteriaQuery criteria, Root root, List<Predicate> restrictions);
 
     /**

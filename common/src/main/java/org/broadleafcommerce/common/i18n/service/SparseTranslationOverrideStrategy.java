@@ -178,20 +178,23 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
         restrictions.add(builder.equal(root.get("fieldName"), property));
         restrictions.add(builder.like(root.get("localeCode").as(String.class),localeCode + "%"));
         try {
+            Object testObject;
+            try {
+                //This should already be in level 1 cache and this should not cause a hit to the database.
+                testObject = em.find(Class.forName(entityType.getType()), Long.parseLong(entityId));
+            } catch (ClassNotFoundException e) {
+                throw ExceptionHelper.refineException(e);
+            }
             if (extensionManager != null) {
                 extensionManager.setup(TranslationImpl.class);
-                Object testObject;
-                try {
-                    //This should already be in level 1 cache and this should not cause a hit to the database.
-                    testObject = em.find(Class.forName(entityType.getType()), Long.parseLong(entityId));
-                } catch (ClassNotFoundException e) {
-                    throw ExceptionHelper.refineException(e);
-                }
-                extensionManager.refineRetrieve(TranslationImpl.class, testObject, builder, criteria, root, restrictions);
+                extensionManager.refineParameterRetrieve(TranslationImpl.class, testObject, builder, criteria, root, restrictions);
             }
             criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
             TypedQuery<Translation> query = em.createQuery(criteria);
+            if (extensionManager != null) {
+                extensionManager.refineQuery(TranslationImpl.class, testObject, query);
+            }
             query.setHint(QueryHints.HINT_CACHEABLE, true);
             return query.getResultList();
         } finally {
