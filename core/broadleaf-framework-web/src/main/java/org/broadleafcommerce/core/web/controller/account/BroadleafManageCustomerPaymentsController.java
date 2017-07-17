@@ -18,22 +18,26 @@
 package org.broadleafcommerce.core.web.controller.account;
 
 
+import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
+import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
 import org.broadleafcommerce.core.web.controller.account.validator.SavePaymentValidator;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerAddress;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
-import org.broadleafcommerce.profile.core.service.CustomerAddressService;
-import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
+import org.broadleafcommerce.profile.core.domain.*;
+import org.broadleafcommerce.profile.core.service.*;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.beans.PropertyEditorSupport;
 import java.security.InvalidParameterException;
 import java.util.List;
 
@@ -59,6 +63,21 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     @Resource(name = "blCustomerAddressService")
     protected CustomerAddressService customerAddressService;
 
+    @Resource(name = "blBillingInfoFormValidator")
+    protected BillingInfoFormValidator billingInfoFormValidator;
+
+    @Resource(name = "blAddressService")
+    protected AddressService addressService;
+
+    @Resource(name = "blCountryService")
+    protected CountryService countryService;
+
+    @Resource(name = "blStateService")
+    protected StateService stateService;
+
+    @Resource(name = "blISOService")
+    protected ISOService isoService;
+
     public String viewCustomerPayments(HttpServletRequest request, Model model) {
         Customer customer = CustomerState.getCustomer(request);
 
@@ -83,22 +102,43 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
         return getCustomerPaymentView();
     }
 
-    public String addCustomerPayment(HttpServletRequest request, Model model, SavePaymentForm form, BindingResult result) {
+    public String addCustomerPayment(HttpServletRequest request, Model model, SavePaymentForm paymentForm,
+                                     BindingResult paymentResult, BillingInfoForm billingForm, BindingResult billingResult) {
+
         Customer customer = CustomerState.getCustomer();
 
-        savePaymentValidator.validate(form, result);
+        addressService.populateAddressISOCountrySub(billingForm.getAddress());
 
-        if(result.hasErrors()) {
+        savePaymentValidator.validate(paymentForm, paymentResult);
+        billingInfoFormValidator.validate(billingForm, billingResult);
+
+
+        if ((billingForm.getAddress().getPhonePrimary() != null) &&
+                (StringUtils.isEmpty(billingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
+            billingForm.getAddress().setPhonePrimary(null);
+        }
+        if ((billingForm.getAddress().getPhoneSecondary() != null) &&
+                (StringUtils.isEmpty(billingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+            billingForm.getAddress().setPhoneSecondary(null);
+        }
+        if ((billingForm.getAddress().getPhoneFax() != null) &&
+                (StringUtils.isEmpty(billingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
+            billingForm.getAddress().setPhoneFax(null);
+        }
+
+        if(paymentResult.hasErrors() || billingResult.hasErrors()) {
             return getCustomerPaymentRedirect();
         }
 
         CustomerPayment customerPayment = customerPaymentService.create();
         customerPayment.setCustomer(customer);
-        customerPayment.setIsDefault(form.isDefaultMethod());
-        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.EXP_DATE.getType(), form.getExpiration());
-        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.LAST_FOUR.getType(), form.getLastFourDigits());
-        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.PAYMENT_NAME.getType(), form.getPaymentName());
-        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.NAME_ON_CARD.getType(), form.getPersonName());
+        customerPayment.setIsDefault(paymentForm.isDefaultMethod());
+        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.EXP_DATE.getType(), paymentForm.getExpiration());
+        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.LAST_FOUR.getType(), paymentForm.getLastFourDigits());
+        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.PAYMENT_NAME.getType(), paymentForm.getPaymentName());
+        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.NAME_ON_CARD.getType(), paymentForm.getPersonName());
+        //customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.CARD_TYPE.getType(), paymentForm.getPersonName());
+        customerPayment.setBillingAddress(billingForm.getAddress());
 //        customerPayment.setToken();
 
         customerPaymentService.saveCustomerPayment(customerPayment);
@@ -130,5 +170,86 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
 
     public String getCustomerPaymentRedirect() {
         return customerPaymentRedirect;
+    }
+
+    @InitBinder
+    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
+
+        /**
+         * @deprecated - address.setState() is deprecated in favor of ISO standardization
+         * This is here for legacy compatibility
+         */
+        binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (StringUtils.isNotEmpty(text)) {
+                    State state = stateService.findStateByAbbreviation(text);
+                    setValue(state);
+                } else {
+                    setValue(null);
+                }
+            }
+        });
+
+        /**
+         * @deprecated - address.setCountry() is deprecated in favor of ISO standardization
+         * This is here for legacy compatibility
+         */
+        binder.registerCustomEditor(Country.class, "address.country", new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (StringUtils.isNotEmpty(text)) {
+                    Country country = countryService.findCountryByAbbreviation(text);
+                    setValue(country);
+                } else {
+                    setValue(null);
+                }
+            }
+        });
+
+        binder.registerCustomEditor(ISOCountry.class, "address.isoCountryAlpha2", new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (StringUtils.isNotEmpty(text)) {
+                    ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code(text);
+                    setValue(isoCountry);
+                }else {
+                    setValue(null);
+                }
+            }
+        });
+
+        binder.registerCustomEditor(Phone.class, "address.phonePrimary", new PropertyEditorSupport() {
+
+            @Override
+            public void setAsText(String text) {
+                Phone phone = new PhoneImpl();
+                phone.setPhoneNumber(text);
+                setValue(phone);
+            }
+
+        });
+
+        binder.registerCustomEditor(Phone.class, "address.phoneSecondary", new PropertyEditorSupport() {
+
+            @Override
+            public void setAsText(String text) {
+                Phone phone = new PhoneImpl();
+                phone.setPhoneNumber(text);
+                setValue(phone);
+            }
+
+        });
+
+        binder.registerCustomEditor(Phone.class, "address.phoneFax", new PropertyEditorSupport() {
+
+            @Override
+            public void setAsText(String text) {
+                Phone phone = new PhoneImpl();
+                phone.setPhoneNumber(text);
+                setValue(phone);
+            }
+
+        });
     }
 }
