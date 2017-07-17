@@ -23,7 +23,9 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.controller.account.validator.SavePaymentValidator;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
+import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +56,9 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     @Resource(name = "blCustomerPaymentService")
     protected CustomerPaymentService customerPaymentService;
 
+    @Resource(name = "blCustomerAddressService")
+    protected CustomerAddressService customerAddressService;
+
     public String viewCustomerPayments(HttpServletRequest request, Model model) {
         Customer customer = CustomerState.getCustomer(request);
 
@@ -70,6 +75,10 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
         model.addAttribute("savePaymentForm", savePaymentForm);
         model.addAttribute("billingInfoForm", new BillingInfoForm());
         model.addAttribute("managePaymentMethods", true);
+
+        List<CustomerAddress> customerAddresses = customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
+
+        model.addAttribute("customerAddresses", customerAddresses);
 
         return getCustomerPaymentView();
     }
