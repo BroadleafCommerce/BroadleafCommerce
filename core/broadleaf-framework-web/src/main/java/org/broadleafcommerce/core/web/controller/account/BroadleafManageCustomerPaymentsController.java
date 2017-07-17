@@ -18,11 +18,13 @@
 package org.broadleafcommerce.core.web.controller.account;
 
 
+import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.controller.account.validator.SavePaymentValidator;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.SavedPayment;
-import org.broadleafcommerce.profile.core.service.CustomerSavedPaymentService;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
+import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
@@ -30,6 +32,7 @@ import org.springframework.validation.BindingResult;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.security.InvalidParameterException;
 import java.util.List;
 
 /**
@@ -48,8 +51,8 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     @Resource(name = "blSavePaymentValidator")
     protected SavePaymentValidator savePaymentValidator;
 
-    @Resource(name = "blCustomerSavedPaymentService")
-    protected CustomerSavedPaymentService savedPaymentService;
+    @Resource(name = "blCustomerPaymentService")
+    protected CustomerPaymentService customerPaymentService;
 
     public String viewCustomerPayments(HttpServletRequest request, Model model) {
         Customer customer = CustomerState.getCustomer(request);
@@ -58,13 +61,15 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
             throw new SecurityException("Customer is not found but tried to access account page");
         }
 
-        List<SavedPayment> savedPaymentList = savedPaymentService.readSavedPaymentsByCustomerId(customer.getId());
+        List<CustomerPayment> savedPaymentList = customerPaymentService.readCustomerPaymentsByCustomerId(customer.getId());
 
         SavePaymentForm savePaymentForm = new SavePaymentForm();
-        savePaymentForm.setDefaultMethod(!savedPaymentService.hasPaymentMethods(customer.getId()));
+        savePaymentForm.setDefaultMethod(savedPaymentList.isEmpty());
 
         model.addAttribute("savedPayments", savedPaymentList);
         model.addAttribute("savePaymentForm", savePaymentForm);
+        model.addAttribute("billingInfoForm", new BillingInfoForm());
+        model.addAttribute("managePaymentMethods", true);
 
         return getCustomerPaymentView();
     }
@@ -78,28 +83,34 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
             return getCustomerPaymentRedirect();
         }
 
-        SavedPayment savedPayment = savedPaymentService.create(customer.getId());
-        savedPayment.setCustomer(customer);
-        savedPayment.setDefaultMethod(savedPayment.isDefaultMethod() || form.isDefaultMethod());
-        savedPayment.setExpiration(form.getExpiration());
-        savedPayment.setLastFourDigits(form.getLastFourDigits());
-        savedPayment.setPaymentName(form.getPaymentName());
-        savedPayment.setPersonName(form.getPersonName());
-//        savedPayment.setToken();
+        CustomerPayment customerPayment = customerPaymentService.create();
+        customerPayment.setCustomer(customer);
+        customerPayment.setIsDefault(form.isDefaultMethod());
+        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.EXP_DATE.getType(), form.getExpiration());
+        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.LAST_FOUR.getType(), form.getLastFourDigits());
+        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.PAYMENT_NAME.getType(), form.getPaymentName());
+        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.NAME_ON_CARD.getType(), form.getPersonName());
+//        customerPayment.setToken();
 
-        savedPaymentService.saveSavedPayment(savedPayment);
+        customerPaymentService.saveCustomerPayment(customerPayment);
 
         return getCustomerPaymentRedirect();
     }
 
     public String makeDefaultCustomerPayment(HttpServletRequest request, Model model, Long customerPaymentId) {
-        savedPaymentService.makeDefaultSavedPayment(customerPaymentId);
+        CustomerPayment customerPayment = customerPaymentService.readCustomerPaymentById(customerPaymentId);
+
+        if(customerPayment == null) {
+            throw new InvalidParameterException("Requested customer payment does not exist.");
+        }
+
+        customerPaymentService.setAsDefaultPayment(customerPayment);
 
         return getCustomerPaymentRedirect();
     }
 
     public String removeCustomerPayment(HttpServletRequest request, Model model, Long customerPaymentId) {
-        savedPaymentService.deleteSavedPayment(customerPaymentId);
+        customerPaymentService.deleteCustomerPaymentById(customerPaymentId);
 
         return getCustomerPaymentRedirect();
     }
