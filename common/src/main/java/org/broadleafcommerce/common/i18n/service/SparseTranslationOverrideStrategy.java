@@ -91,18 +91,36 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
                                              String localeCode, String localeCountryCode, String basicCacheKey) {
         LocalePair override = null;
         if (preCachedSparseOverrideService.isActiveForType(Translation.class.getName())) {
+            boolean isSpecificOnly = localeCode.equals(localeCountryCode) && localeCode.contains("_");
+            boolean isGeneralOnly = localeCode.equals(localeCountryCode) && !localeCode.contains("_");
             String specificCacheKey = getCacheKey(entityType, entityId, property, localeCountryCode);
             String generalCacheKey = getCacheKey(entityType, entityId, property, localeCode);
-            List<StandardCacheItem> overrides = preCachedSparseOverrideService.findElements(specificCacheKey, generalCacheKey);
+            List<StandardCacheItem> overrides;
+            if (isSpecificOnly) {
+                overrides = preCachedSparseOverrideService.findElements(specificCacheKey);
+            } else if (isGeneralOnly) {
+                overrides = preCachedSparseOverrideService.findElements(generalCacheKey);
+            } else {
+                overrides = preCachedSparseOverrideService.findElements(specificCacheKey, generalCacheKey);
+            }
             override = new LocalePair();
             if (!overrides.isEmpty()) {
-                if (ItemStatus.NONE != overrides.get(0).getItemStatus()) {
+                if (isSpecificOnly && ItemStatus.NONE != overrides.get(0).getItemStatus()) {
                     StandardCacheItem specificTranslation = overrides.get(0);
                     override.setSpecificItem(specificTranslation);
-                }
-                if (ItemStatus.NONE != overrides.get(1).getItemStatus()) {
-                    StandardCacheItem generalTranslation = overrides.get(1);
+                } else if (isGeneralOnly && ItemStatus.NONE != overrides.get(0).getItemStatus()) {
+                    StandardCacheItem generalTranslation = overrides.get(0);
                     override.setGeneralItem(generalTranslation);
+                }
+                if (!isSpecificOnly && !isGeneralOnly) {
+                    if (ItemStatus.NONE != overrides.get(0).getItemStatus()) {
+                        StandardCacheItem specificTranslation = overrides.get(0);
+                        override.setSpecificItem(specificTranslation);
+                    }
+                    if (ItemStatus.NONE != overrides.get(1).getItemStatus()) {
+                        StandardCacheItem generalTranslation = overrides.get(1);
+                        override.setGeneralItem(generalTranslation);
+                    }
                 }
             }
         }

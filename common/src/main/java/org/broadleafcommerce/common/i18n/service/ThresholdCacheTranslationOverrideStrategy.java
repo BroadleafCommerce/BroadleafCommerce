@@ -86,9 +86,9 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
                 result = newElement;
             } else {
                 //Translation is dual discriminated by site and catalog, which can make it impossible to find results under normal
-                //circumstances because the two discriminators can cancel eachother out. We use the IGNORE_CATALOG_ONLY ResultType
+                //circumstances because the two discriminators can cancel eachother out. We use the CATALOG_ONLY ResultType
                 //to force the system to only honor the catalog discrimination during this call.
-                Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, ResultType.IGNORE_CATALOG_ONLY);
+                Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, ResultType.CATALOG_ONLY);
                 buildSingleItemResponse(response, translation);
                 return response;
             }

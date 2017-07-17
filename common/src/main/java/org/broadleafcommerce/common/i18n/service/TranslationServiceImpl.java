@@ -252,7 +252,9 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         if (generalTranslation != null) {
             if (ItemStatus.DELETED.equals(generalTranslation.getItemStatus())) {
                 generalTranslationDeleted = true;
-                if (specificTranslationDeleted) {
+                //If the specific translation is override deleted as well, we're done
+                //If the general translation is override deleted and we've only got a general local code - we're done
+                if (specificTranslationDeleted || !localeCountryCode.contains("_")) {
                     return null;
                 }
             } else {
@@ -261,7 +263,9 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
                 } else {
                     response = (String) generalTranslation.getCacheItem();
                 }
-                if (specificTranslationDeleted) {
+                //If the specific translation is override deleted as well, we're done
+                //If the general translation is override and we've only got a general local code - we're done
+                if (specificTranslationDeleted || !localeCountryCode.contains("_")) {
                     return replaceEmptyWithNullResponse(response);
                 }
                 //We have a valid general override - don't check for general template value
