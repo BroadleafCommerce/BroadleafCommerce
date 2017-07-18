@@ -114,7 +114,7 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
         LocalePair response = new LocalePair();
         if (cacheResult == null) {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
-            if (dao.countTranslationEntries(entityType, ResultType.TEMPLATE_CACHE) < translationSupport.getThresholdForFullCache()) {
+            if (dao.countTranslationEntries(entityType, ResultType.TEMPLATE_CACHE) < translationSupport.getTemplateThresholdForFullCache()) {
                 Map<String, Map<String, Translation>> propertyTranslationMap = new HashMap<String, Map<String, Translation>>();
                 List<Translation> translationList = dao.readAllTranslationEntries(entityType, ResultType.TEMPLATE_CACHE);
                 if (!CollectionUtils.isEmpty(translationList)) {
@@ -146,6 +146,11 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
             }
         }
         return response;
+    }
+
+    @Override
+    public boolean validateTemplateKey(String standardCacheKey, String templateCacheKey) {
+        return !standardCacheKey.equals(templateCacheKey);
     }
 
     @Override

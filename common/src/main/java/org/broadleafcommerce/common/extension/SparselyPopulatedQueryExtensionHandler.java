@@ -178,4 +178,13 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      */
     ExtensionResultStatusType isValidState(ExtensionResultHolder<Boolean> response);
 
+    /**
+     * Get a common id for an object that is consistent for a standard site (whether or not the test object is overridden in the standard site)
+     *
+     * @param testObject the object whose id is normalized
+     * @param response the container for the normalized id
+     * @return the status of the extension operation
+     */
+    ExtensionResultStatusType getNormalizedId(Object testObject, ExtensionResultHolder<Long> response);
+
 }

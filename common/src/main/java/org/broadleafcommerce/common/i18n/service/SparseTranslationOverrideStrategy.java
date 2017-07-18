@@ -187,6 +187,11 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
     }
 
     @Override
+    public boolean validateTemplateKey(String standardCacheKey, String templateCacheKey) {
+        return true;
+    }
+
+    @Override
     public int getOrder() {
         return PRECACHED_SPARSE_OVERRIDE_ORDER;
     }

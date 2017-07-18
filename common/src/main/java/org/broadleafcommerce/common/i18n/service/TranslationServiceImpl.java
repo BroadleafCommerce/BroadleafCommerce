@@ -73,6 +73,9 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     @Value("${translation.thresholdForFullCache:1000}")
     protected int thresholdForFullCache;
 
+    @Value("${translation.thresholdForFullCache:1000}")
+    protected int templateThresholdForFullCache;
+
     @Value("${returnBlankTranslationForNotDefaultLocale:false}")
     protected boolean returnBlankTranslationForNotDefaultLocale;
 
@@ -188,7 +191,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         }
         if (!BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox() || !isValidForCache) {
             Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode,
-                    ResultType.IGNORE);
+                    ResultType.CATALOG_ONLY);
             if (translation != null) {
                 return translation.getTranslatedValue();
             } else {
@@ -300,16 +303,15 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     protected String getTemplateTranslatedValue(String standardCacheKey, String property, TranslatedEntity entityType,
                         String entityId, String localeCode, String localeCountryCode, String specificPropertyKey, String generalPropertyKey) {
         String cacheKey = getCacheKey(ResultType.TEMPLATE, entityType);
-        if (standardCacheKey.equals(cacheKey)) {
-            //short circuit immediately for non-MT scenarios
-            return null;
-        }
         StandardCacheItem translation = null;
         LocalePair override = null;
         for (TranslationOverrideStrategy strategy : strategies) {
             override = strategy.getLocaleBasedTemplateValue(cacheKey, property, entityType, entityId, localeCode, localeCountryCode, specificPropertyKey, generalPropertyKey);
             if(override != null) {
                 translation = override.getSpecificItem();
+                if (!strategy.validateTemplateKey(standardCacheKey, cacheKey)) {
+                    return null;
+                }
                 break;
             }
         }
@@ -398,6 +400,21 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     @Override
     public void setThresholdForFullCache(int thresholdForFullCache) {
         this.thresholdForFullCache = thresholdForFullCache;
+    }
+
+    @Override
+    public int getTemplateThresholdForFullCache() {
+        if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
+            return templateThresholdForFullCache;
+        } else {
+            // don't cache when not in a SandBox
+            return -1;
+        }
+    }
+
+    @Override
+    public void setTemplateThresholdForFullCache(int templateThresholdForFullCache) {
+        this.templateThresholdForFullCache = templateThresholdForFullCache;
     }
 
     @Override

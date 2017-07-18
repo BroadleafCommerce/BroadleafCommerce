@@ -33,4 +33,6 @@ public interface TranslationOverrideStrategy extends Ordered {
     LocalePair getLocaleBasedTemplateValue(String templateCacheKey, String property, TranslatedEntity entityType,
                                            String entityId, String localeCode, String localeCountryCode, String specificPropertyKey,
                                            String generalPropertyKey);
+
+    boolean validateTemplateKey(String standardCacheKey, String templateCacheKey);
 }
