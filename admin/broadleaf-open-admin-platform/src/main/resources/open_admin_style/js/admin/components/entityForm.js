@@ -435,7 +435,7 @@ $(document).ready(function() {
             $('body').click(); // Defocus any current elements in case they need to act prior to form submission
             var $form = BLCAdmin.getForm($submitButton);
 
-            BLCAdmin.entityForm.showActionSpinner($submitButton.closest('.content-area-title-bar.entity-form-actions'));
+            BLCAdmin.entityForm.showActionSpinner($submitButton.closest('.entity-form-actions'));
 
             // This is a save, we need to enable the page to be reloaded (in the case of an initial save)
             if (BLCAdmin.entityForm.status) {
@@ -449,6 +449,7 @@ $(document).ready(function() {
             }
 
             event.preventDefault();
+            event.stopPropagation();
         }
     });
 
