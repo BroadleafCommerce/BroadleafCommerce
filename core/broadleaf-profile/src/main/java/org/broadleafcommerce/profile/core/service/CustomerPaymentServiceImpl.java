@@ -23,8 +23,9 @@ import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 @Service("blCustomerPaymentService")
 public class CustomerPaymentServiceImpl implements CustomerPaymentService {
@@ -61,6 +62,12 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
     @Transactional("blTransactionManager")
     public void deleteCustomerPaymentById(Long customerPaymentId) {
         customerPaymentDao.deleteCustomerPaymentById(customerPaymentId);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public void deleteCustomerPaymentByToken(String token) {
+        customerPaymentDao.deleteCustomerPaymentByToken(token);
     }
 
     @Override
