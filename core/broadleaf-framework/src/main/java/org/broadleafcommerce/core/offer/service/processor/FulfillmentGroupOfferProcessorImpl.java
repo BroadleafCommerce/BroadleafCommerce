@@ -43,6 +43,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -179,11 +180,9 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
                     fgOffers.remove(j);
                 }
             }
-            for (int j = 0; j < fgOffers.size(); j++) {
-                if (!orderMeetsQualifyingSubtotalRequirements(order, fgOffers.get(j)) || !orderMeetsSubtotalRequirements(order, fgOffers.get(j))) {
-                    fgOffers.remove(j);
-                }
-            }
+
+            filterOffersByQualifyingAndSubtotalRequirements(order, fgOffers);
+            
             for (PromotableCandidateFulfillmentGroupOffer candidate : fgOffers) {
                 if (potential.getTotalSavings().getAmount().equals(BankersRounding.zeroAmount())) {
                     BroadleafCurrency currency = order.getOrderCurrency();
@@ -233,6 +232,18 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
         }
 
         return fgOfferApplied;
+    }
+
+    protected void filterOffersByQualifyingAndSubtotalRequirements(PromotableOrder order, List<PromotableCandidateFulfillmentGroupOffer> fgOffers) {
+        Iterator<PromotableCandidateFulfillmentGroupOffer> sgOffersIterator = fgOffers.iterator();
+
+        while (sgOffersIterator.hasNext()) {
+            PromotableCandidateFulfillmentGroupOffer offer = sgOffersIterator.next();
+
+            if (!orderMeetsQualifyingSubtotalRequirements(order, offer) || !orderMeetsSubtotalRequirements(order, offer)) {
+                sgOffersIterator.remove();
+            }
+        }
     }
 
     protected boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, PromotableCandidateFulfillmentGroupOffer fgOffer) {
