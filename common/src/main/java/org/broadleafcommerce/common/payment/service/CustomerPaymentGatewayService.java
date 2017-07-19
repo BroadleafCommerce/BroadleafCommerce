@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
+import org.broadleafcommerce.common.web.payment.controller.CustomerPaymentGatewayAbstractController;
 
 /**
  * <p>The default implementation of this interface is represented in the core Broadleaf framework at
@@ -27,8 +28,6 @@ import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
  *
  * <p>These service methods are usually invoked from the controller that listens to the endpoint hit by the external payment
  * provider (which should be a subclass of {@link org.broadleafcommerce.common.web.payment.controller.CustomerPaymentGatewayAbstractController}).</p>
- *
- * @see {@link CustomerPaymentGatewayAbstractController}
  *
  * @see {@link CustomerPaymentGatewayAbstractController}
  * @author Elbert Bautista (elbertbautista)
@@ -42,7 +41,26 @@ public interface CustomerPaymentGatewayService {
      * core commerce engine, it will be the ID of the created {@link CustomerPayment} entity.
      * @throws IllegalArgumentException
      */
-    public Long createCustomerPaymentFromResponseDTO(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config)
+    Long createCustomerPaymentFromResponseDTO(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config)
+            throws IllegalArgumentException;
+
+    /**
+     * @param responseDTO the response from the gateway
+     * @param config configuration values for the payment gateway
+     * @return a unique ID of the customer payment token as it is saved in the core commerce engine. If using Broadleaf's
+     * core commerce engine, it will be the ID of the created {@link CustomerPayment} entity.
+     * @throws IllegalArgumentException
+     */
+    Long updateCustomerPaymentFromResponseDTO(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config)
+            throws IllegalArgumentException;
+
+    /**
+     * @param responseDTO the response from the gateway
+     * @param config configuration values for the payment gateway
+     *
+     * @throws IllegalArgumentException
+     */
+    void deleteCustomerPaymentFromResponseDTO(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config)
             throws IllegalArgumentException;
 
 }

@@ -22,12 +22,13 @@ import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository("blCustomerPaymentDao")
 public class CustomerPaymentDaoImpl implements CustomerPaymentDao {
@@ -71,6 +72,14 @@ public class CustomerPaymentDaoImpl implements CustomerPaymentDao {
     @Override
     public void deleteCustomerPaymentById(Long customerPaymentId) {
         CustomerPayment customerPayment = readCustomerPaymentById(customerPaymentId);
+        if (customerPayment != null) {
+            em.remove(customerPayment);
+        }
+    }
+
+    @Override
+    public void deleteCustomerPaymentByToken(String token) {
+        CustomerPayment customerPayment = readCustomerPaymentByToken(token);
         if (customerPayment != null) {
             em.remove(customerPayment);
         }

@@ -59,7 +59,7 @@ public class CheckoutFormVariableExpression implements BroadleafVariableExpressi
 
     public boolean shouldShowBillingInfoStage() {
         return !cartStateService.orderContainsThirdPartyPayment()
-                && !cartStateService.orderContainsUnconfirmedCreditCard();
+                && !cartStateService.orderContainsTemporaryCreditCard();
     }
 
     /**
@@ -71,7 +71,7 @@ public class CheckoutFormVariableExpression implements BroadleafVariableExpressi
         boolean totalCoveredByAppliedPayments = (orderTotalAfterAppliedPayments != null && orderTotalAfterAppliedPayments.isZero());
 
         return !cartStateService.orderContainsThirdPartyPayment()
-                && !cartStateService.orderContainsUnconfirmedCreditCard()
+                && !cartStateService.orderContainsTemporaryCreditCard()
                 && !totalCoveredByAppliedPayments;
     }
 

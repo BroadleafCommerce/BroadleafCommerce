@@ -40,9 +40,7 @@ public class CartStateServiceImpl implements CartStateService {
 
     @Override
     public boolean hasPopulatedOrderInfo() {
-        Order cart = CartState.getCart();
-
-        return orderContainsThirdPartyPayment() || orderContainsUnconfirmedCreditCard();
+        return orderContainsThirdPartyPayment() || orderContainsTemporaryCreditCard();
     }
 
     @Override
@@ -87,11 +85,11 @@ public class CartStateServiceImpl implements CartStateService {
     }
 
     @Override
-    public boolean orderContainsUnconfirmedCreditCard() {
-        return getUnconfirmedCCFromCart() != null;
+    public boolean orderContainsTemporaryCreditCard() {
+        return getTemporaryCCFromCart() != null;
     }
 
-    protected OrderPayment getUnconfirmedCCFromCart() {
+    protected OrderPayment getTemporaryCCFromCart() {
         OrderPayment unconfirmedCC = null;
 
         Order cart = CartState.getCart();
