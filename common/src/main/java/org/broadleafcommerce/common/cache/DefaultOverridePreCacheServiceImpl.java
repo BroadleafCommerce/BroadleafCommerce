@@ -26,6 +26,8 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * Default implementation of {@link OverridePreCacheService}. Simply contains no-ops methods.
+ *
  * @author Jeff Fischer
  */
 @Service("blOverridePreCacheService")

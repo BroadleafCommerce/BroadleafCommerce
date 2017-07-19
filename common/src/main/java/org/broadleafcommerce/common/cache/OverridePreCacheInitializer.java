@@ -22,12 +22,27 @@ package org.broadleafcommerce.common.cache;
 import org.broadleafcommerce.common.extension.StandardCacheItem;
 
 /**
+ * Performs cache item initialization for a specific entity type.
+ *
  * @author Jeff Fischer
  */
 public interface OverridePreCacheInitializer {
 
+    /**
+     * Whether or not this initializer is qualified to work on the given entity type
+     *
+     * @param type
+     * @return
+     */
     boolean isOverrideQualified(Class<?> type);
 
+    /**
+     * Perform any initialization tasks (e.g. exercising a lazy collection) and returns
+     * a StandardCacheItem instance.
+     *
+     * @param entity
+     * @return
+     */
     StandardCacheItem initializeOverride(Object entity);
 
 }

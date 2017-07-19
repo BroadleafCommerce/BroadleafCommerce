@@ -22,6 +22,8 @@ package org.broadleafcommerce.common.i18n.service;
 import org.broadleafcommerce.common.extension.StandardCacheItem;
 
 /**
+ * Represents a cached translation pair.
+ *
  * @author Jeff Fischer
  */
 public class LocalePair {
@@ -29,6 +31,11 @@ public class LocalePair {
     StandardCacheItem specificItem = null;
     StandardCacheItem generalItem = null;
 
+    /**
+     * Retrieve the language and country specific translation.
+     *
+     * @return
+     */
     public StandardCacheItem getSpecificItem() {
         return specificItem;
     }
@@ -37,6 +44,11 @@ public class LocalePair {
         this.specificItem = specificItem;
     }
 
+    /**
+     * Retrieve the language only translation.
+     *
+     * @return
+     */
     public StandardCacheItem getGeneralItem() {
         return generalItem;
     }

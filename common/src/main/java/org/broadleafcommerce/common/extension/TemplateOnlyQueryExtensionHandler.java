@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.extension;
 
+import org.broadleafcommerce.common.i18n.service.SparseTranslationOverrideStrategy;
+
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -29,6 +31,11 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
+ * Extension handler (generally for DAO usage) that allows contribution to a query (presumably from another module). The intent
+ * of this handler is to manipulate a query to not include standard site catalogs (template only). This is useful in some
+ * caching situations where it is advantageous to only look at template catalog values. {@link SparseTranslationOverrideStrategy}
+ * is an example use case. This is generally used in multitenant scenarios.
+ *
  * @author Jeff Fischer
  */
 public interface TemplateOnlyQueryExtensionHandler extends ExtensionHandler {

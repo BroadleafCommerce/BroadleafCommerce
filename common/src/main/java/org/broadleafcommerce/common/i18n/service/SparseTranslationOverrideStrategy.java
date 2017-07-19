@@ -52,6 +52,28 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
+ * A retrieval and caching strategy for translations. Primarily supports multitenant scenarios with the following characteristics:
+ * <ul>
+ *     <li>A very large template translation catalog</li>
+ *     <li>A small number of standard site overrides</li>
+ *     <li>Small or large quantity of individual standard sites</li>
+ * </ul>
+ * Since the large catalog can be costly for the threshold count bounding inherent to {@link ThresholdCacheTranslationOverrideStrategy},
+ * this strategy opts for completely caching overrides and minimizing template queries. The highest template query optimization
+ * is achieved in conjunction with the 'precached.sparse.override.template.search.restrict.catalog' property set to true (false by
+ * default). See com.broadleafcommerce.tenant.service.extension.MultiTenantTemplateOnlyQueryExtensionHandler for more information,
+ * since this setting assumes the translated entity is in the same catalog as the {@link Translation} instance, which may
+ * not be true for all installations.
+ * </p>
+ * Hybrid configurations are also possible for small to medium size template translation catalogs where the threshold
+ * count bounding queries are not a concern and complete (or partial) caching of the template catalog can be achieved. However,
+ * such a strategy may provide little to no benefit over the out-of-the-box {@link ThresholdCacheTranslationOverrideStrategy}.
+ * See the {@link #templateEnabled} property for more information.
+ * </p>
+ * This strategy is disabled by default. Please see the javadoc for com.broadleafcommerce.tenant.service.cache.SparseOverridePreCacheServiceImpl (MultiTenant only)
+ * for more information on how to enable this strategy via configuration of that service.
+ *
+ * @see ThresholdCacheTranslationOverrideStrategy
  * @author Jeff Fischer
  */
 @Component("blSparseTranslationOverrideStrategy")
@@ -187,7 +209,7 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
     }
 
     @Override
-    public boolean validateTemplateKey(String standardCacheKey, String templateCacheKey) {
+    public boolean validateTemplateProcessing(String standardCacheKey, String templateCacheKey) {
         return true;
     }
 

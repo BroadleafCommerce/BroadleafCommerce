@@ -70,9 +70,17 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     @Resource(name="blTranslationServiceExtensionManager")
     protected TranslationServiceExtensionManager extensionManager;
 
+    /**
+     * The default is 1000. Use the 'translation.thresholdForFullCache' to change the value.
+     */
     @Value("${translation.thresholdForFullCache:1000}")
     protected int thresholdForFullCache;
 
+    /**
+     * The default is 1000. This property also uses 'translation.thresholdForFullCache' for
+     * backwards compatibility. If you wish to change this value, you'll need to extend
+     * TranslationServiceImpl and return a custom value for {@link TranslationSupport#getTemplateThresholdForFullCache()}
+     */
     @Value("${translation.thresholdForFullCache:1000}")
     protected int templateThresholdForFullCache;
 
@@ -309,7 +317,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
             override = strategy.getLocaleBasedTemplateValue(cacheKey, property, entityType, entityId, localeCode, localeCountryCode, specificPropertyKey, generalPropertyKey);
             if(override != null) {
                 translation = override.getSpecificItem();
-                if (!strategy.validateTemplateKey(standardCacheKey, cacheKey)) {
+                if (!strategy.validateTemplateProcessing(standardCacheKey, cacheKey)) {
                     return null;
                 }
                 break;

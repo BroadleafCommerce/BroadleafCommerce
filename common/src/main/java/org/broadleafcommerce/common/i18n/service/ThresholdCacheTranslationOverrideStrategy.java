@@ -41,8 +41,20 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 /**
- * Default strategy. Should run last and will always return a result.
+ * Default {@link TranslationOverrideStrategy}. Should run last and will always return a result. Primarily supports multitenant
+ * scenarios with the following characteristics:
+  * <ul>
+  *     <li>Small to medium template translation catalog</li>
+  *     <li>Small to medium number of standard site overrides</li>
+  *     <li>Small or large quantity of individual standard sites</li>
+  * </ul>
+ * This strategy tries to efficiently cache all standard site overries and/or all template catalog translations. This is the
+ * highest efficiency settings, as all translations are cached on the app tier. However, if the override or template catalog
+ * member count exceeds the threshold, the strategy falls back to on demand queries that are cached as they occur. See
+ * {@link TranslationSupport#getThresholdForFullCache()} and {@link TranslationSupport#getTemplateThresholdForFullCache()}
+ * for more information on these properties and how to set their values.
  *
+ * @see SparseTranslationOverrideStrategy
  * @author Jeff Fischer
  */
 @Component("blThresholdCacheTranslationOverrideStrategy")
@@ -149,7 +161,7 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
     }
 
     @Override
-    public boolean validateTemplateKey(String standardCacheKey, String templateCacheKey) {
+    public boolean validateTemplateProcessing(String standardCacheKey, String templateCacheKey) {
         return !standardCacheKey.equals(templateCacheKey);
     }
 
