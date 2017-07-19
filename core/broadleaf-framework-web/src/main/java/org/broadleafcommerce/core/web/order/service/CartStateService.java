@@ -55,9 +55,9 @@ public interface CartStateService {
     boolean orderContainsThirdPartyPayment();
 
     /**
-     * A helper method used to determine whether or not the {@link CartState#getCart()} contains an unconfirmed credit card
+     * A helper method used to determine whether or not the {@link CartState#getCart()} contains a temporary credit card
      *
      * @return boolean
      */
-    boolean orderContainsUnconfirmedCreditCard();
+    boolean orderContainsTemporaryCreditCard();
 }
