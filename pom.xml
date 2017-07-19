@@ -57,8 +57,8 @@
         <broadleaf-presentation.version>1.0.2-GA</broadleaf-presentation.version>
     </properties>
     <scm>
-        <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</connection>
-        <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</developerConnection>
+        <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
+        <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
         <tag>HEAD</tag>
     </scm>
