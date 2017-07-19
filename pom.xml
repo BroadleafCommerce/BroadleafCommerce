@@ -951,11 +951,6 @@
                         <groupId>com.fasterxml.jackson</groupId>
                         <artifactId>jackson-core</artifactId>
                     </exclusion>
-                    <!-- security vulnerability in version 3.4.6. We explicity include version 3.4.9 elsewhere -->
-                    <exclusion>
-                        <groupId>org.apache.zookeeper</groupId>
-                        <artifactId>zookeeper</artifactId>
-                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
