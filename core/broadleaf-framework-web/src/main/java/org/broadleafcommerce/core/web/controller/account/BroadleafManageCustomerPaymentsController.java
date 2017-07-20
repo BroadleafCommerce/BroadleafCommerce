@@ -19,15 +19,18 @@ package org.broadleafcommerce.core.web.controller.account;
 
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.i18n.domain.ISOCountry;
-import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
 import org.broadleafcommerce.core.web.controller.account.validator.SavePaymentValidator;
-import org.broadleafcommerce.profile.core.domain.*;
-import org.broadleafcommerce.profile.core.service.*;
+import org.broadleafcommerce.core.web.service.InitBinderService;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerAddress;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
+import org.broadleafcommerce.profile.core.service.AddressService;
+import org.broadleafcommerce.profile.core.service.CustomerAddressService;
+import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
@@ -35,11 +38,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.beans.PropertyEditorSupport;
 import java.security.InvalidParameterException;
 import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is the page controller for adding, updating, and deleting saved payment information.
@@ -69,14 +72,9 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     @Resource(name = "blAddressService")
     protected AddressService addressService;
 
-    @Resource(name = "blCountryService")
-    protected CountryService countryService;
+    @Resource(name = "blInitBinderService")
+    protected InitBinderService initBinderService;
 
-    @Resource(name = "blStateService")
-    protected StateService stateService;
-
-    @Resource(name = "blISOService")
-    protected ISOService isoService;
 
     public String viewCustomerPayments(HttpServletRequest request, Model model) {
         Customer customer = CustomerState.getCustomer(request);
@@ -174,82 +172,6 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
 
     @InitBinder
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
-
-        /**
-         * @deprecated - address.setState() is deprecated in favor of ISO standardization
-         * This is here for legacy compatibility
-         */
-        binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    State state = stateService.findStateByAbbreviation(text);
-                    setValue(state);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-
-        /**
-         * @deprecated - address.setCountry() is deprecated in favor of ISO standardization
-         * This is here for legacy compatibility
-         */
-        binder.registerCustomEditor(Country.class, "address.country", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    Country country = countryService.findCountryByAbbreviation(text);
-                    setValue(country);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-
-        binder.registerCustomEditor(ISOCountry.class, "address.isoCountryAlpha2", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code(text);
-                    setValue(isoCountry);
-                }else {
-                    setValue(null);
-                }
-            }
-        });
-
-        binder.registerCustomEditor(Phone.class, "address.phonePrimary", new PropertyEditorSupport() {
-
-            @Override
-            public void setAsText(String text) {
-                Phone phone = new PhoneImpl();
-                phone.setPhoneNumber(text);
-                setValue(phone);
-            }
-
-        });
-
-        binder.registerCustomEditor(Phone.class, "address.phoneSecondary", new PropertyEditorSupport() {
-
-            @Override
-            public void setAsText(String text) {
-                Phone phone = new PhoneImpl();
-                phone.setPhoneNumber(text);
-                setValue(phone);
-            }
-
-        });
-
-        binder.registerCustomEditor(Phone.class, "address.phoneFax", new PropertyEditorSupport() {
-
-            @Override
-            public void setAsText(String text) {
-                Phone phone = new PhoneImpl();
-                phone.setPhoneNumber(text);
-                setValue(phone);
-            }
-
-        });
+        initBinderService.configAddressInitBinder(binder);
     }
 }
