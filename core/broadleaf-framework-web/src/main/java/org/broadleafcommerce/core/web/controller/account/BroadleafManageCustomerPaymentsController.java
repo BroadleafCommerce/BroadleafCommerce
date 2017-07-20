@@ -19,11 +19,10 @@ package org.broadleafcommerce.core.web.controller.account;
 
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
-import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
-import org.broadleafcommerce.core.web.controller.account.validator.SavePaymentValidator;
+import org.broadleafcommerce.core.web.controller.account.validator.SavedPaymentFormValidator;
+import org.broadleafcommerce.core.web.payment.service.SavedPaymentService;
 import org.broadleafcommerce.core.web.service.InitBinderService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
@@ -32,33 +31,29 @@ import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
-import java.security.InvalidParameterException;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This is the page controller for adding, updating, and deleting saved payment information.
+ * This is the page controller for adding, updating, and deleting a customer's saved payments.
  *
+ * @author Chris Kittrell (ckittrell)
  * @author Jacob Mitash
  */
 public class BroadleafManageCustomerPaymentsController extends BroadleafAbstractController {
 
-    @Value("${validate.customer.owned.data:true}")
-    protected boolean validateCustomerOwnedData;
-
     protected static String customerPaymentView = "account/manageCustomerPayments";
     protected static String customerPaymentRedirect = "redirect:/account/payments";
 
-    @Resource(name = "blSavePaymentValidator")
-    protected SavePaymentValidator savePaymentValidator;
+    @Resource(name = "blSavedPaymentService")
+    protected SavedPaymentService savedPaymentService;
 
     @Resource(name = "blCustomerPaymentService")
     protected CustomerPaymentService customerPaymentService;
@@ -66,8 +61,8 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     @Resource(name = "blCustomerAddressService")
     protected CustomerAddressService customerAddressService;
 
-    @Resource(name = "blBillingInfoFormValidator")
-    protected BillingInfoFormValidator billingInfoFormValidator;
+    @Resource(name = "blSavedPaymentFormValidator")
+    protected SavedPaymentFormValidator savedPaymentFormValidator;
 
     @Resource(name = "blAddressService")
     protected AddressService addressService;
@@ -76,90 +71,67 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     protected InitBinderService initBinderService;
 
 
-    public String viewCustomerPayments(HttpServletRequest request, Model model) {
+    public String viewCustomerPayments(HttpServletRequest request, Model model, SavedPaymentForm savedPaymentForm) {
         Customer customer = CustomerState.getCustomer(request);
 
-        if(customer == null) {
+        if (customer == null) {
             throw new SecurityException("Customer is not found but tried to access account page");
         }
 
         List<CustomerPayment> savedPaymentList = customerPaymentService.readCustomerPaymentsByCustomerId(customer.getId());
-
-        SavePaymentForm savePaymentForm = new SavePaymentForm();
-        savePaymentForm.setDefaultMethod(savedPaymentList.isEmpty());
-
-        model.addAttribute("savedPayments", savedPaymentList);
-        model.addAttribute("savePaymentForm", savePaymentForm);
-        model.addAttribute("billingInfoForm", new BillingInfoForm());
-        model.addAttribute("managePaymentMethods", true);
-
-        List<CustomerAddress> customerAddresses = customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
+        List<CustomerAddress> customerAddresses = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
 
         model.addAttribute("customerAddresses", customerAddresses);
+        model.addAttribute("savedPayments", savedPaymentList);
+        model.addAttribute("billingInfoForm", new BillingInfoForm());
+        model.addAttribute("managePaymentMethods", true);
 
         return getCustomerPaymentView();
     }
 
-    public String addCustomerPayment(HttpServletRequest request, Model model, SavePaymentForm paymentForm,
-                                     BindingResult paymentResult, BillingInfoForm billingForm, BindingResult billingResult) {
+    public String addCustomerPayment(HttpServletRequest request, Model model,
+            SavedPaymentForm savedPaymentForm, BindingResult bindingResult) {
 
-        Customer customer = CustomerState.getCustomer();
+        addressService.populateAddressISOCountrySub(savedPaymentForm.getAddress());
+        savedPaymentFormValidator.validate(savedPaymentForm, bindingResult);
 
-        addressService.populateAddressISOCountrySub(billingForm.getAddress());
+        if (!bindingResult.hasErrors()) {
+            if ((savedPaymentForm.getAddress().getPhonePrimary() != null) &&
+                    (StringUtils.isEmpty(savedPaymentForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
+                savedPaymentForm.getAddress().setPhonePrimary(null);
+            }
+            if ((savedPaymentForm.getAddress().getPhoneSecondary() != null) &&
+                    (StringUtils.isEmpty(savedPaymentForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+                savedPaymentForm.getAddress().setPhoneSecondary(null);
+            }
+            if ((savedPaymentForm.getAddress().getPhoneFax() != null) &&
+                    (StringUtils.isEmpty(savedPaymentForm.getAddress().getPhoneFax().getPhoneNumber()))) {
+                savedPaymentForm.getAddress().setPhoneFax(null);
+            }
 
-        savePaymentValidator.validate(paymentForm, paymentResult);
-        billingInfoFormValidator.validate(billingForm, billingResult);
-
-
-        if ((billingForm.getAddress().getPhonePrimary() != null) &&
-                (StringUtils.isEmpty(billingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
-            billingForm.getAddress().setPhonePrimary(null);
-        }
-        if ((billingForm.getAddress().getPhoneSecondary() != null) &&
-                (StringUtils.isEmpty(billingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
-            billingForm.getAddress().setPhoneSecondary(null);
-        }
-        if ((billingForm.getAddress().getPhoneFax() != null) &&
-                (StringUtils.isEmpty(billingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
-            billingForm.getAddress().setPhoneFax(null);
-        }
-
-        if(paymentResult.hasErrors() || billingResult.hasErrors()) {
-            return getCustomerPaymentRedirect();
+            Customer customer = CustomerState.getCustomer();
+            savedPaymentService.addSavedPayment(customer, savedPaymentForm);
         }
 
-        CustomerPayment customerPayment = customerPaymentService.create();
-        customerPayment.setCustomer(customer);
-        customerPayment.setIsDefault(paymentForm.isDefaultMethod());
-        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.EXP_DATE.getType(), paymentForm.getExpiration());
-        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.LAST_FOUR.getType(), paymentForm.getLastFourDigits());
-        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.PAYMENT_NAME.getType(), paymentForm.getPaymentName());
-        customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.NAME_ON_CARD.getType(), paymentForm.getPersonName());
-        //customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.CARD_TYPE.getType(), paymentForm.getPersonName());
-        customerPayment.setBillingAddress(billingForm.getAddress());
-//        customerPayment.setToken();
-
-        customerPaymentService.saveCustomerPayment(customerPayment);
-
-        return getCustomerPaymentRedirect();
+        return getCustomerPaymentView();
     }
 
     public String makeDefaultCustomerPayment(HttpServletRequest request, Model model, Long customerPaymentId) {
         CustomerPayment customerPayment = customerPaymentService.readCustomerPaymentById(customerPaymentId);
 
-        if(customerPayment == null) {
-            throw new InvalidParameterException("Requested customer payment does not exist.");
+        if (customerPayment == null) {
+            throw new IllegalArgumentException("Requested customer payment does not exist.");
         }
 
         customerPaymentService.setAsDefaultPayment(customerPayment);
 
-        return getCustomerPaymentRedirect();
+        return getCustomerPaymentView();
     }
 
     public String removeCustomerPayment(HttpServletRequest request, Model model, Long customerPaymentId) {
         customerPaymentService.deleteCustomerPaymentById(customerPaymentId);
 
-        return getCustomerPaymentRedirect();
+        return getCustomerPaymentView();
     }
 
     public String getCustomerPaymentView() {
