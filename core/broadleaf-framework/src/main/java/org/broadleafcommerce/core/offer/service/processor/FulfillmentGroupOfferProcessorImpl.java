@@ -235,13 +235,13 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
     }
 
     protected void filterOffersByQualifyingAndSubtotalRequirements(PromotableOrder order, List<PromotableCandidateFulfillmentGroupOffer> fgOffers) {
-        Iterator<PromotableCandidateFulfillmentGroupOffer> sgOffersIterator = fgOffers.iterator();
+        Iterator<PromotableCandidateFulfillmentGroupOffer> fgOffersIterator = fgOffers.iterator();
 
-        while (sgOffersIterator.hasNext()) {
-            PromotableCandidateFulfillmentGroupOffer offer = sgOffersIterator.next();
+        while (fgOffersIterator.hasNext()) {
+            PromotableCandidateFulfillmentGroupOffer offer = fgOffersIterator.next();
 
             if (!orderMeetsQualifyingSubtotalRequirements(order, offer) || !orderMeetsSubtotalRequirements(order, offer)) {
-                sgOffersIterator.remove();
+                fgOffersIterator.remove();
             }
         }
     }
