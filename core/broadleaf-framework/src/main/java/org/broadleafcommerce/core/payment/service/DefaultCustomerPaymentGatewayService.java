@@ -32,6 +32,8 @@ import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 /**
@@ -66,6 +68,10 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
         Customer customer = customerService.readCustomerById(customerId);
 
         if (customer != null) {
+            if (isNewDefaultPaymentMethod(responseDTO)) {
+                customerPaymentService.clearDefaultPaymentStatus(customer);
+            }
+
             CustomerPayment customerPayment = customerPaymentService.create();
             populateCustomerPayment(customerPayment, responseDTO, config);
             customerPayment.setCustomer(customer);
@@ -76,6 +82,13 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
         }
 
         return null;
+    }
+
+    private boolean isNewDefaultPaymentMethod(PaymentResponseDTO responseDTO) {
+        Map<String, String> responseMap = responseDTO.getResponseMap();
+        String defaultMethod = responseMap.get("isDefault");
+
+        return Boolean.parseBoolean(defaultMethod);
     }
 
     @Override
@@ -118,9 +131,11 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
     }
 
     protected void populateCustomerPayment(CustomerPayment customerPayment, PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config) {
+        Map<String, String> responseMap = responseDTO.getResponseMap();
+
         customerPayment.setPaymentGatewayType(config.getGatewayType());
         customerPayment.setPaymentType(responseDTO.getPaymentType());
-        customerPayment.setAdditionalFields(responseDTO.getResponseMap());
+        customerPayment.setAdditionalFields(responseMap);
         dtoToEntityService.populateCustomerPaymentToken(responseDTO, customerPayment);
 
         if (responseDTO.getBillTo() != null && responseDTO.getBillTo().addressPopulated()) {
@@ -149,5 +164,8 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
                 customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.EXP_YEAR.getType(), responseDTO.getCreditCard().getCreditCardExpYear());
             }
         }
+
+        String isDefault = responseMap.get("isDefault");
+        customerPayment.setIsDefault(Boolean.parseBoolean(isDefault));
     }
 }
